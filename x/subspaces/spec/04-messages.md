@@ -141,12 +141,12 @@ A user group permissions can be set using the `MsgSetUserGroupPermissions`.
 https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v2/msgs.proto#L326-L347
 ```
 
-The message is expected to fail if:
-* The subspace does not exist;
-* The user group does not exist;
-* The signer has no permission to set permissions;
-* The permissions values are not valid;
-* The signer is inside the user group and it is not the subspace owner.
+It's expected to fail if:
+* the subspace does not exist;
+* the user group does not exist;
+* the signer has no permission to set permissions within the group's section;
+* the permissions values are not valid;
+* the signer is inside the user group and it is not the subspace owner.
 
 ## Msg/DeleteUserGroup
 A user group permissions can be deleted using the `MsgDeleteUserGroup`.
