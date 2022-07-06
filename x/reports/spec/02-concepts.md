@@ -27,7 +27,7 @@ A report message can be optionally used to further describe why a user or conten
 The address of the user that has created the report.
 
 ### Target
-The target user or post that has been reported.
+A report target represents the content that has been reported. This can be either a [UserTarget](#UserTarget) or a [PostTarget](#PostTarget).
 
 ### Creation Date
 The creation date of the report.
