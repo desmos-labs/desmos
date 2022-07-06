@@ -14,10 +14,10 @@ A subspace can be created with the `MsgCreateSubspace`.
 https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v2/msgs.proto#L65-L75 
 ```
 
-The message is expected to fail if one of the following checks inside the function is matched:
-```js reference
-https://github.com/desmos-labs/desmos/blob/48b7d58e9b09f26639f7a767fbd921dba309350f/x/subspaces/types/models.go#L51-L82
-```
+It's expected to fail if:
+* the provided name is either empty or blank;
+* the specified treasury address (if any) is invalid;
+* the specified owner address (if any) is invalid.
 
 ## Msg/EditSubspace
 A subspace can be edited with the `MsgEditSubspace`:
