@@ -78,7 +78,7 @@ Tells whether [registered reaction value](#registered-reaction-value) reactions 
 The _free text value params_ type contains all the parameters related to reactions that use a [free text value value](#free-text-value).
 
 ### Enabled
-This parameter tells if free text values are enabled or not.
+Tells whether [free text value](#free-text-value) reactions are supported within the subspace.
 
 ### Max Length
 The max length that a free text value reaction can have.
