@@ -8,7 +8,7 @@ slug: messages
 # Msg Service
 
 ## Msg/CreateReport
-A report can be created using the `MsgCreateReport`, specifying the information you see below:
+A report can be created using the `MsgCreateReport`.
 
 ```js reference
 https://github.com/desmos-labs/desmos/blob/020cf82788b667924d0f71f9d8f1fd87efa5b340/proto/desmos/reports/v1/msgs.proto#L34-L58
