@@ -35,8 +35,7 @@ It's expected to fail if:
 * the signer does not have the permission to delete a report within the subspace.
 
 ## Msg/SupportStandardReason
-The `MsgSupportStandardReason` can be used if you want to use the set of standard reasons specified in the module 
-params inside your dApp.
+A standard reason can be supported within a subspace using the `MsgSupportStandardReason`.
 
 ```js reference
 https://github.com/desmos-labs/desmos/blob/020cf82788b667924d0f71f9d8f1fd87efa5b340/proto/desmos/reports/v1/msgs.proto#L99-L114
