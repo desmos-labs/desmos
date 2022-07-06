@@ -62,10 +62,10 @@ A section can be edited using the `MsgEditSection`.
 https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v2/msgs.proto#L156-L179 
 ```
 
-The message is expected to fail if:
-* The subspace does not exist;
-* The section does not exist;
-* The editor has no permission to manage sections inside the specified subspace.
+It's expected to fail if:
+* the subspace does not exist;
+* the section does not exist;
+* the editor has no permission to manage sections within the subspace.
 
 ## Msg/MoveSection
 A section can be moved to under another section using the `MsgMoveSection`.
