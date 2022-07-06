@@ -26,12 +26,12 @@ The next reaction id is stored using the associated subspace id as the key:
 - `0x10 | Subspace ID | -> bytes(NextReactionID)`
 
 ## Reaction
-The reaction is stored using the subspace ID where it lives, the post it reacts to and its ID combined as key. This allows to easily query:
-- All the reactions of a subspace;
-- All the reactions of a post;
-- A specific post's reaction.
+A oost reaction is stored using the subspace id, the associated post id and its id combined as the key. This allows to easily query:
+- all the reactions of a subspace;
+- all the reactions of a post;
+- a specific post's reaction.
 
-`0x11 | Subspace ID | Post ID | Reaction ID | -> ProtocolBuffer(Reaction)`
+- `0x11 | Subspace ID | Post ID | Reaction ID | -> ProtocolBuffer(Reaction)`
 
 ## Reactions Subspace Params
 The reactions' subspace params are stored using the associated subspace id as the key:
