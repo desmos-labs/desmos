@@ -74,7 +74,7 @@ An optional description of the group.
 A user group permissions represent the set of permissions that are granted to all the users that are part of the group itself.
 
 ## User Permission
-The user permission represent a user's permissions inside a specific subspace or section.
+A user permission can be used to set an individual user's permission withing a subspace or subspace section. This is particularly useful when you want to set some kind of permission to a single wallet without having to create a user group to do so (e.g. you have a smart contract that needs to have a custom permission set). 
 
 ### Subspace ID
 The ID of the subspace where the user has the permissions.
