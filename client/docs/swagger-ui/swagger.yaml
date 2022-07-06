@@ -4274,6 +4274,7 @@ paths:
                       format: byte
       parameters:
         - name: subspace_id
+          description: Id of the subspace to query
           in: path
           required: true
           type: string
@@ -4526,11 +4527,13 @@ paths:
                       format: byte
       parameters:
         - name: subspace_id
+          description: Id of the subspace that contains the group
           in: path
           required: true
           type: string
           format: uint64
         - name: group_id
+          description: Id of the group to query
           in: path
           required: true
           type: integer
@@ -4605,11 +4608,13 @@ paths:
                       format: byte
       parameters:
         - name: subspace_id
+          description: Id of the subspace that contains the group
           in: path
           required: true
           type: string
           format: uint64
         - name: group_id
+          description: Id of the user group to query the members for
           in: path
           required: true
           type: integer
@@ -4754,15 +4759,18 @@ paths:
                       format: byte
       parameters:
         - name: subspace_id
+          description: Id of the subspace to query the permissions for
           in: path
           required: true
           type: string
           format: uint64
         - name: user
+          description: Address of the user to query the permissions for
           in: path
           required: true
           type: string
         - name: section_id
+          description: Id of the section to query the permissions for.
           in: query
           required: false
           type: integer
@@ -5267,7 +5275,8 @@ paths:
                                 title: >-
                                   Tag reference (user address, hashtag value,
                                   etc)
-                            title: Tag represents a generic tag
+                            title: TextTag represents a tag within the post text
+                          title: Hashtags represent inside the post text
                         mentions:
                           type: array
                           items:
@@ -5290,7 +5299,8 @@ paths:
                                 title: >-
                                   Tag reference (user address, hashtag value,
                                   etc)
-                            title: Tag represents a generic tag
+                            title: TextTag represents a tag within the post text
+                          title: Mentions present inside the post text
                         urls:
                           type: array
                           items:
@@ -5317,6 +5327,12 @@ paths:
                                 type: string
                                 title: (optional) Display value of the URL
                             title: Url contains the details of a generic URL
+                          title: Links present inside the post text
+                    tags:
+                      type: array
+                      items:
+                        type: string
+                      title: 'Tags related to this post, useful for categorization'
                     author:
                       type: string
                       title: Author of the post
@@ -5728,7 +5744,8 @@ paths:
                             tag:
                               type: string
                               title: 'Tag reference (user address, hashtag value, etc)'
-                          title: Tag represents a generic tag
+                          title: TextTag represents a tag within the post text
+                        title: Hashtags represent inside the post text
                       mentions:
                         type: array
                         items:
@@ -5749,7 +5766,8 @@ paths:
                             tag:
                               type: string
                               title: 'Tag reference (user address, hashtag value, etc)'
-                          title: Tag represents a generic tag
+                          title: TextTag represents a tag within the post text
+                        title: Mentions present inside the post text
                       urls:
                         type: array
                         items:
@@ -5776,6 +5794,12 @@ paths:
                               type: string
                               title: (optional) Display value of the URL
                           title: Url contains the details of a generic URL
+                        title: Links present inside the post text
+                  tags:
+                    type: array
+                    items:
+                      type: string
+                    title: 'Tags related to this post, useful for categorization'
                   author:
                     type: string
                     title: Author of the post
@@ -6074,14 +6098,6 @@ paths:
                         attachment should be
 
                         connected is
-                    section_id:
-                      type: integer
-                      format: int64
-                      title: >-
-                        Id of the subspace section inside which the post to
-                        which this attachment
-
-                        should be connected is
                     post_id:
                       type: string
                       format: uint64
@@ -6584,12 +6600,6 @@ paths:
                       title: >-
                         Subspace id inside which the post related to this
                         attachment is located
-                    section_id:
-                      type: integer
-                      format: int64
-                      title: >-
-                        Section id inside which the post related to this
-                        attachment is located
                     post_id:
                       type: string
                       format: uint64
@@ -6974,7 +6984,8 @@ paths:
                                 title: >-
                                   Tag reference (user address, hashtag value,
                                   etc)
-                            title: Tag represents a generic tag
+                            title: TextTag represents a tag within the post text
+                          title: Hashtags represent inside the post text
                         mentions:
                           type: array
                           items:
@@ -6997,7 +7008,8 @@ paths:
                                 title: >-
                                   Tag reference (user address, hashtag value,
                                   etc)
-                            title: Tag represents a generic tag
+                            title: TextTag represents a tag within the post text
+                          title: Mentions present inside the post text
                         urls:
                           type: array
                           items:
@@ -7024,6 +7036,12 @@ paths:
                                 type: string
                                 title: (optional) Display value of the URL
                             title: Url contains the details of a generic URL
+                          title: Links present inside the post text
+                    tags:
+                      type: array
+                      items:
+                        type: string
+                      title: 'Tags related to this post, useful for categorization'
                     author:
                       type: string
                       title: Author of the post
@@ -15129,7 +15147,7 @@ definitions:
           type: string
         title: Permissions that will be granted to all the users part of this group
     title: UserGroup represents a group of users
-  desmos.posts.v1.Attachment:
+  desmos.posts.v2.Attachment:
     type: object
     properties:
       subspace_id:
@@ -15140,14 +15158,6 @@ definitions:
           should be
 
           connected is
-      section_id:
-        type: integer
-        format: int64
-        title: >-
-          Id of the subspace section inside which the post to which this
-          attachment
-
-          should be connected is
       post_id:
         type: string
         format: uint64
@@ -15317,7 +15327,7 @@ definitions:
               }
         title: Content of the attachment
     title: Attachment contains the data of a single post attachment
-  desmos.posts.v1.Entities:
+  desmos.posts.v2.Entities:
     type: object
     properties:
       hashtags:
@@ -15336,7 +15346,8 @@ definitions:
             tag:
               type: string
               title: 'Tag reference (user address, hashtag value, etc)'
-          title: Tag represents a generic tag
+          title: TextTag represents a tag within the post text
+        title: Hashtags represent inside the post text
       mentions:
         type: array
         items:
@@ -15353,7 +15364,8 @@ definitions:
             tag:
               type: string
               title: 'Tag reference (user address, hashtag value, etc)'
-          title: Tag represents a generic tag
+          title: TextTag represents a tag within the post text
+        title: Mentions present inside the post text
       urls:
         type: array
         items:
@@ -15374,8 +15386,9 @@ definitions:
               type: string
               title: (optional) Display value of the URL
           title: Url contains the details of a generic URL
+        title: Links present inside the post text
     title: Contains the details of entities parsed out of the post text
-  desmos.posts.v1.Params:
+  desmos.posts.v2.Params:
     type: object
     properties:
       max_text_length:
@@ -15383,7 +15396,7 @@ definitions:
         format: int64
         title: Maximum length of the post text
     title: Params contains the parameters for the posts module
-  desmos.posts.v1.Post:
+  desmos.posts.v2.Post:
     type: object
     properties:
       subspace_id:
@@ -15426,7 +15439,8 @@ definitions:
                 tag:
                   type: string
                   title: 'Tag reference (user address, hashtag value, etc)'
-              title: Tag represents a generic tag
+              title: TextTag represents a tag within the post text
+            title: Hashtags represent inside the post text
           mentions:
             type: array
             items:
@@ -15445,7 +15459,8 @@ definitions:
                 tag:
                   type: string
                   title: 'Tag reference (user address, hashtag value, etc)'
-              title: Tag represents a generic tag
+              title: TextTag represents a tag within the post text
+            title: Mentions present inside the post text
           urls:
             type: array
             items:
@@ -15468,6 +15483,12 @@ definitions:
                   type: string
                   title: (optional) Display value of the URL
               title: Url contains the details of a generic URL
+            title: Links present inside the post text
+      tags:
+        type: array
+        items:
+          type: string
+        title: 'Tags related to this post, useful for categorization'
       author:
         type: string
         title: Author of the post
@@ -15533,7 +15554,7 @@ definitions:
         format: date-time
         title: (optional) Last edited time of the post
     title: Post contains all the information about a single post
-  desmos.posts.v1.PostReference:
+  desmos.posts.v2.PostReference:
     type: object
     properties:
       type:
@@ -15563,7 +15584,7 @@ definitions:
 
           with the type set to TYPE_QUOTE
     title: PostReference contains the details of a post reference
-  desmos.posts.v1.PostReferenceType:
+  desmos.posts.v2.PostReferenceType:
     type: string
     enum:
       - POST_REFERENCE_TYPE_UNSPECIFIED
@@ -15577,7 +15598,7 @@ definitions:
        - POST_REFERENCE_TYPE_QUOTE: This reference represents a quote of the specified post
        - POST_REFERENCE_TYPE_REPOST: This reference represents a repost of the specified post
     title: PostReferenceType represents the different types of references
-  desmos.posts.v1.QueryParamsResponse:
+  desmos.posts.v2.QueryParamsResponse:
     type: object
     properties:
       params:
@@ -15589,7 +15610,7 @@ definitions:
             title: Maximum length of the post text
         title: Params contains the parameters for the posts module
     title: QueryParamsResponse is the response type for the Query/Params RPC method
-  desmos.posts.v1.QueryPollAnswersResponse:
+  desmos.posts.v2.QueryPollAnswersResponse:
     type: object
     properties:
       answers:
@@ -15602,12 +15623,6 @@ definitions:
               format: uint64
               title: >-
                 Subspace id inside which the post related to this attachment is
-                located
-            section_id:
-              type: integer
-              format: int64
-              title: >-
-                Section id inside which the post related to this attachment is
                 located
             post_id:
               type: string
@@ -15657,7 +15672,7 @@ definitions:
       RPC
 
       method
-  desmos.posts.v1.QueryPostAttachmentsResponse:
+  desmos.posts.v2.QueryPostAttachmentsResponse:
     type: object
     properties:
       attachments:
@@ -15673,14 +15688,6 @@ definitions:
                 attachment should be
 
                 connected is
-            section_id:
-              type: integer
-              format: int64
-              title: >-
-                Id of the subspace section inside which the post to which this
-                attachment
-
-                should be connected is
             post_id:
               type: string
               format: uint64
@@ -15888,7 +15895,7 @@ definitions:
     title: |-
       QueryPostAttachmentsResponse is the response type for the
       Query/PostAttachments RPC method
-  desmos.posts.v1.QueryPostResponse:
+  desmos.posts.v2.QueryPostResponse:
     type: object
     properties:
       post:
@@ -15936,7 +15943,8 @@ definitions:
                     tag:
                       type: string
                       title: 'Tag reference (user address, hashtag value, etc)'
-                  title: Tag represents a generic tag
+                  title: TextTag represents a tag within the post text
+                title: Hashtags represent inside the post text
               mentions:
                 type: array
                 items:
@@ -15957,7 +15965,8 @@ definitions:
                     tag:
                       type: string
                       title: 'Tag reference (user address, hashtag value, etc)'
-                  title: Tag represents a generic tag
+                  title: TextTag represents a tag within the post text
+                title: Mentions present inside the post text
               urls:
                 type: array
                 items:
@@ -15982,6 +15991,12 @@ definitions:
                       type: string
                       title: (optional) Display value of the URL
                   title: Url contains the details of a generic URL
+                title: Links present inside the post text
+          tags:
+            type: array
+            items:
+              type: string
+            title: 'Tags related to this post, useful for categorization'
           author:
             type: string
             title: Author of the post
@@ -16048,7 +16063,7 @@ definitions:
             title: (optional) Last edited time of the post
         title: Post contains all the information about a single post
     title: QueryPostResponse is the response type for the Query/Post RPC method
-  desmos.posts.v1.QuerySectionPostsResponse:
+  desmos.posts.v2.QuerySectionPostsResponse:
     type: object
     properties:
       posts:
@@ -16098,7 +16113,8 @@ definitions:
                       tag:
                         type: string
                         title: 'Tag reference (user address, hashtag value, etc)'
-                    title: Tag represents a generic tag
+                    title: TextTag represents a tag within the post text
+                  title: Hashtags represent inside the post text
                 mentions:
                   type: array
                   items:
@@ -16119,7 +16135,8 @@ definitions:
                       tag:
                         type: string
                         title: 'Tag reference (user address, hashtag value, etc)'
-                    title: Tag represents a generic tag
+                    title: TextTag represents a tag within the post text
+                  title: Mentions present inside the post text
                 urls:
                   type: array
                   items:
@@ -16146,6 +16163,12 @@ definitions:
                         type: string
                         title: (optional) Display value of the URL
                     title: Url contains the details of a generic URL
+                  title: Links present inside the post text
+            tags:
+              type: array
+              items:
+                type: string
+              title: 'Tags related to this post, useful for categorization'
             author:
               type: string
               title: Author of the post
@@ -16243,7 +16266,7 @@ definitions:
       RPC
 
       method
-  desmos.posts.v1.QuerySubspacePostsResponse:
+  desmos.posts.v2.QuerySubspacePostsResponse:
     type: object
     properties:
       posts:
@@ -16293,7 +16316,8 @@ definitions:
                       tag:
                         type: string
                         title: 'Tag reference (user address, hashtag value, etc)'
-                    title: Tag represents a generic tag
+                    title: TextTag represents a tag within the post text
+                  title: Hashtags represent inside the post text
                 mentions:
                   type: array
                   items:
@@ -16314,7 +16338,8 @@ definitions:
                       tag:
                         type: string
                         title: 'Tag reference (user address, hashtag value, etc)'
-                    title: Tag represents a generic tag
+                    title: TextTag represents a tag within the post text
+                  title: Mentions present inside the post text
                 urls:
                   type: array
                   items:
@@ -16341,6 +16366,12 @@ definitions:
                         type: string
                         title: (optional) Display value of the URL
                     title: Url contains the details of a generic URL
+                  title: Links present inside the post text
+            tags:
+              type: array
+              items:
+                type: string
+              title: 'Tags related to this post, useful for categorization'
             author:
               type: string
               title: Author of the post
@@ -16438,7 +16469,7 @@ definitions:
       Query/SubspacePosts
 
       RPC method
-  desmos.posts.v1.ReplySetting:
+  desmos.posts.v2.ReplySetting:
     type: string
     enum:
       - REPLY_SETTING_UNSPECIFIED
@@ -16454,7 +16485,7 @@ definitions:
        - REPLY_SETTING_MUTUAL: Only the author mutual followers will be able to reply to this post
        - REPLY_SETTING_MENTIONS: Only people mentioned inside this post will be able to reply
     title: ReplySetting contains the possible reply settings that a post can have
-  desmos.posts.v1.Tag:
+  desmos.posts.v2.TextTag:
     type: object
     properties:
       start:
@@ -16468,8 +16499,8 @@ definitions:
       tag:
         type: string
         title: 'Tag reference (user address, hashtag value, etc)'
-    title: Tag represents a generic tag
-  desmos.posts.v1.Url:
+    title: TextTag represents a tag within the post text
+  desmos.posts.v2.Url:
     type: object
     properties:
       start:
@@ -16487,7 +16518,7 @@ definitions:
         type: string
         title: (optional) Display value of the URL
     title: Url contains the details of a generic URL
-  desmos.posts.v1.UserAnswer:
+  desmos.posts.v2.UserAnswer:
     type: object
     properties:
       subspace_id:
@@ -16496,10 +16527,6 @@ definitions:
         title: >-
           Subspace id inside which the post related to this attachment is
           located
-      section_id:
-        type: integer
-        format: int64
-        title: Section id inside which the post related to this attachment is located
       post_id:
         type: string
         format: uint64

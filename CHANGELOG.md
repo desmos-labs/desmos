@@ -2,6 +2,34 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
+## Version 4.1.0
+### Features
+#### Posts
+- ([\#941](https://github.com/desmos-labs/desmos/pull/941)) Allow to specify start and end indexes of tags and post references even when a post text is stored outside the chain
+- ([\#942](https://github.com/desmos-labs/desmos/pull/942)) Allow to specify a post tags for content categorization
+
+### Bug Fixes
+#### Profiles
+- ([\#954](https://github.com/desmos-labs/desmos/pull/954)) Added missing unlink messages WASM parsers
+
+#### Subspaces
+- ([\#945](https://github.com/desmos-labs/desmos/pull/945)) Allow to specify the section id inside user permissions query
+
+#### Reactions
+- ([\#940](https://github.com/desmos-labs/desmos/pull/940)) Fixed wrong event types and missing attributes
+
+#### Reports
+- ([\#955](https://github.com/desmos-labs/desmos/pull/955)) Fixed wrong CLI commands naming
+- ([\#961](https://github.com/desmos-labs/desmos/pull/961)) Fixed the JSON fields used to deserialize report create and delete report messages received from CosmWASM
+
+### Dependencies
+- ([\#946](https://github.com/desmos-labs/desmos/pull/946)) Updated WASM parser to be compatible with `cosmwasm-std v1.0.0`
+
+## Version 4.0.1
+### Bug fixes
+#### Other
+- ([\#952](https://github.com/desmos-labs/desmos/pull/952)) Fixed how the `v.4.0.0` upgrade is handled
+
 ## Version 4.0.0
 ### Features
 #### Subspaces

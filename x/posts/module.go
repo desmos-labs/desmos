@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"math/rand"
 
+	v2 "github.com/desmos-labs/desmos/v4/x/posts/legacy/v2"
+
 	"github.com/desmos-labs/desmos/v4/x/posts/simulation"
 	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
 
@@ -30,7 +32,7 @@ import (
 )
 
 const (
-	consensusVersion = 2
+	consensusVersion = 3
 )
 
 // type check to ensure the interface is properly implemented
@@ -90,6 +92,7 @@ func (AppModuleBasic) GetQueryCmd() *cobra.Command {
 // RegisterInterfaces registers interfaces and implementations of the posts module.
 func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) {
 	types.RegisterInterfaces(registry)
+	v2.RegisterInterfaces(registry)
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -111,6 +114,10 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 
 	m := keeper.NewMigrator(am.keeper, am.sk)
 	err := cfg.RegisterMigration(types.ModuleName, 1, m.Migrate1to2)
+	if err != nil {
+		panic(err)
+	}
+	err = cfg.RegisterMigration(types.ModuleName, 2, m.Migrate2to3)
 	if err != nil {
 		panic(err)
 	}

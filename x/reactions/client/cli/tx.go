@@ -56,8 +56,8 @@ func GetCmdAddReaction() *cobra.Command {
 Add a reaction to the post with the given id inside the specified subspace.
 In order to specify the reaction value, either --%s or --%s must be used`, FlagRegisteredReaction, FlagFreeTextReaction),
 		Example: fmt.Sprintf(`
-%[1]s tx reactions add 1 --%[2]s 1 --from alice
-%[1]s tx reactions add 1 --%[3]s "🚀" --from alice
+%[1]s tx reactions add 1 2 --%[2]s 1 --from alice
+%[1]s tx reactions add 1 2 --%[3]s "🚀" --from alice
 `, version.AppName, FlagRegisteredReaction, FlagFreeTextReaction),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -191,7 +191,7 @@ func GetCmdAddRegisteredReaction() *cobra.Command {
 		Args:    cobra.ExactArgs(3),
 		Short:   "Register a new reaction",
 		Long:    "Register a new reaction with the specified shorthand code and display value inside the given subspace",
-		Example: fmt.Sprintf(`%s tx reactions registered add 1 1 ":hello" "https://example.com?image=hello.png" --from alice`, version.AppName),
+		Example: fmt.Sprintf(`%s tx reactions registered add 1 ":hello:" "https://example.com?image=hello.png" --from alice`, version.AppName),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -284,7 +284,7 @@ func GetCmdRemoveRegisteredReaction() *cobra.Command {
 		Use:     "remove [subspace-id] [reaction-id]",
 		Args:    cobra.ExactArgs(2),
 		Short:   "Remove a registered reaction from a subspace",
-		Example: fmt.Sprintf(`%s tx reactions registered 1 1 --from alice`, version.AppName),
+		Example: fmt.Sprintf(`%s tx reactions registered remove 1 1 --from alice`, version.AppName),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {

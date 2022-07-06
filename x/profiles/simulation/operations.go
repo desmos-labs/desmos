@@ -19,6 +19,7 @@ import (
 )
 
 // Simulation operation weights constants
+//nolint:gosec // These are not hardcoded credentials
 const (
 	OpWeightMsgSaveProfile         = "op_weight_msg_save_profile"
 	OpWeightMsgDeleteProfile       = "op_weight_msg_delete_profile"
@@ -87,7 +88,7 @@ func WeightedOperations(
 	)
 
 	var weightMsgUnlinkChainAccount int
-	appParams.GetOrGenerate(cdc, OpWeightMsgLinkChainAccount, &weightMsgUnlinkChainAccount, nil,
+	appParams.GetOrGenerate(cdc, OpWeightMsgUnlinkChainAccount, &weightMsgUnlinkChainAccount, nil,
 		func(r *rand.Rand) {
 			weightMsgUnlinkChainAccount = params.DefaultWeightMsgUnlinkChainAccount
 		},

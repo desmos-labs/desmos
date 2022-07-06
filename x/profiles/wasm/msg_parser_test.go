@@ -153,6 +153,20 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 			},
 		},
 		{
+			name: "unlink chain account json message is parsed correctly",
+			msg: buildUnlinkChainAccountRequest(cdc, types.NewMsgUnlinkChainAccount(
+				"cosmos1u9hgsqfpe3snftr7p7fsyja3wtlmj2sgf2w9yl",
+				"cosmos",
+				"cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0",
+			)),
+			shouldErr: false,
+			expMsgs: []sdk.Msg{types.NewMsgUnlinkChainAccount(
+				"cosmos1u9hgsqfpe3snftr7p7fsyja3wtlmj2sgf2w9yl",
+				"cosmos",
+				"cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0",
+			)},
+		},
+		{
 			name: "link application json message is parsed correctly",
 			msg: buildLinkApplicationRequest(cdc, types.NewMsgLinkApplication(
 				types.NewData("twitter", "twitteruser"),
@@ -175,6 +189,20 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 					0,
 				),
 			},
+		},
+		{
+			name: "unlink application json message is parsed correctly",
+			msg: buildUnlinkApplicationRequest(cdc, types.NewMsgUnlinkApplication(
+				"twitter",
+				"twitteruser",
+				"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+			)),
+			shouldErr: false,
+			expMsgs: []sdk.Msg{types.NewMsgUnlinkApplication(
+				"twitter",
+				"twitteruser",
+				"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+			)},
 		},
 	}
 

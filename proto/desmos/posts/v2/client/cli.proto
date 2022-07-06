@@ -1,12 +1,12 @@
 syntax = "proto3";
-package desmos.posts.v1.client;
+package desmos.posts.v2.client;
 
 import "gogoproto/gogo.proto";
 import "google/protobuf/any.proto";
 import "google/protobuf/timestamp.proto";
 import "cosmos_proto/cosmos.proto";
 
-import "desmos/posts/v1/models.proto";
+import "desmos/posts/v2/models.proto";
 
 option go_package = "github.com/desmos-labs/desmos/v4/x/posts/client/utils";
 
@@ -22,17 +22,20 @@ message CreatePostJSON {
   // (optional) Entities connected to this post
   Entities entities = 3;
 
+  // Tags related to this post
+  repeated string tags = 4;
+
   // Attachments of the post
-  repeated google.protobuf.Any attachments = 4;
+  repeated google.protobuf.Any attachments = 5;
 
   // (optional) Id of the original post of the conversation
-  uint64 conversation_id = 5 [ (gogoproto.customname) = "ConversationID" ];
+  uint64 conversation_id = 6 [ (gogoproto.customname) = "ConversationID" ];
 
   // Reply settings of this post
-  ReplySetting reply_settings = 6;
+  ReplySetting reply_settings = 7;
 
   // A list this posts references (either as a reply, repost or quote)
-  repeated PostReference referenced_posts = 7 [ (gogoproto.nullable) = false ];
+  repeated PostReference referenced_posts = 8 [ (gogoproto.nullable) = false ];
 }
 
 // EditPostJSON contains the data that can be specified when editing a Post
@@ -43,4 +46,7 @@ message EditPostJSON {
 
   // New entities connected to this post
   Entities entities = 2;
+
+  // New tags associated to this post
+  repeated string tags = 3;
 }
