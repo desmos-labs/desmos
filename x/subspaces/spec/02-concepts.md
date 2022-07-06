@@ -47,7 +47,7 @@ A section id represents the unique id within the subspace that the section has. 
 The ID that identifies the parent of a section. This is set by default to `0`, which represents the root section of a subspace, but it can set to any other section's id to create a tree-like sections structure.
 
 ### Name
-The human-readable name of a section.
+A section name represents the human-readable name of a section. This can be useful for developers to quickly see what sections are about, so that they can easily understand where to put a content if there are multiple ones.
 
 ### Description (Optional)
 An optional description of the section topic.
