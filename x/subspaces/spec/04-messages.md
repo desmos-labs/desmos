@@ -50,9 +50,10 @@ https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v2/msgs
 ```
 
 The message is expected to fail if:
-* The subspace does not exist;
-* The parent section does not exist;
-* The creator has no permission to manage sections inside the specified subspace.
+* the subspace does not exist;
+* the parent section (if specified) does not exist;
+* the creator has no permission to manage sections within the subspace;
+* the provided section name is either empty or blank.
 
 ## Msg/EditSection
 A section can be edited using the `MsgEditSection`.
