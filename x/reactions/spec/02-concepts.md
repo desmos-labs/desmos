@@ -14,7 +14,7 @@ Within each subspace, users can react to posts by using a _reaction_. This conta
 The subspace id represents the id of the subspace containing the post to which this reaction is associated.
 
 ### Post ID
-The [post] ID indicates the ID of the posts to which the reaction is associated.
+The post id represents the id of post to which the reaction is associated.
 
 ### ID
 The unique ID that identifies the reaction itself. This ID is automatically assigned to the reaction at the moment of its
