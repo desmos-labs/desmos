@@ -74,13 +74,12 @@ A section can be moved to under another section using the `MsgMoveSection`.
 https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v2/msgs.proto#L184-L207 
 ```
 
-The message is expected to fail if:
-* The subspace does not exist;
-* The section does not exist;
-* The destination section does not exist;
-* The updated section is not valid;
-* The signer has no permission to manage sections inside the specified subspace;
-* The section path is invalid.
+It's expected to fail if:
+* the subspace does not exist;
+* the section does not exist;
+* the destination section does not exist;
+* the signer has no permission to manage sections within the subspace;
+* the new section path is invalid (this means that is not possible to reach the moved section starting from the root section, or that a circular path is detected).
 
 ## Msg/DeleteSection
 A section can be deleted using the `MsgDeleteSection`.
