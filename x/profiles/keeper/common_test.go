@@ -1,6 +1,7 @@
 package keeper_test
 
 import (
+	"path/filepath"
 	"testing"
 	"time"
 
@@ -11,6 +12,7 @@ import (
 	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 
 	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
+	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	"github.com/cosmos/go-bip39"
@@ -34,9 +36,13 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	db "github.com/tendermint/tm-db"
 
+	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+
 	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	ibchost "github.com/cosmos/ibc-go/v3/modules/core/24-host"
 	ibckeeper "github.com/cosmos/ibc-go/v3/modules/core/keeper"
 
@@ -60,6 +66,7 @@ type KeeperTestSuite struct {
 	rk               relationshipskeeper.Keeper
 	sk               subspaceskeeper.Keeper
 	paramsKeeper     paramskeeper.Keeper
+	bankKeeper       bankkeeper.Keeper
 	stakingKeeper    stakingkeeper.Keeper
 	upgradeKeeper    upgradekeeper.Keeper
 	IBCKeeper        *ibckeeper.Keeper
@@ -131,7 +138,30 @@ func (suite *KeeperTestSuite) SetupTest() {
 	)
 
 	suite.capabilityKeeper = capabilitykeeper.NewKeeper(suite.cdc, keys[capabilitytypes.StoreKey], memKeys[capabilitytypes.MemStoreKey])
-	suite.upgradeKeeper = upgradekeeper.Keeper{}
+	homeDir := filepath.Join(suite.T().TempDir(), "x_upgrade_keeper_test")
+	suite.upgradeKeeper = upgradekeeper.NewKeeper(
+		nil,
+		keys[upgradetypes.StoreKey],
+		suite.cdc,
+		homeDir,
+		nil,
+	)
+
+	suite.bankKeeper = bankkeeper.NewBaseKeeper(
+		suite.cdc,
+		keys[banktypes.StoreKey],
+		suite.ak,
+		suite.paramsKeeper.Subspace(banktypes.ModuleName),
+		nil,
+	)
+
+	suite.stakingKeeper = stakingkeeper.NewKeeper(
+		suite.cdc,
+		keys[stakingtypes.StoreKey],
+		suite.ak,
+		suite.bankKeeper,
+		suite.paramsKeeper.Subspace(stakingtypes.ModuleName),
+	)
 
 	scopedIBCKeeper := suite.capabilityKeeper.ScopeToModule(ibchost.ModuleName)
 	scopedProfilesKeeper := suite.capabilityKeeper.ScopeToModule(types.ModuleName)
