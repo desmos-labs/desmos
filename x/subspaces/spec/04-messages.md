@@ -114,11 +114,11 @@ A user group can be edited using the `MsgEditUserGroup`.
 https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v2/msgs.proto#L271-L293
 ```
 
-The message is expected to fail if:
-* The subspace does not exist;
-* The user group does not exist;
-* The signer has no permission to manage user groups;
-* The updated group is invalid.
+It's expected to fail if:
+* the subspace does not exist;
+* the user group does not exist;
+* the signer has no permission to manage user groups within the subspace;
+* the updated group is invalid.
 
 ## Msg/MoveUserGroup
 A user group can be moved to another section group using the `MsgMoveUserGroup`.
