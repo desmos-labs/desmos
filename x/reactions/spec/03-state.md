@@ -13,12 +13,12 @@ The next registered reaction id is stored using the associated subspace id as th
 - `0x01 | Subspace ID | -> bytes(NextRegisteredReactionID)`
 
 ## Registered Reaction
-The registered reaction is stored using the subspace ID where it lives and its ID combined as key. This allows to easily
+A registered reaction is stored using the associated subspace id and its id as the key. This allows to easily
 query:
-- All the registered reactions of a subspace;
-- The specific registered reaction.
+- all the registered reactions of a subspace;
+- a specific registered reaction.
 
-`0x02 | Subspace ID | Reaction ID | -> ProtocolBuffer(RegisteredReaction)`
+- `0x02 | Subspace ID | Reaction ID | -> ProtocolBuffer(RegisteredReaction)`
 
 ## Next Reaction ID
 The next reaction ID is stored using the subspace ID where it lives as key. This allows to easily query the ID to be used next
