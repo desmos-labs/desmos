@@ -26,10 +26,10 @@ A subspace can be edited with the `MsgEditSubspace`:
 https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v2/msgs.proto#L85-L100 
 ```
 
-The message is expected to fail if:
-* The subspace id doesn't exist;
-* The updated subspaces is invalid;
-* The signer has no permission to edit subspace inside the specified subspace.
+It's expected to fail if:
+* the subspace does not exist;
+* the updated subspace is invalid;
+* the signer has no permission to edit the subspace.
 
 ## Msg/DeleteSubspace
 A subspace can be deleted using `MsgDeleteSubspace`.
