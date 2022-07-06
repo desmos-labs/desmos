@@ -200,25 +200,18 @@ message Attachment {
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
 
-  // Id of the subspace section inside which the post to which this attachment
-  // should be connected is
-  uint32 section_id = 2 [
-    (gogoproto.customname) = "SectionID",
-    (gogoproto.moretags) = "yaml:\"section_id\""
-  ];
-
   // Id of the post to which this attachment should be connected
-  uint64 post_id = 3 [
+  uint64 post_id = 2 [
     (gogoproto.customname) = "PostID",
     (gogoproto.moretags) = "yaml:\"post_id\""
   ];
 
   // If of this attachment
-  uint32 id = 4
+  uint32 id = 3
       [ (gogoproto.customname) = "ID", (gogoproto.moretags) = "yaml:\"id\"" ];
 
   // Content of the attachment
-  google.protobuf.Any content = 5 [
+  google.protobuf.Any content = 4 [
     (cosmos_proto.accepts_interface) = "AttachmentContent",
     (gogoproto.moretags) = "yaml:\"content\""
   ];
@@ -295,30 +288,24 @@ message UserAnswer {
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
 
-  // Section id inside which the post related to this attachment is located
-  uint32 section_id = 2 [
-    (gogoproto.customname) = "SectionID",
-    (gogoproto.moretags) = "yaml:\"section_id\""
-  ];
-
   // Id of the post associated to this attachment
-  uint64 post_id = 3 [
+  uint64 post_id = 2 [
     (gogoproto.customname) = "PostID",
     (gogoproto.moretags) = "yaml:\"post_id\""
   ];
 
   // Id of the poll to which this answer is associated
-  uint32 poll_id = 4 [
+  uint32 poll_id = 3 [
     (gogoproto.customname) = "PollID",
     (gogoproto.moretags) = "yaml:\"poll_id\""
   ];
 
   // Indexes of the answers inside the ProvidedAnswers array
-  repeated uint32 answers_indexes = 5
+  repeated uint32 answers_indexes = 4
       [ (gogoproto.moretags) = "yaml:\"answers_indexes\"" ];
 
   // Address of the user answering the poll
-  string user = 6 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+  string user = 5 [ (gogoproto.moretags) = "yaml:\"user\"" ];
 }
 
 // PollTallyResults contains the tally results for a poll

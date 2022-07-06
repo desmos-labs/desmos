@@ -91,7 +91,8 @@ func ResultStoreKey(requestID RequestID) []byte {
 
 // ReportsOfValidatorPrefixKey returns the prefix key to get all reports for a request from a validator.
 func ReportsOfValidatorPrefixKey(reqID RequestID, val sdk.ValAddress) []byte {
-	buf := append(ReportStoreKeyPrefix, sdk.Uint64ToBigEndian(uint64(reqID))...)
+	buf := append([]byte(nil), ReportStoreKeyPrefix...)
+	buf = append(buf, sdk.Uint64ToBigEndian(uint64(reqID))...)
 	buf = append(buf, val.Bytes()...)
 	return buf
 }

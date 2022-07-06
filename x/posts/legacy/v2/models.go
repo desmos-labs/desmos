@@ -2,7 +2,11 @@ package v2
 
 // DONTCOVER
 
-import "time"
+import (
+	"time"
+
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+)
 
 // NewPost allows to build a new Post instance
 func NewPost(
@@ -70,4 +74,12 @@ func NewPostReference(referenceType PostReferenceType, postID uint64, position u
 		PostID:   postID,
 		Position: position,
 	}
+}
+
+type AttachmentContent interface{}
+
+// UnpackInterfaces implements codectypes.UnpackInterfacesMessage
+func (a *Attachment) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
+	var content AttachmentContent
+	return unpacker.UnpackAny(a.Content, &content)
 }

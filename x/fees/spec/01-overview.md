@@ -18,7 +18,7 @@ The module allows on-chain governance to specify a minimum amount of fees that u
    - [Minimum Fee](02-concepts.md#minimum-fees)
 2. **[State](03-state.md)**
 3. **[AnteHandlers](04-ante-handlers.md)**
-4. **[Parameters](05-parameters.md)**
+4. **[Parameters](05-params.md)**
 5. **[Client](06-client.md)**
    - [CLI](06-client.md#cli)
    - [gRPC](06-client.md#grpc)

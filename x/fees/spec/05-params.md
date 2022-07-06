@@ -1,8 +1,8 @@
 ---
-id: parameters
+id: params
 title: Parameters
 sidebar_label: Parameters
-slug: parameters
+slug: params
 ---
 
 # Parameters

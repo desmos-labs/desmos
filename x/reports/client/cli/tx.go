@@ -53,8 +53,8 @@ To report a post, --%s must be used instead.`, FlagUser, FlagPostID),
   --from alice
 
 %[1]s tx reports report 1 1,2,3 \
-  --%s 1 \
-  --message "This port is spam" \
+  --%[3]s 1 \
+  --message "This post is spam" \
   --from alice
 `, version.AppName, FlagUser, FlagPostID),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -114,7 +114,7 @@ func GetCmdDeleteReport() *cobra.Command {
 		Args:    cobra.ExactArgs(2),
 		Short:   "Delete a report",
 		Long:    "Delete the report having the given id from the specified subspace",
-		Example: fmt.Sprintf(`%s tx reports delete-report 1 1 --from alice`, version.AppName),
+		Example: fmt.Sprintf(`%s tx reports delete 1 1 --from alice`, version.AppName),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
