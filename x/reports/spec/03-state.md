@@ -30,8 +30,7 @@ A user report is stored using the combination of subspace id, post id and report
 * `0x04 | Subspace ID | User | Reporter | -> bytes(ReportID)`
 
 ## Next Reason ID
-The next reason ID is stored using the subspace ID where it lives as key. This allows to easily query the ID to be used next
-for the newest reason created:
+The next reason id is stored using the subspace id that it references as the key:
 
 * `0x10 | Subspace ID | -> bytes(NextReasonID)`
 
