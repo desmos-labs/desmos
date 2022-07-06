@@ -155,10 +155,10 @@ A user group permissions can be deleted using the `MsgDeleteUserGroup`.
 https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v2/msgs.proto#L353-L369
 ```
 
-The message is expected to fail if:
-* The subspace does not exist;
-* The user group does not exist;
-* The signer has no permission to manage sections inside the specified section.
+It's expected to fail if:
+* the subspace does not exist;
+* the user group does not exist;
+* the signer has no permission to manage sections inside the group's section.
 
 ## Msg/AddUserToUserGroup
 A user can be added to a user group using the `MsgAddUserToUserGroup`.
