@@ -8,9 +8,7 @@ slug: concepts
 # Concepts 
 
 ## Reaction
-The reaction structure contains the data that identify a post's reaction.
-Reactions can be registered by users inside their subspaces in order to later use
-them to react contents. They can be text values or more classic kind of reactions (i.e. emojis).
+Within each subspace, users can react to posts by using a _reaction_. This contains all the data referring to the post to which the reaction should be added, along with the reaction value itself. Reactions can be used to represent likes as well as any other type of response the subspace owners have decided to support. 
 
 ### Subspace ID
 The [subspace] ID indicates the ID of the Dapp where the reaction has been made.
