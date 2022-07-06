@@ -35,8 +35,8 @@ The next reason id is stored using the subspace id that it references as the key
 * `0x10 | Subspace ID | -> bytes(NextReasonID)`
 
 ## Reason
-A reason is stored using the subspace ID where it lives combined with its own ID as key. This allows to easily query:
-- All the reasons of a subspace;
-- A specific reason in a subspace.
+A reporting reason is stored using the subspace id and its own id as the key. This allows to easily query:
+- all the reasons of a subspace;
+- a specific reason in a subspace.
 
 * `Ox11 | Subspace ID | Reason ID | -> bytes(Reason)`
