@@ -33,9 +33,9 @@ This address represents the creator of the subspace. Note that, once a subspace 
 The creation time of a subspace represents the block time at which the subspace was created. Note that this cannot be set externally nor edited, and is assigned automatically when a `MsgCreateSubspace` is handled.
 
 ## Section
-A Section is a zone within a subspace. Each section can represent a category or a topic, and they can be useful to build
-forum-like social networks, allowing a deeper way to manage and categorize contents. Sections can also be nested.
-Furthermore, each subspace must have a root section (identified by the `0` ID) which is the highest section. 
+A section can be seen as a folder within a subspace. It can be useful to represent a category or a topic, or to build
+forum-like social networks, allowing a better way to manage and categorize contents. Just like folders, you can also create nested sections.
+By default, each subspace has a root section with id `0`.
 
 ### Subspace ID
 The ID of the subspace where the section exists.
