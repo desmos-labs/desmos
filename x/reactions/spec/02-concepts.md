@@ -68,7 +68,7 @@ The parameters related to reactions using a [registered reaction value](#registe
 ### Free Text 
 The parameters related to reactions using a [free text reaction value](#free-text-reaction-value).
 
-## Registered Reactions Params
+## Registered Reaction Value Params
 The _registered reaction value params_ type contains all the parameters related to reactions that use a [registered reaction value](#registered-reaction-value).
 
 ### Enabled
