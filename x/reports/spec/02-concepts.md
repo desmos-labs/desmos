@@ -24,7 +24,7 @@ The reasons ids represent the array of the reasons that this report has been cre
 A report message can be optionally used to further describe why a user or content has been reported. This can be useful if the reporter wants to leave a message to other users or administrators that will deal with the report itself.
 
 ### Reporter
-The address of the user that made the report.
+The address of the user that has created the report.
 
 ### Target
 The target user or post that has been reported.
