@@ -30,7 +30,7 @@ The registered reaction value contains the details of a reaction value that refe
 a reaction registered within the subspace.
 
 ### Registered reaction ID
-The ID of the registered reaction the value refers to.
+The id of the registered reaction that should be used as the post's reaction. 
 
 ## Free Text Value
 The free text value contains the details of a reaction value that is made of free text.
