@@ -88,10 +88,10 @@ A section can be deleted using the `MsgDeleteSection`.
 https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v2/msgs.proto#L212-L224 
 ```
 
-The message is expected to fail if:
-* The subspace does not exist;
-* The section does not exist;
-* The signer has no permission to manage sections inside the specified subspace.
+It's is expected to fail if:
+* the subspace does not exist;
+* the section does not exist;
+* the signer has no permission to manage sections within the subspace.
 
 ## Msg/CreateUserGroup
 A user group can be created using the `MsgCreateUserGroup`.
