@@ -48,9 +48,9 @@ A user group member is stored on the chain with a combination of subspace id and
 * User Group Member: `0x04 | Subspace ID | User Group ID | Address | -> 0x01`
 
 ## User Permission
-The user permission is stored on the chain with a combination of Subspace ID, Section ID and user address as key. This make it easier to query:
-- All the User Permissions for a subspace;
-- All the User Permissions for a section;
-- All the User Permissions for an address.
+A user permission is stored on the chain with a combination of subspace id, section id and user address as key. This make it easy to query:
+- all the user permissions set within a subspace;
+- all the user permissions set within a a section;
+- all the permissions set to an address.
 
 * User Permission: `0x05 | Subspace ID | Section ID | Address | -> ProtocolBuffer(UserPermission)`
