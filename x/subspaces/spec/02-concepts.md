@@ -27,7 +27,7 @@ The treasury address represents the wallet of the subspace itself. This can be u
 The subspace owner represents the wallet that owns the subspace. As the owner, this wallet will have the `EVERYTHING` permission always set, which allows it to perform any kind of operation within this subspace.
 
 ### Creator
-The address of the creator of the subspace.
+This address represents the creator of the subspace. Note that, once a subspace is created, the creator address can never change. However, if you want to transfer the ownership to another user you can use the [owner](#owner) field. 
 
 ### Creation time
 The creation time of the subspace.
