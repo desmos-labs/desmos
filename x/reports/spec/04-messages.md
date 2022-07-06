@@ -29,12 +29,10 @@ A report can be deleted using the `MsgDeleteReport`.
 https://github.com/desmos-labs/desmos/blob/020cf82788b667924d0f71f9d8f1fd87efa5b340/proto/desmos/reports/v1/msgs.proto#L77-L92
 ```
 
-The message is expected to fail if any of the following situations occurs:
-
-* The subspace does not exist;
-* The report does not exist;
-* The signer does not have the permission to delete a report inside the subspace;
-* The signer is not the reporter;
+It's expected to fail if:
+* the subspace does not exist;
+* the report does not exist;
+* the signer does not have the permission to delete a report within the subspace.
 
 ## Msg/SupportStandardReason
 The `MsgSupportStandardReason` can be used if you want to use the set of standard reasons specified in the module 
