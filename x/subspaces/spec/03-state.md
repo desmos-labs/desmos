@@ -35,10 +35,10 @@ The next group id is stored using the subspace id to which it is associated as t
 * Next Group ID: `0x02 | Subspace ID | -> bytes(NextUserGroupID)`
 
 ## User Group
-The user group is stored on the chain with a combination of subspace, section and user group IDs as key. This make it easier to query:
-- All the user groups of a subspace;
-- All the user groups of a section;
-- A specific user group.
+A user group is stored on the chain with a combination of subspace id, section id and user group id as key. This make it easier to query:
+- all the user groups of a subspace;
+- all the user groups of a section;
+- a specific user group.
 
 * User Group: `0x03 | Subspace ID | Section ID | User Group ID -> ProtocolBuffer(UserGroup)`
 
