@@ -65,7 +65,7 @@ The ID of the section where the group exists.
 A user group id uniquely identifies this group within the subspace itself. This, along with the subspace id itself, is used to uniquely reference this group within Desmos.
 
 ### Name
-The human-readable name of the group.
+The user group name represents the human-readable name of the group. In most cases, this is going to be a short name that makes it possible to easily understand who the users within the group are (e.g. __admins__, __moderators__, etc).
 
 ### Description (Optional)
 An optional description of the group.
