@@ -49,8 +49,9 @@ The id of the subspace inside which the reaction has been registered.
 Each registered reaction has a unique id within a subspace. This, along with the subspace id itself, is used to uniquely reference a registered reaction while adding a post reaction through the [registered reaction value](#registered-reaction-value) type.
 
 ### Shorthand code
-The unique shorthand code associated to this reaction. (i.e :smile:)
-[Here](https://emojipedia.org/shortcodes/) you can read the Emoji's shorthands.
+A registered reaction shorthand code should be used by users to reference the reaction itself within a text. For this reason, each registered reaction should have a unique shorthand code within a subspace. 
+
+Usually shorthand codes are in the form of `:<code>:` (e.g. the code `:rocket:` is associated to the :rocket: emoji). 
 
 ### Display value
 The value that should be displayed when using the reaction.
