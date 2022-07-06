@@ -30,7 +30,7 @@ The address of the user that has created the report.
 A report target represents the content that has been reported. This can be either a [UserTarget](#UserTarget) or a [PostTarget](#PostTarget).
 
 ### Creation Date
-The creation date of the report.
+The creation date of a report represents the block time at which the report has been stored on the chain. This cannot be specified externally and is assigned automatically when handling a `MsgCreateReport`.
 
 ## User Target
 The user target contains the data of the reported user.
