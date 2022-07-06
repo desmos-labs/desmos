@@ -46,8 +46,7 @@ At the same time, registered reactions can also be used to customize the set of 
 The id of the subspace inside which the reaction has been registered.
 
 ### ID 
-The unique ID that identifies the registered reaction itself. This ID is automatically assigned to the reaction at the moment of its
-creation in a sequential way.
+Each registered reaction has a unique id within a subspace. This, along with the subspace id itself, is used to uniquely reference a registered reaction while adding a post reaction through the [registered reaction value](#registered-reaction-value) type.
 
 ### Shorthand code
 The unique shorthand code associated to this reaction. (i.e :smile:)
