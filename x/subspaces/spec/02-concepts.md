@@ -12,8 +12,7 @@ A subspace is a structure representing a specific dApp within the Desmos ecosyst
 Each subspace can have its own [sections](#section), [user groups](#user-group) and [permissions](#user-permission).
 
 ### ID
-The unique ID identifying a Subspace. This ID is automatically assigned to the subspace at the moment of its
-creation in a sequential way (e.g. if there's 2 subspace in the chain, the one we are creating will have id equal to 3).
+The most important part of a subspace it's its own id. This represents the **unique identifier** that is assigned to the subspace during its creation. 
 
 ### Name
 The human-readable name of the subspace. This name will most likely be the same of the social app built on the top of it.
