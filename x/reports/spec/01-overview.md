@@ -33,8 +33,9 @@ This module handles the creation and management of a reporting system toward con
     - [Msg/RemoveReason](04-messages.md#msgremovereason)
 4. **[Events](05-events.md)**
     - [Handlers](05-events.md#handlers)
-5. **[Parameters](07-params.md)**
-6. **[Client](08-client.md)**
+5. **[Permissions](06-permissions.md)**
+6. **[Parameters](07-params.md)**
+7. **[Client](08-client.md)**
     - [CLI](08-client.md#cli)
     - [gRPC](08-client.md#grpc)
     - [REST](08-client.md#rest)
