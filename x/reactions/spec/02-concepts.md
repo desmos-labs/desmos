@@ -60,7 +60,7 @@ The display value of a registered reaction represents the image, emoji, GIF or v
 Each subspace owner can decide what kind of reactions are supported inside their own subspace. The _subspace reactions params_ contains all the related configuration about it. 
 
 ### Subspace ID
-The ID of the subspace for which the parameters are valid.
+The id of the subspace for which the parameters are valid.
 
 ### Registered Reaction
 The parameters associated with the registered reaction in the subspace.
