@@ -14,14 +14,13 @@ A report can be created using the `MsgCreateReport`.
 https://github.com/desmos-labs/desmos/blob/020cf82788b667924d0f71f9d8f1fd87efa5b340/proto/desmos/reports/v1/msgs.proto#L34-L58
 ```
 
-The message is expected to fail if any of the following situations occurs:
-* The reporter does not have a profile;
-* The subspace does not exist;
-* One or more of the specified reasons IDs do not exist;
-* The reported does not have the permission to report content inside the subspace;
-* The report has already been made;
-* The report validation fails;
-* The report target type is not valid.
+It's expected to fail if:
+* the reporter does not have a profile;
+* the subspace does not exist;
+* one of the specified reasons ids does not exist inside the subspace;
+* the reported does not have the permission to report content within the subspace;
+* another report for the same target has already been created by the same user;
+* the report target does not exist.
 
 ## Msg/DeleteReport
 A report can be deleted using the `MsgDeleteReport`, specifying the information you see below:
