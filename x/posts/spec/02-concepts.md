@@ -26,7 +26,7 @@ The unique ID that identifies the post itself. This ID is automatically assigned
 creation in a sequential way (e.g. if there's 4 posts in the chain, the one we are creating will have id equal to 5).
 
 ### External ID (Optional)
-External ID indicates and external ID attached to the post. It is represented by a string. //TODO add some more info 
+External ID indicates and external ID attached to the post. It is represented by a string.
 
 ### Text (Optional)
 The text is the actual textual content of the post. It has a fixed max length that is determined by an on-chain governance parameter.
@@ -38,8 +38,8 @@ Entities are divided in 3 different categories:
 - Mentions (i.e. @desmos1xcfui...., @Forbole)
 - Urls (i.e. https://desmos.network, ftp://user:password@example.com/image.png)
 
-#### Tag
-Both hashtags and mentions are represented as a `Tag`. The `Tag` structure contains the necessary fields that ease the process of 
+#### TextTag
+Both hashtags and mentions are represented as a `TextTag`. The `TextTag` structure contains the necessary fields that ease the process of 
 text's parsing.
 
 ##### Start
@@ -83,9 +83,12 @@ A reference to an external post, usable for reply, repost or quote purposes.
 ##### Type
 This is the type of the reference. It can be one of the following values:
 
-```js reference
-https://github.com/desmos-labs/desmos/blob/14137abeaf79d61c92bc805d2f93f9f0e6e99138/proto/desmos/posts/v1/models.proto#L70
-```
+| **Name**                          | **Description**                                          |  
+|:----------------------------------|:---------------------------------------------------------|
+| `POST_REFERENCE_TYPE_UNSPECIFIED` | No reference specified                                   |
+| `POST_REFERENCE_TYPE_REPLY`       | This reference represents a reply to the specified post  |
+| `POST_REFERENCE_TYPE_QUOTE`       | This reference represents a quote of the specified post  |
+| `POST_REFERENCE_TYPE_REPOST`      | This reference represents a repost of the specified post |
 
 ##### Post ID
 The ID of the referenced post.
@@ -97,9 +100,13 @@ start in the post's text.
 ### Reply Setting
 This field contains the possible reply settings that a post can have. It can be one of the following values:
 
-```js reference 
-https://github.com/desmos-labs/desmos/blob/14137abeaf79d61c92bc805d2f93f9f0e6e99138/proto/desmos/posts/v1/models.proto#L98
-```
+| **Name**                    | **Description**                                              |  
+|:----------------------------|:-------------------------------------------------------------|
+| `REPLY_SETTING_UNSPECIFIED` | No reference specified                                       |
+| `REPLY_SETTING_EVERYONE`    | This reference represents a reply to the specified post      |
+| `REPLY_SETTING_FOLLOWERS`   | This reference represents a quote of the specified post      |
+| `REPLY_SETTING_MUTUAL`      | This reference represents a repost of the specified post     |
+| `REPLY_SETTING_MENTIONS`    | Only people mentioned inside this post will be able to reply |
 
 ### Creation Date
 The creation date of the post.
@@ -112,9 +119,6 @@ An attachment represent something that can be added to a post in order to enrich
 
 ### Subspace ID
 The [subspace] ID indicates the ID of the Dapp where the attachment is hosted and lives.
-
-### Section ID
-The [section] ID indicates the ID of the subspace's section where the attachment lives.
 
 ### Post ID
 The [post](#Post) ID to which the attachment is linked.
@@ -184,9 +188,6 @@ The user answer represent an answer given by a user to a poll.
 
 #### Subspace ID
 The [subspace] ID indicates the ID of the Dapp where the user answer is hosted and lives.
-
-#### Section ID
-The [section] ID indicates the ID of the subspace's section where the user answer lives.
 
 #### Post ID
 The [post](#Post) ID to which the user answer is linked.
