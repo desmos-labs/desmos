@@ -24,7 +24,7 @@ An optional description of what the subspace is about.
 The treasury address represents the wallet of the subspace itself. This can be used for different reasons such as verifying a subspace with external applications (to prove its authenticity), or paying for fees when executing some smart contracts. 
 
 ### Owner
-The address of the user (or smart contract) that owns the subspace. 
+The subspace owner represents the wallet that owns the subspace. As the owner, this wallet will have the `EVERYTHING` permission always set, which allows it to perform any kind of operation within this subspace.
 
 ### Creator
 The address of the creator of the subspace.
