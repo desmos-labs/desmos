@@ -63,7 +63,7 @@ Each subspace owner can decide what kind of reactions are supported inside their
 The id of the subspace for which the parameters are valid.
 
 ### Registered Reaction
-The parameters associated with the registered reaction in the subspace.
+The parameters related to reactions using a [registered reaction value](#registered-reaction-value).
 
 ### Free Text 
 The parameters associated with the free text value reactions in the subspace.
