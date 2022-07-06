@@ -6107,7 +6107,7 @@ paths:
                     id:
                       type: integer
                       format: int64
-                      title: Id of this attachment
+                      title: If of this attachment
                     content:
                       type: object
                       properties:
@@ -15165,7 +15165,7 @@ definitions:
       id:
         type: integer
         format: int64
-        title: Id of this attachment
+        title: If of this attachment
       content:
         type: object
         properties:
@@ -15695,7 +15695,7 @@ definitions:
             id:
               type: integer
               format: int64
-              title: Id of this attachment
+              title: If of this attachment
             content:
               type: object
               properties:
