@@ -57,4 +57,4 @@ A reason id represents the unique id within the subspace that can be used to uni
 The title of a reason should be used to give users a quick idea about why they might want to select this reason during the report creation process. Good titles should be short and easy to understand (e.g. __Spam__, __Explicit content__, etc). 
 
 ### Description (Optional)
-AN optional extended description of the reason and why the report has been made.
+A reason description can be optionally used to allow the users to further understand when they should select this reason during the report creation process.
