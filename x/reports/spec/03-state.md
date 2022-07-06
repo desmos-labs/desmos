@@ -20,8 +20,7 @@ A report is stored using the subspace id and its id combined as the key. This al
 * `0x02 | Subspace ID | Report ID | -> ProtocolBuffer(Report)`
 
 ## Posts Report
-A post report is stored using the combination of subspace, post IDs and reporter address as key. This allows to easily query
-all the reports towards a specific post.
+A post report is stored using the combination of subspace id, post id and reporter address as the key. This allows to easily query all the reports towards a specific post.
 
 * `0x03 | Subspace ID | Post ID | Reporter | -> bytes(ReportID)`
 
