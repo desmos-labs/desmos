@@ -44,7 +44,7 @@ The ID of the subspace where the section exists.
 A section id represents the unique id within the subspace that the section has. This is used everywhere else along with the subspace id to uniquely identify this section.
 
 ### Parent ID (Optional)
-The ID that identifies the parent section of a section.
+The ID that identifies the parent of a section. This is set by default to `0`, which represents the root section of a subspace, but it can set to any other section's id to create a tree-like sections structure.
 
 ### Name
 The human-readable name of a section.
