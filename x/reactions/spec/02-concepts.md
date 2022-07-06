@@ -33,7 +33,7 @@ a reaction registered within the subspace.
 The id of the registered reaction that should be used as the post's reaction. 
 
 ## Free Text Value
-The free text value contains the details of a reaction value that is made of free text.
+The free text value contains the details of a reaction value that is made of free text. This is particularly useful to react to posts using emojis or other text inside a subspace that has not registered any supported reaction.
 
 ### Text
 The actual value of the reaction.
