@@ -20,7 +20,7 @@ The post id represents the id of post to which the reaction is associated.
 A reaction id is a unique id within a post that can be used along with the post id itself to uniquely identify a reaction.
 
 ### Value
-The value of the reaction. It can be a registered reaction or a text reaction.
+The value of the reaction can be either a [registered reaction value](#registered-reaction-value) or a [text reaction value](#text-reaction-value).
 
 ### Author
 The address of the author of the reaction.
