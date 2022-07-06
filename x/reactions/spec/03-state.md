@@ -34,7 +34,6 @@ The reaction is stored using the subspace ID where it lives, the post it reacts 
 `0x11 | Subspace ID | Post ID | Reaction ID | -> ProtocolBuffer(Reaction)`
 
 ## Reactions Subspace Params
-The reactions' subspace params are stored using the subspace ID where they are specified as key. Thi allows to easily query
-the subspace params.
+The reactions' subspace params are stored using the associated subspace id as the key:
 
-`0x20 | Subspace ID | -> ProtocolBuffer(SubspaceReactionsParams)`
+- `0x20 | Subspace ID | -> ProtocolBuffer(SubspaceReactionsParams)`
