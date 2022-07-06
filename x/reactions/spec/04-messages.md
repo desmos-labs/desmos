@@ -37,6 +37,7 @@ It's expected to fail if:
 * the user has no permission to remove reactions within the subspace.
 
 ## Msg/AddRegisteredReaction
+A registered reaction can be added to a subspace with the `MsgAddRegisteredReaction`.
 
 ```js reference
 https://github.com/desmos-labs/desmos/blob/020cf82788b667924d0f71f9d8f1fd87efa5b340/proto/desmos/reactions/v1/msgs.proto#L101-117
