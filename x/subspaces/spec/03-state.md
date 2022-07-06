@@ -13,7 +13,7 @@ The next subspace id is stored on the chain as follows:
 * `0x00 | -> bytes(NextSubspaceID)`
 
 ## Subspace
-The Subspace is stored on the chain with its ID as key:
+A subspace is stored on the chain by using its unique id as the key:
 
 * Subspace: `0x01 | Subspace ID | -> ProtocolBuffer(Subspace)`
 
