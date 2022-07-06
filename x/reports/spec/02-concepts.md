@@ -33,7 +33,7 @@ A report target represents the content that has been reported. This can be eithe
 The creation date of a report represents the block time at which the report has been stored on the chain. This cannot be specified externally and is assigned automatically when handling a `MsgCreateReport`.
 
 ## User Target
-The user target contains the data of the reported user.
+A user target object should be used when reporting a specific user.
 
 ### User
 The address of the reported user.
