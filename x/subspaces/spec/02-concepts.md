@@ -71,7 +71,7 @@ The user group name represents the human-readable name of the group. In most cas
 An optional description of the group.
 
 ### Permissions
-The array of permissions granted to all the users part of the group.
+A user group permissions represent the set of permissions that are granted to all the users that are part of the group itself.
 
 ## User Permission
 The user permission represent a user's permissions inside a specific subspace or section.
