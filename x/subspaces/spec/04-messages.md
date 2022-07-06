@@ -127,12 +127,12 @@ A user group can be moved to another section group using the `MsgMoveUserGroup`.
 https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v2/msgs.proto#L298-L317
 ```
 
-The message is expected to fail if:
-* The subspace does not exist;
-* The destination section does not exist;
-* The user group does not exist;
-* The signer has no permission to manage user groups inside the section;
-* The signer has no permissions to manage user groups or set permissions inside the destination section.
+It's expected to fail if:
+* the subspace does not exist;
+* the user group does not exist;
+* the destination section does not exist;
+* the signer has no permission to manage user groups inside the current group's section;
+* the signer has no permissions to manage user groups or set permissions inside the destination section.
 
 ## Msg/SetUserGroupPermissions
 A user group permissions can be set using the `MsgSetUserGroupPermissions`.
