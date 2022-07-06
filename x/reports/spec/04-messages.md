@@ -23,7 +23,7 @@ It's expected to fail if:
 * the report target does not exist.
 
 ## Msg/DeleteReport
-A report can be deleted using the `MsgDeleteReport`, specifying the information you see below:
+A report can be deleted using the `MsgDeleteReport`.
 
 ```js reference
 https://github.com/desmos-labs/desmos/blob/020cf82788b667924d0f71f9d8f1fd87efa5b340/proto/desmos/reports/v1/msgs.proto#L77-L92
