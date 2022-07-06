@@ -11,7 +11,7 @@ slug: concepts
 Within each subspace, users can react to posts by using a _reaction_. This contains all the data referring to the post to which the reaction should be added, along with the reaction value itself. Reactions can be used to represent likes as well as any other type of response the subspace owners have decided to support. 
 
 ### Subspace ID
-The [subspace] ID indicates the ID of the Dapp where the reaction has been made.
+The subspace id represents the id of the subspace containing the post to which this reaction is associated.
 
 ### Post ID
 The [post] ID indicates the ID of the posts to which the reaction is associated.
