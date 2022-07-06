@@ -43,7 +43,7 @@ In some cases, subspace owners and admins might want to allow users to only reac
 At the same time, registered reactions can also be used to customize the set of emojis that can be used within a subspace. For example, you might want to register a reaction with a custom shorthand code that is visualized as a GIF. This is the case for dApps that act like Discord, allowing admins to register custom reactions associated to custom shorthand codes.
 
 ### Subspace ID
-The ID of the subspaces where the reaction has been registered.
+The id of the subspace inside which the reaction has been registered.
 
 ### ID 
 The unique ID that identifies the registered reaction itself. This ID is automatically assigned to the reaction at the moment of its
