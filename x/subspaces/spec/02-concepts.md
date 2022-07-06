@@ -62,8 +62,7 @@ The ID of the subspace where the group exists.
 The ID of the section where the group exists.
 
 ### ID
-The unique ID identifying the group. This ID is automatically assigned to the section at the moment of its creation in a
-sequential way.
+A user group id uniquely identifies this group within the subspace itself. This, along with the subspace id itself, is used to uniquely reference this group within Desmos.
 
 ### Name
 The human-readable name of the group.
