@@ -75,6 +75,7 @@ It's expected to fail if:
 * the user has no permission to manage registered reactions.
 
 ## Msg/SetReactionsParams
+A subspace's reaction params can be set with the `MsgSetReactionsParams`.
 
 ```js reference
 https://github.com/desmos-labs/desmos/blob/020cf82788b667924d0f71f9d8f1fd87efa5b340/proto/desmos/reactions/v1/msgs.proto#L184-L205
