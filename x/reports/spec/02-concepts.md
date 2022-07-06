@@ -15,8 +15,7 @@ Each report contains the necessary information to identify the target and reason
 The subspace id represents the id of the subspace where the report has been created.
 
 ### ID
-The unique ID that identifies the report itself. This ID is automatically assigned to the report at the moment of its
-creation in a sequential way (e.g. if there's 2 reports to a post, the one we are creating will have id equal to 3).
+The most important thing about a report is its id. This is a unique identifier across the subspace that is used to uniquely reference the report itself along with the subspace id. Report ids are assigned automatically during the handling of a `MsgCreateReport`. 
 
 ### Reasons IDs
 The IDs array of the reasons this report has been created for. Each ID resolve to a specific reason registered within the
