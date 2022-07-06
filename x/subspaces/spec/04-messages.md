@@ -180,11 +180,11 @@ A user can be removed from a user group using the `MsgRemoveUserFromUserGroup`.
 https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v2/msgs.proto#L402-L422
 ```
 
-The message is expected to fail if:
-* The subspace does not exist;
-* The user group does not exist;
-* The sender has no permission to set permissions inside the subspace and section where user group live;
-* The user is not the member of the user group.
+It's expected to fail if:
+* the subspace does not exist;
+* the user group does not exist;
+* the sender has no permission to set permissions inside the subspace and section where user group is;
+* the user is not the member of the user group.
 
 ## Msg/SetUserPermissions
 A user permissions can be set using the `MsgSetUserPermissions`.
