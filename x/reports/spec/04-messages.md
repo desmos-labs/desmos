@@ -64,7 +64,7 @@ The message is expected to fail if any of the following situations occurs:
 * The reason validation fails.
 
 ## Msg/RemoveReason
-A previously added reason can be removed using the `MsgRemoveReason`, specifying the information you see below:
+A previously added reason can be removed using the `MsgRemoveReason`.
 
 ```js reference
 https://github.com/desmos-labs/desmos/blob/020cf82788b667924d0f71f9d8f1fd87efa5b340/proto/desmos/reports/v1/msgs.proto#L156-L171
