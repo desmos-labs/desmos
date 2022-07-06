@@ -38,9 +38,9 @@ A subspace can be deleted using `MsgDeleteSubspace`.
 https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v2/msgs.proto#L105-115 
 ```
 
-The message is expected to fail if:
-* The subspace does not exist;
-* The signer has no permission to delete subspace inside the specified subspace.
+It's expected to fail if:
+* the subspace does not exist;
+* the signer has no permission to delete the subspace.
 
 ## Msg/CreateSection
 A section can be created using the `MsgCreateSection`.
