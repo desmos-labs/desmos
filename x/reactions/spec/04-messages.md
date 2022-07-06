@@ -43,12 +43,11 @@ A registered reaction can be added to a subspace with the `MsgAddRegisteredReact
 https://github.com/desmos-labs/desmos/blob/020cf82788b667924d0f71f9d8f1fd87efa5b340/proto/desmos/reactions/v1/msgs.proto#L101-117
 ```
 
-The message is expected to fail if any of the following situations occur:
-* The subspace associated with the registered reaction does not exist;
-* The user has no permission to register a reaction within the subspace;
-* The system is unable to retrieve the next registered reaction ID;
-* The reaction validation fails.
-
+It's expected to fail if:
+* the subspace does not exist;
+* the user has no permission to register a reaction within the subspace;
+* the provided shorthand code is either blank or empty; 
+* the provided display value is either blank or empty.
 
 ## Msg/EditRegisteredReaction
 
