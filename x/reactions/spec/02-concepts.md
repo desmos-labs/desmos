@@ -23,7 +23,7 @@ A reaction id is a unique id within a post that can be used along with the post 
 The value of the reaction can be either a [registered reaction value](#registered-reaction-value) or a [text reaction value](#text-reaction-value).
 
 ### Author
-The address of the author of the reaction.
+The author of a reaction is the user that has created this reaction.
 
 ## Registered Reaction Value
 The registered reaction value contains the details of a reaction value that references
