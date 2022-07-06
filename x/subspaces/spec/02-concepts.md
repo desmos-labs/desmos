@@ -80,7 +80,7 @@ A user permission can be used to set an individual user's permission withing a s
 The ID of the subspace where the permission has been set.
 
 ### Section ID
-The ID of the section the user has the permissions.
+The ID of the section where the permission has been set. Note that permissions set within parent sections are automatically applied to children sections as well. This means that if you set a user to have a specific permission inside the root section, such permission will be valid throught the entire subspace.
 
 ### User
 The address of the user who has the permissions.
