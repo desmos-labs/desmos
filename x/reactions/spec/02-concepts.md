@@ -54,7 +54,7 @@ A registered reaction shorthand code should be used by users to reference the re
 Usually shorthand codes are in the form of `:<code>:` (e.g. the code `:rocket:` is associated to the :rocket: emoji). 
 
 ### Display value
-The value that should be displayed when using the reaction.
+The display value of a registered reaction represents the image, emoji, GIF or video that should be visualized instead of the reaction shorthand code. This can be a simple text value (like an emoji) or an URL pointing to the image/GIF/video wanted. 
 
 ## Subspace Reactions Params
 The params contains all the reactions details for a specific subspace, such as registered reactions,
