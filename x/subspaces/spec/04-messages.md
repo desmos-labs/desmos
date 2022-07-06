@@ -101,11 +101,11 @@ https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v2/msgs
 ```
 
 The message is expected to fail if:
-* The subspace does not exist;
-* The destination section does not exist;
-* The signer has no permissions to create a user group or set permissions inside the specified section;
-* The permissions values are not valid;
-* The group is not valid;
+* the subspace does not exist;
+* the section does not exist;
+* the signer has no permissions to create a user group or set permissions within the section;
+* the permissions values are not valid;
+* the provided user group name is either blank or empty.
 
 ## Msg/EditUserGroup
 A user group can be edited using the `MsgEditUserGroup`.
