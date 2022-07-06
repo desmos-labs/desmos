@@ -8,7 +8,7 @@ slug: state
 # State
 
 ## Next Subspace ID
-The Next Subspace ID is stored on the chain as follows:
+The next subspace id is stored on the chain as follows:
 
 * `0x00 | -> bytes(NextSubspaceID)`
 
