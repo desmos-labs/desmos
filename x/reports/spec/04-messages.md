@@ -69,7 +69,7 @@ A previously added reason can be removed using the `MsgRemoveReason`.
 https://github.com/desmos-labs/desmos/blob/020cf82788b667924d0f71f9d8f1fd87efa5b340/proto/desmos/reports/v1/msgs.proto#L156-L171
 ```
 
-The message is expected to fail if any of the following situations occurs:
-* The subspace reason does not exist;
-* The reason does not exist;
-* The signer does not have the permission to manage reasons inside the subspace.
+It's expected to fail if:
+* the subspace reason does not exist;
+* the reason does not exist;
+* the signer does not have the permission to manage registered reasons within the subspace.
