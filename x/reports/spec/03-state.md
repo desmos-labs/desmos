@@ -13,9 +13,9 @@ The next report id is stored using the subspace id that it references as the key
 * `0x01 | Subspace ID | -> bytes(NextReportID)`
 
 ## Report
-A report is stored using the subspace ID and its ID combined as its key. This allows to easily query:
-- All the reports of a subspace;
-- A specific report in a subspace.
+A report is stored using the subspace id and its id combined as the key. This allows to easily query:
+- all the reports of a subspace;
+- a specific report in a subspace.
 
 * `0x02 | Subspace ID | Report ID | -> ProtocolBuffer(Report)`
 
