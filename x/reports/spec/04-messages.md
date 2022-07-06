@@ -57,11 +57,10 @@ A reason can be added to a subspace using the `MsgAddReason`.
 https://github.com/desmos-labs/desmos/blob/020cf82788b667924d0f71f9d8f1fd87efa5b340/proto/desmos/reports/v1/msgs.proto#L128-L143
 ```
 
-The message is expected to fail if any of the following situations occurs:
-* The subspace reason does not exist;
-* The signer does not have the permission to manage reasons inside the subspace;
-* The system is unable to provide a valid next reason ID;
-* The reason validation fails.
+It's expected to fail if:
+* the subspace reason does not exist;
+* the signer does not have the permission to manage reasons within the subspace;
+* the reason name is either empty or blank.
 
 ## Msg/RemoveReason
 A previously added reason can be removed using the `MsgRemoveReason`.
