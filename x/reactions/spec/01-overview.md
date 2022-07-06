@@ -21,11 +21,11 @@ This module gives the possibility to react to contents and customise the reactio
     - [Registered Reactions Params](02-concepts.md#registered-reactions-params)
     - [Free Text Value Params](02-concepts.md#free-text-value-params)
 2. **[State](03-state.md)**
-    - [](03-state.md#next-registered-reaction-id)
-    - [](03-state.md#registered-reaction)
-    - [](03-state.md#next-reaction-id)
-    - [](03-state.md#reaction)
-    - [](03-state.md#reactions-subspace-params)
+    - [Next Registered Reaction ID](03-state.md#next-registered-reaction-id)
+    - [Registered Reaction](03-state.md#registered-reaction)
+    - [Next Reaction ID](03-state.md#next-reaction-id)
+    - [Reaction](03-state.md#reaction)
+    - [Reactions Subspace Params](03-state.md#reactions-subspace-params)
 3. **[Msg Service](04-messages.md)**
     - [Msg/](04-messages.md#)
     - [Msg/](04-messages.md#)
