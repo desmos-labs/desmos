@@ -39,7 +39,7 @@ A user target object should be used when reporting a specific user.
 The address of the reported user.
 
 ## Post Target
-The post target contains the data of the reported post.
+A post target should be used when reporting a specific post within the same subspace where the report has been created.
 
 ### Post ID
 The ID of the reported post.
