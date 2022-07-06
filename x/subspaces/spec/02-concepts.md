@@ -21,8 +21,7 @@ The subspace name allows the subspace creator and owner to set a human-readable 
 An optional description of what the subspace is about.
 
 ### Treasury
-The treasury is an address owned by the subspaces that should be used to connect it to external applications
-in order to verify it.
+The treasury address represents the wallet of the subspace itself. This can be used for different reasons such as verifying a subspace with external applications (to prove its authenticity), or paying for fees when executing some smart contracts. 
 
 ### Owner
 The address of the user (or smart contract) that owns the subspace. 
