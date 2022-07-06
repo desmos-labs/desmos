@@ -57,8 +57,7 @@ Usually shorthand codes are in the form of `:<code>:` (e.g. the code `:rocket:` 
 The display value of a registered reaction represents the image, emoji, GIF or video that should be visualized instead of the reaction shorthand code. This can be a simple text value (like an emoji) or an URL pointing to the image/GIF/video wanted. 
 
 ## Subspace Reactions Params
-The params contains all the reactions details for a specific subspace, such as registered reactions,
-free text reactions params.
+Each subspace owner can decide what kind of reactions are supported inside their own subspace. The _subspace reactions params_ contains all the related configuration about it. 
 
 ### Subspace ID
 The ID of the subspace for which the parameters are valid.
