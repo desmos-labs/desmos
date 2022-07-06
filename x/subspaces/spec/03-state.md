@@ -43,7 +43,7 @@ A user group is stored on the chain with a combination of subspace id, section i
 * User Group: `0x03 | Subspace ID | Section ID | User Group ID -> ProtocolBuffer(UserGroup)`
 
 ## User Group Member
-The user group member is stored on the chain with a combination of subspace and user group IDs as key.
+A user group member is stored on the chain with a combination of subspace id and user group id as key:
 
 * User Group Member: `0x04 | Subspace ID | User Group ID | Address | -> 0x01`
 
