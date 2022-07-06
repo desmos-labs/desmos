@@ -168,10 +168,10 @@ https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v2/msgs
 ```
 
 It's expected to fail if:
-* The subspace does not exist;
-* The user group does not exist;
-* The signer has no permission to set permissions inside the subspace and section where user group live;
-* The sender already is the member of the user group.
+* the subspace does not exist;
+* the user group does not exist;
+* the signer has no permission to set permissions inside the subspace and section where user group is;
+* the user already is a member of the user group.
 
 ## Msg/RemoveUserFromUserGroup
 A user can be removed from a user group using the `MsgRemoveUserFromUserGroup`.
