@@ -21,10 +21,9 @@ query:
 - `0x02 | Subspace ID | Reaction ID | -> ProtocolBuffer(RegisteredReaction)`
 
 ## Next Reaction ID
-The next reaction ID is stored using the subspace ID where it lives as key. This allows to easily query the ID to be used next
-for the newest reaction:
+The next reaction id is stored using the associated subspace id as the key:
 
-`0x10 | Subspace ID | -> bytes(NextReactionID)`
+- `0x10 | Subspace ID | -> bytes(NextReactionID)`
 
 ## Reaction
 The reaction is stored using the subspace ID where it lives, the post it reacts to and its ID combined as key. This allows to easily query:
