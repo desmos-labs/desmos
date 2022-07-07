@@ -114,7 +114,7 @@ The subspace id specifies the id of the subspace inside which the post related t
 The post id specifies the id of the post to which the attachment is associated.
 
 ### ID
-The unique ID that identifies the attachment. This ID is automatically assigned the same way the post one is.
+An attachment id is the unique identifier within a specific post. This is automatically created when handling a `MsgCreatePost` or `MsgAddPostAttachment`. With the subspace id and post id, it can be used to uniquely identify an attachment within Desmos.
 
 ### Content
 The content of the attachment. It can be either:
