@@ -123,7 +123,7 @@ The content of the attachment. It can be either a media content (e.g. a picture,
 A media content can be used to specify the details of a media attachment (e.g. an image, a video, a GIF, etc).
 
 ### URI
-The URI address referencing the media.
+The URI referencing the media.
 
 ### Mime type
 The [mime type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types) of the media.
