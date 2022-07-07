@@ -25,7 +25,7 @@ The section in which a post is placed is stored to enable the possibility of que
 * `0x02 | Subspace ID | Section ID | Post ID | -> 0x01`
 
 ## Next Attachment ID
-The next attachment ID is stored tied to the subspace ID and the post ID where the next attachment will be added:
+The next attachment id is stored tied to the subspace id and the post id to which it refers:
 
 * `0x10 | Subspace ID | Post ID | -> bytes(NextAttachmentID)`
 
