@@ -111,7 +111,7 @@ An attachment represents any kind of media that can be attached to a post, such 
 The subspace id specifies the id of the subspace inside which the post related to the attachment is.
 
 ### Post ID
-The [post](#Post) ID to which the attachment is linked.
+The post id specifies the id of the post to which the attachment is associated.
 
 ### ID
 The unique ID that identifies the attachment. This ID is automatically assigned the same way the post one is.
