@@ -83,8 +83,9 @@ Type of the post reference. It can be one of the following values:
 The id of the referenced post. Note that it's possible to reference only posts within the same subspace. Trying to reference a post within another subspace will return an error or might end up in unwanted behavior. 
 
 ##### Position
-This field should be used only when the `Type` field is equal to `TYPE_QUOTE` to indicates where the `PostReference`
-start in the post's text.
+If the post reference represents a quote of a post, it might be useful to be able to specify the index within the text at which the quoted post should be rendered. This is particularly useful if a post should quote more than one post: with different positions application will be able to render the quoted post properly. 
+
+Note that trying to set this field to a non-zero value with any kind of reference aside `TYPE_QUOTE` will end up in the post being considered invalid.
 
 ### Reply Setting
 This field contains the possible reply settings that a post can have. It can be one of the following values:
