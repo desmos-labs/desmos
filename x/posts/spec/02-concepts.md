@@ -178,7 +178,7 @@ The answers' results represent by the `AnswerResult` structure.
 This field contains the result of a single poll provided answer
 
 ###### Answer Index
-The Index of the answer inside the `ProvidedAnswer`s array.
+The index of the answer within the post's `ProvidedAnswer` field associated to which these results.
 
 ###### Votes
 The number of votes received by an answer.
