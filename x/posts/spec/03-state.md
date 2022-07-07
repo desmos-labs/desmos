@@ -13,9 +13,9 @@ The next post id is stored tied to the subspace to which it refers:
 * `0x00 | Subspace ID | ->  bytes(NextPostID)`
 
 ## Post
-A Post is stored tied to the subspace in which it was created. This allows to easily query:
-- All the posts of a given Subspace;
-- A specific post of a given Subspace.
+A post is stored using the subspace id and its id as the key. This allows to easily query:
+- all the posts of a given subspace;
+- a specific post of a given subspace.
 
 * `0x01 | Subspace ID | Post ID | -> ProtocolBuffer(Post)` 
 
