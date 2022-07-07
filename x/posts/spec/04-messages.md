@@ -61,7 +61,7 @@ It's expected to fail if:
 * the attachment is invalid.
 
 ## Msg/RemovePostAttachment
-A previously added attachment can be removed with `MsgRemovePostAttachment`.
+A post attachment can be removed with `MsgRemovePostAttachment`.
 
 ```js reference
 https://github.com/desmos-labs/desmos/blob/v4.1.0/proto/desmos/posts/v2/msgs.proto#L209-L232
