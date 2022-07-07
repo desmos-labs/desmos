@@ -35,8 +35,7 @@ It's expected to fail if:
 * the updated post contents are invalid.
 
 ## Msg/DeletePost
-A post can be deleted with the following `MsgDeletePost`. Deleting a post will also delete all it's related `Attachment`s 
-and `Reactions`.
+A post can be deleted with the `MsgDeletePost`.
 
 ```js reference
 https://github.com/desmos-labs/desmos/blob/v4.1.0/proto/desmos/posts/v2/msgs.proto#L147-L163
