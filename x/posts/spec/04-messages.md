@@ -8,8 +8,7 @@ slug: messages
 # Msg Service
 
 ## Msg/CreatePost
-A post can be created using the `MsgCreatePost`, specifying the targets `Subspace ID` and `Section ID` and the information
-needed to compose a post showed below.
+A post can be created using the `MsgCreatePost`.
 
 ```js reference
 https://github.com/desmos-labs/desmos/blob/6787823c96a29241aacfa96e4b0b21f782d059cd/proto/desmos/posts/v1/msgs.proto#L37-L68
