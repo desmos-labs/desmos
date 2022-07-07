@@ -22,7 +22,7 @@ It's to fail if:
 * the post contents are invalid.
 
 ## Msg/EditPost
-A previously created post can be edited with the following `MsgEditPost`.
+A previously created post can be edited with the `MsgEditPost`.
 
 ```js reference
 https://github.com/desmos-labs/desmos/blob/6787823c96a29241aacfa96e4b0b21f782d059cd/proto/desmos/posts/v1/msgs.proto#L80-L98
