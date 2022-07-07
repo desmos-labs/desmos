@@ -47,8 +47,7 @@ It's expected to fail if:
 * the signer has no permission to delete posts within the subspace.
 
 ## Msg/AddPostAttachment
-With `MsgAddPostAttachment` it is possible to add an attachment to a post. Attachment can be a [media](02-concepts.md#media)
-or a [poll](02-concepts.md#poll).
+It's possible to add an attachment to an existing post with `MsgAddPostAttachment`. Attachment can be a [media](02-concepts.md#media) or a [poll](02-concepts.md#poll).
 
 ```js reference
 https://github.com/desmos-labs/desmos/blob/v4.1.0/proto/desmos/posts/v2/msgs.proto#L170-L191
