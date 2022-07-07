@@ -129,7 +129,7 @@ The URI referencing the media.
 The [mime type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types) of the media.
 
 ## Poll
-The Poll structure represents a poll attached to a post.
+A poll media can be used to represent a poll attachment.
 
 ### Question
 The question field define the question of the poll.
