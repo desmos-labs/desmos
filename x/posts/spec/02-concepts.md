@@ -50,7 +50,7 @@ Within Desmos there is no URL validation, so this type can be used to represent 
 Index within the post text at which the URL starts.
 
 ##### End
-It is the text's index that indicates the exact point where the url ends and the last character where to parse the text.
+Index within the post text at which the URL ends.
 
 ##### Url
 The actual value of the url where the user should be redirected to.
