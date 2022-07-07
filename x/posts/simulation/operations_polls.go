@@ -70,6 +70,11 @@ func randomAnswerPollFields(
 
 	// Get a random poll
 	poll := RandomAttachment(r, polls)
+	if content, ok := poll.Content.GetCachedValue().(*types.Poll); ok && content.EndDate.Before(time.Now().Add(time.Minute*1)) {
+		// Skip because the poll voting period has already ended
+		skip = true
+		return
+	}
 
 	// Get a user
 	users := sk.GetUsersWithRootPermissions(ctx, poll.SubspaceID, subspacestypes.NewPermissions(types.PermissionInteractWithContent))
