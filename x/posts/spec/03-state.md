@@ -30,7 +30,7 @@ The next attachment id is stored tied to the subspace id and the post id to whic
 * `0x10 | Subspace ID | Post ID | -> bytes(NextAttachmentID)`
 
 ## Attachment
-The attachment are stored in a way that allows to easily query all the posts' attachments:
+A post attachment is stored using the subspace id, post id and its id as the key. This allows to easily query all the posts' attachments:
 
 * `0x11 | SubspaceID | PostID | Attachment ID | -> ProtocolBuffer(Attachment)`
 
