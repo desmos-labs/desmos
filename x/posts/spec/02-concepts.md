@@ -41,7 +41,7 @@ Index within the post text at which the tag starts.
 Index within the post text at which the tag ends.
 
 ##### Tag
-The actual value of the tag. It can be a user address, a hashtag value or anything else you want to emphasize in your post.
+The actual value of the tag. Usually this is going to be either the hashtag value, or the address of the mentioned user (if within the post text the DTag is used to reference the user).
 
 #### Url
 This field contains the details of a generic URL. There is no validation on it, so you can implement your own, deciding which
