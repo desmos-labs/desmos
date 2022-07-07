@@ -108,7 +108,7 @@ The las time the post has been edited.
 An attachment represents any kind of media that can be attached to a post, such as (but not limited to): an image, a GIF, or a poll.
 
 ### Subspace ID
-The [subspace] ID indicates the ID of the Dapp where the attachment is hosted and lives.
+The subspace id specifies the id of the subspace inside which the post related to the attachment is.
 
 ### Post ID
 The [post](#Post) ID to which the attachment is linked.
