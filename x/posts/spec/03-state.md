@@ -20,7 +20,7 @@ A post is stored using the subspace id and its id as the key. This allows to eas
 * `0x01 | Subspace ID | Post ID | -> ProtocolBuffer(Post)` 
 
 ## Post section
-The section reference is stored to enable the possibility of querying posts for a particular subspace's section:
+The section in which a post is placed is stored to enable the possibility of querying posts for a particular subspace's section:
 
 * `0x02 | Subspace ID | Section ID | Post ID | -> 0x01`
 
