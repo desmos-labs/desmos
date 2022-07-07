@@ -190,7 +190,7 @@ The user answer represent an answer given by a user to a poll.
 The subspace id represents the id of the subspace inside which is placed the post that contains the poll to which this answer refers. 
 
 #### Post ID
-The [post](#Post) ID to which the user answer is linked.
+Id of the post that contains the poll to which this answer refers.
 
 #### Poll ID
 The ID of the Poll being answered.
