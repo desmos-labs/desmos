@@ -67,13 +67,12 @@ A post attachment can be removed with `MsgRemovePostAttachment`.
 https://github.com/desmos-labs/desmos/blob/v4.1.0/proto/desmos/posts/v2/msgs.proto#L209-L232
 ```
 
-The message is expected to fail if any of the following situations occur:
-* The subspace associated with the post does not exist;
-* The post does not exist;
-* The post editor is not the post author;
-* The post editor has no permission to edit the post in the subspace;
-* The attachment does not exist;
-* The post's validation fails.
+It's expected to fail if:
+* the subspace does not exist;
+* the post does not exist;
+* the post editor is not the post author;
+* the post editor has no permission to edit posts within the subspace;
+* the attachment does not exist.
 
 ## Msg/AnswerPoll
 With `MsgAnswerPoll` it is possible to answer any active post's poll.
