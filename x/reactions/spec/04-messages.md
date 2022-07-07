@@ -11,7 +11,7 @@ slug: messages
 A post reaction can be added with the `MsgAddReaction`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/020cf82788b667924d0f71f9d8f1fd87efa5b340/proto/desmos/reactions/v1/msgs.proto#L39-L60
+https://github.com/desmos-labs/desmos/blob/v4.1.0/proto/desmos/reactions/v1/msgs.proto#L39-L60
 ```
 
 It's expected to fail if:
@@ -27,7 +27,7 @@ It's expected to fail if:
 A reaction can be removed with the `MsgRemoveReaction`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/020cf82788b667924d0f71f9d8f1fd87efa5b340/proto/desmos/reactions/v1/msgs.proto#L73-L94
+https://github.com/desmos-labs/desmos/blob/v4.1.0/proto/desmos/reactions/v1/msgs.proto#L73-L94
 ```
 
 It's expected to fail if:
@@ -40,7 +40,7 @@ It's expected to fail if:
 A registered reaction can be added to a subspace with the `MsgAddRegisteredReaction`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/020cf82788b667924d0f71f9d8f1fd87efa5b340/proto/desmos/reactions/v1/msgs.proto#L101-117
+https://github.com/desmos-labs/desmos/blob/v4.1.0/proto/desmos/reactions/v1/msgs.proto#L101-117
 ```
 
 It's expected to fail if:
@@ -53,7 +53,7 @@ It's expected to fail if:
 A registered reaction can be edited with the `MsgEditRegisteredReaction`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/020cf82788b667924d0f71f9d8f1fd87efa5b340/proto/desmos/reactions/v1/msgs.proto#L131-L153
+https://github.com/desmos-labs/desmos/blob/v4.1.0/proto/desmos/reactions/v1/msgs.proto#L131-L153
 ```
 
 it's expected to fail if:
@@ -66,7 +66,7 @@ it's expected to fail if:
 A registered reaction ca be removed with the `MsgRemoveRegisteredReaction`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/020cf82788b667924d0f71f9d8f1fd87efa5b340/proto/desmos/reactions/v1/msgs.proto#L161-L176
+https://github.com/desmos-labs/desmos/blob/v4.1.0/proto/desmos/reactions/v1/msgs.proto#L161-L176
 ```
 
 It's expected to fail if:
@@ -78,7 +78,7 @@ It's expected to fail if:
 A subspace's reaction params can be set with the `MsgSetReactionsParams`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/020cf82788b667924d0f71f9d8f1fd87efa5b340/proto/desmos/reactions/v1/msgs.proto#L184-L205
+https://github.com/desmos-labs/desmos/blob/v4.1.0/proto/desmos/reactions/v1/msgs.proto#L184-L205
 ```
 
 It's expected to fail if:
