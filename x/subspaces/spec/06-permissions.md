@@ -12,9 +12,12 @@ of the following permissions.
 
 | **Permission Value** | **Permission Description**                                         | 
 |:---------------------|:-------------------------------------------------------------------|
-| `EDIT_SUBSPACE`      | Allows to change the subspace's information                        |
-| `DELETE_SUBSPACE`    | Allow to delete a subspace                                         |
-| `MANAGE_SECTIONS`    | Allow to manage the subspace's sections                            |
-| `MANAGE_GROUPS`      | Allow to manage the subspace's groups                              |
-| `SET_PERMISSIONS`    | Allow to set other users' permissions except for `SET_PERMISSIONS` |
-| `EVERYTHING`         | Allow to do everything                                             |
+| `EDIT_SUBSPACE`      | Allows to change the subspace's information                       |
+| `DELETE_SUBSPACE`    | Allows to delete a subspace                                        |
+| `MANAGE_SECTIONS`    | Allows to manage the subspace's sections                           |
+| `MANAGE_GROUPS`      | Allows to manage the subspace's groups                             |
+| `SET_PERMISSIONS`    | Allows to set other users' permissions except for `SET_PERMISSIONS`|
+| `EVERYTHING`         | Allows to do everything                                            |
+
+> **Warning**
+> Note that when setting permission `EVERYTHING` to a user, that user will de facto be the same as the subspace owner, having control over everything and being able to do everything within that subspace. Use this with caution.
