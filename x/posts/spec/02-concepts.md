@@ -141,7 +141,7 @@ The possible answers the users can chose from to reply the poll. They are each a
 The representation of a provided answer for a poll.
 
 ##### Text (Optional)
-The text of the answer.
+The text of the answer. Note that either one of the text or attachments field must be specified within a provided answer to make sure it's valid.
 
 ##### Attachments (Optional)
 The [attachments](#attachment) associated to the answer. This can be useful to allow polls where answers are represented by a media content (e.g. an image) instead of a text. Note that either one of the text or attachments field must be specified within a provided answer to make sure it's valid.
