@@ -13,7 +13,7 @@ Inside Desmos, a post represents a single piece of content within a subspace. Th
 Aside from the inner text, developers can put on chain some metadata that can be useful during the visualization of the post, such as (but not limited to): links, users mentions or hashtags.
 
 ### Subspace ID
-The [subspace] ID indicates the ID of the Dapp where the post is hosted and lives.
+The subspace id specifies the id of the subspace inside which the post is placed.
 
 ### Section ID 
 The [section] ID indicates the ID of the subspace's section where the post lives.
