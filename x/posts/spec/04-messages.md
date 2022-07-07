@@ -27,12 +27,12 @@ A previously created post can be edited with the `MsgEditPost`.
 ```js reference
 https://github.com/desmos-labs/desmos/blob/6787823c96a29241aacfa96e4b0b21f782d059cd/proto/desmos/posts/v1/msgs.proto#L80-L98
 ```
-The message is expected to fail if any of the following situations occur:
-* The subspace associated with the post does not exist;
-* The post does not exist;
-* The post editor is not the post author;
-* The post editor does not have the permission to edit content in the subspace;
-* The updated post's validation fails.
+It's expected to fail if:
+* the subspace does not exist;
+* the post does not exist;
+* the post editor is not the post author;
+* the post editor does not have the permission to edit the posts within the subspace;
+* the updated post contents are invalid.
 
 ## Msg/DeletePost
 A post can be deleted with the following `MsgDeletePost`. Deleting a post will also delete all it's related `Attachment`s 
