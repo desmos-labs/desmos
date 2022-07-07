@@ -8,12 +8,9 @@ slug: concepts
 # Concepts 
 
 ## Post
-A Post is a structure representing any kind of content in a social network. It can contain some text and be enriched with:
-- Attachments such as media (pictures, clips, videos, GIFs) and polls;
-- Links;
-- Mentions of users;
-- Hashtags values;
-- Quotes of other posts.
+Inside Desmos, a post represents a single piece of content within a subspace. This can be used to represent things such as a blog post, a tweet, or anything else. A post can also be used to represents a quote of another post, a comment or a re-post of another content.
+
+Aside from the inner text, developers can put on chain some metadata that can be useful during the visualization of the post, such as (but not limited to): links, users mentions or hashtags.
 
 ### Subspace ID
 The [subspace] ID indicates the ID of the Dapp where the post is hosted and lives.
