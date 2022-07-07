@@ -193,7 +193,7 @@ The subspace id represents the id of the subspace inside which is placed the pos
 Id of the post that contains the poll to which this answer refers.
 
 #### Poll ID
-The ID of the Poll being answered.
+Id of the poll to which this answer refers. 
 
 #### Answer Indexes
 The indexes of the answers inside the `ProvideAnswer`s array.
