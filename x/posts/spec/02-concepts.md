@@ -44,8 +44,7 @@ Index within the post text at which the tag ends.
 The actual value of the tag. Usually this is going to be either the hashtag value, or the address of the mentioned user (if within the post text the DTag is used to reference the user).
 
 #### Url
-This field contains the details of a generic URL. There is no validation on it, so you can implement your own, deciding which
-one to accept and which not.
+Within Desmos there is no URL validation, so this type can be used to represent any kind of URL that might be present inside the post text.
 
 ##### Start
 It is the text's index that indicates the exact point where the url start and the text should be parsed.
