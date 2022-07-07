@@ -162,7 +162,7 @@ This fields contains the final results of the poll. It's going to be populated b
 The poll results for each provided answer, represented each one by an `AnswerResult`.
 
 ##### Answer Result
-This field contains the result of a single poll provided answer
+This structure contains the result of a single poll provided answer
 
 ###### Answer Index
 The index of the answer within the post's `ProvidedAnswer` field associated to which these results.
