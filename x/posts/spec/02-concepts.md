@@ -56,7 +56,7 @@ Index within the post text at which the URL ends.
 The actual value of the url where the user should be redirected to.
 
 ##### Display url (Optional)
-The visual url that should be displayed in the app. Ideally something that shorten or make an url more human-readable.
+Value to be displayed within the post text instead of the URL value itself. This might be useful if you want to shorten a link or if you want to represent a clickable text.
 
 ### Author
 The address of the author of the post.
