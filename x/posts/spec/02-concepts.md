@@ -71,7 +71,7 @@ In order to represent various interactions with a post, inside Desmos we use pos
 A reference to an external post. This can be used to represent a reply (comment), repost or quote of another post.
 
 ##### Type
-This is the type of the reference. It can be one of the following values:
+Type of the post reference. It can be one of the following values:
 
 | **Name**                          | **Description**                                          |  
 |:----------------------------------|:---------------------------------------------------------|
