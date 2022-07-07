@@ -8,8 +8,7 @@ slug: state
 # State
 
 ## Next Post ID
-The Next Post ID is stored tied to the subspace where it lives. It allows to query the ID to be used next for the newest
-post created:
+The next post id is stored tied to the subspace to which it refers:
 
 * `0x00 | Subspace ID | ->  bytes(NextPostID)`
 
