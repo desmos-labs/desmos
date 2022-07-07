@@ -159,7 +159,7 @@ This field tells if the poll allows users to edit their answers or not.
 This fields contains the final results of the poll. It's going to be populated by the chain after the poll has ended. Trying to provide a final tally results value inside a `MsgCreatePost` or `MsgAddPostAttachment` will return an error.
 
 #### Results
-The answers' results represent by the `AnswerResult` structure.
+The poll results for each provided answer, represented each one by an `AnswerResult`.
 
 ##### Answer Result
 This field contains the result of a single poll provided answer
