@@ -21,7 +21,7 @@ The posts module emits the following events:
 | create_post | author            | {userAddress}                 |
 | create_post | creation_time     | {CreationTime}                |
 | message     | module            | posts                         |
-| message     | action            | desmos.posts.v1.MsgCreatePost |
+| message     | action            | desmos.posts.v2.MsgCreatePost |
 | message     | sender            | {userAddress}                 |
 
 ### MsgEditPost
@@ -32,7 +32,7 @@ The posts module emits the following events:
 | edit_post | post_id           | {postID}                    |
 | edit_post | last_edit_time    | {LastEditTime}              |
 | message   | module            | posts                       |
-| message   | action            | desmos.posts.v1.MsgEditPost |
+| message   | action            | desmos.posts.v2.MsgEditPost |
 | message   | sender            | {userAddress}               |
 
 ### MsgDeletePost
@@ -42,7 +42,7 @@ The posts module emits the following events:
 | delete_post | subspace_id       | {subspaceID}                  |
 | delete_post | post_id           | {postID}                      |
 | message     | module            | posts                         |
-| message     | action            | desmos.posts.v1.MsgDeletePost |
+| message     | action            | desmos.posts.v2.MsgDeletePost |
 | message     | sender            | {userAddress}                 |
 
 ### MsgAddPostAttachment
@@ -54,7 +54,7 @@ The posts module emits the following events:
 | add_post_attachment | attachment_id     | {attachmentID}                       |
 | add_post_attachment | last_edit_time    | {lastEditTime}                       |
 | message             | module            | posts                                |
-| message             | action            | desmos.posts.v1.MsgAddPostAttachment |
+| message             | action            | desmos.posts.v2.MsgAddPostAttachment |
 | message             | sender            | {userAddress}                        |
 
 ### MsgRemovePostAttachment
@@ -66,7 +66,7 @@ The posts module emits the following events:
 | remove_post_attachment | attachment_id     | {attachmentID}                          |
 | remove_post_attachment | last_edit_time    | {lastEditTime}                          |
 | message                | module            | posts                                   |
-| message                | action            | desmos.posts.v1.MsgRemovePostAttachment |
+| message                | action            | desmos.posts.v2.MsgRemovePostAttachment |
 | message                | sender            | {userAddress}                           |    
 
 
@@ -78,7 +78,7 @@ The posts module emits the following events:
 | answer_poll | post_id           | {postID}                      |
 | answer_poll | poll_id           | {pollID}                      |
 | message     | module            | posts                         |
-| message     | action            | desmos.posts.v1.MsgAnswerPoll |
+| message     | action            | desmos.posts.v2.MsgAnswerPoll |
 | message     | sender            | {userAddress}                 |
 
 ## Keeper
