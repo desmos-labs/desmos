@@ -156,7 +156,7 @@ This field tells if the poll allows multiple answers from the same user or not.
 This field tells if the poll allows users to edit their answers or not.
 
 ### Final Tally Results 
-This fields contains the final results of the poll.
+This fields contains the final results of the poll. It's going to be populated by the chain after the poll has ended. Trying to provide a final tally results value inside a `MsgCreatePost` or `MsgAddPostAttachment` will return an error.
 
 #### Results
 The answers' results represent by the `AnswerResult` structure.
