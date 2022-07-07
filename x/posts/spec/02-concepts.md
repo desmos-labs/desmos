@@ -147,7 +147,7 @@ The text of the answer. Note that either one of the text or attachments field mu
 The [attachments](#attachment) associated to the answer. This can be useful to allow polls where answers are represented by a media content (e.g. an image) instead of a text. Note that either one of the text or attachments field must be specified within a provided answer to make sure it's valid.
 
 ### End Date
-The date when the poll will close.
+The date when the poll will close. Once this date has passed, the final results of the poll will be automatically tallied on the next block after such date. Also, all new answers after the date will not be considered valid. 
 
 ### Allow Multiple Answers
 This field tells if the poll allows multiple answers or not.
