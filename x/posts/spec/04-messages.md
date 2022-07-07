@@ -11,7 +11,7 @@ slug: messages
 A post can be created using the `MsgCreatePost`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/6787823c96a29241aacfa96e4b0b21f782d059cd/proto/desmos/posts/v1/msgs.proto#L37-L68
+https://github.com/desmos-labs/desmos/blob/v4.1.0/proto/desmos/posts/v2/msgs.proto#L36-L89
 ```
 
 It's to fail if:
