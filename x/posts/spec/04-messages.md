@@ -75,7 +75,7 @@ It's expected to fail if:
 * the attachment does not exist.
 
 ## Msg/AnswerPoll
-With `MsgAnswerPoll` it is possible to answer any active post's poll.
+It's possible to answer any active post's poll With `MsgAnswerPoll`.
 
 ```js reference 
 https://github.com/desmos-labs/desmos/blob/v4.1.0/proto/desmos/posts/v2/msgs.proto#L245-271
