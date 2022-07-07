@@ -132,7 +132,7 @@ The [mime type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP
 A poll media can be used to represent a poll attachment.
 
 ### Question
-The question field define the question of the poll.
+The question of the poll.
 
 ### Provided answers
 The possible answers choices the users have to reply the poll. They are represented by a `ProvidedAnswer` structure.
