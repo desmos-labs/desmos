@@ -150,7 +150,7 @@ The [attachments](#attachment) associated to the answer. This can be useful to a
 The date when the poll will close. Once this date has passed, the final results of the poll will be automatically tallied on the next block after such date. Also, all new answers after the date will not be considered valid. 
 
 ### Allow Multiple Answers
-This field tells if the poll allows multiple answers or not.
+This field tells if the poll allows multiple answers from the same user or not.
 
 ### Allow Answer Edits
 This field tells if the poll allows users to edit their answers or not.
