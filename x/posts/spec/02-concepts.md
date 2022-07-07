@@ -80,7 +80,7 @@ Type of the post reference. It can be one of the following values:
 | `POST_REFERENCE_TYPE_REPOST`      | This reference represents a repost of the specified post |
 
 ##### Post ID
-The ID of the referenced post.
+The id of the referenced post. Note that it's possible to reference only posts within the same subspace. Trying to reference a post within another subspace will return an error or might end up in unwanted behavior. 
 
 ##### Position
 This field should be used only when the `Type` field is equal to `TYPE_QUOTE` to indicates where the `PostReference`
