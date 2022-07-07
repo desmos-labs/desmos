@@ -28,11 +28,7 @@ A post external id is an optional text field that can be useful to developers th
 A post text is the actual textual content of the post. It has a fixed max length that is determined by an on-chain governance parameter. Any post with a text length greater than the current max length allowed will be considered invalid and not stored on the chain (an error will be returned during the saving). To store large text posts we recommend storing the post text contents on an external storage and then using either the text or external id fields to specify how to retrieve them.
 
 ### Entities (Optional)
-Entities are particular parts of the text that can be parsed out of it in order to be displayed in custom ways.
-Entities are divided in 3 different categories:
-- Hashtags (i.e. #desmos)
-- Mentions (i.e. @desmos1xcfui...., @Forbole)
-- Urls (i.e. https://desmos.network, ftp://user:password@example.com/image.png)
+Entities represent part of the post's text content that should be rendered in a particular way. These include hashtags, mentions to other users or links.
 
 #### TextTag
 Both hashtags and mentions are represented as a `TextTag`. The `TextTag` structure contains the necessary fields that ease the process of 
