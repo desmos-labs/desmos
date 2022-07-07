@@ -58,6 +58,9 @@ The actual value of the url where the user should be redirected to.
 ##### Display url (Optional)
 Value to be displayed within the post text instead of the URL value itself. This might be useful if you want to shorten a link or if you want to represent a clickable text.
 
+### Tags (optional)
+Tags represent a set of strings that can be useful to quickly identify the post's contents. They can be used for content categorization or other different scopes.
+
 ### Author
 Address of the post author.
 
