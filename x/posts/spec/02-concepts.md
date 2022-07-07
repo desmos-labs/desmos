@@ -102,7 +102,6 @@ This field contains the possible reply settings that a post can have. It can be 
 
 | **Name**                    | **Description**                                              |  
 |:----------------------------|:-------------------------------------------------------------|
-| `REPLY_SETTING_UNSPECIFIED` | No reference specified                                       |
 | `REPLY_SETTING_EVERYONE`    | This reference represents a reply to the specified post      |
 | `REPLY_SETTING_FOLLOWERS`   | This reference represents a quote of the specified post      |
 | `REPLY_SETTING_MUTUAL`      | This reference represents a repost of the specified post     |

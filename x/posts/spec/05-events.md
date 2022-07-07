@@ -80,3 +80,11 @@ The posts module emits the following events:
 | message     | module            | posts                         |
 | message     | action            | desmos.posts.v1.MsgAnswerPoll |
 | message     | sender            | {userAddress}                 |
+
+## Keeper
+
+| **Type**   | **Attribute Key** | **Attribute Value** | 
+|:-----------|:------------------|:--------------------|
+| tally_poll | subspace_id       | {subspaceID}        |
+| tally_poll | post_id           | {postID}            |
+| tally_poll | poll_id           | {pollID}            |

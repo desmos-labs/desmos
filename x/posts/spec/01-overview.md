@@ -35,6 +35,7 @@ kind of data.
     - [Msg/AnswerPoll](04-messages.md#msganswerpoll)
 4. **[Events](05-events.md)**
     - [Handlers](05-events.md#handlers)
+    - [Keeper](05-events.md#keeper)
 5. **[Permissions](06-permissions.md)**
 6. **[Parameters](07-params.md)**
 7. **[Client](08-client.md)**
