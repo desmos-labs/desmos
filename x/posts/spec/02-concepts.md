@@ -38,7 +38,7 @@ text's parsing.
 Index within the post text at which the tag starts.
 
 ##### End
-It is the text's index that indicates the exact point where the tag ends and the last character where to parse the text.
+Index within the post text at which the tag ends.
 
 ##### Tag
 The actual value of the tag. It can be a user address, a hashtag value or anything else you want to emphasize in your post.
