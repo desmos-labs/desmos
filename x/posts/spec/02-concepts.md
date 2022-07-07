@@ -120,8 +120,7 @@ An attachment id is the unique identifier within a specific post. This is automa
 The content of the attachment. It can be either a media content (e.g. a picture, a video, a GIF, etc), or a poll.
 
 ## Media
-The Media structure represent a media content of any kind from pictures, to clips, videos, GIFs, etc... attached to 
-a post.
+A media content can be used to specify the details of a media attachment (e.g. an image, a video, a GIF, etc).
 
 ### URI
 The URI address referencing the media.
