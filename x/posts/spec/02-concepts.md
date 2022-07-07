@@ -35,7 +35,7 @@ Both hashtags and mentions are represented as a `TextTag`. The `TextTag` structu
 text's parsing.
 
 ##### Start
-It is the text's index that indicates the exact point where the tag start and the text should be parsed.
+Index within the post text at which the tag starts.
 
 ##### End
 It is the text's index that indicates the exact point where the tag ends and the last character where to parse the text.
