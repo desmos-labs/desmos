@@ -25,7 +25,7 @@ It's to fail if:
 A previously created post can be edited with the `MsgEditPost`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/6787823c96a29241aacfa96e4b0b21f782d059cd/proto/desmos/posts/v1/msgs.proto#L80-L98
+https://github.com/desmos-labs/desmos/blob/v4.1.0/proto/desmos/posts/v2/msgs.proto#L107-L135
 ```
 It's expected to fail if:
 * the subspace does not exist;
