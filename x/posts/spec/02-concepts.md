@@ -135,7 +135,7 @@ A poll media can be used to represent a poll attachment.
 The question of the poll.
 
 ### Provided answers
-The possible answers choices the users have to reply the poll. They are represented by a `ProvidedAnswer` structure.
+The possible answers the users can chose from to reply the poll. They are each an instance of `ProvidedAnswer`.
 
 #### Provided Answer
 The representation of a provided answer for a poll.
