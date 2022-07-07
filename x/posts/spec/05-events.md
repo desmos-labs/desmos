@@ -42,7 +42,7 @@ The posts module emits the following events:
 | delete_post | subspace_id       | {subspaceID}                  |
 | delete_post | post_id           | {postID}                      |
 | message     | module            | posts                         |
-| message     | action            | desmos.posts.v1.MsgDeletePost |
+| message     | action            | desmos.posts.v2.MsgDeletePost |
 | message     | sender            | {userAddress}                 |
 
 ### MsgAddPostAttachment
