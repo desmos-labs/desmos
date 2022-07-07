@@ -117,9 +117,7 @@ The post id specifies the id of the post to which the attachment is associated.
 An attachment id is the unique identifier within a specific post. This is automatically created when handling a `MsgCreatePost` or `MsgAddPostAttachment`. With the subspace id and post id, it can be used to uniquely identify an attachment within Desmos.
 
 ### Content
-The content of the attachment. It can be either:
-- A media content (pictures, clips, videos, GIFs);
-- A poll.
+The content of the attachment. It can be either a media content (e.g. a picture, a video, a GIF, etc), or a poll.
 
 ## Media
 The Media structure represent a media content of any kind from pictures, to clips, videos, GIFs, etc... attached to 
