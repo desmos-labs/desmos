@@ -78,5 +78,5 @@ The posts module emits the following events:
 | answer_poll | post_id           | {postID}                      |
 | answer_poll | poll_id           | {pollID}                      |
 | message     | module            | posts                         |
-| message     | action            | desmos.posts.v1.MsgAnswerPoll |
+| message     | action            | desmos.posts.v2.MsgAnswerPoll |
 | message     | sender            | {userAddress}                 |
