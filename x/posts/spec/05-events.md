@@ -66,7 +66,7 @@ The posts module emits the following events:
 | remove_post_attachment | attachment_id     | {attachmentID}                          |
 | remove_post_attachment | last_edit_time    | {lastEditTime}                          |
 | message                | module            | posts                                   |
-| message                | action            | desmos.posts.v1.MsgRemovePostAttachment |
+| message                | action            | desmos.posts.v2.MsgRemovePostAttachment |
 | message                | sender            | {userAddress}                           |    
 
 
