@@ -75,7 +75,6 @@ Type of the post reference. It can be one of the following values:
 
 | **Name**                          | **Description**                                          |  
 |:----------------------------------|:---------------------------------------------------------|
-| `POST_REFERENCE_TYPE_UNSPECIFIED` | No reference specified                                   |
 | `POST_REFERENCE_TYPE_REPLY`       | This reference represents a reply to the specified post  |
 | `POST_REFERENCE_TYPE_QUOTE`       | This reference represents a quote of the specified post  |
 | `POST_REFERENCE_TYPE_REPOST`      | This reference represents a repost of the specified post |
