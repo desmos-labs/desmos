@@ -68,7 +68,7 @@ In order to be able to display a conversation properly, you can use the conversa
 In order to represent various interactions with a post, inside Desmos we use post references. All the references that a post has to other posts should be placed inside the referenced posts array.
 
 #### PostReference
-A reference to an external post, usable for reply, repost or quote purposes.
+A reference to an external post. This can be used to represent a reply (comment), repost or quote of another post.
 
 ##### Type
 This is the type of the reference. It can be one of the following values:
