@@ -16,7 +16,7 @@ Aside from the inner text, developers can put on chain some metadata that can be
 The subspace id specifies the id of the subspace inside which the post is placed.
 
 ### Section ID 
-The [section] ID indicates the ID of the subspace's section where the post lives.
+The section id specifies the id of the subspace section where the post is placed.
 
 ### ID
 The unique ID that identifies the post itself. This ID is automatically assigned to the post at the moment of its 
