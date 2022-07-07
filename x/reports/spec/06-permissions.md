@@ -12,7 +12,7 @@ of the following permissions.
 
 | **Permission Value** | **Permission Description**     | 
 |:---------------------|:-------------------------------|
-| `REPORT_CONTENT`     | Allows to report contents      |
-| `DELETE_OWN_REPORTS` | Allows to delete owned reports |
-| `MANAGE_REPORTS`     | Allows to manage owned reports |
-| `MANAGE_REASONS`     | Allows to manage reasons       |
+| `REPORT_CONTENT`     | Allows to report contents                |
+| `DELETE_OWN_REPORTS` | Allows to delete own reports             |
+| `MANAGE_REPORTS`     | Allows to manage other users' reports    |
+| `MANAGE_REASONS`     | Allows to manage reporting reasons       |
