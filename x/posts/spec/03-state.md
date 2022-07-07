@@ -35,7 +35,7 @@ A post attachment is stored using the subspace id, post id and its id as the key
 * `0x11 | SubspaceID | PostID | Attachment ID | -> ProtocolBuffer(Attachment)`
 
 ## User Answer
-The user answers are stored to allow an easy way to query a poll's users answers:
+A user answer to a poll is stored using the subspace id, post id and poll id as the key. This allows to easily query all the answers of a specific poll:
 
 * `0x20 | Subspace ID | Post ID | Poll ID | -> ProtocolBuffer(UserAnswer)`
 
