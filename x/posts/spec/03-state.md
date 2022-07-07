@@ -42,4 +42,4 @@ A user answer to a poll is stored using the subspace id, post id and poll id as 
 ## Active poll queue 
 Active polls are stored using the voting end time, subspace id, post id and poll id as the key. This allows to determine, at each block height, which polls should have their results tallied:
 
-* `0x21 | End Time | Subspace ID | Post ID | poll ID | -> bytes(PollID)`
+* `0x21 | End Time | Subspace ID | Post ID | Poll ID | -> bytes(PollID)`
