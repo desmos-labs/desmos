@@ -196,7 +196,7 @@ Id of the post that contains the poll to which this answer refers.
 Id of the poll to which this answer refers. 
 
 #### Answer Indexes
-The indexes of the answers inside the `ProvideAnswer`s array.
+The answer indexes contains a list of user answers, each one identified by the index of the chosen option within the poll's `ProvidedAnswer` array.
 
 #### User 
 The address of the user answering the poll.
