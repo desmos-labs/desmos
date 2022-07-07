@@ -19,8 +19,7 @@ The subspace id specifies the id of the subspace inside which the post is placed
 The section id specifies the id of the subspace section where the post is placed.
 
 ### ID
-The unique ID that identifies the post itself. This ID is automatically assigned to the post at the moment of its 
-creation in a sequential way (e.g. if there's 4 posts in the chain, the one we are creating will have id equal to 5).
+A post id is the unique identifier of that post within the subspace. Each post id is generated automatically when handling a `MsgCreatePost` and can be used along with the subspace id itself to uniquely identify a post within Desmos.
 
 ### External ID (Optional)
 External ID indicates and external ID attached to the post. It is represented by a string.
