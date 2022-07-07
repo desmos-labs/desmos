@@ -81,12 +81,11 @@ It's possible to answer any active post's poll With `MsgAnswerPoll`.
 https://github.com/desmos-labs/desmos/blob/v4.1.0/proto/desmos/posts/v2/msgs.proto#L245-271
 ```
 
-The message is expected to fail if any of the following situations occur:
-* The signer does not have a profile;
-* The subspace associated with the post does not exist;
-* The poll's associated post does not exist;
-* The signer does not have the permission to interact with content in the subspace;
-* The poll does not exist;
-* The signer try to edit its own answer but the poll does not allow answers edits;
-* The signer try to give multiple answers but the poll does not allow multiple answers;
-* The answer given does not correspond to any answer index (the answer does not exist).
+It's expected to fail if:
+* the signer does not have a profile;
+* the subspace associated with the post does not exist;
+* the poll does not exist;
+* the signer does not have the permission to interact with contents within the subspace;
+* the signer is trying to edit their own answer but the poll does not allow answers edits;
+* the signer is trying to give multiple answers but the poll does not allow multiple answers;
+* the answer is invalid.
