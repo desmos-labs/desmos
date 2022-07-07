@@ -22,7 +22,7 @@ The section id specifies the id of the subspace section where the post is placed
 A post id is the unique identifier of that post within the subspace. Each post id is generated automatically when handling a `MsgCreatePost` and can be used along with the subspace id itself to uniquely identify a post within Desmos.
 
 ### External ID (Optional)
-External ID indicates and external ID attached to the post. It is represented by a string.
+A post external id is an optional text field that can be useful to developers that want to link this post to an external data storage. As an example, if a developer wants to store the post content on their own data storage what they can do is use the external id field to tell how the content should be retrieved.
 
 ### Text (Optional)
 The text is the actual textual content of the post. It has a fixed max length that is determined by an on-chain governance parameter.
