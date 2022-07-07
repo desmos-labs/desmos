@@ -47,7 +47,7 @@ The actual value of the tag. Usually this is going to be either the hashtag valu
 Within Desmos there is no URL validation, so this type can be used to represent any kind of URL that might be present inside the post text.
 
 ##### Start
-It is the text's index that indicates the exact point where the url start and the text should be parsed.
+Index within the post text at which the URL starts.
 
 ##### End
 It is the text's index that indicates the exact point where the url ends and the last character where to parse the text.
