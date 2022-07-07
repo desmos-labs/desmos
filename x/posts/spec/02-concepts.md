@@ -105,7 +105,7 @@ The creation date of the post.
 The las time the post has been edited.
 
 ## Attachment
-An attachment represent something that can be added to a post in order to enrich it or give it some additional use cases.
+An attachment represents any kind of media that can be attached to a post, such as (but not limited to): an image, a GIF, or a poll.
 
 ### Subspace ID
 The [subspace] ID indicates the ID of the Dapp where the attachment is hosted and lives.
