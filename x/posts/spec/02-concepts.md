@@ -59,7 +59,7 @@ The actual value of the url where the user should be redirected to.
 Value to be displayed within the post text instead of the URL value itself. This might be useful if you want to shorten a link or if you want to represent a clickable text.
 
 ### Author
-The address of the author of the post.
+Address of the post author.
 
 ### Conversation ID (optional)
 The ID of the original post of the conversation. This ID identifies the parent post (if existent) where the conversation
