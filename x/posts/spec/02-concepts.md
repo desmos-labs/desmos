@@ -144,7 +144,7 @@ The representation of a provided answer for a poll.
 The text of the answer.
 
 ##### Attachments (Optional)
-The [attachments](#attachment) of the answer. If not provided, a text answer has to be specified.
+The [attachments](#attachment) associated to the answer. This can be useful to allow polls where answers are represented by a media content (e.g. an image) instead of a text. Note that either one of the text or attachments field must be specified within a provided answer to make sure it's valid.
 
 ### End Date
 The date when the poll will close.
