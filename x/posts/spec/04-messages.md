@@ -41,10 +41,10 @@ A post can be deleted with the `MsgDeletePost`.
 https://github.com/desmos-labs/desmos/blob/v4.1.0/proto/desmos/posts/v2/msgs.proto#L147-L163
 ```
 
-The message is expected to fail if any of the following situations occur:
-* The subspace associated with the post does not exist;
-* The post does not exist;
-* The signer has no permission to delete the post in the subspace;
+It's expected to fail if:
+* the subspace does not exist;
+* the post does not exist;
+* the signer has no permission to delete posts within the subspace.
 
 ## Msg/AddPostAttachment
 With `MsgAddPostAttachment` it is possible to add an attachment to a post. Attachment can be a [media](02-concepts.md#media)
