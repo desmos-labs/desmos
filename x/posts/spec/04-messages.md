@@ -67,7 +67,7 @@ The message is expected to fail if any of the following situations occur:
 A previously added attachment can be removed with `MsgRemovePostAttachment`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/6787823c96a29241aacfa96e4b0b21f782d059cd/proto/desmos/posts/v1/msgs.proto#L151-L163
+https://github.com/desmos-labs/desmos/blob/v4.1.0/proto/desmos/posts/v2/msgs.proto#L209-L232
 ```
 
 The message is expected to fail if any of the following situations occur:
