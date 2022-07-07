@@ -40,7 +40,6 @@ A user answer to a poll is stored using the subspace id, post id and poll id as 
 * `0x20 | Subspace ID | Post ID | Poll ID | -> ProtocolBuffer(UserAnswer)`
 
 ## Active poll queue 
-The active poll queue allows to append an active poll to a queue of active polls.
-Later on this key is used to check on each of them and set them as inactive at the correct poll's end time:
+Active polls are stored using the voting end time, subspace id, post id and poll id as the key. This allows to determine, at each block height, which polls should have their results tallied:
 
 * `0x21 | End Time | Subspace ID | Post ID | poll ID | -> bytes(PollID)`
