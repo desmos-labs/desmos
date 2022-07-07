@@ -32,7 +32,7 @@ The posts module emits the following events:
 | edit_post | post_id           | {postID}                    |
 | edit_post | last_edit_time    | {LastEditTime}              |
 | message   | module            | posts                       |
-| message   | action            | desmos.posts.v1.MsgEditPost |
+| message   | action            | desmos.posts.v2.MsgEditPost |
 | message   | sender            | {userAddress}               |
 
 ### MsgDeletePost
