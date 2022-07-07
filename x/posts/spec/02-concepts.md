@@ -65,7 +65,7 @@ Address of the post author.
 In order to be able to display a conversation properly, you can use the conversation id to specify the id of the post that should be considered as the first post of the conversation itself. As an example, if a thread is started then all posts referring to that thread should have the same conversation, even if they are answering other posts. This is to make sure they can be connected to the original conversation and displayed within it.
 
 ### Referenced Posts
-Referenced posts are represented by a `PostReference` structure.
+In order to represent various interactions with a post, inside Desmos we use post references. All the references that a post has to other posts should be placed inside the referenced posts array.
 
 #### PostReference
 A reference to an external post, usable for reply, repost or quote purposes.
