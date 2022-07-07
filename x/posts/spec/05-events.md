@@ -21,7 +21,7 @@ The posts module emits the following events:
 | create_post | author            | {userAddress}                 |
 | create_post | creation_time     | {CreationTime}                |
 | message     | module            | posts                         |
-| message     | action            | desmos.posts.v1.MsgCreatePost |
+| message     | action            | desmos.posts.v2.MsgCreatePost |
 | message     | sender            | {userAddress}                 |
 
 ### MsgEditPost
