@@ -25,7 +25,7 @@ A post id is the unique identifier of that post within the subspace. Each post i
 A post external id is an optional text field that can be useful to developers that want to link this post to an external data storage. As an example, if a developer wants to store the post content on their own data storage what they can do is use the external id field to tell how the content should be retrieved.
 
 ### Text (Optional)
-The text is the actual textual content of the post. It has a fixed max length that is determined by an on-chain governance parameter.
+A post text is the actual textual content of the post. It has a fixed max length that is determined by an on-chain governance parameter. Any post with a text length greater than the current max length allowed will be considered invalid and not stored on the chain (an error will be returned during the saving). To store large text posts we recommend storing the post text contents on an external storage and then using either the text or external id fields to specify how to retrieve them.
 
 ### Entities (Optional)
 Entities are particular parts of the text that can be parsed out of it in order to be displayed in custom ways.
