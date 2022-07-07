@@ -53,13 +53,12 @@ It's possible to add an attachment to an existing post with `MsgAddPostAttachmen
 https://github.com/desmos-labs/desmos/blob/v4.1.0/proto/desmos/posts/v2/msgs.proto#L170-L191
 ```
 
-The message is expected to fail if any of the following situations occur:
-* The subspace associated with the post does not exist;
-* The post does not exist;
-* The post editor is not the post author;
-* The post editor has no permission to edit the post in the subspace;
-* The attachment's validation fails;
-* The post's validation fails.
+It's expected to fail if:
+* the subspace does not exist;
+* the post does not exist;
+* the post editor is not the post author;
+* the post editor has no permission to edit posts within the subspace;
+* the attachment is invalid.
 
 ## Msg/RemovePostAttachment
 A previously added attachment can be removed with `MsgRemovePostAttachment`.
