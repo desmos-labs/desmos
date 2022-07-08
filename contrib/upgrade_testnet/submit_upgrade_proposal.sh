@@ -25,8 +25,6 @@ while [ ${CNT} -lt $ITER ]; do
   sleep $SLEEP
 done
 
-docker logs desmosnode0
-
 curr_block=$(curl -s $NODE/status | jq -r '.result.sync_info.latest_block_height')
 if [ -z ${curr_block} ] ; then
   echo "===> Failed to start the chain"
