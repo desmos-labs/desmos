@@ -115,9 +115,6 @@ func (k Keeper) StartProfileConnection(
 		return err
 	}
 
-	// Get block time as the creation time of the appLink
-	creationTime := ctx.BlockTime()
-
 	// Store the connection
 	err = k.SaveApplicationLink(ctx, types.NewApplicationLink(
 		sender.String(),
@@ -130,8 +127,8 @@ func (k Keeper) StartProfileConnection(
 			clientID,
 		),
 		nil,
-		creationTime,
-		creationTime.Add(k.GetParams(ctx).AppLinks.ValidityDuration),
+		ctx.BlockTime(),
+		ctx.BlockTime().Add(k.GetParams(ctx).AppLinks.ValidityDuration),
 	))
 
 	if err != nil {

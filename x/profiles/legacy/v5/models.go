@@ -1,5 +1,7 @@
 package v5
 
+// DONTCOVER
+
 import (
 	"encoding/json"
 	"time"

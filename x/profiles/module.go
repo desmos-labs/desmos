@@ -183,8 +183,7 @@ func (AppModule) ConsensusVersion() uint64 {
 
 // BeginBlock returns the begin blocker for the profiles module.
 func (am AppModule) BeginBlock(ctx sdk.Context, _ abci.RequestBeginBlock) {
-	// TODO should we emit an event for this?
-	am.keeper.DeleteExpiredApplicationLinks(ctx)
+	BeginBlocker(ctx, am.keeper)
 }
 
 // EndBlock returns the end blocker for the profiles module. It returns no validator

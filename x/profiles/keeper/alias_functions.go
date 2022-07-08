@@ -135,7 +135,7 @@ func (k Keeper) GetApplicationLinks(ctx sdk.Context) []types.ApplicationLink {
 
 // IterateExpiringApplicationLinks iterates through all the expiring application links references.
 // The key will be skipped and deleted if the application link has already been deleted.
-func (k Keeper) IterateExpiringApplicationLinks(ctx sdk.Context, fn func(index int64, link types.ApplicationLink) (stop bool)) error {
+func (k Keeper) IterateExpiringApplicationLinks(ctx sdk.Context, fn func(index int64, link types.ApplicationLink) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 
 	iterator := sdk.KVStorePrefixIterator(store, types.ExpiringAppLinkTimePrefix)
@@ -146,7 +146,7 @@ func (k Keeper) IterateExpiringApplicationLinks(ctx sdk.Context, fn func(index i
 		trimmedPrefixKey := bytes.TrimPrefix(iterator.Key(), types.ExpiringAppLinkTimePrefix)
 		expiringTime, err := sdk.ParseTimeBytes(bytes.TrimSuffix(trimmedPrefixKey, iterator.Value()))
 		if err != nil {
-			return err
+			panic(err)
 		}
 
 		// Skip if application link has been deleted already
@@ -166,8 +166,6 @@ func (k Keeper) IterateExpiringApplicationLinks(ctx sdk.Context, fn func(index i
 		}
 		i++
 	}
-
-	return nil
 }
 
 // --------------------------------------------------------------------------------------------------------------------

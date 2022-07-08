@@ -5,6 +5,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/desmos-labs/desmos/v4/x/profiles"
+
 	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
 
 	"github.com/cosmos/cosmos-sdk/store"
@@ -25,7 +27,7 @@ import (
 	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
-func setupBenchTest() (authkeeper.AccountKeeper, keeper.Keeper, sdk.Context) {
+func setupBenchTest() (sdk.Context, authkeeper.AccountKeeper, keeper.Keeper) {
 	// Define the store keys
 	keys := sdk.NewKVStoreKeys(types.StoreKey, authtypes.StoreKey, paramstypes.StoreKey)
 	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -77,7 +79,7 @@ func setupBenchTest() (authkeeper.AccountKeeper, keeper.Keeper, sdk.Context) {
 		nil,
 	)
 
-	return ak, k, ctx
+	return ctx, ak, k
 }
 
 func generateRandomAppLinks(r *rand.Rand, linkNum int) []types.ApplicationLink {
@@ -106,9 +108,8 @@ func generateRandomAppLinks(r *rand.Rand, linkNum int) []types.ApplicationLink {
 }
 
 func BenchmarkKeeper_DeleteExpiredApplicationLinks(b *testing.B) {
-	r := rand.New(rand.NewSource(100))
-	ak, k, ctx := setupBenchTest()
-	links := generateRandomAppLinks(r, 1)
+	ctx, ak, k := setupBenchTest()
+	links := generateRandomAppLinks(rand.New(rand.NewSource(100)), 1)
 	ctx, _ = ctx.CacheContext()
 
 	for _, link := range links {
@@ -117,10 +118,11 @@ func BenchmarkKeeper_DeleteExpiredApplicationLinks(b *testing.B) {
 		require.NoError(b, err)
 	}
 
+	b.ResetTimer()
 	b.Run("iterate and delete expired links", func(b *testing.B) {
 		for i := 0; i < b.N; i++ {
 			b.ReportAllocs()
-			k.DeleteExpiredApplicationLinks(ctx)
+			profiles.BeginBlocker(ctx, k)
 		}
 	})
 }

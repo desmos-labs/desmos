@@ -1,6 +1,8 @@
 package keeper
 
 import (
+	"time"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
@@ -23,10 +25,10 @@ func (k Keeper) SaveApplicationLink(ctx sdk.Context, link types.ApplicationLink)
 	// Store the data
 	store := ctx.KVStore(k.storeKey)
 	userApplicationLinkKey := types.UserApplicationLinkKey(link.User, link.Data.Application, link.Data.Username)
-	applicationLinkExpiringTimeKey := types.ApplicationLinkExpiringTimeKey(link.ExpirationTime, link.OracleRequest.ClientID)
 	store.Set(userApplicationLinkKey, types.MustMarshalApplicationLink(k.cdc, link))
 	store.Set(types.ApplicationLinkClientIDKey(link.OracleRequest.ClientID), userApplicationLinkKey)
 	store.Set(types.ApplicationLinkOwnerKey(link.Data.Application, link.Data.Username, link.User), []byte{0x01})
+	applicationLinkExpiringTimeKey := types.ApplicationLinkExpiringTimeKey(link.ExpirationTime, link.OracleRequest.ClientID)
 	store.Set(applicationLinkExpiringTimeKey, []byte(link.OracleRequest.ClientID))
 
 	ctx.EventManager().EmitEvent(
@@ -110,7 +112,7 @@ func (k Keeper) DeleteApplicationLink(ctx sdk.Context, appLink types.Application
 			sdk.NewAttribute(types.AttributeKeyUser, appLink.User),
 			sdk.NewAttribute(types.AttributeKeyApplicationName, appLink.Data.Application),
 			sdk.NewAttribute(types.AttributeKeyApplicationUsername, appLink.Data.Username),
-			sdk.NewAttribute(types.AttributeKeyApplicationLinkExpirationTime, appLink.ExpirationTime.String()),
+			sdk.NewAttribute(types.AttributeKeyApplicationLinkExpirationTime, appLink.ExpirationTime.Format(time.RFC3339)),
 		),
 	)
 }
@@ -126,12 +128,4 @@ func (k Keeper) DeleteAllUserApplicationLinks(ctx sdk.Context, user string) {
 	for _, link := range links {
 		k.DeleteApplicationLink(ctx, link)
 	}
-}
-
-// DeleteExpiredApplicationLinks deletes all the expired application links in the given context
-func (k Keeper) DeleteExpiredApplicationLinks(ctx sdk.Context) {
-	k.IterateExpiringApplicationLinks(ctx, func(_ int64, link types.ApplicationLink) (stop bool) {
-		k.DeleteApplicationLink(ctx, link)
-		return false
-	})
 }
