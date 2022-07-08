@@ -125,6 +125,12 @@ paths:
                       title: >-
                         CreationTime represents the time in which the link was
                         created
+                    expiration_time:
+                      type: string
+                      format: date-time
+                      title: >-
+                        ExpirationTime represents the time in which the link
+                        will expire
                   title: >-
                     ApplicationLink contains the data of a link to a centralized
                     application
@@ -555,6 +561,12 @@ paths:
                     title: >-
                       CreationTime represents the time in which the link was
                       created
+                  expiration_time:
+                    type: string
+                    format: date-time
+                    title: >-
+                      ExpirationTime represents the time in which the link will
+                      expire
                 title: >-
                   ApplicationLink contains the data of a link to a centralized
                   application
@@ -11656,6 +11668,10 @@ definitions:
         type: string
         format: date-time
         title: CreationTime represents the time in which the link was created
+      expiration_time:
+        type: string
+        format: date-time
+        title: ExpirationTime represents the time in which the link will expire
     title: ApplicationLink contains the data of a link to a centralized application
   desmos.profiles.v3.ApplicationLinkState:
     type: string
@@ -12940,6 +12956,10 @@ definitions:
             type: string
             format: date-time
             title: CreationTime represents the time in which the link was created
+          expiration_time:
+            type: string
+            format: date-time
+            title: ExpirationTime represents the time in which the link will expire
         title: >-
           ApplicationLink contains the data of a link to a centralized
           application
@@ -13115,6 +13135,10 @@ definitions:
               type: string
               format: date-time
               title: CreationTime represents the time in which the link was created
+            expiration_time:
+              type: string
+              format: date-time
+              title: ExpirationTime represents the time in which the link will expire
           title: >-
             ApplicationLink contains the data of a link to a centralized
             application
