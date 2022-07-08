@@ -26,7 +26,7 @@ The profiles module emits the following events:
 
 | **Type**       | **Attribute Key** | **Attribute Value**                 | 
 |:---------------|:------------------|:------------------------------------|
-| delete_profile | profile_creator   | {userAddress}                      |
+| delete_profile | profile_creator   | {userAddress}                       |
 | message        | module            | profiles                            | 
 | message        | action            | desmos.profiles.v2.MsgDeleteProfile |
 | message        | sender            | {userAddress}                       |
