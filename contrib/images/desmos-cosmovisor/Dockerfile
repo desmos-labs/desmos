@@ -18,9 +18,9 @@ FROM desmoslabs/desmos:$DESMOS_VERSION
 # Copy over binaries from the build-env
 COPY --from=build-env /go/src/github.com/cosmos/cosmos-sdk/cosmovisor/cosmovisor /usr/bin/cosmovisor
 
-#ARG UID=1000
-#ARG GID=1000
-#USER ${UID}:${GID}
+ARG UID=1000
+ARG GID=1000
+USER ${UID}:${GID}
 
 COPY wrapper.sh /usr/bin/wrapper.sh
 ENTRYPOINT ["bash", "/usr/bin/wrapper.sh"]
