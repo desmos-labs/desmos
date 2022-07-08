@@ -18,13 +18,13 @@ const (
 
 // Default profile paramsModule
 var (
-	DefaultMinNicknameLength      = sdk.NewInt(2)
-	DefaultMaxNicknameLength      = sdk.NewInt(1000) // Longest name on earth count 954 chars
-	DefaultRegEx                  = `^[A-Za-z0-9_]+$`
-	DefaultMinDTagLength          = sdk.NewInt(3)
-	DefaultMaxDTagLength          = sdk.NewInt(30)
-	DefaultMaxBioLength           = sdk.NewInt(1000)
-	DefaultAppLinksExpirationTime = time.Hour*24*7*4*6 + FourteenDaysCorrectionFactor // This duration is equal to 5.9835 months time. Equivalent to 262080 minutes
+	DefaultMinNicknameLength        = sdk.NewInt(2)
+	DefaultMaxNicknameLength        = sdk.NewInt(1000) // Longest name on earth count 954 chars
+	DefaultRegEx                    = `^[A-Za-z0-9_]+$`
+	DefaultMinDTagLength            = sdk.NewInt(3)
+	DefaultMaxDTagLength            = sdk.NewInt(30)
+	DefaultMaxBioLength             = sdk.NewInt(1000)
+	DefaultAppLinksValidityDuration = time.Hour*24*7*4*6 + FourteenDaysCorrectionFactor // This duration is equal to 5.9835 months time. Equivalent to 262080 minutes
 )
 
 // Parameters store keys
@@ -271,14 +271,14 @@ func ValidateOracleParams(i interface{}) error {
 
 // ___________________________________________________________________________________________________________________
 
-func NewAppLinksParams(expirationTime time.Duration) AppLinksParams {
+func NewAppLinksParams(validityDuration time.Duration) AppLinksParams {
 	return AppLinksParams{
-		ExpirationTime: expirationTime,
+		ValidityDuration: validityDuration,
 	}
 }
 
 func DefaultAppLinksParams() AppLinksParams {
-	return NewAppLinksParams(DefaultAppLinksExpirationTime)
+	return NewAppLinksParams(DefaultAppLinksValidityDuration)
 }
 
 func ValidateAppLinksParams(i interface{}) error {
@@ -287,8 +287,8 @@ func ValidateAppLinksParams(i interface{}) error {
 		return fmt.Errorf("invalid parameters type: %s", i)
 	}
 
-	if params.ExpirationTime < FourteenDaysCorrectionFactor {
-		return fmt.Errorf("expiration time param must be not less than 14 days: %s", params.ExpirationTime)
+	if params.ValidityDuration < FourteenDaysCorrectionFactor {
+		return fmt.Errorf("validity duration must be not less than 14 days: %s", params.ValidityDuration)
 	}
 
 	return nil

@@ -31,19 +31,19 @@ func NewDecodeStore(cdc codec.Codec) func(kvA, kvB kv.Pair) string {
 			var chainLinkA, chainLinkB types.ChainLink
 			cdc.MustUnmarshal(kvA.Value, &chainLinkA)
 			cdc.MustUnmarshal(kvB.Value, &chainLinkB)
-			return fmt.Sprintf("Chain link A: %s\nChain link B: %s\n", chainLinkA, chainLinkB)
+			return fmt.Sprintf("ChainLinkA: %s\nChainLinkB: %s\n", chainLinkA, chainLinkB)
 
 		case bytes.HasPrefix(kvA.Key, types.ApplicationLinkPrefix):
 			var applicationLinkA, applicationLinkB types.ApplicationLink
 			cdc.MustUnmarshal(kvA.Value, &applicationLinkA)
 			cdc.MustUnmarshal(kvB.Value, &applicationLinkB)
-			return fmt.Sprintf("Application link A: %s\nApplication link B: %s\n", &applicationLinkA, &applicationLinkB)
+			return fmt.Sprintf("ApplicationLinkA: %s\nApplicationLinkB: %s\n", &applicationLinkA, &applicationLinkB)
 
 		case bytes.HasPrefix(kvA.Key, types.ExpiringAppLinkTimePrefix):
 			var clientIDA, clientIDB string
 			clientIDA = string(kvA.Value)
 			clientIDB = string(kvB.Value)
-			return fmt.Sprintf("Client ID A: %s\nClient ID B: %s\n",
+			return fmt.Sprintf("ExpiringClientIDA: %s\nExpiringClientIDB: %s\n",
 				clientIDA, clientIDB)
 
 		default:

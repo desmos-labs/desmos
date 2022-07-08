@@ -126,10 +126,10 @@ message OracleParams {
 message AppLinksParams {
   option (gogoproto.goproto_getters) = false;
 
-  // ExpirationTime indicates the max amount of time before a link expires
-  google.protobuf.Duration expiration_time = 1 [
+  // Default validity duration before an application link expires
+  google.protobuf.Duration validity_duration = 1 [
     (gogoproto.nullable) = false,
     (gogoproto.stdduration) = true,
-    (gogoproto.moretags) = "yaml:\"expiration_time\""
+    (gogoproto.moretags) = "yaml:\"validity_duration\""
   ];
 }

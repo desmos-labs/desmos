@@ -170,6 +170,7 @@ func (suite *TestSuite) TestProfilesWasmQuerier_QueryCustom() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2020, 3, 1, 00, 00, 00, 000, time.UTC),
 					)),
 				)
 			},
@@ -191,6 +192,7 @@ func (suite *TestSuite) TestProfilesWasmQuerier_QueryCustom() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2020, 3, 1, 00, 00, 00, 000, time.UTC),
 					),
 				},
 				Pagination: &query.PageResponse{NextKey: nil, Total: 1}},
@@ -220,6 +222,7 @@ func (suite *TestSuite) TestProfilesWasmQuerier_QueryCustom() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2020, 3, 1, 00, 00, 00, 000, time.UTC),
 					)),
 				)
 			},
@@ -240,6 +243,7 @@ func (suite *TestSuite) TestProfilesWasmQuerier_QueryCustom() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2020, 3, 1, 00, 00, 00, 000, time.UTC),
 					)},
 			),
 		},
@@ -271,6 +275,7 @@ func (suite *TestSuite) TestProfilesWasmQuerier_QueryCustom() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2020, 3, 1, 00, 00, 00, 000, time.UTC),
 					)),
 				)
 			},

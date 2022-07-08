@@ -52,7 +52,7 @@ func ParamChanges(r *rand.Rand) []simtypes.ParamChange {
 		simulation.NewSimParamChange(types.ModuleName, string(types.AppLinksParamsKey),
 			func(r *rand.Rand) string {
 				params := RandomAppLinksParams(r)
-				return fmt.Sprintf(`{"expiration_time":"%d"}`, params.ExpirationTime)
+				return fmt.Sprintf(`{"validity_duration":"%d"}`, params.ValidityDuration)
 			},
 		),
 	}

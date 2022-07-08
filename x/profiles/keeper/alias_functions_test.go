@@ -3,7 +3,6 @@ package keeper_test
 import (
 	"time"
 
-	"github.com/desmos-labs/desmos/v4/testutil"
 	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
 
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
@@ -312,7 +311,7 @@ func (suite *KeeperTestSuite) TestKeeper_IterateExpiringApplicationLinks() {
 	ctx, _ := suite.ctx.CacheContext()
 
 	for _, link := range links {
-		suite.ak.SetAccount(ctx, testutil.ProfileFromAddr(link.User))
+		suite.ak.SetAccount(ctx, profilestesting.ProfileFromAddr(link.User))
 		err := suite.k.SaveApplicationLink(ctx, link)
 		suite.Require().NoError(err)
 	}
