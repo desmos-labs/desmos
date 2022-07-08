@@ -2796,11 +2796,11 @@ paths:
                   app_links:
                     type: object
                     properties:
-                      expiration_time:
+                      validity_duration:
                         type: string
                         title: >-
-                          ExpirationTime indicates the max amount of time before
-                          a link expires
+                          Default validity duration before an application link
+                          expires
                     title: >-
                       AppLinksParams define the parameters related to the app
                       links
@@ -11571,9 +11571,9 @@ definitions:
   desmos.profiles.v3.AppLinksParams:
     type: object
     properties:
-      expiration_time:
+      validity_duration:
         type: string
-        title: ExpirationTime indicates the max amount of time before a link expires
+        title: Default validity duration before an application link expires
     title: AppLinksParams define the parameters related to the app links
   desmos.profiles.v3.ApplicationLink:
     type: object
@@ -12512,11 +12512,9 @@ definitions:
       app_links:
         type: object
         properties:
-          expiration_time:
+          validity_duration:
             type: string
-            title: >-
-              ExpirationTime indicates the max amount of time before a link
-              expires
+            title: Default validity duration before an application link expires
         title: AppLinksParams define the parameters related to the app links
     title: Params contains the parameters for the profiles module
   desmos.profiles.v3.Proof:
@@ -14002,11 +14000,9 @@ definitions:
           app_links:
             type: object
             properties:
-              expiration_time:
+              validity_duration:
                 type: string
-                title: >-
-                  ExpirationTime indicates the max amount of time before a link
-                  expires
+                title: Default validity duration before an application link expires
             title: AppLinksParams define the parameters related to the app links
         title: Params contains the parameters for the profiles module
     description: QueryParamsResponse is the response type for the Query/Params RPC method.
