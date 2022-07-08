@@ -1,9 +1,9 @@
 syntax = "proto3";
-package desmos.profiles.v2;
+package desmos.profiles.v3;
 
 option go_package = "github.com/desmos-labs/desmos/v4/x/profiles/types";
 
-import "desmos/profiles/v2/models_app_links.proto";
+import "desmos/profiles/v3/models_app_links.proto";
 
 import "gogoproto/gogo.proto";
 import "ibc/core/client/v1/client.proto";

@@ -4,7 +4,7 @@ info:
   description: A REST interface for state queries
   version: 3.0.0
 paths:
-  /desmos/profiles/v2/app-links:
+  /desmos/profiles/v3/app-links:
     get:
       summary: >-
         ApplicationLinks queries the applications links associated to the given
@@ -125,12 +125,6 @@ paths:
                       title: >-
                         CreationTime represents the time in which the link was
                         created
-                    expiration_time:
-                      type: string
-                      format: date-time
-                      title: >-
-                        ExpirationTime represents the time in which the link
-                        will expire
                   title: >-
                     ApplicationLink contains the data of a link to a centralized
                     application
@@ -444,7 +438,7 @@ paths:
           format: boolean
       tags:
         - Query
-  '/desmos/profiles/v2/app-links/clients/{client_id}':
+  '/desmos/profiles/v3/app-links/clients/{client_id}':
     get:
       summary: |-
         ApplicationLinkByClientID queries a single application link for a given
@@ -561,12 +555,6 @@ paths:
                     title: >-
                       CreationTime represents the time in which the link was
                       created
-                  expiration_time:
-                    type: string
-                    format: date-time
-                    title: >-
-                      ExpirationTime represents the time in which the link will
-                      expire
                 title: >-
                   ApplicationLink contains the data of a link to a centralized
                   application
@@ -774,7 +762,7 @@ paths:
           type: string
       tags:
         - Query
-  /desmos/profiles/v2/app-links/owners:
+  /desmos/profiles/v3/app-links/owners:
     get:
       summary: |-
         ApplicationLinkOwners queries for the owners of applications links,
@@ -1102,7 +1090,7 @@ paths:
           format: boolean
       tags:
         - Query
-  /desmos/profiles/v2/chain-links:
+  /desmos/profiles/v3/chain-links:
     get:
       summary: |-
         ChainLinks queries the chain links associated to the given user, if
@@ -2011,7 +1999,7 @@ paths:
           format: boolean
       tags:
         - Query
-  /desmos/profiles/v2/chain-links/owners:
+  /desmos/profiles/v3/chain-links/owners:
     get:
       summary: >-
         ChainLinkOwners queries for the owners of chain links, optionally
@@ -2341,7 +2329,7 @@ paths:
           format: boolean
       tags:
         - Query
-  /desmos/profiles/v2/dtag-transfer-requests:
+  /desmos/profiles/v3/dtag-transfer-requests:
     get:
       summary: >-
         IncomingDTagTransferRequests queries all the DTag transfers requests
@@ -2679,7 +2667,7 @@ paths:
           format: boolean
       tags:
         - Query
-  /desmos/profiles/v2/params:
+  /desmos/profiles/v3/params:
     get:
       summary: Params queries the profiles module params
       operationId: ProfilesParams
@@ -2999,7 +2987,7 @@ paths:
                         }
       tags:
         - Query
-  '/desmos/profiles/v2/profiles/{user}':
+  '/desmos/profiles/v3/profiles/{user}':
     get:
       summary: >-
         Profile queries the profile of a specific user given their DTag or
@@ -11568,14 +11556,14 @@ definitions:
 
       NOTE: The amount field is an Int which implements the custom method
       signatures required by gogoproto.
-  desmos.profiles.v2.AppLinksParams:
+  desmos.profiles.v3.AppLinksParams:
     type: object
     properties:
       expiration_time:
         type: string
         title: ExpirationTime indicates the max amount of time before a link expires
     title: AppLinksParams define the parameters related to the app links
-  desmos.profiles.v2.ApplicationLink:
+  desmos.profiles.v3.ApplicationLink:
     type: object
     properties:
       user:
@@ -11668,12 +11656,8 @@ definitions:
         type: string
         format: date-time
         title: CreationTime represents the time in which the link was created
-      expiration_time:
-        type: string
-        format: date-time
-        title: ExpirationTime represents the time in which the link will expire
     title: ApplicationLink contains the data of a link to a centralized application
-  desmos.profiles.v2.ApplicationLinkState:
+  desmos.profiles.v3.ApplicationLinkState:
     type: string
     enum:
       - APPLICATION_LINK_STATE_INITIALIZED_UNSPECIFIED
@@ -11692,20 +11676,20 @@ definitions:
     title: |-
       ApplicationLinkState defines if an application link is in the following
       states: STARTED, ERRORED, SUCCESSFUL, TIMED_OUT
-  desmos.profiles.v2.BioParams:
+  desmos.profiles.v3.BioParams:
     type: object
     properties:
       max_length:
         type: string
         format: byte
     title: BioParams defines the parameters related to profile biography
-  desmos.profiles.v2.ChainConfig:
+  desmos.profiles.v3.ChainConfig:
     type: object
     properties:
       name:
         type: string
     description: ChainConfig contains the data of the chain with which the link is made.
-  desmos.profiles.v2.ChainLink:
+  desmos.profiles.v3.ChainLink:
     type: object
     properties:
       user:
@@ -12240,7 +12224,7 @@ definitions:
     title: |-
       ChainLink contains the data representing either an inter- or cross- chain
       link
-  desmos.profiles.v2.DTagParams:
+  desmos.profiles.v3.DTagParams:
     type: object
     properties:
       reg_ex:
@@ -12252,7 +12236,7 @@ definitions:
         type: string
         format: byte
     title: DTagParams defines the parameters related to profile DTags
-  desmos.profiles.v2.DTagTransferRequest:
+  desmos.profiles.v3.DTagTransferRequest:
     type: object
     properties:
       dtag_to_trade:
@@ -12273,7 +12257,7 @@ definitions:
 
           give to the sender their DTag
     title: DTagTransferRequest represent a DTag transfer request between two users
-  desmos.profiles.v2.Data:
+  desmos.profiles.v3.Data:
     type: object
     properties:
       application:
@@ -12285,7 +12269,7 @@ definitions:
     title: |-
       Data contains the data associated to a specific user of a
       generic centralized application
-  desmos.profiles.v2.NicknameParams:
+  desmos.profiles.v3.NicknameParams:
     type: object
     properties:
       min_length:
@@ -12295,7 +12279,7 @@ definitions:
         type: string
         format: byte
     title: NicknameParams defines the parameters related to the profiles nicknames
-  desmos.profiles.v2.OracleParams:
+  desmos.profiles.v3.OracleParams:
     type: object
     properties:
       script_id:
@@ -12359,7 +12343,7 @@ definitions:
       OracleParams defines the parameters related to the oracle
       that will be used to verify the ownership of a centralized
       application account by a Desmos profile
-  desmos.profiles.v2.OracleRequest:
+  desmos.profiles.v3.OracleRequest:
     type: object
     properties:
       id:
@@ -12392,7 +12376,7 @@ definitions:
     title: |-
       OracleRequest represents a generic oracle request used to
       verify the ownership of a centralized application account
-  desmos.profiles.v2.OracleRequest.CallData:
+  desmos.profiles.v3.OracleRequest.CallData:
     type: object
     properties:
       application:
@@ -12408,7 +12392,7 @@ definitions:
     title: |-
       CallData contains the data sent to a single oracle request in order to
       verify the ownership of a centralized application by a Desmos profile
-  desmos.profiles.v2.Params:
+  desmos.profiles.v3.Params:
     type: object
     properties:
       nickname:
@@ -12519,7 +12503,7 @@ definitions:
               expires
         title: AppLinksParams define the parameters related to the app links
     title: Params contains the parameters for the profiles module
-  desmos.profiles.v2.Proof:
+  desmos.profiles.v3.Proof:
     type: object
     properties:
       pub_key:
@@ -12856,7 +12840,7 @@ definitions:
     title: |-
       Proof contains all the data used to verify a signature when linking an
       account to a profile
-  desmos.profiles.v2.QueryApplicationLinkByClientIDResponse:
+  desmos.profiles.v3.QueryApplicationLinkByClientIDResponse:
     type: object
     properties:
       link:
@@ -12956,17 +12940,13 @@ definitions:
             type: string
             format: date-time
             title: CreationTime represents the time in which the link was created
-          expiration_time:
-            type: string
-            format: date-time
-            title: ExpirationTime represents the time in which the link will expire
         title: >-
           ApplicationLink contains the data of a link to a centralized
           application
     title: |-
       QueryApplicationLinkByClientIDResponse contains the data returned by the
       request allowing to get an application link using a client id
-  desmos.profiles.v2.QueryApplicationLinkOwnersResponse:
+  desmos.profiles.v3.QueryApplicationLinkOwnersResponse:
     type: object
     properties:
       owners:
@@ -13017,7 +12997,7 @@ definitions:
       request
 
       allowing to get application link owners.
-  desmos.profiles.v2.QueryApplicationLinkOwnersResponse.ApplicationLinkOwnerDetails:
+  desmos.profiles.v3.QueryApplicationLinkOwnersResponse.ApplicationLinkOwnerDetails:
     type: object
     properties:
       user:
@@ -13029,7 +13009,7 @@ definitions:
     title: |-
       ApplicationLinkOwnerDetails contains the details of a single application
       link owner
-  desmos.profiles.v2.QueryApplicationLinksResponse:
+  desmos.profiles.v3.QueryApplicationLinksResponse:
     type: object
     properties:
       links:
@@ -13135,10 +13115,6 @@ definitions:
               type: string
               format: date-time
               title: CreationTime represents the time in which the link was created
-            expiration_time:
-              type: string
-              format: date-time
-              title: ExpirationTime represents the time in which the link will expire
           title: >-
             ApplicationLink contains the data of a link to a centralized
             application
@@ -13171,7 +13147,7 @@ definitions:
     title: |-
       QueryApplicationLinksResponse represents the response to the query used
       to get the application links for a specific user
-  desmos.profiles.v2.QueryChainLinkOwnersResponse:
+  desmos.profiles.v3.QueryChainLinkOwnersResponse:
     type: object
     properties:
       owners:
@@ -13218,7 +13194,7 @@ definitions:
     description: |-
       QueryChainLinkOwnersResponse contains the data returned by the request
       allowing to get chain link owners.
-  desmos.profiles.v2.QueryChainLinkOwnersResponse.ChainLinkOwnerDetails:
+  desmos.profiles.v3.QueryChainLinkOwnersResponse.ChainLinkOwnerDetails:
     type: object
     properties:
       user:
@@ -13228,7 +13204,7 @@ definitions:
       target:
         type: string
     title: ChainLinkOwnerDetails contains the details of a single chain link owner
-  desmos.profiles.v2.QueryChainLinksResponse:
+  desmos.profiles.v3.QueryChainLinksResponse:
     type: object
     properties:
       links:
@@ -13831,7 +13807,7 @@ definitions:
     description: |-
       QueryChainLinksResponse is the response type for the
       Query/ChainLinks RPC method.
-  desmos.profiles.v2.QueryIncomingDTagTransferRequestsResponse:
+  desmos.profiles.v3.QueryIncomingDTagTransferRequestsResponse:
     type: object
     properties:
       requests:
@@ -13895,7 +13871,7 @@ definitions:
     description: |-
       QueryIncomingDTagTransferRequestsResponse is the response type for the
       Query/IncomingDTagTransferRequests RPC method.
-  desmos.profiles.v2.QueryParamsResponse:
+  desmos.profiles.v3.QueryParamsResponse:
     type: object
     properties:
       params:
@@ -14010,7 +13986,7 @@ definitions:
             title: AppLinksParams define the parameters related to the app links
         title: Params contains the parameters for the profiles module
     description: QueryParamsResponse is the response type for the Query/Params RPC method.
-  desmos.profiles.v2.QueryProfileResponse:
+  desmos.profiles.v3.QueryProfileResponse:
     type: object
     properties:
       profile:
@@ -14175,7 +14151,7 @@ definitions:
     description: >-
       QueryProfileResponse is the response type for the Query/Profile RPC
       method.
-  desmos.profiles.v2.Result:
+  desmos.profiles.v3.Result:
     type: object
     properties:
       success:
@@ -14196,7 +14172,7 @@ definitions:
             type: string
             title: Error that is associated with the failure
     title: Result represents a verification result
-  desmos.profiles.v2.Result.Failed:
+  desmos.profiles.v3.Result.Failed:
     type: object
     properties:
       error:
@@ -14205,7 +14181,7 @@ definitions:
     title: |-
       Failed is the result of an application link that has not been verified
       successfully
-  desmos.profiles.v2.Result.Success:
+  desmos.profiles.v3.Result.Success:
     type: object
     properties:
       value:

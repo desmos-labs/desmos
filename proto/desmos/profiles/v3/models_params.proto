@@ -1,10 +1,11 @@
 syntax = "proto3";
-package desmos.profiles.legacy.v200;
+package desmos.profiles.v3;
 
 import "gogoproto/gogo.proto";
 import "cosmos/base/v1beta1/coin.proto";
+import "google/protobuf/duration.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v200";
+option go_package = "github.com/desmos-labs/desmos/v4/x/profiles/types";
 
 // Params contains the parameters for the profiles module
 message Params {
@@ -27,6 +28,11 @@ message Params {
   OracleParams oracle = 4 [
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"oracle\""
+  ];
+
+  AppLinksParams app_links = 5 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"app_links\""
   ];
 }
 
@@ -113,5 +119,17 @@ message OracleParams {
     (gogoproto.nullable) = false,
     (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
     (gogoproto.moretags) = "yaml:\"fee_amount\""
+  ];
+}
+
+// AppLinksParams define the parameters related to the app links
+message AppLinksParams {
+  option (gogoproto.goproto_getters) = false;
+
+  // ExpirationTime indicates the max amount of time before a link expires
+  google.protobuf.Duration expiration_time = 1 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdduration) = true,
+    (gogoproto.moretags) = "yaml:\"expiration_time\""
   ];
 }
