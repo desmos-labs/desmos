@@ -5,6 +5,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
+	v5types "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v5/types"
+
 	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
@@ -14,7 +16,6 @@ import (
 // - add missing application links owner keys to allow reverse searches
 // - add missing chain links owner keys to allow reverse searches
 // - remove all chain links that are not valid anymore due to the new validation rules
-//
 func MigrateStore(ctx sdk.Context, storeKey sdk.StoreKey, cdc codec.BinaryCodec, legacyAmino *codec.LegacyAmino) error {
 	store := ctx.KVStore(storeKey)
 
@@ -38,9 +39,9 @@ func fixApplicationLinks(store sdk.KVStore, cdc codec.BinaryCodec) error {
 	applicationLinksStore := prefix.NewStore(store, types.ApplicationLinkPrefix)
 	applicationLinksIterator := applicationLinksStore.Iterator(nil, nil)
 
-	var applicationLinks []types.ApplicationLink
+	var applicationLinks []v5types.ApplicationLink
 	for ; applicationLinksIterator.Valid(); applicationLinksIterator.Next() {
-		var applicationLink types.ApplicationLink
+		var applicationLink v5types.ApplicationLink
 		err := cdc.Unmarshal(applicationLinksIterator.Value(), &applicationLink)
 		if err != nil {
 			return err
@@ -63,10 +64,10 @@ func fixChainLinks(store sdk.KVStore, cdc codec.BinaryCodec, legacyAmino *codec.
 	chainLinkStore := prefix.NewStore(store, types.ChainLinksPrefix)
 	chainLinksIterator := chainLinkStore.Iterator(nil, nil)
 
-	var validChainLinks []types.ChainLink
-	var invalidChainLinks []types.ChainLink
+	var validChainLinks []v5types.ChainLink
+	var invalidChainLinks []v5types.ChainLink
 	for ; chainLinksIterator.Valid(); chainLinksIterator.Next() {
-		var chainLink types.ChainLink
+		var chainLink v5types.ChainLink
 		err := cdc.Unmarshal(chainLinksIterator.Value(), &chainLink)
 		if err != nil {
 			return err

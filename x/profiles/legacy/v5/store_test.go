@@ -5,6 +5,8 @@ import (
 	"testing"
 	"time"
 
+	v5types "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v5/types"
+
 	v5 "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v5"
 
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
@@ -12,7 +14,7 @@ import (
 	"github.com/desmos-labs/desmos/v4/testutil/storetesting"
 
 	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
-	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -21,7 +23,6 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/desmos-labs/desmos/v4/app"
-	"github.com/desmos-labs/desmos/v4/x/relationships/types"
 )
 
 func TestMigrateStore(t *testing.T) {
@@ -45,17 +46,17 @@ func TestMigrateStore(t *testing.T) {
 				kvStore := ctx.KVStore(keys[types.StoreKey])
 
 				// Store an application link
-				linkKey := profilestypes.UserApplicationLinkKey("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773", "twitter", "twitteruser")
+				linkKey := types.UserApplicationLinkKey("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773", "twitter", "twitteruser")
 				kvStore.Set(
 					linkKey,
-					cdc.MustMarshal(&profilestypes.ApplicationLink{
+					cdc.MustMarshal(&v5types.ApplicationLink{
 						User:  "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
-						Data:  profilestypes.NewData("twitter", "twitteruser"),
-						State: profilestypes.ApplicationLinkStateInitialized,
-						OracleRequest: profilestypes.NewOracleRequest(
+						Data:  v5types.NewData("twitter", "twitteruser"),
+						State: v5types.ApplicationLinkStateInitialized,
+						OracleRequest: v5types.NewOracleRequest(
 							0,
 							1,
-							profilestypes.NewOracleRequestCallData("twitter", "calldata"),
+							v5types.NewOracleRequestCallData("twitter", "calldata"),
 							"client_id",
 						),
 						Result:       nil,
@@ -64,13 +65,13 @@ func TestMigrateStore(t *testing.T) {
 				)
 
 				// Store an application link client id
-				kvStore.Set(profilestypes.ApplicationLinkClientIDKey("client_id"), linkKey)
+				kvStore.Set(types.ApplicationLinkClientIDKey("client_id"), linkKey)
 			},
 			check: func(ctx sdk.Context) {
 				kvStore := ctx.KVStore(keys[types.StoreKey])
 
 				// Check the application link owner
-				key := profilestypes.ApplicationLinkOwnerKey(
+				key := types.ApplicationLinkOwnerKey(
 					"twitter",
 					"twitteruser",
 					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
@@ -85,26 +86,26 @@ func TestMigrateStore(t *testing.T) {
 
 				// Store the chain link
 				signatureValue := []byte("custom value")
-				signature := profilestypes.SingleSignatureData{
+				signature := v5types.SingleSignatureData{
 					Mode:      signing.SignMode_SIGN_MODE_TEXTUAL,
 					Signature: signatureValue,
 				}
 				signatureAny := profilestesting.NewAny(&signature)
 
-				chainLink := profilestypes.NewChainLink(
+				chainLink := v5types.NewChainLink(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					profilestypes.NewBech32Address(account.Bech32Address().GetValue(), "cosmos"),
-					profilestypes.Proof{
+					v5types.NewBech32Address("cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f", "cosmos"),
+					v5types.Proof{
 						PubKey:    account.PubKeyAny(),
 						Signature: signatureAny,
 						PlainText: hex.EncodeToString(signatureValue),
 					},
-					profilestypes.ChainConfig{Name: "cosmos"},
+					v5types.ChainConfig{Name: "cosmos"},
 					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 				)
 
 				kvStore.Set(
-					profilestypes.ChainLinksStoreKey(
+					types.ChainLinksStoreKey(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						"cosmos",
 						"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
@@ -116,15 +117,15 @@ func TestMigrateStore(t *testing.T) {
 				kvStore := ctx.KVStore(keys[types.StoreKey])
 
 				// Make sure the chain link is deleted and the owner key is not added
-				require.False(t, kvStore.Has(profilestypes.ChainLinkOwnerKey(
+				require.False(t, kvStore.Has(types.ChainLinkOwnerKey(
 					"cosmos",
-					account.Bech32Address().GetValue(),
+					"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				)))
-				require.False(t, kvStore.Has(profilestypes.ChainLinksStoreKey(
+				require.False(t, kvStore.Has(types.ChainLinksStoreKey(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos",
-					account.Bech32Address().GetValue(),
+					"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
 				)))
 			},
 		},
@@ -140,7 +141,7 @@ func TestMigrateStore(t *testing.T) {
 				)
 
 				kvStore.Set(
-					profilestypes.ChainLinksStoreKey(
+					types.ChainLinksStoreKey(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						"cosmos",
 						"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
@@ -151,9 +152,9 @@ func TestMigrateStore(t *testing.T) {
 			check: func(ctx sdk.Context) {
 				kvStore := ctx.KVStore(keys[types.StoreKey])
 
-				key := profilestypes.ChainLinkOwnerKey(
+				key := types.ChainLinkOwnerKey(
 					"cosmos",
-					account.Bech32Address().GetValue(),
+					"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				)
 				require.Equal(t, []byte{0x01}, kvStore.Get(key))

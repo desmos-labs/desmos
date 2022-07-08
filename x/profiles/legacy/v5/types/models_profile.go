@@ -1,4 +1,4 @@
-package v4
+package types
 
 // DONTCOVER
 
@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"time"
+
+	"github.com/desmos-labs/desmos/v4/x/commons"
 
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting/exported"
 
@@ -23,10 +25,7 @@ var (
 )
 
 // NewProfile builds a new profile having the given DTag, creator and creation date
-func NewProfile(
-	dTag string, nickname, bio string, pictures Pictures, creationDate time.Time,
-	account authtypes.AccountI,
-) (*Profile, error) {
+func NewProfile(dTag string, nickname, bio string, pictures Pictures, creationDate time.Time, account authtypes.AccountI) (*Profile, error) {
 	// Make sure myAccount is a proto.Message, e.g. a BaseAccount etc.
 	protoAccount, ok := account.(proto.Message)
 	if !ok {
@@ -46,6 +45,18 @@ func NewProfile(
 		CreationDate: creationDate,
 		Account:      myAccountAny,
 	}, nil
+}
+
+// NewProfileFromAccount allows to build a new Profile instance from a provided DTag, and account and a creation time
+func NewProfileFromAccount(dTag string, account authtypes.AccountI, creationTime time.Time) (*Profile, error) {
+	return NewProfile(
+		dTag,
+		"",
+		"",
+		NewPictures("", ""),
+		creationTime,
+		account,
+	)
 }
 
 // GetAccount returns the underlying account as an authtypes.AccountI instance
@@ -310,4 +321,33 @@ func (p *Profile) MarshalJSON() ([]byte, error) {
 		Pictures:      p.Pictures,
 		CreationDate:  p.CreationDate,
 	})
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+// NewPictures is a constructor function for Pictures
+func NewPictures(profile, cover string) Pictures {
+	return Pictures{
+		Profile: profile,
+		Cover:   cover,
+	}
+}
+
+// Validate check the validity of the Pictures
+func (pic Pictures) Validate() error {
+	if pic.Profile != "" {
+		valid := commons.IsURIValid(pic.Profile)
+		if !valid {
+			return fmt.Errorf("invalid profile picture uri provided")
+		}
+	}
+
+	if pic.Cover != "" {
+		valid := commons.IsURIValid(pic.Cover)
+		if !valid {
+			return fmt.Errorf("invalid profile cover uri provided")
+		}
+	}
+
+	return nil
 }

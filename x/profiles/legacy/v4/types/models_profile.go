@@ -1,9 +1,10 @@
-package v5
+package types
 
 // DONTCOVER
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting/exported"
@@ -13,12 +14,39 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/ghodss/yaml"
+	"github.com/gogo/protobuf/proto"
 )
 
 var (
 	_ authtypes.AccountI      = (*Profile)(nil)
 	_ exported.VestingAccount = (*Profile)(nil)
 )
+
+// NewProfile builds a new profile having the given DTag, creator and creation date
+func NewProfile(
+	dTag string, nickname, bio string, pictures Pictures, creationDate time.Time,
+	account authtypes.AccountI,
+) (*Profile, error) {
+	// Make sure myAccount is a proto.Message, e.g. a BaseAccount etc.
+	protoAccount, ok := account.(proto.Message)
+	if !ok {
+		return nil, fmt.Errorf("the given account cannot be serialized using Protobuf")
+	}
+
+	myAccountAny, err := codectypes.NewAnyWithValue(protoAccount)
+	if err != nil {
+		return nil, err
+	}
+
+	return &Profile{
+		DTag:         dTag,
+		Nickname:     nickname,
+		Bio:          bio,
+		Pictures:     pictures,
+		CreationDate: creationDate,
+		Account:      myAccountAny,
+	}, nil
+}
 
 // GetAccount returns the underlying account as an authtypes.AccountI instance
 func (p *Profile) GetAccount() authtypes.AccountI {

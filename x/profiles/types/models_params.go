@@ -24,7 +24,7 @@ var (
 	DefaultMinDTagLength            = sdk.NewInt(3)
 	DefaultMaxDTagLength            = sdk.NewInt(30)
 	DefaultMaxBioLength             = sdk.NewInt(1000)
-	DefaultAppLinksValidityDuration = time.Hour*24*7*4*6 + FourteenDaysCorrectionFactor // This duration is equal to 5.9835 months time. Equivalent to 262080 minutes
+	DefaultAppLinksValidityDuration = time.Hour * 24 * 365 // 1 year
 )
 
 // Parameters store keys
