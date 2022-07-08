@@ -6,18 +6,24 @@ import (
 	"math/rand"
 	"time"
 
+	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
+
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
-	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
-// RandomGenesisSubspace picks a random genesis subspace from the given slice
-func RandomGenesisSubspace(r *rand.Rand, subspaces []types.GenesisSubspace) types.GenesisSubspace {
-	return subspaces[r.Intn(len(subspaces))]
-}
+var (
+	validPermissions = []types.Permissions{
+		types.CombinePermissions(poststypes.PermissionWrite, poststypes.PermissionEditOwnContent, poststypes.PermissionInteractWithContent),
+		types.CombinePermissions(poststypes.PermissionWrite, poststypes.PermissionInteractWithContent),
+		types.CombinePermissions(poststypes.PermissionWrite, poststypes.PermissionEditOwnContent),
+		types.CombinePermissions(poststypes.PermissionWrite, poststypes.PermissionEditOwnContent, poststypes.PermissionInteractWithContent, types.PermissionDeleteSubspace),
+		types.CombinePermissions(types.PermissionEverything),
+	}
+)
 
 // RandomSubspace picks a random subspace from an array and returns its position as well as value.
 func RandomSubspace(r *rand.Rand, subspaces []types.Subspace) types.Subspace {
@@ -65,9 +71,19 @@ func RandomDate(r *rand.Rand) time.Time {
 	return time.Unix(sec, 0).Truncate(time.Millisecond)
 }
 
-// RandomString returns a random string from the given slice
-func RandomString(r *rand.Rand, strings []string) string {
-	return strings[r.Intn(len(strings))]
+// RandomSection returns a randomly selected section from the slice given
+func RandomSection(r *rand.Rand, sections []types.Section) types.Section {
+	return sections[r.Intn(len(sections))]
+}
+
+// RandomSectionName returns a random section name
+func RandomSectionName(r *rand.Rand) string {
+	return simtypes.RandStringOfLength(r, 10)
+}
+
+// RandomSectionDescription returns a random section description
+func RandomSectionDescription(r *rand.Rand) string {
+	return simtypes.RandStringOfLength(r, 20)
 }
 
 // RandomGroup returns a random group selecting it from the list of groups given
@@ -76,12 +92,12 @@ func RandomGroup(r *rand.Rand, groups []types.UserGroup) types.UserGroup {
 }
 
 // RandomPermission returns a random permission from the given slice
-func RandomPermission(r *rand.Rand, permissions []types.Permission) types.Permission {
+func RandomPermission(r *rand.Rand, permissions []types.Permissions) types.Permissions {
 	return permissions[r.Intn(len(permissions))]
 }
 
 // RandomAddress returns a random address from the slice given
-func RandomAddress(r *rand.Rand, addresses []sdk.AccAddress) sdk.AccAddress {
+func RandomAddress(r *rand.Rand, addresses []string) string {
 	return addresses[r.Intn(len(addresses))]
 }
 
@@ -91,9 +107,9 @@ func RandomAuthAccount(r *rand.Rand, accounts []authtypes.AccountI) authtypes.Ac
 }
 
 // GetAccount gets the account having the given address from the accs list
-func GetAccount(address sdk.Address, accs []simtypes.Account) *simtypes.Account {
+func GetAccount(address string, accs []simtypes.Account) *simtypes.Account {
 	for _, acc := range accs {
-		if acc.Address.Equals(address) {
+		if acc.Address.String() == address {
 			return &acc
 		}
 	}

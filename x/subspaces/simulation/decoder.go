@@ -7,7 +7,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types/kv"
 
-	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
 // NewDecodeStore returns a new decoder that unmarshals the KVPair's Value
@@ -25,7 +25,7 @@ func NewDecodeStore(cdc codec.Codec) func(kvA, kvB kv.Pair) string {
 			var subspaceA, subspaceB types.Subspace
 			cdc.MustUnmarshal(kvA.Value, &subspaceA)
 			cdc.MustUnmarshal(kvB.Value, &subspaceB)
-			return fmt.Sprintf("SubspaceA: %s\nSubspaceB: %s\n", subspaceA.String(), subspaceB.String())
+			return fmt.Sprintf("SubspaceA: %s\nSubspaceB: %s\n", &subspaceA, &subspaceB)
 
 		case bytes.HasPrefix(kvA.Key, types.GroupIDPrefix):
 			var groupIDA, groupIDB uint32
@@ -39,14 +39,26 @@ func NewDecodeStore(cdc codec.Codec) func(kvA, kvB kv.Pair) string {
 			cdc.MustUnmarshal(kvB.Value, &groupB)
 			return fmt.Sprintf("GroupA: %s\nGroupB: %s\n", &groupA, &groupB)
 
-		case bytes.HasPrefix(kvA.Key, types.GroupMembersStorePrefix):
+		case bytes.HasPrefix(kvA.Key, types.GroupsMembersPrefix):
 			return fmt.Sprintf("GroupMemberKeyA: %s\nGroupMemberKeyB: %s\n", kvA.Key, kvB.Key)
 
 		case bytes.HasPrefix(kvA.Key, types.UserPermissionsStorePrefix):
-			var permissionA, permissionB uint32
-			permissionA = types.UnmarshalPermission(kvA.Value)
-			permissionB = types.UnmarshalPermission(kvB.Value)
-			return fmt.Sprintf("PermissionKeyA: %d\nPermissionKeyB: %d\n", permissionA, permissionB)
+			var permissionA, permissionB types.UserPermission
+			cdc.MustUnmarshal(kvA.Value, &permissionA)
+			cdc.MustUnmarshal(kvB.Value, &permissionB)
+			return fmt.Sprintf("PermissionA: %s\nPermissionB: %s\n", &permissionA, &permissionB)
+
+		case bytes.HasPrefix(kvA.Key, types.SectionIDPrefix):
+			var sectionIDA, sectionIDB uint32
+			sectionIDA = types.GetSectionIDFromBytes(kvA.Value)
+			sectionIDB = types.GetSectionIDFromBytes(kvB.Value)
+			return fmt.Sprintf("SectionIDA: %d\nSectionIDB: %d\n", sectionIDA, sectionIDB)
+
+		case bytes.HasPrefix(kvA.Key, types.SectionsPrefix):
+			var sectionA, sectionB types.Section
+			cdc.MustUnmarshal(kvA.Value, &sectionA)
+			cdc.MustUnmarshal(kvB.Value, &sectionB)
+			return fmt.Sprintf("SectionA: %s\nSectionB: %s\n", &sectionA, &sectionB)
 
 		default:
 			panic(fmt.Sprintf("unexpected %s key %X (%s)", types.ModuleName, kvA.Key, kvA.Key))

@@ -1,3 +1,6 @@
+//go:build norace
+// +build norace
+
 package cli_test
 
 import (
@@ -12,8 +15,8 @@ import (
 	"github.com/golang/protobuf/proto"
 	tmcli "github.com/tendermint/tendermint/libs/cli"
 
-	"github.com/desmos-labs/desmos/v3/x/profiles/client/cli"
-	"github.com/desmos-labs/desmos/v3/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/client/cli"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 func (s *IntegrationTestSuite) TestCmdQueryChainLinks() {
@@ -99,6 +102,99 @@ func (s *IntegrationTestSuite) TestCmdQueryChainLinks() {
 				for i := range uc.expectedOutput.Links {
 					s.Require().True(uc.expectedOutput.Links[i].Equal(response.Links[i]))
 				}
+			}
+		})
+	}
+}
+
+func (s *IntegrationTestSuite) TestCmdQueryChainLinkOwners() {
+	val := s.network.Validators[0]
+	target := s.testChainLinkAccount.GetBech32ChainLink(
+		"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
+		time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
+	).GetAddressData().GetValue()
+
+	useCases := []struct {
+		name           string
+		args           []string
+		shouldErr      bool
+		expectedOutput types.QueryChainLinkOwnersResponse
+	}{
+		{
+			name: "existing chain link owners are returned properly",
+			args: []string{
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			shouldErr: false,
+			expectedOutput: types.QueryChainLinkOwnersResponse{
+				Owners: []types.QueryChainLinkOwnersResponse_ChainLinkOwnerDetails{
+					{
+						User:      "cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
+						ChainName: "cosmos",
+						Target:    target,
+					},
+				},
+				Pagination: &query.PageResponse{
+					NextKey: nil,
+					Total:   0,
+				},
+			},
+		},
+		{
+			name: "empty array is returned properly",
+			args: []string{
+				"desmos",
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			shouldErr: false,
+			expectedOutput: types.QueryChainLinkOwnersResponse{
+				Owners: []types.QueryChainLinkOwnersResponse_ChainLinkOwnerDetails{},
+				Pagination: &query.PageResponse{
+					NextKey: nil,
+					Total:   0,
+				},
+			},
+		},
+		{
+			name: "existing chain link owners of the given chain name are returned properly",
+			args: []string{
+				"cosmos",
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			shouldErr: false,
+			expectedOutput: types.QueryChainLinkOwnersResponse{
+				Owners: []types.QueryChainLinkOwnersResponse_ChainLinkOwnerDetails{
+					{
+						User:      "cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
+						ChainName: "cosmos",
+						Target:    target,
+					},
+				},
+				Pagination: &query.PageResponse{
+					NextKey: nil,
+					Total:   0,
+				},
+			},
+		},
+	}
+
+	for _, uc := range useCases {
+		uc := uc
+
+		s.Run(uc.name, func() {
+			cmd := cli.GetCmdQueryChainLinkOwners()
+			clientCtx := val.ClientCtx
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, uc.args)
+
+			if uc.shouldErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+
+				var response types.QueryChainLinkOwnersResponse
+				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().Equal(uc.expectedOutput.Pagination, response.Pagination)
+				s.Require().Equal(uc.expectedOutput.Owners, response.Owners)
 			}
 		})
 	}

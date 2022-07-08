@@ -3,14 +3,14 @@ package keeper_test
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v3/x/supply/types"
+	"github.com/desmos-labs/desmos/v4/x/supply/types"
 )
 
-func (suite *KeeperTestSuite) TestQueryServer_TotalSupply() {
+func (suite *KeeperTestSuite) TestQueryServer_Total() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
-		req       *types.QueryTotalSupplyRequest
+		req       *types.QueryTotalRequest
 		expSupply sdk.Int
 	}{
 		{
@@ -22,7 +22,7 @@ func (suite *KeeperTestSuite) TestQueryServer_TotalSupply() {
 					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(300_000))),
 				)
 			},
-			req:       types.NewQueryTotalSupplyRequest(sdk.DefaultBondDenom, 6),
+			req:       types.NewQueryTotalRequest(sdk.DefaultBondDenom, 6),
 			expSupply: sdk.NewInt(1_000_000),
 		},
 		{
@@ -34,7 +34,7 @@ func (suite *KeeperTestSuite) TestQueryServer_TotalSupply() {
 					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(300_000))),
 				)
 			},
-			req:       types.NewQueryTotalSupplyRequest(sdk.DefaultBondDenom, 0),
+			req:       types.NewQueryTotalRequest(sdk.DefaultBondDenom, 0),
 			expSupply: sdk.NewInt(1_000_000_000_000),
 		},
 	}
@@ -47,18 +47,18 @@ func (suite *KeeperTestSuite) TestQueryServer_TotalSupply() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.TotalSupply(sdk.WrapSDKContext(ctx), tc.req)
+			res, err := suite.k.Total(sdk.WrapSDKContext(ctx), tc.req)
 			suite.Require().NoError(err)
 			suite.Require().Equal(tc.expSupply, res.TotalSupply)
 		})
 	}
 }
 
-func (suite *KeeperTestSuite) TestQueryServer_CirculatingSupply() {
+func (suite *KeeperTestSuite) TestQueryServer_Circulating() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
-		req       *types.QueryCirculatingSupplyRequest
+		req       *types.QueryCirculatingRequest
 		expSupply sdk.Int
 	}{
 		{
@@ -70,7 +70,7 @@ func (suite *KeeperTestSuite) TestQueryServer_CirculatingSupply() {
 					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(300_000))),
 				)
 			},
-			req:       types.NewQueryCirculatingSupplyRequest(sdk.DefaultBondDenom, 3),
+			req:       types.NewQueryCirculatingRequest(sdk.DefaultBondDenom, 3),
 			expSupply: sdk.NewInt(500),
 		},
 		{
@@ -82,7 +82,7 @@ func (suite *KeeperTestSuite) TestQueryServer_CirculatingSupply() {
 					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(300_000))),
 				)
 			},
-			req:       types.NewQueryCirculatingSupplyRequest(sdk.DefaultBondDenom, 0),
+			req:       types.NewQueryCirculatingRequest(sdk.DefaultBondDenom, 0),
 			expSupply: sdk.NewInt(500_000),
 		},
 	}
@@ -95,7 +95,7 @@ func (suite *KeeperTestSuite) TestQueryServer_CirculatingSupply() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.CirculatingSupply(sdk.WrapSDKContext(ctx), tc.req)
+			res, err := suite.k.Circulating(sdk.WrapSDKContext(ctx), tc.req)
 			suite.Require().NoError(err)
 			suite.Require().Equal(tc.expSupply, res.CirculatingSupply)
 		})

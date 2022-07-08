@@ -1,0 +1,125 @@
+syntax = "proto3";
+package desmos.reports.v1;
+
+import "gogoproto/gogo.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+import "cosmos_proto/cosmos.proto";
+
+option go_package = "github.com/desmos-labs/desmos/v4/x/reports/types";
+
+// Report contains the data of a generic report
+message Report {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  // Id of the subspace for which the report has been created
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+
+  // Id of the report
+  uint64 id = 2
+      [ (gogoproto.customname) = "ID", (gogoproto.moretags) = "yaml:\"id\"" ];
+
+  // Id of the reason this report has been created for
+  repeated uint32 reasons_ids = 3 [
+    (gogoproto.customname) = "ReasonsIDs",
+    (gogoproto.moretags) = "yaml:\"reasons_ids\""
+  ];
+
+  // (optional) Message attached to this report
+  string message = 4 [ (gogoproto.moretags) = "yaml:\"message\"" ];
+
+  // Address of the reporter
+  string reporter = 5 [ (gogoproto.moretags) = "yaml:\"reporter\"" ];
+
+  // Target of the report
+  google.protobuf.Any target = 6 [
+    (gogoproto.moretags) = "yaml:\"target\"",
+    (cosmos_proto.accepts_interface) = "ReportTarget"
+  ];
+
+  // Time in which the report was created
+  google.protobuf.Timestamp creation_date = 7 [
+    (gogoproto.stdtime) = true,
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"creation_date\""
+  ];
+}
+
+// UserTarget contains the data of a report about a user
+message UserTarget {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+  option (cosmos_proto.implements_interface) = "ReportTarget";
+
+  // Address of the reported user
+  string user = 1 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+}
+
+// PostTarget contains the data of a report about a post
+message PostTarget {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+  option (cosmos_proto.implements_interface) = "ReportTarget";
+
+  // Id of the reported post
+  uint64 post_id = 1 [
+    (gogoproto.customname) = "PostID",
+    (gogoproto.moretags) = "yaml:\"post_id\""
+  ];
+}
+
+// Reason contains the data about a reporting reason
+message Reason {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  // Id of the subspace for which this reason is valid
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+
+  // Id of the reason inside the subspace
+  uint32 id = 2
+      [ (gogoproto.customname) = "ID", (gogoproto.moretags) = "yaml:\"id\"" ];
+
+  // Title of the reason
+  string title = 3 [ (gogoproto.moretags) = "yaml:\"title\"" ];
+
+  // (optional) Extended description of the reason and the cases it applies to
+  string description = 4 [ (gogoproto.moretags) = "yaml:\"description\"" ];
+}
+
+// Params contains the module parameters
+message Params {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  // List of available reasons from which new subspaces can pick their default
+  // ones
+  repeated StandardReason standard_reasons = 1 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"standard_reasons\""
+  ];
+}
+
+// StandardReason contains the data of a standard reason that can be picked and
+// used from different subspaces
+message StandardReason {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  // Id of the reason inside the subspace
+  uint32 id = 1
+      [ (gogoproto.customname) = "ID", (gogoproto.moretags) = "yaml:\"id\"" ];
+
+  // Title of the reason
+  string title = 2 [ (gogoproto.moretags) = "yaml:\"title\"" ];
+
+  // (optional) Extended description of the reason and the cases it applies to
+  string description = 3 [ (gogoproto.moretags) = "yaml:\"description\"" ];
+}

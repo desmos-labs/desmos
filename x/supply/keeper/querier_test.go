@@ -4,8 +4,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/desmos-labs/desmos/v3/x/supply/keeper"
-	"github.com/desmos-labs/desmos/v3/x/supply/types"
+	"github.com/desmos-labs/desmos/v4/x/supply/keeper"
+	"github.com/desmos-labs/desmos/v4/x/supply/types"
 )
 
 func (suite *KeeperTestSuite) TestQuerier_QueryTotalSupply() {
@@ -28,7 +28,7 @@ func (suite *KeeperTestSuite) TestQuerier_QueryTotalSupply() {
 			path: []string{types.QueryTotalSupply},
 			request: abci.RequestQuery{
 				Data: suite.cdc.MustMarshal(
-					types.NewQueryTotalSupplyRequest(sdk.DefaultBondDenom, 3),
+					types.NewQueryTotalRequest(sdk.DefaultBondDenom, 3),
 				),
 			},
 			expSupply: sdk.NewInt(1),
@@ -75,7 +75,7 @@ func (suite *KeeperTestSuite) TestQuerier_QueryCirculatingSupply() {
 			path: []string{types.QueryCirculatingSupply, "1000"},
 			request: abci.RequestQuery{
 				Data: suite.cdc.MustMarshal(
-					types.NewQueryCirculatingSupplyRequest(sdk.DefaultBondDenom, 0),
+					types.NewQueryCirculatingRequest(sdk.DefaultBondDenom, 0),
 				),
 			},
 			expSupply: sdk.NewInt(500),

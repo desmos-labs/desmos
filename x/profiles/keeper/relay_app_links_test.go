@@ -6,22 +6,22 @@ import (
 	"strings"
 	"time"
 
-	"github.com/desmos-labs/desmos/v3/testutil"
+	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
 
-	"github.com/desmos-labs/desmos/v3/pkg/obi"
+	"github.com/desmos-labs/desmos/v4/pkg/obi"
 
-	clienttypes "github.com/cosmos/ibc-go/v2/modules/core/02-client/types"
-	"github.com/cosmos/ibc-go/v2/modules/core/exported"
+	clienttypes "github.com/cosmos/ibc-go/v3/modules/core/02-client/types"
+	"github.com/cosmos/ibc-go/v3/modules/core/exported"
 
-	"github.com/desmos-labs/desmos/v3/testutil/ibctesting"
+	"github.com/desmos-labs/desmos/v4/testutil/ibctesting"
 
-	channeltypes "github.com/cosmos/ibc-go/v2/modules/core/04-channel/types"
+	channeltypes "github.com/cosmos/ibc-go/v3/modules/core/04-channel/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	oracletypes "github.com/desmos-labs/desmos/v3/x/oracle/types"
+	oracletypes "github.com/desmos-labs/desmos/v4/x/oracle/types"
 
-	"github.com/desmos-labs/desmos/v3/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 func createRequestPacketData(clientID string) oracletypes.OracleRequestPacketData {
@@ -140,7 +140,7 @@ func (suite *KeeperTestSuite) TestKeeper_StartProfileConnection() {
 				callData = "call_data"
 			},
 			storeChainA: func(ctx sdk.Context) {
-				profile := testutil.ProfileFromAddr(suite.chainA.Account.GetAddress().String())
+				profile := profilestesting.ProfileFromAddr(suite.chainA.Account.GetAddress().String())
 				suite.chainA.App.AccountKeeper.SetAccount(ctx, profile)
 			},
 			expPass: true,
@@ -217,7 +217,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 		{
 			name: "resolve status expired updates connection properly",
 			store: func(ctx sdk.Context) {
-				profile := testutil.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")
+				profile := profilestesting.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")
 				suite.ak.SetAccount(ctx, profile)
 
 				link := types.NewApplicationLink(
@@ -262,7 +262,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 		{
 			name: "resolve status failure updates connection properly",
 			store: func(ctx sdk.Context) {
-				profile := testutil.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")
+				profile := profilestesting.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")
 				suite.ak.SetAccount(ctx, profile)
 
 				link := types.NewApplicationLink(
@@ -307,7 +307,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 		{
 			name: "wrongly encoded result returns error",
 			store: func(ctx sdk.Context) {
-				profile := testutil.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")
+				profile := profilestesting.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")
 				suite.ak.SetAccount(ctx, profile)
 
 				link := types.NewApplicationLink(
@@ -338,7 +338,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 		{
 			name: "different returned value (username) updates correctly",
 			store: func(ctx sdk.Context) {
-				profile := testutil.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")
+				profile := profilestesting.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")
 				suite.ak.SetAccount(ctx, profile)
 
 				link := types.NewApplicationLink(
@@ -383,7 +383,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 		{
 			name: "wrongly encoded result signature error",
 			store: func(ctx sdk.Context) {
-				profile := testutil.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")
+				profile := profilestesting.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")
 				suite.ak.SetAccount(ctx, profile)
 
 				link := types.NewApplicationLink(
@@ -672,7 +672,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnOracleRequestAcknowledgementPacket() 
 					time.Date(2020, 3, 1, 00, 00, 00, 000, time.UTC),
 				)
 
-				suite.ak.SetAccount(ctx, testutil.ProfileFromAddr(address))
+				suite.ak.SetAccount(ctx, profilestesting.ProfileFromAddr(address))
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
@@ -713,7 +713,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnOracleRequestAcknowledgementPacket() 
 					time.Date(2020, 3, 1, 00, 00, 00, 000, time.UTC),
 				)
 
-				suite.ak.SetAccount(ctx, testutil.ProfileFromAddr(address))
+				suite.ak.SetAccount(ctx, profilestesting.ProfileFromAddr(address))
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
@@ -740,7 +740,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnOracleRequestAcknowledgementPacket() 
 					time.Date(2020, 3, 1, 00, 00, 00, 000, time.UTC),
 				)
 
-				suite.ak.SetAccount(ctx, testutil.ProfileFromAddr(address))
+				suite.ak.SetAccount(ctx, profilestesting.ProfileFromAddr(address))
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
@@ -818,7 +818,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnOracleRequestTimeoutPacket() {
 					time.Date(2020, 3, 1, 00, 00, 00, 000, time.UTC),
 				)
 
-				suite.ak.SetAccount(ctx, testutil.ProfileFromAddr(address))
+				suite.ak.SetAccount(ctx, profilestesting.ProfileFromAddr(address))
 				suite.Require().NoError(suite.k.SaveApplicationLink(ctx, link))
 			},
 			data:      createRequestPacketData("client_id"),

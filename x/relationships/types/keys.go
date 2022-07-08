@@ -1,7 +1,7 @@
 package types
 
 import (
-	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
 // DONTCOVER
@@ -18,8 +18,8 @@ const (
 )
 
 var (
-	RelationshipsStorePrefix = []byte("relationships")
-	UsersBlocksStorePrefix   = []byte("users_blocks")
+	RelationshipsStorePrefix = []byte{0x01}
+	UsersBlocksStorePrefix   = []byte{0x02}
 )
 
 // SubspaceRelationshipsPrefix returns the prefix used to store all relationships for the given subspace

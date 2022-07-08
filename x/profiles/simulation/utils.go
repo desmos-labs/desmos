@@ -12,7 +12,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v3/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 var (
@@ -99,6 +99,12 @@ func RandomProfile(r *rand.Rand, accounts []*types.Profile) *types.Profile {
 func RandomDTagTransferRequest(r *rand.Rand, requests []types.DTagTransferRequest) types.DTagTransferRequest {
 	idx := r.Intn(len(requests))
 	return requests[idx]
+}
+
+// RandomChainLink picks and returns a random chain link from an array of chain links
+func RandomChainLink(r *rand.Rand, links []types.ChainLink) types.ChainLink {
+	idx := r.Intn(len(links))
+	return links[idx]
 }
 
 // RandomDTag return a random DTag

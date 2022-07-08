@@ -64,6 +64,10 @@ ldflags = -X 'github.com/cosmos/cosmos-sdk/version.Name=Desmos' \
   	-X "github.com/cosmos/cosmos-sdk/version.BuildTags=$(build_tags_comma_sep)" \
   	-X "github.com/tendermint/tendermint/version.TMCoreSemVer=$(TENDERMINT_VERSION)"
 
+ifeq ($(LINK_STATICALLY),true)
+  ldflags += -linkmode=external -extldflags "-Wl,-z,muldefs -static"
+endif
+
 ifneq ($(GOSUM),)
   ldflags += -X github.com/cosmos/cosmos-sdk/version.VendorDirHash=$(shell $(GOSUM) go.sum)
 endif
@@ -114,14 +118,17 @@ BUILD_TARGETS := build install
 
 build: BUILD_ARGS=-o $(BUILDDIR)/
 
-build-alpine: go.sum
+create-builder: go.sum
+	$(MAKE) -C contrib/images desmos-builder CONTEXT=$(CURDIR)
+
+build-alpine: create-builder
 	mkdir -p $(BUILDDIR)
 	$(DOCKER) build -f Dockerfile --rm --tag desmoslabs/desmos-alpine .
 	$(DOCKER) create --name desmos-alpine --rm desmoslabs/desmos-alpine
 	$(DOCKER) cp desmos-alpine:/usr/bin/desmos $(BUILDDIR)/desmos
 	$(DOCKER) rm desmos-alpine
 
-build-linux: go.sum
+build-linux: create-builder
 	mkdir -p $(BUILDDIR)
 	$(DOCKER) build -f Dockerfile-ubuntu --rm --tag desmoslabs/desmos-linux .
 	$(DOCKER) create --name desmos-linux desmoslabs/desmos-linux
@@ -277,12 +284,16 @@ benchmark:
 ###############################################################################
 ###                                Linting                                  ###
 ###############################################################################
+golangci_lint_cmd=github.com/golangci/golangci-lint/cmd/golangci-lint
 
 lint:
-	golangci-lint run --out-format=tab --timeout=10m
+	@echo "--> Running linter"
+	@go run $(golangci_lint_cmd) run --timeout=10m
 
 lint-fix:
-	golangci-lint run --fix --out-format=tab --issues-exit-code=0 --timeout=10m
+	@echo "--> Running linter"
+	@go run $(golangci_lint_cmd) run --fix --out-format=tab --issues-exit-code=0
+
 .PHONY: lint lint-fix
 
 format:
@@ -333,12 +344,12 @@ proto-lint:
 proto-check-breaking:
 	@$(DOCKER_BUF) breaking --against $(HTTPS_GIT)#branch=master
 
-TM_URL           = https://raw.githubusercontent.com/tendermint/tendermint/v0.34.16/proto/tendermint
+TM_URL           = https://raw.githubusercontent.com/tendermint/tendermint/v0.34.19/proto/tendermint
 GOGO_PROTO_URL   = https://raw.githubusercontent.com/regen-network/protobuf/cosmos
-COSMOS_URL 		 = https://raw.githubusercontent.com/cosmos/cosmos-sdk/v0.45.1/proto/cosmos
+COSMOS_URL 		 = https://raw.githubusercontent.com/cosmos/cosmos-sdk/v0.45.4/proto/cosmos
 COSMOS_PROTO_URL = https://raw.githubusercontent.com/regen-network/cosmos-proto/master
 CONFIO_URL 		 = https://raw.githubusercontent.com/confio/ics23/v0.6.3
-IBC_URL 		 = https://raw.githubusercontent.com/cosmos/ibc-go/v2.2.0/proto/ibc
+IBC_URL 		 = https://raw.githubusercontent.com/cosmos/ibc-go/v3.0.0/proto/ibc
 
 TM_CRYPTO_TYPES     = third_party/proto/tendermint/crypto
 TM_ABCI_TYPES       = third_party/proto/tendermint/abci

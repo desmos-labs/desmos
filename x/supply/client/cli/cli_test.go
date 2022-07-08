@@ -1,3 +1,6 @@
+//go:build norace
+// +build norace
+
 package cli_test
 
 import (
@@ -13,9 +16,9 @@ import (
 	"github.com/stretchr/testify/suite"
 	tmcli "github.com/tendermint/tendermint/libs/cli"
 
-	"github.com/desmos-labs/desmos/v3/testutil"
-	"github.com/desmos-labs/desmos/v3/x/supply/client/cli"
-	"github.com/desmos-labs/desmos/v3/x/supply/types"
+	"github.com/desmos-labs/desmos/v4/testutil"
+	"github.com/desmos-labs/desmos/v4/x/supply/client/cli"
+	"github.com/desmos-labs/desmos/v4/x/supply/types"
 )
 
 type IntegrationTestSuite struct {
@@ -63,7 +66,7 @@ func (s *IntegrationTestSuite) TestCmdQueryTotalSupply() {
 		name           string
 		args           []string
 		shouldErr      bool
-		expectedOutput types.QueryTotalSupplyResponse
+		expectedOutput types.QueryTotalResponse
 	}{
 		{
 			name: "invalid denom returns error",
@@ -80,7 +83,7 @@ func (s *IntegrationTestSuite) TestCmdQueryTotalSupply() {
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			shouldErr:      false,
-			expectedOutput: types.QueryTotalSupplyResponse{TotalSupply: sdk.NewInt(1000000020)},
+			expectedOutput: types.QueryTotalResponse{TotalSupply: sdk.NewInt(1000000020)},
 		},
 		{
 			name: "total supply returned correctly with divider_exponent conversion applied",
@@ -90,7 +93,7 @@ func (s *IntegrationTestSuite) TestCmdQueryTotalSupply() {
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			shouldErr:      false,
-			expectedOutput: types.QueryTotalSupplyResponse{TotalSupply: sdk.NewInt(10000000)},
+			expectedOutput: types.QueryTotalResponse{TotalSupply: sdk.NewInt(10000000)},
 		},
 	}
 
@@ -107,7 +110,7 @@ func (s *IntegrationTestSuite) TestCmdQueryTotalSupply() {
 			} else {
 				s.Require().NoError(err)
 
-				var response types.QueryTotalSupplyResponse
+				var response types.QueryTotalResponse
 				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(tc.expectedOutput.TotalSupply, response.TotalSupply)
 			}
@@ -122,7 +125,7 @@ func (s *IntegrationTestSuite) TestCmdQueryCirculatingSupply() {
 		name           string
 		args           []string
 		shouldErr      bool
-		expectedOutput types.QueryCirculatingSupplyResponse
+		expectedOutput types.QueryCirculatingResponse
 	}{
 		{
 			name: "invalid denom returns error",
@@ -139,7 +142,7 @@ func (s *IntegrationTestSuite) TestCmdQueryCirculatingSupply() {
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			shouldErr:      false,
-			expectedOutput: types.QueryCirculatingSupplyResponse{CirculatingSupply: sdk.NewInt(1000000020)},
+			expectedOutput: types.QueryCirculatingResponse{CirculatingSupply: sdk.NewInt(1000000020)},
 		},
 		{
 			name: "circulating supply returned correctly with divider_exponent conversion applied",
@@ -149,7 +152,7 @@ func (s *IntegrationTestSuite) TestCmdQueryCirculatingSupply() {
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			shouldErr:      false,
-			expectedOutput: types.QueryCirculatingSupplyResponse{CirculatingSupply: sdk.NewInt(10000000)},
+			expectedOutput: types.QueryCirculatingResponse{CirculatingSupply: sdk.NewInt(10000000)},
 		},
 	}
 
@@ -166,7 +169,7 @@ func (s *IntegrationTestSuite) TestCmdQueryCirculatingSupply() {
 			} else {
 				s.Require().NoError(err)
 
-				var response types.QueryCirculatingSupplyResponse
+				var response types.QueryCirculatingResponse
 				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(tc.expectedOutput.CirculatingSupply, response.CirculatingSupply)
 			}

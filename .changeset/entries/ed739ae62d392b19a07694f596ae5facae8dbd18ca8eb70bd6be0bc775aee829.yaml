@@ -1,6 +1,0 @@
-type: feat
-module: x/profiles
-pull_request: 793
-description: Added the ability to reverse search application links and chain links
-backward_compatible: true
-date: 2022-03-23T14:27:24.394374729Z
