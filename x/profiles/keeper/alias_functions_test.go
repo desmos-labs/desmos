@@ -3,7 +3,7 @@ package keeper_test
 import (
 	"time"
 
-	"github.com/desmos-labs/desmos/v3/testutil"
+	"github.com/desmos-labs/desmos/v4/testutil"
 	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
 
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"

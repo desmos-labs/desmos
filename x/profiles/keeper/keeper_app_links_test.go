@@ -3,7 +3,6 @@ package keeper_test
 import (
 	"time"
 
-	"github.com/desmos-labs/desmos/v3/testutil"
 	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -575,7 +574,7 @@ func (suite *KeeperTestSuite) Test_DeleteExpiredApplicationLinks() {
 					time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
-				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr(address)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr(address)))
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},

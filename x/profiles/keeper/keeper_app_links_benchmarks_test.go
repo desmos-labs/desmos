@@ -5,6 +5,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
+
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
@@ -18,10 +20,9 @@ import (
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	db "github.com/tendermint/tm-db"
 
-	"github.com/desmos-labs/desmos/v3/app"
-	"github.com/desmos-labs/desmos/v3/testutil"
-	"github.com/desmos-labs/desmos/v3/x/profiles/keeper"
-	"github.com/desmos-labs/desmos/v3/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/app"
+	"github.com/desmos-labs/desmos/v4/x/profiles/keeper"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 func setupBenchTest() (authkeeper.AccountKeeper, keeper.Keeper, sdk.Context) {
@@ -111,7 +112,7 @@ func BenchmarkKeeper_DeleteExpiredApplicationLinks(b *testing.B) {
 	ctx, _ = ctx.CacheContext()
 
 	for _, link := range links {
-		ak.SetAccount(ctx, testutil.ProfileFromAddr(link.User))
+		ak.SetAccount(ctx, profilestesting.ProfileFromAddr(link.User))
 		err := k.SaveApplicationLink(ctx, link)
 		require.NoError(b, err)
 	}
