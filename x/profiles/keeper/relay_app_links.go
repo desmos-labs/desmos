@@ -130,7 +130,6 @@ func (k Keeper) StartProfileConnection(
 		ctx.BlockTime(),
 		ctx.BlockTime().Add(k.GetParams(ctx).AppLinks.ValidityDuration),
 	))
-
 	if err != nil {
 		return err
 	}
