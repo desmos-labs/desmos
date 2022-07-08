@@ -11,13 +11,13 @@ jobs:
   Benchmarks:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v3
+
       - name: Setup Go 🧰
-        uses: actions/setup-go@v2.1.5
+        uses: actions/setup-go@v3
         with:
           go-version: 1.17
-
-      - name: Checkout 🛎️
-        uses: actions/checkout@v2
 
       - name: Compute diff 📜
         uses: technote-space/get-diff-action@v6.1.0
