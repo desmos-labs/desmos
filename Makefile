@@ -13,8 +13,6 @@ MOCKS_DIR = $(CURDIR)/tests/mocks
 HTTPS_GIT := https://github.com/desmos-labs/desmos.git
 DOCKER := $(shell which docker)
 DOCKER_BUF := $(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace bufbuild/buf
-BENCH_COUNT ?= 5
-REF_NAME ?= $(shell git symbolic-ref HEAD --short | tr / - 2>/dev/null)
 
 export GO111MODULE = on
 
@@ -276,9 +274,7 @@ test-cover:
 .PHONY: test-cover
 
 benchmark:
-	@go test -mod=readonly -bench=. -count=$(BENCH_COUNT) -run=^a  ./... >bench-$(REF_NAME).txt
-	@test -s $(GOPATH)/bin/benchstat || GO111MODULE=off GOFLAGS= GOBIN=$(GOPATH)/bin go get -u golang.org/x/perf/cmd/benchstat
-	@test -e bench-master.txt && benchstat bench-master.txt bench-$(REF_NAME).txt || benchstat bench-$(REF_NAME).txt
+	@go test -mod=readonly -bench=. $(PACKAGES_NOSIMULATION)
 .PHONY: benchmark
 
 ###############################################################################
