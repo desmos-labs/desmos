@@ -50,7 +50,7 @@ It's expected to fail if:
 It's possible to add an attachment to an existing post with `MsgAddPostAttachment`. Attachment can be a [media](02-concepts.md#media) or a [poll](02-concepts.md#poll).
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/v4.1.0/proto/desmos/posts/v2/msgs.proto#L170-L191
+https://github.com/desmos-labs/desmos/blob/v4.1.0/proto/desmos/posts/v2/msgs.proto#L168-L191
 ```
 
 It's expected to fail if:
@@ -78,13 +78,14 @@ It's expected to fail if:
 It's possible to answer any active post's poll With `MsgAnswerPoll`.
 
 ```js reference 
-https://github.com/desmos-labs/desmos/blob/v4.1.0/proto/desmos/posts/v2/msgs.proto#L245-271
+https://github.com/desmos-labs/desmos/blob/v4.1.0/proto/desmos/posts/v2/msgs.proto#L245-L271
 ```
 
 It's expected to fail if:
 * the signer does not have a profile;
 * the subspace associated with the post does not exist;
 * the poll does not exist;
+* the poll voting period already ended;
 * the signer does not have the permission to interact with contents within the subspace;
 * the signer is trying to edit their own answer but the poll does not allow answers edits;
 * the signer is trying to give multiple answers but the poll does not allow multiple answers;

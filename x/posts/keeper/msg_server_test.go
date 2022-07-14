@@ -1798,7 +1798,86 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 			shouldErr: true,
 		},
 		{
+			name: "voting after end time returns error",
+			setupCtx: func(ctx sdk.Context) sdk.Context {
+				return ctx.WithBlockTime(time.Date(2100, 1, 1, 00, 00, 00, 000, time.UTC))
+			},
+			store: func(ctx sdk.Context) {
+				err := suite.ak.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"))
+				suite.Require().NoError(err)
+
+				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
+					1,
+					"Test",
+					"Testing subspace",
+					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
+					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
+					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+
+				suite.sk.SetUserPermissions(ctx,
+					1,
+					0,
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					subspacestypes.NewPermissions(types.PermissionInteractWithContent),
+				)
+
+				suite.k.SavePost(ctx, types.NewPost(
+					1,
+					0,
+					1,
+					"External ID",
+					"This is a text",
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
+					0,
+					nil,
+					nil,
+					nil,
+					types.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				))
+
+				suite.k.SaveAttachment(ctx, types.NewAttachment(
+					1,
+					1,
+					1,
+					types.NewPoll(
+						"What animal is best?",
+						[]types.Poll_ProvidedAnswer{
+							types.NewProvidedAnswer("Cat", nil),
+							types.NewProvidedAnswer("Dog", nil),
+						},
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						false,
+						false,
+						nil,
+					),
+				))
+
+				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(
+					1,
+					1,
+					1,
+					[]uint32{0, 1},
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+				))
+			},
+			msg: types.NewMsgAnswerPoll(
+				1,
+				1,
+				1,
+				[]uint32{1},
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+			),
+			shouldErr: true,
+		},
+		{
 			name: "already answered poll returns error if no answer edits are allowed",
+			setupCtx: func(ctx sdk.Context) sdk.Context {
+				return ctx.WithBlockTime(time.Date(2010, 1, 1, 00, 00, 00, 000, time.UTC))
+			},
 			store: func(ctx sdk.Context) {
 				err := suite.ak.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"))
 				suite.Require().NoError(err)
@@ -1872,6 +1951,9 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 		},
 		{
 			name: "multiple answers return error if they are not allowed",
+			setupCtx: func(ctx sdk.Context) sdk.Context {
+				return ctx.WithBlockTime(time.Date(2010, 1, 1, 00, 00, 00, 000, time.UTC))
+			},
 			store: func(ctx sdk.Context) {
 				err := suite.ak.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"))
 				suite.Require().NoError(err)
@@ -1937,6 +2019,9 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 		},
 		{
 			name: "invalid answer indexes return error",
+			setupCtx: func(ctx sdk.Context) sdk.Context {
+				return ctx.WithBlockTime(time.Date(2010, 1, 1, 00, 00, 00, 000, time.UTC))
+			},
 			store: func(ctx sdk.Context) {
 				err := suite.ak.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"))
 				suite.Require().NoError(err)
@@ -2002,6 +2087,9 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 		},
 		{
 			name: "editing an answer works correctly",
+			setupCtx: func(ctx sdk.Context) sdk.Context {
+				return ctx.WithBlockTime(time.Date(2010, 1, 1, 00, 00, 00, 000, time.UTC))
+			},
 			store: func(ctx sdk.Context) {
 				err := suite.ak.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"))
 				suite.Require().NoError(err)
@@ -2101,6 +2189,9 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 		},
 		{
 			name: "new answer is stored correctly",
+			setupCtx: func(ctx sdk.Context) sdk.Context {
+				return ctx.WithBlockTime(time.Date(2010, 1, 1, 00, 00, 00, 000, time.UTC))
+			},
 			store: func(ctx sdk.Context) {
 				err := suite.ak.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"))
 				suite.Require().NoError(err)

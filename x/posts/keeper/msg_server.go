@@ -422,6 +422,11 @@ func (k msgServer) AnswerPoll(goCtx context.Context, msg *types.MsgAnswerPoll) (
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "poll with id %d does not exist", msg.PollID)
 	}
 
+	// Make sure the poll is still active
+	if ctx.BlockTime().After(poll.EndDate) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "the poll voting period has already ended")
+	}
+
 	alreadyAnswered := k.HasUserAnswer(ctx, msg.SubspaceID, msg.PostID, msg.PollID, msg.Signer)
 
 	// Make sure the user is not trying to edit the answer when the poll does not allow it
