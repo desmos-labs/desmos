@@ -4,15 +4,15 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/desmos-labs/desmos/v3/testutil"
+	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v3/x/profiles/keeper"
-	"github.com/desmos-labs/desmos/v3/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/keeper"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 func (suite *KeeperTestSuite) TestInvariants() {
@@ -32,7 +32,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 			store: func(ctx sdk.Context) {
 				profile, err := types.NewProfileFromAccount(
 					"",
-					testutil.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+					profilestesting.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 					time.Now(),
 				)
 				suite.Require().NoError(err)
@@ -83,7 +83,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 				link := types.NewChainLink(
 					"user",
 					types.NewBech32Address("value", "prefix"),
-					types.NewProof(key, testutil.SingleSignatureProtoFromHex("1234"), "value"),
+					types.NewProof(key, profilestesting.SingleSignatureProtoFromHex("1234"), "value"),
 					types.NewChainConfig("chain_name"),
 					time.Now(),
 				)

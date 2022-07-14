@@ -4,7 +4,7 @@ package desmos.profiles.v2;
 import "gogoproto/gogo.proto";
 import "cosmos/base/v1beta1/coin.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v3/x/profiles/types";
+option go_package = "github.com/desmos-labs/desmos/v4/x/profiles/types";
 
 // Params contains the parameters for the profiles module
 message Params {

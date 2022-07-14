@@ -1,111 +1,155 @@
 package types
 
 import (
-	"encoding/binary"
 	"fmt"
+	"regexp"
 	"strings"
 )
 
-// Permission represents a permission that can be set to a user or user group
-type Permission = uint32
+var (
+	// PermissionEditSubspace allows to change the information of the subspace
+	PermissionEditSubspace = RegisterPermission("edit subspace")
 
-const (
-	// PermissionNothing represents the permission to do nothing
-	PermissionNothing = Permission(0b000000)
+	// PermissionDeleteSubspace allows users to delete the subspace.
+	PermissionDeleteSubspace = RegisterPermission("delete subspace")
 
-	// PermissionWrite identifies users that can create content inside the subspace
-	PermissionWrite = Permission(0b000001)
-
-	// PermissionModerateContent allows users to moderate contents of other users (e.g. deleting it)
-	PermissionModerateContent = Permission(0b000010)
-
-	// PermissionChangeInfo allows to change the information of the subspace
-	PermissionChangeInfo = Permission(0b000100)
+	// PermissionManageSections allows users to manage a subspace sections
+	PermissionManageSections = RegisterPermission("manage sections")
 
 	// PermissionManageGroups allows users to manage user groups and members
-	PermissionManageGroups = Permission(0b001000)
+	PermissionManageGroups = RegisterPermission("manage groups")
 
 	// PermissionSetPermissions allows users to set other users' permissions (except PermissionSetPermissions).
 	// This includes managing user groups and the associated permissions
-	PermissionSetPermissions = Permission(0b010000)
-
-	// PermissionDeleteSubspace allows users to delete the subspace.
-	PermissionDeleteSubspace = Permission(0b100000)
+	PermissionSetPermissions = RegisterPermission("set permissions")
 
 	// PermissionEverything allows to do everything.
 	// This should usually be reserved only to the owner (which has it by default)
-	PermissionEverything = Permission(0b111111)
+	PermissionEverything = RegisterPermission("everything")
 )
 
 var (
-	permissionsMap = map[Permission]string{
-		PermissionNothing:         "Nothing",
-		PermissionWrite:           "Write",
-		PermissionModerateContent: "ModerateContent",
-		PermissionChangeInfo:      "ChangeInfo",
-		PermissionManageGroups:    "ManageGroups",
-		PermissionSetPermissions:  "SetUserPermissions",
-		PermissionEverything:      "Everything",
-	}
+	// multipleSpacesRegex represents the regex used to search for multiple spaces when registering a permission
+	multipleSpacesRegex = regexp.MustCompile(`\s+`)
+
+	// registeredPermissions represents the list of permissions that are registered and should be considered valid
+	registeredPermissions []Permission
 )
 
-// ParsePermission parses the given permission string as a single Permissions instance
-func ParsePermission(permission string) (Permission, error) {
-	// Check inside the map if we have anything here
-	for permValue, permString := range permissionsMap {
-		if strings.EqualFold(permission, permString) {
-			return permValue, nil
+// Permission represents a permission that can be set to a user or user group
+type Permission = string
+
+// newPermission returns a new Permission containing the given value
+func newPermission(permissionName string) Permission {
+	permissionName = multipleSpacesRegex.ReplaceAllString(permissionName, " ")
+	permissionName = strings.ReplaceAll(permissionName, " ", "_")
+	return strings.ToUpper(permissionName)
+}
+
+// containsPermission tells whether the given permissions slice contains the provided permissions
+func containsPermission(slice []Permission, permission Permission) bool {
+	for _, element := range slice {
+		if element == permission {
+			return true
+		}
+	}
+	return false
+}
+
+// isPermissionRegistered checks if the given permissions is registered or not
+func isPermissionRegistered(permission Permission) bool {
+	return containsPermission(registeredPermissions, permission)
+}
+
+// RegisterPermission registers the permissions with the given name and returns its value
+func RegisterPermission(permissionName string) Permission {
+	permission := newPermission(permissionName)
+	if isPermissionRegistered(permission) {
+		panic(fmt.Errorf("permissions %s has already been registered", permission))
+	}
+
+	registeredPermissions = append(registeredPermissions, permission)
+	return permission
+}
+
+// SerializePermission serializes the given permissions to a string value
+func SerializePermission(permission Permission) string {
+	return permission
+}
+
+type Permissions []Permission
+
+// NewPermissions allows to build a new Permissions instance
+func NewPermissions(permissions ...Permission) Permissions {
+	return permissions
+}
+
+// Equals returns true iff the given permissions slice is equals to this one
+func (p Permissions) Equals(other Permissions) bool {
+	if len(p) != len(other) {
+		return false
+	}
+
+	for i, element := range p {
+		if element != other[i] {
+			return false
 		}
 	}
 
-	return 0, fmt.Errorf("invalid permission value: %s", permission)
+	return true
 }
 
-// SerializePermission serializes the given permission to a string value
-func SerializePermission(permission Permission) string {
-	return permissionsMap[permission]
-}
-
-// MarshalPermission marshals the given permission to a byte array
-func MarshalPermission(permission Permission) (permissionBytes []byte) {
-	permissionBytes = make([]byte, 4)
-	binary.BigEndian.PutUint32(permissionBytes, permission)
-	return
-}
-
-// UnmarshalPermission reads the given byte array as a Permission object
-func UnmarshalPermission(bz []byte) (permission Permission) {
-	if len(bz) < 4 {
-		return PermissionNothing
+// CheckPermission checks whether the given permissions contain the specified permissions
+func CheckPermission(permissions Permissions, permission Permission) bool {
+	// If PermissionEverything is set, every permission will be valid
+	if containsPermission(permissions, PermissionEverything) {
+		return true
 	}
-	return binary.BigEndian.Uint32(bz)
+
+	// Otherwise, check for the specific permissions
+	return containsPermission(permissions, permission)
 }
 
-// CheckPermission checks whether the given permissions contain the specified permission
-func CheckPermission(permissions Permission, permission Permission) bool {
-	return (permissions & permission) == permission
+func CheckPermissions(permissions Permissions, toCheck Permissions) bool {
+	for _, permission := range toCheck {
+		if !CheckPermission(permissions, permission) {
+			return false
+		}
+	}
+	return true
 }
 
 // CombinePermissions combines all the given permissions into a single Permission object using the OR operator
-func CombinePermissions(permissions ...Permission) Permission {
-	result := PermissionNothing
+func CombinePermissions(permissions ...Permission) Permissions {
+	// If the given slice contains PermissionEverything, then just return that one
+	if containsPermission(permissions, PermissionEverything) {
+		return Permissions{PermissionEverything}
+	}
+	return SanitizePermissions(permissions)
+}
+
+// SanitizePermissions sanitizes the given permissions to remove any duplicate
+func SanitizePermissions(permissions Permissions) (sanitized Permissions) {
+	existing := map[Permission]bool{}
 	for _, permission := range permissions {
-		result |= permission
+		if !isPermissionRegistered(permission) {
+			// Skip invalid permissions
+			continue
+		}
+
+		if _, exists := existing[permission]; exists {
+			// If a permission already exists, skip it
+			continue
+		}
+
+		sanitized = append(sanitized, permission)
+		existing[permission] = true
 	}
-	return result
+
+	return sanitized
 }
 
-// SanitizePermission sanitizes the given permission to remove any unwanted bits set to 1
-func SanitizePermission(permission Permission) Permission {
-	mask := PermissionNothing
-	for perm := range permissionsMap {
-		mask = CombinePermissions(mask, perm)
-	}
-
-	return permission & mask
-}
-
-// IsPermissionValid checks whether the given value represents a valid permission or not
-func IsPermissionValid(permission Permission) bool {
-	return SanitizePermission(permission) == permission
+// ArePermissionsValid checks whether the given value represents a valid permissions or not
+func ArePermissionsValid(permissions Permissions) bool {
+	return SanitizePermissions(permissions).Equals(permissions)
 }

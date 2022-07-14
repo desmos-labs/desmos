@@ -3,14 +3,14 @@ package keeper_test
 import (
 	"time"
 
-	"github.com/desmos-labs/desmos/v3/testutil"
+	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
 
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	"github.com/desmos-labs/desmos/v3/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 func (suite *KeeperTestSuite) TestKeeper_IterateProfile() {
@@ -79,11 +79,11 @@ func (suite *KeeperTestSuite) TestKeeper_GetProfiles() {
 		{
 			name: "non empty profiles list is returned properly",
 			store: func(ctx sdk.Context) {
-				profile := testutil.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
+				profile := profilestesting.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
 				suite.Require().NoError(suite.k.SaveProfile(ctx, profile))
 			},
 			expProfiles: []*types.Profile{
-				testutil.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
+				profilestesting.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 			},
 		},
 		{
@@ -129,7 +129,7 @@ func (suite *KeeperTestSuite) TestKeeper_IterateUserIncomingDTagTransferRequests
 	}
 
 	for _, request := range requests {
-		profile := testutil.ProfileFromAddr(address)
+		profile := profilestesting.ProfileFromAddr(address)
 		err := suite.k.SaveProfile(suite.ctx, profile)
 		suite.Require().NoError(err)
 
@@ -194,7 +194,7 @@ func (suite *KeeperTestSuite) TestKeeper_IterateUserApplicationLinks() {
 	ctx, _ := suite.ctx.CacheContext()
 
 	for _, link := range links {
-		suite.ak.SetAccount(ctx, testutil.ProfileFromAddr(link.User))
+		suite.ak.SetAccount(ctx, profilestesting.ProfileFromAddr(link.User))
 
 		err := suite.k.SaveApplicationLink(ctx, link)
 		suite.Require().NoError(err)
@@ -256,7 +256,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetApplicationLinks() {
 	ctx, _ := suite.ctx.CacheContext()
 
 	for _, link := range links {
-		suite.ak.SetAccount(ctx, testutil.ProfileFromAddr(link.User))
+		suite.ak.SetAccount(ctx, profilestesting.ProfileFromAddr(link.User))
 
 		err := suite.k.SaveApplicationLink(ctx, link)
 		suite.Require().NoError(err)
@@ -291,7 +291,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetChainLinks() {
 						types.NewChainLink(
 							"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 							types.NewBech32Address("cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f", "cosmos"),
-							types.NewProof(pub1, testutil.SingleSignatureProtoFromHex("1234"), "plain_text"),
+							types.NewProof(pub1, profilestesting.SingleSignatureProtoFromHex("1234"), "plain_text"),
 							types.NewChainConfig("cosmos"),
 							time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 						),
@@ -304,7 +304,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetChainLinks() {
 						types.NewChainLink(
 							"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 							types.NewBech32Address("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs", "cosmos"),
-							types.NewProof(pub2, testutil.SingleSignatureProtoFromHex("1234"), "plain_text"),
+							types.NewProof(pub2, profilestesting.SingleSignatureProtoFromHex("1234"), "plain_text"),
 							types.NewChainConfig("cosmos"),
 							time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 						),
@@ -315,14 +315,14 @@ func (suite *KeeperTestSuite) TestKeeper_GetChainLinks() {
 				types.NewChainLink(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					types.NewBech32Address("cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f", "cosmos"),
-					types.NewProof(pub1, testutil.SingleSignatureProtoFromHex("1234"), "plain_text"),
+					types.NewProof(pub1, profilestesting.SingleSignatureProtoFromHex("1234"), "plain_text"),
 					types.NewChainConfig("cosmos"),
 					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 				),
 				types.NewChainLink(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					types.NewBech32Address("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs", "cosmos"),
-					types.NewProof(pub2, testutil.SingleSignatureProtoFromHex("1234"), "plain_text"),
+					types.NewProof(pub2, profilestesting.SingleSignatureProtoFromHex("1234"), "plain_text"),
 					types.NewChainConfig("cosmos"),
 					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 				),

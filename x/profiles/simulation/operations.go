@@ -5,7 +5,7 @@ package simulation
 import (
 	"math/rand"
 
-	feeskeeper "github.com/desmos-labs/desmos/v3/x/fees/keeper"
+	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
 
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
@@ -14,11 +14,12 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
 
-	"github.com/desmos-labs/desmos/v3/app/params"
-	"github.com/desmos-labs/desmos/v3/x/profiles/keeper"
+	"github.com/desmos-labs/desmos/v4/app/params"
+	"github.com/desmos-labs/desmos/v4/x/profiles/keeper"
 )
 
 // Simulation operation weights constants
+//nolint:gosec // These are not hardcoded credentials
 const (
 	OpWeightMsgSaveProfile         = "op_weight_msg_save_profile"
 	OpWeightMsgDeleteProfile       = "op_weight_msg_delete_profile"
@@ -26,6 +27,8 @@ const (
 	OpWeightMsgAcceptDTagTransfer  = "op_weight_msg_accept_dtag_transfer_request"
 	OpWeightMsgRefuseDTagTransfer  = "op_weight_msg_refuse_dtag_transfer_request"
 	OpWeightMsgCancelDTagTransfer  = "op_weight_msg_cancel_dtag_transfer_request"
+	OpWeightMsgLinkChainAccount    = "op_weight_msg_link_chain_account"
+	OpWeightMsgUnlinkChainAccount  = "op_weight_msg_unlink_chain_account"
 
 	DefaultGasValue = 200000
 )
@@ -77,6 +80,20 @@ func WeightedOperations(
 		},
 	)
 
+	var weightMsgLinkChainAccount int
+	appParams.GetOrGenerate(cdc, OpWeightMsgLinkChainAccount, &weightMsgLinkChainAccount, nil,
+		func(r *rand.Rand) {
+			weightMsgLinkChainAccount = params.DefaultWeightMsgLinkChainAccount
+		},
+	)
+
+	var weightMsgUnlinkChainAccount int
+	appParams.GetOrGenerate(cdc, OpWeightMsgUnlinkChainAccount, &weightMsgUnlinkChainAccount, nil,
+		func(r *rand.Rand) {
+			weightMsgUnlinkChainAccount = params.DefaultWeightMsgUnlinkChainAccount
+		},
+	)
+
 	return sim.WeightedOperations{
 		sim.NewWeightedOperation(
 			weightMsgSaveProfile,
@@ -101,6 +118,14 @@ func WeightedOperations(
 		sim.NewWeightedOperation(
 			weightMsgCancelDTagTransfer,
 			SimulateMsgCancelDTagTransfer(k, ak, bk, fk),
+		),
+		sim.NewWeightedOperation(
+			weightMsgLinkChainAccount,
+			SimulateMsgLinkChainAccount(k, ak, bk, fk),
+		),
+		sim.NewWeightedOperation(
+			weightMsgUnlinkChainAccount,
+			SimulateMsgUnlinkChainAccount(k, ak, bk, fk),
 		),
 	}
 }

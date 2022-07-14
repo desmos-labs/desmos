@@ -5,9 +5,11 @@ package simulation
 import (
 	"math/rand"
 
-	feeskeeper "github.com/desmos-labs/desmos/v3/x/fees/keeper"
+	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
 
-	"github.com/desmos-labs/desmos/v3/testutil/simtesting"
+	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
+
+	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
@@ -16,8 +18,8 @@ import (
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
-	"github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
-	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
+	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
 // SimulateMsgCreateUserGroup tests and runs a single MsgCreateUserGroup
@@ -38,6 +40,7 @@ func SimulateMsgCreateUserGroup(
 		// Build the message
 		msg := types.NewMsgCreateUserGroup(
 			subspaceID,
+			0,
 			update.Name,
 			update.Description,
 			permissions,
@@ -57,7 +60,7 @@ func SimulateMsgCreateUserGroup(
 // randomCreateUserGroupFields returns the data used to build a random MsgCreateUserGroup
 func randomCreateUserGroupFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
-) (subspaceID uint64, update *types.GroupUpdate, permissions types.Permission, account simtypes.Account, skip bool) {
+) (subspaceID uint64, update types.GroupUpdate, permissions types.Permissions, account simtypes.Account, skip bool) {
 	// Get a subspace id
 	subspaces := k.GetAllSubspaces(ctx)
 	if len(subspaces) == 0 {
@@ -73,14 +76,13 @@ func randomCreateUserGroupFields(
 	groupDescription := RandomDescription(r)
 
 	// Get a default permission
-	permissions = RandomPermission(r, []types.Permission{
-		types.PermissionWrite,
-		types.PermissionChangeInfo,
-		types.PermissionEverything,
+	permissions = RandomPermission(r, []types.Permissions{
+		types.NewPermissions(poststypes.PermissionWrite),
+		types.NewPermissions(types.PermissionEditSubspace),
 	})
 
 	// Get a signer
-	signers, _ := k.GetUsersWithPermission(ctx, subspace.ID, types.CombinePermissions(types.PermissionManageGroups, types.PermissionSetPermissions))
+	signers := k.GetUsersWithRootPermissions(ctx, subspace.ID, types.CombinePermissions(types.PermissionManageGroups, types.PermissionSetPermissions))
 	acc := GetAccount(RandomAddress(r, signers), accs)
 	if acc == nil {
 		// Skip the operation without error as the account is not valid
@@ -125,7 +127,7 @@ func SimulateMsgEditUserGroup(
 // randomEditUserGroupFields returns the data used to build a random MsgEditUserGroup
 func randomEditUserGroupFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
-) (subspaceID uint64, groupID uint32, update *types.GroupUpdate, account simtypes.Account, skip bool) {
+) (subspaceID uint64, groupID uint32, update types.GroupUpdate, account simtypes.Account, skip bool) {
 	// Get a group
 	groups := k.GetAllUserGroups(ctx)
 	if len(groups) == 0 {
@@ -149,7 +151,7 @@ func randomEditUserGroupFields(
 	}
 
 	// Get a signer
-	signers, _ := k.GetUsersWithPermission(ctx, subspaceID, types.PermissionManageGroups)
+	signers := k.GetUsersWithRootPermissions(ctx, subspaceID, types.NewPermissions(types.PermissionManageGroups))
 	acc := GetAccount(RandomAddress(r, signers), accs)
 	if acc == nil {
 		// Skip the operation without error as the account is not valid
@@ -159,6 +161,78 @@ func randomEditUserGroupFields(
 	account = *acc
 
 	return subspaceID, groupID, update, account, false
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// SimulateMsgMoveUserGroup tests and runs a single MsgMoveUserGroup
+func SimulateMsgMoveUserGroup(
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+) simtypes.Operation {
+	return func(
+		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
+		accs []simtypes.Account, chainID string,
+	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
+
+		// Get the data
+		subspaceID, groupID, newSectionID, signer, skip := randomMoveUserGroupFields(r, ctx, accs, k)
+		if skip {
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgMoveUserGroup"), nil, nil
+		}
+
+		// Build the message
+		msg := types.NewMsgMoveUserGroup(subspaceID, groupID, newSectionID, signer.Address.String())
+
+		// Send the message
+		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
+		if err != nil {
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgMoveUserGroup"), nil, err
+		}
+
+		return simtypes.NewOperationMsg(msg, true, "MsgMoveUserGroup", nil), nil, nil
+	}
+}
+
+// randomMoveUserGroupFields returns the data used to build a random MsgMoveUserGroup
+func randomMoveUserGroupFields(
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
+) (subspaceID uint64, groupID uint32, newSectionID uint32, account simtypes.Account, skip bool) {
+	// Get a subspace id
+	subspaces := k.GetAllSubspaces(ctx)
+	if len(subspaces) == 0 {
+		// Skip because there are no subspaces
+		skip = true
+		return
+	}
+	subspace := RandomSubspace(r, subspaces)
+	subspaceID = subspace.ID
+
+	// Get a group
+	groups := k.GetSubspaceUserGroups(ctx, subspaceID)
+	if len(groups) == 0 {
+		// Skip if there are no groups
+		skip = true
+		return
+	}
+	group := RandomGroup(r, groups)
+	groupID = group.ID
+
+	// Get a section
+	sections := k.GetSubspaceSections(ctx, subspaceID)
+	section := RandomSection(r, sections)
+	newSectionID = section.ID
+
+	// Get a signer
+	signers := k.GetUsersWithRootPermissions(ctx, subspace.ID, types.NewPermissions(types.PermissionEverything))
+	acc := GetAccount(RandomAddress(r, signers), accs)
+	if acc == nil {
+		// Skip the operation without error as the account is not valid
+		skip = true
+		return
+	}
+	account = *acc
+
+	return subspaceID, groupID, newSectionID, account, false
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -194,7 +268,7 @@ func SimulateMsgSetUserGroupPermissions(
 // randomSetUserGroupPermissionsFields returns the data used to build a random MsgSetUserGroupPermissions
 func randomSetUserGroupPermissionsFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
-) (subspaceID uint64, groupID uint32, permissions types.Permission, account simtypes.Account, skip bool) {
+) (subspaceID uint64, groupID uint32, permissions types.Permissions, account simtypes.Account, skip bool) {
 	// Get a subspace id
 	subspaces := k.GetAllSubspaces(ctx)
 	if len(subspaces) == 0 {
@@ -206,7 +280,7 @@ func randomSetUserGroupPermissionsFields(
 	subspaceID = subspace.ID
 
 	// Get a group
-	groups := k.GetSubspaceGroups(ctx, subspaceID)
+	groups := k.GetSubspaceUserGroups(ctx, subspaceID)
 	if len(groups) == 0 {
 		// Skip if there are no groups
 		skip = true
@@ -215,15 +289,10 @@ func randomSetUserGroupPermissionsFields(
 	groupID = RandomGroup(r, groups).ID
 
 	// Get a permission
-	permissions = RandomPermission(r, []types.Permission{
-		types.PermissionWrite,
-		types.PermissionModerateContent,
-		types.PermissionChangeInfo,
-		types.PermissionManageGroups,
-	})
+	permissions = RandomPermission(r, validPermissions)
 
 	// Get a signer
-	signers, _ := k.GetUsersWithPermission(ctx, subspace.ID, types.PermissionSetPermissions)
+	signers := k.GetUsersWithRootPermissions(ctx, subspace.ID, types.NewPermissions(types.PermissionSetPermissions))
 	acc := GetAccount(RandomAddress(r, signers), accs)
 	if acc == nil {
 		// Skip the operation without error as the account is not valid
@@ -232,9 +301,9 @@ func randomSetUserGroupPermissionsFields(
 	}
 	account = *acc
 
-	// Make sure the user can change this group's permissions
-	if subspace.Owner != account.Address.String() && k.IsMemberOfGroup(ctx, subspaceID, groupID, account.Address) {
-		// If the user is not the subspace owner and it's part of the user group they cannot edit the group permissions
+	// Make sure the user can change this group's validPermissions
+	if subspace.Owner != account.Address.String() && k.IsMemberOfGroup(ctx, subspaceID, groupID, account.Address.String()) {
+		// If the user is not the subspace owner and it's part of the user group they cannot edit the group validPermissions
 		skip = true
 		return
 	}
@@ -294,7 +363,7 @@ func randomDeleteUserGroupFields(
 	groupID = group.ID
 
 	// Get a signer
-	signers, _ := k.GetUsersWithPermission(ctx, subspaceID, types.PermissionManageGroups)
+	signers := k.GetUsersWithRootPermissions(ctx, subspaceID, types.NewPermissions(types.PermissionManageGroups))
 	acc := GetAccount(RandomAddress(r, signers), accs)
 	if acc == nil {
 		// Skip the operation without error as the account is not valid
@@ -360,7 +429,7 @@ func randomAddUserToUserGroupFields(
 	// Get a user
 	accounts := ak.GetAllAccounts(ctx)
 	userAccount := RandomAuthAccount(r, accounts)
-	if k.IsMemberOfGroup(ctx, subspaceID, groupID, userAccount.GetAddress()) {
+	if k.IsMemberOfGroup(ctx, subspaceID, groupID, userAccount.GetAddress().String()) {
 		// Skip if the user is already part of group
 		skip = true
 		return
@@ -368,7 +437,7 @@ func randomAddUserToUserGroupFields(
 	user = userAccount.GetAddress().String()
 
 	// Get a signer
-	signers, _ := k.GetUsersWithPermission(ctx, subspaceID, types.PermissionSetPermissions)
+	signers := k.GetUsersWithRootPermissions(ctx, subspaceID, types.NewPermissions(types.PermissionSetPermissions))
 	acc := GetAccount(RandomAddress(r, signers), accs)
 	if acc == nil {
 		// Skip the operation without error as the account is not valid
@@ -432,17 +501,17 @@ func randomRemoveUserFromUserGroupFields(
 	groupID = group.ID
 
 	// Get a user
-	members := k.GetGroupMembers(ctx, subspaceID, groupID)
+	members := k.GetUserGroupMembers(ctx, subspaceID, groupID)
 	if len(members) == 0 {
 		// Skip if there are no member groups to remove
 		skip = true
 		return
 	}
 
-	user = RandomAddress(r, members).String()
+	user = RandomAddress(r, members)
 
 	// Get a signer
-	signers, _ := k.GetUsersWithPermission(ctx, subspaceID, types.PermissionSetPermissions)
+	signers := k.GetUsersWithRootPermissions(ctx, subspaceID, types.NewPermissions(types.PermissionSetPermissions))
 	acc := GetAccount(RandomAddress(r, signers), accs)
 	if acc == nil {
 		// Skip the operation without error as the account is not valid

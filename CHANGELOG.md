@@ -2,6 +2,62 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
+## Version 4.1.0
+### Features
+#### Posts
+- ([\#941](https://github.com/desmos-labs/desmos/pull/941)) Allow to specify start and end indexes of tags and post references even when a post text is stored outside the chain
+- ([\#942](https://github.com/desmos-labs/desmos/pull/942)) Allow to specify a post tags for content categorization
+
+### Bug Fixes
+#### Profiles
+- ([\#954](https://github.com/desmos-labs/desmos/pull/954)) Added missing unlink messages WASM parsers
+
+#### Subspaces
+- ([\#945](https://github.com/desmos-labs/desmos/pull/945)) Allow to specify the section id inside user permissions query
+
+#### Reactions
+- ([\#940](https://github.com/desmos-labs/desmos/pull/940)) Fixed wrong event types and missing attributes
+
+#### Reports
+- ([\#955](https://github.com/desmos-labs/desmos/pull/955)) Fixed wrong CLI commands naming
+- ([\#961](https://github.com/desmos-labs/desmos/pull/961)) Fixed the JSON fields used to deserialize report create and delete report messages received from CosmWASM
+
+### Dependencies
+- ([\#946](https://github.com/desmos-labs/desmos/pull/946)) Updated WASM parser to be compatible with `cosmwasm-std v1.0.0`
+
+## Version 4.0.1
+### Bug fixes
+#### Other
+- ([\#952](https://github.com/desmos-labs/desmos/pull/952)) Fixed how the `v.4.0.0` upgrade is handled
+
+## Version 4.0.0
+### Features
+#### Subspaces
+- ([\#866](https://github.com/desmos-labs/desmos/pull/866)) Added support for subspaces sections
+- ([\#886](https://github.com/desmos-labs/desmos/pull/886)) Improved how permissions are managed
+- ([\#919](https://github.com/desmos-labs/desmos/pull/919)) Added the ability to create a GenericSubspaceAuthorization to authorize operations only inside a specific subspace
+
+#### Posts
+- ([\#847](https://github.com/desmos-labs/desmos/pull/847)) Added the new `x/posts` module
+
+#### Reactions
+- ([\#898](https://github.com/desmos-labs/desmos/pull/898)) Added the new `x/reactions` module
+
+#### Reports
+- ([\#860](https://github.com/desmos-labs/desmos/pull/860)) Added the new `x/reports` module
+
+#### Other
+- ([\#822](https://github.com/desmos-labs/desmos/pull/822)) Added CosmWASM messages and queries parsers for all modules
+- ([\#919](https://github.com/desmos-labs/desmos/pull/919)) Added proper support for `x/authz`
+
+### Dependencies
+- ([\#875](https://github.com/desmos-labs/desmos/pull/875)) Updated ibc-go to v3.0.0 and wasmd to v0.27.0
+
+## Version 3.2.0
+### Bug Fixes
+#### Supply
+- ([\#883](https://github.com/desmos-labs/desmos/pull/883)) Removed a wrongfully added supply store key
+
 ## Version 3.1.0
 ### Features
 #### Profiles

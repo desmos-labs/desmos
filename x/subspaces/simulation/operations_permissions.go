@@ -5,9 +5,9 @@ package simulation
 import (
 	"math/rand"
 
-	feeskeeper "github.com/desmos-labs/desmos/v3/x/fees/keeper"
+	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
 
-	"github.com/desmos-labs/desmos/v3/testutil/simtesting"
+	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
@@ -16,8 +16,8 @@ import (
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
-	"github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
-	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
+	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
 // SimulateMsgSetUserPermissions tests and runs a single MsgSetUserPermissions
@@ -36,7 +36,7 @@ func SimulateMsgSetUserPermissions(
 		}
 
 		// Build the message
-		msg := types.NewMsgSetUserPermissions(subspaceID, user, permissions, creator.Address.String())
+		msg := types.NewMsgSetUserPermissions(subspaceID, 0, user, permissions, creator.Address.String())
 
 		// Send the message
 		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{creator.PrivKey})
@@ -51,7 +51,7 @@ func SimulateMsgSetUserPermissions(
 // randomSetUserPermissionsFields returns the data used to build a random MsgSetUserPermissions
 func randomSetUserPermissionsFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
-) (subspaceID uint64, target string, permissions types.Permission, account simtypes.Account, skip bool) {
+) (subspaceID uint64, target string, permissions types.Permissions, account simtypes.Account, skip bool) {
 	// Get a subspace id
 	subspaces := k.GetAllSubspaces(ctx)
 	if len(subspaces) == 0 {
@@ -67,15 +67,10 @@ func randomSetUserPermissionsFields(
 	target = targetAcc.Address.String()
 
 	// Get a permission
-	permissions = RandomPermission(r, []types.Permission{
-		types.PermissionWrite,
-		types.PermissionModerateContent,
-		types.PermissionChangeInfo,
-		types.PermissionManageGroups,
-	})
+	permissions = RandomPermission(r, validPermissions)
 
 	// Get a signer
-	signers, _ := k.GetUsersWithPermission(ctx, subspace.ID, types.PermissionSetPermissions)
+	signers := k.GetUsersWithRootPermissions(ctx, subspace.ID, types.NewPermissions(types.PermissionSetPermissions))
 	acc := GetAccount(RandomAddress(r, signers), accs)
 	if acc == nil {
 		// Skip the operation without error as the account is not valid

@@ -5,12 +5,14 @@ import (
 	"testing"
 	"time"
 
-	v5 "github.com/desmos-labs/desmos/v3/x/profiles/legacy/v5"
+	v5 "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v5"
 
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 
-	"github.com/desmos-labs/desmos/v3/testutil"
-	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/testutil/storetesting"
+
+	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
+	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -18,8 +20,8 @@ import (
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v3/app"
-	"github.com/desmos-labs/desmos/v3/x/relationships/types"
+	"github.com/desmos-labs/desmos/v4/app"
+	"github.com/desmos-labs/desmos/v4/x/relationships/types"
 )
 
 func TestMigrateStore(t *testing.T) {
@@ -30,7 +32,7 @@ func TestMigrateStore(t *testing.T) {
 	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
-	account := testutil.GetChainLinkAccount("cosmos", "cosmos")
+	account := profilestesting.GetChainLinkAccount("cosmos", "cosmos")
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -87,7 +89,7 @@ func TestMigrateStore(t *testing.T) {
 					Mode:      signing.SignMode_SIGN_MODE_TEXTUAL,
 					Signature: signatureValue,
 				}
-				signatureAny := testutil.NewAny(&signature)
+				signatureAny := profilestesting.NewAny(&signature)
 
 				chainLink := profilestypes.NewChainLink(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -162,7 +164,7 @@ func TestMigrateStore(t *testing.T) {
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			ctx := testutil.BuildContext(keys, tKeys, memKeys)
+			ctx := storetesting.BuildContext(keys, tKeys, memKeys)
 			if tc.store != nil {
 				tc.store(ctx)
 			}

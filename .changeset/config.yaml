@@ -60,10 +60,16 @@ types:
 modules:
   - id: x/profiles
     description: Profiles
-  - id: x/subspaces
-    description: Subspaces
   - id: x/relationships
     description: Relationships
+  - id: x/subspaces
+    description: Subspaces
+  - id: x/posts
+    description: Posts
+  - id: x/reactions
+    description: Reactions
+  - id: x/reports
+    description: Reports
   - id: x/fees
     description: Fees
   - id: x/supply

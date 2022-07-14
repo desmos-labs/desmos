@@ -3,7 +3,7 @@ package types_test
 import (
 	"testing"
 
-	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
@@ -244,11 +244,344 @@ func TestMsgDeleteSubspace_GetSigners(t *testing.T) {
 
 // --------------------------------------------------------------------------------------------------------------------
 
+var msgCreateSection = types.NewMsgCreateSection(
+	1,
+	"Test section",
+	"This is a test section",
+	0,
+	"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+)
+
+func TestMsgCreateSection_Route(t *testing.T) {
+	require.Equal(t, types.RouterKey, msgCreateSection.Route())
+}
+
+func TestMsgCreateSection_Type(t *testing.T) {
+	require.Equal(t, types.ActionCreateSection, msgCreateSection.Type())
+}
+
+func TestMsgCreateSection_ValidateBasic(t *testing.T) {
+	testCases := []struct {
+		name      string
+		msg       *types.MsgCreateSection
+		shouldErr bool
+	}{
+		{
+			name: "invalid subspace id returns error",
+			msg: types.NewMsgCreateSection(
+				0,
+				msgCreateSection.Name,
+				msgCreateSection.Description,
+				msgCreateSection.ParentID,
+				msgCreateSection.Creator,
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid name returns error",
+			msg: types.NewMsgCreateSection(
+				msgCreateSection.SubspaceID,
+				"",
+				msgCreateSection.Description,
+				msgCreateSection.ParentID,
+				msgCreateSection.Creator,
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid signer returns error",
+			msg: types.NewMsgCreateSection(
+				msgCreateSection.SubspaceID,
+				msgCreateSection.Name,
+				msgCreateSection.Description,
+				msgCreateSection.ParentID,
+				"",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "valid message returns no error",
+			msg:  msgCreateSection,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.msg.ValidateBasic()
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestMsgCreateSection_GetSignBytes(t *testing.T) {
+	expected := `{"type":"desmos/MsgCreateSection","value":{"creator":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","description":"This is a test section","name":"Test section","subspace_id":"1"}}`
+	require.Equal(t, expected, string(msgCreateSection.GetSignBytes()))
+}
+
+func TestMsgCreateSection_GetSigners(t *testing.T) {
+	addr, _ := sdk.AccAddressFromBech32(msgCreateSection.Creator)
+	require.Equal(t, []sdk.AccAddress{addr}, msgCreateSection.GetSigners())
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+var msgEditSection = types.NewMsgEditSection(
+	1,
+	1,
+	"Test section",
+	"This is a test section",
+	"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+)
+
+func TestMsgEditSection_Route(t *testing.T) {
+	require.Equal(t, types.RouterKey, msgEditSection.Route())
+}
+
+func TestMsgEditSection_Type(t *testing.T) {
+	require.Equal(t, types.ActionEditSection, msgEditSection.Type())
+}
+
+func TestMsgEditSection_ValidateBasic(t *testing.T) {
+	testCases := []struct {
+		name      string
+		msg       *types.MsgEditSection
+		shouldErr bool
+	}{
+		{
+			name: "invalid subspace id returns error",
+			msg: types.NewMsgEditSection(
+				0,
+				msgEditSection.SectionID,
+				msgEditSection.Name,
+				msgEditSection.Description,
+				msgEditSection.Editor,
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid name returns error",
+			msg: types.NewMsgEditSection(
+				msgEditSection.SubspaceID,
+				msgEditSection.SectionID,
+				"",
+				msgEditSection.Description,
+				msgEditSection.Editor,
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid editor returns error",
+			msg: types.NewMsgEditSection(
+				msgEditSection.SubspaceID,
+				msgEditSection.SectionID,
+				msgEditSection.Name,
+				msgEditSection.Description,
+				"",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "valid message returns no error",
+			msg:  msgEditSection,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.msg.ValidateBasic()
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestMsgEditSection_GetSignBytes(t *testing.T) {
+	expected := `{"type":"desmos/MsgEditSection","value":{"description":"This is a test section","editor":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","name":"Test section","section_id":1,"subspace_id":"1"}}`
+	require.Equal(t, expected, string(msgEditSection.GetSignBytes()))
+}
+
+func TestMsgEditSection_GetSigners(t *testing.T) {
+	addr, _ := sdk.AccAddressFromBech32(msgEditSection.Editor)
+	require.Equal(t, []sdk.AccAddress{addr}, msgEditSection.GetSigners())
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+var msgMoveSection = types.NewMsgMoveSection(
+	1,
+	1,
+	1,
+	"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+)
+
+func TestMsgMoveSection_Route(t *testing.T) {
+	require.Equal(t, types.RouterKey, msgMoveSection.Route())
+}
+
+func TestMsgMoveSection_Type(t *testing.T) {
+	require.Equal(t, types.ActionMoveSection, msgMoveSection.Type())
+}
+
+func TestMsgMoveSection_ValidateBasic(t *testing.T) {
+	testCases := []struct {
+		name      string
+		msg       *types.MsgMoveSection
+		shouldErr bool
+	}{
+		{
+			name: "invalid subspace id returns error",
+			msg: types.NewMsgMoveSection(
+				0,
+				msgMoveSection.SectionID,
+				msgMoveSection.NewParentID,
+				msgMoveSection.Signer,
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid section id returns error",
+			msg: types.NewMsgMoveSection(
+				msgMoveSection.SubspaceID,
+				0,
+				msgMoveSection.NewParentID,
+				msgMoveSection.Signer,
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid editor returns error",
+			msg: types.NewMsgMoveSection(
+				msgMoveSection.SubspaceID,
+				msgMoveSection.SectionID,
+				msgMoveSection.NewParentID,
+				"",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "valid message returns no error",
+			msg:  msgMoveSection,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.msg.ValidateBasic()
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestMsgMoveSection_GetSignBytes(t *testing.T) {
+	expected := `{"type":"desmos/MsgMoveSection","value":{"new_parent_id":1,"section_id":1,"signer":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","subspace_id":"1"}}`
+	require.Equal(t, expected, string(msgMoveSection.GetSignBytes()))
+}
+
+func TestMsgMoveSection_GetSigners(t *testing.T) {
+	addr, _ := sdk.AccAddressFromBech32(msgMoveSection.Signer)
+	require.Equal(t, []sdk.AccAddress{addr}, msgMoveSection.GetSigners())
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+var msgDeleteSection = types.NewMsgDeleteSection(
+	1,
+	1,
+	"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+)
+
+func TestMsgDeleteSection_Route(t *testing.T) {
+	require.Equal(t, types.RouterKey, msgDeleteSection.Route())
+}
+
+func TestMsgDeleteSection_Type(t *testing.T) {
+	require.Equal(t, types.ActionDeleteSection, msgDeleteSection.Type())
+}
+
+func TestMsgDeleteSection_ValidateBasic(t *testing.T) {
+	testCases := []struct {
+		name      string
+		msg       *types.MsgDeleteSection
+		shouldErr bool
+	}{
+		{
+			name: "invalid subspace id returns error",
+			msg: types.NewMsgDeleteSection(
+				0,
+				msgDeleteSection.SectionID,
+				msgDeleteSection.Signer,
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid section id returns error",
+			msg: types.NewMsgDeleteSection(
+				msgDeleteSection.SubspaceID,
+				0,
+				msgDeleteSection.Signer,
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid editor returns error",
+			msg: types.NewMsgDeleteSection(
+				msgDeleteSection.SubspaceID,
+				msgDeleteSection.SectionID,
+				"",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "valid message returns no error",
+			msg:  msgDeleteSection,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.msg.ValidateBasic()
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestMsgDeleteSection_GetSignBytes(t *testing.T) {
+	expected := `{"type":"desmos/MsgDeleteSection","value":{"section_id":1,"signer":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","subspace_id":"1"}}`
+	require.Equal(t, expected, string(msgDeleteSection.GetSignBytes()))
+}
+
+func TestMsgDeleteSection_GetSigners(t *testing.T) {
+	addr, _ := sdk.AccAddressFromBech32(msgDeleteSection.Signer)
+	require.Equal(t, []sdk.AccAddress{addr}, msgDeleteSection.GetSigners())
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
 var msgCreateUserGroup = types.NewMsgCreateUserGroup(
 	1,
+	0,
 	"Group",
 	"Description",
-	types.PermissionWrite,
+	types.NewPermissions(types.PermissionEditSubspace),
 	"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 )
 
@@ -270,9 +603,10 @@ func TestMsgCreateUserGroup_ValidateBasic(t *testing.T) {
 			name: "invalid subspace id returns error",
 			msg: types.NewMsgCreateUserGroup(
 				0,
+				1,
 				"group",
 				"description",
-				types.PermissionWrite,
+				types.NewPermissions(types.PermissionEditSubspace),
 				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 			),
 			shouldErr: true,
@@ -281,9 +615,22 @@ func TestMsgCreateUserGroup_ValidateBasic(t *testing.T) {
 			name: "invalid group name returns error",
 			msg: types.NewMsgCreateUserGroup(
 				1,
+				1,
 				"",
 				"description",
-				types.PermissionWrite,
+				types.NewPermissions(types.PermissionEditSubspace),
+				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid permissions return error",
+			msg: types.NewMsgCreateUserGroup(
+				1,
+				1,
+				"group",
+				"description",
+				types.NewPermissions("INVALID"),
 				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 			),
 			shouldErr: true,
@@ -292,9 +639,10 @@ func TestMsgCreateUserGroup_ValidateBasic(t *testing.T) {
 			name: "invalid creator returns error",
 			msg: types.NewMsgCreateUserGroup(
 				1,
+				1,
 				"group",
 				"description",
-				types.PermissionWrite,
+				types.NewPermissions(types.PermissionEditSubspace),
 				"cosmos1m0czrla04f7rp3zg7dsgc4kl",
 			),
 			shouldErr: true,
@@ -319,7 +667,7 @@ func TestMsgCreateUserGroup_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgCreateUserGroup_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgCreateUserGroup","value":{"creator":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","default_permissions":1,"description":"Description","name":"Group","subspace_id":"1"}}`
+	expected := `{"type":"desmos/MsgCreateUserGroup","value":{"creator":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","default_permissions":["EDIT_SUBSPACE"],"description":"Description","name":"Group","subspace_id":"1"}}`
 	require.Equal(t, expected, string(msgCreateUserGroup.GetSignBytes()))
 }
 
@@ -405,10 +753,82 @@ func TestMsgEditUserGroup_GetSigners(t *testing.T) {
 
 // --------------------------------------------------------------------------------------------------------------------
 
+var msgMoveUserGroup = types.NewMsgMoveUserGroup(
+	1,
+	1,
+	2,
+	"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+)
+
+func TestMsgMoveUserGroup_Route(t *testing.T) {
+	require.Equal(t, types.RouterKey, msgMoveUserGroup.Route())
+}
+
+func TestMsgMoveUserGroup_Type(t *testing.T) {
+	require.Equal(t, types.ActionMoveUserGroup, msgMoveUserGroup.Type())
+}
+
+func TestMsgMoveUserGroup_ValidateBasic(t *testing.T) {
+	testCases := []struct {
+		name      string
+		msg       *types.MsgMoveUserGroup
+		shouldErr bool
+	}{
+		{
+			name: "invalid subspace id returns error",
+			msg: types.NewMsgMoveUserGroup(
+				0,
+				msgMoveUserGroup.GroupID,
+				msgMoveUserGroup.NewSectionID,
+				msgMoveUserGroup.Signer,
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid creator returns error",
+			msg: types.NewMsgMoveUserGroup(
+				msgMoveUserGroup.SubspaceID,
+				msgMoveUserGroup.GroupID,
+				msgMoveUserGroup.NewSectionID,
+				"",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "valid message returns no error",
+			msg:  msgMoveUserGroup,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.msg.ValidateBasic()
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestMsgMoveUserGroup_GetSignBytes(t *testing.T) {
+	expected := `{"type":"desmos/MsgMoveUserGroup","value":{"group_id":1,"new_section_id":2,"signer":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","subspace_id":"1"}}`
+	require.Equal(t, expected, string(msgMoveUserGroup.GetSignBytes()))
+}
+
+func TestMsgMoveUserGroup_GetSigners(t *testing.T) {
+	addr, _ := sdk.AccAddressFromBech32(msgMoveUserGroup.Signer)
+	require.Equal(t, []sdk.AccAddress{addr}, msgMoveUserGroup.GetSigners())
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
 var msgSetUserGroupPermissions = types.NewMsgSetUserGroupPermissions(
 	1,
 	1,
-	types.PermissionWrite,
+	types.NewPermissions(types.PermissionEditSubspace),
 	"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 )
 
@@ -431,7 +851,17 @@ func TestMsgSetUserGroupPermissions_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgSetUserGroupPermissions(
 				0,
 				1,
-				types.PermissionWrite,
+				types.NewPermissions(types.PermissionEditSubspace),
+				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid permissions return error",
+			msg: types.NewMsgSetUserGroupPermissions(
+				1,
+				1,
+				types.NewPermissions("INVALID"),
 				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 			),
 			shouldErr: true,
@@ -441,7 +871,7 @@ func TestMsgSetUserGroupPermissions_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgSetUserGroupPermissions(
 				1,
 				1,
-				types.PermissionWrite,
+				types.NewPermissions(types.PermissionEditSubspace),
 				"cosmos1m0czrla04f7rp3zg7dsgc4kl",
 			),
 			shouldErr: true,
@@ -466,7 +896,7 @@ func TestMsgSetUserGroupPermissions_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgSetUserGroupPermissions_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgSetUserGroupPermissions","value":{"group_id":1,"permissions":1,"signer":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","subspace_id":"1"}}`
+	expected := `{"type":"desmos/MsgSetUserGroupPermissions","value":{"group_id":1,"permissions":["EDIT_SUBSPACE"],"signer":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","subspace_id":"1"}}`
 	require.Equal(t, expected, string(msgSetUserGroupPermissions.GetSignBytes()))
 }
 
@@ -740,8 +1170,9 @@ func TestMsgRemoveUserFromUserGroup_GetSigners(t *testing.T) {
 // --------------------------------------------------------------------------------------------------------------------
 var msgSetUserPermissions = types.NewMsgSetUserPermissions(
 	1,
+	0,
 	"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-	types.PermissionWrite,
+	types.NewPermissions(types.PermissionEditSubspace),
 	"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 )
 
@@ -763,8 +1194,9 @@ func TestMsgSetUserPermissions_ValidateBasic(t *testing.T) {
 			name: "invalid subspace id returns error",
 			msg: types.NewMsgSetUserPermissions(
 				0,
+				1,
 				"group",
-				types.PermissionWrite,
+				types.NewPermissions(types.PermissionEditSubspace),
 				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 			),
 			shouldErr: true,
@@ -773,8 +1205,9 @@ func TestMsgSetUserPermissions_ValidateBasic(t *testing.T) {
 			name: "invalid target returns error",
 			msg: types.NewMsgSetUserPermissions(
 				1,
+				1,
 				"",
-				types.PermissionWrite,
+				types.NewPermissions(types.PermissionEditSubspace),
 				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 			),
 			shouldErr: true,
@@ -783,8 +1216,9 @@ func TestMsgSetUserPermissions_ValidateBasic(t *testing.T) {
 			name: "invalid signer returns error",
 			msg: types.NewMsgSetUserPermissions(
 				1,
+				1,
 				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-				types.PermissionWrite,
+				types.NewPermissions(types.PermissionEditSubspace),
 				"cosmos1m0czrla04f7rp3zg7d",
 			),
 			shouldErr: true,
@@ -793,8 +1227,9 @@ func TestMsgSetUserPermissions_ValidateBasic(t *testing.T) {
 			name: "same user and signer returns error",
 			msg: types.NewMsgSetUserPermissions(
 				1,
+				1,
 				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-				types.PermissionWrite,
+				types.NewPermissions(types.PermissionEditSubspace),
 				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 			),
 			shouldErr: true,
@@ -819,7 +1254,7 @@ func TestMsgSetUserPermissions_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgSetUserPermissions_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgSetUserPermissions","value":{"permissions":1,"signer":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","subspace_id":"1","user":"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"}}`
+	expected := `{"type":"desmos/MsgSetUserPermissions","value":{"permissions":["EDIT_SUBSPACE"],"signer":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","subspace_id":"1","user":"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"}}`
 	require.Equal(t, expected, string(msgSetUserPermissions.GetSignBytes()))
 }
 

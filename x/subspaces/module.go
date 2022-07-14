@@ -6,14 +6,16 @@ import (
 	"fmt"
 	"math/rand"
 
-	feeskeeper "github.com/desmos-labs/desmos/v3/x/fees/keeper"
+	"github.com/desmos-labs/desmos/v4/x/subspaces/authz"
 
-	"github.com/desmos-labs/desmos/v3/x/subspaces/simulation"
+	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
 
-	"github.com/desmos-labs/desmos/v3/x/subspaces/client/cli"
+	"github.com/desmos-labs/desmos/v4/x/subspaces/simulation"
 
-	"github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
-	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v4/x/subspaces/client/cli"
+
+	"github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
+	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -30,7 +32,7 @@ import (
 )
 
 const (
-	consensusVersion = 2
+	consensusVersion = 3
 )
 
 // type check to ensure the interface is properly implemented
@@ -89,6 +91,7 @@ func (AppModuleBasic) GetQueryCmd() *cobra.Command {
 
 // RegisterInterfaces registers interfaces and implementations of the subspaces module.
 func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) {
+	authz.RegisterInterfaces(registry)
 	types.RegisterInterfaces(registry)
 }
 
@@ -110,6 +113,10 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 
 	m := keeper.NewMigrator(am.keeper)
 	err := cfg.RegisterMigration(types.ModuleName, 1, m.Migrate1to2)
+	if err != nil {
+		panic(err)
+	}
+	err = cfg.RegisterMigration(types.ModuleName, 2, m.Migrate2to3)
 	if err != nil {
 		panic(err)
 	}

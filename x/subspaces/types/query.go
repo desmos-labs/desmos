@@ -18,10 +18,27 @@ func NewQuerySubspacesRequest(pagination *query.PageRequest) *QuerySubspacesRequ
 	}
 }
 
+// NewQuerySectionsRequest returns a new QuerySectionsRequest instance
+func NewQuerySectionsRequest(subspaceID uint64, pagination *query.PageRequest) *QuerySectionsRequest {
+	return &QuerySectionsRequest{
+		SubspaceId: subspaceID,
+		Pagination: pagination,
+	}
+}
+
+// NewQuerySectionRequest returns a new QuerySectionRequest instance
+func NewQuerySectionRequest(subspaceID uint64, sectionID uint32) *QuerySectionRequest {
+	return &QuerySectionRequest{
+		SubspaceId: subspaceID,
+		SectionId:  sectionID,
+	}
+}
+
 // NewQueryUserGroupsRequest returns a new QueryUserGroupsRequest instance
-func NewQueryUserGroupsRequest(subspaceID uint64, pagination *query.PageRequest) *QueryUserGroupsRequest {
+func NewQueryUserGroupsRequest(subspaceID uint64, sectionID uint32, pagination *query.PageRequest) *QueryUserGroupsRequest {
 	return &QueryUserGroupsRequest{
 		SubspaceId: subspaceID,
+		SectionId:  sectionID,
 		Pagination: pagination,
 	}
 }
@@ -46,9 +63,38 @@ func NewQueryUserGroupMembersRequest(
 }
 
 // NewQueryUserPermissionsRequest returns a new QueryPermissionsRequest instance
-func NewQueryUserPermissionsRequest(subspaceID uint64, user string) *QueryUserPermissionsRequest {
+func NewQueryUserPermissionsRequest(subspaceID uint64, sectionID uint32, user string) *QueryUserPermissionsRequest {
 	return &QueryUserPermissionsRequest{
 		SubspaceId: subspaceID,
+		SectionId:  sectionID,
 		User:       user,
+	}
+}
+
+// NewPermissionDetailUser returns a new PermissionDetail for the user with the given address and permission value
+func NewPermissionDetailUser(subspaceID uint64, sectionID uint32, user string, permissions Permissions) PermissionDetail {
+	return PermissionDetail{
+		SubspaceId: subspaceID,
+		SectionId:  sectionID,
+		Sum: &PermissionDetail_User_{
+			User: &PermissionDetail_User{
+				User:       user,
+				Permission: permissions,
+			},
+		},
+	}
+}
+
+// NewPermissionDetailGroup returns a new PermissionDetail for the user with the given id and permission value
+func NewPermissionDetailGroup(subspaceID uint64, sectionID uint32, groupID uint32, permissions Permissions) PermissionDetail {
+	return PermissionDetail{
+		SubspaceId: subspaceID,
+		SectionId:  sectionID,
+		Sum: &PermissionDetail_Group_{
+			Group: &PermissionDetail_Group{
+				GroupID:    groupID,
+				Permission: permissions,
+			},
+		},
 	}
 }

@@ -5,9 +5,9 @@ package simulation
 import (
 	"math/rand"
 
-	feeskeeper "github.com/desmos-labs/desmos/v3/x/fees/keeper"
+	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
 
-	"github.com/desmos-labs/desmos/v3/testutil/simtesting"
+	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
@@ -16,8 +16,8 @@ import (
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
-	"github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
-	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
+	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
 // SimulateMsgCreateSubspace tests and runs a single MsgCreateSubspace
@@ -113,7 +113,7 @@ func SimulateMsgEditSubspace(
 // randomEditSubspaceFields returns the data needed to edit a subspace
 func randomEditSubspaceFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
-) (subspaceID uint64, update *types.SubspaceUpdate, account simtypes.Account, skip bool) {
+) (subspaceID uint64, update types.SubspaceUpdate, account simtypes.Account, skip bool) {
 	// Get a subspace id
 	subspaces := k.GetAllSubspaces(ctx)
 	if len(subspaces) == 0 {
@@ -125,7 +125,7 @@ func randomEditSubspaceFields(
 	subspaceID = subspace.ID
 
 	// Get an editor
-	editors, _ := k.GetUsersWithPermission(ctx, subspace.ID, types.PermissionChangeInfo)
+	editors := k.GetUsersWithRootPermissions(ctx, subspace.ID, types.NewPermissions(types.PermissionEditSubspace))
 	acc := GetAccount(RandomAddress(r, editors), accs)
 	if acc == nil {
 		// Skip the operation without error as the account is not valid
@@ -206,7 +206,7 @@ func randomDeleteSubspaceFields(
 	subspaceID = subspace.ID
 
 	// Get an editor
-	editors, _ := k.GetUsersWithPermission(ctx, subspace.ID, types.PermissionDeleteSubspace)
+	editors := k.GetUsersWithRootPermissions(ctx, subspace.ID, types.NewPermissions(types.PermissionDeleteSubspace))
 	acc := GetAccount(RandomAddress(r, editors), accs)
 	if acc == nil {
 		// Skip the operation without error as the account is not valid
