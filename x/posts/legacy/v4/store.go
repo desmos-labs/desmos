@@ -13,12 +13,12 @@ import (
 // polls that are already ended (and thus should have not accepted new answers).
 func MigrateStore(ctx sdk.Context, storeKey sdk.StoreKey, cdc codec.BinaryCodec) error {
 	store := ctx.KVStore(storeKey)
-	return removeUserAnswers(store, cdc)
+	return removeInvalidPollAnswers(store, cdc)
 }
 
-// removeUserAnswers iterates over all the polls and deletes the user answers for all the polls which
+// removeInvalidPollAnswers iterates over all the polls and deletes the user answers for all the polls which
 // final results already been tallied. This is to delete all the answers that have been added after that.
-func removeUserAnswers(store sdk.KVStore, cdc codec.BinaryCodec) error {
+func removeInvalidPollAnswers(store sdk.KVStore, cdc codec.BinaryCodec) error {
 	attachmentStore := prefix.NewStore(store, types.AttachmentPrefix)
 	attachmentsIterator := attachmentStore.Iterator(nil, nil)
 	defer attachmentsIterator.Close()
