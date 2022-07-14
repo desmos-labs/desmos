@@ -135,8 +135,19 @@ func TestMigrateStore(t *testing.T) {
 				kvStore := ctx.KVStore(keys[types.StoreKey])
 
 				// Store the chain link
-				chainLink := account.GetBech32ChainLink(
+				addr, _ := sdk.Bech32ifyAddressBytes("cosmos", account.PubKey().Address())
+				chainLink := v5types.NewChainLink(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					v5types.NewBech32Address(addr, "cosmos"),
+					v5types.NewProof(
+						account.PubKey(),
+						&v5types.SingleSignatureData{
+							Mode:      signing.SignMode_SIGN_MODE_TEXTUAL,
+							Signature: account.Sign("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+						},
+						hex.EncodeToString([]byte("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")),
+					),
+					v5types.NewChainConfig(account.ChainName()),
 					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 				)
 
@@ -144,7 +155,7 @@ func TestMigrateStore(t *testing.T) {
 					types.ChainLinksStoreKey(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						"cosmos",
-						"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
+						account.Bech32Address().GetValue(),
 					),
 					cdc.MustMarshal(&chainLink),
 				)
@@ -154,7 +165,7 @@ func TestMigrateStore(t *testing.T) {
 
 				key := types.ChainLinkOwnerKey(
 					"cosmos",
-					"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
+					account.Bech32Address().GetValue(),
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				)
 				require.Equal(t, []byte{0x01}, kvStore.Get(key))
