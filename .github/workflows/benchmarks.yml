@@ -29,21 +29,21 @@ jobs:
 
       - name: Go cache 💾
         if: env.GIT_DIFF
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/go/pkg
           key: ${{ runner.os }}-go-pkg-${{ hashFiles('**/go.mod') }}
 
       - name: Restore benchstat 🪛
         if: env.GIT_DIFF
-        uses: actions/cache@v2.1.7
+        uses: actions/cache@v3
         with:
           path: ~/go/bin/benchstat
           key: ${{ runner.os }}-benchstat
 
       - name: Restore base benchmark result 📝
         if: env.GIT_DIFF
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             bench-master.txt
