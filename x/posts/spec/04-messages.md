@@ -85,6 +85,7 @@ It's expected to fail if:
 * the signer does not have a profile;
 * the subspace associated with the post does not exist;
 * the poll does not exist;
+* the poll voting period already ended;
 * the signer does not have the permission to interact with contents within the subspace;
 * the signer is trying to edit their own answer but the poll does not allow answers edits;
 * the signer is trying to give multiple answers but the poll does not allow multiple answers;

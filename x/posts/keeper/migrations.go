@@ -5,6 +5,8 @@ package keeper
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
+	v4 "github.com/desmos-labs/desmos/v4/x/posts/legacy/v4"
+
 	v3 "github.com/desmos-labs/desmos/v4/x/posts/legacy/v3"
 
 	v2 "github.com/desmos-labs/desmos/v4/x/posts/legacy/v2"
@@ -33,4 +35,9 @@ func (m Migrator) Migrate1to2(ctx sdk.Context) error {
 // Migrate2to3 migrates from version 2 to 3.
 func (m Migrator) Migrate2to3(ctx sdk.Context) error {
 	return v3.MigrateStore(ctx, m.k.storeKey, m.k.cdc)
+}
+
+// Migrate3to4 migrates from version 3 to 4.
+func (m Migrator) Migrate3to4(ctx sdk.Context) error {
+	return v4.MigrateStore(ctx, m.k.storeKey, m.k.cdc)
 }
