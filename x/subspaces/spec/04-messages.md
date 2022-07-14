@@ -35,7 +35,7 @@ It's expected to fail if:
 A subspace can be deleted using `MsgDeleteSubspace`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/v4.1.0/proto/desmos/subspaces/v2/msgs.proto#L105-115 
+https://github.com/desmos-labs/desmos/blob/v4.1.0/proto/desmos/subspaces/v2/msgs.proto#L105-L115 
 ```
 
 It's expected to fail if:
@@ -46,7 +46,7 @@ It's expected to fail if:
 A section can be created using the `MsgCreateSection`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/v4.1.0/proto/desmos/subspaces/v2/msgs.proto#L122-L141 
+https://github.com/desmos-labs/desmos/blob/v4.1.0/proto/desmos/subspaces/v2/msgs.proto#L122-L145 
 ```
 
 The message is expected to fail if:
@@ -85,7 +85,7 @@ It's expected to fail if:
 A section can be deleted using the `MsgDeleteSection`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/v4.1.0/proto/desmos/subspaces/v2/msgs.proto#L212-L224 
+https://github.com/desmos-labs/desmos/blob/v4.1.0/proto/desmos/subspaces/v2/msgs.proto#L212-L228 
 ```
 
 It's is expected to fail if:
@@ -124,7 +124,7 @@ It's expected to fail if:
 A user group can be moved to another section group using the `MsgMoveUserGroup`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/v4.1.0/proto/desmos/subspaces/v2/msgs.proto#L298-L317
+https://github.com/desmos-labs/desmos/blob/v4.1.0/proto/desmos/subspaces/v2/msgs.proto#L298-L321
 ```
 
 It's expected to fail if:

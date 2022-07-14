@@ -20,7 +20,7 @@ The post id represents the id of post to which the reaction is associated.
 A reaction id is a unique id within a post that can be used along with the post id itself to uniquely identify a reaction.
 
 ### Value
-The value of the reaction can be either a [registered reaction value](#registered-reaction-value) or a [text reaction value](#text-reaction-value).
+The value of the reaction can be either a [registered reaction value](#registered-reaction-value) or a [text reaction value](#free-text-value).
 
 ### Author
 The author of a reaction is the user that has created this reaction.
@@ -66,7 +66,7 @@ The id of the subspace for which the parameters are valid.
 The parameters related to reactions using a [registered reaction value](#registered-reaction-value).
 
 ### Free Text 
-The parameters related to reactions using a [free text reaction value](#free-text-reaction-value).
+The parameters related to reactions using a [free text value](#free-text-value).
 
 ## Registered Reaction Value Params
 The _registered reaction value params_ type contains all the parameters related to reactions that use a [registered reaction value](#registered-reaction-value).
@@ -75,7 +75,7 @@ The _registered reaction value params_ type contains all the parameters related 
 Tells whether [registered reaction value](#registered-reaction-value) reactions are supported within the subspace.
 
 ## Free Text Value Params
-The _free text value params_ type contains all the parameters related to reactions that use a [free text value value](#free-text-value).
+The _free text value params_ type contains all the parameters related to reactions that use a [free text value](#free-text-value).
 
 ### Enabled
 Tells whether [free text value](#free-text-value) reactions are supported within the subspace.

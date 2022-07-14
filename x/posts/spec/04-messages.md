@@ -50,7 +50,7 @@ It's expected to fail if:
 It's possible to add an attachment to an existing post with `MsgAddPostAttachment`. Attachment can be a [media](02-concepts.md#media) or a [poll](02-concepts.md#poll).
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/v4.1.0/proto/desmos/posts/v2/msgs.proto#L170-L191
+https://github.com/desmos-labs/desmos/blob/v4.1.0/proto/desmos/posts/v2/msgs.proto#L168-L191
 ```
 
 It's expected to fail if:
@@ -78,7 +78,7 @@ It's expected to fail if:
 It's possible to answer any active post's poll With `MsgAnswerPoll`.
 
 ```js reference 
-https://github.com/desmos-labs/desmos/blob/v4.1.0/proto/desmos/posts/v2/msgs.proto#L245-271
+https://github.com/desmos-labs/desmos/blob/v4.1.0/proto/desmos/posts/v2/msgs.proto#L245-L271
 ```
 
 It's expected to fail if:
