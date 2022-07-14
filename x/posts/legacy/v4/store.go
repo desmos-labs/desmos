@@ -52,7 +52,8 @@ func removePollAnswers(store sdk.KVStore, subspaceID uint64, postID uint64, poll
 	// Get the answers
 	var keys [][]byte
 	for ; answersIterator.Valid(); answersIterator.Next() {
-		keys = append(keys, append(types.PollAnswersPrefix(subspaceID, postID, pollID), answersIterator.Key()...))
+		user := string(answersIterator.Key())
+		keys = append(keys, types.PollAnswerStoreKey(subspaceID, postID, pollID, user))
 	}
 
 	// Close the iterator to avoid any conflict
