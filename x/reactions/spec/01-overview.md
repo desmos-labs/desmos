@@ -18,7 +18,7 @@ This module gives the possibility to react to contents and customise the reactio
     - [Registered Reaction Value](02-concepts.md#registered-reaction-value)
     - [Free Text Value](02-concepts.md#free-text-value)
     - [Subspace Reactions Params](02-concepts.md#subspace-reactions-params)
-    - [Registered Reactions Params](02-concepts.md#registered-reactions-params)
+    - [Registered Reactions Value Params](02-concepts.md#registered-reaction-value-params)
     - [Free Text Value Params](02-concepts.md#free-text-value-params)
 2. **[State](03-state.md)**
     - [Next Registered Reaction ID](03-state.md#next-registered-reaction-id)
