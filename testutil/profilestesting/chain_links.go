@@ -53,7 +53,7 @@ func (a ChainLinkAccount) Bech32Address() *types.Bech32Address {
 	return types.NewBech32Address(addr, a.bech32Prefix)
 }
 
-func (a ChainLinkAccount) Bech32SignatureData(signedValue string) types.SignatureData {
+func (a ChainLinkAccount) Bech32SignatureData(signedValue string) types.CosmosSignatureData {
 	return &types.SingleSignatureData{
 		Mode:      signing.SignMode_SIGN_MODE_TEXTUAL,
 		Signature: a.Sign(signedValue),

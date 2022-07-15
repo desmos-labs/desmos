@@ -32,6 +32,74 @@ var _ = time.Kitchen
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
+// CosmosSignatureValueEncoding contains the different kinds of value encoding
+// that the signature can have
+type CosmosSignatureValueEncoding int32
+
+const (
+	// Unknown should never be used
+	COSMOS_SIGNATURE_VALUE_ENCODING_UNKNOWN CosmosSignatureValueEncoding = 0
+	// TXLegacyAmino should be used when the signed value is an Amino
+	// transaction, containing the address inside its memo
+	COSMOS_SIGNATURE_VALUE_ENCODING_AMINO_TX CosmosSignatureValueEncoding = 1
+	// TXDirect should be used when the signed value is a Protobuf transaction
+	// containing the address inside its memo
+	COSMOS_SIGNATURE_VALUE_ENCODING_DIRECT_TX CosmosSignatureValueEncoding = 2
+	// Textual should be used when the signed value is the address itself
+	COSMOS_SIGNATURE_VALUE_ENCODING_TEXTUAL CosmosSignatureValueEncoding = 3
+)
+
+var CosmosSignatureValueEncoding_name = map[int32]string{
+	0: "COSMOS_SIGNATURE_VALUE_ENCODING_UNKNOWN",
+	1: "COSMOS_SIGNATURE_VALUE_ENCODING_AMINO_TX",
+	2: "COSMOS_SIGNATURE_VALUE_ENCODING_DIRECT_TX",
+	3: "COSMOS_SIGNATURE_VALUE_ENCODING_TEXTUAL",
+}
+
+var CosmosSignatureValueEncoding_value = map[string]int32{
+	"COSMOS_SIGNATURE_VALUE_ENCODING_UNKNOWN":   0,
+	"COSMOS_SIGNATURE_VALUE_ENCODING_AMINO_TX":  1,
+	"COSMOS_SIGNATURE_VALUE_ENCODING_DIRECT_TX": 2,
+	"COSMOS_SIGNATURE_VALUE_ENCODING_TEXTUAL":   3,
+}
+
+func (x CosmosSignatureValueEncoding) String() string {
+	return proto.EnumName(CosmosSignatureValueEncoding_name, int32(x))
+}
+
+func (CosmosSignatureValueEncoding) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_29bee920e792da29, []int{0}
+}
+
+// EVMSignatureMethod contains the various EVM signature methods supported
+type EVMSignatureMethod int32
+
+const (
+	// Unknown should never be used
+	EVM_SIGNATURE_METHOD_UNKNOWN EVMSignatureMethod = 0
+	// PersonalSign should be used when the value has been signed using the
+	// personal_sign signature method
+	EVM_SIGNATURE_METHOD_PERSONAL_SIGN EVMSignatureMethod = 1
+)
+
+var EVMSignatureMethod_name = map[int32]string{
+	0: "EVM_SIGNATURE_METHOD_UNKNOWN",
+	1: "EVM_SIGNATURE_METHOD_PERSONAL_SIGN",
+}
+
+var EVMSignatureMethod_value = map[string]int32{
+	"EVM_SIGNATURE_METHOD_UNKNOWN":       0,
+	"EVM_SIGNATURE_METHOD_PERSONAL_SIGN": 1,
+}
+
+func (x EVMSignatureMethod) String() string {
+	return proto.EnumName(EVMSignatureMethod_name, int32(x))
+}
+
+func (EVMSignatureMethod) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_29bee920e792da29, []int{1}
+}
+
 // ChainLink contains the data representing either an inter- or cross- chain
 // link
 type ChainLink struct {
@@ -288,26 +356,27 @@ func (m *HexAddress) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_HexAddress proto.InternalMessageInfo
 
-// SingleSignatureData is the signature data for a single signer
-type SingleSignatureData struct {
-	// Mode is the signing mode of the single signer
-	Mode signing.SignMode `protobuf:"varint,1,opt,name=mode,proto3,enum=cosmos.tx.signing.v1beta1.SignMode" json:"mode,omitempty"`
-	// Signature is the raw signature bytes
-	Signature []byte `protobuf:"bytes,2,opt,name=signature,proto3" json:"signature,omitempty"`
+// CosmosSignature represents a signature generated using a Cosmos-compatible
+// wallet
+type CosmosSignature struct {
+	// Encoding of the signed value
+	ValueEncoding CosmosSignatureValueEncoding `protobuf:"varint,1,opt,name=value_encoding,json=valueEncoding,proto3,enum=desmos.profiles.v3.CosmosSignatureValueEncoding" json:"value_encoding,omitempty" yaml:"value_encoding"`
+	// Data of the signature
+	SignatureData *types.Any `protobuf:"bytes,2,opt,name=signature_data,json=signatureData,proto3" json:"signature_data,omitempty" yaml:"signature_data"`
 }
 
-func (m *SingleSignatureData) Reset()         { *m = SingleSignatureData{} }
-func (m *SingleSignatureData) String() string { return proto.CompactTextString(m) }
-func (*SingleSignatureData) ProtoMessage()    {}
-func (*SingleSignatureData) Descriptor() ([]byte, []int) {
+func (m *CosmosSignature) Reset()         { *m = CosmosSignature{} }
+func (m *CosmosSignature) String() string { return proto.CompactTextString(m) }
+func (*CosmosSignature) ProtoMessage()    {}
+func (*CosmosSignature) Descriptor() ([]byte, []int) {
 	return fileDescriptor_29bee920e792da29, []int{6}
 }
-func (m *SingleSignatureData) XXX_Unmarshal(b []byte) error {
+func (m *CosmosSignature) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *SingleSignatureData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *CosmosSignature) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_SingleSignatureData.Marshal(b, m, deterministic)
+		return xxx_messageInfo_CosmosSignature.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -317,38 +386,38 @@ func (m *SingleSignatureData) XXX_Marshal(b []byte, deterministic bool) ([]byte,
 		return b[:n], nil
 	}
 }
-func (m *SingleSignatureData) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SingleSignatureData.Merge(m, src)
+func (m *CosmosSignature) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CosmosSignature.Merge(m, src)
 }
-func (m *SingleSignatureData) XXX_Size() int {
+func (m *CosmosSignature) XXX_Size() int {
 	return m.Size()
 }
-func (m *SingleSignatureData) XXX_DiscardUnknown() {
-	xxx_messageInfo_SingleSignatureData.DiscardUnknown(m)
+func (m *CosmosSignature) XXX_DiscardUnknown() {
+	xxx_messageInfo_CosmosSignature.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_SingleSignatureData proto.InternalMessageInfo
+var xxx_messageInfo_CosmosSignature proto.InternalMessageInfo
 
-// MultiSignatureData is the signature data for a multisig public key
-type MultiSignatureData struct {
-	// Bitarray specifies which keys within the multisig are signing
-	BitArray *types1.CompactBitArray `protobuf:"bytes,1,opt,name=bit_array,json=bitArray,proto3" json:"bit_array,omitempty"`
-	// Signatures is the signatures of the multi-signature
-	Signatures []*types.Any `protobuf:"bytes,2,rep,name=signatures,proto3" json:"signatures,omitempty"`
+// CosmosSingleSignatureData is the signature data for a single signer
+type CosmosSingleSignatureData struct {
+	// Mode is the signing mode of the single signer
+	Mode signing.SignMode `protobuf:"varint,1,opt,name=mode,proto3,enum=cosmos.tx.signing.v1beta1.SignMode" json:"mode,omitempty" yaml:"mode"`
+	// Signature is the raw signature bytes
+	Signature []byte `protobuf:"bytes,2,opt,name=signature,proto3" json:"signature,omitempty" yaml:"signature"`
 }
 
-func (m *MultiSignatureData) Reset()         { *m = MultiSignatureData{} }
-func (m *MultiSignatureData) String() string { return proto.CompactTextString(m) }
-func (*MultiSignatureData) ProtoMessage()    {}
-func (*MultiSignatureData) Descriptor() ([]byte, []int) {
+func (m *CosmosSingleSignatureData) Reset()         { *m = CosmosSingleSignatureData{} }
+func (m *CosmosSingleSignatureData) String() string { return proto.CompactTextString(m) }
+func (*CosmosSingleSignatureData) ProtoMessage()    {}
+func (*CosmosSingleSignatureData) Descriptor() ([]byte, []int) {
 	return fileDescriptor_29bee920e792da29, []int{7}
 }
-func (m *MultiSignatureData) XXX_Unmarshal(b []byte) error {
+func (m *CosmosSingleSignatureData) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MultiSignatureData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *CosmosSingleSignatureData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MultiSignatureData.Marshal(b, m, deterministic)
+		return xxx_messageInfo_CosmosSingleSignatureData.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -358,27 +427,114 @@ func (m *MultiSignatureData) XXX_Marshal(b []byte, deterministic bool) ([]byte, 
 		return b[:n], nil
 	}
 }
-func (m *MultiSignatureData) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MultiSignatureData.Merge(m, src)
+func (m *CosmosSingleSignatureData) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CosmosSingleSignatureData.Merge(m, src)
 }
-func (m *MultiSignatureData) XXX_Size() int {
+func (m *CosmosSingleSignatureData) XXX_Size() int {
 	return m.Size()
 }
-func (m *MultiSignatureData) XXX_DiscardUnknown() {
-	xxx_messageInfo_MultiSignatureData.DiscardUnknown(m)
+func (m *CosmosSingleSignatureData) XXX_DiscardUnknown() {
+	xxx_messageInfo_CosmosSingleSignatureData.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MultiSignatureData proto.InternalMessageInfo
+var xxx_messageInfo_CosmosSingleSignatureData proto.InternalMessageInfo
+
+// CosmosMultiSignatureData is the signature data for a multisig public key
+type CosmosMultiSignatureData struct {
+	// Bitarray specifies which keys within the multisig are signing
+	BitArray *types1.CompactBitArray `protobuf:"bytes,1,opt,name=bit_array,json=bitArray,proto3" json:"bit_array,omitempty" yaml:"bit_array"`
+	// Signatures is the signatures of the multi-signature
+	Signatures []*types.Any `protobuf:"bytes,2,rep,name=signatures,proto3" json:"signatures,omitempty" yaml:"signatures"`
+}
+
+func (m *CosmosMultiSignatureData) Reset()         { *m = CosmosMultiSignatureData{} }
+func (m *CosmosMultiSignatureData) String() string { return proto.CompactTextString(m) }
+func (*CosmosMultiSignatureData) ProtoMessage()    {}
+func (*CosmosMultiSignatureData) Descriptor() ([]byte, []int) {
+	return fileDescriptor_29bee920e792da29, []int{8}
+}
+func (m *CosmosMultiSignatureData) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *CosmosMultiSignatureData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_CosmosMultiSignatureData.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *CosmosMultiSignatureData) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CosmosMultiSignatureData.Merge(m, src)
+}
+func (m *CosmosMultiSignatureData) XXX_Size() int {
+	return m.Size()
+}
+func (m *CosmosMultiSignatureData) XXX_DiscardUnknown() {
+	xxx_messageInfo_CosmosMultiSignatureData.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CosmosMultiSignatureData proto.InternalMessageInfo
+
+// EVMSignature contains the data of a signature generated using an
+// EVM-compatible wallet
+type EVMSignature struct {
+	// Method used when generating the signature
+	SignatureMethod EVMSignatureMethod `protobuf:"varint,1,opt,name=signature_method,json=signatureMethod,proto3,enum=desmos.profiles.v3.EVMSignatureMethod" json:"signature_method,omitempty" yaml:"signature_method"`
+	// Raw signature bytes
+	Signature []byte `protobuf:"bytes,2,opt,name=signature,proto3" json:"signature,omitempty" yaml:"signature"`
+}
+
+func (m *EVMSignature) Reset()         { *m = EVMSignature{} }
+func (m *EVMSignature) String() string { return proto.CompactTextString(m) }
+func (*EVMSignature) ProtoMessage()    {}
+func (*EVMSignature) Descriptor() ([]byte, []int) {
+	return fileDescriptor_29bee920e792da29, []int{9}
+}
+func (m *EVMSignature) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *EVMSignature) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_EVMSignature.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *EVMSignature) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EVMSignature.Merge(m, src)
+}
+func (m *EVMSignature) XXX_Size() int {
+	return m.Size()
+}
+func (m *EVMSignature) XXX_DiscardUnknown() {
+	xxx_messageInfo_EVMSignature.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_EVMSignature proto.InternalMessageInfo
 
 func init() {
+	proto.RegisterEnum("desmos.profiles.v3.CosmosSignatureValueEncoding", CosmosSignatureValueEncoding_name, CosmosSignatureValueEncoding_value)
+	proto.RegisterEnum("desmos.profiles.v3.EVMSignatureMethod", EVMSignatureMethod_name, EVMSignatureMethod_value)
 	proto.RegisterType((*ChainLink)(nil), "desmos.profiles.v3.ChainLink")
 	proto.RegisterType((*ChainConfig)(nil), "desmos.profiles.v3.ChainConfig")
 	proto.RegisterType((*Proof)(nil), "desmos.profiles.v3.Proof")
 	proto.RegisterType((*Bech32Address)(nil), "desmos.profiles.v3.Bech32Address")
 	proto.RegisterType((*Base58Address)(nil), "desmos.profiles.v3.Base58Address")
 	proto.RegisterType((*HexAddress)(nil), "desmos.profiles.v3.HexAddress")
-	proto.RegisterType((*SingleSignatureData)(nil), "desmos.profiles.v3.SingleSignatureData")
-	proto.RegisterType((*MultiSignatureData)(nil), "desmos.profiles.v3.MultiSignatureData")
+	proto.RegisterType((*CosmosSignature)(nil), "desmos.profiles.v3.CosmosSignature")
+	proto.RegisterType((*CosmosSingleSignatureData)(nil), "desmos.profiles.v3.CosmosSingleSignatureData")
+	proto.RegisterType((*CosmosMultiSignatureData)(nil), "desmos.profiles.v3.CosmosMultiSignatureData")
+	proto.RegisterType((*EVMSignature)(nil), "desmos.profiles.v3.EVMSignature")
 }
 
 func init() {
@@ -386,57 +542,76 @@ func init() {
 }
 
 var fileDescriptor_29bee920e792da29 = []byte{
-	// 793 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x55, 0x4d, 0x4f, 0xeb, 0x46,
-	0x14, 0x8d, 0x0b, 0x81, 0x66, 0x92, 0x50, 0x18, 0x52, 0x29, 0x40, 0x15, 0x53, 0x23, 0xb5, 0x54,
-	0x15, 0xb6, 0x20, 0x54, 0xad, 0xb2, 0x6a, 0x4c, 0x2b, 0x21, 0x01, 0x52, 0x6b, 0x58, 0x75, 0x13,
-	0x8d, 0x9d, 0x89, 0x19, 0x61, 0x7b, 0x2c, 0x7b, 0x1c, 0x25, 0x52, 0xa5, 0x2e, 0xdb, 0x25, 0xcb,
-	0x2e, 0xba, 0xe0, 0x3f, 0xb4, 0x3f, 0x02, 0x75, 0x85, 0xba, 0x62, 0x95, 0x56, 0xb0, 0xe9, 0x3a,
-	0xbf, 0xe0, 0x69, 0x3e, 0x9c, 0x84, 0xf0, 0x40, 0x7a, 0xab, 0xb7, 0xf3, 0xdc, 0x7b, 0xce, 0x99,
-	0x73, 0xe7, 0x5e, 0x5d, 0x83, 0x2f, 0xbb, 0x38, 0x0d, 0x69, 0x6a, 0xc5, 0x09, 0xed, 0x91, 0x00,
-	0xa7, 0x56, 0xbf, 0x69, 0x85, 0xb4, 0x8b, 0x83, 0xb4, 0xe3, 0x5d, 0x22, 0x12, 0x75, 0x02, 0x12,
-	0x5d, 0xa5, 0x66, 0x9c, 0x50, 0x46, 0x21, 0x94, 0x60, 0x33, 0x07, 0x9b, 0xfd, 0xe6, 0x66, 0xcd,
-	0xa7, 0x3e, 0x15, 0x69, 0x8b, 0x7f, 0x49, 0xe4, 0xe6, 0x86, 0x4f, 0xa9, 0x1f, 0x60, 0x4b, 0x9c,
-	0xdc, 0xac, 0x67, 0xa1, 0x68, 0xa8, 0x52, 0xfa, 0x7c, 0x8a, 0x91, 0x10, 0xa7, 0x0c, 0x85, 0x71,
-	0xce, 0xf5, 0x28, 0xbf, 0xa5, 0x23, 0x45, 0xe5, 0x41, 0xa5, 0x3e, 0x97, 0x27, 0x8b, 0x0d, 0xac,
-	0x94, 0xf8, 0x11, 0x89, 0x7c, 0xab, 0xbf, 0xef, 0x62, 0x86, 0xf6, 0xf3, 0xb3, 0x02, 0xee, 0x29,
-	0xa0, 0x97, 0x0c, 0x63, 0x46, 0xad, 0x30, 0x0b, 0x18, 0x49, 0xc9, 0x14, 0x9d, 0x07, 0x24, 0xdc,
-	0xf8, 0x63, 0x01, 0x94, 0x8e, 0x78, 0xb9, 0xa7, 0x24, 0xba, 0x82, 0x3b, 0x60, 0x31, 0x4b, 0x71,
-	0x52, 0xd7, 0xb6, 0xb5, 0xdd, 0x92, 0xfd, 0xd1, 0x78, 0xa4, 0x97, 0x87, 0x28, 0x0c, 0x5a, 0x06,
-	0x8f, 0x1a, 0x8e, 0x48, 0xc2, 0x1f, 0xc1, 0x32, 0xea, 0x76, 0x13, 0x9c, 0xa6, 0xf5, 0x0f, 0xb6,
-	0xb5, 0xdd, 0xf2, 0x41, 0xcd, 0x94, 0x85, 0x99, 0x79, 0x61, 0x66, 0x3b, 0x1a, 0xda, 0x9f, 0x8e,
-	0x47, 0xfa, 0x8a, 0x64, 0x2b, 0xb8, 0xf1, 0xf7, 0x5f, 0x7b, 0xe5, 0xb6, 0xfc, 0xfe, 0x0e, 0x31,
-	0xe4, 0xe4, 0x3a, 0xf0, 0x7b, 0x50, 0x8c, 0x13, 0x4a, 0x7b, 0xf5, 0x05, 0x21, 0xb8, 0x61, 0x3e,
-	0x7f, 0x6e, 0xf3, 0x07, 0x0e, 0xb0, 0x6b, 0xb7, 0x23, 0xbd, 0x30, 0x1e, 0xe9, 0x15, 0xa9, 0x2c,
-	0x58, 0x86, 0x23, 0xd9, 0xb0, 0x03, 0x2a, 0xb2, 0x75, 0x1e, 0x8d, 0x7a, 0xc4, 0xaf, 0x2f, 0x0a,
-	0x35, 0xfd, 0x6d, 0x6a, 0xa2, 0xe6, 0x23, 0x01, 0xb3, 0xb7, 0x94, 0xe6, 0xba, 0xd4, 0x9c, 0x95,
-	0x30, 0x9c, 0xb2, 0x37, 0x45, 0x42, 0x04, 0xaa, 0x5e, 0x82, 0x11, 0x23, 0x34, 0xea, 0xf0, 0xe6,
-	0xd5, 0x8b, 0xe2, 0x86, 0xcd, 0x67, 0x0f, 0x70, 0x91, 0x77, 0xd6, 0xde, 0x56, 0xe2, 0x35, 0x25,
-	0x3e, 0x4b, 0x37, 0xae, 0xff, 0xd5, 0x35, 0xa7, 0x92, 0xc7, 0x38, 0xa9, 0x55, 0xf9, 0xed, 0x46,
-	0x2f, 0xfc, 0x7e, 0xa3, 0x6b, 0xff, 0xdf, 0xe8, 0x9a, 0xf1, 0x2d, 0x28, 0xcf, 0x38, 0xe5, 0xfd,
-	0x89, 0x50, 0x88, 0x9f, 0xf7, 0x87, 0x47, 0x0d, 0x47, 0x24, 0xe7, 0x14, 0xee, 0x35, 0x50, 0x14,
-	0x4f, 0x07, 0xdb, 0x60, 0x39, 0xce, 0xdc, 0xce, 0x15, 0x1e, 0x0a, 0xfe, 0x4b, 0x7d, 0x83, 0xd3,
-	0xbe, 0x29, 0xb8, 0xe1, 0x2c, 0xc5, 0x99, 0x7b, 0x82, 0x87, 0xf0, 0x18, 0x94, 0xf8, 0xb4, 0x21,
-	0x96, 0x25, 0xf8, 0xd5, 0xe6, 0xd7, 0xc6, 0x23, 0x7d, 0x55, 0x8a, 0x4c, 0x08, 0x86, 0x33, 0x25,
-	0xc3, 0x43, 0x00, 0xe2, 0x80, 0xbf, 0x33, 0xc3, 0x03, 0x26, 0xda, 0x5e, 0xb2, 0x3f, 0x1e, 0x8f,
-	0xf4, 0x35, 0x75, 0xf3, 0x24, 0x67, 0x38, 0x25, 0x71, 0xb8, 0xc0, 0x03, 0x36, 0x57, 0xda, 0x2f,
-	0xa0, 0x6a, 0x63, 0xef, 0xb2, 0x79, 0xa0, 0x66, 0x0a, 0x7e, 0x06, 0x8a, 0x7d, 0x14, 0x64, 0xf9,
-	0xfb, 0xac, 0x4e, 0xe7, 0x44, 0x84, 0x0d, 0x47, 0xa6, 0xe1, 0x17, 0x60, 0x29, 0x4e, 0x70, 0x8f,
-	0x0c, 0x44, 0x0d, 0x25, 0x7b, 0x6d, 0x3c, 0xd2, 0xab, 0xf9, 0x40, 0xf1, 0x38, 0xaf, 0x58, 0x7c,
-	0xb4, 0xb6, 0x66, 0x6f, 0xfc, 0xe7, 0xe9, 0xfc, 0x1a, 0x17, 0xa0, 0x6a, 0xa3, 0x14, 0x7f, 0xf5,
-	0xcd, 0x3b, 0x1a, 0x78, 0x5d, 0xf5, 0x67, 0x00, 0x8e, 0xf1, 0xe0, 0x7d, 0xd5, 0xf4, 0xab, 0x06,
-	0xd6, 0xcf, 0x49, 0xe4, 0x07, 0xf8, 0x3c, 0x6f, 0x16, 0x8f, 0xc3, 0xaf, 0xc1, 0x22, 0xdf, 0x8e,
-	0xc2, 0xc6, 0xca, 0xc1, 0x8e, 0xa9, 0xb6, 0x13, 0x1b, 0x98, 0xf9, 0xfe, 0x51, 0x1b, 0xc6, 0xe4,
-	0xbc, 0x33, 0xda, 0xc5, 0x8e, 0x20, 0xc0, 0x4f, 0xe6, 0x67, 0xa6, 0x32, 0x33, 0x07, 0xad, 0x0d,
-	0xee, 0x45, 0xf9, 0xa8, 0x3e, 0xb9, 0xd1, 0xf8, 0x53, 0x03, 0xf0, 0x8c, 0x6f, 0xab, 0xa7, 0x46,
-	0x4e, 0x41, 0xc9, 0x25, 0xac, 0x83, 0x92, 0x04, 0xe5, 0x83, 0x6c, 0xe5, 0x6e, 0xe4, 0xd2, 0x33,
-	0x27, 0x3b, 0x2e, 0xb7, 0x74, 0x44, 0xc3, 0x18, 0x79, 0xcc, 0x26, 0xac, 0xcd, 0x69, 0xce, 0x87,
-	0xae, 0xfa, 0xe2, 0x73, 0x38, 0x31, 0xc3, 0xf7, 0xd9, 0xc2, 0x4b, 0x23, 0xed, 0xcc, 0xe0, 0x5e,
-	0x71, 0x6d, 0x9f, 0xdc, 0x3e, 0x34, 0xb4, 0xbb, 0x87, 0x86, 0xf6, 0xdf, 0x43, 0x43, 0xbb, 0x7e,
-	0x6c, 0x14, 0xee, 0x1e, 0x1b, 0x85, 0xfb, 0xc7, 0x46, 0xe1, 0xa7, 0x7d, 0x9f, 0xb0, 0xcb, 0xcc,
-	0x35, 0x3d, 0x1a, 0x5a, 0x72, 0x23, 0xed, 0x05, 0xc8, 0x4d, 0xd5, 0xb7, 0xd5, 0x3f, 0xb4, 0x06,
-	0xd3, 0x9f, 0x11, 0x1b, 0xc6, 0x38, 0x75, 0x97, 0x84, 0x83, 0xe6, 0x9b, 0x00, 0x00, 0x00, 0xff,
-	0xff, 0x32, 0xbc, 0x6e, 0x9d, 0xac, 0x06, 0x00, 0x00,
+	// 1098 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x56, 0x4d, 0x4f, 0xe3, 0x46,
+	0x18, 0x8e, 0xf9, 0xd8, 0x6d, 0x86, 0x04, 0xb2, 0xb3, 0xa0, 0x06, 0x58, 0xc5, 0xd4, 0x2b, 0xb1,
+	0xec, 0x07, 0xf6, 0x02, 0x5b, 0xa9, 0xe2, 0xd4, 0x38, 0x58, 0x0b, 0x82, 0x24, 0x5b, 0x13, 0xe8,
+	0xaa, 0x17, 0xcb, 0x4e, 0x86, 0x60, 0xe1, 0x2f, 0xd9, 0x93, 0x28, 0x91, 0x2a, 0xf5, 0xd0, 0xcb,
+	0x4a, 0xbd, 0xec, 0xb1, 0x87, 0x1e, 0x90, 0xfa, 0x17, 0x7a, 0xea, 0x2f, 0xd8, 0xf6, 0xb4, 0xea,
+	0xa9, 0x52, 0xa5, 0xb4, 0x02, 0x55, 0xea, 0x39, 0xbf, 0xa0, 0x9a, 0x19, 0x3b, 0x76, 0x42, 0x80,
+	0xb6, 0x97, 0xde, 0x32, 0xf3, 0x3e, 0xcf, 0xe3, 0xf7, 0xe3, 0x99, 0x99, 0x80, 0xa7, 0x0d, 0x14,
+	0xd8, 0x6e, 0x20, 0x79, 0xbe, 0x7b, 0x62, 0x5a, 0x28, 0x90, 0xda, 0x5b, 0x92, 0xed, 0x36, 0x90,
+	0x15, 0x68, 0xf5, 0x53, 0xdd, 0x74, 0x34, 0xcb, 0x74, 0xce, 0x02, 0xd1, 0xf3, 0x5d, 0xec, 0x42,
+	0xc8, 0xc0, 0x62, 0x04, 0x16, 0xdb, 0x5b, 0x4b, 0xf3, 0x4d, 0xb7, 0xe9, 0xd2, 0xb0, 0x44, 0x7e,
+	0x31, 0xe4, 0xd2, 0x62, 0xd3, 0x75, 0x9b, 0x16, 0x92, 0xe8, 0xca, 0x68, 0x9d, 0x48, 0xba, 0xd3,
+	0x0d, 0x43, 0xfc, 0x68, 0x08, 0x9b, 0x36, 0x0a, 0xb0, 0x6e, 0x7b, 0x11, 0xb7, 0xee, 0x92, 0xaf,
+	0x68, 0x4c, 0x94, 0x2d, 0xc2, 0xd0, 0x23, 0xb6, 0x92, 0x70, 0x47, 0x0a, 0xcc, 0xa6, 0x63, 0x3a,
+	0x4d, 0xa9, 0xbd, 0x61, 0x20, 0xac, 0x6f, 0x44, 0xeb, 0x10, 0xb8, 0x1e, 0x02, 0xeb, 0x7e, 0xd7,
+	0xc3, 0xae, 0x64, 0xb7, 0x2c, 0x6c, 0x06, 0x66, 0x8c, 0x8e, 0x36, 0x18, 0x5c, 0xf8, 0x6e, 0x12,
+	0xa4, 0x4b, 0xa4, 0xdc, 0x03, 0xd3, 0x39, 0x83, 0x0f, 0xc1, 0x54, 0x2b, 0x40, 0x7e, 0x9e, 0x5b,
+	0xe1, 0xd6, 0xd2, 0xf2, 0x5c, 0xbf, 0xc7, 0xcf, 0x74, 0x75, 0xdb, 0xda, 0x16, 0xc8, 0xae, 0xa0,
+	0xd2, 0x20, 0xfc, 0x0c, 0xdc, 0xd5, 0x1b, 0x0d, 0x1f, 0x05, 0x41, 0x7e, 0x62, 0x85, 0x5b, 0x9b,
+	0xd9, 0x9c, 0x17, 0x59, 0x61, 0x62, 0x54, 0x98, 0x58, 0x74, 0xba, 0xf2, 0x47, 0xfd, 0x1e, 0x3f,
+	0xcb, 0xd8, 0x21, 0x5c, 0xf8, 0xf9, 0x87, 0xf5, 0x99, 0x22, 0xfb, 0xbd, 0xa3, 0x63, 0x5d, 0x8d,
+	0x74, 0xa0, 0x02, 0xa6, 0x3d, 0xdf, 0x75, 0x4f, 0xf2, 0x93, 0x54, 0x70, 0x51, 0xbc, 0xda, 0x6e,
+	0xf1, 0x15, 0x01, 0xc8, 0xf3, 0xef, 0x7a, 0x7c, 0xaa, 0xdf, 0xe3, 0x33, 0x4c, 0x99, 0xb2, 0x04,
+	0x95, 0xb1, 0xa1, 0x06, 0x32, 0x6c, 0x74, 0x75, 0xd7, 0x39, 0x31, 0x9b, 0xf9, 0x29, 0xaa, 0xc6,
+	0x8f, 0x53, 0xa3, 0x35, 0x97, 0x28, 0x4c, 0x5e, 0x0e, 0x35, 0xef, 0x33, 0xcd, 0xa4, 0x84, 0xa0,
+	0xce, 0xd4, 0x63, 0x24, 0xd4, 0x41, 0xb6, 0xee, 0x23, 0x1d, 0x9b, 0xae, 0xa3, 0x91, 0xe1, 0xe5,
+	0xa7, 0xe9, 0x17, 0x96, 0xae, 0x34, 0xa0, 0x16, 0x4d, 0x56, 0x5e, 0x09, 0xc5, 0xe7, 0x43, 0xf1,
+	0x24, 0x5d, 0x78, 0xfb, 0x3b, 0xcf, 0xa9, 0x99, 0x68, 0x8f, 0x90, 0xb6, 0x33, 0x6f, 0xce, 0xf9,
+	0xd4, 0xb7, 0xe7, 0x3c, 0xf7, 0xd7, 0x39, 0xcf, 0x09, 0x9f, 0x82, 0x99, 0x44, 0xa6, 0x64, 0x3e,
+	0x8e, 0x6e, 0xa3, 0xab, 0xf3, 0x21, 0xbb, 0x82, 0x4a, 0x83, 0x23, 0x0a, 0x7f, 0x72, 0x60, 0x9a,
+	0xb6, 0x0e, 0x16, 0xc1, 0x5d, 0xaf, 0x65, 0x68, 0x67, 0xa8, 0x4b, 0xf9, 0xd7, 0xcd, 0x0d, 0xc6,
+	0x73, 0x0b, 0xe1, 0x82, 0x7a, 0xc7, 0x6b, 0x19, 0xfb, 0xa8, 0x0b, 0x8f, 0x40, 0x9a, 0xb8, 0x4d,
+	0xc7, 0x2d, 0x1f, 0xdd, 0x3a, 0xfc, 0x1c, 0x13, 0x19, 0x10, 0xc8, 0xf8, 0xd3, 0x87, 0xd1, 0x4a,
+	0x8d, 0x95, 0xe0, 0x0b, 0x00, 0x3c, 0x8b, 0x34, 0x1d, 0xa3, 0x0e, 0xa6, 0x1e, 0x48, 0xcb, 0x0b,
+	0xfd, 0x1e, 0x7f, 0x2f, 0x4c, 0x63, 0x10, 0x13, 0xd4, 0x34, 0x5d, 0xd4, 0x50, 0x07, 0x8f, 0xd4,
+	0xf9, 0x15, 0xc8, 0xca, 0xa8, 0x7e, 0xba, 0xb5, 0x19, 0x1a, 0x0c, 0xae, 0x82, 0xe9, 0xb6, 0x6e,
+	0xb5, 0xa2, 0x66, 0xe5, 0x62, 0xd3, 0xd0, 0x6d, 0x41, 0x65, 0x61, 0xf8, 0x18, 0xdc, 0xf1, 0x7c,
+	0x74, 0x62, 0x76, 0x68, 0x41, 0x69, 0xf9, 0x5e, 0xbf, 0xc7, 0x67, 0x23, 0x77, 0x91, 0x7d, 0x52,
+	0x3e, 0xfd, 0xb1, 0xbd, 0x9c, 0xfc, 0xe2, 0x2f, 0xc3, 0x66, 0x16, 0x6a, 0x20, 0x2b, 0xeb, 0x01,
+	0xfa, 0xf8, 0x93, 0x7f, 0x99, 0xc0, 0xcd, 0xaa, 0x5f, 0x02, 0xb0, 0x8b, 0x3a, 0xff, 0x57, 0x4d,
+	0xdf, 0x4c, 0x80, 0xb9, 0x12, 0xbd, 0x4f, 0x06, 0x73, 0x83, 0x3e, 0x98, 0xa5, 0x1f, 0xd1, 0x90,
+	0x53, 0x77, 0x1b, 0xa6, 0xd3, 0xa4, 0xc9, 0xcc, 0x6e, 0x3e, 0x1f, 0x7b, 0xcc, 0x86, 0xc9, 0xc7,
+	0x84, 0xa8, 0x84, 0x3c, 0x79, 0xb1, 0xdf, 0xe3, 0x17, 0x12, 0xe9, 0x0f, 0x14, 0x05, 0x35, 0xdb,
+	0x4e, 0x22, 0xa1, 0x0d, 0x66, 0x07, 0x6e, 0xd1, 0x1a, 0x3a, 0xd6, 0x6f, 0x34, 0xdf, 0xf3, 0x58,
+	0x77, 0x98, 0x45, 0x1c, 0x78, 0x7f, 0x24, 0x25, 0x7a, 0x11, 0x65, 0x83, 0xe4, 0x72, 0x7b, 0x81,
+	0xf4, 0x24, 0xec, 0x47, 0xec, 0x58, 0xe1, 0x47, 0x0e, 0x2c, 0x46, 0x6c, 0xa7, 0x69, 0xa1, 0x21,
+	0x0d, 0xb8, 0x0b, 0xa6, 0xc8, 0xf3, 0x11, 0x76, 0xe3, 0xa1, 0x18, 0x5e, 0xdf, 0xb8, 0x23, 0x46,
+	0x17, 0x74, 0x78, 0x05, 0x8b, 0x84, 0x57, 0x76, 0x1b, 0x28, 0x79, 0x80, 0x09, 0x55, 0x50, 0xa9,
+	0x02, 0xdc, 0x1c, 0x3d, 0x65, 0x19, 0x79, 0x7e, 0xdc, 0x79, 0x4a, 0x1c, 0xa1, 0x6d, 0x3e, 0x91,
+	0xf2, 0xb8, 0x12, 0x85, 0xaf, 0x27, 0x40, 0x9e, 0xed, 0x97, 0xc9, 0x0b, 0x30, 0x9c, 0xbb, 0x01,
+	0xd2, 0x86, 0x89, 0x35, 0xdd, 0xf7, 0xf5, 0xe8, 0x72, 0x90, 0xa2, 0x02, 0xd8, 0x43, 0x22, 0x0e,
+	0xde, 0x8d, 0xa8, 0x8a, 0x92, 0x6b, 0x7b, 0x7a, 0x1d, 0xcb, 0x26, 0x2e, 0x12, 0x5a, 0x32, 0xc5,
+	0x81, 0x96, 0xa0, 0x7e, 0x60, 0x84, 0x71, 0x68, 0x00, 0x30, 0x48, 0x97, 0xbc, 0x1c, 0x93, 0xd7,
+	0xce, 0xef, 0x59, 0x7c, 0xf4, 0x63, 0xc6, 0xb5, 0xb3, 0x4b, 0xa8, 0xde, 0xde, 0x85, 0x9f, 0x38,
+	0x90, 0x51, 0x8e, 0xcb, 0xb1, 0x9b, 0x1d, 0x90, 0x8b, 0x3d, 0x62, 0x23, 0x7c, 0xea, 0x36, 0xc2,
+	0x09, 0xae, 0x8e, 0xf3, 0x73, 0x92, 0x5b, 0xa6, 0x68, 0x79, 0xb9, 0xdf, 0xe3, 0x3f, 0x1c, 0x75,
+	0x1b, 0x53, 0x12, 0xd4, 0xb9, 0x60, 0x18, 0xfd, 0x9f, 0x66, 0x3b, 0xde, 0x8e, 0x4f, 0x7e, 0xe3,
+	0xc0, 0x83, 0x9b, 0xce, 0x17, 0x7c, 0x0a, 0x1e, 0x95, 0xaa, 0x87, 0xe5, 0xea, 0xa1, 0x76, 0xb8,
+	0xf7, 0xb2, 0x52, 0xac, 0x1d, 0xa9, 0x8a, 0x76, 0x5c, 0x3c, 0x38, 0x52, 0x34, 0xa5, 0x52, 0xaa,
+	0xee, 0xec, 0x55, 0x5e, 0x6a, 0x47, 0x95, 0xfd, 0x4a, 0xf5, 0xf3, 0x4a, 0x2e, 0x05, 0x9f, 0x81,
+	0xb5, 0xdb, 0xc0, 0xc5, 0xf2, 0x5e, 0xa5, 0xaa, 0xd5, 0x5e, 0xe7, 0x38, 0xb8, 0x0e, 0x1e, 0xdf,
+	0x86, 0xde, 0xd9, 0x53, 0x95, 0x52, 0x8d, 0xc0, 0x27, 0xfe, 0x49, 0x26, 0x35, 0xe5, 0x75, 0xed,
+	0xa8, 0x78, 0x90, 0x9b, 0x5c, 0x9a, 0x7a, 0xf3, 0x7d, 0x21, 0xf5, 0xa4, 0x01, 0xe0, 0xd5, 0x66,
+	0xc3, 0x15, 0xf0, 0x40, 0x39, 0x2e, 0x27, 0x54, 0xca, 0x4a, 0x6d, 0xb7, 0xba, 0x93, 0xa8, 0x63,
+	0x15, 0x08, 0x63, 0x11, 0xaf, 0x14, 0xf5, 0xb0, 0x5a, 0x29, 0x1e, 0xd0, 0x48, 0x8e, 0x63, 0x5f,
+	0x91, 0xf7, 0xdf, 0x5d, 0x14, 0xb8, 0xf7, 0x17, 0x05, 0xee, 0x8f, 0x8b, 0x02, 0xf7, 0xf6, 0xb2,
+	0x90, 0x7a, 0x7f, 0x59, 0x48, 0xfd, 0x7a, 0x59, 0x48, 0x7d, 0xb1, 0xd1, 0x34, 0xf1, 0x69, 0xcb,
+	0x10, 0xeb, 0xae, 0x2d, 0x31, 0x23, 0xac, 0x5b, 0xba, 0x11, 0x84, 0xbf, 0xa5, 0xf6, 0x0b, 0xa9,
+	0x13, 0xff, 0x75, 0xc4, 0x5d, 0x0f, 0x05, 0xc6, 0x1d, 0xea, 0xe2, 0xad, 0xbf, 0x03, 0x00, 0x00,
+	0xff, 0xff, 0x9a, 0xb6, 0xdc, 0xcc, 0x5a, 0x0a, 0x00, 0x00,
 }
 
 func (this *ChainLink) Equal(that interface{}) bool {
@@ -607,14 +782,41 @@ func (this *HexAddress) Equal(that interface{}) bool {
 	}
 	return true
 }
-func (this *SingleSignatureData) Equal(that interface{}) bool {
+func (this *CosmosSignature) Equal(that interface{}) bool {
 	if that == nil {
 		return this == nil
 	}
 
-	that1, ok := that.(*SingleSignatureData)
+	that1, ok := that.(*CosmosSignature)
 	if !ok {
-		that2, ok := that.(SingleSignatureData)
+		that2, ok := that.(CosmosSignature)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.ValueEncoding != that1.ValueEncoding {
+		return false
+	}
+	if !this.SignatureData.Equal(that1.SignatureData) {
+		return false
+	}
+	return true
+}
+func (this *CosmosSingleSignatureData) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*CosmosSingleSignatureData)
+	if !ok {
+		that2, ok := that.(CosmosSingleSignatureData)
 		if ok {
 			that1 = &that2
 		} else {
@@ -634,14 +836,14 @@ func (this *SingleSignatureData) Equal(that interface{}) bool {
 	}
 	return true
 }
-func (this *MultiSignatureData) Equal(that interface{}) bool {
+func (this *CosmosMultiSignatureData) Equal(that interface{}) bool {
 	if that == nil {
 		return this == nil
 	}
 
-	that1, ok := that.(*MultiSignatureData)
+	that1, ok := that.(*CosmosMultiSignatureData)
 	if !ok {
-		that2, ok := that.(MultiSignatureData)
+		that2, ok := that.(CosmosMultiSignatureData)
 		if ok {
 			that1 = &that2
 		} else {
@@ -663,6 +865,33 @@ func (this *MultiSignatureData) Equal(that interface{}) bool {
 		if !this.Signatures[i].Equal(that1.Signatures[i]) {
 			return false
 		}
+	}
+	return true
+}
+func (this *EVMSignature) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*EVMSignature)
+	if !ok {
+		that2, ok := that.(EVMSignature)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.SignatureMethod != that1.SignatureMethod {
+		return false
+	}
+	if !bytes.Equal(this.Signature, that1.Signature) {
+		return false
 	}
 	return true
 }
@@ -924,7 +1153,7 @@ func (m *HexAddress) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *SingleSignatureData) Marshal() (dAtA []byte, err error) {
+func (m *CosmosSignature) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -934,12 +1163,52 @@ func (m *SingleSignatureData) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *SingleSignatureData) MarshalTo(dAtA []byte) (int, error) {
+func (m *CosmosSignature) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *SingleSignatureData) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *CosmosSignature) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.SignatureData != nil {
+		{
+			size, err := m.SignatureData.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintModelsChainLinks(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.ValueEncoding != 0 {
+		i = encodeVarintModelsChainLinks(dAtA, i, uint64(m.ValueEncoding))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *CosmosSingleSignatureData) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *CosmosSingleSignatureData) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *CosmosSingleSignatureData) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -959,7 +1228,7 @@ func (m *SingleSignatureData) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *MultiSignatureData) Marshal() (dAtA []byte, err error) {
+func (m *CosmosMultiSignatureData) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -969,12 +1238,12 @@ func (m *MultiSignatureData) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MultiSignatureData) MarshalTo(dAtA []byte) (int, error) {
+func (m *CosmosMultiSignatureData) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MultiSignatureData) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *CosmosMultiSignatureData) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1004,6 +1273,41 @@ func (m *MultiSignatureData) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		}
 		i--
 		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *EVMSignature) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *EVMSignature) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *EVMSignature) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Signature) > 0 {
+		i -= len(m.Signature)
+		copy(dAtA[i:], m.Signature)
+		i = encodeVarintModelsChainLinks(dAtA, i, uint64(len(m.Signature)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.SignatureMethod != 0 {
+		i = encodeVarintModelsChainLinks(dAtA, i, uint64(m.SignatureMethod))
+		i--
+		dAtA[i] = 0x8
 	}
 	return len(dAtA) - i, nil
 }
@@ -1123,7 +1427,23 @@ func (m *HexAddress) Size() (n int) {
 	return n
 }
 
-func (m *SingleSignatureData) Size() (n int) {
+func (m *CosmosSignature) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.ValueEncoding != 0 {
+		n += 1 + sovModelsChainLinks(uint64(m.ValueEncoding))
+	}
+	if m.SignatureData != nil {
+		l = m.SignatureData.Size()
+		n += 1 + l + sovModelsChainLinks(uint64(l))
+	}
+	return n
+}
+
+func (m *CosmosSingleSignatureData) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1139,7 +1459,7 @@ func (m *SingleSignatureData) Size() (n int) {
 	return n
 }
 
-func (m *MultiSignatureData) Size() (n int) {
+func (m *CosmosMultiSignatureData) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1154,6 +1474,22 @@ func (m *MultiSignatureData) Size() (n int) {
 			l = e.Size()
 			n += 1 + l + sovModelsChainLinks(uint64(l))
 		}
+	}
+	return n
+}
+
+func (m *EVMSignature) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.SignatureMethod != 0 {
+		n += 1 + sovModelsChainLinks(uint64(m.SignatureMethod))
+	}
+	l = len(m.Signature)
+	if l > 0 {
+		n += 1 + l + sovModelsChainLinks(uint64(l))
 	}
 	return n
 }
@@ -1927,7 +2263,7 @@ func (m *HexAddress) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *SingleSignatureData) Unmarshal(dAtA []byte) error {
+func (m *CosmosSignature) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1950,10 +2286,115 @@ func (m *SingleSignatureData) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: SingleSignatureData: wiretype end group for non-group")
+			return fmt.Errorf("proto: CosmosSignature: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: SingleSignatureData: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: CosmosSignature: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ValueEncoding", wireType)
+			}
+			m.ValueEncoding = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModelsChainLinks
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ValueEncoding |= CosmosSignatureValueEncoding(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SignatureData", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModelsChainLinks
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthModelsChainLinks
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthModelsChainLinks
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.SignatureData == nil {
+				m.SignatureData = &types.Any{}
+			}
+			if err := m.SignatureData.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipModelsChainLinks(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthModelsChainLinks
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *CosmosSingleSignatureData) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowModelsChainLinks
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: CosmosSingleSignatureData: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: CosmosSingleSignatureData: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -2030,7 +2471,7 @@ func (m *SingleSignatureData) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MultiSignatureData) Unmarshal(dAtA []byte) error {
+func (m *CosmosMultiSignatureData) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -2053,10 +2494,10 @@ func (m *MultiSignatureData) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MultiSignatureData: wiretype end group for non-group")
+			return fmt.Errorf("proto: CosmosMultiSignatureData: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MultiSignatureData: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: CosmosMultiSignatureData: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -2127,6 +2568,109 @@ func (m *MultiSignatureData) Unmarshal(dAtA []byte) error {
 			m.Signatures = append(m.Signatures, &types.Any{})
 			if err := m.Signatures[len(m.Signatures)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipModelsChainLinks(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthModelsChainLinks
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *EVMSignature) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowModelsChainLinks
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: EVMSignature: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: EVMSignature: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SignatureMethod", wireType)
+			}
+			m.SignatureMethod = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModelsChainLinks
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SignatureMethod |= EVMSignatureMethod(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Signature", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModelsChainLinks
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthModelsChainLinks
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthModelsChainLinks
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Signature = append(m.Signature[:0], dAtA[iNdEx:postIndex]...)
+			if m.Signature == nil {
+				m.Signature = []byte{}
 			}
 			iNdEx = postIndex
 		default:

@@ -198,14 +198,14 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 					types.NewChainLink(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
-						types.NewProof(ext.GetPubKey(), profilestesting.SingleSignatureProtoFromHex(hex.EncodeToString(ext.Sign(ext.GetAddress()))), hex.EncodeToString([]byte(ext.GetAddress().String()))),
+						types.NewProof(ext.GetPubKey(), profilestesting.SingleCosmosSignatureFromHex(hex.EncodeToString(ext.Sign(ext.GetAddress()))), hex.EncodeToString([]byte(ext.GetAddress().String()))),
 						types.NewChainConfig("cosmos"),
 						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 					),
 					types.NewChainLink(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
-						types.NewProof(ext.GetPubKey(), profilestesting.SingleSignatureProtoFromHex(hex.EncodeToString(ext.Sign(ext.GetAddress()))), hex.EncodeToString([]byte(ext.GetAddress().String()))),
+						types.NewProof(ext.GetPubKey(), profilestesting.SingleCosmosSignatureFromHex(hex.EncodeToString(ext.Sign(ext.GetAddress()))), hex.EncodeToString([]byte(ext.GetAddress().String()))),
 						types.NewChainConfig("cosmos"),
 						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 					),
@@ -259,7 +259,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 						types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
 						types.NewProof(
 							ext.GetPubKey(),
-							profilestesting.SingleSignatureProtoFromHex(
+							profilestesting.SingleCosmosSignatureFromHex(
 								hex.EncodeToString(ext.Sign([]byte("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"))),
 							),
 							hex.EncodeToString([]byte("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")),
@@ -317,7 +317,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 						types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
 						types.NewProof(
 							ext.GetPubKey(),
-							profilestesting.SingleSignatureProtoFromHex(
+							profilestesting.SingleCosmosSignatureFromHex(
 								hex.EncodeToString(ext.Sign([]byte("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"))),
 							),
 							hex.EncodeToString([]byte("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")),

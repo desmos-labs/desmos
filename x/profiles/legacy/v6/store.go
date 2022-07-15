@@ -220,7 +220,7 @@ func convertChainLinkProof(v5Proof v5types.Proof, cdc codec.BinaryCodec) types.P
 		panic(err)
 	}
 
-	var v6Signature types.SignatureData
+	var v6Signature types.CosmosSignatureData
 	v6SignatureAny := convertChainLinkSignatureData(v5Proof.Signature, cdc)
 	err = cdc.UnpackAny(v6SignatureAny, &v6Signature)
 	if err != nil {

@@ -222,7 +222,7 @@ func TestMigrateStore(t *testing.T) {
 				require.Equal(t, types.NewChainLink(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					types.NewBech32Address("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs", "cosmos"),
-					types.NewProof(pubKey, profilestesting.SingleSignatureProtoFromHex("1234"), "plain_text"),
+					types.NewProof(pubKey, profilestesting.SingleCosmosSignatureFromHex("1234"), "plain_text"),
 					types.NewChainConfig("cosmos"),
 					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 				), stored)

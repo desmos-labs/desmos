@@ -75,20 +75,24 @@ func ProfileFromAddr(address string) *types.Profile {
 	return profile
 }
 
-// SingleSignatureProtoFromHex convert the hex-encoded string of the single signature to SignatureData
-func SingleSignatureProtoFromHex(s string) types.SignatureData {
-	sig, err := hex.DecodeString(s)
+// SingleCosmosSignatureFromHex convert the hex-encoded string of the single signature to CosmosSignatureData
+func SingleCosmosSignatureFromHex(hexEncodedSignature string) types.Signature {
+	sig, err := hex.DecodeString(hexEncodedSignature)
 	if err != nil {
 		panic(err)
 	}
-	return &types.SingleSignatureData{
-		Mode:      signing.SignMode_SIGN_MODE_DIRECT,
-		Signature: sig,
-	}
+
+	return types.NewCosmosSignature(
+		types.COSMOS_SIGNATURE_VALUE_ENCODING_TEXTUAL,
+		&types.CosmosSingleSignatureData{
+			Mode:      signing.SignMode_SIGN_MODE_DIRECT,
+			Signature: sig,
+		},
+	)
 }
 
-// MultiSignatureProtoFromAnyHex convert the hex-encoded string of the MultiSignature Any value to SignatureData
-func MultiSignatureProtoFromAnyHex(unpacker codectypes.AnyUnpacker, hexEncodedSignatureData string) types.SignatureData {
+// MultiCosmosSignatureFromHex convert the hex-encoded string of the MultiSignature Any value to CosmosSignatureData
+func MultiCosmosSignatureFromHex(unpacker codectypes.AnyUnpacker, hexEncodedSignatureData string) types.Signature {
 	sig, err := hex.DecodeString(hexEncodedSignatureData)
 	if err != nil {
 		panic(err)
@@ -100,9 +104,9 @@ func MultiSignatureProtoFromAnyHex(unpacker codectypes.AnyUnpacker, hexEncodedSi
 		panic(err)
 	}
 
-	var sigData types.SignatureData
+	var sigData types.CosmosSignatureData
 	if err = unpacker.UnpackAny(&multisigAny, &sigData); err != nil {
 		panic(err)
 	}
-	return sigData
+	return types.NewCosmosSignature(types.COSMOS_SIGNATURE_VALUE_ENCODING_TEXTUAL, sigData)
 }
