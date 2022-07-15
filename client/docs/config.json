@@ -7,7 +7,7 @@
   },
   "apis": [
     {
-      "url": "./tmp-swagger-gen/desmos/profiles/v2/query.swagger.json",
+      "url": "./tmp-swagger-gen/desmos/profiles/v3/query.swagger.json",
       "operationIds": {
         "rename": {
           "Params": "ProfilesParams"

@@ -178,3 +178,9 @@ func RandomOracleParams(r *rand.Rand) types.OracleParams {
 		simtypes.RandSubsetCoins(r, feeCoins)...,
 	)
 }
+
+// RandomAppLinksParams return a random appLinks param
+func RandomAppLinksParams(r *rand.Rand) types.AppLinksParams {
+	randomDuration := time.Duration(simtypes.RandIntBetween(r, 60*60*24*14, 60*60*24*7*4*6)) * time.Second
+	return types.NewAppLinksParams(randomDuration)
+}

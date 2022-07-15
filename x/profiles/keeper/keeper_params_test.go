@@ -19,6 +19,7 @@ func (suite *KeeperTestSuite) TestKeeper_SetParams() {
 			200_000,
 			sdk.NewCoin("band", sdk.NewInt(10)),
 		),
+		types.NewAppLinksParams(types.DefaultAppLinksValidityDuration),
 	)
 	suite.k.SetParams(suite.ctx, params)
 
@@ -48,6 +49,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetParams() {
 						200_000,
 						sdk.NewCoin("band", sdk.NewInt(10)),
 					),
+					types.NewAppLinksParams(types.DefaultAppLinksValidityDuration),
 				)
 				suite.k.SetParams(ctx, params)
 			},
@@ -64,6 +66,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetParams() {
 					200_000,
 					sdk.NewCoin("band", sdk.NewInt(10)),
 				),
+				types.NewAppLinksParams(types.DefaultAppLinksValidityDuration),
 			),
 		},
 		{

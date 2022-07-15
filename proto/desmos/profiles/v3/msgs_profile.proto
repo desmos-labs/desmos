@@ -1,0 +1,48 @@
+syntax = "proto3";
+package desmos.profiles.v3;
+
+import "gogoproto/gogo.proto";
+import "google/protobuf/any.proto";
+import "cosmos_proto/cosmos.proto";
+import "desmos/profiles/v3/models_profile.proto";
+import "desmos/profiles/v3/models_dtag_requests.proto";
+
+option go_package = "github.com/desmos-labs/desmos/v4/x/profiles/types";
+
+// MsgSaveProfile represents a message to save a profile.
+message MsgSaveProfile {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string dtag = 1 [
+    (gogoproto.moretags) = "yaml:\"dtag\"",
+    (gogoproto.customname) = "DTag"
+  ];
+
+  string nickname = 2 [ (gogoproto.moretags) = "yaml:\"nickname\"" ];
+
+  string bio = 3 [ (gogoproto.moretags) = "yaml:\"bio\"" ];
+
+  string profile_picture = 4
+      [ (gogoproto.moretags) = "yaml:\"profile_picture\"" ];
+
+  string cover_picture = 5 [ (gogoproto.moretags) = "yaml:\"cover_picture\"" ];
+
+  string creator = 6 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
+}
+
+// MsgSaveProfileResponse defines the Msg/SaveProfile response type.
+message MsgSaveProfileResponse {}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// MsgDeleteProfile represents the message used to delete an existing profile.
+message MsgDeleteProfile {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string creator = 1 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
+}
+
+// MsgDeleteProfileResponse defines the Msg/DeleteProfile response type.
+message MsgDeleteProfileResponse {}

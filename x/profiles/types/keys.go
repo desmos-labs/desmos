@@ -3,6 +3,9 @@ package types
 import (
 	"bytes"
 	"strings"
+	"time"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // DONTCOVER
@@ -41,8 +44,9 @@ var (
 	ApplicationLinkPrefix         = []byte{0x13}
 	ApplicationLinkClientIDPrefix = []byte{0x14}
 
-	ChainLinkChainPrefix     = []byte{0x15}
-	ApplicationLinkAppPrefix = []byte{0x16}
+	ChainLinkChainPrefix      = []byte{0x15}
+	ApplicationLinkAppPrefix  = []byte{0x16}
+	ExpiringAppLinkTimePrefix = []byte{0x17}
 )
 
 // DTagStoreKey turns a DTag into the key used to store the address associated with it into the store
@@ -145,4 +149,16 @@ func GetApplicationLinkOwnerData(key []byte) (application, username, owner strin
 	cleanedKey := bytes.TrimPrefix(key, ApplicationLinkAppPrefix)
 	values := bytes.Split(cleanedKey, Separator)
 	return string(values[0]), string(values[1]), string(values[2])
+}
+
+// ApplicationLinkExpiringTimePrefix returns the store prefix used to identify the
+// expiration time for application links
+func ApplicationLinkExpiringTimePrefix(expirationTime time.Time) []byte {
+	return append(ExpiringAppLinkTimePrefix, sdk.FormatTimeBytes(expirationTime)...)
+}
+
+// ApplicationLinkExpiringTimeKey returns the key used to store the expirationTime
+// of the application link associated with the given clientID
+func ApplicationLinkExpiringTimeKey(expirationTime time.Time, clientID string) []byte {
+	return append(ApplicationLinkExpiringTimePrefix(expirationTime), []byte(clientID)...)
 }

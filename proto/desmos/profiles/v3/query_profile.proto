@@ -1,0 +1,25 @@
+syntax = "proto3";
+package desmos.profiles.v3;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/any.proto";
+import "cosmos_proto/cosmos.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+
+option go_package = "github.com/desmos-labs/desmos/v4/x/profiles/types";
+
+// QueryProfileRequest is the request type for the Query/Profile RPC method.
+message QueryProfileRequest {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  // Address or DTag of the user to query the profile for
+  string user = 1;
+}
+
+// QueryProfileResponse is the response type for the Query/Profile RPC method.
+message QueryProfileResponse {
+  google.protobuf.Any profile = 1
+      [ (cosmos_proto.accepts_interface) = "AccountI" ];
+}

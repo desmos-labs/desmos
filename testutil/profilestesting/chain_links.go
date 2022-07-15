@@ -35,8 +35,17 @@ func (a ChainLinkAccount) ChainName() string {
 	return a.chainName
 }
 
+func (a ChainLinkAccount) PubKey() cryptotypes.PubKey {
+	return a.pubKey
+}
+
 func (a ChainLinkAccount) PubKeyAny() *codectypes.Any {
 	return NewAny(a.pubKey)
+}
+
+func (a ChainLinkAccount) Sign(value string) []byte {
+	bech32Sig, _ := a.privKey.Sign([]byte(value))
+	return bech32Sig
 }
 
 func (a ChainLinkAccount) Bech32Address() *types.Bech32Address {
@@ -45,10 +54,9 @@ func (a ChainLinkAccount) Bech32Address() *types.Bech32Address {
 }
 
 func (a ChainLinkAccount) Bech32SignatureData(signedValue string) types.SignatureData {
-	bech32Sig, _ := a.privKey.Sign([]byte(signedValue))
 	return &types.SingleSignatureData{
 		Mode:      signing.SignMode_SIGN_MODE_TEXTUAL,
-		Signature: bech32Sig,
+		Signature: a.Sign(signedValue),
 	}
 }
 

@@ -6,6 +6,9 @@ import (
 	"fmt"
 	"math/rand"
 
+	v4 "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v4/types"
+	v5 "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v5/types"
+
 	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -24,13 +27,12 @@ import (
 
 	"github.com/desmos-labs/desmos/v4/x/profiles/client/cli"
 	"github.com/desmos-labs/desmos/v4/x/profiles/keeper"
-	v4 "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v4"
 	"github.com/desmos-labs/desmos/v4/x/profiles/simulation"
 	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 const (
-	consensusVersion = 6
+	consensusVersion = 7
 )
 
 // type check to ensure the interface is properly implemented
@@ -91,6 +93,7 @@ func (AppModuleBasic) GetQueryCmd() *cobra.Command {
 // RegisterInterfaces registers interfaces and implementations of the profiles module.
 func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) {
 	v4.RegisterInterfaces(registry)
+	v5.RegisterInterfaces(registry)
 	types.RegisterInterfaces(registry)
 }
 
@@ -110,12 +113,16 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
 	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
 
-	m := keeper.NewMigrator(am.ak, am.keeper, cfg.QueryServer())
+	m := keeper.NewMigrator(am.ak, am.keeper)
 	err := cfg.RegisterMigration(types.ModuleName, 4, m.Migrate4to5)
 	if err != nil {
 		panic(err)
 	}
-	err = cfg.RegisterMigration(types.ModuleName, 5, m.Migrate5To6)
+	err = cfg.RegisterMigration(types.ModuleName, 5, m.Migrate5to6)
+	if err != nil {
+		panic(err)
+	}
+	err = cfg.RegisterMigration(types.ModuleName, 6, m.Migrate6to7)
 	if err != nil {
 		panic(err)
 	}
@@ -182,7 +189,8 @@ func (AppModule) ConsensusVersion() uint64 {
 }
 
 // BeginBlock returns the begin blocker for the profiles module.
-func (am AppModule) BeginBlock(_ sdk.Context, _ abci.RequestBeginBlock) {
+func (am AppModule) BeginBlock(ctx sdk.Context, _ abci.RequestBeginBlock) {
+	BeginBlocker(ctx, am.keeper)
 }
 
 // EndBlock returns the end blocker for the profiles module. It returns no validator

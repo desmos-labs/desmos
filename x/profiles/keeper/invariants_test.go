@@ -121,6 +121,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 					types.AppLinkStateVerificationStarted,
 					types.NewOracleRequest(1, 1, types.NewOracleRequestCallData("", ""), "client_id"),
 					nil,
+					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 					time.Now(),
 				)
 				store.Set(

@@ -1,7 +1,7 @@
 syntax = "proto3";
 package desmos.profiles.v2;
 
-option go_package = "github.com/desmos-labs/desmos/v4/x/profiles/types";
+option go_package = "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v5/types";
 
 import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";

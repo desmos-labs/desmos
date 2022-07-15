@@ -32,6 +32,7 @@ func (suite *KeeperTestSuite) Test_SaveApplicationLink() {
 				),
 				nil,
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
 			shouldErr: true,
 		},
@@ -53,6 +54,7 @@ func (suite *KeeperTestSuite) Test_SaveApplicationLink() {
 				),
 				nil,
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
 			shouldErr: false,
 			check: func(ctx sdk.Context) {
@@ -121,6 +123,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLink() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
 				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr(address)))
@@ -148,6 +151,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLink() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
 				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr(address)))
@@ -175,6 +179,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLink() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
 				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr(address)))
@@ -202,6 +207,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLink() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
 				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr(address)))
@@ -224,6 +230,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLink() {
 				),
 				nil,
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
 		},
 	}
@@ -278,6 +285,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLinkByClientID() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
 				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr(address)))
@@ -300,6 +308,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLinkByClientID() {
 				),
 				nil,
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
 		},
 	}
@@ -349,6 +358,7 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
 				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr(address)))
@@ -367,6 +377,7 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 				),
 				nil,
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
 			check: func(ctx sdk.Context) {
 				suite.Require().True(suite.k.HasApplicationLink(ctx,
@@ -392,6 +403,7 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
 				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr(address)))
@@ -410,6 +422,7 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 				),
 				nil,
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
 			check: func(ctx sdk.Context) {
 				suite.Require().True(suite.k.HasApplicationLink(ctx,
@@ -435,6 +448,7 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
 				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr(address)))
@@ -453,6 +467,7 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 				),
 				nil,
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
 			check: func(ctx sdk.Context) {
 				suite.Require().True(suite.k.HasApplicationLink(ctx,
@@ -478,6 +493,7 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
 				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr(address)))
@@ -496,6 +512,7 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 				),
 				nil,
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
 			check: func(ctx sdk.Context) {
 				suite.Require().False(suite.k.HasApplicationLink(ctx,

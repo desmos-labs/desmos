@@ -523,7 +523,7 @@ type Attachment struct {
 	SectionID uint32 `protobuf:"varint,2,opt,name=section_id,json=sectionId,proto3" json:"section_id,omitempty"`
 	// Id of the post to which this attachment should be connected
 	PostID uint64 `protobuf:"varint,3,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty"`
-	// If of this attachment
+	// Id of this attachment
 	ID uint32 `protobuf:"varint,4,opt,name=id,proto3" json:"id,omitempty"`
 	// Content of the attachment
 	Content *types.Any `protobuf:"bytes,5,opt,name=content,proto3" json:"content,omitempty"`
