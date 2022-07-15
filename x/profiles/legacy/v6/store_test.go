@@ -233,43 +233,36 @@ func TestMigrateStore(t *testing.T) {
 			store: func(ctx sdk.Context) {
 				kvStore := ctx.KVStore(keys[types.StoreKey])
 
-				// Store the chain links
-				newerChainLink := newerChainAccount.GetBech32ChainLink(
-					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					time.Date(2020, 1, 3, 00, 00, 00, 000, time.UTC),
-				)
+				sig, err := hex.DecodeString("1234")
+				require.NoError(t, err)
 
-				kvStore.Set(
-					profilestypes.ChainLinksStoreKey(
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"cosmos",
-						newerChainAccount.Bech32Address().Value,
+				chainLink := v5types.NewChainLink(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					v5types.NewBech32Address("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs", "cosmos"),
+					v5types.NewProof(
+						pubKey,
+						&v5types.SingleSignatureData{
+							Mode:      signing.SignMode_SIGN_MODE_DIRECT,
+							Signature: sig,
+						},
+						"plain_text",
 					),
-					cdc.MustMarshal(&newerChainLink),
-				)
-
-				olderChainLink := olderChainAccount.GetBech32ChainLink(
-					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					v5types.NewChainConfig("cosmos"),
 					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 				)
-
 				kvStore.Set(
-					profilestypes.ChainLinksStoreKey(
+					types.ChainLinksStoreKey(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						"cosmos",
-						olderChainAccount.Bech32Address().Value,
+						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
 					),
-					cdc.MustMarshal(&olderChainLink),
+					cdc.MustMarshal(&chainLink),
 				)
 			},
 			check: func(ctx sdk.Context) {
 				kvStore := ctx.KVStore(keys[types.StoreKey])
-
-				key := profilestypes.DefaultExternalAddressKey(
-					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					"cosmos",
-				)
-				require.Equal(t, []byte(olderChainAccount.Bech32Address().Value), kvStore.Get(key))
+				key := types.DefaultExternalAddressKey("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", "cosmos")
+				require.Equal(t, []byte("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs"), kvStore.Get(key))
 			},
 		},
 	}

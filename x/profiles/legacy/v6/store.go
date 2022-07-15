@@ -46,7 +46,7 @@ func MigrateStore(ctx sdk.Context, ak authkeeper.AccountKeeper, storeKey sdk.Sto
 	}
 
 	// Set the default external addresses
-	err := setDefaultExternalAddresses(store, cdc)
+	err = setDefaultExternalAddresses(store, cdc)
 	if err != nil {
 		return err
 	}

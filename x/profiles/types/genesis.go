@@ -13,7 +13,8 @@ import (
 func NewGenesisState(
 	requests []DTagTransferRequest,
 	params Params, portID string,
-	chainLinks []ChainLink, defaultExternalAddresses []DefaultExternalAddressEntry,
+	chainLinks []ChainLink,
+	defaultExternalAddresses []DefaultExternalAddressEntry,
 	applicationLinks []ApplicationLink,
 ) *GenesisState {
 	return &GenesisState{
