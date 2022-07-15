@@ -12,7 +12,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v3/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 var (
@@ -177,4 +177,10 @@ func RandomOracleParams(r *rand.Rand) types.OracleParams {
 		uint64(simtypes.RandIntBetween(r, 1, 10000)),
 		simtypes.RandSubsetCoins(r, feeCoins)...,
 	)
+}
+
+// RandomAppLinksParams return a random appLinks param
+func RandomAppLinksParams(r *rand.Rand) types.AppLinksParams {
+	randomDuration := time.Duration(simtypes.RandIntBetween(r, 60*60*24*14, 60*60*24*7*4*6)) * time.Second
+	return types.NewAppLinksParams(randomDuration)
 }

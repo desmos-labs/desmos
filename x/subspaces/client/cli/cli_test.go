@@ -1,3 +1,6 @@
+//go:build norace
+// +build norace
+
 package cli_test
 
 import (
@@ -5,12 +8,14 @@ import (
 	"testing"
 	"time"
 
-	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
+	authzcli "github.com/cosmos/cosmos-sdk/x/authz/client/cli"
+
+	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/gogo/protobuf/proto"
 
-	"github.com/desmos-labs/desmos/v3/x/subspaces/client/cli"
+	"github.com/desmos-labs/desmos/v4/x/subspaces/client/cli"
 
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
 	"github.com/cosmos/cosmos-sdk/testutil/network"
@@ -19,8 +24,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v3/testutil"
-	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v4/testutil"
+	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
 func TestIntegrationTestSuite(t *testing.T) {
@@ -508,7 +513,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserPermissions() {
 		{
 			name: "subspace not found returns error",
 			args: []string{
-				"11", "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				"11", "0", "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			shouldErr: true,
@@ -516,7 +521,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserPermissions() {
 		{
 			name: "user permissions are returned correctly",
 			args: []string{
-				"2", "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				"2", "0", "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			shouldErr: false,
@@ -1354,6 +1359,56 @@ func (s *IntegrationTestSuite) TestCmdSetPermissions() {
 		tc := tc
 		s.Run(tc.name, func() {
 			cmd := cli.GetCmdSetUserPermissions()
+			clientCtx := val.ClientCtx
+
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+			if tc.shouldErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+			}
+		})
+	}
+}
+
+func (s *IntegrationTestSuite) TestCmdGrantAuthorization() {
+	val := s.network.Validators[0]
+	testCases := []struct {
+		name      string
+		args      []string
+		shouldErr bool
+		respType  proto.Message
+	}{
+		{
+			name:      "invalid subspaces ids returns error",
+			args:      []string{"", "cosmos1xw69y2z3yf00rgfnly99628gn5c0x7fryyfv5e"},
+			shouldErr: true,
+		},
+		{
+			name:      "invalid subspace id returns error",
+			args:      []string{"0", "cosmos1xw69y2z3yf00rgfnly99628gn5c0x7fryyfv5e"},
+			shouldErr: true,
+		},
+		{
+			name: "valid data returns no error",
+			args: []string{
+				"1", "cosmos1xw69y2z3yf00rgfnly99628gn5c0x7fryyfv5e",
+				fmt.Sprintf("--%s=%s", authzcli.FlagMsgType, sdk.MsgTypeURL(&types.MsgSetUserPermissions{})),
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+			},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdGrantAuthorization()
 			clientCtx := val.ClientCtx
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)

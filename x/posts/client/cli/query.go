@@ -13,8 +13,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/spf13/cobra"
 
-	"github.com/desmos-labs/desmos/v3/x/posts/types"
-	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v4/x/posts/types"
+	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
 // GetQueryCmd returns the command allowing to perform queries
@@ -210,7 +210,12 @@ If a user address is provided, only the answer of that user will be returned (if
 				return err
 			}
 
-			res, err := queryClient.PollAnswers(context.Background(), types.NewQueryPollAnswersRequest(subspaceID, postID, pollID, args[3], pageReq))
+			var user string
+			if len(args) > 3 {
+				user = args[3]
+			}
+
+			res, err := queryClient.PollAnswers(context.Background(), types.NewQueryPollAnswersRequest(subspaceID, postID, pollID, user, pageReq))
 			if err != nil {
 				return err
 			}

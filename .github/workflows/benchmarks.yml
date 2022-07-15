@@ -1,0 +1,54 @@
+name: Benchmarks
+# Benchmarks workflow runs benchmark tests and compares the results with the ones present on the master branch.
+# This workflow is run on pushes to master & every Pull Requests where a .go, .mod, .sum have been changed
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+jobs:
+  Benchmarks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v3
+
+      - name: Setup Go 🧰
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.17
+
+      - name: Compute diff 📜
+        uses: technote-space/get-diff-action@v6.1.0
+        with:
+          PATTERNS: |
+            **/**.go
+            go.mod
+            go.sum
+
+      - name: Go cache 💾
+        if: env.GIT_DIFF
+        uses: actions/cache@v3
+        with:
+          path: ~/go/pkg
+          key: ${{ runner.os }}-go-pkg-${{ hashFiles('**/go.mod') }}
+
+      - name: Restore benchstat 🪛
+        if: env.GIT_DIFF
+        uses: actions/cache@v3
+        with:
+          path: ~/go/bin/benchstat
+          key: ${{ runner.os }}-benchstat
+
+      - name: Restore base benchmark result 📝
+        if: env.GIT_DIFF
+        uses: actions/cache@v3
+        with:
+          path: |
+            bench-master.txt
+          # Using base sha for PR or new commit hash for master/main push in benchmark result key.
+          key: ${{ runner.os }}-bench-${{ (github.event.pull_request.base.sha != github.event.after) && github.event.pull_request.base.sha || github.event.after }}
+
+      - name: Run benchmarks 🧮
+        run: REF_NAME=${GITHUB_REF##*/} make benchmark

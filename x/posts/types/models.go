@@ -36,6 +36,7 @@ func NewPost(
 	author string,
 	conversationID uint64,
 	entities *Entities,
+	tags []string,
 	referencedPosts []PostReference,
 	replySetting ReplySetting,
 	creationDate time.Time,
@@ -48,6 +49,7 @@ func NewPost(
 		ExternalID:      externalID,
 		Text:            text,
 		Entities:        entities,
+		Tags:            tags,
 		Author:          author,
 		ConversationID:  conversationID,
 		ReferencedPosts: referencedPosts,
@@ -72,17 +74,11 @@ func (p Post) Validate() error {
 		if err != nil {
 			return fmt.Errorf("invalid entities: %s", err)
 		}
+	}
 
-		// Make sure that no entity has a start or end index that is greater to the text length
-		maxIndexAllowed := uint64(0)
-		if len(strings.TrimSpace(p.Text)) > 0 {
-			maxIndexAllowed = uint64(len(strings.TrimSpace(p.Text)) - 1)
-		}
-
-		for _, segment := range p.Entities.getSegments() {
-			if segment.start > maxIndexAllowed || segment.end > maxIndexAllowed {
-				return fmt.Errorf("entity cannot have start/end index greater than text length")
-			}
+	for _, tag := range p.Tags {
+		if strings.TrimSpace(tag) == "" {
+			return fmt.Errorf("invalid post tag: %s", tag)
 		}
 	}
 
@@ -103,10 +99,6 @@ func (p Post) Validate() error {
 
 		if reference.PostID >= p.ID {
 			return fmt.Errorf("invalid referenced post id: %d", reference.PostID)
-		}
-
-		if reference.Position > uint64(len(p.Text)) {
-			return fmt.Errorf("invalid reference position: %d", reference.Position)
 		}
 	}
 
@@ -157,7 +149,7 @@ func (p Post) GetMentionedUsers() []string {
 }
 
 // NewPostReference returns a new PostReference instance
-func NewPostReference(referenceType PostReference_Type, postID uint64, position uint64) PostReference {
+func NewPostReference(referenceType PostReferenceType, postID uint64, position uint64) PostReference {
 	return PostReference{
 		Type:     referenceType,
 		PostID:   postID,
@@ -167,7 +159,7 @@ func NewPostReference(referenceType PostReference_Type, postID uint64, position 
 
 // Validate implements fmt.Validator
 func (r PostReference) Validate() error {
-	if r.Type == TYPE_UNSPECIFIED {
+	if r.Type == POST_REFERENCE_TYPE_UNSPECIFIED {
 		return fmt.Errorf("invalid reference type: %s", r.Type)
 	}
 
@@ -175,8 +167,8 @@ func (r PostReference) Validate() error {
 		return fmt.Errorf("invalid post id: %d", r.PostID)
 	}
 
-	if r.Type != TYPE_QUOTE && r.Position > 0 {
-		return fmt.Errorf("reference position should be set only with TYPE_QUOTE")
+	if r.Type != POST_REFERENCE_TYPE_QUOTE && r.Position > 0 {
+		return fmt.Errorf("reference position should be set only with POST_REFERENCE_TYPE_QUOTE")
 	}
 
 	return nil
@@ -193,14 +185,18 @@ type PostUpdate struct {
 	// Update's entities will always replace the existing ones
 	Entities *Entities
 
+	// Update's tags will always replace the existing ones
+	Tags []string
+
 	UpdateTime time.Time
 }
 
 // NewPostUpdate returns a new PostUpdate instance
-func NewPostUpdate(text string, entities *Entities, updateTime time.Time) PostUpdate {
+func NewPostUpdate(text string, entities *Entities, tags []string, updateTime time.Time) PostUpdate {
 	return PostUpdate{
 		Text:       text,
 		Entities:   entities,
+		Tags:       tags,
 		UpdateTime: updateTime,
 	}
 }
@@ -222,6 +218,7 @@ func (p Post) Update(update PostUpdate) Post {
 		p.Author,
 		p.ConversationID,
 		update.Entities,
+		update.Tags,
 		p.ReferencedPosts,
 		p.ReplySettings,
 		p.CreationDate,
@@ -232,7 +229,7 @@ func (p Post) Update(update PostUpdate) Post {
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewEntities returns a new Entities instance
-func NewEntities(hashtags []Tag, mentions []Tag, urls []Url) *Entities {
+func NewEntities(hashtags []TextTag, mentions []TextTag, urls []Url) *Entities {
 	return &Entities{
 		Hashtags: hashtags,
 		Mentions: mentions,
@@ -327,9 +324,9 @@ func (e *Entities) getSegments() []entitySegment {
 	return segments
 }
 
-// NewTag returns a new Tag instance
-func NewTag(start, end uint64, tag string) Tag {
-	return Tag{
+// NewTextTag returns a new TextTag instance
+func NewTextTag(start, end uint64, tag string) TextTag {
+	return TextTag{
 		Start: start,
 		End:   end,
 		Tag:   tag,
@@ -337,7 +334,7 @@ func NewTag(start, end uint64, tag string) Tag {
 }
 
 // Validate implements fmt.Validator
-func (t Tag) Validate() error {
+func (t TextTag) Validate() error {
 	if t.Start > t.End {
 		return fmt.Errorf("invalid start and end indexes: %d %d", t.Start, t.End)
 	}

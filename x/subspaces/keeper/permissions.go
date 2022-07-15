@@ -3,7 +3,7 @@ package keeper
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
 // SetUserPermissions sets the given permission for the specific user inside a single subspace
@@ -29,13 +29,13 @@ func (k Keeper) HasPermission(ctx sdk.Context, subspaceID uint64, sectionID uint
 	}
 
 	// Get the permissions set to the specific user
-	specificPermissions := k.GetUserPermissions(ctx, subspaceID, sectionID, user)
+	permissions := k.GetUserPermissions(ctx, subspaceID, sectionID, user)
 
 	// Get the group permissions
 	groupPermissions := k.GetGroupsInheritedPermissions(ctx, subspaceID, sectionID, user)
+	permissions = append(permissions, groupPermissions...)
 
 	// Check the combination of the permissions
-	permissions := append(specificPermissions, groupPermissions...)
 	return types.CheckPermission(types.CombinePermissions(permissions...), permission)
 }
 

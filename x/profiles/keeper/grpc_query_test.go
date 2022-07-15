@@ -3,12 +3,12 @@ package keeper_test
 import (
 	"time"
 
-	"github.com/desmos-labs/desmos/v3/testutil/profilestesting"
+	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 
-	"github.com/desmos-labs/desmos/v3/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 func (suite *KeeperTestSuite) TestQueryServer_Profile() {
@@ -750,6 +750,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinks() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 					)),
 				)
 				suite.Require().NoError(suite.k.SaveApplicationLink(
@@ -769,6 +770,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinks() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 					),
 				))
 			},
@@ -795,6 +797,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinks() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 				),
 			},
 		},
@@ -821,6 +824,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinks() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 					)),
 				)
 				suite.Require().NoError(suite.k.SaveApplicationLink(
@@ -840,6 +844,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinks() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 					),
 				))
 			},
@@ -866,6 +871,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinks() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 				),
 			},
 		},
@@ -892,6 +898,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinks() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 					)),
 				)
 				suite.Require().NoError(suite.k.SaveApplicationLink(
@@ -911,6 +918,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinks() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 					),
 				))
 			},
@@ -935,6 +943,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinks() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 				),
 				types.NewApplicationLink(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -951,6 +960,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinks() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 				),
 			},
 		},
@@ -977,6 +987,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinks() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 					)),
 				)
 				suite.Require().NoError(suite.k.SaveApplicationLink(
@@ -996,6 +1007,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinks() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 					),
 				))
 			},
@@ -1022,6 +1034,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinks() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 				),
 			},
 		},
@@ -1082,6 +1095,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkByClientID() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 					)),
 				)
 			},
@@ -1101,6 +1115,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkByClientID() {
 					"client_id",
 				),
 				nil,
+				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
 		},
@@ -1156,6 +1171,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkOwners() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 					)),
 				)
 
@@ -1179,6 +1195,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkOwners() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 					)),
 				)
 			},
@@ -1220,6 +1237,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkOwners() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 					)),
 				)
 
@@ -1243,6 +1261,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkOwners() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 					)),
 				)
 
@@ -1266,6 +1285,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkOwners() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 					)),
 				)
 			},
@@ -1307,6 +1327,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkOwners() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 					)),
 				)
 
@@ -1330,6 +1351,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkOwners() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 					)),
 				)
 
@@ -1353,6 +1375,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkOwners() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 					)),
 				)
 			},

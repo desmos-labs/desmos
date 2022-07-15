@@ -36,9 +36,9 @@ import (
 	ibctmtypes "github.com/cosmos/ibc-go/v3/modules/light-clients/07-tendermint/types"
 	"github.com/cosmos/ibc-go/v3/testing/mock"
 
-	simapp "github.com/desmos-labs/desmos/v3/app"
+	simapp "github.com/desmos-labs/desmos/v4/app"
 
-	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
+	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 const (
@@ -539,7 +539,7 @@ func (chain *TestChain) CreateTMClientHeader(chainID string, blockHeight int64, 
 		AppHash:            chain.CurrentHeader.AppHash,
 		LastResultsHash:    tmhash.Sum([]byte("last_results_hash")),
 		EvidenceHash:       tmhash.Sum([]byte("evidence_hash")),
-		ProposerAddress:    tmValSet.Proposer.Address, //nolint:staticcheck
+		ProposerAddress:    tmValSet.Proposer.Address,
 	}
 	hhash := tmHeader.Hash()
 	blockID := MakeBlockID(hhash, 3, tmhash.Sum([]byte("part_set")))
@@ -553,11 +553,9 @@ func (chain *TestChain) CreateTMClientHeader(chainID string, blockHeight int64, 
 		Commit: commit.ToProto(),
 	}
 
-	if tmValSet != nil {
-		valSet, err = tmValSet.ToProto()
-		if err != nil {
-			panic(err)
-		}
+	valSet, err = tmValSet.ToProto()
+	if err != nil {
+		panic(err)
 	}
 
 	if tmTrustedVals != nil {

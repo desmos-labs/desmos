@@ -8,25 +8,30 @@ import (
 	"path/filepath"
 	"strings"
 
-	postskeeper "github.com/desmos-labs/desmos/v3/x/posts/keeper"
-	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
+	"github.com/desmos-labs/desmos/v4/x/reactions"
+	reactionstypes "github.com/desmos-labs/desmos/v4/x/reactions/types"
 
-	"github.com/desmos-labs/desmos/v3/app/upgrades"
-	v300 "github.com/desmos-labs/desmos/v3/app/upgrades/v300"
-	v310 "github.com/desmos-labs/desmos/v3/app/upgrades/v310"
-	v320 "github.com/desmos-labs/desmos/v3/app/upgrades/v320"
+	postskeeper "github.com/desmos-labs/desmos/v4/x/posts/keeper"
+	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
 
-	profilesv4 "github.com/desmos-labs/desmos/v3/x/profiles/legacy/v4"
+	"github.com/desmos-labs/desmos/v4/app/upgrades"
+	v300 "github.com/desmos-labs/desmos/v4/app/upgrades/v300"
+	v310 "github.com/desmos-labs/desmos/v4/app/upgrades/v310"
+	v320 "github.com/desmos-labs/desmos/v4/app/upgrades/v320"
+	v400 "github.com/desmos-labs/desmos/v4/app/upgrades/v400"
+	v410 "github.com/desmos-labs/desmos/v4/app/upgrades/v410"
+
+	profilesv4 "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v4"
 
 	"github.com/cosmos/cosmos-sdk/version"
 
-	"github.com/desmos-labs/desmos/v3/x/posts"
-	"github.com/desmos-labs/desmos/v3/x/relationships"
-	relationshipstypes "github.com/desmos-labs/desmos/v3/x/relationships/types"
+	"github.com/desmos-labs/desmos/v4/x/posts"
+	"github.com/desmos-labs/desmos/v4/x/relationships"
+	relationshipstypes "github.com/desmos-labs/desmos/v4/x/relationships/types"
 
-	"github.com/desmos-labs/desmos/v3/x/fees"
-	feeskeeper "github.com/desmos-labs/desmos/v3/x/fees/keeper"
-	feestypes "github.com/desmos-labs/desmos/v3/x/fees/types"
+	"github.com/desmos-labs/desmos/v4/x/fees"
+	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
+	feestypes "github.com/desmos-labs/desmos/v4/x/fees/types"
 
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
@@ -100,21 +105,21 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
 	upgradeclient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
 
-	"github.com/desmos-labs/desmos/v3/x/profiles"
-	profileskeeper "github.com/desmos-labs/desmos/v3/x/profiles/keeper"
-	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
-	relationshipskeeper "github.com/desmos-labs/desmos/v3/x/relationships/keeper"
-	"github.com/desmos-labs/desmos/v3/x/reports"
-	reportskeeper "github.com/desmos-labs/desmos/v3/x/reports/keeper"
-	reportstypes "github.com/desmos-labs/desmos/v3/x/reports/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles"
+	profileskeeper "github.com/desmos-labs/desmos/v4/x/profiles/keeper"
+	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
+	reactionskeeper "github.com/desmos-labs/desmos/v4/x/reactions/keeper"
+	relationshipskeeper "github.com/desmos-labs/desmos/v4/x/relationships/keeper"
+	"github.com/desmos-labs/desmos/v4/x/reports"
+	reportskeeper "github.com/desmos-labs/desmos/v4/x/reports/keeper"
+	reportstypes "github.com/desmos-labs/desmos/v4/x/reports/types"
+	"github.com/desmos-labs/desmos/v4/x/subspaces"
+	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
+	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 
-	"github.com/desmos-labs/desmos/v3/x/subspaces"
-	subspaceskeeper "github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
-	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
-
-	"github.com/desmos-labs/desmos/v3/x/supply"
-	supplykeeper "github.com/desmos-labs/desmos/v3/x/supply/keeper"
-	supplytypes "github.com/desmos-labs/desmos/v3/x/supply/types"
+	"github.com/desmos-labs/desmos/v4/x/supply"
+	supplykeeper "github.com/desmos-labs/desmos/v4/x/supply/keeper"
+	supplytypes "github.com/desmos-labs/desmos/v4/x/supply/types"
 
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -189,14 +194,35 @@ func GetEnabledProposals() []wasm.ProposalType {
 
 // GetWasmOpts parses appOpts and add wasm opt to the given options array.
 // if telemetry is enabled, the wasmVM cache metrics are activated.
-func GetWasmOpts(appOpts servertypes.AppOptions) []wasm.Option {
+func GetWasmOpts(
+	appOpts servertypes.AppOptions,
+	cdc codec.Codec,
+	profilesKeeper profileskeeper.Keeper,
+	subspacesKeeper subspaceskeeper.Keeper,
+	relationshipsKeeper relationshipskeeper.Keeper,
+	postsKeeper postskeeper.Keeper,
+	reportsKeeper reportskeeper.Keeper,
+	reactionsKeeper reactionskeeper.Keeper,
+) []wasm.Option {
 	var wasmOpts []wasm.Option
 	if cast.ToBool(appOpts.Get("telemetry.enabled")) {
 		wasmOpts = append(wasmOpts, wasmkeeper.WithVMCacheMetrics(prometheus.DefaultRegisterer))
 	}
 
-	// add any custom opts under here
-	// wasmOpts = append(wasmOpts, wasmkeeper.With...)
+	customQueryPlugin := NewDesmosCustomQueryPlugin(
+		cdc,
+		profilesKeeper,
+		subspacesKeeper,
+		relationshipsKeeper,
+		postsKeeper,
+		reportsKeeper,
+		reactionsKeeper,
+	)
+	customMessageEncoder := NewDesmosCustomMessageEncoder(cdc)
+
+	wasmOpts = append(wasmOpts, wasmkeeper.WithGasRegister(NewDesmosWasmGasRegister()))
+	wasmOpts = append(wasmOpts, wasmkeeper.WithQueryPlugins(&customQueryPlugin))
+	wasmOpts = append(wasmOpts, wasmkeeper.WithMessageEncoders(&customMessageEncoder))
 
 	return wasmOpts
 }
@@ -243,6 +269,7 @@ var (
 		subspaces.AppModuleBasic{},
 		posts.AppModuleBasic{},
 		reports.AppModuleBasic{},
+		reactions.AppModuleBasic{},
 		fees.AppModuleBasic{},
 		supply.AppModuleBasic{},
 	)
@@ -310,6 +337,7 @@ type DesmosApp struct {
 	RelationshipsKeeper relationshipskeeper.Keeper
 	PostsKeeper         postskeeper.Keeper
 	ReportsKeeper       reportskeeper.Keeper
+	ReactionsKeeper     reactionskeeper.Keeper
 	SupplyKeeper        supplykeeper.Keeper
 
 	// Module Manager
@@ -358,7 +386,7 @@ func NewDesmosApp(
 
 		// Custom modules
 		profilestypes.StoreKey, relationshipstypes.StoreKey, subspacestypes.StoreKey,
-		poststypes.StoreKey, reportstypes.StoreKey,
+		poststypes.StoreKey, reportstypes.StoreKey, reactionstypes.StoreKey,
 		feestypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -511,11 +539,22 @@ func NewDesmosApp(
 		&postsKeeper,
 	)
 
+	// Create reactions keeper
+	app.ReactionsKeeper = reactionskeeper.NewKeeper(
+		app.appCodec,
+		keys[reactionstypes.StoreKey],
+		app.ProfileKeeper,
+		&subspacesKeeper,
+		app.RelationshipsKeeper,
+		&postsKeeper,
+	)
+
 	// Register the posts hooks
 	// NOTE: postsKeeper above is passed by reference, so that it will contain these hooks
 	app.PostsKeeper = *postsKeeper.SetHooks(
 		poststypes.NewMultiPostsHooks(
 			app.ReportsKeeper.Hooks(),
+			app.ReactionsKeeper.Hooks(),
 		),
 	)
 
@@ -526,6 +565,7 @@ func NewDesmosApp(
 			app.RelationshipsKeeper.Hooks(),
 			app.PostsKeeper.Hooks(),
 			app.ReportsKeeper.Hooks(),
+			app.ReactionsKeeper.Hooks(),
 		),
 	)
 
@@ -554,7 +594,16 @@ func NewDesmosApp(
 	}
 
 	supportedFeatures := "iterator,staking,stargate"
-	wasmOpts := GetWasmOpts(appOpts)
+	wasmOpts := GetWasmOpts(
+		appOpts,
+		app.appCodec,
+		app.ProfileKeeper,
+		app.SubspacesKeeper,
+		app.RelationshipsKeeper,
+		app.PostsKeeper,
+		app.ReportsKeeper,
+		app.ReactionsKeeper,
+	)
 
 	// The last arguments can contain custom message handlers, and custom query handlers,
 	// if we want to allow any custom callbacks
@@ -633,6 +682,7 @@ func NewDesmosApp(
 		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv4.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		posts.NewAppModule(appCodec, app.PostsKeeper, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		reports.NewAppModule(appCodec, app.ReportsKeeper, app.SubspacesKeeper, app.PostsKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
+		reactions.NewAppModule(appCodec, app.ReactionsKeeper, app.SubspacesKeeper, app.PostsKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		supply.NewAppModule(appCodec, legacyAmino, app.SupplyKeeper),
 	)
 
@@ -668,6 +718,7 @@ func NewDesmosApp(
 		profilestypes.ModuleName,
 		poststypes.ModuleName,
 		reportstypes.ModuleName,
+		reactionstypes.ModuleName,
 		supplytypes.ModuleName,
 	)
 	app.mm.SetOrderEndBlockers(
@@ -697,6 +748,7 @@ func NewDesmosApp(
 		profilestypes.ModuleName,
 		poststypes.ModuleName,
 		reportstypes.ModuleName,
+		reactionstypes.ModuleName,
 		supplytypes.ModuleName,
 	)
 
@@ -733,6 +785,7 @@ func NewDesmosApp(
 		relationshipstypes.ModuleName,
 		poststypes.ModuleName,
 		reportstypes.ModuleName,
+		reactionstypes.ModuleName,
 		supplytypes.ModuleName,
 
 		crisistypes.ModuleName,
@@ -768,6 +821,7 @@ func NewDesmosApp(
 		profilestypes.ModuleName,
 		poststypes.ModuleName,
 		reportstypes.ModuleName,
+		reactionstypes.ModuleName,
 		supplytypes.ModuleName,
 
 		crisistypes.ModuleName,
@@ -812,6 +866,7 @@ func NewDesmosApp(
 		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv4.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		posts.NewAppModule(appCodec, app.PostsKeeper, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		reports.NewAppModule(appCodec, app.ReportsKeeper, app.SubspacesKeeper, app.PostsKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
+		reactions.NewAppModule(appCodec, app.ReactionsKeeper, app.SubspacesKeeper, app.PostsKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 	)
 
 	app.sm.RegisterStoreDecoders()
@@ -1008,6 +1063,8 @@ func (app *DesmosApp) registerUpgradeHandlers() {
 	app.registerUpgrade(v300.NewUpgrade(app.mm, app.configurator))
 	app.registerUpgrade(v310.NewUpgrade(app.mm, app.configurator))
 	app.registerUpgrade(v320.NewUpgrade(app.mm, app.configurator))
+	app.registerUpgrade(v400.NewUpgrade(app.mm, app.configurator))
+	app.registerUpgrade(v410.NewUpgrade(app.mm, app.configurator))
 }
 
 // registerUpgrade registers the given upgrade to be supported by the app
@@ -1066,6 +1123,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(profilestypes.ModuleName)
 	paramsKeeper.Subspace(poststypes.ModuleName)
 	paramsKeeper.Subspace(reportstypes.ModuleName)
+	paramsKeeper.Subspace(reactionstypes.ModuleName)
 
 	return paramsKeeper
 }

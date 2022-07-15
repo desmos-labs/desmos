@@ -6,7 +6,7 @@ import "google/protobuf/any.proto";
 import "google/protobuf/timestamp.proto";
 import "cosmos_proto/cosmos.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v3/x/reports/types";
+option go_package = "github.com/desmos-labs/desmos/v4/x/reports/types";
 
 // Report contains the data of a generic report
 message Report {
@@ -36,7 +36,10 @@ message Report {
   string reporter = 5 [ (gogoproto.moretags) = "yaml:\"reporter\"" ];
 
   // Target of the report
-  google.protobuf.Any target = 6 [ (gogoproto.moretags) = "yaml:\"target\"" ];
+  google.protobuf.Any target = 6 [
+    (gogoproto.moretags) = "yaml:\"target\"",
+    (cosmos_proto.accepts_interface) = "ReportTarget"
+  ];
 
   // Time in which the report was created
   google.protobuf.Timestamp creation_date = 7 [
@@ -50,6 +53,7 @@ message Report {
 message UserTarget {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
+  option (cosmos_proto.implements_interface) = "ReportTarget";
 
   // Address of the reported user
   string user = 1 [ (gogoproto.moretags) = "yaml:\"user\"" ];
@@ -59,6 +63,7 @@ message UserTarget {
 message PostTarget {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
+  option (cosmos_proto.implements_interface) = "ReportTarget";
 
   // Id of the reported post
   uint64 post_id = 1 [

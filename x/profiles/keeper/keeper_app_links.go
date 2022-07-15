@@ -1,10 +1,12 @@
 package keeper
 
 import (
+	"time"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/desmos-labs/desmos/v3/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 // Connections are stored using three keys:
@@ -26,6 +28,8 @@ func (k Keeper) SaveApplicationLink(ctx sdk.Context, link types.ApplicationLink)
 	store.Set(userApplicationLinkKey, types.MustMarshalApplicationLink(k.cdc, link))
 	store.Set(types.ApplicationLinkClientIDKey(link.OracleRequest.ClientID), userApplicationLinkKey)
 	store.Set(types.ApplicationLinkOwnerKey(link.Data.Application, link.Data.Username, link.User), []byte{0x01})
+	applicationLinkExpiringTimeKey := types.ApplicationLinkExpiringTimeKey(link.ExpirationTime, link.OracleRequest.ClientID)
+	store.Set(applicationLinkExpiringTimeKey, []byte(link.OracleRequest.ClientID))
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
@@ -98,8 +102,19 @@ func (k Keeper) DeleteApplicationLink(ctx sdk.Context, appLink types.Application
 	store.Delete(types.UserApplicationLinkKey(appLink.User, appLink.Data.Application, appLink.Data.Username))
 	store.Delete(types.ApplicationLinkClientIDKey(appLink.OracleRequest.ClientID))
 	store.Delete(types.ApplicationLinkOwnerKey(appLink.Data.Application, appLink.Data.Username, appLink.User))
+	store.Delete(types.ApplicationLinkExpiringTimeKey(appLink.ExpirationTime, appLink.OracleRequest.ClientID))
 
 	k.AfterApplicationLinkDeleted(ctx, appLink)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			types.EventTypeApplicationLinkDeleted,
+			sdk.NewAttribute(types.AttributeKeyUser, appLink.User),
+			sdk.NewAttribute(types.AttributeKeyApplicationName, appLink.Data.Application),
+			sdk.NewAttribute(types.AttributeKeyApplicationUsername, appLink.Data.Username),
+			sdk.NewAttribute(types.AttributeKeyApplicationLinkExpirationTime, appLink.ExpirationTime.Format(time.RFC3339)),
+		),
+	)
 }
 
 // DeleteAllUserApplicationLinks delete all the applications links associated with the given user

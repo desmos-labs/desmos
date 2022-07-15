@@ -13,7 +13,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/query"
 
-	"github.com/desmos-labs/desmos/v3/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 var _ types.QueryServer = Keeper{}
@@ -139,7 +139,8 @@ func (k Keeper) ChainLinkOwners(ctx context.Context, request *types.QueryChainLi
 	ownersStore := prefix.NewStore(store, ownersPrefix)
 	pageRes, err := query.Paginate(ownersStore, request.Pagination, func(key []byte, value []byte) error {
 		// Re-add the prefix because the prefix store trims it out, and we need it to get the data
-		keyWithPrefix := append(ownersPrefix, key...)
+		keyWithPrefix := append([]byte(nil), ownersPrefix...)
+		keyWithPrefix = append(keyWithPrefix, key...)
 		chainName, target, user := types.GetChainLinkOwnerData(keyWithPrefix)
 
 		owners = append(owners, types.QueryChainLinkOwnersResponse_ChainLinkOwnerDetails{
@@ -261,7 +262,8 @@ func (k Keeper) ApplicationLinkOwners(ctx context.Context, request *types.QueryA
 	ownersStore := prefix.NewStore(store, ownersPrefix)
 	pageRes, err := query.Paginate(ownersStore, request.Pagination, func(key []byte, value []byte) error {
 		// Re-add the prefix because the prefix store trims it out, and we need it to get the data
-		keyWithPrefix := append(ownersPrefix, key...)
+		keyWithPrefix := append([]byte(nil), ownersPrefix...)
+		keyWithPrefix = append(keyWithPrefix, key...)
 		application, username, user := types.GetApplicationLinkOwnerData(keyWithPrefix)
 
 		owners = append(owners, types.QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails{

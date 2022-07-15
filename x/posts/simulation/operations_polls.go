@@ -13,13 +13,13 @@ import (
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
-	"github.com/desmos-labs/desmos/v3/testutil/simtesting"
-	feeskeeper "github.com/desmos-labs/desmos/v3/x/fees/keeper"
-	"github.com/desmos-labs/desmos/v3/x/posts/keeper"
-	"github.com/desmos-labs/desmos/v3/x/posts/types"
-	subspaceskeeper "github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
-	subspacessim "github.com/desmos-labs/desmos/v3/x/subspaces/simulation"
-	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
+	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
+	"github.com/desmos-labs/desmos/v4/x/posts/keeper"
+	"github.com/desmos-labs/desmos/v4/x/posts/types"
+	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
+	subspacessim "github.com/desmos-labs/desmos/v4/x/subspaces/simulation"
+	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
 // SimulateMsgAnswerPoll tests and runs a single msg answer poll post
@@ -70,6 +70,11 @@ func randomAnswerPollFields(
 
 	// Get a random poll
 	poll := RandomAttachment(r, polls)
+	if content, ok := poll.Content.GetCachedValue().(*types.Poll); ok && content.EndDate.Before(time.Now().Add(time.Minute*1)) {
+		// Skip because the poll voting period has already ended
+		skip = true
+		return
+	}
 
 	// Get a user
 	users := sk.GetUsersWithRootPermissions(ctx, poll.SubspaceID, subspacestypes.NewPermissions(types.PermissionInteractWithContent))

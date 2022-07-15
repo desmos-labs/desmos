@@ -4,9 +4,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/legacy/legacytx"
 
-	"github.com/desmos-labs/desmos/v3/x/fees/keeper"
-	"github.com/desmos-labs/desmos/v3/x/fees/types"
-	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/fees/keeper"
+	"github.com/desmos-labs/desmos/v4/x/fees/types"
+	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 func (suite *KeeperTestSuite) TestFeeDecorator() {

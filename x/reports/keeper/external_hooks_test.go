@@ -3,12 +3,12 @@ package keeper_test
 import (
 	"time"
 
-	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
+	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v3/x/reports/types"
-	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v4/x/reports/types"
+	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
 func (suite *KeeperTestsuite) TestKeeper_AfterSubspaceSaved() {
@@ -176,6 +176,7 @@ func (suite *KeeperTestsuite) TestKeeper_AfterPostDeleted() {
 					"This is a text",
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 					1,
+					nil,
 					nil,
 					nil,
 					poststypes.REPLY_SETTING_EVERYONE,

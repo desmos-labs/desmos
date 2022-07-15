@@ -6,16 +6,16 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/desmos-labs/desmos/v3/testutil/profilestesting"
+	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
 
-	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	"github.com/cosmos/cosmos-sdk/types/module"
 
-	"github.com/desmos-labs/desmos/v3/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 // RandomizedGenState generates a random GenesisState for profile
@@ -58,6 +58,7 @@ func RandomizedGenState(simsState *module.SimulationState) {
 			RandomDTagParams(simsState.Rand),
 			RandomBioParams(simsState.Rand),
 			RandomOracleParams(simsState.Rand),
+			RandomAppLinksParams(simsState.Rand),
 		),
 		types.IBCPortID,
 		chainLinks,

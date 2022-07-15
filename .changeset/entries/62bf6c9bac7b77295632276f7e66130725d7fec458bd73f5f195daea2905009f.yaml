@@ -1,0 +1,6 @@
+type: fix
+module: x/posts
+pull_request: 964
+description: Do not allow to answer a poll after voting period ends
+backward_compatible: false
+date: 2022-07-08T05:38:47.837745373Z

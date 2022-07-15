@@ -1,0 +1,137 @@
+syntax = "proto3";
+package desmos.reactions.v1;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "cosmos_proto/cosmos.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+
+import "desmos/reactions/v1/models.proto";
+
+option go_package = "github.com/desmos-labs/desmos/v4/x/reactions/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  // Reactions allows to query the reactions for a given post
+  rpc Reactions(QueryReactionsRequest) returns (QueryReactionsResponse) {
+    option (google.api.http).get = "/desmos/reactions/v1/subspaces/"
+                                   "{subspace_id}/posts/{post_id}/reactions";
+  }
+
+  // Reaction allows to query the reaction with the given id
+  rpc Reaction(QueryReactionRequest) returns (QueryReactionResponse) {
+    option (google.api.http).get =
+        "/desmos/reactions/v1/subspaces/{subspace_id}/posts/{post_id}/"
+        "reactions/{reaction_id}";
+  }
+
+  // RegisteredReactions allows to query the registered reaction of a subspace
+  rpc RegisteredReactions(QueryRegisteredReactionsRequest)
+      returns (QueryRegisteredReactionsResponse) {
+    option (google.api.http).get =
+        "/desmos/reactions/v1/subspaces/{subspace_id}/registered-reactions";
+  }
+  // RegisteredReaction allows to query the registered reaction of a subspace
+  rpc RegisteredReaction(QueryRegisteredReactionRequest)
+      returns (QueryRegisteredReactionResponse) {
+    option (google.api.http).get =
+        "/desmos/reactions/v1/subspaces/{subspace_id}/registered-reactions/"
+        "{reaction_id}";
+  }
+
+  // ReactionsParams allows to query the reaction params of a subspace
+  rpc ReactionsParams(QueryReactionsParamsRequest)
+      returns (QueryReactionsParamsResponse) {
+    option (google.api.http).get =
+        "/desmos/reactions/v1/subspaces/{subspace_id}/params";
+  }
+}
+
+// QueryReactionsRequest is the request type for the Query/Reactions RPC method
+message QueryReactionsRequest {
+  // Id of the subspace that contains the post to query the reactions for
+  uint64 subspace_id = 1;
+
+  // Post id to query the reactions for
+  uint64 post_id = 2;
+
+  // (optional) User to query the reactions for.
+  // This is going to be used only if a post id is specified as well.
+  string user = 3;
+
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 4;
+}
+
+// QueryReactionsResponse is the response type for the Query/Reactions RPC
+// method
+message QueryReactionsResponse {
+  repeated Reaction reactions = 1 [ (gogoproto.nullable) = false ];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QueryReactionRequest is the request type for the Query/ReactionRequest RPC
+// method
+message QueryReactionRequest {
+  // Id of the subspace that contains the post to query the reactions for
+  uint64 subspace_id = 1;
+
+  // Post id to query the reactions for
+  uint64 post_id = 2;
+
+  // Id of the reaction to query
+  uint32 reaction_id = 3;
+}
+
+// QueryReactionResponse is the response type for the Query/Reaction RPC
+// method
+message QueryReactionResponse {
+  Reaction reaction = 1 [ (gogoproto.nullable) = false ];
+}
+
+// QueryRegisteredReactionsRequest is the request type for the
+// Query/RegisteredReactions RPC method
+message QueryRegisteredReactionsRequest {
+  // Id of the subspace to query the registered reactions for
+  uint64 subspace_id = 1;
+
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+// QueryRegisteredReactionsResponse is the response type for the
+// Query/RegisteredReactions RPC method
+message QueryRegisteredReactionsResponse {
+  repeated RegisteredReaction registered_reactions = 1
+      [ (gogoproto.nullable) = false ];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QueryRegisteredReactionRequest is the request type for the
+// Query/RegisteredReaction RPC method
+message QueryRegisteredReactionRequest {
+  // Id of the subspace to query the registered reactions for
+  uint64 subspace_id = 1;
+
+  // Id of the registered reaction to query for
+  uint32 reaction_id = 2;
+}
+
+// QueryRegisteredReactionResponse is the response type for the
+// Query/RegisteredReaction RPC method
+message QueryRegisteredReactionResponse {
+  RegisteredReaction registered_reaction = 1 [ (gogoproto.nullable) = false ];
+}
+
+// QueryReactionsParamsRequest is the request type for the Query/ReactionsParams
+// RPC method
+message QueryReactionsParamsRequest {
+  // Id of the subspace for which to query the params
+  uint64 subspace_id = 1;
+}
+
+// QueryReactionsParamsResponse is the response type for the
+// Query/ReactionsParam RPC method
+message QueryReactionsParamsResponse {
+  SubspaceReactionsParams params = 1 [ (gogoproto.nullable) = false ];
+}

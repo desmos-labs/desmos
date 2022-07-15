@@ -17,7 +17,7 @@ import (
 	tmrand "github.com/tendermint/tendermint/libs/rand"
 	dbm "github.com/tendermint/tm-db"
 
-	"github.com/desmos-labs/desmos/v3/app"
+	"github.com/desmos-labs/desmos/v4/app"
 )
 
 // NewAppConstructor returns a new Desmos AppConstructor

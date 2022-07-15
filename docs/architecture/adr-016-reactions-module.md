@@ -6,7 +6,7 @@
 
 ## Status
 
-DRAFT Not Implemented
+ACCEPTED Implemented
 
 ## Abstract
 
@@ -259,17 +259,17 @@ syntax = "proto3";
 // Query defines the gRPC querier service.
 service Query {
   // Reactions allows to query the reactions present inside a subspace
-  rpc Reactions(QueryReactionsRequest) returns QueryReactionsResponse {
+  rpc Reactions(QueryReactionsRequest) returns (QueryReactionsResponse) {
     option (google.api.http).get = "/desmos/reactions/v1/{subspace_id}/reactions";
   }
 
   // RegisteredReactions allows to query the registered reaction of a subspace
-  rpc RegisteredReactions(QueryRegisteredReactionsRequest) returns QueryRegisteredReactionsResponse {
+  rpc RegisteredReactions(QueryRegisteredReactionsRequest) returns (QueryRegisteredReactionsResponse) {
     option (google.api.http).get = "/desmos/reactions/v1/{subspace_id}/registered-reactions";
   }
-  
+
   // ReactionsParams allows to query the reaction params of a subspace
-  rpc ReactionsParams(QueryReactionsParamsRequest) returns QueryReactionsParamsResponse {
+  rpc ReactionsParams(QueryReactionsParamsRequest) returns (QueryReactionsParamsResponse) {
     option (google.api.http).get = "/desmos/reactions/v1/{subspace_id}/params";
   }
 }
@@ -278,7 +278,7 @@ service Query {
 message QueryReactionsRequest {
   // Id of the subspace to query the reactions for
   uint64 subspace_id = 1;
-  
+
   // (optional) Post id to query the reactions for
   uint64 post_id = 2;
 
@@ -292,14 +292,28 @@ message QueryReactionsResponse {
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
-// QueryReactionsParamsRequest is the request type for the 
-// Query/ReactionsParams RPC method
+// QueryRegisteredReactionsRequest is the request type for the Query/RegisteredReactions RPC method
+message QueryRegisteredReactionsRequest {
+  // Id of the subspace to query the registered reactions for
+  uint64 subspace_id = 1;
+
+  // pagination defines an optional pagination for the request.
+  optional cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+// QueryRegisteredReactionsResponse is the response type for the Query/RegisteredReactions RPC method
+message QueryRegisteredReactionsResponse {
+  repeated RegisteredReaction registered_reactions = 1;
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QueryReactionsParamsRequest is the request type for the Query/ReactionsParams RPC method
 message QueryReactionsParamsRequest {
+  // Id of the subspace for which to query the params
   uint64 subspace_id = 1;
 }
 
-// QueryReactionsParamsResponse is the response type for the 
-// Query/ReactionsParam RPC method
+// QueryReactionsParamsResponse is the response type for the Query/ReactionsParam RPC method
 message QueryReactionsParamsResponse {
   // Params related to RegisteredReactionValue reactions
   RegisteredReactionValueParams registered = 1;

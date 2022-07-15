@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -380,12 +380,17 @@ func (k msgServer) CreateUserGroup(goCtx context.Context, msg *types.MsgCreateUs
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "group with id %d not found", msg.SubspaceID)
 	}
 
+	// Check if the section exists
+	if !k.HasSection(ctx, msg.SubspaceID, msg.SectionID) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "section with id %d not found inside subspace %d", msg.SectionID, msg.SubspaceID)
+	}
+
 	creator, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address: %s", msg.Creator)
 	}
 
-	// Check the permissions to create a group
+	// Check the permissions to manage groups
 	if !k.HasPermission(ctx, msg.SubspaceID, msg.SectionID, creator.String(), types.PermissionManageGroups) {
 		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage user groups in this subspace")
 	}
@@ -762,6 +767,11 @@ func (k msgServer) SetUserPermissions(goCtx context.Context, msg *types.MsgSetUs
 	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+	}
+
+	// Check if the section exists
+	if !k.HasSection(ctx, msg.SubspaceID, msg.SectionID) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "section with id %d not found inside subspace %d", msg.SectionID, msg.SubspaceID)
 	}
 
 	signer, err := sdk.AccAddressFromBech32(msg.Signer)

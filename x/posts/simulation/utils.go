@@ -8,7 +8,7 @@ import (
 
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
-	"github.com/desmos-labs/desmos/v3/x/posts/types"
+	"github.com/desmos-labs/desmos/v4/x/posts/types"
 )
 
 var (
@@ -38,6 +38,7 @@ func GenerateRandomPost(r *rand.Rand, accounts []simtypes.Account, subspaceID ui
 		author.Address.String(),
 		0,
 		nil,
+		GenerateRandomTags(r, 10),
 		nil,
 		RandomReplySettings(r),
 		time.Now(),
@@ -48,6 +49,15 @@ func GenerateRandomPost(r *rand.Rand, accounts []simtypes.Account, subspaceID ui
 // GenerateRandomText returns a random text that does not exceed the given max length
 func GenerateRandomText(r *rand.Rand, maxLength uint32) string {
 	return simtypes.RandStringOfLength(r, int(maxLength))
+}
+
+// GenerateRandomTags returns a slice containing tagsNumber randomly generated tags
+func GenerateRandomTags(r *rand.Rand, tagsNumber int) []string {
+	tags := make([]string, tagsNumber)
+	for i := 0; i < tagsNumber; i++ {
+		tags[i] = simtypes.RandStringOfLength(r, 10)
+	}
+	return tags
 }
 
 // RandomReplySettings returns a random valid ReplySetting for the post

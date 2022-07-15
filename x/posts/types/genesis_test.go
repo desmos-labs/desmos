@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v3/x/posts/types"
+	"github.com/desmos-labs/desmos/v4/x/posts/types"
 )
 
 func TestValidateGenesis(t *testing.T) {
@@ -47,6 +47,7 @@ func TestValidateGenesis(t *testing.T) {
 						1,
 						nil,
 						nil,
+						nil,
 						types.REPLY_SETTING_EVERYONE,
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 						nil,
@@ -77,6 +78,7 @@ func TestValidateGenesis(t *testing.T) {
 						0,
 						nil,
 						nil,
+						nil,
 						types.REPLY_SETTING_EVERYONE,
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 						nil,
@@ -89,6 +91,7 @@ func TestValidateGenesis(t *testing.T) {
 						"This is a text",
 						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 						0,
+						nil,
 						nil,
 						nil,
 						types.REPLY_SETTING_EVERYONE,
@@ -136,6 +139,7 @@ func TestValidateGenesis(t *testing.T) {
 						0,
 						nil,
 						nil,
+						nil,
 						types.REPLY_SETTING_EVERYONE,
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 						nil,
@@ -173,6 +177,7 @@ func TestValidateGenesis(t *testing.T) {
 						"This is a text",
 						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 						0,
+						nil,
 						nil,
 						nil,
 						types.REPLY_SETTING_EVERYONE,
@@ -243,6 +248,7 @@ func TestValidateGenesis(t *testing.T) {
 						"This is a text",
 						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 						0,
+						nil,
 						nil,
 						nil,
 						types.REPLY_SETTING_EVERYONE,

@@ -1,41 +1,233 @@
 package v6_test
 
 import (
+	"encoding/hex"
 	"testing"
 	"time"
 
-	"github.com/desmos-labs/desmos/v3/testutil/profilestesting"
-	"github.com/desmos-labs/desmos/v3/testutil/storetesting"
-	v6 "github.com/desmos-labs/desmos/v3/x/profiles/legacy/v6"
-	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
+	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
+	v5types "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v5/types"
+	v6 "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v6"
+
+	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
+
+	"github.com/cosmos/cosmos-sdk/store"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
+	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	"github.com/tendermint/tendermint/libs/log"
+	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
+	dbm "github.com/tendermint/tm-db"
+
+	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v3/app"
-	"github.com/desmos-labs/desmos/v3/x/relationships/types"
+	"github.com/desmos-labs/desmos/v4/app"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
+func buildContext(
+	keys map[string]*sdk.KVStoreKey, tKeys map[string]*sdk.TransientStoreKey, memKeys map[string]*sdk.MemoryStoreKey,
+) sdk.Context {
+	db := dbm.NewMemDB()
+	cms := store.NewCommitMultiStore(db)
+	for _, key := range keys {
+		cms.MountStoreWithDB(key, sdk.StoreTypeIAVL, db)
+	}
+	for _, tKey := range tKeys {
+		cms.MountStoreWithDB(tKey, sdk.StoreTypeTransient, db)
+	}
+	for _, memKey := range memKeys {
+		cms.MountStoreWithDB(memKey, sdk.StoreTypeMemory, nil)
+	}
+
+	err := cms.LoadLatestVersion()
+	if err != nil {
+		panic(err)
+	}
+
+	return sdk.NewContext(cms, tmproto.Header{}, false, log.NewNopLogger())
+}
+
 func TestMigrateStore(t *testing.T) {
-	cdc, _ := app.MakeCodecs()
+	cdc, legacyAmino := app.MakeCodecs()
 
 	// Build all the necessary keys
 	keys := sdk.NewKVStoreKeys(authtypes.StoreKey, types.StoreKey)
 	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
-	olderChainAccount := profilestesting.GetChainLinkAccount("cosmos", "cosmos")
-	newerChainAccount := profilestesting.GetChainLinkAccount("cosmos", "cosmos")
+	// Build the x/auth keeper
+	paramsKeeper := paramskeeper.NewKeeper(
+		cdc,
+		legacyAmino,
+		keys[paramstypes.StoreKey],
+		tKeys[paramstypes.TStoreKey],
+	)
+	authKeeper := authkeeper.NewAccountKeeper(
+		cdc,
+		keys[authtypes.StoreKey],
+		paramsKeeper.Subspace(authtypes.ModuleName),
+		authtypes.ProtoBaseAccount,
+		app.GetMaccPerms(),
+	)
 
+	pubKey := secp256k1.GenPrivKey().PubKey()
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
 		shouldErr bool
 		check     func(ctx sdk.Context)
 	}{
+		{
+			name: "profiles are migrated properly",
+			store: func(ctx sdk.Context) {
+				// Store a profile
+				profile, err := v5types.NewProfile(
+					"john_doe",
+					"John Doe",
+					"My name if John Doe",
+					v5types.Pictures{
+						Profile: "",
+						Cover:   "",
+					},
+					time.Date(2020, 1, 1, 0, 0, 0, 00, time.UTC),
+					profilestesting.AccountFromAddr("cosmos1nejmx335u222dj6lg7qjqrufchkpazu8e0semf"),
+				)
+				require.NoError(t, err)
+				authKeeper.SetAccount(ctx, profile)
+			},
+			check: func(ctx sdk.Context) {
+				// Check the profile to make sure it contains the same data
+				v7Profile, err := types.NewProfile(
+					"john_doe",
+					"John Doe",
+					"My name if John Doe",
+					types.NewPictures("", ""),
+					time.Date(2020, 1, 1, 0, 0, 0, 00, time.UTC),
+					profilestesting.AccountFromAddr("cosmos1nejmx335u222dj6lg7qjqrufchkpazu8e0semf"),
+				)
+				require.NoError(t, err)
+
+				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1nejmx335u222dj6lg7qjqrufchkpazu8e0semf")
+				require.NoError(t, err)
+
+				account := authKeeper.GetAccount(ctx, sdkAddr)
+				profile, ok := account.(*types.Profile)
+				require.True(t, ok)
+				require.Equal(t, v7Profile, profile)
+			},
+		},
+		{
+			name: "application links are migrated properly",
+			store: func(ctx sdk.Context) {
+				kvStore := ctx.KVStore(keys[types.StoreKey])
+
+				// Store an application link
+				link := v5types.NewApplicationLink(
+					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+					v5types.NewData("twitter", "twitteruser"),
+					v5types.ApplicationLinkStateInitialized,
+					v5types.NewOracleRequest(
+						0,
+						1,
+						v5types.NewOracleRequestCallData("twitter", "calldata"),
+						"client_id",
+					),
+					nil,
+					time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
+				)
+				kvStore.Set(types.UserApplicationLinkKey("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773", "twitter", "twitteruser"), cdc.MustMarshal(&link))
+			},
+			check: func(ctx sdk.Context) {
+				kvStore := ctx.KVStore(keys[types.StoreKey])
+
+				// Check the application links
+				linkKey := types.UserApplicationLinkKey(
+					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+					"twitter",
+					"twitteruser",
+				)
+
+				var stored types.ApplicationLink
+				cdc.MustUnmarshal(kvStore.Get(linkKey), &stored)
+				require.Equal(t, types.NewApplicationLink(
+					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+					types.NewData("twitter", "twitteruser"),
+					types.ApplicationLinkStateInitialized,
+					types.NewOracleRequest(
+						0,
+						1,
+						types.NewOracleRequestCallData("twitter", "calldata"),
+						"client_id",
+					),
+					nil,
+					time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
+				), stored)
+
+				// Check the application link expiration time
+				require.Equal(t, []byte("client_id"), kvStore.Get(types.ApplicationLinkExpiringTimeKey(
+					time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
+					"client_id",
+				)))
+			},
+		},
+		{
+			name: "chain links are migrated properly",
+			store: func(ctx sdk.Context) {
+				kvStore := ctx.KVStore(keys[types.StoreKey])
+
+				sig, err := hex.DecodeString("1234")
+				require.NoError(t, err)
+
+				chainLink := v5types.NewChainLink(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					v5types.NewBech32Address("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs", "cosmos"),
+					v5types.NewProof(
+						pubKey,
+						&v5types.SingleSignatureData{
+							Mode:      signing.SignMode_SIGN_MODE_DIRECT,
+							Signature: sig,
+						},
+						"plain_text",
+					),
+					v5types.NewChainConfig("cosmos"),
+					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+				)
+				kvStore.Set(
+					types.ChainLinksStoreKey(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"cosmos",
+						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
+					),
+					cdc.MustMarshal(&chainLink),
+				)
+			},
+			shouldErr: false,
+			check: func(ctx sdk.Context) {
+				kvStore := ctx.KVStore(keys[types.StoreKey])
+
+				var stored types.ChainLink
+				cdc.MustUnmarshal(kvStore.Get(types.ChainLinksStoreKey(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos",
+					"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
+				)), &stored)
+				require.Equal(t, types.NewChainLink(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					types.NewBech32Address("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs", "cosmos"),
+					types.NewProof(pubKey, profilestesting.SingleSignatureProtoFromHex("1234"), "plain_text"),
+					types.NewChainConfig("cosmos"),
+					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+				), stored)
+			},
+		},
 		{
 			name: "default external addresses are set properly",
 			store: func(ctx sdk.Context) {
@@ -85,12 +277,12 @@ func TestMigrateStore(t *testing.T) {
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			ctx := storetesting.BuildContext(keys, tKeys, memKeys)
+			ctx := buildContext(keys, tKeys, memKeys)
 			if tc.store != nil {
 				tc.store(ctx)
 			}
 
-			err := v6.MigrateStore(ctx, keys[types.StoreKey], cdc)
+			err := v6.MigrateStore(ctx, authKeeper, keys[types.StoreKey], legacyAmino, cdc)
 			if tc.shouldErr {
 				require.Error(t, err)
 			} else {

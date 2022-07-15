@@ -3,8 +3,8 @@ package keeper_test
 import (
 	"testing"
 
-	"github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
-	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
+	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
@@ -16,7 +16,7 @@ import (
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	db "github.com/tendermint/tm-db"
 
-	"github.com/desmos-labs/desmos/v3/app"
+	"github.com/desmos-labs/desmos/v4/app"
 )
 
 type KeeperTestsuite struct {
@@ -28,6 +28,10 @@ type KeeperTestsuite struct {
 	k              keeper.Keeper
 	paramsKeeper   paramskeeper.Keeper
 	storeKey       sdk.StoreKey
+}
+
+func TestKeeperTestSuite(t *testing.T) {
+	suite.Run(t, new(KeeperTestsuite))
 }
 
 func (suite *KeeperTestsuite) SetupTest() {
@@ -52,8 +56,4 @@ func (suite *KeeperTestsuite) SetupTest() {
 
 	// Define keeper
 	suite.k = keeper.NewKeeper(suite.cdc, suite.storeKey)
-}
-
-func TestKeeperTestSuite(t *testing.T) {
-	suite.Run(t, new(KeeperTestsuite))
 }

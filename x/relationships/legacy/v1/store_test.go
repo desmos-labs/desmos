@@ -3,14 +3,16 @@ package v1_test
 import (
 	"testing"
 
+	v4types "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v4/types"
+
 	"github.com/cosmos/cosmos-sdk/testutil"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v3/app"
-	profilesv4 "github.com/desmos-labs/desmos/v3/x/profiles/legacy/v4"
-	v1 "github.com/desmos-labs/desmos/v3/x/relationships/legacy/v1"
-	"github.com/desmos-labs/desmos/v3/x/relationships/types"
+	"github.com/desmos-labs/desmos/v4/app"
+	profilesv4 "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v4"
+	v1 "github.com/desmos-labs/desmos/v4/x/relationships/legacy/v1"
+	"github.com/desmos-labs/desmos/v4/x/relationships/types"
 )
 
 func TestMigrateStore(t *testing.T) {
@@ -27,27 +29,27 @@ func TestMigrateStore(t *testing.T) {
 			store: func(ctx sdk.Context) {
 				store := ctx.KVStore(storeKey)
 
-				blockBz := cdc.MustMarshal(&profilesv4.UserBlock{
+				blockBz := cdc.MustMarshal(&v4types.UserBlock{
 					Blocker:    "blocker",
 					Blocked:    "blocked",
 					Reason:     "reason",
 					SubspaceID: "",
 				})
-				store.Set(profilesv4.UserBlockStoreKey("blocker", "", "blocked"), blockBz)
+				store.Set(v4types.UserBlockStoreKey("blocker", "", "blocked"), blockBz)
 
-				relBz := cdc.MustMarshal(&profilesv4.Relationship{
+				relBz := cdc.MustMarshal(&v4types.Relationship{
 					Creator:    "user",
 					Recipient:  "recipient",
 					SubspaceID: "",
 				})
-				store.Set(profilesv4.RelationshipsStoreKey("user", "", "recipient"), relBz)
+				store.Set(v4types.RelationshipsStoreKey("user", "", "recipient"), relBz)
 
-				relBz = cdc.MustMarshal(&profilesv4.Relationship{
+				relBz = cdc.MustMarshal(&v4types.Relationship{
 					Creator:    "user",
 					Recipient:  "recipient",
 					SubspaceID: "2",
 				})
-				store.Set(profilesv4.RelationshipsStoreKey("user", "2", "recipient"), relBz)
+				store.Set(v4types.RelationshipsStoreKey("user", "2", "recipient"), relBz)
 			},
 			shouldErr: false,
 			check: func(ctx sdk.Context) {

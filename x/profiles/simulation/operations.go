@@ -5,7 +5,7 @@ package simulation
 import (
 	"math/rand"
 
-	feeskeeper "github.com/desmos-labs/desmos/v3/x/fees/keeper"
+	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
 
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
@@ -14,11 +14,12 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
 
-	"github.com/desmos-labs/desmos/v3/app/params"
-	"github.com/desmos-labs/desmos/v3/x/profiles/keeper"
+	"github.com/desmos-labs/desmos/v4/app/params"
+	"github.com/desmos-labs/desmos/v4/x/profiles/keeper"
 )
 
 // Simulation operation weights constants
+//nolint:gosec // These are not hardcoded credentials
 const (
 	OpWeightMsgSaveProfile            = "op_weight_msg_save_profile"
 	OpWeightMsgDeleteProfile          = "op_weight_msg_delete_profile"
@@ -88,7 +89,7 @@ func WeightedOperations(
 	)
 
 	var weightMsgUnlinkChainAccount int
-	appParams.GetOrGenerate(cdc, OpWeightMsgLinkChainAccount, &weightMsgUnlinkChainAccount, nil,
+	appParams.GetOrGenerate(cdc, OpWeightMsgUnlinkChainAccount, &weightMsgUnlinkChainAccount, nil,
 		func(r *rand.Rand) {
 			weightMsgUnlinkChainAccount = params.DefaultWeightMsgUnlinkChainAccount
 		},

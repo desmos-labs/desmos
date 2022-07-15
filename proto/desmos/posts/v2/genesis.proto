@@ -1,0 +1,56 @@
+syntax = "proto3";
+package desmos.posts.v2;
+
+import "gogoproto/gogo.proto";
+import "google/protobuf/timestamp.proto";
+
+import "desmos/posts/v2/models.proto";
+
+option go_package = "github.com/desmos-labs/desmos/v4/x/posts/types";
+
+// GenesisState contains the data of the genesis state for the posts module
+message GenesisState {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  repeated SubspaceDataEntry subspaces_data = 1
+      [ (gogoproto.nullable) = false ];
+  repeated PostDataEntry posts_data = 2 [ (gogoproto.nullable) = false ];
+  repeated Post posts = 3 [ (gogoproto.nullable) = false ];
+  repeated Attachment attachments = 4 [ (gogoproto.nullable) = false ];
+  repeated ActivePollData active_polls = 5 [ (gogoproto.nullable) = false ];
+  repeated UserAnswer user_answers = 6 [ (gogoproto.nullable) = false ];
+  Params params = 7 [ (gogoproto.nullable) = false ];
+}
+
+// SubspaceDataEntry contains the data for a given subspace
+message SubspaceDataEntry {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
+  uint64 initial_post_id = 2 [ (gogoproto.customname) = "InitialPostID" ];
+}
+
+// PostDataEntry contains the data of a given post
+message PostDataEntry {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
+  uint64 post_id = 2 [ (gogoproto.customname) = "PostID" ];
+  uint32 initial_attachment_id = 3
+      [ (gogoproto.customname) = "InitialAttachmentID" ];
+}
+
+// ActivePollData contains the data of an active poll
+message ActivePollData {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
+  uint64 post_id = 2 [ (gogoproto.customname) = "PostID" ];
+  uint32 poll_id = 3 [ (gogoproto.customname) = "PollID" ];
+  google.protobuf.Timestamp end_date = 4
+      [ (gogoproto.nullable) = false, (gogoproto.stdtime) = true ];
+}

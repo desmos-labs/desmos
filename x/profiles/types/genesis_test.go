@@ -4,12 +4,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/desmos-labs/desmos/v3/testutil/profilestesting"
+	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v3/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 func TestValidateGenesis(t *testing.T) {
@@ -32,6 +32,7 @@ func TestValidateGenesis(t *testing.T) {
 					types.DefaultDTagParams(),
 					types.DefaultBioParams(),
 					types.DefaultOracleParams(),
+					types.DefaultAppLinksParams(),
 				),
 				types.IBCPortID,
 				nil,
@@ -118,6 +119,7 @@ func TestValidateGenesis(t *testing.T) {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 					),
 				},
 			),
@@ -187,6 +189,7 @@ func TestValidateGenesis(t *testing.T) {
 							"client_id",
 						),
 						nil,
+						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 					),
 				},

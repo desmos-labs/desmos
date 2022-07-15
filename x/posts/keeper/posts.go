@@ -4,7 +4,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/desmos-labs/desmos/v3/x/posts/types"
+	"github.com/desmos-labs/desmos/v4/x/posts/types"
 )
 
 // SetNextPostID sets the new post id for the given subspace to the store
@@ -106,7 +106,7 @@ func (k Keeper) ValidatePost(ctx sdk.Context, post types.Post) error {
 			return err
 		}
 
-		if reference.Type == types.TYPE_REPLY_TO {
+		if reference.Type == types.POST_REFERENCE_TYPE_REPLY {
 			err = k.ValidatePostReply(ctx, post.Author, post.SubspaceID, reference.PostID)
 			if err != nil {
 				return err

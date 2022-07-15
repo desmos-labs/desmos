@@ -9,7 +9,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/spf13/cobra"
 
-	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
 // DONTCOVER
@@ -366,10 +366,10 @@ func GetCmdQueryUserGroupMembers() *cobra.Command {
 // GetCmdQueryUserPermissions returns the command to query the permissions of a specific user
 func GetCmdQueryUserPermissions() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "permissions [subspace-id] [user]",
+		Use:     "permissions [subspace-id] [section-id] [user]",
 		Short:   "Query permissions of the given user",
-		Example: fmt.Sprintf(`%s query subspaces permissions 1 desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud`, version.AppName),
-		Args:    cobra.ExactArgs(2),
+		Example: fmt.Sprintf(`%s query subspaces permissions 1 0 desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud`, version.AppName),
+		Args:    cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
@@ -382,9 +382,14 @@ func GetCmdQueryUserPermissions() *cobra.Command {
 				return err
 			}
 
+			sectionID, err := types.ParseSectionID(args[1])
+			if err != nil {
+				return err
+			}
+
 			res, err := queryClient.UserPermissions(
 				context.Background(),
-				types.NewQueryUserPermissionsRequest(subspaceID, args[1]),
+				types.NewQueryUserPermissionsRequest(subspaceID, sectionID, args[2]),
 			)
 			if err != nil {
 				return err

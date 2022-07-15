@@ -13,13 +13,13 @@ import (
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
-	"github.com/desmos-labs/desmos/v3/testutil/simtesting"
-	feeskeeper "github.com/desmos-labs/desmos/v3/x/fees/keeper"
-	"github.com/desmos-labs/desmos/v3/x/posts/keeper"
-	"github.com/desmos-labs/desmos/v3/x/posts/types"
-	subspaceskeeper "github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
-	subspacessim "github.com/desmos-labs/desmos/v3/x/subspaces/simulation"
-	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
+	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
+	"github.com/desmos-labs/desmos/v4/x/posts/keeper"
+	"github.com/desmos-labs/desmos/v4/x/posts/types"
+	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
+	subspacessim "github.com/desmos-labs/desmos/v4/x/subspaces/simulation"
+	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
 // SimulateMsgCreatePost tests and runs a single msg create post
@@ -44,6 +44,7 @@ func SimulateMsgCreatePost(
 			data.ConversationID,
 			data.ReplySettings,
 			data.Entities,
+			data.Tags,
 			nil,
 			data.ReferencedPosts,
 			author.Address.String(),
@@ -124,7 +125,7 @@ func SimulateMsgEditPost(
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "edit post"), nil, nil
 		}
 
-		msg := types.NewMsgEditPost(subspaceID, postID, data.Text, data.Entities, editor.Address.String())
+		msg := types.NewMsgEditPost(subspaceID, postID, data.Text, data.Entities, data.Tags, editor.Address.String())
 		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{editor.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "edit post"), nil, err
@@ -176,6 +177,7 @@ func randomPostEditFields(
 	update = types.NewPostUpdate(
 		GenerateRandomText(r, k.GetParams(ctx).MaxTextLength),
 		nil,
+		GenerateRandomTags(r, 4),
 		time.Now(),
 	)
 	return subspaceID, postID, update, editor, false

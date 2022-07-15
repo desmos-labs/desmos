@@ -3,7 +3,7 @@ package keeper_test
 import (
 	"time"
 
-	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
@@ -662,6 +662,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserPermissions() {
 			shouldErr: true,
 			req: types.NewQueryUserPermissionsRequest(
 				1,
+				types.RootSectionID,
 				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 			),
 		},
@@ -680,6 +681,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserPermissions() {
 			},
 			req: types.NewQueryUserPermissionsRequest(
 				1,
+				types.RootSectionID,
 				"cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e",
 			),
 			shouldErr: false,
@@ -736,6 +738,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserPermissions() {
 			},
 			req: types.NewQueryUserPermissionsRequest(
 				1,
+				types.RootSectionID,
 				"cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e",
 			),
 			shouldErr: false,

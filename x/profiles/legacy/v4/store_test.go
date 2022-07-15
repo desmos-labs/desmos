@@ -5,12 +5,16 @@ import (
 	"testing"
 	"time"
 
+	v4 "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v4"
+	types2 "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v4/types"
+	v5types "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v5/types"
+
 	"github.com/cosmos/cosmos-sdk/types/tx"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	"github.com/cosmos/cosmos-sdk/x/auth/legacy/legacytx"
 
-	"github.com/desmos-labs/desmos/v3/testutil/profilestesting"
-	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
+	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
 
 	"github.com/cosmos/cosmos-sdk/store"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -26,9 +30,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v3/app"
-	v4 "github.com/desmos-labs/desmos/v3/x/profiles/legacy/v4"
-	"github.com/desmos-labs/desmos/v3/x/relationships/types"
+	"github.com/desmos-labs/desmos/v4/app"
+	v4types "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v4/types"
 )
 
 func buildContext(
@@ -58,7 +61,7 @@ func TestMigrateStore(t *testing.T) {
 	cdc, legacyAmino := app.MakeCodecs()
 
 	// Build all the necessary keys
-	keys := sdk.NewKVStoreKeys(authtypes.StoreKey, types.StoreKey)
+	keys := sdk.NewKVStoreKeys(authtypes.StoreKey, profilestypes.StoreKey)
 	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
@@ -81,7 +84,7 @@ func TestMigrateStore(t *testing.T) {
 	pubKey := profilestesting.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d")
 	pubKeyAny := profilestesting.NewAny(pubKey)
 
-	addressAny := profilestesting.NewAny(&v4.Bech32Address{
+	addressAny := profilestesting.NewAny(&v4types.Bech32Address{
 		Value:  "cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
 		Prefix: "cosmos",
 	})
@@ -95,14 +98,14 @@ func TestMigrateStore(t *testing.T) {
 		{
 			name: "profiles are migrated properly",
 			store: func(ctx sdk.Context) {
-				kvStore := ctx.KVStore(keys[types.StoreKey])
+				kvStore := ctx.KVStore(keys[profilestypes.StoreKey])
 
 				// Store a profile
-				profile, err := v4.NewProfile(
+				profile, err := types2.NewProfile(
 					"john_doe",
 					"John Doe",
 					"My name if John Doe",
-					v4.Pictures{
+					v4types.Pictures{
 						Profile: "",
 						Cover:   "",
 					},
@@ -113,17 +116,17 @@ func TestMigrateStore(t *testing.T) {
 				authKeeper.SetAccount(ctx, profile)
 
 				// Store a DTag reference
-				kvStore.Set(v4.DTagStoreKey("john_doe"), []byte("cosmos1nejmx335u222dj6lg7qjqrufchkpazu8e0semf"))
+				kvStore.Set(profilestypes.DTagStoreKey("john_doe"), []byte("cosmos1nejmx335u222dj6lg7qjqrufchkpazu8e0semf"))
 			},
 			check: func(ctx sdk.Context) {
-				kvStore := ctx.KVStore(keys[types.StoreKey])
+				kvStore := ctx.KVStore(keys[profilestypes.StoreKey])
 
 				// Check the profile to make sure it contains the same data
-				v2Profile, err := profilestypes.NewProfile(
+				v2Profile, err := v5types.NewProfile(
 					"john_doe",
 					"John Doe",
 					"My name if John Doe",
-					profilestypes.NewPictures("", ""),
+					v5types.NewPictures("", ""),
 					time.Date(2020, 1, 1, 0, 0, 0, 00, time.UTC),
 					profilestesting.AccountFromAddr("cosmos1nejmx335u222dj6lg7qjqrufchkpazu8e0semf"),
 				)
@@ -133,7 +136,7 @@ func TestMigrateStore(t *testing.T) {
 				require.NoError(t, err)
 
 				account := authKeeper.GetAccount(ctx, sdkAddr)
-				profile, ok := account.(*profilestypes.Profile)
+				profile, ok := account.(*v5types.Profile)
 				require.True(t, ok)
 				require.Equal(t, v2Profile, profile)
 
@@ -145,12 +148,12 @@ func TestMigrateStore(t *testing.T) {
 		{
 			name: "DTag transfer requests are migrated properly",
 			store: func(ctx sdk.Context) {
-				kvStore := ctx.KVStore(keys[types.StoreKey])
+				kvStore := ctx.KVStore(keys[profilestypes.StoreKey])
 
 				// Store a DTag transfer request
 				kvStore.Set(
-					v4.DTagTransferRequestStoreKey("cosmos13vsgmgs9tjktnnc6pkln7pm4jswxmeajrqc4xd", "cosmos1nejmx335u222dj6lg7qjqrufchkpazu8e0semf"),
-					cdc.MustMarshal(&profilestypes.DTagTransferRequest{
+					profilestypes.DTagTransferRequestStoreKey("cosmos13vsgmgs9tjktnnc6pkln7pm4jswxmeajrqc4xd", "cosmos1nejmx335u222dj6lg7qjqrufchkpazu8e0semf"),
+					cdc.MustMarshal(&v4types.DTagTransferRequest{
 						DTagToTrade: "john_doe",
 						Sender:      "cosmos13vsgmgs9tjktnnc6pkln7pm4jswxmeajrqc4xd",
 						Receiver:    "cosmos1nejmx335u222dj6lg7qjqrufchkpazu8e0semf",
@@ -158,16 +161,16 @@ func TestMigrateStore(t *testing.T) {
 				)
 			},
 			check: func(ctx sdk.Context) {
-				kvStore := ctx.KVStore(keys[types.StoreKey])
+				kvStore := ctx.KVStore(keys[profilestypes.StoreKey])
 
 				// Check the migrated DTag transfer request
-				var stored profilestypes.DTagTransferRequest
+				var stored v5types.DTagTransferRequest
 				cdc.MustUnmarshal(kvStore.Get(profilestypes.DTagTransferRequestStoreKey(
 					"cosmos13vsgmgs9tjktnnc6pkln7pm4jswxmeajrqc4xd",
 					"cosmos1nejmx335u222dj6lg7qjqrufchkpazu8e0semf",
 				)), &stored)
 
-				require.Equal(t, profilestypes.NewDTagTransferRequest(
+				require.Equal(t, v5types.NewDTagTransferRequest(
 					"john_doe",
 					"cosmos13vsgmgs9tjktnnc6pkln7pm4jswxmeajrqc4xd",
 					"cosmos1nejmx335u222dj6lg7qjqrufchkpazu8e0semf",
@@ -175,22 +178,22 @@ func TestMigrateStore(t *testing.T) {
 			},
 		},
 		{
-			name: "application links are stored properly",
+			name: "application links are migrated properly",
 			store: func(ctx sdk.Context) {
-				kvStore := ctx.KVStore(keys[types.StoreKey])
+				kvStore := ctx.KVStore(keys[profilestypes.StoreKey])
 
 				// Store an application link
-				linkKey := v4.UserApplicationLinkKey("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773", "twitter", "twitteruser")
+				linkKey := profilestypes.UserApplicationLinkKey("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773", "twitter", "twitteruser")
 				kvStore.Set(
 					linkKey,
-					cdc.MustMarshal(&profilestypes.ApplicationLink{
+					cdc.MustMarshal(&v5types.ApplicationLink{
 						User:  "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
-						Data:  profilestypes.NewData("twitter", "twitteruser"),
-						State: profilestypes.ApplicationLinkStateInitialized,
-						OracleRequest: profilestypes.NewOracleRequest(
+						Data:  v5types.NewData("twitter", "twitteruser"),
+						State: v5types.ApplicationLinkStateInitialized,
+						OracleRequest: v5types.NewOracleRequest(
 							0,
 							1,
-							profilestypes.NewOracleRequestCallData("twitter", "calldata"),
+							v5types.NewOracleRequestCallData("twitter", "calldata"),
 							"client_id",
 						),
 						Result:       nil,
@@ -199,10 +202,10 @@ func TestMigrateStore(t *testing.T) {
 				)
 
 				// Store an application link client id
-				kvStore.Set(v4.ApplicationLinkClientIDKey("client_id"), linkKey)
+				kvStore.Set(profilestypes.ApplicationLinkClientIDKey("client_id"), linkKey)
 			},
 			check: func(ctx sdk.Context) {
-				kvStore := ctx.KVStore(keys[types.StoreKey])
+				kvStore := ctx.KVStore(keys[profilestypes.StoreKey])
 
 				// Check the application links
 				linkKey := profilestypes.UserApplicationLinkKey(
@@ -211,16 +214,16 @@ func TestMigrateStore(t *testing.T) {
 					"twitteruser",
 				)
 
-				var stored profilestypes.ApplicationLink
+				var stored v5types.ApplicationLink
 				cdc.MustUnmarshal(kvStore.Get(linkKey), &stored)
-				require.Equal(t, profilestypes.NewApplicationLink(
+				require.Equal(t, v5types.NewApplicationLink(
 					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
-					profilestypes.NewData("twitter", "twitteruser"),
-					profilestypes.ApplicationLinkStateInitialized,
-					profilestypes.NewOracleRequest(
+					v5types.NewData("twitter", "twitteruser"),
+					v5types.ApplicationLinkStateInitialized,
+					v5types.NewOracleRequest(
 						0,
 						1,
-						profilestypes.NewOracleRequestCallData("twitter", "calldata"),
+						v5types.NewOracleRequestCallData("twitter", "calldata"),
 						"client_id",
 					),
 					nil,
@@ -234,62 +237,66 @@ func TestMigrateStore(t *testing.T) {
 		{
 			name: "leftover application client id keys are deleted properly",
 			store: func(ctx sdk.Context) {
-				kvStore := ctx.KVStore(keys[types.StoreKey])
-				kvStore.Set(v4.ApplicationLinkClientIDKey("client_id"), []byte("client_id_value"))
+				kvStore := ctx.KVStore(keys[profilestypes.StoreKey])
+				kvStore.Set(v4types.ApplicationLinkClientIDKey("client_id"), []byte("client_id_value"))
 			},
 			check: func(ctx sdk.Context) {
-				kvStore := ctx.KVStore(keys[types.StoreKey])
-				require.False(t, kvStore.Has(v4.ApplicationLinkClientIDKey("client_id")))
+				kvStore := ctx.KVStore(keys[profilestypes.StoreKey])
+				require.False(t, kvStore.Has(v4types.ApplicationLinkClientIDKey("client_id")))
 				require.False(t, kvStore.Has(profilestypes.ApplicationLinkClientIDKey("client_id")))
 			},
 		},
 		{
 			name: "chain link is migrated properly (text signature)",
 			store: func(ctx sdk.Context) {
-				kvStore := ctx.KVStore(keys[types.StoreKey])
+				kvStore := ctx.KVStore(keys[profilestypes.StoreKey])
 
 				// Store the chain link
 				kvStore.Set(
-					v4.ChainLinksStoreKey("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", "cosmos", "cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f"),
-					cdc.MustMarshal(&v4.ChainLink{
+					v4types.ChainLinksStoreKey(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"cosmos",
+						"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
+					),
+					cdc.MustMarshal(&v4types.ChainLink{
 						User:    "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						Address: addressAny,
-						Proof: v4.Proof{
+						Proof: v4types.Proof{
 							PubKey:    pubKeyAny,
 							Signature: "7369676E6174757265",
 							PlainText: "74657874",
 						},
-						ChainConfig:  v4.ChainConfig{Name: "cosmos"},
+						ChainConfig:  v4types.ChainConfig{Name: "cosmos"},
 						CreationTime: time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 					}),
 				)
 			},
 			check: func(ctx sdk.Context) {
-				kvStore := ctx.KVStore(keys[types.StoreKey])
+				kvStore := ctx.KVStore(keys[profilestypes.StoreKey])
 
 				signatureValue, err := hex.DecodeString("7369676E6174757265")
 				require.NoError(t, err)
-				signature := profilestypes.SingleSignatureData{
+				signature := v5types.SingleSignatureData{
 					Mode:      signing.SignMode_SIGN_MODE_TEXTUAL,
 					Signature: signatureValue,
 				}
 				signatureAny := profilestesting.NewAny(&signature)
 
-				var stored profilestypes.ChainLink
+				var stored v5types.ChainLink
 				cdc.MustUnmarshal(kvStore.Get(profilestypes.ChainLinksStoreKey(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos",
 					"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
 				)), &stored)
-				require.Equal(t, profilestypes.NewChainLink(
+				require.Equal(t, v5types.NewChainLink(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					profilestypes.NewBech32Address("cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f", "cosmos"),
-					profilestypes.Proof{
+					v5types.NewBech32Address("cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f", "cosmos"),
+					v5types.Proof{
 						PubKey:    pubKeyAny,
 						Signature: signatureAny,
 						PlainText: "74657874",
 					},
-					profilestypes.ChainConfig{Name: "cosmos"},
+					v5types.ChainConfig{Name: "cosmos"},
 					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 				), stored)
 			},
@@ -297,7 +304,7 @@ func TestMigrateStore(t *testing.T) {
 		{
 			name: "chain link is migrated properly (direct sign tx signature)",
 			store: func(ctx sdk.Context) {
-				kvStore := ctx.KVStore(keys[types.StoreKey])
+				kvStore := ctx.KVStore(keys[profilestypes.StoreKey])
 
 				// Build the signature
 				bz, err := cdc.Marshal(&tx.SignDoc{
@@ -311,22 +318,26 @@ func TestMigrateStore(t *testing.T) {
 
 				// Store the chain link
 				kvStore.Set(
-					v4.ChainLinksStoreKey("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", "cosmos", "cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f"),
-					cdc.MustMarshal(&v4.ChainLink{
+					v4types.ChainLinksStoreKey(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"cosmos",
+						"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
+					),
+					cdc.MustMarshal(&v4types.ChainLink{
 						User:    "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						Address: addressAny,
-						Proof: v4.Proof{
+						Proof: v4types.Proof{
 							PubKey:    pubKeyAny,
 							Signature: "7369676E6174757265",
 							PlainText: plainTextValue,
 						},
-						ChainConfig:  v4.ChainConfig{Name: "cosmos"},
+						ChainConfig:  v4types.ChainConfig{Name: "cosmos"},
 						CreationTime: time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 					}),
 				)
 			},
 			check: func(ctx sdk.Context) {
-				kvStore := ctx.KVStore(keys[types.StoreKey])
+				kvStore := ctx.KVStore(keys[profilestypes.StoreKey])
 
 				bz, err := cdc.Marshal(&tx.SignDoc{
 					BodyBytes:     nil,
@@ -340,26 +351,26 @@ func TestMigrateStore(t *testing.T) {
 				signatureValue, err := hex.DecodeString("7369676E6174757265")
 				require.NoError(t, err)
 
-				signatureAny := profilestesting.NewAny(&profilestypes.SingleSignatureData{
+				signatureAny := profilestesting.NewAny(&v5types.SingleSignatureData{
 					Mode:      signing.SignMode_SIGN_MODE_DIRECT,
 					Signature: signatureValue,
 				})
 
-				var stored profilestypes.ChainLink
+				var stored v5types.ChainLink
 				cdc.MustUnmarshal(kvStore.Get(profilestypes.ChainLinksStoreKey(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos",
 					"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
 				)), &stored)
-				require.Equal(t, profilestypes.NewChainLink(
+				require.Equal(t, v5types.NewChainLink(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					profilestypes.NewBech32Address("cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f", "cosmos"),
-					profilestypes.Proof{
+					v5types.NewBech32Address("cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f", "cosmos"),
+					v5types.Proof{
 						PubKey:    pubKeyAny,
 						Signature: signatureAny,
 						PlainText: plainTextValue,
 					},
-					profilestypes.ChainConfig{Name: "cosmos"},
+					v5types.ChainConfig{Name: "cosmos"},
 					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 				), stored)
 			},
@@ -367,7 +378,7 @@ func TestMigrateStore(t *testing.T) {
 		{
 			name: "chain link is migrated properly (amino sign tx signature)",
 			store: func(ctx sdk.Context) {
-				kvStore := ctx.KVStore(keys[types.StoreKey])
+				kvStore := ctx.KVStore(keys[profilestypes.StoreKey])
 
 				// Build the signature
 				bz, err := legacyAmino.MarshalJSON(&legacytx.StdSignDoc{
@@ -384,22 +395,26 @@ func TestMigrateStore(t *testing.T) {
 
 				// Store the chain link
 				kvStore.Set(
-					v4.ChainLinksStoreKey("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", "cosmos", "cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f"),
-					cdc.MustMarshal(&v4.ChainLink{
+					v4types.ChainLinksStoreKey(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"cosmos",
+						"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
+					),
+					cdc.MustMarshal(&v4types.ChainLink{
 						User:    "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						Address: addressAny,
-						Proof: v4.Proof{
+						Proof: v4types.Proof{
 							PubKey:    pubKeyAny,
 							Signature: "7369676E6174757265",
 							PlainText: plainTextValue,
 						},
-						ChainConfig:  v4.ChainConfig{Name: "cosmos"},
+						ChainConfig:  v4types.ChainConfig{Name: "cosmos"},
 						CreationTime: time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 					}),
 				)
 			},
 			check: func(ctx sdk.Context) {
-				kvStore := ctx.KVStore(keys[types.StoreKey])
+				kvStore := ctx.KVStore(keys[profilestypes.StoreKey])
 
 				bz, err := legacyAmino.MarshalJSON(&legacytx.StdSignDoc{
 					AccountNumber: 1,
@@ -416,27 +431,27 @@ func TestMigrateStore(t *testing.T) {
 				signatureValue, err := hex.DecodeString("7369676E6174757265")
 				require.NoError(t, err)
 
-				signature := profilestypes.SingleSignatureData{
+				signature := v5types.SingleSignatureData{
 					Mode:      signing.SignMode_SIGN_MODE_LEGACY_AMINO_JSON,
 					Signature: signatureValue,
 				}
 				signatureAny := profilestesting.NewAny(&signature)
 
-				var stored profilestypes.ChainLink
+				var stored v5types.ChainLink
 				cdc.MustUnmarshal(kvStore.Get(profilestypes.ChainLinksStoreKey(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos",
 					"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
 				)), &stored)
-				require.Equal(t, profilestypes.NewChainLink(
+				require.Equal(t, v5types.NewChainLink(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					profilestypes.NewBech32Address("cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f", "cosmos"),
-					profilestypes.Proof{
+					v5types.NewBech32Address("cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f", "cosmos"),
+					v5types.Proof{
 						PubKey:    pubKeyAny,
 						Signature: signatureAny,
 						PlainText: plainTextValue,
 					},
-					profilestypes.ChainConfig{Name: "cosmos"},
+					v5types.ChainConfig{Name: "cosmos"},
 					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 				), stored)
 			},
@@ -444,12 +459,12 @@ func TestMigrateStore(t *testing.T) {
 		{
 			name: "user blocks and relationships are deleted properly",
 			store: func(ctx sdk.Context) {
-				kvStore := ctx.KVStore(keys[types.StoreKey])
+				kvStore := ctx.KVStore(keys[profilestypes.StoreKey])
 
 				// Store a user block
 				kvStore.Set(
-					v4.UserBlockStoreKey("blocker", "", "blocked"),
-					cdc.MustMarshal(&v4.UserBlock{
+					v4types.UserBlockStoreKey("blocker", "", "blocked"),
+					cdc.MustMarshal(&v4types.UserBlock{
 						Blocker:    "blocker",
 						Blocked:    "blocked",
 						Reason:     "reason",
@@ -459,16 +474,16 @@ func TestMigrateStore(t *testing.T) {
 
 				// Store some relationships
 				kvStore.Set(
-					v4.RelationshipsStoreKey("user", "1", "recipient"),
-					cdc.MustMarshal(&v4.Relationship{
+					v4types.RelationshipsStoreKey("user", "1", "recipient"),
+					cdc.MustMarshal(&v4types.Relationship{
 						Creator:    "user",
 						Recipient:  "recipient",
 						SubspaceID: "1",
 					}),
 				)
 				kvStore.Set(
-					v4.RelationshipsStoreKey("user", "2", "recipient"),
-					cdc.MustMarshal(&v4.Relationship{
+					v4types.RelationshipsStoreKey("user", "2", "recipient"),
+					cdc.MustMarshal(&v4types.Relationship{
 						Creator:    "user",
 						Recipient:  "recipient",
 						SubspaceID: "2",
@@ -477,14 +492,14 @@ func TestMigrateStore(t *testing.T) {
 			},
 			shouldErr: false,
 			check: func(ctx sdk.Context) {
-				kvStore := ctx.KVStore(keys[types.StoreKey])
+				kvStore := ctx.KVStore(keys[profilestypes.StoreKey])
 
 				// Make sure all blocks are deleted
-				require.False(t, kvStore.Has(v4.UserBlockStoreKey("blocker", "", "blocked")))
+				require.False(t, kvStore.Has(v4types.UserBlockStoreKey("blocker", "", "blocked")))
 
 				// Make sure all relationships are deleted
-				require.False(t, kvStore.Has(v4.RelationshipsStoreKey("user", "1", "recipient")))
-				require.False(t, kvStore.Has(v4.RelationshipsStoreKey("user", "1", "recipient")))
+				require.False(t, kvStore.Has(v4types.RelationshipsStoreKey("user", "1", "recipient")))
+				require.False(t, kvStore.Has(v4types.RelationshipsStoreKey("user", "1", "recipient")))
 			},
 		},
 	}
@@ -497,7 +512,7 @@ func TestMigrateStore(t *testing.T) {
 				tc.store(ctx)
 			}
 
-			err := v4.MigrateStore(ctx, authKeeper, keys[types.StoreKey], legacyAmino, cdc)
+			err := v4.MigrateStore(ctx, authKeeper, keys[profilestypes.StoreKey], legacyAmino, cdc)
 			if tc.shouldErr {
 				require.Error(t, err)
 			} else {

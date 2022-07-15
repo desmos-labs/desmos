@@ -6,22 +6,22 @@ import (
 	"strings"
 	"time"
 
-	"github.com/desmos-labs/desmos/v3/testutil/profilestesting"
+	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
 
-	"github.com/desmos-labs/desmos/v3/pkg/obi"
+	"github.com/desmos-labs/desmos/v4/pkg/obi"
 
 	clienttypes "github.com/cosmos/ibc-go/v3/modules/core/02-client/types"
 	"github.com/cosmos/ibc-go/v3/modules/core/exported"
 
-	"github.com/desmos-labs/desmos/v3/testutil/ibctesting"
+	"github.com/desmos-labs/desmos/v4/testutil/ibctesting"
 
 	channeltypes "github.com/cosmos/ibc-go/v3/modules/core/04-channel/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	oracletypes "github.com/desmos-labs/desmos/v3/x/oracle/types"
+	oracletypes "github.com/desmos-labs/desmos/v4/x/oracle/types"
 
-	"github.com/desmos-labs/desmos/v3/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 func createRequestPacketData(clientID string) oracletypes.OracleRequestPacketData {
@@ -232,6 +232,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2020, 3, 1, 00, 00, 00, 000, time.UTC),
 				)
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
@@ -255,6 +256,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 				),
 				types.NewErrorResult(types.ErrRequestExpired),
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				time.Date(2020, 3, 1, 00, 00, 00, 000, time.UTC),
 			),
 		},
 		{
@@ -275,6 +277,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2020, 3, 1, 00, 00, 00, 000, time.UTC),
 				)
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
@@ -298,6 +301,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 				),
 				types.NewErrorResult(types.ErrRequestFailed),
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				time.Date(2020, 3, 1, 00, 00, 00, 000, time.UTC),
 			),
 		},
 		{
@@ -318,6 +322,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2020, 3, 1, 00, 00, 00, 000, time.UTC),
 				)
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
@@ -348,6 +353,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2020, 3, 1, 00, 00, 00, 000, time.UTC),
 				)
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
@@ -371,6 +377,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 				),
 				types.NewErrorResult(types.ErrInvalidAppUsername),
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				time.Date(2020, 3, 1, 00, 00, 00, 000, time.UTC),
 			),
 		},
 		{
@@ -391,6 +398,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2020, 3, 1, 00, 00, 00, 000, time.UTC),
 				)
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
@@ -420,6 +428,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2020, 3, 1, 00, 00, 00, 000, time.UTC),
 				)
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
@@ -443,6 +452,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 				),
 				types.NewErrorResult(types.ErrInvalidSignature),
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				time.Date(2020, 3, 1, 00, 00, 00, 000, time.UTC),
 			),
 		},
 		{
@@ -462,6 +472,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2020, 3, 1, 00, 00, 00, 000, time.UTC),
 				)
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
@@ -480,6 +491,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 				),
 				types.NewSuccessResult(hexValue, hexSig),
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				time.Date(2020, 3, 1, 00, 00, 00, 000, time.UTC),
 			),
 		},
 		{
@@ -499,6 +511,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2020, 3, 1, 00, 00, 00, 000, time.UTC),
 				)
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
@@ -517,6 +530,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 				),
 				nil,
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				time.Date(2020, 3, 1, 00, 00, 00, 000, time.UTC),
 			),
 		},
 		{
@@ -536,6 +550,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 					),
 					types.NewErrorResult(types.ErrInvalidSignature),
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2020, 3, 1, 00, 00, 00, 000, time.UTC),
 				)
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
@@ -554,6 +569,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 				),
 				types.NewErrorResult(types.ErrInvalidSignature),
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				time.Date(2020, 3, 1, 00, 00, 00, 000, time.UTC),
 			),
 		},
 		{
@@ -573,6 +589,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 					),
 					types.NewSuccessResult("value", "signature"),
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2020, 3, 1, 00, 00, 00, 000, time.UTC),
 				)
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
@@ -591,6 +608,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 				),
 				types.NewSuccessResult("value", "signature"),
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				time.Date(2020, 3, 1, 00, 00, 00, 000, time.UTC),
 			),
 		},
 	}
@@ -651,6 +669,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnOracleRequestAcknowledgementPacket() 
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2020, 3, 1, 00, 00, 00, 000, time.UTC),
 				)
 
 				suite.ak.SetAccount(ctx, profilestesting.ProfileFromAddr(address))
@@ -672,6 +691,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnOracleRequestAcknowledgementPacket() 
 				),
 				types.NewErrorResult("error"),
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				time.Date(2020, 3, 1, 00, 00, 00, 000, time.UTC),
 			),
 		},
 		{
@@ -690,6 +710,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnOracleRequestAcknowledgementPacket() 
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2020, 3, 1, 00, 00, 00, 000, time.UTC),
 				)
 
 				suite.ak.SetAccount(ctx, profilestesting.ProfileFromAddr(address))
@@ -716,6 +737,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnOracleRequestAcknowledgementPacket() 
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2020, 3, 1, 00, 00, 00, 000, time.UTC),
 				)
 
 				suite.ak.SetAccount(ctx, profilestesting.ProfileFromAddr(address))
@@ -737,6 +759,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnOracleRequestAcknowledgementPacket() 
 				),
 				nil,
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				time.Date(2020, 3, 1, 00, 00, 00, 000, time.UTC),
 			),
 		},
 	}
@@ -792,6 +815,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnOracleRequestTimeoutPacket() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2020, 3, 1, 00, 00, 00, 000, time.UTC),
 				)
 
 				suite.ak.SetAccount(ctx, profilestesting.ProfileFromAddr(address))
@@ -815,6 +839,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnOracleRequestTimeoutPacket() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2020, 3, 1, 00, 00, 00, 000, time.UTC),
 				)
 				suite.Require().Equal(expected, link)
 			},

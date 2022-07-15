@@ -3,12 +3,12 @@ package keeper_test
 import (
 	"time"
 
-	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
-	relationshipstypes "github.com/desmos-labs/desmos/v3/x/relationships/types"
+	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
+	relationshipstypes "github.com/desmos-labs/desmos/v4/x/relationships/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v3/x/reports/types"
+	"github.com/desmos-labs/desmos/v4/x/reports/types"
 )
 
 func (suite *KeeperTestsuite) TestKeeper_SetNextReportID() {
@@ -149,6 +149,19 @@ func (suite *KeeperTestsuite) TestKeeper_ValidateReport() {
 		shouldErr bool
 	}{
 		{
+			name: "invalid report returns error",
+			report: types.NewReport(
+				0,
+				1,
+				[]uint32{1},
+				"This content is spam",
+				types.NewUserTarget("cosmos10s22qjua2n3law0ymstm3txm7764mfk2cjawq5"),
+				"cosmos1wprgptc8ktt0eemrn2znpxv8crdxm8tdpkdr7w",
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+			),
+			shouldErr: true,
+		},
+		{
 			name: "UserTarget - blocked reporter returns error",
 			store: func(ctx sdk.Context) {
 				suite.rk.SaveUserBlock(ctx, relationshipstypes.NewUserBlock(
@@ -208,6 +221,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidateReport() {
 					0,
 					nil,
 					nil,
+					nil,
 					poststypes.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
@@ -242,6 +256,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidateReport() {
 					"This is a new post",
 					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 					0,
+					nil,
 					nil,
 					nil,
 					poststypes.REPLY_SETTING_EVERYONE,

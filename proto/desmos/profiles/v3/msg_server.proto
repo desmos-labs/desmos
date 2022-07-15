@@ -1,0 +1,66 @@
+syntax = "proto3";
+package desmos.profiles.v3;
+
+import "gogoproto/gogo.proto";
+import "google/protobuf/any.proto";
+import "cosmos_proto/cosmos.proto";
+import "desmos/profiles/v3/models_profile.proto";
+import "desmos/profiles/v3/models_dtag_requests.proto";
+import "desmos/profiles/v3/msgs_profile.proto";
+import "desmos/profiles/v3/msgs_dtag_requests.proto";
+import "desmos/profiles/v3/msgs_chain_links.proto";
+import "desmos/profiles/v3/msgs_app_links.proto";
+
+option go_package = "github.com/desmos-labs/desmos/v4/x/profiles/types";
+
+// Msg defines the relationships Msg service.
+service Msg {
+  // SaveProfile defines the method to save a profile
+  rpc SaveProfile(MsgSaveProfile) returns (MsgSaveProfileResponse);
+
+  // DeleteProfile defines the method to delete an existing profile
+  rpc DeleteProfile(MsgDeleteProfile) returns (MsgDeleteProfileResponse);
+
+  // RequestDTagTransfer defines the method to request another user to transfer
+  // their DTag to you
+  rpc RequestDTagTransfer(MsgRequestDTagTransfer)
+      returns (MsgRequestDTagTransferResponse);
+
+  // CancelDTagTransferRequest defines the method to cancel an outgoing DTag
+  // transfer request
+  rpc CancelDTagTransferRequest(MsgCancelDTagTransferRequest)
+      returns (MsgCancelDTagTransferRequestResponse);
+
+  // AcceptDTagTransferRequest defines the method to accept an incoming DTag
+  // transfer request
+  rpc AcceptDTagTransferRequest(MsgAcceptDTagTransferRequest)
+      returns (MsgAcceptDTagTransferRequestResponse);
+
+  // RefuseDTagTransferRequest defines the method to refuse an incoming DTag
+  // transfer request
+  rpc RefuseDTagTransferRequest(MsgRefuseDTagTransferRequest)
+      returns (MsgRefuseDTagTransferRequestResponse);
+
+  // LinkChainAccount defines a method to link an external chain account to a
+  // profile
+  rpc LinkChainAccount(MsgLinkChainAccount)
+      returns (MsgLinkChainAccountResponse);
+
+  // UnlinkChainAccount defines a method to unlink an external chain account
+  // from a profile
+  rpc UnlinkChainAccount(MsgUnlinkChainAccount)
+      returns (MsgUnlinkChainAccountResponse);
+
+  // SetDefaultExternalAddress allows to set a specific external address as the
+  // default one for a given chain
+  rpc SetDefaultExternalAddress(MsgSetDefaultExternalAddress)
+      returns (MsgSetDefaultExternalAddressResponse);
+
+  // LinkApplication defines a method to create a centralized application
+  // link
+  rpc LinkApplication(MsgLinkApplication) returns (MsgLinkApplicationResponse);
+
+  // UnlinkApplication defines a method to remove a centralized application
+  rpc UnlinkApplication(MsgUnlinkApplication)
+      returns (MsgUnlinkApplicationResponse);
+}

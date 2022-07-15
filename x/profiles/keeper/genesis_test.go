@@ -4,12 +4,12 @@ import (
 	"encoding/hex"
 	"time"
 
-	"github.com/desmos-labs/desmos/v3/testutil/profilestesting"
+	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	"github.com/desmos-labs/desmos/v3/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 func (suite *KeeperTestSuite) Test_ExportGenesis() {
@@ -66,6 +66,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 						200_000,
 						sdk.NewCoin("band", sdk.NewInt(10)),
 					),
+					types.NewAppLinksParams(types.DefaultAppLinksValidityDuration),
 				)
 				suite.k.SetParams(ctx, params)
 				suite.k.SetPort(ctx, "port-id")
@@ -103,6 +104,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 					),
 				}
 				for _, link := range applicationLinks {
@@ -127,6 +129,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 						200_000,
 						sdk.NewCoin("band", sdk.NewInt(10)),
 					),
+					types.NewAppLinksParams(types.DefaultAppLinksValidityDuration),
 				),
 				"port-id",
 				[]types.ChainLink{
@@ -155,6 +158,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 					),
 				},
 			),
@@ -265,6 +269,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 						200_000,
 						sdk.NewCoin("band", sdk.NewInt(10)),
 					),
+					types.NewAppLinksParams(types.DefaultAppLinksValidityDuration),
 				),
 				"profiles-port-id",
 				[]types.ChainLink{
@@ -298,6 +303,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 					),
 				},
 			),
@@ -320,6 +326,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 						200_000,
 						sdk.NewCoin("band", sdk.NewInt(10)),
 					),
+					types.NewAppLinksParams(types.DefaultAppLinksValidityDuration),
 				)
 				suite.Require().Equal(params, suite.k.GetParams(ctx))
 
@@ -355,6 +362,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 							"client_id",
 						),
 						nil,
+						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 					),
 				}

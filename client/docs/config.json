@@ -7,7 +7,7 @@
   },
   "apis": [
     {
-      "url": "./tmp-swagger-gen/desmos/profiles/v2/query.swagger.json",
+      "url": "./tmp-swagger-gen/desmos/profiles/v3/query.swagger.json",
       "operationIds": {
         "rename": {
           "Params": "ProfilesParams"
@@ -21,12 +21,15 @@
       "url": "./tmp-swagger-gen/desmos/subspaces/v2/query.swagger.json"
     },
     {
-      "url": "./tmp-swagger-gen/desmos/posts/v1/query.swagger.json",
+      "url": "./tmp-swagger-gen/desmos/posts/v2/query.swagger.json",
       "operationIds": {
         "rename": {
           "Params": "PostsParams"
         }
       }
+    },
+    {
+      "url": "./tmp-swagger-gen/desmos/reactions/v1/query.swagger.json"
     },
     {
       "url": "./tmp-swagger-gen/desmos/reports/v1/query.swagger.json",

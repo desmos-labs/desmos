@@ -12,15 +12,16 @@ import (
 
 // NewApplicationLink allows to build a new ApplicationLink instance
 func NewApplicationLink(
-	user string, data Data, state ApplicationLinkState, oracleRequest OracleRequest, result *Result, creationTime time.Time,
+	user string, data Data, state ApplicationLinkState, oracleRequest OracleRequest, result *Result, creationTime time.Time, expirationTime time.Time,
 ) ApplicationLink {
 	return ApplicationLink{
-		User:          user,
-		Data:          data,
-		State:         state,
-		OracleRequest: oracleRequest,
-		Result:        result,
-		CreationTime:  creationTime,
+		User:           user,
+		Data:           data,
+		State:          state,
+		OracleRequest:  oracleRequest,
+		Result:         result,
+		CreationTime:   creationTime,
+		ExpirationTime: expirationTime,
 	}
 }
 
@@ -50,6 +51,14 @@ func (l ApplicationLink) Validate() error {
 
 	if l.CreationTime.IsZero() {
 		return fmt.Errorf("invalid creation time: %s", l.CreationTime)
+	}
+
+	if l.ExpirationTime.IsZero() {
+		return fmt.Errorf("invalid expiration time: %s", l.ExpirationTime)
+	}
+
+	if l.ExpirationTime.Before(l.CreationTime) {
+		return fmt.Errorf("expiration time: %s cannot be before creation time: %s", l.ExpirationTime, l.CreationTime)
 	}
 
 	return nil
