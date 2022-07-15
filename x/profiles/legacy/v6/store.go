@@ -18,7 +18,7 @@ import (
 	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
-// MigrateStore performs in-place store migrations from v5 to v6
+// MigrateStore performs in-place store migrations from v6 to v7.
 // The migration includes:
 //
 // - migrating all the profiles to have the proper Protobuf type

@@ -10,7 +10,7 @@ import (
 	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
-// MigrateStore performs in-place store migrations from v5 to v6
+// MigrateStore performs in-place store migrations from v5 to v6.
 // The migration includes:
 //
 // - add missing application links owner keys to allow reverse searches
