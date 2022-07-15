@@ -12,7 +12,7 @@
 
 ## Status
 
-ACCEPTED
+ACCEPTED Implemented
 
 ## Abstract
 This ADR defines the `x/subspaces` module which allows users to create and manage the representation of different social networks inside which contents will be created.  
