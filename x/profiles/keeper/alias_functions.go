@@ -143,19 +143,32 @@ func (k Keeper) IterateExpiringApplicationLinks(ctx sdk.Context, fn func(index i
 
 	i := int64(0)
 	for ; iterator.Valid(); iterator.Next() {
+		// This iterator has the following key and value structure:
+		// ExpiringAppLinkTimePrefix | Expiration Time | Client ID ->  Client ID
+		//
+		// This means that in order to get the expired application links we need to:
+		// 1. Extract the Expiration Time from the iterator key
+		// 2. If the Expiration Time has passed, get the application link by using the Client ID from the iterator value
+
+		// First, we remove the prefix from the key, so we are left with the Expiration Time and Client ID
 		trimmedPrefixKey := bytes.TrimPrefix(iterator.Key(), types.ExpiringAppLinkTimePrefix)
+
+		// Second, we remove the Client ID from the trimmed key, so we are left only with the Expiration Time
 		expiringTime, err := sdk.ParseTimeBytes(bytes.TrimSuffix(trimmedPrefixKey, iterator.Value()))
 		if err != nil {
 			panic(err)
 		}
 
-		// Skip if application link has been deleted already
+		// Third, we get the Client ID from the iterator value
 		clientIDKey := types.ApplicationLinkClientIDKey(string(iterator.Value()))
+
+		// Skip if application link has been deleted already
 		if !store.Has(clientIDKey) {
 			store.Delete(iterator.Key())
 			continue
 		}
 
+		// Check if the expiration time has passed (the application link is expired)
 		if ctx.BlockTime().After(expiringTime) {
 			applicationKey := store.Get(clientIDKey)
 			link := types.MustUnmarshalApplicationLink(k.cdc, store.Get(applicationKey))
