@@ -104,7 +104,7 @@ func TestMigrateStore(t *testing.T) {
 			},
 			check: func(ctx sdk.Context) {
 				// Check the profile to make sure it contains the same data
-				v6Profile, err := types.NewProfile(
+				v7Profile, err := types.NewProfile(
 					"john_doe",
 					"John Doe",
 					"My name if John Doe",
