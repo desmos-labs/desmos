@@ -54,14 +54,14 @@ func (b *AccountChainLinkJSONBuilder) BuildChainLinkJSON(chain types.Chain) (uti
 	if err != nil {
 		return utils.ChainLinkJSON{}, err
 	}
-	sigData := &profilestypes.SingleSignatureData{
-		Mode:      signing.SignMode_SIGN_MODE_DIRECT,
-		Signature: sig,
-	}
 
 	return utils.NewChainLinkJSON(
 		profilestypes.NewBech32Address(addr, chain.Prefix),
-		profilestypes.NewProof(pubkey, sigData, hex.EncodeToString(value)),
+		profilestypes.NewProof(
+			pubkey,
+			profilestypes.NewCosmosSingleSignature(signing.SignMode_SIGN_MODE_DIRECT, sig),
+			hex.EncodeToString(value),
+		),
 		profilestypes.NewChainConfig(chain.Name),
 	), nil
 }

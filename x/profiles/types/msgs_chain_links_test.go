@@ -51,7 +51,7 @@ func TestMsgLinkChainAccount_ValidateBasic(t *testing.T) {
 			name: "invalid proof returns error",
 			msg: types.NewMsgLinkChainAccount(
 				types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
-				types.NewProof(secp256k1.GenPrivKey().PubKey(), &types.SingleSignatureData{}, "wrong"),
+				types.NewProof(secp256k1.GenPrivKey().PubKey(), &types.CosmosSingleSignature{}, "wrong"),
 				msgChainLinkAccount.ChainConfig,
 				msgChainLinkAccount.Signer,
 			),

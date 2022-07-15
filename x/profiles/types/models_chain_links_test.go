@@ -181,10 +181,9 @@ func generateCosmosMultiSigSignature(t *testing.T, privKeys []cryptotypes.PrivKe
 	}
 
 	// Generate the signature data object
-	sigData, err := types.SignatureDataFromCosmosSignatureData(cosmosMultisig)
+	signature, err := types.SignatureDataFromCosmosSignatureData(cosmosMultisig)
 	require.NoError(t, err)
-
-	return types.NewCosmosSignature(types.COSMOS_SIGNATURE_VALUE_ENCODING_TEXTUAL, sigData)
+	return signature
 }
 
 func TestProof_Verify(t *testing.T) {
@@ -197,10 +196,7 @@ func TestProof_Verify(t *testing.T) {
 	bech32Owner := "cosmos10m20h8fy0qp2a8f46zzjpvg8pfl8flajgxsvmk"
 	bech32Sig, err := bech32PrivKey.Sign([]byte(bech32Owner))
 	require.NoError(t, err)
-	bech32SigData := types.NewCosmosSignature(types.COSMOS_SIGNATURE_VALUE_ENCODING_TEXTUAL, &types.CosmosSingleSignatureData{
-		Mode:      signing.SignMode_SIGN_MODE_TEXTUAL,
-		Signature: bech32Sig,
-	})
+	bech32SigData := types.NewCosmosSingleSignature(signing.SignMode_SIGN_MODE_TEXTUAL, bech32Sig)
 	anySigData, err := codectypes.NewAnyWithValue(bech32SigData)
 	require.NoError(t, err)
 
@@ -214,10 +210,7 @@ func TestProof_Verify(t *testing.T) {
 	base58Owner := "cosmos1u55ywhk6thmhnxs7yn8vh8v7eznckcqjevnadx"
 	base58Sig, err := base58PrivKey.Sign([]byte(base58Owner))
 	require.NoError(t, err)
-	base58SigData := types.NewCosmosSignature(types.COSMOS_SIGNATURE_VALUE_ENCODING_TEXTUAL, &types.CosmosSingleSignatureData{
-		Mode:      signing.SignMode_SIGN_MODE_TEXTUAL,
-		Signature: base58Sig,
-	})
+	base58SigData := types.NewCosmosSingleSignature(signing.SignMode_SIGN_MODE_TEXTUAL, base58Sig)
 
 	// Hex
 	hexPrivKeyBz, err := hex.DecodeString("2842d8f3701d16711b9ee320f32efe38e6b0891e243eaf6515250e7b006de53e")
@@ -229,10 +222,7 @@ func TestProof_Verify(t *testing.T) {
 	hexOwner := "cosmos1l0g43u695yvmwem09ncwgsxup6m8aklcyr38ph"
 	hexSig, err := hexPrivKey.Sign([]byte(hexOwner))
 	require.NoError(t, err)
-	hexSigData := types.NewCosmosSignature(types.COSMOS_SIGNATURE_VALUE_ENCODING_TEXTUAL, &types.CosmosSingleSignatureData{
-		Mode:      signing.SignMode_SIGN_MODE_DIRECT,
-		Signature: hexSig,
-	})
+	hexSigData := types.NewCosmosSingleSignature(signing.SignMode_SIGN_MODE_DIRECT, hexSig)
 
 	// Multisig
 	privKeys, multiSigPubKey := generateMultiSigKeys(3)
@@ -707,7 +697,7 @@ func TestChainLink_Validate(t *testing.T) {
 			chainLink: types.NewChainLink(
 				"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
 				types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
-				types.NewProof(secp256k1.GenPrivKey().PubKey(), &types.CosmosSignature{}, "="),
+				types.NewProof(secp256k1.GenPrivKey().PubKey(), &types.CosmosSingleSignature{}, "="),
 				types.NewChainConfig("cosmos"),
 				time.Now(),
 			),

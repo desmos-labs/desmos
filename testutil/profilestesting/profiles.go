@@ -81,14 +81,7 @@ func SingleCosmosSignatureFromHex(hexEncodedSignature string) types.Signature {
 	if err != nil {
 		panic(err)
 	}
-
-	return types.NewCosmosSignature(
-		types.COSMOS_SIGNATURE_VALUE_ENCODING_TEXTUAL,
-		&types.CosmosSingleSignatureData{
-			Mode:      signing.SignMode_SIGN_MODE_DIRECT,
-			Signature: sig,
-		},
-	)
+	return types.NewCosmosSingleSignature(signing.SignMode_SIGN_MODE_DIRECT, sig)
 }
 
 // MultiCosmosSignatureFromHex convert the hex-encoded string of the MultiSignature Any value to CosmosSignatureData
@@ -104,9 +97,9 @@ func MultiCosmosSignatureFromHex(unpacker codectypes.AnyUnpacker, hexEncodedSign
 		panic(err)
 	}
 
-	var sigData types.CosmosSignatureData
-	if err = unpacker.UnpackAny(&multisigAny, &sigData); err != nil {
+	var signature types.Signature
+	if err = unpacker.UnpackAny(&multisigAny, &signature); err != nil {
 		panic(err)
 	}
-	return types.NewCosmosSignature(types.COSMOS_SIGNATURE_VALUE_ENCODING_TEXTUAL, sigData)
+	return signature
 }

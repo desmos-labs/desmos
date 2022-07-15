@@ -69,8 +69,17 @@ func NewProof(pubKey cryptotypes.PubKey, signature Signature, plainText string) 
 }
 
 // GetSignature returns the Signature associated to this proof
-func (p *Proof) GetSignature() Signature {
-	return p.Signature.GetCachedValue().(Signature)
+func (p Proof) GetSignature() (Signature, error) {
+	sigValue := p.Signature.GetCachedValue()
+	if sigValue == nil {
+		return nil, fmt.Errorf("nil signature")
+	}
+
+	signature, ok := sigValue.(Signature)
+	if !ok {
+		return nil, fmt.Errorf("invalid signature type: %T", sigValue)
+	}
+	return signature, nil
 }
 
 // Validate checks the validity of the Proof
@@ -104,14 +113,20 @@ func (p Proof) Verify(cdc codec.BinaryCodec, amino *codec.LegacyAmino, owner str
 		return fmt.Errorf("error while decoding proof text: %s", err)
 	}
 
+	// Get the signature
+	signature, err := p.GetSignature()
+	if err != nil {
+		return err
+	}
+
 	// Validate the signature
-	err = p.GetSignature().Validate(cdc, amino, value, owner)
+	err = signature.Validate(cdc, amino, value, owner)
 	if err != nil {
 		return fmt.Errorf("invalid signature: %s", err)
 	}
 
 	// Verify the signature
-	pubKey, err := p.GetSignature().Verify(cdc, p.PubKey, value)
+	pubKey, err := signature.Verify(cdc, p.PubKey, value)
 	if err != nil {
 		return fmt.Errorf("error while verifying the signature: %s", err)
 	}
@@ -136,7 +151,7 @@ func (p *Proof) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 		return err
 	}
 
-	var signatureData CosmosSignatureData
+	var signatureData Signature
 	return unpacker.UnpackAny(p.Signature, &signatureData)
 }
 
@@ -156,52 +171,41 @@ type Signature interface {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-var _ Signature = &CosmosSignature{}
+type CosmosSignature interface {
+	Signature
+	GetSignMode() (signing.SignMode, error)
+}
 
-// NewCosmosSignature returns a new CosmosSignature instance
-func NewCosmosSignature(valueEncoding CosmosSignatureValueEncoding, signatureData CosmosSignatureData) *CosmosSignature {
-	signatureDataAny, err := codectypes.NewAnyWithValue(signatureData)
-	if err != nil {
-		panic("failed to pack signature data to any type")
-	}
+// --------------------------------------------------------------------------------------------------------------------
 
-	return &CosmosSignature{
-		ValueEncoding: valueEncoding,
-		SignatureData: signatureDataAny,
+var _ Signature = &CosmosSingleSignature{}
+
+// NewCosmosSingleSignature returns a new CosmosSignature instance
+func NewCosmosSingleSignature(mode signing.SignMode, signature []byte) *CosmosSingleSignature {
+	return &CosmosSingleSignature{
+		Mode:      mode,
+		Signature: signature,
 	}
 }
 
-// GetSignatureData returns the CosmosSignatureData associated with this CosmosSignature
-func (s *CosmosSignature) GetSignatureData() CosmosSignatureData {
-	return s.SignatureData.GetCachedValue().(CosmosSignatureData)
+// GetSignMode implements CosmosSignature
+func (s *CosmosSingleSignature) GetSignMode() (signing.SignMode, error) {
+	return s.Mode, nil
 }
 
 // Validate implements Signature
-func (s *CosmosSignature) Validate(cdc codec.BinaryCodec, amino *codec.LegacyAmino, plainText []byte, owner string) error {
-	if s.ValueEncoding == COSMOS_SIGNATURE_VALUE_ENCODING_UNKNOWN {
-		return fmt.Errorf("invalid value encoding")
-	}
-
-	if s.SignatureData == nil {
-		return fmt.Errorf("invalid signature value encoding")
-	}
-
-	err := s.GetSignatureData().Validate()
-	if err != nil {
-		return err
-	}
-
+func (s *CosmosSingleSignature) Validate(cdc codec.BinaryCodec, amino *codec.LegacyAmino, plainText []byte, owner string) error {
 	// Validate the signature itself
-	switch s.ValueEncoding {
-	case COSMOS_SIGNATURE_VALUE_ENCODING_DIRECT_TX:
+	switch s.Mode {
+	case signing.SignMode_SIGN_MODE_DIRECT:
 		return ValidateDirectTxSig(plainText, owner, cdc)
-	case COSMOS_SIGNATURE_VALUE_ENCODING_AMINO_TX:
+	case signing.SignMode_SIGN_MODE_LEGACY_AMINO_JSON:
 		return ValidateAminoTxSig(plainText, owner, amino)
-	case COSMOS_SIGNATURE_VALUE_ENCODING_TEXTUAL:
+	case signing.SignMode_SIGN_MODE_TEXTUAL:
 		return ValidateTextSig(plainText, owner)
+	default:
+		return fmt.Errorf("invalid signing mode: %s", s.Mode)
 	}
-
-	return nil
 }
 
 // ValidateTextSig tells whether the given value has been generated using SIGN_MODE_TEXTUAL
@@ -263,74 +267,160 @@ func ValidateAminoTxSig(value []byte, expectedMemo string, cdc *codec.LegacyAmin
 }
 
 // Verify implements Signature
-func (s *CosmosSignature) Verify(cdc codec.BinaryCodec, pubKey *codectypes.Any, plainText []byte) (cryptotypes.PubKey, error) {
+func (s *CosmosSingleSignature) Verify(cdc codec.BinaryCodec, pubKey *codectypes.Any, plainText []byte) (cryptotypes.PubKey, error) {
 	// Convert the signature data to the Cosmos type
-	cosmosSigData, err := SignatureDataToCosmosSignatureData(cdc, s.GetSignatureData())
+	cosmosSigData, err := SignatureToCosmosSignatureData(cdc, s)
 	if err != nil {
 		return nil, err
 	}
 
-	// Verify the signature
-	var pubkey cryptotypes.PubKey
-	switch sigData := cosmosSigData.(type) {
-	case *signing.SingleSignatureData:
-		err = cdc.UnpackAny(pubKey, &pubkey)
-		if err != nil {
-			return nil, fmt.Errorf("failed to unpack the public key")
-		}
-		if !pubkey.VerifySignature(plainText, sigData.Signature) {
-			return nil, fmt.Errorf("failed to verify the signature")
-		}
+	sigData, ok := cosmosSigData.(*signing.SingleSignatureData)
+	if !ok {
+		return nil, fmt.Errorf("invalid cosmos signature data type: %T", sigData)
+	}
 
-	case *signing.MultiSignatureData:
-		var multiPubkey multisig.PubKey
-		err = cdc.UnpackAny(pubKey, &multiPubkey)
-		if err != nil {
-			return nil, fmt.Errorf("failed to unpack the public key")
-		}
-		err = multiPubkey.VerifyMultisignature(
-			func(mode signing.SignMode) ([]byte, error) {
-				return plainText, nil
-			},
-			sigData,
-		)
-		if err != nil {
-			return nil, err
-		}
-		pubkey = multiPubkey
+	// Get the pub key
+	var pubkey cryptotypes.PubKey
+	err = cdc.UnpackAny(pubKey, &pubkey)
+	if err != nil {
+		return nil, fmt.Errorf("failed to unpack the public key")
+	}
+
+	// Verify the signature
+	if !pubkey.VerifySignature(plainText, sigData.Signature) {
+		return nil, fmt.Errorf("failed to verify the signature")
 	}
 
 	return pubkey, nil
 }
 
+// --------------------------------------------------------------------------------------------------------------------
+
+var _ Signature = &CosmosMultiSignature{}
+
+// NewCosmosMultiSignature returns a new CosmosMultiSignature instance
+func NewCosmosMultiSignature(bitArray *cryptotypes.CompactBitArray, signatures []CosmosSignature) *CosmosMultiSignature {
+	sigsAnys := make([]*codectypes.Any, len(signatures))
+	for i, sig := range signatures {
+		sigAny, err := codectypes.NewAnyWithValue(sig)
+		if err != nil {
+			panic("failed to pack signature to any type")
+		}
+		sigsAnys[i] = sigAny
+	}
+
+	return &CosmosMultiSignature{
+		BitArray:   bitArray,
+		Signatures: sigsAnys,
+	}
+}
+
+// GetSignMode implements CosmosSignature
+func (s *CosmosMultiSignature) GetSignMode() (signing.SignMode, error) {
+	signMode := signing.SignMode_SIGN_MODE_UNSPECIFIED
+	for i, signature := range s.Signatures {
+		// Unwrap the signature
+		cosmosSig, ok := signature.GetCachedValue().(CosmosSignature)
+		if !ok {
+			return signing.SignMode_SIGN_MODE_UNSPECIFIED, fmt.Errorf("invalid signature type at index %d: %T", i, cosmosSig)
+		}
+
+		// Get the signature sign mode
+		signatureSignMode, err := cosmosSig.GetSignMode()
+		if err != nil {
+			return signing.SignMode_SIGN_MODE_UNSPECIFIED, err
+		}
+
+		if signatureSignMode == signing.SignMode_SIGN_MODE_UNSPECIFIED {
+			return signing.SignMode_SIGN_MODE_UNSPECIFIED, fmt.Errorf("invalid signature signing mode: %s", signatureSignMode)
+		}
+
+		if signMode != signing.SignMode_SIGN_MODE_UNSPECIFIED && signMode != signatureSignMode {
+			return signing.SignMode_SIGN_MODE_UNSPECIFIED, fmt.Errorf("signature at index %d has different signing mode than others", i)
+		}
+		signMode = signatureSignMode
+	}
+	return signMode, nil
+}
+
+// Validate implements Signature
+func (s *CosmosMultiSignature) Validate(cdc codec.BinaryCodec, amino *codec.LegacyAmino, plainText []byte, owner string) error {
+	signMode, err := s.GetSignMode()
+	if err != nil {
+		return err
+	}
+
+	// Validate the signature itself
+	switch signMode {
+	case signing.SignMode_SIGN_MODE_DIRECT:
+		return ValidateDirectTxSig(plainText, owner, cdc)
+	case signing.SignMode_SIGN_MODE_LEGACY_AMINO_JSON:
+		return ValidateAminoTxSig(plainText, owner, amino)
+	case signing.SignMode_SIGN_MODE_TEXTUAL:
+		return ValidateTextSig(plainText, owner)
+	default:
+		return fmt.Errorf("invalid signing mode: %s", signMode)
+	}
+}
+
+// Verify implements Signature
+func (s *CosmosMultiSignature) Verify(cdc codec.BinaryCodec, pubKey *codectypes.Any, plainText []byte) (cryptotypes.PubKey, error) {
+	// Convert the signature data to the Cosmos type
+	cosmosSigData, err := SignatureToCosmosSignatureData(cdc, s)
+	if err != nil {
+		return nil, err
+	}
+
+	// Make sure the sig data is of the correct type
+	sigData, ok := cosmosSigData.(*signing.MultiSignatureData)
+	if !ok {
+		return nil, fmt.Errorf("invalid signature data type: %T", sigData)
+	}
+
+	// Get the pub key
+	var multiPubkey multisig.PubKey
+	err = cdc.UnpackAny(pubKey, &multiPubkey)
+	if err != nil {
+		return nil, fmt.Errorf("failed to unpack the public key")
+	}
+
+	// Verify the signature
+	err = multiPubkey.VerifyMultisignature(func(mode signing.SignMode) ([]byte, error) {
+		return plainText, nil
+	}, sigData)
+	if err != nil {
+		return nil, err
+	}
+
+	return multiPubkey, nil
+}
+
 // UnpackInterfaces implements codectypes.UnpackInterfacesMessage
-func (p *CosmosSignature) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
-	var pubKey CosmosSignatureData
-	return unpacker.UnpackAny(p.SignatureData, &pubKey)
+func (s *CosmosMultiSignature) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
+	for _, signature := range s.Signatures {
+		var signatureData Signature
+		err := unpacker.UnpackAny(signature, &signatureData)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// CosmosSignatureData represents a generic single- or multi- signature data
-type CosmosSignatureData interface {
-	proto.Message
-	isSignatureData()
-
-	// Validate checks the validity of the CosmosSignatureData
-	Validate() error
-}
-
-// SignatureDataToCosmosSignatureData allows to convert the given CosmosSignatureData to a Cosmos SignatureData instance
+// SignatureToCosmosSignatureData allows to convert the given Signature to a Cosmos SignatureData instance
 // unpacking the proto.Any instance using the given unpacker.
-func SignatureDataToCosmosSignatureData(unpacker codectypes.AnyUnpacker, s CosmosSignatureData) (signing.SignatureData, error) {
+func SignatureToCosmosSignatureData(unpacker codectypes.AnyUnpacker, s Signature) (signing.SignatureData, error) {
 	switch data := s.(type) {
-	case *CosmosSingleSignatureData:
+	case *CosmosSingleSignature:
 		return &signing.SingleSignatureData{
 			Signature: data.Signature,
 			SignMode:  data.Mode,
 		}, nil
 
-	case *CosmosMultiSignatureData:
+	case *CosmosMultiSignature:
 		sigs, err := unpackSignatures(unpacker, data.Signatures)
 		if err != nil {
 			return nil, err
@@ -340,16 +430,17 @@ func SignatureDataToCosmosSignatureData(unpacker codectypes.AnyUnpacker, s Cosmo
 			BitArray:   data.BitArray,
 			Signatures: sigs,
 		}, nil
-	}
 
-	return nil, fmt.Errorf("signature type not supported: %T", s)
+	default:
+		return nil, fmt.Errorf("signature type not supported: %T", s)
+	}
 }
 
-// SignatureDataFromCosmosSignatureData allows to create a CosmosSignatureData instance from the given Cosmos SignatureData
-func SignatureDataFromCosmosSignatureData(data signing.SignatureData) (CosmosSignatureData, error) {
+// SignatureDataFromCosmosSignatureData allows to create a Signature instance from the given Cosmos SignatureData
+func SignatureDataFromCosmosSignatureData(data signing.SignatureData) (Signature, error) {
 	switch data := data.(type) {
 	case *signing.SingleSignatureData:
-		return &CosmosSingleSignatureData{
+		return &CosmosSingleSignature{
 			Mode:      data.SignMode,
 			Signature: data.Signature,
 		}, nil
@@ -367,7 +458,7 @@ func SignatureDataFromCosmosSignatureData(data signing.SignatureData) (CosmosSig
 			}
 			sigAnys[i] = sigAny
 		}
-		return &CosmosMultiSignatureData{
+		return &CosmosMultiSignature{
 			BitArray:   data.BitArray,
 			Signatures: sigAnys,
 		}, nil
@@ -380,12 +471,12 @@ func SignatureDataFromCosmosSignatureData(data signing.SignatureData) (CosmosSig
 func unpackSignatures(unpacker codectypes.AnyUnpacker, sigs []*codectypes.Any) ([]signing.SignatureData, error) {
 	var signatures = make([]signing.SignatureData, len(sigs))
 	for i, sig := range sigs {
-		var signatureData CosmosSignatureData
-		if err := unpacker.UnpackAny(sig, &signatureData); err != nil {
+		var signature Signature
+		if err := unpacker.UnpackAny(sig, &signature); err != nil {
 			return nil, err
 		}
 
-		cosmosSigData, err := SignatureDataToCosmosSignatureData(unpacker, signatureData)
+		cosmosSigData, err := SignatureToCosmosSignatureData(unpacker, signature)
 		if err != nil {
 			return nil, err
 		}
@@ -397,61 +488,9 @@ func unpackSignatures(unpacker codectypes.AnyUnpacker, sigs []*codectypes.Any) (
 
 // --------------------------------------------------------------------------------------------------------------------
 
-var _ CosmosSignatureData = &CosmosSingleSignatureData{}
-
-// isSignatureData implements CosmosSignatureData
-func (s *CosmosSingleSignatureData) isSignatureData() {}
-
-// Validate implements CosmosSignature
-func (s *CosmosSingleSignatureData) Validate() error {
-	if s.Mode == signing.SignMode_SIGN_MODE_UNSPECIFIED {
-		return fmt.Errorf("invalid signing mode: %s", signing.SignMode_SIGN_MODE_UNSPECIFIED)
-	}
-
-	if s.Signature == nil {
-		return fmt.Errorf("invalid signature")
-	}
-
-	return nil
-}
-
-// --------------------------------------------------------------------------------------------------------------------
-
-var _ CosmosSignatureData = &CosmosMultiSignatureData{}
-
-// isSignatureData implements CosmosSignatureData
-func (s *CosmosMultiSignatureData) isSignatureData() {}
-
-// Validate implements CosmosSignatureData
-func (s *CosmosMultiSignatureData) Validate() error {
-	if s.Signatures == nil {
-		return fmt.Errorf("invalid signatures")
-	}
-
-	if s.BitArray == nil {
-		return fmt.Errorf("invalid bit array")
-	}
-
-	return nil
-}
-
-// UnpackInterfaces implements codectypes.UnpackInterfacesMessage
-func (s *CosmosMultiSignatureData) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
-	for _, signature := range s.Signatures {
-		var signatureData CosmosSignatureData
-		err := unpacker.UnpackAny(signature, &signatureData)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-// --------------------------------------------------------------------------------------------------------------------
-
 var _ Signature = &EVMSignature{}
 
+// NewEVMSignature returns a new EVMSignature instance
 func NewEVMSignature(signatureMethod EVMSignatureMethod, signature []byte) *EVMSignature {
 	return &EVMSignature{
 		SignatureMethod: signatureMethod,
@@ -460,7 +499,7 @@ func NewEVMSignature(signatureMethod EVMSignatureMethod, signature []byte) *EVMS
 }
 
 // Validate implements Signature
-func (s *EVMSignature) Validate(cdc codec.BinaryCodec, amino *codec.LegacyAmino, plainText []byte, owner string) error {
+func (s *EVMSignature) Validate(_ codec.BinaryCodec, _ *codec.LegacyAmino, plainText []byte, owner string) error {
 	if s.SignatureMethod == EVM_SIGNATURE_METHOD_UNKNOWN {
 		return fmt.Errorf("invalid signature method: %s", s.SignatureMethod)
 	}
