@@ -47,7 +47,8 @@ func MigrateStore(ctx sdk.Context, ak authkeeper.AccountKeeper, storeKey sdk.Sto
 	return nil
 }
 
-// migrateProfiles migrates the profiles from v5 to v6 to properly update the Protobuf name
+// migrateProfiles migrates the profiles from v5 to v7 to properly update the Protobuf name.
+// The migration from v5 to v6 is skipped because the two types are identical (from v5 to v6 no changes were made).
 func migrateProfiles(ctx sdk.Context, ak authkeeper.AccountKeeper) error {
 	var profiles []*v5types.Profile
 	ak.IterateAccounts(ctx, func(account authtypes.AccountI) (stop bool) {
@@ -59,7 +60,7 @@ func migrateProfiles(ctx sdk.Context, ak authkeeper.AccountKeeper) error {
 
 	for _, profile := range profiles {
 		// Convert the profile
-		v6Profile, err := types.NewProfile(
+		v7Profile, err := types.NewProfile(
 			profile.DTag,
 			profile.Nickname,
 			profile.Bio,
@@ -72,13 +73,14 @@ func migrateProfiles(ctx sdk.Context, ak authkeeper.AccountKeeper) error {
 		}
 
 		// Set the account
-		ak.SetAccount(ctx, v6Profile)
+		ak.SetAccount(ctx, v7Profile)
 	}
 
 	return nil
 }
 
-// migrateApplicationLinks migrates the application links from v5 to v6 adding the expiration date properly
+// migrateApplicationLinks migrates the application links from v5 to v7 adding the expiration date properly.
+// The migration from v5 to v6 is skipped because the two types are identical (from v5 to v6 no changes were made).
 func migrateApplicationLinks(store sdk.KVStore, cdc codec.BinaryCodec) error {
 	appLinksStore := prefix.NewStore(store, types.ApplicationLinkPrefix)
 	iterator := appLinksStore.Iterator(nil, nil)
@@ -95,7 +97,7 @@ func migrateApplicationLinks(store sdk.KVStore, cdc codec.BinaryCodec) error {
 
 	for _, v5Link := range applicationLinks {
 		// Migrate the link
-		v6Link := types.NewApplicationLink(
+		v7Link := types.NewApplicationLink(
 			v5Link.User,
 			convertApplicationLinkData(v5Link.Data),
 			convertApplicationLinkState(v5Link.State),
@@ -106,12 +108,12 @@ func migrateApplicationLinks(store sdk.KVStore, cdc codec.BinaryCodec) error {
 		)
 
 		// Store the application link
-		userApplicationLinkKey := types.UserApplicationLinkKey(v6Link.User, v6Link.Data.Application, v6Link.Data.Username)
-		store.Set(userApplicationLinkKey, cdc.MustMarshal(&v6Link))
+		userApplicationLinkKey := types.UserApplicationLinkKey(v7Link.User, v7Link.Data.Application, v7Link.Data.Username)
+		store.Set(userApplicationLinkKey, cdc.MustMarshal(&v7Link))
 
 		// Store the expiration time
-		applicationLinkExpiringTimeKey := types.ApplicationLinkExpiringTimeKey(v6Link.ExpirationTime, v6Link.OracleRequest.ClientID)
-		store.Set(applicationLinkExpiringTimeKey, []byte(v6Link.OracleRequest.ClientID))
+		applicationLinkExpiringTimeKey := types.ApplicationLinkExpiringTimeKey(v7Link.ExpirationTime, v7Link.OracleRequest.ClientID)
+		store.Set(applicationLinkExpiringTimeKey, []byte(v7Link.OracleRequest.ClientID))
 	}
 
 	return nil
@@ -164,7 +166,8 @@ func convertApplicationLinkResult(v5Result *v5types.Result) *types.Result {
 	}
 }
 
-// migrateChainLinks migrates the chain links from v5 to v6 by changing the various Protobuf interface types
+// migrateChainLinks migrates the chain links from v5 to v7 by changing the various Protobuf interface types.
+// The migration from v5 to v6 is skipped because the two types are identical (from v5 to v6 no changes were made).
 func migrateChainLinks(store sdk.KVStore, cdc codec.BinaryCodec) error {
 	appLinksStore := prefix.NewStore(store, types.ChainLinksPrefix)
 	iterator := appLinksStore.Iterator(nil, nil)
@@ -181,7 +184,7 @@ func migrateChainLinks(store sdk.KVStore, cdc codec.BinaryCodec) error {
 
 	for _, v5Link := range applicationLinks {
 		// Migrate the link
-		v6Link := types.NewChainLink(
+		v7Link := types.NewChainLink(
 			v5Link.User,
 			convertChainLinkAddressData(v5Link.GetAddressData()),
 			convertChainLinkProof(v5Link.Proof, cdc),
@@ -190,8 +193,8 @@ func migrateChainLinks(store sdk.KVStore, cdc codec.BinaryCodec) error {
 		)
 
 		// Store the chain link
-		userApplicationLinkKey := types.ChainLinksStoreKey(v6Link.User, v6Link.ChainConfig.Name, v6Link.GetAddressData().GetValue())
-		store.Set(userApplicationLinkKey, cdc.MustMarshal(&v6Link))
+		userApplicationLinkKey := types.ChainLinksStoreKey(v7Link.User, v7Link.ChainConfig.Name, v7Link.GetAddressData().GetValue())
+		store.Set(userApplicationLinkKey, cdc.MustMarshal(&v7Link))
 	}
 
 	return nil
