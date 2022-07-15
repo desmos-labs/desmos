@@ -120,7 +120,7 @@ func TestMigrateStore(t *testing.T) {
 				account := authKeeper.GetAccount(ctx, sdkAddr)
 				profile, ok := account.(*types.Profile)
 				require.True(t, ok)
-				require.Equal(t, v6Profile, profile)
+				require.Equal(t, v7Profile, profile)
 			},
 		},
 		{
