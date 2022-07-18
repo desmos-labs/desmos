@@ -119,6 +119,9 @@ This will start an interactive prompt session allowing you to generate the prope
    This will effectively link your Desmos profile to the external chain address. The required argument is the (absolute) path to the file generated using the `create-chain-link-json` command.
 
 
+## Default External Address
+A default external address represents a default chain link which makes dealing with a single chain link per chain for a profile easier. Each chain must have a chain link as a default external address for interaction, it will pick up the oldest chain link as a default external address if the link of the default external address is unlinked.
+
 ## Application Link
 An application link (abbr. _app link_) represents a link to an external (and possibly centralized) application. Such links are one of the easiest way for Desmos profile owners to verify they are trustworthy: if you have a lot of followers on Twitter, connecting your Desmos profile to your Twitter account will make it easier for users to make sure no other people is trying to impersonate you.
 

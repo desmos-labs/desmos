@@ -97,6 +97,17 @@ The profiles module emits the following events:
 | message              | action                       | desmos.profiles.v2.MsgUnlinkChainAccount |
 | message              | sender                       | {userAddress}                            |
 
+## MsgSetDefaultExternalAddress
+
+| **Type**                     | **Attribute Key**           | **Attribute Value**                     | 
+|:-----------------------------|:----------------------------|:----------------------------------------|
+| set_default_external_address | chain_link_chain_name       | {chainName}                             | 
+| set_default_external_address | chain_link_external_address | {externalAddress}                       |
+| set_default_external_address | chain_link_owner            | {chainLinkOwner}                        |
+| message                      | module                      | profiles                                | 
+| message                      | action                      | desmos.profiles.v3.MsgSetDefaultAddress |
+| message                      | sender                      | {userAddress}                           |
+
 ## MsgLinkApplication
 
 | **Type**         | **Attribute Key**              | **Attribute Value**                   | 

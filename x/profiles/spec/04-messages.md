@@ -87,6 +87,15 @@ https://github.com/desmos-labs/desmos/blob/v4.1.0/proto/desmos/profiles/v2/msgs_
 
 It's expected to fail if the chain link does not exist.
 
+## Msg/SetDefaultExternalAddress
+A new default external address can be set using `MsgSetDefaultExternalAddress`.
+
+```js reference
+TODO: update it after upgrading
+```
+
+It's expected to fail if the chain link does not exist.
+
 ## Msg/LinkApplication
 A new application link can be created using the `MsgLinkApplication`
 

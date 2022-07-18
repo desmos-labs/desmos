@@ -25,6 +25,11 @@ To make it possible to query chain links given a user address or given a chain n
 * Chain Link: `0x12 | User address | Chain name | External address | -> ProtocolBuffer(ChainLink)`
 * Chain Link Owner: `0x15 | ChainName | 0x00 | External address | 0x00 | User address | -> 0x01 `
 
+## Default External Address
+An external address to a spcified chain is stored using owner address and chain name as the key, which allows to easily query all the default addresses:
+
+* Default External Address: `0x18 | Owner address | Chain name | -> bytes(ExternalAddress)`
+
 ## Application Link
 Storing a single application link requires the usage of three different keys to allow for the following queries: 
 * application links of a user, given their address;
