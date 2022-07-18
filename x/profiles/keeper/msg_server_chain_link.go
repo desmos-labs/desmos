@@ -11,6 +11,7 @@ import (
 	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
+// LinkChainAccount defines a rpc method for MsgLinkChainAccount
 func (k msgServer) LinkChainAccount(goCtx context.Context, msg *types.MsgLinkChainAccount) (*types.MsgLinkChainAccountResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -49,6 +50,7 @@ func (k msgServer) LinkChainAccount(goCtx context.Context, msg *types.MsgLinkCha
 	return &types.MsgLinkChainAccountResponse{}, nil
 }
 
+// UnlinkChainAccount defines a rpc method for MsgUnlinkChainAccount
 func (k msgServer) UnlinkChainAccount(goCtx context.Context, msg *types.MsgUnlinkChainAccount) (*types.MsgUnlinkChainAccountResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -83,6 +85,7 @@ func (k msgServer) UnlinkChainAccount(goCtx context.Context, msg *types.MsgUnlin
 	return &types.MsgUnlinkChainAccountResponse{}, nil
 }
 
+// SetDefaultExternalAddress defines a rpc method for MsgSetDefaultExternalAddress
 func (k msgServer) SetDefaultExternalAddress(goCtx context.Context, msg *types.MsgSetDefaultExternalAddress) (*types.MsgSetDefaultExternalAddressResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
