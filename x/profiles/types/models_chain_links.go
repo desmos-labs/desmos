@@ -500,7 +500,7 @@ func NewEVMSignature(signatureMethod EVMSignatureMethod, signature []byte) *EVMS
 
 // Validate implements Signature
 func (s *EVMSignature) Validate(_ codec.BinaryCodec, _ *codec.LegacyAmino, plainText []byte, owner string) error {
-	if s.SignatureMethod == EVM_SIGNATURE_METHOD_UNKNOWN {
+	if s.SignatureMethod == EVM_SIGNATURE_METHOD_UNSPECIFIED {
 		return fmt.Errorf("invalid signature method: %s", s.SignatureMethod)
 	}
 

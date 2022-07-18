@@ -173,8 +173,8 @@ message EVMSignature {
 enum EVMSignatureMethod {
   option (gogoproto.goproto_enum_prefix) = false;
 
-  // Unknown should never be used
-  EVM_SIGNATURE_METHOD_UNKNOWN = 0;
+  // Unspecified should never be used
+  EVM_SIGNATURE_METHOD_UNSPECIFIED = 0;
 
   // PersonalSign should be used when the value has been signed using the
   // personal_sign signature method
