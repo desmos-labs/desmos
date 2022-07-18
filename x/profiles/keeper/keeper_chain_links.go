@@ -121,17 +121,16 @@ func (k Keeper) getOldestUserChainByChain(ctx sdk.Context, owner, chainName stri
 func (k Keeper) updateOwnerDefaultExternalAddress(ctx sdk.Context, owner, chainName string) {
 	store := ctx.KVStore(k.storeKey)
 	link, found := k.getOldestUserChainByChain(ctx, owner, chainName)
-	if found {
-		srcAddrData, err := types.UnpackAddressData(k.cdc, link.Address)
-		if err != nil {
-			panic(err)
-		}
-		k.SaveDefaultExternalAddress(ctx, owner, chainName, srcAddrData.GetValue())
-		return
+	if !found {
+		// If the owner has no chain link on the given chain name, then delete the key
+		store.Delete(types.DefaultExternalAddressKey(owner, chainName))
 	}
-
-	// If owner has no chain link on the given chain name, then delete the key
-	store.Delete(types.DefaultExternalAddressKey(owner, chainName))
+	
+	srcAddrData, err := types.UnpackAddressData(k.cdc, link.Address)
+	if err != nil {
+		panic(err)
+	}
+	k.SaveDefaultExternalAddress(ctx, owner, chainName, srcAddrData.GetValue())
 }
 
 // SaveDefaultExternalAddress stores the given address as a default external address
