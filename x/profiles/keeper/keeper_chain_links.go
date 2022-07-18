@@ -148,9 +148,6 @@ func (k Keeper) HasDefaultExternalAddress(ctx sdk.Context, owner, chainName stri
 // isDefaultExternalAddress tells whether the given chain link is a default external address or not
 func (k Keeper) isDefaultExternalAddress(ctx sdk.Context, link types.ChainLink) bool {
 	store := ctx.KVStore(k.storeKey)
-	if !k.HasDefaultExternalAddress(ctx, link.User, link.ChainConfig.Name) {
-		return false
-	}
 	addressBz := store.Get(types.DefaultExternalAddressKey(link.User, link.ChainConfig.Name))
 	return string(addressBz) == link.GetAddressData().GetValue()
 }

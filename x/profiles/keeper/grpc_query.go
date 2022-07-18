@@ -176,7 +176,8 @@ func (k Keeper) DefaultExternalAddresses(ctx context.Context, request *types.Que
 	defaultStore := prefix.NewStore(store, defaultPrefix)
 	pageRes, err := query.Paginate(defaultStore, request.Pagination, func(key []byte, value []byte) error {
 		// Re-add the prefix because the prefix store trims it out, and we need it to get the data
-		keyWithPrefix := append(defaultPrefix, key...)
+		keyWithPrefix := append([]byte(nil), defaultPrefix...)
+		keyWithPrefix = append(defaultPrefix, key...)
 		owner, chainName := types.GetDefaultExternalAddressData(keyWithPrefix)
 		link, found := k.GetChainLink(sdkCtx, owner, chainName, string(value))
 		if !found {
