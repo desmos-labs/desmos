@@ -95,9 +95,9 @@ func (k Keeper) DeleteAllUserChainLinks(ctx sdk.Context, user string) {
 	}
 }
 
-// getOldestUserChainByChain returns the oldest chain link of the given owner associated to the given chain name
-// If the such the chain link is not exists, return false instead.
-func (k Keeper) getOldestUserChainByChain(ctx sdk.Context, owner, chainName string) (types.ChainLink, bool) {
+// getOldestUserChainLink returns the oldest chain link of the given owner associated to the given chain name.
+// If such chain link does not exist, returns false instead.
+func (k Keeper) getOldestUserChainLink(ctx sdk.Context, owner, chainName string) (types.ChainLink, bool) {
 	var oldestLink types.ChainLink
 	found := false
 	k.IterateUserChainLinksByChain(ctx, owner, chainName, func(link types.ChainLink) (stop bool) {
@@ -120,12 +120,12 @@ func (k Keeper) getOldestUserChainByChain(ctx sdk.Context, owner, chainName stri
 // It must be performed after deleting the default external address chain link
 func (k Keeper) updateOwnerDefaultExternalAddress(ctx sdk.Context, owner, chainName string) {
 	store := ctx.KVStore(k.storeKey)
-	link, found := k.getOldestUserChainByChain(ctx, owner, chainName)
+	link, found := k.getOldestUserChainLink(ctx, owner, chainName)
 	if !found {
 		// If the owner has no chain link on the given chain name, then delete the key
 		store.Delete(types.DefaultExternalAddressKey(owner, chainName))
 	}
-	
+
 	srcAddrData, err := types.UnpackAddressData(k.cdc, link.Address)
 	if err != nil {
 		panic(err)
