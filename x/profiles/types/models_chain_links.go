@@ -202,68 +202,10 @@ func (s *CosmosSingleSignature) Validate(cdc codec.BinaryCodec, amino *codec.Leg
 	case COSMOS_SIGN_MODE_AMINO:
 		return ValidateAminoTxSig(plainText, owner, amino)
 	case COSMOS_SIGN_MODE_RAW:
-		return ValidateTextSig(plainText, owner)
+		return ValidateRawSig(plainText, owner)
 	default:
 		return fmt.Errorf("invalid signing mode: %s", s.SignMode)
 	}
-}
-
-// ValidateTextSig tells whether the given value has been generated using SIGN_MODE_TEXTUAL
-// and signing the given expected value
-func ValidateTextSig(value []byte, expectedValue string) error {
-	if string(value) != expectedValue {
-		return fmt.Errorf("invalid signed value: expected %s, got %s", expectedValue, value)
-	}
-
-	return nil
-}
-
-// ValidateDirectTxSig tells whether the given value has been generated using SIGN_MODE_DIRECT and signing
-// a transaction that contains a memo field equals to the given expected value
-func ValidateDirectTxSig(value []byte, expectedMemo string, cdc codec.BinaryCodec) error {
-	// Unmarshal the SignDoc
-	var signDoc tx.SignDoc
-	err := cdc.Unmarshal(value, &signDoc)
-	if err != nil {
-		return err
-	}
-
-	// Check to make sure the value was a SignDoc. If that's not the case, the two arrays will not match
-	if !bytes.Equal(value, cdc.MustMarshal(&signDoc)) {
-		return fmt.Errorf("invalid signed doc")
-	}
-
-	// Get the TxBody
-	var txBody tx.TxBody
-	err = cdc.Unmarshal(signDoc.BodyBytes, &txBody)
-	if err != nil {
-		return err
-	}
-
-	// Check the memo field
-	if txBody.Memo != expectedMemo {
-		return fmt.Errorf("invalid signed memo: expected %s, got %s", expectedMemo, txBody.Memo)
-	}
-
-	return nil
-}
-
-// ValidateAminoTxSig tells whether the given value has been generated using SIGN_MODE_AMINO_JSON and signing
-// a transaction that contains a memo field equals to the given expected value
-func ValidateAminoTxSig(value []byte, expectedMemo string, cdc *codec.LegacyAmino) error {
-	// Unmarshal the StdSignDoc
-	var signDoc legacytx.StdSignDoc
-	err := cdc.UnmarshalJSON(value, &signDoc)
-	if err != nil {
-		return err
-	}
-
-	// Check the memo field
-	if signDoc.Memo != expectedMemo {
-		return fmt.Errorf("invalid signed memo: expected %s, got %s", expectedMemo, signDoc.Memo)
-	}
-
-	return nil
 }
 
 // Verify implements Signature
@@ -357,7 +299,7 @@ func (s *CosmosMultiSignature) Validate(cdc codec.BinaryCodec, amino *codec.Lega
 	case COSMOS_SIGN_MODE_AMINO:
 		return ValidateAminoTxSig(plainText, owner, amino)
 	case COSMOS_SIGN_MODE_RAW:
-		return ValidateTextSig(plainText, owner)
+		return ValidateRawSig(plainText, owner)
 	default:
 		return fmt.Errorf("invalid signing mode: %s", signMode)
 	}
@@ -403,6 +345,66 @@ func (s *CosmosMultiSignature) UnpackInterfaces(unpacker codectypes.AnyUnpacker)
 		if err != nil {
 			return err
 		}
+	}
+
+	return nil
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// ValidateDirectTxSig tells whether the given value has been generated using SIGN_MODE_DIRECT and signing
+// a transaction that contains a memo field equals to the given expected value
+func ValidateDirectTxSig(value []byte, expectedMemo string, cdc codec.BinaryCodec) error {
+	// Unmarshal the SignDoc
+	var signDoc tx.SignDoc
+	err := cdc.Unmarshal(value, &signDoc)
+	if err != nil {
+		return err
+	}
+
+	// Check to make sure the value was a SignDoc. If that's not the case, the two arrays will not match
+	if !bytes.Equal(value, cdc.MustMarshal(&signDoc)) {
+		return fmt.Errorf("invalid signed doc")
+	}
+
+	// Get the TxBody
+	var txBody tx.TxBody
+	err = cdc.Unmarshal(signDoc.BodyBytes, &txBody)
+	if err != nil {
+		return err
+	}
+
+	// Check the memo field
+	if txBody.Memo != expectedMemo {
+		return fmt.Errorf("invalid signed memo: expected %s, got %s", expectedMemo, txBody.Memo)
+	}
+
+	return nil
+}
+
+// ValidateAminoTxSig tells whether the given value has been generated using SIGN_MODE_AMINO_JSON and signing
+// a transaction that contains a memo field equals to the given expected value
+func ValidateAminoTxSig(value []byte, expectedMemo string, cdc *codec.LegacyAmino) error {
+	// Unmarshal the StdSignDoc
+	var signDoc legacytx.StdSignDoc
+	err := cdc.UnmarshalJSON(value, &signDoc)
+	if err != nil {
+		return err
+	}
+
+	// Check the memo field
+	if signDoc.Memo != expectedMemo {
+		return fmt.Errorf("invalid signed memo: expected %s, got %s", expectedMemo, signDoc.Memo)
+	}
+
+	return nil
+}
+
+// ValidateRawSig tells whether the given value has been generated using SIGN_MODE_TEXTUAL
+// and signing the given expected value
+func ValidateRawSig(value []byte, expectedValue string) error {
+	if string(value) != expectedValue {
+		return fmt.Errorf("invalid signed value: expected %s, got %s", expectedValue, value)
 	}
 
 	return nil
@@ -514,10 +516,6 @@ func NewEVMSignature(signatureMethod EVMSignatureMethod, signature []byte) *EVMS
 func (s *EVMSignature) Validate(_ codec.BinaryCodec, _ *codec.LegacyAmino, plainText []byte, owner string) error {
 	if s.SignatureMethod == EVM_SIGNATURE_METHOD_UNSPECIFIED {
 		return fmt.Errorf("invalid signature method: %s", s.SignatureMethod)
-	}
-
-	if s.Signature == nil {
-		return fmt.Errorf("missing signature")
 	}
 
 	expectedSignedValue := fmt.Sprintf("\x19Ethereum Signed Message:\n%d%s", len(owner), owner)
