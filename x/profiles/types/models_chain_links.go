@@ -173,7 +173,7 @@ type Signature interface {
 
 type CosmosSignature interface {
 	Signature
-	GetSignMode() (signing.SignMode, error)
+	GetSignMode() (CosmosSignMode, error)
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -181,30 +181,30 @@ type CosmosSignature interface {
 var _ Signature = &CosmosSingleSignature{}
 
 // NewCosmosSingleSignature returns a new CosmosSignature instance
-func NewCosmosSingleSignature(mode signing.SignMode, signature []byte) *CosmosSingleSignature {
+func NewCosmosSingleSignature(mode CosmosSignMode, signature []byte) *CosmosSingleSignature {
 	return &CosmosSingleSignature{
-		Mode:      mode,
+		SignMode:  mode,
 		Signature: signature,
 	}
 }
 
 // GetSignMode implements CosmosSignature
-func (s *CosmosSingleSignature) GetSignMode() (signing.SignMode, error) {
-	return s.Mode, nil
+func (s *CosmosSingleSignature) GetSignMode() (CosmosSignMode, error) {
+	return s.SignMode, nil
 }
 
 // Validate implements Signature
 func (s *CosmosSingleSignature) Validate(cdc codec.BinaryCodec, amino *codec.LegacyAmino, plainText []byte, owner string) error {
 	// Validate the signature itself
-	switch s.Mode {
-	case signing.SignMode_SIGN_MODE_DIRECT:
+	switch s.SignMode {
+	case COSMOS_SIGN_MODE_DIRECT:
 		return ValidateDirectTxSig(plainText, owner, cdc)
-	case signing.SignMode_SIGN_MODE_LEGACY_AMINO_JSON:
+	case COSMOS_SIGN_MODE_AMINO:
 		return ValidateAminoTxSig(plainText, owner, amino)
-	case signing.SignMode_SIGN_MODE_TEXTUAL:
+	case COSMOS_SIGN_MODE_RAW:
 		return ValidateTextSig(plainText, owner)
 	default:
-		return fmt.Errorf("invalid signing mode: %s", s.Mode)
+		return fmt.Errorf("invalid signing mode: %s", s.SignMode)
 	}
 }
 
@@ -316,27 +316,27 @@ func NewCosmosMultiSignature(bitArray *cryptotypes.CompactBitArray, signatures [
 }
 
 // GetSignMode implements CosmosSignature
-func (s *CosmosMultiSignature) GetSignMode() (signing.SignMode, error) {
-	signMode := signing.SignMode_SIGN_MODE_UNSPECIFIED
+func (s *CosmosMultiSignature) GetSignMode() (CosmosSignMode, error) {
+	signMode := COSMOS_SIGN_MODE_UNSPECIFIED
 	for i, signature := range s.Signatures {
 		// Unwrap the signature
 		cosmosSig, ok := signature.GetCachedValue().(CosmosSignature)
 		if !ok {
-			return signing.SignMode_SIGN_MODE_UNSPECIFIED, fmt.Errorf("invalid signature type at index %d: %T", i, cosmosSig)
+			return COSMOS_SIGN_MODE_UNSPECIFIED, fmt.Errorf("invalid signature type at index %d: %T", i, cosmosSig)
 		}
 
 		// Get the signature sign mode
 		signatureSignMode, err := cosmosSig.GetSignMode()
 		if err != nil {
-			return signing.SignMode_SIGN_MODE_UNSPECIFIED, err
+			return COSMOS_SIGN_MODE_UNSPECIFIED, err
 		}
 
-		if signatureSignMode == signing.SignMode_SIGN_MODE_UNSPECIFIED {
-			return signing.SignMode_SIGN_MODE_UNSPECIFIED, fmt.Errorf("invalid signature signing mode: %s", signatureSignMode)
+		if signatureSignMode == COSMOS_SIGN_MODE_UNSPECIFIED {
+			return COSMOS_SIGN_MODE_UNSPECIFIED, fmt.Errorf("invalid signature signing mode: %s", signatureSignMode)
 		}
 
-		if signMode != signing.SignMode_SIGN_MODE_UNSPECIFIED && signMode != signatureSignMode {
-			return signing.SignMode_SIGN_MODE_UNSPECIFIED, fmt.Errorf("signature at index %d has different signing mode than others", i)
+		if signMode != COSMOS_SIGN_MODE_UNSPECIFIED && signMode != signatureSignMode {
+			return COSMOS_SIGN_MODE_UNSPECIFIED, fmt.Errorf("signature at index %d has different signing mode than others", i)
 		}
 		signMode = signatureSignMode
 	}
@@ -352,11 +352,11 @@ func (s *CosmosMultiSignature) Validate(cdc codec.BinaryCodec, amino *codec.Lega
 
 	// Validate the signature itself
 	switch signMode {
-	case signing.SignMode_SIGN_MODE_DIRECT:
+	case COSMOS_SIGN_MODE_DIRECT:
 		return ValidateDirectTxSig(plainText, owner, cdc)
-	case signing.SignMode_SIGN_MODE_LEGACY_AMINO_JSON:
+	case COSMOS_SIGN_MODE_AMINO:
 		return ValidateAminoTxSig(plainText, owner, amino)
-	case signing.SignMode_SIGN_MODE_TEXTUAL:
+	case COSMOS_SIGN_MODE_RAW:
 		return ValidateTextSig(plainText, owner)
 	default:
 		return fmt.Errorf("invalid signing mode: %s", signMode)
@@ -417,7 +417,7 @@ func SignatureToCosmosSignatureData(unpacker codectypes.AnyUnpacker, s Signature
 	case *CosmosSingleSignature:
 		return &signing.SingleSignatureData{
 			Signature: data.Signature,
-			SignMode:  data.Mode,
+			SignMode:  signing.SignMode_SIGN_MODE_UNSPECIFIED, // This can be unknown since we don't use it anyway
 		}, nil
 
 	case *CosmosMultiSignature:
@@ -440,8 +440,20 @@ func SignatureToCosmosSignatureData(unpacker codectypes.AnyUnpacker, s Signature
 func SignatureDataFromCosmosSignatureData(data signing.SignatureData) (Signature, error) {
 	switch data := data.(type) {
 	case *signing.SingleSignatureData:
+		var signingMode CosmosSignMode
+		switch data.SignMode {
+		case signing.SignMode_SIGN_MODE_DIRECT:
+			signingMode = COSMOS_SIGN_MODE_DIRECT
+		case signing.SignMode_SIGN_MODE_LEGACY_AMINO_JSON:
+			signingMode = COSMOS_SIGN_MODE_AMINO
+		case signing.SignMode_SIGN_MODE_TEXTUAL:
+			signingMode = COSMOS_SIGN_MODE_RAW
+		default:
+			return nil, fmt.Errorf("unsupported signing mode: %s", data.SignMode)
+		}
+
 		return &CosmosSingleSignature{
-			Mode:      data.SignMode,
+			SignMode:  signingMode,
 			Signature: data.Signature,
 		}, nil
 

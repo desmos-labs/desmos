@@ -15,6 +15,8 @@ import (
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
+	"github.com/cosmos/cosmos-sdk/types/tx/signing"
+
 	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
@@ -240,7 +242,19 @@ func convertChainLinkSignatureData(data *codectypes.Any, cdc codec.BinaryCodec) 
 	var signatureAny *codectypes.Any
 	switch signature := v5Signature.(type) {
 	case *v5types.SingleSignatureData:
-		v6Signature := types.NewCosmosSingleSignature(signature.Mode, signature.Signature)
+		var signingMode types.CosmosSignMode
+		switch signature.Mode {
+		case signing.SignMode_SIGN_MODE_DIRECT:
+			signingMode = types.COSMOS_SIGN_MODE_DIRECT
+		case signing.SignMode_SIGN_MODE_LEGACY_AMINO_JSON:
+			signingMode = types.COSMOS_SIGN_MODE_AMINO
+		case signing.SignMode_SIGN_MODE_TEXTUAL:
+			signingMode = types.COSMOS_SIGN_MODE_RAW
+		default:
+			panic(fmt.Sprintf("unsupported signing mode: %s", signature.Mode))
+		}
+
+		v6Signature := types.NewCosmosSingleSignature(signingMode, signature.Signature)
 		signatureAny, err = codectypes.NewAnyWithValue(v6Signature)
 		if err != nil {
 			panic(err)

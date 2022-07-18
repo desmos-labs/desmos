@@ -196,7 +196,7 @@ func TestProof_Verify(t *testing.T) {
 	bech32Owner := "cosmos10m20h8fy0qp2a8f46zzjpvg8pfl8flajgxsvmk"
 	bech32Sig, err := bech32PrivKey.Sign([]byte(bech32Owner))
 	require.NoError(t, err)
-	bech32SigData := types.NewCosmosSingleSignature(signing.SignMode_SIGN_MODE_TEXTUAL, bech32Sig)
+	bech32SigData := types.NewCosmosSingleSignature(types.COSMOS_SIGN_MODE_RAW, bech32Sig)
 	anySigData, err := codectypes.NewAnyWithValue(bech32SigData)
 	require.NoError(t, err)
 
@@ -210,7 +210,7 @@ func TestProof_Verify(t *testing.T) {
 	base58Owner := "cosmos1u55ywhk6thmhnxs7yn8vh8v7eznckcqjevnadx"
 	base58Sig, err := base58PrivKey.Sign([]byte(base58Owner))
 	require.NoError(t, err)
-	base58SigData := types.NewCosmosSingleSignature(signing.SignMode_SIGN_MODE_TEXTUAL, base58Sig)
+	base58SigData := types.NewCosmosSingleSignature(types.COSMOS_SIGN_MODE_RAW, base58Sig)
 
 	// Hex
 	hexPrivKeyBz, err := hex.DecodeString("2842d8f3701d16711b9ee320f32efe38e6b0891e243eaf6515250e7b006de53e")
@@ -222,7 +222,7 @@ func TestProof_Verify(t *testing.T) {
 	hexOwner := "cosmos1l0g43u695yvmwem09ncwgsxup6m8aklcyr38ph"
 	hexSig, err := hexPrivKey.Sign([]byte(hexOwner))
 	require.NoError(t, err)
-	hexSigData := types.NewCosmosSingleSignature(signing.SignMode_SIGN_MODE_TEXTUAL, hexSig)
+	hexSigData := types.NewCosmosSingleSignature(types.COSMOS_SIGN_MODE_RAW, hexSig)
 
 	// Multisig
 	privKeys, multiSigPubKey := generateMultiSigKeys(3)

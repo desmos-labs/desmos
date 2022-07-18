@@ -6,7 +6,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 
 	"github.com/desmos-labs/desmos/v4/app/desmos/cmd/chainlink/getter"
 	"github.com/desmos-labs/desmos/v4/app/desmos/cmd/chainlink/types"
@@ -59,7 +58,7 @@ func (b *AccountChainLinkJSONBuilder) BuildChainLinkJSON(chain types.Chain) (uti
 		profilestypes.NewBech32Address(addr, chain.Prefix),
 		profilestypes.NewProof(
 			pubkey,
-			profilestypes.NewCosmosSingleSignature(signing.SignMode_SIGN_MODE_DIRECT, sig),
+			profilestypes.NewCosmosSingleSignature(profilestypes.COSMOS_SIGN_MODE_RAW, sig),
 			hex.EncodeToString(value),
 		),
 		profilestypes.NewChainConfig(chain.Name),

@@ -11,7 +11,6 @@ import (
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/bech32/legacybech32"
-	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	"github.com/gogo/protobuf/proto"
@@ -81,7 +80,7 @@ func SingleCosmosSignatureFromHex(hexEncodedSignature string) types.Signature {
 	if err != nil {
 		panic(err)
 	}
-	return types.NewCosmosSingleSignature(signing.SignMode_SIGN_MODE_TEXTUAL, sig)
+	return types.NewCosmosSingleSignature(types.COSMOS_SIGN_MODE_RAW, sig)
 }
 
 // MultiCosmosSignatureFromHex convert the hex-encoded string of the MultiSignature Any value to CosmosSignatureData
