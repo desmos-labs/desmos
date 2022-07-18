@@ -128,11 +128,6 @@ func (suite *KeeperTestSuite) TestMsgServer_LinkChainAccount() {
 				_, found, err := suite.k.GetProfile(ctx, destAddr)
 				suite.Require().NoError(err)
 				suite.Require().True(found)
-
-				// check the default address is set properly
-				store := ctx.KVStore(suite.storeKey)
-				defaultAddr := store.Get(types.DefaultExternalAddressKey(destAddr, "cosmos"))
-				suite.Require().True(true, string(defaultAddr) == srcAddr)
 			},
 		},
 	}
@@ -201,12 +196,6 @@ func (suite *KeeperTestSuite) TestMsgServer_UnlinkChainAccount() {
 					types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, link.GetAddressData().GetValue()),
 					suite.cdc.MustMarshal(&link),
 				)
-
-				// Set the default external address
-				store.Set(
-					types.DefaultExternalAddressKey(link.ChainConfig.Name, link.User),
-					[]byte(link.GetAddressData().GetValue()),
-				)
 			},
 			msg: types.NewMsgUnlinkChainAccount(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -229,7 +218,6 @@ func (suite *KeeperTestSuite) TestMsgServer_UnlinkChainAccount() {
 				),
 			},
 			check: func(ctx sdk.Context) {
-				store := ctx.KVStore(suite.storeKey)
 				_, found := suite.k.GetChainLink(
 					ctx,
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -237,9 +225,6 @@ func (suite *KeeperTestSuite) TestMsgServer_UnlinkChainAccount() {
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				)
 				suite.Require().False(found)
-
-				// Check the default external address is removed properly
-				suite.Require().False(store.Has(types.DefaultExternalAddressKey("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", "cosmos")))
 			},
 		},
 	}
