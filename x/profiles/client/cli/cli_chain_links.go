@@ -245,11 +245,11 @@ func GetCmdQueryChainLinkOwners() *cobra.Command {
 	return cmd
 }
 
-// GetCmdQueryDefaultExternalAddress returns the command allowing to query the default chain links, optionally associated with a owner and chain name
-func GetCmdQueryDefaultExternalAddress() *cobra.Command {
+// GetCmdQueryDefaultExternalAddresses returns the command allowing to query the default chain links, optionally associated with a owner and chain name
+func GetCmdQueryDefaultExternalAddresses() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "default-external-address [[owner]] [[chain_name]]",
-		Short: "Retrieve all default chain links with optional owner, chain name and pagination",
+		Use:   "default-external-addresses [[owner]] [[chain_name]]",
+		Short: "Retrieve all default addresses in chain link with optional owner, chain name and pagination",
 		Example: fmt.Sprintf(`%s query profiles chain-link-owners
 %s query profiles default-external-address --page=2 --limit=100
 %s query profiles default-external-address "desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud"

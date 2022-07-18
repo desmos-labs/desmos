@@ -25,7 +25,7 @@ func GetQueryCmd() *cobra.Command {
 		GetCmdQueryParams(),
 		GetCmdQueryChainLinks(),
 		GetCmdQueryChainLinkOwners(),
-		GetCmdQueryDefaultExternalAddress(),
+		GetCmdQueryDefaultExternalAddresses(),
 		GetCmdQueryApplicationsLinks(),
 		GetCmdQueryApplicationLinkOwners(),
 	)
