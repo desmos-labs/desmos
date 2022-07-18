@@ -175,7 +175,7 @@ func generateCosmosMultiSigSignature(t *testing.T, privKeys []cryptotypes.PrivKe
 		require.NoError(t, err)
 
 		// Build the signature data for the single signature and add it to the multi signature data
-		sigData := &signing.SingleSignatureData{Signature: sig}
+		sigData := &signing.SingleSignatureData{SignMode: signing.SignMode_SIGN_MODE_TEXTUAL, Signature: sig}
 		err = multisig.AddSignatureFromPubKey(cosmosMultisig, sigData, privKeys[i].PubKey(), pubKeys)
 		require.NoError(t, err)
 	}
@@ -222,7 +222,7 @@ func TestProof_Verify(t *testing.T) {
 	hexOwner := "cosmos1l0g43u695yvmwem09ncwgsxup6m8aklcyr38ph"
 	hexSig, err := hexPrivKey.Sign([]byte(hexOwner))
 	require.NoError(t, err)
-	hexSigData := types.NewCosmosSingleSignature(signing.SignMode_SIGN_MODE_DIRECT, hexSig)
+	hexSigData := types.NewCosmosSingleSignature(signing.SignMode_SIGN_MODE_TEXTUAL, hexSig)
 
 	// Multisig
 	privKeys, multiSigPubKey := generateMultiSigKeys(3)
@@ -366,27 +366,31 @@ func TestValidateTextSig(t *testing.T) {
 		name          string
 		value         []byte
 		expectedValue string
-		expValid      bool
+		shouldErr     bool
 	}{
 		{
-			name:          "wrong value returns false",
+			name:          "wrong value returns error",
 			value:         []byte(""),
 			expectedValue: "value",
-			expValid:      false,
+			shouldErr:     true,
 		},
 		{
-			name:          "correct value returns true",
+			name:          "correct value returns no error",
 			value:         []byte("value"),
 			expectedValue: "value",
-			expValid:      true,
+			shouldErr:     false,
 		},
 	}
 
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			isValid := types.ValidateTextSig(tc.value, tc.expectedValue)
-			require.Equal(t, tc.expValid, isValid)
+			err := types.ValidateTextSig(tc.value, tc.expectedValue)
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
 		})
 	}
 }
@@ -397,33 +401,37 @@ func TestValidateDirectTxSig(t *testing.T) {
 		name         string
 		value        []byte
 		expectedMemo string
-		expIsValid   bool
+		shouldErr    bool
 	}{
 		{
-			name:         "invalid message returns false",
+			name:         "invalid message returns no error",
 			value:        cdc.MustMarshal(&types.Bech32Address{Prefix: "cosmos"}),
 			expectedMemo: "memo",
-			expIsValid:   false,
+			shouldErr:    true,
 		},
 		{
-			name:         "wrong memo returns false",
+			name:         "wrong memo returns no error",
 			value:        cdc.MustMarshal(&tx.SignDoc{BodyBytes: cdc.MustMarshal(&tx.TxBody{Memo: "memo"})}),
 			expectedMemo: "other memo",
-			expIsValid:   false,
+			shouldErr:    true,
 		},
 		{
-			name:         "valid data returns true",
+			name:         "valid data returns no error",
 			value:        cdc.MustMarshal(&tx.SignDoc{BodyBytes: cdc.MustMarshal(&tx.TxBody{Memo: "memo"})}),
 			expectedMemo: "memo",
-			expIsValid:   true,
+			shouldErr:    false,
 		},
 	}
 
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			isValid := types.ValidateDirectTxSig(tc.value, tc.expectedMemo, cdc)
-			require.Equal(t, tc.expIsValid, isValid)
+			err := types.ValidateDirectTxSig(tc.value, tc.expectedMemo, cdc)
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
 		})
 	}
 }
@@ -434,33 +442,37 @@ func TestValidateAminoTxSig(t *testing.T) {
 		name         string
 		value        []byte
 		expectedMemo string
-		expIsValid   bool
+		shouldErr    bool
 	}{
 		{
-			name:         "invalid message returns false",
+			name:         "invalid message returns error",
 			value:        legacyAmino.MustMarshalJSON(&types.Bech32Address{}),
 			expectedMemo: "memo",
-			expIsValid:   false,
+			shouldErr:    true,
 		},
 		{
-			name:         "wrong memo returns false",
+			name:         "wrong memo returns error",
 			value:        legacyAmino.MustMarshalJSON(&legacytx.StdSignDoc{}),
 			expectedMemo: "memo",
-			expIsValid:   false,
+			shouldErr:    true,
 		},
 		{
-			name:         "valid data returns true",
+			name:         "valid data returns no error",
 			value:        legacyAmino.MustMarshalJSON(&legacytx.StdSignDoc{Memo: "memo"}),
 			expectedMemo: "memo",
-			expIsValid:   true,
+			shouldErr:    false,
 		},
 	}
 
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			isValid := types.ValidateAminoTxSig(tc.value, tc.expectedMemo, legacyAmino)
-			require.Equal(t, tc.expIsValid, isValid)
+			err := types.ValidateAminoTxSig(tc.value, tc.expectedMemo, legacyAmino)
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
 		})
 	}
 }

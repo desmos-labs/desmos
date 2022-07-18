@@ -192,7 +192,7 @@ func TestMigrateStore(t *testing.T) {
 					v5types.NewProof(
 						pubKey,
 						&v5types.SingleSignatureData{
-							Mode:      signing.SignMode_SIGN_MODE_DIRECT,
+							Mode:      signing.SignMode_SIGN_MODE_TEXTUAL,
 							Signature: sig,
 						},
 						"plain_text",
