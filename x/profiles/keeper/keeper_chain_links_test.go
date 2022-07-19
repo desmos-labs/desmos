@@ -644,8 +644,8 @@ func (suite *KeeperTestSuite) TestKeeper_SaveDefaultExternalAddress() {
 			target:    "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 			check: func(ctx sdk.Context) {
 				store := ctx.KVStore(suite.storeKey)
-				suite.Require().Equal("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
-					string(store.Get(types.DefaultExternalAddressKey("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x", "cosmos"))))
+				stored := store.Get(types.DefaultExternalAddressKey("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x", "cosmos"))
+				suite.Require().Equal("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773", string(stored)))
 			},
 		},
 		{
