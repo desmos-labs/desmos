@@ -2341,7 +2341,7 @@ paths:
           format: boolean
       tags:
         - Query
-  /desmos/profiles/v3/default-addresses:
+  /desmos/profiles/v3/default-external-addresses:
     get:
       summary: |-
         DefaultExternalAddresses queries the default addresses associated to the
