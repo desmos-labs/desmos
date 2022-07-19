@@ -212,7 +212,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveChainLink() {
 				types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
 				types.NewProof(
 					ext.GetPubKey(),
-					profilestesting.SingleSignatureProtoFromHex(hex.EncodeToString(ext.Sign([]byte("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")))),
+					profilestesting.SingleCosmosSignatureFromHex(hex.EncodeToString(ext.Sign([]byte("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")))),
 					hex.EncodeToString([]byte("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")),
 				),
 				types.NewChainConfig("cosmos"),
@@ -227,7 +227,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveChainLink() {
 					types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
 					types.NewProof(
 						ext.GetPubKey(),
-						profilestesting.SingleSignatureProtoFromHex(hex.EncodeToString(ext.Sign([]byte("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")))),
+						profilestesting.SingleCosmosSignatureFromHex(hex.EncodeToString(ext.Sign([]byte("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")))),
 						hex.EncodeToString([]byte("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")),
 					),
 					types.NewChainConfig("cosmos"),
