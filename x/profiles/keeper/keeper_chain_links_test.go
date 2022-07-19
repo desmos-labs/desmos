@@ -476,9 +476,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 				)))
 
 				// Check the default external address
-				suite.Require().True(suite.k.HasDefaultExternalAddress(ctx,
-					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
-					"cosmos"))
+				suite.Require().True(suite.k.HasDefaultExternalAddress(ctx, "cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x", "cosmos"))
 				external := store.Get(types.DefaultExternalAddressKey("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x", "cosmos"))
 				suite.Require().True(string(external) == secondAccount.Bech32Address().Value)
 			},
