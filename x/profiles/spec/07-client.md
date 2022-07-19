@@ -117,7 +117,7 @@ pagination:
 ```
 
 #### default-external-addresses
-The `default-external-addresses` command allows users to query for default external addresses in chain link optionally specifying an owner address and a chain name.
+The `default-external-addresses` command allows users to query for default external addresses optionally specifying an owner address and a chain name.
 
 ```bash
 desmos query profiles default-external-addresses [[owner]] [[chain_name]] [flags]
@@ -339,7 +339,7 @@ desmos tx profiles unlink-chain "cosmos" cosmos18xnmlzqrqr6zt526pnczxe65zk3f4xgm
 ```
 
 #### set-default-external-address
-The `set-default-external-address` allows user to set a default external address.
+The `set-default-external-address` command allows user to set a default external address.
 
 ```bash
 set-default-external-address [chain-name] [target]
@@ -526,7 +526,7 @@ Example Output:
 ```
 
 ### DefaultExternalAddresses
-The `DefaultExternalAddresses` endpoint allows user to query for external default address optionally specifying an owner and chain name.
+The `DefaultExternalAddresses` endpoint allows to query for external default addresses optionally specifying an owner and chain name.
 
 ```bash
 desmos.profiles.v2.Query/desmos.profiles.v3.Query/DefaultExternalAddresses

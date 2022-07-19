@@ -200,7 +200,7 @@ func (s *IntegrationTestSuite) TestCmdQueryChainLinkOwners() {
 	}
 }
 
-func (s *IntegrationTestSuite) TestCmdQueryDefaultExternalAddress() {
+func (s *IntegrationTestSuite) TestCmdQueryDefaultExternalAddresses() {
 	val := s.network.Validators[0]
 	useCases := []struct {
 		name           string
@@ -268,7 +268,7 @@ func (s *IntegrationTestSuite) TestCmdQueryDefaultExternalAddress() {
 		uc := uc
 
 		s.Run(uc.name, func() {
-			cmd := cli.GetCmdQueryDefaultExternalAddress()
+			cmd := cli.GetCmdQueryDefaultExternalAddresses()
 			clientCtx := val.ClientCtx
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, uc.args)
 

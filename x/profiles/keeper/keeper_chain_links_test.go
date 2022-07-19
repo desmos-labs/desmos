@@ -438,9 +438,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 				)))
 
-				suite.Require().False(suite.k.HasDefaultExternalAddress(ctx,
-					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
-					"cosmos"))
+				suite.Require().False(suite.k.HasDefaultExternalAddress(ctx, "cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x", "cosmos"))
 			},
 		},
 		{
@@ -478,9 +476,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 				)))
 
 				// Check the default external address
-				suite.Require().True(suite.k.HasDefaultExternalAddress(ctx,
-					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
-					"cosmos"))
+				suite.Require().True(suite.k.HasDefaultExternalAddress(ctx, "cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x", "cosmos"))
 				external := store.Get(types.DefaultExternalAddressKey("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x", "cosmos"))
 				suite.Require().True(string(external) == secondAccount.Bech32Address().Value)
 			},
@@ -521,9 +517,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 				)))
 
-				suite.Require().True(suite.k.HasDefaultExternalAddress(ctx,
-					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
-					"cosmos"))
+				suite.Require().True(suite.k.HasDefaultExternalAddress(ctx, "cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x", "cosmos"))
 			},
 		},
 	}
@@ -650,22 +644,26 @@ func (suite *KeeperTestSuite) TestKeeper_SaveDefaultExternalAddress() {
 			target:    "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 			check: func(ctx sdk.Context) {
 				store := ctx.KVStore(suite.storeKey)
-				suite.Require().Equal("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
-					string(store.Get(types.DefaultExternalAddressKey("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x", "cosmos"))))
+				stored := store.Get(types.DefaultExternalAddressKey("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x", "cosmos"))
+				suite.Require().Equal("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773", string(stored))
 			},
 		},
 		{
 			name: "existing external address is overridden properly",
 			store: func(ctx sdk.Context) {
-				suite.k.SaveDefaultExternalAddress(ctx, "cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x", "cosmos", "cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn")
+				suite.k.SaveDefaultExternalAddress(ctx,
+					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+					"cosmos",
+					"cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn",
+				)
 			},
 			owner:     "cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 			chainName: "cosmos",
 			target:    "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 			check: func(ctx sdk.Context) {
 				store := ctx.KVStore(suite.storeKey)
-				suite.Require().Equal("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
-					string(store.Get(types.DefaultExternalAddressKey("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x", "cosmos"))))
+				stored := store.Get(types.DefaultExternalAddressKey("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x", "cosmos"))
+				suite.Require().Equal("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773", string(stored))
 			},
 		},
 	}
@@ -684,5 +682,4 @@ func (suite *KeeperTestSuite) TestKeeper_SaveDefaultExternalAddress() {
 			}
 		})
 	}
-
 }
