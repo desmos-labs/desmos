@@ -678,5 +678,4 @@ func (suite *KeeperTestSuite) TestKeeper_SaveDefaultExternalAddress() {
 			}
 		})
 	}
-
 }
