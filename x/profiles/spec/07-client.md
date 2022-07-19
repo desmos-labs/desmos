@@ -769,6 +769,16 @@ The `chain-links/owners` endpoint allows users to query for chain link owners gi
 **Note**
 The `target` parameter will be used only if the `chain_name` is specified as well.
 
+### DefaultExternalAddresses
+The `default-external-addresses` endpoint allows users to query for default external addresses given an optional owner address and chain name.
+
+```
+/desmos/profiles/v3/default-external-addresses?owner={owner}&chain_name={chainName}
+```
+
+**Note**
+- The `chain_name` parameter will be used only if the `owner` is specified as well.
+
 ### Application Links
 The `app-links` endpoint allows users to query for application links given an optional user, application name and username. 
 
