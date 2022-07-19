@@ -141,3 +141,62 @@ func randomUnlinkChainAccountFields(
 	signer = *signerAcc
 	return link, signer, false
 }
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// SimulateMsgSetDefaultExternalAddress tests and runs a single MsgSetDefaultExternalAddress
+func SimulateMsgSetDefaultExternalAddress(
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+) simtypes.Operation {
+	return func(
+		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
+		accs []simtypes.Account, chainID string,
+	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
+
+		// Get the data
+		link, signer, skip := randomSetDefaultExternalAddressFields(r, ctx, accs, k)
+		if skip {
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
+		}
+
+		// Build the message
+		msg := types.NewMsgSetDefaultExternalAddress(link.ChainConfig.Name, link.GetAddressData().GetValue(), link.User)
+
+		// Send the message
+		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
+		if err != nil {
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgSetDefaultExternalAddress"), nil, err
+		}
+		return simtypes.NewOperationMsg(msg, true, "", nil), nil, nil
+	}
+}
+
+// randomSetDefaultExternalAddressFields returns the data used to build a random MsgSetDefaultExternalAddress
+func randomSetDefaultExternalAddressFields(
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
+) (link types.ChainLink, signer simtypes.Account, skip bool) {
+	if len(accs) == 0 {
+		// Skip because there are no accounts
+		skip = true
+		return
+	}
+
+	// Get a random chain link
+	links := k.GetChainLinks(ctx)
+	if len(links) == 0 {
+		skip = true
+		return
+	}
+	link = RandomChainLink(r, links)
+
+	// Get the signer
+	addr, _ := sdk.AccAddressFromBech32(link.User)
+	signerAcc := GetSimAccount(addr, accs)
+	if signerAcc == nil {
+		skip = true
+		return
+	}
+
+	signer = *signerAcc
+	return link, signer, false
+}

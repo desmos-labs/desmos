@@ -25,6 +25,7 @@ const (
 	ActionUnlinkChainAccount        = "unlink_chain_account"
 	ActionLinkApplication           = "link_application"
 	ActionUnlinkApplication         = "unlink_application"
+	ActionSetDefaultExternalAddress = "set_default_external_address"
 
 	DoNotModify = "[do-not-modify]"
 
@@ -44,9 +45,10 @@ var (
 	ApplicationLinkPrefix         = []byte{0x13}
 	ApplicationLinkClientIDPrefix = []byte{0x14}
 
-	ChainLinkChainPrefix      = []byte{0x15}
-	ApplicationLinkAppPrefix  = []byte{0x16}
-	ExpiringAppLinkTimePrefix = []byte{0x17}
+	ChainLinkChainPrefix         = []byte{0x15}
+	ApplicationLinkAppPrefix     = []byte{0x16}
+	ExpiringAppLinkTimePrefix    = []byte{0x17}
+	DefaultExternalAddressPrefix = []byte{0x18}
 )
 
 // DTagStoreKey turns a DTag into the key used to store the address associated with it into the store
@@ -101,6 +103,25 @@ func GetChainLinkOwnerData(key []byte) (chainName, target, owner string) {
 	cleanedKey := bytes.TrimPrefix(key, ChainLinkChainPrefix)
 	values := bytes.Split(cleanedKey, Separator)
 	return string(values[0]), string(values[1]), string(values[2])
+}
+
+// OwnerDefaultExternalAddressPrefix returns the store prefix used to identify all the default external addresses
+// for the given owner
+func OwnerDefaultExternalAddressPrefix(owner string) []byte {
+	return append(DefaultExternalAddressPrefix, []byte(owner)...)
+}
+
+// DefaultExternalAddressKey returns the key used to store the address of the chain link which is set as
+// default external address
+func DefaultExternalAddressKey(owner, chainName string) []byte {
+	return append(OwnerDefaultExternalAddressPrefix(owner), append(Separator, []byte(chainName)...)...)
+}
+
+// GetDefaultExternalAddressData returns the owner, chain name from a given DefaultExternalAddressKey
+func GetDefaultExternalAddressData(key []byte) (owner string, chainName string) {
+	cleanedKey := bytes.TrimPrefix(key, DefaultExternalAddressPrefix)
+	values := bytes.Split(cleanedKey, Separator)
+	return string(values[0]), string(values[1])
 }
 
 // UserApplicationLinksPrefix returns the store prefix used to identify all the application links for the given user

@@ -1,0 +1,6 @@
+type: feat
+module: x/profiles
+pull_request: 887
+description: implement adr 013 per-chain default address
+backward_compatible: true
+date: 2022-06-15T11:56:47.0160117Z

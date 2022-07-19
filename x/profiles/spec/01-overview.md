@@ -17,11 +17,13 @@ This module allows the creation and management of an on-chain social profile tha
     - [Profile](02-concepts.md#profile)
     - [DTag Transfer Request](02-concepts.md#dtag-transfer-request)
     - [Chain Link](02-concepts.md#chain-link)
+    - [Default External Address](02-concepts.md#default-external-address)
     - [Application Link](02-concepts.md#application-link)
 2. **[State](03-state.md)**
     - [Profile](03-state.md#profile)
     - [DTag Transfer Request](03-state.md#dtag-transfer-request)
     - [Chain Link](03-state.md#chain-link)
+    - [Default External Address](03-state.md#default-external-address)
     - [Application Link](03-state.md#application-link)
     - [IBC Port](03-state.md#ibc-port)
 3. **[Msg Service](04-messages.md)**
@@ -33,6 +35,7 @@ This module allows the creation and management of an on-chain social profile tha
     - [Msg/RefuseDTagTransferRequest](04-messages.md#msgrefusedtagtransferrequest)
     - [Msg/LinkChainAccount](04-messages.md#msglinkchainaccount)
     - [Msg/UnlinkChainAccount](04-messages.md#msgunlinkchainaccount)
+    - [Msg/SetDefaultExternalAddress](04-messages.md#msgsetdefaultexternaladdress)
     - [Msg/LinkApplication](04-messages.md#msglinkapplication)
     - [Msg/UnlinkApplication](04-messages.md#msgunlinkapplication)
 4. **[Events](05-events.md)**

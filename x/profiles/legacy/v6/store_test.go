@@ -228,6 +228,43 @@ func TestMigrateStore(t *testing.T) {
 				), stored)
 			},
 		},
+		{
+			name: "default external addresses are set properly",
+			store: func(ctx sdk.Context) {
+				kvStore := ctx.KVStore(keys[types.StoreKey])
+
+				sig, err := hex.DecodeString("1234")
+				require.NoError(t, err)
+
+				chainLink := v5types.NewChainLink(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					v5types.NewBech32Address("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs", "cosmos"),
+					v5types.NewProof(
+						pubKey,
+						&v5types.SingleSignatureData{
+							Mode:      signing.SignMode_SIGN_MODE_DIRECT,
+							Signature: sig,
+						},
+						"plain_text",
+					),
+					v5types.NewChainConfig("cosmos"),
+					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+				)
+				kvStore.Set(
+					types.ChainLinksStoreKey(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"cosmos",
+						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
+					),
+					cdc.MustMarshal(&chainLink),
+				)
+			},
+			check: func(ctx sdk.Context) {
+				kvStore := ctx.KVStore(keys[types.StoreKey])
+				key := types.DefaultExternalAddressKey("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", "cosmos")
+				require.Equal(t, []byte("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs"), kvStore.Get(key))
+			},
+		},
 	}
 
 	for _, tc := range testCases {

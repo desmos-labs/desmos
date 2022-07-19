@@ -37,6 +37,7 @@ func TestValidateGenesis(t *testing.T) {
 				types.IBCPortID,
 				nil,
 				nil,
+				nil,
 			),
 			shouldErr: true,
 		},
@@ -52,6 +53,7 @@ func TestValidateGenesis(t *testing.T) {
 				},
 				types.DefaultParams(),
 				types.IBCPortID,
+				nil,
 				nil,
 				nil,
 			),
@@ -77,6 +79,19 @@ func TestValidateGenesis(t *testing.T) {
 					),
 				},
 				nil,
+				nil,
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid default external address return error",
+			genesis: types.NewGenesisState(
+				nil,
+				types.DefaultParams(),
+				types.IBCPortID,
+				nil,
+				[]types.DefaultExternalAddressEntry{types.NewDefaultExternalAddressEntry("", "", "")},
+				nil,
 			),
 			shouldErr: true,
 		},
@@ -86,6 +101,7 @@ func TestValidateGenesis(t *testing.T) {
 				nil,
 				types.DefaultParams(),
 				types.IBCPortID,
+				nil,
 				nil,
 				[]types.ApplicationLink{
 					types.NewApplicationLink(
@@ -115,6 +131,7 @@ func TestValidateGenesis(t *testing.T) {
 				nil,
 				types.DefaultParams(),
 				"1235$512",
+				nil,
 				nil,
 				nil,
 			),
@@ -156,6 +173,7 @@ func TestValidateGenesis(t *testing.T) {
 						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 					),
 				},
+				nil,
 				[]types.ApplicationLink{
 					types.NewApplicationLink(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -185,6 +203,59 @@ func TestValidateGenesis(t *testing.T) {
 
 		t.Run(tc.name, func(t *testing.T) {
 			err := types.ValidateGenesis(tc.genesis)
+
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestDefaultExternalAddressEntry_Validate(t *testing.T) {
+	testCases := []struct {
+		name      string
+		entry     types.DefaultExternalAddressEntry
+		shouldErr bool
+	}{
+		{
+			name:      "invalid owner returns error",
+			entry:     types.NewDefaultExternalAddressEntry("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "", ""),
+			shouldErr: true,
+		},
+		{
+			name:      "invalid chain name returns error - empty",
+			entry:     types.NewDefaultExternalAddressEntry("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "", ""),
+			shouldErr: true,
+		},
+		{
+			name:      "invalid chain name returns error - blank",
+			entry:     types.NewDefaultExternalAddressEntry("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "   ", ""),
+			shouldErr: true,
+		},
+		{
+			name:      "invalid target returns error - empty",
+			entry:     types.NewDefaultExternalAddressEntry("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos", ""),
+			shouldErr: true,
+		},
+		{
+			name:      "invalid target returns error - blank",
+			entry:     types.NewDefaultExternalAddressEntry("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos", "   "),
+			shouldErr: true,
+		},
+		{
+			name:      "valid entry returns no error",
+			entry:     types.NewDefaultExternalAddressEntry("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos", "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"),
+			shouldErr: false,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.entry.Validate()
 
 			if tc.shouldErr {
 				require.Error(t, err)

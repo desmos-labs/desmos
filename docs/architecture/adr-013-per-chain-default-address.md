@@ -6,7 +6,7 @@
 
 ## Status
 
-ACCEPTED Not Implemented
+ACCEPTED Implemented
 
 ## Abstract
 
@@ -47,7 +47,7 @@ message MsgSetDefaultExternalAddress {
   string chain_name = 1;
   
   // Address to be set as the default one
-  string external_address = 2;
+  string target = 2;
   
   // User signing the message
   string signer = 3;

@@ -22,6 +22,7 @@ func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 	return &msgServer{keeper}
 }
 
+// SaveProfile defines a rpc method for MsgSaveProfile
 func (k msgServer) SaveProfile(goCtx context.Context, msg *types.MsgSaveProfile) (*types.MsgSaveProfileResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -84,6 +85,7 @@ func (k msgServer) SaveProfile(goCtx context.Context, msg *types.MsgSaveProfile)
 	return &types.MsgSaveProfileResponse{}, nil
 }
 
+// DeleteProfile defines a rpc method for MsgDeleteProfile
 func (k msgServer) DeleteProfile(goCtx context.Context, msg *types.MsgDeleteProfile) (*types.MsgDeleteProfileResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 

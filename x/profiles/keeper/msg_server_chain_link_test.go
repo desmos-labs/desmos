@@ -115,9 +115,9 @@ func (suite *KeeperTestSuite) TestMsgServer_LinkChainAccount() {
 				),
 				sdk.NewEvent(
 					types.EventTypeLinkChainAccount,
-					sdk.NewAttribute(types.AttributeKeyChainLinkSourceAddress, srcAddr),
-					sdk.NewAttribute(types.AttributeKeyChainLinkSourceChainName, "cosmos"),
-					sdk.NewAttribute(types.AttributeKeyChainLinkDestinationAddress, destAddr),
+					sdk.NewAttribute(types.AttributeKeyChainLinkExternalAddress, srcAddr),
+					sdk.NewAttribute(types.AttributeKeyChainLinkChainName, "cosmos"),
+					sdk.NewAttribute(types.AttributeKeyChainLinkOwner, destAddr),
 					sdk.NewAttribute(types.AttributeKeyChainLinkCreationTime, blockTime.Format(time.RFC3339Nano)),
 				),
 			},
@@ -212,9 +212,9 @@ func (suite *KeeperTestSuite) TestMsgServer_UnlinkChainAccount() {
 				),
 				sdk.NewEvent(
 					types.EventTypeUnlinkChainAccount,
-					sdk.NewAttribute(types.AttributeKeyChainLinkSourceAddress, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
-					sdk.NewAttribute(types.AttributeKeyChainLinkSourceChainName, "cosmos"),
-					sdk.NewAttribute(types.AttributeKeyChainLinkDestinationAddress, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+					sdk.NewAttribute(types.AttributeKeyChainLinkExternalAddress, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+					sdk.NewAttribute(types.AttributeKeyChainLinkChainName, "cosmos"),
+					sdk.NewAttribute(types.AttributeKeyChainLinkOwner, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 				),
 			},
 			check: func(ctx sdk.Context) {
@@ -239,6 +239,104 @@ func (suite *KeeperTestSuite) TestMsgServer_UnlinkChainAccount() {
 
 			server := keeper.NewMsgServerImpl(suite.k)
 			_, err := server.UnlinkChainAccount(sdk.WrapSDKContext(ctx), tc.msg)
+			suite.Require().Equal(tc.expEvents, ctx.EventManager().Events())
+
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+
+				if tc.check != nil {
+					tc.check(ctx)
+				}
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestMsgServer_SetDefaultExternalAddress() {
+	testCases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		msg       *types.MsgSetDefaultExternalAddress
+		shouldErr bool
+		expEvents sdk.Events
+		check     func(ctx sdk.Context)
+	}{
+		{
+			name: "non existent link exists returns error",
+			msg: types.NewMsgSetDefaultExternalAddress(
+				"cosmos",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			),
+			shouldErr: true,
+			expEvents: sdk.EmptyEvents(),
+		},
+		{
+			name: "found link returns no error",
+			store: func(ctx sdk.Context) {
+				store := ctx.KVStore(suite.storeKey)
+				link := types.NewChainLink(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
+					types.NewProof(
+						profilestesting.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
+						profilestesting.SingleSignatureProtoFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
+						"74657874",
+					),
+					types.NewChainConfig("cosmos"),
+					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				)
+				store.Set(
+					types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, link.GetAddressData().GetValue()),
+					suite.cdc.MustMarshal(&link),
+				)
+
+				// Set the default external address
+				store.Set(
+					types.DefaultExternalAddressKey(link.ChainConfig.Name, link.User),
+					[]byte(link.GetAddressData().GetValue()),
+				)
+			},
+			msg: types.NewMsgSetDefaultExternalAddress(
+				"cosmos",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			),
+			shouldErr: false,
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					sdk.EventTypeMessage,
+					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgSetDefaultExternalAddress{})),
+					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+				),
+				sdk.NewEvent(
+					types.EventTypeSetDefaultExternalAddress,
+					sdk.NewAttribute(types.AttributeKeyChainLinkChainName, "cosmos"),
+					sdk.NewAttribute(types.AttributeKeyChainLinkExternalAddress, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+					sdk.NewAttribute(types.AttributeKeyChainLinkOwner, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+				),
+			},
+			check: func(ctx sdk.Context) {
+				store := ctx.KVStore(suite.storeKey)
+				external := store.Get(types.DefaultExternalAddressKey("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", "cosmos"))
+				suite.Require().True(string(external) == "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			server := keeper.NewMsgServerImpl(suite.k)
+			_, err := server.SetDefaultExternalAddress(sdk.WrapSDKContext(ctx), tc.msg)
 			suite.Require().Equal(tc.expEvents, ctx.EventManager().Events())
 
 			if tc.shouldErr {

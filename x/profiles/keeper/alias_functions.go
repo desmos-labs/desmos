@@ -219,6 +219,23 @@ func (k Keeper) IterateUserChainLinks(ctx sdk.Context, user string, fn func(inde
 	}
 }
 
+// IterateUserChainLinksByChain iterates through the chain links related to the given user by the chain having the given chain name and perform the provided function
+func (k Keeper) IterateUserChainLinksByChain(ctx sdk.Context, user string, chainName string, fn func(link types.ChainLink) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+
+	iterator := sdk.KVStorePrefixIterator(store, types.UserChainLinksChainPrefix(user, chainName))
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		link := types.MustUnmarshalChainLink(k.cdc, iterator.Value())
+
+		stop := fn(link)
+		if stop {
+			break
+		}
+	}
+}
+
 // GetChainLinks allows to returns the list of all stored chain links
 func (k Keeper) GetChainLinks(ctx sdk.Context) []types.ChainLink {
 	var links []types.ChainLink
@@ -227,4 +244,32 @@ func (k Keeper) GetChainLinks(ctx sdk.Context) []types.ChainLink {
 		return false
 	})
 	return links
+}
+
+// IterateDefaultExternalAddresses iterates through the default external addresses and performs the provided function
+func (k Keeper) IterateDefaultExternalAddresses(ctx sdk.Context, fn func(entry types.DefaultExternalAddressEntry) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+
+	iterator := sdk.KVStorePrefixIterator(store, types.DefaultExternalAddressPrefix)
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		owner, chainName := types.GetDefaultExternalAddressData(iterator.Key())
+		target := string(iterator.Value())
+		stop := fn(types.NewDefaultExternalAddressEntry(owner, chainName, target))
+		if stop {
+			break
+		}
+	}
+}
+
+// GetDefaultExternalAddressEntries returns a slice of DefaultExternalAddressEntry objects containing the details of all the
+// default exnternal address entries stored inside the current context
+func (k Keeper) GetDefaultExternalAddressEntries(ctx sdk.Context) []types.DefaultExternalAddressEntry {
+	var entries []types.DefaultExternalAddressEntry
+	k.IterateDefaultExternalAddresses(ctx, func(entry types.DefaultExternalAddressEntry) (stop bool) {
+		entries = append(entries, entry)
+		return false
+	})
+	return entries
 }
