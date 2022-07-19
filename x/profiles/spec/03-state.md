@@ -26,7 +26,7 @@ To make it possible to query chain links given a user address or given a chain n
 * Chain Link Owner: `0x15 | ChainName | 0x00 | External address | 0x00 | User address | -> 0x01 `
 
 ## Default External Address
-An external address to a spcified chain is stored using owner address and chain name as the key, which allows to easily query all the default addresses:
+A chain external address is stored using the owner address and the chain name as the key:
 
 * Default External Address: `0x18 | Owner address | Chain name | -> bytes(ExternalAddress)`
 
