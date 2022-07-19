@@ -517,9 +517,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 				)))
 
-				suite.Require().True(suite.k.HasDefaultExternalAddress(ctx,
-					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
-					"cosmos"))
+				suite.Require().True(suite.k.HasDefaultExternalAddress(ctx, "cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x", "cosmos"))
 			},
 		},
 	}
