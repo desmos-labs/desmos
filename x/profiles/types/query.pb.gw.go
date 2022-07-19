@@ -792,7 +792,7 @@ var (
 
 	pattern_Query_ChainLinkOwners_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 2, 4}, []string{"desmos", "profiles", "v3", "chain-links", "owners"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_DefaultExternalAddresses_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"desmos", "profiles", "v2", "default-addresses"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_DefaultExternalAddresses_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"desmos", "profiles", "v3", "default-external-addresses"}, "", runtime.AssumeColonVerbOpt(true)))
 
 	pattern_Query_ApplicationLinks_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"desmos", "profiles", "v3", "app-links"}, "", runtime.AssumeColonVerbOpt(true)))
 
