@@ -526,7 +526,7 @@ Example Output:
 ```
 
 ### DefaultExternalAddresses
-The `DefaultExternalAddresses` endpoint allows user to query for external default address optionally specifying an owner and chain name.
+The `DefaultExternalAddresses` endpoint allows to query for external default addresses optionally specifying an owner and chain name.
 
 ```bash
 desmos.profiles.v2.Query/desmos.profiles.v3.Query/DefaultExternalAddresses
