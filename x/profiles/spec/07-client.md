@@ -339,7 +339,7 @@ desmos tx profiles unlink-chain "cosmos" cosmos18xnmlzqrqr6zt526pnczxe65zk3f4xgm
 ```
 
 #### set-default-external-address
-The `set-default-external-address` allows user to set a default external address.
+The `set-default-external-address` command allows user to set a default external address.
 
 ```bash
 set-default-external-address [chain-name] [target]
