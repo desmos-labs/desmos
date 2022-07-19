@@ -51,6 +51,11 @@ service Msg {
   rpc UnlinkChainAccount(MsgUnlinkChainAccount)
       returns (MsgUnlinkChainAccountResponse);
 
+  // SetDefaultExternalAddress allows to set a specific external address as the
+  // default one for a given chain
+  rpc SetDefaultExternalAddress(MsgSetDefaultExternalAddress)
+      returns (MsgSetDefaultExternalAddressResponse);
+
   // LinkApplication defines a method to create a centralized application
   // link
   rpc LinkApplication(MsgLinkApplication) returns (MsgLinkApplicationResponse);

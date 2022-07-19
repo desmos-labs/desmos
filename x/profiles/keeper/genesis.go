@@ -15,6 +15,7 @@ func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 		k.GetParams(ctx),
 		k.GetPort(ctx),
 		k.GetChainLinks(ctx),
+		k.GetDefaultExternalAddressEntries(ctx),
 		k.GetApplicationLinks(ctx),
 	)
 }
@@ -61,6 +62,10 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) []abci.Val
 		if err != nil {
 			panic(err)
 		}
+	}
+
+	for _, entry := range data.DefaultExternalAddresses {
+		k.SaveDefaultExternalAddress(ctx, entry.Owner, entry.ChainName, entry.Target)
 	}
 
 	// Store the application links

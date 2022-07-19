@@ -10,6 +10,7 @@ import (
 	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
+// RequestDTagTransfer defines a rpc method for MsgRequestDTagTransfer
 func (k msgServer) RequestDTagTransfer(goCtx context.Context, msg *types.MsgRequestDTagTransfer) (*types.MsgRequestDTagTransferResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -60,6 +61,7 @@ func (k msgServer) RequestDTagTransfer(goCtx context.Context, msg *types.MsgRequ
 	return &types.MsgRequestDTagTransferResponse{}, nil
 }
 
+// CancelDTagTransferRequest defines a rpc method for MsgCancelDTagTransferRequest
 func (k msgServer) CancelDTagTransferRequest(goCtx context.Context, msg *types.MsgCancelDTagTransferRequest) (*types.MsgCancelDTagTransferRequestResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -88,6 +90,7 @@ func (k msgServer) CancelDTagTransferRequest(goCtx context.Context, msg *types.M
 	return &types.MsgCancelDTagTransferRequestResponse{}, nil
 }
 
+// AcceptDTagTransferRequest defines a rpc method for MsgAcceptDTagTransferRequest
 func (k msgServer) AcceptDTagTransferRequest(goCtx context.Context, msg *types.MsgAcceptDTagTransferRequest) (*types.MsgAcceptDTagTransferRequestResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -195,6 +198,7 @@ func (k msgServer) AcceptDTagTransferRequest(goCtx context.Context, msg *types.M
 	return &types.MsgAcceptDTagTransferRequestResponse{}, nil
 }
 
+// RefuseDTagTransferRequest defines a rpc method for MsgRefuseDTagTransferRequest
 func (k msgServer) RefuseDTagTransferRequest(goCtx context.Context, msg *types.MsgRefuseDTagTransferRequest) (*types.MsgRefuseDTagTransferRequestResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 

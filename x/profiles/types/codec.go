@@ -26,6 +26,7 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(MsgRefuseDTagTransferRequest{}, "desmos/MsgRefuseDTagTransferRequest", nil)
 	cdc.RegisterConcrete(MsgLinkChainAccount{}, "desmos/MsgLinkChainAccount", nil)
 	cdc.RegisterConcrete(MsgUnlinkChainAccount{}, "desmos/MsgUnlinkChainAccount", nil)
+	cdc.RegisterConcrete(MsgSetDefaultExternalAddress{}, "desmos/MsgSetDefaultExternalAddress", nil)
 	cdc.RegisterConcrete(MsgLinkApplication{}, "desmos/MsgLinkApplication", nil)
 	cdc.RegisterConcrete(MsgUnlinkApplication{}, "desmos/MsgUnlinkApplication", nil)
 
@@ -72,6 +73,7 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 		&MsgUnlinkChainAccount{},
 		&MsgLinkApplication{},
 		&MsgUnlinkApplication{},
+		&MsgSetDefaultExternalAddress{},
 	)
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)

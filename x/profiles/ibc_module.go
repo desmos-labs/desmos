@@ -240,9 +240,9 @@ func handleLinkChainAccountPacketData(
 		sdk.NewEvent(
 			types.EventTypeLinkChainAccountPacket,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
-			sdk.NewAttribute(types.AttributeKeyChainLinkSourceAddress, address.GetValue()),
-			sdk.NewAttribute(types.AttributeKeyChainLinkSourceChainName, packetData.SourceChainConfig.Name),
-			sdk.NewAttribute(types.AttributeKeyChainLinkDestinationAddress, packetData.DestinationAddress),
+			sdk.NewAttribute(types.AttributeKeyChainLinkExternalAddress, address.GetValue()),
+			sdk.NewAttribute(types.AttributeKeyChainLinkChainName, packetData.SourceChainConfig.Name),
+			sdk.NewAttribute(types.AttributeKeyChainLinkOwner, packetData.DestinationAddress),
 			sdk.NewAttribute(types.AttributeKeyAckSuccess, fmt.Sprintf("%t", true)),
 		),
 	)

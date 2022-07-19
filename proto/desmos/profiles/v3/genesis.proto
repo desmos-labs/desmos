@@ -30,13 +30,25 @@ message GenesisState {
     (gogoproto.moretags) = "yaml:\"application_links\""
   ];
 
-  string ibc_port_id = 4 [
+  repeated DefaultExternalAddressEntry default_external_addresses = 4 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"default_external_addresses\""
+  ];
+
+  string ibc_port_id = 5 [
     (gogoproto.moretags) = "yaml:\"ibc_port_id\"",
     (gogoproto.customname) = "IBCPortID"
   ];
 
-  desmos.profiles.v3.Params params = 5 [
+  desmos.profiles.v3.Params params = 6 [
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"params\""
   ];
+}
+
+// DefaultExternalAddressEntry contains the data of a default extnernal address
+message DefaultExternalAddressEntry {
+  string owner = 1;
+  string chain_name = 2;
+  string target = 3;
 }

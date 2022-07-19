@@ -65,6 +65,7 @@ func (k Keeper) LinkApplication(
 	return &types.MsgLinkApplicationResponse{}, nil
 }
 
+// UnlinkApplication defines a rpc method for MsgUnlinkApplication
 func (k msgServer) UnlinkApplication(
 	goCtx context.Context, msg *types.MsgUnlinkApplication,
 ) (*types.MsgUnlinkApplicationResponse, error) {

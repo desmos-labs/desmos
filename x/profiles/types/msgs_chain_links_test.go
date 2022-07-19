@@ -188,3 +188,84 @@ func TestMsgUnlinkChainAccount_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgUnlinkChainAccount.Owner)
 	require.Equal(t, []sdk.AccAddress{addr}, msgUnlinkChainAccount.GetSigners())
 }
+
+// ___________________________________________________________________________________________________________________
+
+var msgSetDefaultExternalAddress = types.NewMsgSetDefaultExternalAddress(
+	"cosmos",
+	"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+	"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+)
+
+func TestMsgSetDefaultExternalAddress_Route(t *testing.T) {
+	require.Equal(t, "profiles", msgSetDefaultExternalAddress.Route())
+}
+
+func TestMsgSetDefaultExternalAddress_Type(t *testing.T) {
+	require.Equal(t, "set_default_external_address", msgSetDefaultExternalAddress.Type())
+}
+
+func TestMsgSetDefaultExternalAddress_ValidateBasic(t *testing.T) {
+	testCases := []struct {
+		name      string
+		msg       *types.MsgSetDefaultExternalAddress
+		shouldErr bool
+	}{
+		{
+			name: "invalid chain name returns error",
+			msg: types.NewMsgSetDefaultExternalAddress(
+				"",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid target returns error",
+			msg: types.NewMsgSetDefaultExternalAddress(
+				"cosmos",
+				"",
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid owner returns error",
+			msg: types.NewMsgSetDefaultExternalAddress(
+				"cosmos",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				"",
+			),
+			shouldErr: true,
+		},
+		{
+			name:      "valid message returns no error",
+			msg:       msgSetDefaultExternalAddress,
+			shouldErr: false,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.msg.ValidateBasic()
+
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestMsgSetDefaultExternalAddress_GetSignBytes(t *testing.T) {
+	actual := msgSetDefaultExternalAddress.GetSignBytes()
+	expected := `{"type":"desmos/MsgSetDefaultExternalAddress","value":{"chain_name":"cosmos","signer":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","target":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
+	require.Equal(t, expected, string(actual))
+}
+
+func TestMsgSetDefaultExternalAddress_GetSigners(t *testing.T) {
+	addr, _ := sdk.AccAddressFromBech32(msgSetDefaultExternalAddress.Signer)
+	require.Equal(t, []sdk.AccAddress{addr}, msgSetDefaultExternalAddress.GetSigners())
+}

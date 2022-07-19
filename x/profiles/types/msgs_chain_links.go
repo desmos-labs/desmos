@@ -123,3 +123,50 @@ func (msg MsgUnlinkChainAccount) GetSigners() []sdk.AccAddress {
 	signer, _ := sdk.AccAddressFromBech32(msg.Owner)
 	return []sdk.AccAddress{signer}
 }
+
+// ___________________________________________________________________________________________________________________
+
+func NewMsgSetDefaultExternalAddress(chainName, target, signer string) *MsgSetDefaultExternalAddress {
+	return &MsgSetDefaultExternalAddress{
+		ChainName: chainName,
+		Target:    target,
+		Signer:    signer,
+	}
+}
+
+// Route should return the name of the module
+func (msg MsgSetDefaultExternalAddress) Route() string { return RouterKey }
+
+// Type should return the action
+func (msg MsgSetDefaultExternalAddress) Type() string {
+	return ActionSetDefaultExternalAddress
+}
+
+// ValidateBasic runs stateless checks on the message
+func (msg MsgSetDefaultExternalAddress) ValidateBasic() error {
+	if strings.TrimSpace(msg.ChainName) == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "chain name cannot be empty or blank")
+	}
+
+	if strings.TrimSpace(msg.Target) == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid external address")
+	}
+
+	_, err := sdk.AccAddressFromBech32(msg.Signer)
+	if err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid signer")
+	}
+
+	return nil
+}
+
+// GetSignBytes encodes the message for signing
+func (msg MsgSetDefaultExternalAddress) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
+}
+
+// GetSigners defines whose signature is required
+func (msg MsgSetDefaultExternalAddress) GetSigners() []sdk.AccAddress {
+	signer, _ := sdk.AccAddressFromBech32(msg.Signer)
+	return []sdk.AccAddress{signer}
+}

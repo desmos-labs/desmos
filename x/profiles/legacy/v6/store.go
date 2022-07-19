@@ -25,6 +25,7 @@ import (
 //
 // - migrating all the profiles to have the proper Protobuf type
 // - add the expiration date to all application links
+// - set the default external address to oldest chain link of each chain for each owner
 func MigrateStore(ctx sdk.Context, ak authkeeper.AccountKeeper, storeKey sdk.StoreKey, amino *codec.LegacyAmino, cdc codec.BinaryCodec) error {
 	store := ctx.KVStore(storeKey)
 
@@ -42,6 +43,12 @@ func MigrateStore(ctx sdk.Context, ak authkeeper.AccountKeeper, storeKey sdk.Sto
 
 	// Migrate all the chain links
 	err = migrateChainLinks(store, cdc)
+	if err != nil {
+		return err
+	}
+
+	// Set the default external addresses
+	err = setDefaultExternalAddresses(store, cdc)
 	if err != nil {
 		return err
 	}
@@ -288,4 +295,43 @@ func convertChainLinkSignatureData(data *codectypes.Any, cdc codec.BinaryCodec) 
 
 	return signatureAny
 
+}
+
+// setDefaultExternalAddresses set the default external address of each chain for each owner
+func setDefaultExternalAddresses(store sdk.KVStore, cdc codec.BinaryCodec) error {
+	chainLinkStore := prefix.NewStore(store, types.ChainLinksPrefix)
+	chainLinksIterator := chainLinkStore.Iterator(nil, nil)
+	defer chainLinksIterator.Close()
+
+	for ; chainLinksIterator.Valid(); chainLinksIterator.Next() {
+		var link types.ChainLink
+		err := cdc.Unmarshal(chainLinksIterator.Value(), &link)
+		if err != nil {
+			return err
+		}
+
+		// Validate the source address
+		srcAddrData, err := types.UnpackAddressData(cdc, link.Address)
+		if err != nil {
+			return err
+		}
+
+		// Update default external address if the key exists
+		if store.Has(types.DefaultExternalAddressKey(link.User, link.ChainConfig.Name)) {
+			addrBz := store.Get(types.DefaultExternalAddressKey(link.User, link.ChainConfig.Name))
+			var defaultLink types.ChainLink
+			err := cdc.Unmarshal(store.Get(types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, string(addrBz))), &defaultLink)
+			if err != nil {
+				return err
+			}
+
+			// Skip if the new link is after the default one
+			if link.CreationTime.After(defaultLink.CreationTime) {
+				continue
+			}
+		}
+
+		store.Set(types.DefaultExternalAddressKey(link.User, link.ChainConfig.Name), []byte(srcAddrData.GetValue()))
+	}
+	return nil
 }

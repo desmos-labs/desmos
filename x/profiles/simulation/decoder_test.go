@@ -82,6 +82,13 @@ func TestDecodeStore(t *testing.T) {
 			Value: []byte("client_id"),
 		},
 		{
+			Key: types.DefaultExternalAddressKey(
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				"cosmos",
+			),
+			Value: []byte("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+		},
+		{
 			Key:   []byte("invalid"),
 			Value: []byte("value"),
 		},
@@ -96,6 +103,7 @@ func TestDecodeStore(t *testing.T) {
 		{"Chain link", fmt.Sprintf("ChainLinkA: %s\nChainLinkB: %s\n", chainLink, chainLink)},
 		{"Application link", fmt.Sprintf("ApplicationLinkA: %s\nApplicationLinkB: %s\n", &applicationLink, &applicationLink)},
 		{"Expiring Application link", fmt.Sprintf("ExpiringClientIDA: %s\nExpiringClientIDB: %s\n", "client_id", "client_id")},
+		{"External address", fmt.Sprintf("ExternalAddressA: %s\nExternalAddressB: %s\n", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")},
 		{"other", ""},
 	}
 

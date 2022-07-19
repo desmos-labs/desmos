@@ -116,6 +116,46 @@ pagination:
   total: "0"
 ```
 
+#### default-external-addresses
+The `default-external-addresses` command allows users to query for default external addresses optionally specifying an owner address and a chain name.
+
+```bash
+desmos query profiles default-external-addresses [[owner]] [[chain_name]] [flags]
+```
+
+**Notes**
+- The `chain_name` paremeter will only be used if the `owner` is specified
+
+Example:
+```bash
+desmos query profiles default-external-address desmos1evj20rymftvecmgn8t0xv700wkjlgucwfy4f0c cosmos
+```
+
+Example Output:
+```yaml
+links:
+- address:
+    '@type': /desmos.profiles.v3.Bech32Address
+    prefix: cosmos
+    value: cosmos13n9wek2ktpxhpgfrd39zlaqaeahxuyusxrsfvn
+  chain_config:
+    name: cosmos
+  creation_time: "2022-07-18T10:07:51.899288600Z"
+  proof:
+    plain_text: 6465736d6f733165766a323072796d66747665636d676e3874307876373030776b6a6c67756377667934663063
+    pub_key:
+      '@type': /cosmos.crypto.secp256k1.PubKey
+      key: AqYZhHKaeBcrYktZEvor/SUDlHCkv5JBplaG2vc2bvfS
+    signature:
+      '@type': /desmos.profiles.v3.SingleSignatureData
+      mode: SIGN_MODE_DIRECT
+      signature: 3yCU8/HKv7Vn0sf7HB+AhV/hK37DCBAkQkXdruaFSvMjRZB1XrYkpKWZVi+xnhSenc1p951Q1058rrYjuNCk9g==
+  user: desmos1evj20rymftvecmgn8t0xv700wkjlgucwfy4f0c
+pagination:
+  next_key: null
+  total: "0"
+```
+
 #### app-links
 The `app-links` allows users to query application links optionally specifying a user, an application name and a username.
 
@@ -298,6 +338,18 @@ Example:
 desmos tx profiles unlink-chain "cosmos" cosmos18xnmlzqrqr6zt526pnczxe65zk3f4xgmndpxn2`
 ```
 
+#### set-default-external-address
+The `set-default-external-address` command allows user to set a default external address.
+
+```bash
+set-default-external-address [chain-name] [target]
+```
+
+Example:
+```bash
+desmos tx profiles set-default-external-address "cosmos" cosmos18xnmlzqrqr6zt526pnczxe65zk3f4xgmndpxn2
+```
+
 #### link-app
 The `link-app` command allows users to link an external app account to their Desmos profile. 
 
@@ -465,6 +517,46 @@ Example Output:
       "user": "desmos16c60y8t8vra27zjg2arlcd58dck9cwn7p6fwtd",
       "chain_name": "osmosis",
       "target": "osmo1kdl9888p5ez2mt7w59anugx7z0ek927gvdvk7p"
+    }
+  ],
+  "pagination": {
+    "total": "1"
+  }
+}
+```
+
+### DefaultExternalAddresses
+The `DefaultExternalAddresses` endpoint allows to query for external default addresses optionally specifying an owner and chain name.
+
+```bash
+desmos.profiles.v2.Query/desmos.profiles.v3.Query/DefaultExternalAddresses
+```
+
+**Notes**
+- The `chainName` parameter will only be used if the `owner` one is specified
+
+Example
+```bash
+grpcurl -plaintext  \
+  -d '{"owner": "desmos1evj20rymftvecmgn8t0xv700wkjlgucwfy4f0c", "chainName": "cosmos"}' localhost:9090 desmos.profiles.v3.Query/DefaultExternalAddresses
+```
+
+Example Output:
+```json
+{
+  "links": [
+    {
+      "user": "desmos1evj20rymftvecmgn8t0xv700wkjlgucwfy4f0c",
+      "address": {"@type":"/desmos.profiles.v3.Bech32Address","prefix":"cosmos","value":"cosmos13n9wek2ktpxhpgfrd39zlaqaeahxuyusxrsfvn"},
+      "proof": {
+        "pubKey": {"@type":"/cosmos.crypto.secp256k1.PubKey","key":"AqYZhHKaeBcrYktZEvor/SUDlHCkv5JBplaG2vc2bvfS"},
+        "signature": {"@type":"/desmos.profiles.v3.SingleSignatureData","mode":"SIGN_MODE_DIRECT","signature":"3yCU8/HKv7Vn0sf7HB+AhV/hK37DCBAkQkXdruaFSvMjRZB1XrYkpKWZVi+xnhSenc1p951Q1058rrYjuNCk9g=="},
+        "plainText": "6465736d6f733165766a323072796d66747665636d676e3874307876373030776b6a6c67756377667934663063"
+      },
+      "chainConfig": {
+        "name": "cosmos"
+      },
+      "creationTime": "2022-07-18T10:07:51.899288600Z"
     }
   ],
   "pagination": {
@@ -676,6 +768,16 @@ The `chain-links/owners` endpoint allows users to query for chain link owners gi
 
 **Note**
 The `target` parameter will be used only if the `chain_name` is specified as well.
+
+### DefaultExternalAddresses
+The `default-external-addresses` endpoint allows users to query for default external addresses given an optional owner address and chain name.
+
+```
+/desmos/profiles/v3/default-external-addresses?owner={owner}&chain_name={chainName}
+```
+
+**Note**
+- The `chain_name` parameter will be used only if the `owner` is specified as well.
 
 ### Application Links
 The `app-links` endpoint allows users to query for application links given an optional user, application name and username. 

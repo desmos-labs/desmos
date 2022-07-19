@@ -46,6 +46,11 @@ func NewDecodeStore(cdc codec.Codec) func(kvA, kvB kv.Pair) string {
 			return fmt.Sprintf("ExpiringClientIDA: %s\nExpiringClientIDB: %s\n",
 				clientIDA, clientIDB)
 
+		case bytes.HasPrefix(kvA.Key, types.DefaultExternalAddressPrefix):
+			addressA := string(kvA.Value)
+			addressB := string(kvB.Value)
+			return fmt.Sprintf("ExternalAddressA: %s\nExternalAddressB: %s\n", addressA, addressB)
+
 		default:
 			panic(fmt.Sprintf("unexpected %s key %X (%s)", types.ModuleName, kvA.Key, kvA.Key))
 		}

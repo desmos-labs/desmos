@@ -43,6 +43,14 @@ service Query {
     option (google.api.http).get = "/desmos/profiles/v3/chain-links/owners";
   }
 
+  // DefaultExternalAddresses queries the default addresses associated to the
+  // given user and (optionally) chain name
+  rpc DefaultExternalAddresses(QueryDefaultExternalAddressesRequest)
+      returns (QueryDefaultExternalAddressesResponse) {
+    option (google.api.http).get =
+        "/desmos/profiles/v3/default-external-addresses";
+  }
+
   // ApplicationLinks queries the applications links associated to the given
   // user, if provided. Otherwise, it queries all the application links stored.
   rpc ApplicationLinks(QueryApplicationLinksRequest)
