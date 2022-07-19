@@ -117,7 +117,7 @@ pagination:
 ```
 
 #### default-external-addresses
-The `default-external-addresses` command allows users to query for default external addresses in chain link optionally specifying an owner address and a chain name.
+The `default-external-addresses` command allows users to query for default external addresses optionally specifying an owner address and a chain name.
 
 ```bash
 desmos query profiles default-external-addresses [[owner]] [[chain_name]] [flags]
