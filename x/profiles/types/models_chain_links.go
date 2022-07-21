@@ -7,8 +7,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/desmos-labs/desmos/v4/types/crypto/ethsecp256k1"
-
 	"github.com/cosmos/cosmos-sdk/x/auth/legacy/legacytx"
 
 	"github.com/cosmos/cosmos-sdk/types/bech32"
@@ -171,6 +169,75 @@ type Signature interface {
 
 // --------------------------------------------------------------------------------------------------------------------
 
+// ValidateRawValue tells whether the given value has been properly encoded as a raw value
+func ValidateRawValue(value []byte, expectedValue string) error {
+	if string(value) != expectedValue {
+		return fmt.Errorf("invalid signed value: expected %s, got %s", expectedValue, value)
+	}
+
+	return nil
+}
+
+// ValidateDirectTxValue tells whether the given value has been properly encoded as a Protobuf transaction containing
+// the expected value as the memo field value
+func ValidateDirectTxValue(value []byte, expectedMemo string, cdc codec.BinaryCodec) error {
+	// Unmarshal the SignDoc
+	var signDoc tx.SignDoc
+	err := cdc.Unmarshal(value, &signDoc)
+	if err != nil {
+		return err
+	}
+
+	// Check to make sure the value was a SignDoc. If that's not the case, the two arrays will not match
+	if !bytes.Equal(value, cdc.MustMarshal(&signDoc)) {
+		return fmt.Errorf("invalid signed doc")
+	}
+
+	// Get the TxBody
+	var txBody tx.TxBody
+	err = cdc.Unmarshal(signDoc.BodyBytes, &txBody)
+	if err != nil {
+		return err
+	}
+
+	// Check the memo field
+	if txBody.Memo != expectedMemo {
+		return fmt.Errorf("invalid signed memo: expected %s, got %s", expectedMemo, txBody.Memo)
+	}
+
+	return nil
+}
+
+// ValidateAminoTxValue tells whether the given value has been properly encoded as an Amino transaction containing
+// the expected value as the memo field value
+func ValidateAminoTxValue(value []byte, expectedMemo string, cdc *codec.LegacyAmino) error {
+	// Unmarshal the StdSignDoc
+	var signDoc legacytx.StdSignDoc
+	err := cdc.UnmarshalJSON(value, &signDoc)
+	if err != nil {
+		return err
+	}
+
+	// Check the memo field
+	if signDoc.Memo != expectedMemo {
+		return fmt.Errorf("invalid signed memo: expected %s, got %s", expectedMemo, signDoc.Memo)
+	}
+
+	return nil
+}
+
+// ValidatePersonalSignValue tells whether the given value has been properly encoded using the EVM persona_sign specification
+func ValidatePersonalSignValue(value []byte, expectedValue string) error {
+	expectedSignedValue := fmt.Sprintf("\x19Ethereum Signed Message:\n%d%s", len(expectedValue), expectedValue)
+	if string(value) != expectedSignedValue {
+		return fmt.Errorf("invalid signed value: expected %s but got %s", expectedSignedValue, value)
+	}
+
+	return nil
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
 type CosmosSignature interface {
 	Signature
 	GetSignatureValueEncoding() (SignatureValueEncoding, error)
@@ -201,11 +268,13 @@ func (s *SingleSignature) Validate(cdc codec.BinaryCodec, amino *codec.LegacyAmi
 	// Validate the signature itself
 	switch s.ValueEncoding {
 	case SIGNATURE_VALUE_ENCODING_COSMOS_DIRECT:
-		return ValidateDirectTxSig(plainText, owner, cdc)
+		return ValidateDirectTxValue(plainText, owner, cdc)
 	case SIGNATURE_VALUE_ENCODING_COSMOS_AMINO:
-		return ValidateAminoTxSig(plainText, owner, amino)
+		return ValidateAminoTxValue(plainText, owner, amino)
 	case SIGNATURE_VALUE_ENCODING_RAW:
-		return ValidateRawSig(plainText, owner)
+		return ValidateRawValue(plainText, owner)
+	case SIGNATURE_VALUE_ENCODING_EVM_PERSONAL_SIGN:
+		return ValidatePersonalSignValue(plainText, owner)
 	default:
 		return fmt.Errorf("invalid value encoding: %s", s.ValueEncoding)
 	}
@@ -290,11 +359,11 @@ func (s *CosmosMultiSignature) Validate(cdc codec.BinaryCodec, amino *codec.Lega
 	// Validate the signature itself
 	switch signMode {
 	case SIGNATURE_VALUE_ENCODING_RAW:
-		return ValidateRawSig(plainText, owner)
+		return ValidateRawValue(plainText, owner)
 	case SIGNATURE_VALUE_ENCODING_COSMOS_DIRECT:
-		return ValidateDirectTxSig(plainText, owner, cdc)
+		return ValidateDirectTxValue(plainText, owner, cdc)
 	case SIGNATURE_VALUE_ENCODING_COSMOS_AMINO:
-		return ValidateAminoTxSig(plainText, owner, amino)
+		return ValidateAminoTxValue(plainText, owner, amino)
 	default:
 		return fmt.Errorf("invalid signing mode: %s", signMode)
 	}
@@ -340,66 +409,6 @@ func (s *CosmosMultiSignature) UnpackInterfaces(unpacker codectypes.AnyUnpacker)
 		if err != nil {
 			return err
 		}
-	}
-
-	return nil
-}
-
-// --------------------------------------------------------------------------------------------------------------------
-
-// ValidateRawSig tells whether the given value has been generated using SIGN_MODE_TEXTUAL
-// and signing the given expected value
-func ValidateRawSig(value []byte, expectedValue string) error {
-	if string(value) != expectedValue {
-		return fmt.Errorf("invalid signed value: expected %s, got %s", expectedValue, value)
-	}
-
-	return nil
-}
-
-// ValidateDirectTxSig tells whether the given value has been generated using SIGN_MODE_DIRECT and signing
-// a transaction that contains a memo field equals to the given expected value
-func ValidateDirectTxSig(value []byte, expectedMemo string, cdc codec.BinaryCodec) error {
-	// Unmarshal the SignDoc
-	var signDoc tx.SignDoc
-	err := cdc.Unmarshal(value, &signDoc)
-	if err != nil {
-		return err
-	}
-
-	// Check to make sure the value was a SignDoc. If that's not the case, the two arrays will not match
-	if !bytes.Equal(value, cdc.MustMarshal(&signDoc)) {
-		return fmt.Errorf("invalid signed doc")
-	}
-
-	// Get the TxBody
-	var txBody tx.TxBody
-	err = cdc.Unmarshal(signDoc.BodyBytes, &txBody)
-	if err != nil {
-		return err
-	}
-
-	// Check the memo field
-	if txBody.Memo != expectedMemo {
-		return fmt.Errorf("invalid signed memo: expected %s, got %s", expectedMemo, txBody.Memo)
-	}
-
-	return nil
-}
-
-// ValidateAminoTxSig tells whether the given value has been generated using SIGN_MODE_AMINO_JSON and signing
-// a transaction that contains a memo field equals to the given expected value
-func ValidateAminoTxSig(value []byte, expectedMemo string, cdc *codec.LegacyAmino) error {
-	// Unmarshal the StdSignDoc
-	var signDoc legacytx.StdSignDoc
-	err := cdc.UnmarshalJSON(value, &signDoc)
-	if err != nil {
-		return err
-	}
-
-	// Check the memo field
-	if signDoc.Memo != expectedMemo {
-		return fmt.Errorf("invalid signed memo: expected %s, got %s", expectedMemo, signDoc.Memo)
 	}
 
 	return nil
@@ -493,51 +502,6 @@ func unpackSignatures(unpacker codectypes.AnyUnpacker, sigs []*codectypes.Any) (
 	}
 
 	return signatures, nil
-}
-
-// --------------------------------------------------------------------------------------------------------------------
-
-var _ Signature = &EVMSignature{}
-
-// NewEVMSignature returns a new EVMSignature instance
-func NewEVMSignature(signatureMethod EVMSignatureMethod, signature []byte) *EVMSignature {
-	return &EVMSignature{
-		SignatureMethod: signatureMethod,
-		Signature:       signature,
-	}
-}
-
-// Validate implements Signature
-func (s *EVMSignature) Validate(_ codec.BinaryCodec, _ *codec.LegacyAmino, plainText []byte, owner string) error {
-	if s.SignatureMethod == EVM_SIGNATURE_METHOD_UNSPECIFIED {
-		return fmt.Errorf("invalid signature method: %s", s.SignatureMethod)
-	}
-
-	expectedSignedValue := fmt.Sprintf("\x19Ethereum Signed Message:\n%d%s", len(owner), owner)
-	if string(plainText) != expectedSignedValue {
-		return fmt.Errorf("invalid signed value: expected %s but got %s", expectedSignedValue, plainText)
-	}
-
-	return nil
-}
-
-// Verify implements Signature
-func (s *EVMSignature) Verify(cdc codec.BinaryCodec, pubKey *codectypes.Any, plainText []byte) (cryptotypes.PubKey, error) {
-	var pubkey cryptotypes.PubKey
-	err := cdc.UnpackAny(pubKey, &pubkey)
-	if err != nil {
-		return nil, err
-	}
-
-	if _, ok := pubkey.(*ethsecp256k1.PubKey); !ok {
-		return nil, fmt.Errorf("invalid public key type")
-	}
-
-	if !pubkey.VerifySignature(plainText, s.Signature) {
-		return nil, fmt.Errorf("invalid signature")
-	}
-
-	return pubkey, nil
 }
 
 // --------------------------------------------------------------------------------------------------------------------

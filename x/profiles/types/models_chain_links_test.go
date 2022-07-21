@@ -3,8 +3,6 @@ package types_test
 import (
 	"encoding/hex"
 
-	"github.com/desmos-labs/desmos/v4/types/crypto/ethsecp256k1"
-
 	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
 
 	"github.com/mr-tron/base58"
@@ -333,6 +331,158 @@ func TestProof_Verify(t *testing.T) {
 
 // --------------------------------------------------------------------------------------------------------------------
 
+func TestValidateDirectTxValue(t *testing.T) {
+	cdc, _ := app.MakeCodecs()
+	testCases := []struct {
+		name         string
+		value        []byte
+		expectedMemo string
+		shouldErr    bool
+	}{
+		{
+			name:         "invalid message returns error",
+			value:        cdc.MustMarshal(&types.Bech32Address{Prefix: "cosmos"}),
+			expectedMemo: "memo",
+			shouldErr:    true,
+		},
+		{
+			name:         "wrong memo returns error",
+			value:        cdc.MustMarshal(&tx.SignDoc{BodyBytes: cdc.MustMarshal(&tx.TxBody{Memo: "memo"})}),
+			expectedMemo: "other memo",
+			shouldErr:    true,
+		},
+		{
+			name:         "valid data returns no error",
+			value:        cdc.MustMarshal(&tx.SignDoc{BodyBytes: cdc.MustMarshal(&tx.TxBody{Memo: "memo"})}),
+			expectedMemo: "memo",
+			shouldErr:    false,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := types.ValidateDirectTxValue(tc.value, tc.expectedMemo, cdc)
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestValidateAminoTxValue(t *testing.T) {
+	_, legacyAmino := app.MakeCodecs()
+	testCases := []struct {
+		name         string
+		value        []byte
+		expectedMemo string
+		shouldErr    bool
+	}{
+		{
+			name:         "invalid message returns error",
+			value:        legacyAmino.MustMarshalJSON(&types.Bech32Address{}),
+			expectedMemo: "memo",
+			shouldErr:    true,
+		},
+		{
+			name:         "wrong memo returns error",
+			value:        legacyAmino.MustMarshalJSON(&legacytx.StdSignDoc{}),
+			expectedMemo: "memo",
+			shouldErr:    true,
+		},
+		{
+			name:         "valid data returns no error",
+			value:        legacyAmino.MustMarshalJSON(&legacytx.StdSignDoc{Memo: "memo"}),
+			expectedMemo: "memo",
+			shouldErr:    false,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := types.ValidateAminoTxValue(tc.value, tc.expectedMemo, legacyAmino)
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestValidateRawValue(t *testing.T) {
+	testCases := []struct {
+		name          string
+		value         []byte
+		expectedValue string
+		shouldErr     bool
+	}{
+		{
+			name:          "wrong value returns error",
+			value:         []byte(""),
+			expectedValue: "value",
+			shouldErr:     true,
+		},
+		{
+			name:          "correct value returns no error",
+			value:         []byte("value"),
+			expectedValue: "value",
+			shouldErr:     false,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := types.ValidateRawValue(tc.value, tc.expectedValue)
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestValidatePersonalSignValue(t *testing.T) {
+	testCases := []struct {
+		name          string
+		value         []byte
+		expectedValue string
+		shouldErr     bool
+	}{
+		{
+			name:          "wrong value returns error",
+			value:         []byte(""),
+			expectedValue: "value",
+			shouldErr:     true,
+		},
+		{
+			name:          "correct value returns no error",
+			value:         []byte("\x19Ethereum Signed Message:\n45desmos16c60y8t8vra27zjg2arlcd58dck9cwn7p6fwtd"),
+			expectedValue: "desmos16c60y8t8vra27zjg2arlcd58dck9cwn7p6fwtd",
+			shouldErr:     false,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := types.ValidatePersonalSignValue(tc.value, tc.expectedValue)
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
 func TestSingleSignature_Validate(t *testing.T) {
 	cdc, amino := app.MakeCodecs()
 	testCases := []struct {
@@ -381,6 +531,20 @@ func TestSingleSignature_Validate(t *testing.T) {
 			name:      "valid raw value returns no error",
 			signature: types.NewSingleSignature(types.SIGNATURE_VALUE_ENCODING_RAW, nil),
 			plainText: []byte("cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae"),
+			owner:     "cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae",
+			shouldErr: false,
+		},
+		{
+			name:      "invalid personal sign value returns error",
+			signature: types.NewSingleSignature(types.SIGNATURE_VALUE_ENCODING_EVM_PERSONAL_SIGN, nil),
+			plainText: []byte("\x19Ethereum Signed Message:\n5value"),
+			owner:     "cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae",
+			shouldErr: true,
+		},
+		{
+			name:      "valid personal sign value returns no error",
+			signature: types.NewSingleSignature(types.SIGNATURE_VALUE_ENCODING_EVM_PERSONAL_SIGN, nil),
+			plainText: []byte("\x19Ethereum Signed Message:\n45cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae"),
 			owner:     "cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae",
 			shouldErr: false,
 		},
@@ -625,235 +789,6 @@ func TestCosmosMultiSignature_Verify(t *testing.T) {
 			signature: generateCosmosMultiSigSignature(t, privKeys, []byte("cosmos1vfvst0mr79nzzxsk65uuhfklmwrnsfadhtn977")),
 			pubKey:    pubKeyAny,
 			plainText: []byte("cosmos1vfvst0mr79nzzxsk65uuhfklmwrnsfadhtn977"),
-			shouldErr: false,
-			expPubKey: pubKey,
-		},
-	}
-
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(t *testing.T) {
-			pubKey, err := tc.signature.Verify(cdc, tc.pubKey, tc.plainText)
-			if tc.shouldErr {
-				require.Error(t, err)
-			} else {
-				require.NoError(t, err)
-				require.True(t, tc.expPubKey.Equals(pubKey))
-			}
-		})
-	}
-}
-
-// --------------------------------------------------------------------------------------------------------------------
-
-func TestValidateDirectTxSig(t *testing.T) {
-	cdc, _ := app.MakeCodecs()
-	testCases := []struct {
-		name         string
-		value        []byte
-		expectedMemo string
-		shouldErr    bool
-	}{
-		{
-			name:         "invalid message returns error",
-			value:        cdc.MustMarshal(&types.Bech32Address{Prefix: "cosmos"}),
-			expectedMemo: "memo",
-			shouldErr:    true,
-		},
-		{
-			name:         "wrong memo returns error",
-			value:        cdc.MustMarshal(&tx.SignDoc{BodyBytes: cdc.MustMarshal(&tx.TxBody{Memo: "memo"})}),
-			expectedMemo: "other memo",
-			shouldErr:    true,
-		},
-		{
-			name:         "valid data returns no error",
-			value:        cdc.MustMarshal(&tx.SignDoc{BodyBytes: cdc.MustMarshal(&tx.TxBody{Memo: "memo"})}),
-			expectedMemo: "memo",
-			shouldErr:    false,
-		},
-	}
-
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(t *testing.T) {
-			err := types.ValidateDirectTxSig(tc.value, tc.expectedMemo, cdc)
-			if tc.shouldErr {
-				require.Error(t, err)
-			} else {
-				require.NoError(t, err)
-			}
-		})
-	}
-}
-
-func TestValidateAminoTxSig(t *testing.T) {
-	_, legacyAmino := app.MakeCodecs()
-	testCases := []struct {
-		name         string
-		value        []byte
-		expectedMemo string
-		shouldErr    bool
-	}{
-		{
-			name:         "invalid message returns error",
-			value:        legacyAmino.MustMarshalJSON(&types.Bech32Address{}),
-			expectedMemo: "memo",
-			shouldErr:    true,
-		},
-		{
-			name:         "wrong memo returns error",
-			value:        legacyAmino.MustMarshalJSON(&legacytx.StdSignDoc{}),
-			expectedMemo: "memo",
-			shouldErr:    true,
-		},
-		{
-			name:         "valid data returns no error",
-			value:        legacyAmino.MustMarshalJSON(&legacytx.StdSignDoc{Memo: "memo"}),
-			expectedMemo: "memo",
-			shouldErr:    false,
-		},
-	}
-
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(t *testing.T) {
-			err := types.ValidateAminoTxSig(tc.value, tc.expectedMemo, legacyAmino)
-			if tc.shouldErr {
-				require.Error(t, err)
-			} else {
-				require.NoError(t, err)
-			}
-		})
-	}
-}
-
-func TestValidateRawSig(t *testing.T) {
-	testCases := []struct {
-		name          string
-		value         []byte
-		expectedValue string
-		shouldErr     bool
-	}{
-		{
-			name:          "wrong value returns error",
-			value:         []byte(""),
-			expectedValue: "value",
-			shouldErr:     true,
-		},
-		{
-			name:          "correct value returns no error",
-			value:         []byte("value"),
-			expectedValue: "value",
-			shouldErr:     false,
-		},
-	}
-
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(t *testing.T) {
-			err := types.ValidateRawSig(tc.value, tc.expectedValue)
-			if tc.shouldErr {
-				require.Error(t, err)
-			} else {
-				require.NoError(t, err)
-			}
-		})
-	}
-}
-
-// --------------------------------------------------------------------------------------------------------------------
-
-func TestEVMSignature_Validate(t *testing.T) {
-	cdc, amino := app.MakeCodecs()
-	testCases := []struct {
-		name      string
-		signature *types.EVMSignature
-		plainText []byte
-		owner     string
-		shouldErr bool
-	}{
-		{
-			name:      "invalid signing method returns error",
-			signature: types.NewEVMSignature(types.EVM_SIGNATURE_METHOD_UNSPECIFIED, nil),
-			plainText: []byte("\x19Ethereum Signed Message:\n45cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae"),
-			owner:     "cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae",
-			shouldErr: true,
-		},
-		{
-			name:      "invalid plain text returns error",
-			signature: types.NewEVMSignature(types.EVM_SIGNATURE_METHOD_PERSONAL_SIGN, nil),
-			plainText: []byte("\x19Ethereum Signed Message:\n5value"),
-			owner:     "cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae",
-			shouldErr: true,
-		},
-		{
-			name:      "valid data returns no error",
-			signature: types.NewEVMSignature(types.EVM_SIGNATURE_METHOD_PERSONAL_SIGN, nil),
-			plainText: []byte("\x19Ethereum Signed Message:\n45cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae"),
-			owner:     "cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae",
-			shouldErr: false,
-		},
-	}
-
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(t *testing.T) {
-			err := tc.signature.Validate(cdc, amino, tc.plainText, tc.owner)
-			if tc.shouldErr {
-				require.Error(t, err)
-			} else {
-				require.NoError(t, err)
-			}
-		})
-	}
-}
-
-func TestEVMSignature_Verify(t *testing.T) {
-	cdc, _ := app.MakeCodecs()
-
-	pubKeyHex := "0473b502fc87442aa6e3026ebd78ce4f7d631896f3f3abbe99c63c36fb3bedffce84618b8d83cea35eeaf9d89620c160df4effd72dfd41c7d6b3bb334e11cc990e"
-	pubKeyBz, err := hex.DecodeString(pubKeyHex)
-	require.NoError(t, err)
-
-	pubKey := &ethsecp256k1.PubKey{Key: pubKeyBz}
-	pubKeyAny, err := codectypes.NewAnyWithValue(pubKey)
-	require.NoError(t, err)
-
-	sigBz, err := hex.DecodeString("fc036f35f3d1aee08fbb49048f91eb8fc7fc0d83553067a3a70ce25d039e74aa310fd488dd0c493e75ab3923df4cc6b077ee9309df1501583ca330d1c7c1ff6b1b")
-	require.NoError(t, err)
-
-	invalidAny, err := codectypes.NewAnyWithValue(&types.SingleSignature{})
-	require.NoError(t, err)
-
-	testCases := []struct {
-		name      string
-		store     func(ctx sdk.Context)
-		signature *types.EVMSignature
-		pubKey    *codectypes.Any
-		plainText []byte
-		shouldErr bool
-		expPubKey cryptotypes.PubKey
-	}{
-		{
-			name:      "invalid pub key returns error",
-			signature: types.NewEVMSignature(types.EVM_SIGNATURE_METHOD_PERSONAL_SIGN, sigBz),
-			pubKey:    invalidAny,
-			plainText: []byte("\x19Ethereum Signed Message:\n45desmos16c60y8t8vra27zjg2arlcd58dck9cwn7p6fwtd"),
-			shouldErr: true,
-		},
-		{
-			name:      "invalid signature returns error",
-			signature: types.NewEVMSignature(types.EVM_SIGNATURE_METHOD_PERSONAL_SIGN, sigBz),
-			pubKey:    pubKeyAny,
-			plainText: []byte("value"),
-			shouldErr: true,
-		},
-		{
-			name:      "valid data returns no error",
-			signature: types.NewEVMSignature(types.EVM_SIGNATURE_METHOD_PERSONAL_SIGN, sigBz),
-			pubKey:    pubKeyAny,
-			plainText: []byte("\x19Ethereum Signed Message:\n45desmos16c60y8t8vra27zjg2arlcd58dck9cwn7p6fwtd"),
 			shouldErr: false,
 			expPubKey: pubKey,
 		},

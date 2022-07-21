@@ -38,7 +38,6 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterInterface((*Signature)(nil), nil)
 	cdc.RegisterConcrete(&SingleSignature{}, "desmos/SingleSignature", nil)
 	cdc.RegisterConcrete(&CosmosMultiSignature{}, "desmos/CosmosMultiSignature", nil)
-	cdc.RegisterConcrete(&EVMSignature{}, "desmos/EVMSignature", nil)
 
 	cdc.RegisterConcrete(&Profile{}, "desmos/Profile", nil)
 }
@@ -59,7 +58,6 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 		(*Signature)(nil),
 		&SingleSignature{},
 		&CosmosMultiSignature{},
-		&EVMSignature{},
 	)
 
 	registry.RegisterImplementations((*sdk.Msg)(nil),
