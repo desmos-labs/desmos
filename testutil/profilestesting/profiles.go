@@ -74,8 +74,8 @@ func ProfileFromAddr(address string) *types.Profile {
 	return profile
 }
 
-// SingleCosmosSignatureFromHex convert the hex-encoded string of the single signature to CosmosSignatureData
-func SingleCosmosSignatureFromHex(hexEncodedSignature string) types.Signature {
+// SingleSignatureFromHex convert the hex-encoded string of the single signature to CosmosSignatureData
+func SingleSignatureFromHex(hexEncodedSignature string) types.Signature {
 	sig, err := hex.DecodeString(hexEncodedSignature)
 	if err != nil {
 		panic(err)

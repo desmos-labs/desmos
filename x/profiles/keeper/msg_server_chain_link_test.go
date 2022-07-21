@@ -51,7 +51,7 @@ func (suite *KeeperTestSuite) TestMsgServer_LinkChainAccount() {
 			name: "invalid chain link returns error",
 			msg: types.NewMsgLinkChainAccount(
 				types.NewBech32Address(srcAddr, "cosmos"),
-				types.NewProof(srcPubKey, profilestesting.SingleCosmosSignatureFromHex(srcSigHex), hex.EncodeToString([]byte(srcAddr))),
+				types.NewProof(srcPubKey, profilestesting.SingleSignatureFromHex(srcSigHex), hex.EncodeToString([]byte(srcAddr))),
 				types.NewChainConfig("cosmos"),
 				destAddr,
 			),
@@ -62,7 +62,7 @@ func (suite *KeeperTestSuite) TestMsgServer_LinkChainAccount() {
 			name: "invalid chain address packed value returns error",
 			msg: &types.MsgLinkChainAccount{
 				ChainAddress: profilestesting.NewAny(srcPriv),
-				Proof:        types.NewProof(srcPubKey, profilestesting.SingleCosmosSignatureFromHex(srcSigHex), hex.EncodeToString([]byte(srcAddr))),
+				Proof:        types.NewProof(srcPubKey, profilestesting.SingleSignatureFromHex(srcSigHex), hex.EncodeToString([]byte(srcAddr))),
 				ChainConfig:  types.NewChainConfig("cosmos"),
 				Signer:       destAddr,
 			},
@@ -101,7 +101,7 @@ func (suite *KeeperTestSuite) TestMsgServer_LinkChainAccount() {
 			},
 			msg: types.NewMsgLinkChainAccount(
 				types.NewBech32Address(srcAddr, "cosmos"),
-				types.NewProof(srcPubKey, profilestesting.SingleCosmosSignatureFromHex(srcSigHex), hex.EncodeToString([]byte(destAddr))),
+				types.NewProof(srcPubKey, profilestesting.SingleSignatureFromHex(srcSigHex), hex.EncodeToString([]byte(destAddr))),
 				types.NewChainConfig("cosmos"),
 				destAddr,
 			),
@@ -186,7 +186,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UnlinkChainAccount() {
 					types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
 					types.NewProof(
 						profilestesting.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
-						profilestesting.SingleCosmosSignatureFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
+						profilestesting.SingleSignatureFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
 						"74657874",
 					),
 					types.NewChainConfig("cosmos"),
@@ -282,7 +282,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SetDefaultExternalAddress() {
 					types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
 					types.NewProof(
 						profilestesting.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
-						profilestesting.SingleCosmosSignatureFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
+						profilestesting.SingleSignatureFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
 						"74657874",
 					),
 					types.NewChainConfig("cosmos"),

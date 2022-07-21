@@ -67,7 +67,7 @@ func (suite *CreateJSONChainLinkTestSuite) TestSingleSignatureAccount() {
 		profilestypes.NewBech32Address("cosmos13j7p6faa9jr8ty6lvqv0prldprr6m5xenmafnt", "cosmos"),
 		profilestypes.NewProof(
 			key.GetPubKey(),
-			profilestesting.SingleCosmosSignatureFromHex(hex.EncodeToString(sig)),
+			profilestesting.SingleSignatureFromHex(hex.EncodeToString(sig)),
 			hex.EncodeToString([]byte(suite.Owner)),
 		),
 		profilestypes.NewChainConfig("cosmos"),

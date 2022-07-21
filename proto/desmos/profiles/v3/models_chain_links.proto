@@ -125,7 +125,7 @@ message HexAddress {
 message SingleSignature {
   option (gogoproto.goproto_getters) = false;
   option (gogoproto.equal) = true;
-  option (cosmos_proto.implements_interface) = "CosmosSignature";
+  option (cosmos_proto.implements_interface) = "Signature";
 
   // Type represents the type of the signature value
   SignatureValueType value_type = 1
@@ -166,7 +166,7 @@ enum SignatureValueType {
 message CosmosMultiSignature {
   option (gogoproto.goproto_getters) = false;
   option (gogoproto.equal) = true;
-  option (cosmos_proto.implements_interface) = "CosmosSignature";
+  option (cosmos_proto.implements_interface) = "Signature";
 
   // Bitarray specifies which keys within the multisig are signing
   cosmos.crypto.multisig.v1beta1.CompactBitArray bit_array = 1
@@ -174,7 +174,7 @@ message CosmosMultiSignature {
 
   // Signatures is the signatures of the multi-signature
   repeated google.protobuf.Any signatures = 2 [
-    (cosmos_proto.accepts_interface) = "CosmosSignature",
+    (cosmos_proto.accepts_interface) = "Signature",
     (gogoproto.moretags) = "yaml:\"signatures\""
   ];
 }

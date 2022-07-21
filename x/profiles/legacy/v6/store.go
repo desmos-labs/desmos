@@ -268,13 +268,13 @@ func convertChainLinkSignatureData(data *codectypes.Any, cdc codec.BinaryCodec) 
 		}
 
 	case *v5types.MultiSignatureData:
-		signatures := make([]types.CosmosSignature, len(signature.Signatures))
+		signatures := make([]types.Signature, len(signature.Signatures))
 		for i, sig := range signature.Signatures {
 			// Recursively convert the signature any
 			sigAny := convertChainLinkSignatureData(sig, cdc)
 
 			// Unpack the signature
-			var cosmosSig types.CosmosSignature
+			var cosmosSig types.Signature
 			err = cdc.UnpackAny(sigAny, &cosmosSig)
 			if err != nil {
 				panic(err)

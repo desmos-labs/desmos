@@ -159,6 +159,9 @@ func (p *Proof) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 type Signature interface {
 	proto.Message
 
+	// GetValueType returns the type of the signature
+	GetValueType() (SignatureValueType, error)
+
 	// Validate checks the validity of the Signature
 	Validate(cdc codec.BinaryCodec, amino *codec.LegacyAmino, plainText []byte, owner string) error
 
@@ -238,17 +241,7 @@ func ValidatePersonalSignValue(value []byte, expectedValue string) error {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-type CosmosSignature interface {
-	Signature
-	GetValueType() (SignatureValueType, error)
-}
-
-// --------------------------------------------------------------------------------------------------------------------
-
-var (
-	_ Signature       = &SingleSignature{}
-	_ CosmosSignature = &SingleSignature{}
-)
+var _ Signature = &SingleSignature{}
 
 // NewSingleSignature returns a new CosmosSignature instance
 func NewSingleSignature(valueType SignatureValueType, signature []byte) *SingleSignature {
@@ -299,13 +292,10 @@ func (s *SingleSignature) Verify(cdc codec.BinaryCodec, pubKey *codectypes.Any, 
 
 // --------------------------------------------------------------------------------------------------------------------
 
-var (
-	_ Signature       = &CosmosMultiSignature{}
-	_ CosmosSignature = &CosmosMultiSignature{}
-)
+var _ Signature = &CosmosMultiSignature{}
 
 // NewCosmosMultiSignature returns a new CosmosMultiSignature instance
-func NewCosmosMultiSignature(bitArray *cryptotypes.CompactBitArray, signatures []CosmosSignature) *CosmosMultiSignature {
+func NewCosmosMultiSignature(bitArray *cryptotypes.CompactBitArray, signatures []Signature) *CosmosMultiSignature {
 	sigsAnys := make([]*codectypes.Any, len(signatures))
 	for i, sig := range signatures {
 		sigAny, err := codectypes.NewAnyWithValue(sig)
@@ -326,7 +316,7 @@ func (s *CosmosMultiSignature) GetValueType() (SignatureValueType, error) {
 	signMode := SIGNATURE_VALUE_TYPE_UNSPECIFIED
 	for i, signature := range s.Signatures {
 		// Unwrap the signature
-		cosmosSig, ok := signature.GetCachedValue().(CosmosSignature)
+		cosmosSig, ok := signature.GetCachedValue().(Signature)
 		if !ok {
 			return SIGNATURE_VALUE_TYPE_UNSPECIFIED, fmt.Errorf("invalid signature type at index %d: %T", i, cosmosSig)
 		}
