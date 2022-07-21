@@ -47,7 +47,7 @@ func (k Keeper) Profile(ctx context.Context, request *types.QueryProfileRequest)
 	}
 
 	if !found {
-		return &types.QueryProfileResponse{Profile: nil}, nil
+		return nil, status.Errorf(codes.NotFound, "profile for dtag/address %s not found", dTagOrAddress)
 	}
 
 	accountAny, err := codectypes.NewAnyWithValue(account)
