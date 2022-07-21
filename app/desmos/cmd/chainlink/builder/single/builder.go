@@ -58,7 +58,7 @@ func (b *AccountChainLinkJSONBuilder) BuildChainLinkJSON(chain types.Chain) (uti
 		profilestypes.NewBech32Address(addr, chain.Prefix),
 		profilestypes.NewProof(
 			pubkey,
-			profilestypes.NewSingleSignature(profilestypes.SIGNATURE_VALUE_ENCODING_RAW, sig),
+			profilestypes.NewSingleSignature(profilestypes.SIGNATURE_VALUE_TYPE_RAW, sig),
 			hex.EncodeToString(value),
 		),
 		profilestypes.NewChainConfig(chain.Name),

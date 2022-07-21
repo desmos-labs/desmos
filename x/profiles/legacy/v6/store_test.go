@@ -285,12 +285,12 @@ func TestMigrateStore(t *testing.T) {
 				  "signatures": [
 					{
 					  "@type": "/desmos.profiles.v3.SingleSignature",
-					  "value_encoding": "SIGNATURE_VALUE_ENCODING_COSMOS_AMINO",
+					  "value_type": "SIGNATURE_VALUE_TYPE_COSMOS_AMINO",
 					  "signature": "J/xFZ4GKKYA+wT9ClATHExyBiswZVPUS89caM3nn7HQdJd6LFC9hFRZSsG73iq7/1YcHAj5ujfvpjJkBhQFkdg=="
 					},
 					{
 					  "@type": "/desmos.profiles.v3.SingleSignature",
-					  "value_encoding": "SIGNATURE_VALUE_ENCODING_COSMOS_AMINO",
+					  "value_type": "SIGNATURE_VALUE_TYPE_COSMOS_AMINO",
 					  "signature": "k5TIZjDnr7lhiZrdj8GiEdFLjMOHAsU8qnAYUVV/NYMsEeEVENpNZ2V4oZs0KGUxdUdUmytL14zfgJ2vpVBB9w=="
 					}
 				  ]

@@ -127,40 +127,39 @@ message SingleSignature {
   option (gogoproto.equal) = true;
   option (cosmos_proto.implements_interface) = "CosmosSignature";
 
-  // ValueEncoding represents how the value has been encoded before being signed
-  SignatureValueEncoding value_encoding = 1
-      [ (gogoproto.moretags) = "yaml:\"value_encoding\"" ];
+  // Type represents the type of the signature value
+  SignatureValueType value_type = 1
+      [ (gogoproto.moretags) = "yaml:\"value_type\"" ];
 
   // Signature is the raw signature bytes
   bytes signature = 2 [ (gogoproto.moretags) = "yaml:\"signature\"" ];
 }
 
-// SignatureValueEncoding tells how the value has been encoded before being
-// signed
-enum SignatureValueEncoding {
+// SignatureValueType specifies all the possible signature types
+enum SignatureValueType {
   option (gogoproto.goproto_enum_prefix) = false;
 
-  // SIGNATURE_VALUE_ENCODING_UNSPECIFIED specifies an unknown signing mode and
-  // will be rejected
-  SIGNATURE_VALUE_ENCODING_UNSPECIFIED = 0;
+  // SIGNATURE_VALUE_TYPE_UNSPECIFIED specifies an unknown signing mode
+  // and will be rejected
+  SIGNATURE_VALUE_TYPE_UNSPECIFIED = 0;
 
-  // SIGNATURE_VALUE_ENCODING_RAW should be used when the value has been signed
-  // as a raw byte array
-  SIGNATURE_VALUE_ENCODING_RAW = 1;
+  // SIGNATURE_VALUE_TYPE_RAW should be used when the value has been
+  // signed as a raw byte array
+  SIGNATURE_VALUE_TYPE_RAW = 1;
 
-  // SIGNATURE_VALUE_ENCODING_COSMOS_DIRECT should be used when the signed value
-  // has been encoded as a Protobuf transaction containing the owner address
-  // inside its memo field
-  SIGNATURE_VALUE_ENCODING_COSMOS_DIRECT = 2;
+  // SIGNATURE_VALUE_TYPE_COSMOS_DIRECT should be used when the signed
+  // value has been encoded as a Protobuf transaction containing the owner
+  // address inside its memo field
+  SIGNATURE_VALUE_TYPE_COSMOS_DIRECT = 2;
 
-  // SIGNATURE_VALUE_ENCODING_COSMOS_AMINO should be used when the value has
+  // SIGNATURE_VALUE_TYPE_COSMOS_AMINO should be used when the value has
   // been encoded as an Amino transaction containing the owner address inside
   // its memo field
-  SIGNATURE_VALUE_ENCODING_COSMOS_AMINO = 3;
+  SIGNATURE_VALUE_TYPE_COSMOS_AMINO = 3;
 
-  // SIGNATURE_VALUE_ENCODING_EVM_PERSONAL_SIGN should be used when the value
+  // SIGNATURE_VALUE_TYPE_EVM_PERSONAL_SIGN should be used when the value
   // has been encoded following the EVM personal_sign specification
-  SIGNATURE_VALUE_ENCODING_EVM_PERSONAL_SIGN = 4;
+  SIGNATURE_VALUE_TYPE_EVM_PERSONAL_SIGN = 4;
 }
 
 // CosmosMultiSignature is the signature data for a multisig public key

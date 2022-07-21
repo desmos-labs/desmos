@@ -249,14 +249,14 @@ func convertChainLinkSignatureData(data *codectypes.Any, cdc codec.BinaryCodec) 
 	var signatureAny *codectypes.Any
 	switch signature := v5Signature.(type) {
 	case *v5types.SingleSignatureData:
-		var signingMode types.SignatureValueEncoding
+		var signingMode types.SignatureValueType
 		switch signature.Mode {
 		case signing.SignMode_SIGN_MODE_DIRECT:
-			signingMode = types.SIGNATURE_VALUE_ENCODING_COSMOS_DIRECT
+			signingMode = types.SIGNATURE_VALUE_TYPE_COSMOS_DIRECT
 		case signing.SignMode_SIGN_MODE_LEGACY_AMINO_JSON:
-			signingMode = types.SIGNATURE_VALUE_ENCODING_COSMOS_AMINO
+			signingMode = types.SIGNATURE_VALUE_TYPE_COSMOS_AMINO
 		case signing.SignMode_SIGN_MODE_TEXTUAL:
-			signingMode = types.SIGNATURE_VALUE_ENCODING_RAW
+			signingMode = types.SIGNATURE_VALUE_TYPE_RAW
 		default:
 			panic(fmt.Sprintf("unsupported signing mode: %s", signature.Mode))
 		}
