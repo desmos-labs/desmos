@@ -385,7 +385,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetChainLinks() {
 						types.NewChainLink(
 							"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 							types.NewBech32Address("cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f", "cosmos"),
-							types.NewProof(pub1, profilestesting.SingleSignatureProtoFromHex("1234"), "plain_text"),
+							types.NewProof(pub1, profilestesting.SingleSignatureFromHex("1234"), "plain_text"),
 							types.NewChainConfig("cosmos"),
 							time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 						),
@@ -398,7 +398,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetChainLinks() {
 						types.NewChainLink(
 							"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 							types.NewBech32Address("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs", "cosmos"),
-							types.NewProof(pub2, profilestesting.SingleSignatureProtoFromHex("1234"), "plain_text"),
+							types.NewProof(pub2, profilestesting.SingleSignatureFromHex("1234"), "plain_text"),
 							types.NewChainConfig("cosmos"),
 							time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 						),
@@ -409,14 +409,14 @@ func (suite *KeeperTestSuite) TestKeeper_GetChainLinks() {
 				types.NewChainLink(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					types.NewBech32Address("cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f", "cosmos"),
-					types.NewProof(pub1, profilestesting.SingleSignatureProtoFromHex("1234"), "plain_text"),
+					types.NewProof(pub1, profilestesting.SingleSignatureFromHex("1234"), "plain_text"),
 					types.NewChainConfig("cosmos"),
 					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 				),
 				types.NewChainLink(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					types.NewBech32Address("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs", "cosmos"),
-					types.NewProof(pub2, profilestesting.SingleSignatureProtoFromHex("1234"), "plain_text"),
+					types.NewProof(pub2, profilestesting.SingleSignatureFromHex("1234"), "plain_text"),
 					types.NewChainConfig("cosmos"),
 					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 				),

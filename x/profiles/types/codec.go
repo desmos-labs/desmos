@@ -9,9 +9,15 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting/exported"
 	authzcodec "github.com/cosmos/cosmos-sdk/x/authz/codec"
+
+	"github.com/desmos-labs/desmos/v4/types/crypto/ethsecp256k1"
 )
 
 func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
+	// Register custom key types
+	cdc.RegisterConcrete(&ethsecp256k1.PubKey{}, ethsecp256k1.PubKeyName, nil)
+	cdc.RegisterConcrete(&ethsecp256k1.PrivKey{}, ethsecp256k1.PrivKeyName, nil)
+
 	cdc.RegisterConcrete(MsgSaveProfile{}, "desmos/MsgSaveProfile", nil)
 	cdc.RegisterConcrete(MsgDeleteProfile{}, "desmos/MsgDeleteProfile", nil)
 	cdc.RegisterConcrete(MsgRequestDTagTransfer{}, "desmos/MsgRequestDTagTransfer", nil)
@@ -29,9 +35,9 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&Base58Address{}, "desmos/Base58Address", nil)
 	cdc.RegisterConcrete(&HexAddress{}, "desmos/HexAddress", nil)
 
-	cdc.RegisterInterface((*SignatureData)(nil), nil)
-	cdc.RegisterConcrete(&SingleSignatureData{}, "desmos/SingleSignatureData", nil)
-	cdc.RegisterConcrete(&MultiSignatureData{}, "desmos/MultiSignatureData", nil)
+	cdc.RegisterInterface((*Signature)(nil), nil)
+	cdc.RegisterConcrete(&SingleSignature{}, "desmos/SingleSignature", nil)
+	cdc.RegisterConcrete(&CosmosMultiSignature{}, "desmos/CosmosMultiSignature", nil)
 
 	cdc.RegisterConcrete(&Profile{}, "desmos/Profile", nil)
 }
@@ -49,9 +55,9 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 	)
 	registry.RegisterInterface(
 		"desmos.profiles.v3.Signature",
-		(*SignatureData)(nil),
-		&SingleSignatureData{},
-		&MultiSignatureData{},
+		(*Signature)(nil),
+		&SingleSignature{},
+		&CosmosMultiSignature{},
 	)
 
 	registry.RegisterImplementations((*sdk.Msg)(nil),

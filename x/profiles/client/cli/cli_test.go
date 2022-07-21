@@ -208,7 +208,7 @@ func (s *IntegrationTestSuite) writeChainLinkJSONFile(filePath string) {
 
 	jsonData := utils.NewChainLinkJSON(
 		types.NewBech32Address(addStr, "cosmos"),
-		types.NewProof(srcKey.PubKey(), profilestesting.SingleSignatureProtoFromHex(hex.EncodeToString(sigBz)), hex.EncodeToString([]byte(plainText))),
+		types.NewProof(srcKey.PubKey(), profilestesting.SingleSignatureFromHex(hex.EncodeToString(sigBz)), hex.EncodeToString([]byte(plainText))),
 		types.NewChainConfig("cosmos"),
 	)
 

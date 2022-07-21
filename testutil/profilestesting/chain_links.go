@@ -8,7 +8,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 
 	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
@@ -53,11 +52,8 @@ func (a ChainLinkAccount) Bech32Address() *types.Bech32Address {
 	return types.NewBech32Address(addr, a.bech32Prefix)
 }
 
-func (a ChainLinkAccount) Bech32SignatureData(signedValue string) types.SignatureData {
-	return &types.SingleSignatureData{
-		Mode:      signing.SignMode_SIGN_MODE_TEXTUAL,
-		Signature: a.Sign(signedValue),
-	}
+func (a ChainLinkAccount) Bech32SignatureData(signedValue string) types.Signature {
+	return types.NewSingleSignature(types.SIGNATURE_VALUE_TYPE_RAW, a.Sign(signedValue))
 }
 
 func (a ChainLinkAccount) Bech32Proof(user string) types.Proof {

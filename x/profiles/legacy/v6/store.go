@@ -15,6 +15,8 @@ import (
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
+	"github.com/cosmos/cosmos-sdk/types/tx/signing"
+
 	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
@@ -227,7 +229,7 @@ func convertChainLinkProof(v5Proof v5types.Proof, cdc codec.BinaryCodec) types.P
 		panic(err)
 	}
 
-	var v6Signature types.SignatureData
+	var v6Signature types.Signature
 	v6SignatureAny := convertChainLinkSignatureData(v5Proof.Signature, cdc)
 	err = cdc.UnpackAny(v6SignatureAny, &v6Signature)
 	if err != nil {
@@ -235,7 +237,6 @@ func convertChainLinkProof(v5Proof v5types.Proof, cdc codec.BinaryCodec) types.P
 	}
 
 	return types.NewProof(pubKey, v6Signature, v5Proof.PlainText)
-
 }
 
 func convertChainLinkSignatureData(data *codectypes.Any, cdc codec.BinaryCodec) *codectypes.Any {
@@ -248,24 +249,48 @@ func convertChainLinkSignatureData(data *codectypes.Any, cdc codec.BinaryCodec) 
 	var signatureAny *codectypes.Any
 	switch signature := v5Signature.(type) {
 	case *v5types.SingleSignatureData:
-		v6Signature := &types.SingleSignatureData{Signature: signature.Signature, Mode: signature.Mode}
+		var signingMode types.SignatureValueType
+		switch signature.Mode {
+		case signing.SignMode_SIGN_MODE_DIRECT:
+			signingMode = types.SIGNATURE_VALUE_TYPE_COSMOS_DIRECT
+		case signing.SignMode_SIGN_MODE_LEGACY_AMINO_JSON:
+			signingMode = types.SIGNATURE_VALUE_TYPE_COSMOS_AMINO
+		case signing.SignMode_SIGN_MODE_TEXTUAL:
+			signingMode = types.SIGNATURE_VALUE_TYPE_RAW
+		default:
+			panic(fmt.Sprintf("unsupported signing mode: %s", signature.Mode))
+		}
+
+		v6Signature := types.NewSingleSignature(signingMode, signature.Signature)
 		signatureAny, err = codectypes.NewAnyWithValue(v6Signature)
 		if err != nil {
 			panic(err)
 		}
 
 	case *v5types.MultiSignatureData:
-		sigsAnys := make([]*codectypes.Any, len(signature.Signatures))
-		for i, signature := range signature.Signatures {
-			sigsAnys[i] = convertChainLinkSignatureData(signature, cdc)
+		signatures := make([]types.Signature, len(signature.Signatures))
+		for i, sig := range signature.Signatures {
+			// Recursively convert the signature any
+			sigAny := convertChainLinkSignatureData(sig, cdc)
+
+			// Unpack the signature
+			var cosmosSig types.Signature
+			err = cdc.UnpackAny(sigAny, &cosmosSig)
+			if err != nil {
+				panic(err)
+			}
+
+			signatures[i] = cosmosSig
 		}
 
-		v6Signature := &types.MultiSignatureData{BitArray: signature.BitArray, Signatures: sigsAnys}
+		// Build the signature
+		v6Signature := types.NewCosmosMultiSignature(signature.BitArray, signatures)
+
+		// Convert it as an Any
 		signatureAny, err = codectypes.NewAnyWithValue(v6Signature)
 		if err != nil {
 			panic(err)
 		}
-
 	}
 
 	return signatureAny

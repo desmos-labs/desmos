@@ -179,7 +179,7 @@ func TestMigrateStore(t *testing.T) {
 			},
 		},
 		{
-			name: "chain links are migrated properly",
+			name: "chain links are migrated properly - single signature",
 			store: func(ctx sdk.Context) {
 				kvStore := ctx.KVStore(keys[types.StoreKey])
 
@@ -192,7 +192,7 @@ func TestMigrateStore(t *testing.T) {
 					v5types.NewProof(
 						pubKey,
 						&v5types.SingleSignatureData{
-							Mode:      signing.SignMode_SIGN_MODE_DIRECT,
+							Mode:      signing.SignMode_SIGN_MODE_TEXTUAL,
 							Signature: sig,
 						},
 						"plain_text",
@@ -222,7 +222,93 @@ func TestMigrateStore(t *testing.T) {
 				require.Equal(t, types.NewChainLink(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					types.NewBech32Address("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs", "cosmos"),
-					types.NewProof(pubKey, profilestesting.SingleSignatureProtoFromHex("1234"), "plain_text"),
+					types.NewProof(pubKey, profilestesting.SingleSignatureFromHex("1234"), "plain_text"),
+					types.NewChainConfig("cosmos"),
+					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+				), stored)
+			},
+		},
+		{
+			name: "chain links are migrated properly - multi signature",
+			store: func(ctx sdk.Context) {
+				kvStore := ctx.KVStore(keys[types.StoreKey])
+
+				var signatureJSON = `{
+				  "@type": "/desmos.profiles.v2.MultiSignatureData",
+				  "bit_array": {
+					"extra_bits_stored": 3,
+					"elems": "wA=="
+				  },
+				  "signatures": [
+					{
+					  "@type": "/desmos.profiles.v2.SingleSignatureData",
+					  "mode": "SIGN_MODE_LEGACY_AMINO_JSON",
+					  "signature": "J/xFZ4GKKYA+wT9ClATHExyBiswZVPUS89caM3nn7HQdJd6LFC9hFRZSsG73iq7/1YcHAj5ujfvpjJkBhQFkdg=="
+					},
+					{
+					  "@type": "/desmos.profiles.v2.SingleSignatureData",
+					  "mode": "SIGN_MODE_LEGACY_AMINO_JSON",
+					  "signature": "k5TIZjDnr7lhiZrdj8GiEdFLjMOHAsU8qnAYUVV/NYMsEeEVENpNZ2V4oZs0KGUxdUdUmytL14zfgJ2vpVBB9w=="
+					}
+				  ]
+				}`
+				var signatureData v5types.SignatureData
+				err := cdc.UnmarshalInterfaceJSON([]byte(signatureJSON), &signatureData)
+				require.NoError(t, err)
+
+				chainLink := v5types.NewChainLink(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					v5types.NewBech32Address("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs", "cosmos"),
+					v5types.NewProof(pubKey, signatureData, "plain_text"),
+					v5types.NewChainConfig("cosmos"),
+					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+				)
+				kvStore.Set(
+					types.ChainLinksStoreKey(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"cosmos",
+						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
+					),
+					cdc.MustMarshal(&chainLink),
+				)
+			},
+			shouldErr: false,
+			check: func(ctx sdk.Context) {
+				kvStore := ctx.KVStore(keys[types.StoreKey])
+
+				var signatureJSON = `{
+				  "@type": "/desmos.profiles.v3.CosmosMultiSignature",
+				  "bit_array": {
+					"extra_bits_stored": 3,
+					"elems": "wA=="
+				  },
+				  "signatures": [
+					{
+					  "@type": "/desmos.profiles.v3.SingleSignature",
+					  "value_type": "SIGNATURE_VALUE_TYPE_COSMOS_AMINO",
+					  "signature": "J/xFZ4GKKYA+wT9ClATHExyBiswZVPUS89caM3nn7HQdJd6LFC9hFRZSsG73iq7/1YcHAj5ujfvpjJkBhQFkdg=="
+					},
+					{
+					  "@type": "/desmos.profiles.v3.SingleSignature",
+					  "value_type": "SIGNATURE_VALUE_TYPE_COSMOS_AMINO",
+					  "signature": "k5TIZjDnr7lhiZrdj8GiEdFLjMOHAsU8qnAYUVV/NYMsEeEVENpNZ2V4oZs0KGUxdUdUmytL14zfgJ2vpVBB9w=="
+					}
+				  ]
+				}`
+				var signature types.Signature
+				err := cdc.UnmarshalInterfaceJSON([]byte(signatureJSON), &signature)
+				require.NoError(t, err)
+
+				var stored types.ChainLink
+				cdc.MustUnmarshal(kvStore.Get(types.ChainLinksStoreKey(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos",
+					"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
+				)), &stored)
+				require.Equal(t, types.NewChainLink(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					types.NewBech32Address("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs", "cosmos"),
+					types.NewProof(pubKey, signature, "plain_text"),
 					types.NewChainConfig("cosmos"),
 					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 				), stored)

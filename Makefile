@@ -303,6 +303,20 @@ format:
 .PHONY: format
 
 ###############################################################################
+###                                  Types                                  ###
+###############################################################################
+
+EVMOS_URL 		 = https://raw.githubusercontent.com/evmos/ethermint/v0.17.1/crypto/
+CRYPTO_TYPES 	 = types/crypto
+
+update-deps-types:
+	@mkdir -p $(CRYPTO_TYPES)/ethsecp256k1
+	@curl -sSL $(EVMOS_URL)/ethsecp256k1/keys.pb.go > $(CRYPTO_TYPES)/ethsecp256k1/keys.pb.go
+	@curl -sSL $(EVMOS_URL)/ethsecp256k1/ethsecp256k1.go > $(CRYPTO_TYPES)/ethsecp256k1/ethsecp256k1.go
+
+.PHONY: update-deps-types
+
+###############################################################################
 ###                                Protobuf                                 ###
 ###############################################################################
 

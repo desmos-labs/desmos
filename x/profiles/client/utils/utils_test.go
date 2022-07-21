@@ -34,7 +34,7 @@ func TestParseLinkAccountJSON(t *testing.T) {
 
 	jsonData := utils.NewChainLinkJSON(
 		types.NewBech32Address(addStr, "cosmos"),
-		types.NewProof(pubKey, profilestesting.SingleSignatureProtoFromHex(hex.EncodeToString(sigBz)), plainText),
+		types.NewProof(pubKey, profilestesting.SingleSignatureFromHex(hex.EncodeToString(sigBz)), plainText),
 		types.NewChainConfig("cosmos"),
 	)
 

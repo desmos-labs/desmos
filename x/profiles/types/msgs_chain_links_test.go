@@ -17,7 +17,7 @@ var msgChainLinkAccount = types.NewMsgLinkChainAccount(
 	types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
 	types.NewProof(
 		profilestesting.PubKeyFromBech32("cosmospub1addwnpepq0j8zw4t6tg3v8gh7d2d799gjhue7ewwmpg2hwr77f9kuuyzgqtrw5r6wec"),
-		profilestesting.SingleSignatureProtoFromHex("ad112abb30e5240c7b9d21b4cc5421d76cfadfcd5977cca262523b5f5bc759457d4aa6d5c1eb6223db104b47aa1f222468be8eb5bb2762b971622ac5b96351b5"),
+		profilestesting.SingleSignatureFromHex("ad112abb30e5240c7b9d21b4cc5421d76cfadfcd5977cca262523b5f5bc759457d4aa6d5c1eb6223db104b47aa1f222468be8eb5bb2762b971622ac5b96351b5"),
 		"74657874",
 	),
 	types.NewChainConfig("cosmos"),
@@ -51,7 +51,7 @@ func TestMsgLinkChainAccount_ValidateBasic(t *testing.T) {
 			name: "invalid proof returns error",
 			msg: types.NewMsgLinkChainAccount(
 				types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
-				types.NewProof(secp256k1.GenPrivKey().PubKey(), &types.SingleSignatureData{}, "wrong"),
+				types.NewProof(secp256k1.GenPrivKey().PubKey(), &types.SingleSignature{}, "wrong"),
 				msgChainLinkAccount.ChainConfig,
 				msgChainLinkAccount.Signer,
 			),
@@ -99,7 +99,7 @@ func TestMsgLinkChainAccount_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgLinkChainAccount_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgLinkChainAccount","value":{"chain_address":{"type":"desmos/Bech32Address","value":{"prefix":"cosmos","value":"cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0"}},"chain_config":{"name":"cosmos"},"proof":{"plain_text":"74657874","pub_key":{"type":"tendermint/PubKeySecp256k1","value":"A+RxOqvS0RYdF/NU3xSolfmfZc7YUKu4fvJLbnCCQBY3"},"signature":{"type":"desmos/SingleSignatureData","value":{"mode":1,"signature":"rREquzDlJAx7nSG0zFQh12z6381Zd8yiYlI7X1vHWUV9SqbVwetiI9sQS0eqHyIkaL6OtbsnYrlxYirFuWNRtQ=="}}},"signer":"cosmos1u9hgsqfpe3snftr7p7fsyja3wtlmj2sgf2w9yl"}}`
+	expected := `{"type":"desmos/MsgLinkChainAccount","value":{"chain_address":{"type":"desmos/Bech32Address","value":{"prefix":"cosmos","value":"cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0"}},"chain_config":{"name":"cosmos"},"proof":{"plain_text":"74657874","pub_key":{"type":"tendermint/PubKeySecp256k1","value":"A+RxOqvS0RYdF/NU3xSolfmfZc7YUKu4fvJLbnCCQBY3"},"signature":{"type":"desmos/SingleSignature","value":{"signature":"rREquzDlJAx7nSG0zFQh12z6381Zd8yiYlI7X1vHWUV9SqbVwetiI9sQS0eqHyIkaL6OtbsnYrlxYirFuWNRtQ==","value_type":1}}},"signer":"cosmos1u9hgsqfpe3snftr7p7fsyja3wtlmj2sgf2w9yl"}}`
 	require.Equal(t, expected, string(msgChainLinkAccount.GetSignBytes()))
 }
 

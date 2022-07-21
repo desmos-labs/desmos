@@ -86,7 +86,7 @@ func (b *AccountChainLinkJSONBuilder) BuildChainLinkJSON(chain types.Chain) (uti
 		return utils.ChainLinkJSON{}, err
 	}
 
-	sigData, err := profilestypes.SignatureDataFromCosmosSignatureData(sigs[0].Data)
+	sigData, err := profilestypes.CosmosSignatureDataToSignature(sigs[0].Data)
 	if err != nil {
 		return utils.ChainLinkJSON{}, err
 	}
