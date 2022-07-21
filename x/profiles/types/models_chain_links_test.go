@@ -227,7 +227,7 @@ func generateCosmosMultiSigSignature(t *testing.T, privKeys []cryptotypes.PrivKe
 	}
 
 	// Generate the signature data object
-	signature, err := types.SignatureDataFromCosmosSignatureData(cosmosMultisig)
+	signature, err := types.CosmosSignatureDataToSignature(cosmosMultisig)
 	require.NoError(t, err)
 	return signature.(*types.CosmosMultiSignature)
 }
@@ -247,11 +247,11 @@ func TestProof_Verify(t *testing.T) {
 
 	sigBz, err := privKey.Sign([]byte("cosmos1u55ywhk6thmhnxs7yn8vh8v7eznckcqjevnadx"))
 	require.NoError(t, err)
-	signature := types.NewCosmosSingleSignature(types.COSMOS_SIGN_MODE_RAW, sigBz)
+	signature := types.NewSingleSignature(types.SIGNATURE_VALUE_ENCODING_RAW, sigBz)
 	sigAny, err := codectypes.NewAnyWithValue(signature)
 	require.NoError(t, err)
 
-	invalidAny, err := codectypes.NewAnyWithValue(&types.CosmosSingleSignature{})
+	invalidAny, err := codectypes.NewAnyWithValue(&types.SingleSignature{})
 	require.NoError(t, err)
 
 	testCases := []struct {
@@ -333,53 +333,53 @@ func TestProof_Verify(t *testing.T) {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-func TestCosmosSingleSignature_Validate(t *testing.T) {
+func TestSingleSignature_Validate(t *testing.T) {
 	cdc, amino := app.MakeCodecs()
 	testCases := []struct {
 		name      string
-		signature *types.CosmosSingleSignature
+		signature *types.SingleSignature
 		plainText []byte
 		owner     string
 		shouldErr bool
 	}{
 		{
 			name:      "invalid direct value returns error",
-			signature: types.NewCosmosSingleSignature(types.COSMOS_SIGN_MODE_DIRECT, nil),
+			signature: types.NewSingleSignature(types.SIGNATURE_VALUE_ENCODING_COSMOS_DIRECT, nil),
 			plainText: cdc.MustMarshal(&types.Bech32Address{Prefix: "cosmos"}),
 			owner:     "cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae",
 			shouldErr: true,
 		},
 		{
 			name:      "valid direct value returns no error",
-			signature: types.NewCosmosSingleSignature(types.COSMOS_SIGN_MODE_DIRECT, nil),
+			signature: types.NewSingleSignature(types.SIGNATURE_VALUE_ENCODING_COSMOS_DIRECT, nil),
 			plainText: cdc.MustMarshal(&tx.SignDoc{BodyBytes: cdc.MustMarshal(&tx.TxBody{Memo: "cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae"})}),
 			owner:     "cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae",
 			shouldErr: false,
 		},
 		{
 			name:      "invalid amino value returns error",
-			signature: types.NewCosmosSingleSignature(types.COSMOS_SIGN_MODE_AMINO, nil),
+			signature: types.NewSingleSignature(types.SIGNATURE_VALUE_ENCODING_COSMOS_AMINO, nil),
 			plainText: amino.MustMarshalJSON(&legacytx.StdSignDoc{Memo: ""}),
 			owner:     "cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae",
 			shouldErr: true,
 		},
 		{
 			name:      "valid amino value returns error",
-			signature: types.NewCosmosSingleSignature(types.COSMOS_SIGN_MODE_AMINO, nil),
+			signature: types.NewSingleSignature(types.SIGNATURE_VALUE_ENCODING_COSMOS_AMINO, nil),
 			plainText: amino.MustMarshalJSON(&legacytx.StdSignDoc{Memo: "cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae"}),
 			owner:     "cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae",
 			shouldErr: false,
 		},
 		{
 			name:      "invalid raw value returns error",
-			signature: types.NewCosmosSingleSignature(types.COSMOS_SIGN_MODE_RAW, nil),
+			signature: types.NewSingleSignature(types.SIGNATURE_VALUE_ENCODING_RAW, nil),
 			plainText: []byte(""),
 			owner:     "cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae",
 			shouldErr: true,
 		},
 		{
 			name:      "valid raw value returns no error",
-			signature: types.NewCosmosSingleSignature(types.COSMOS_SIGN_MODE_RAW, nil),
+			signature: types.NewSingleSignature(types.SIGNATURE_VALUE_ENCODING_RAW, nil),
 			plainText: []byte("cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae"),
 			owner:     "cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae",
 			shouldErr: false,
@@ -399,7 +399,7 @@ func TestCosmosSingleSignature_Validate(t *testing.T) {
 	}
 }
 
-func TestCosmosSingleSignature_Verify(t *testing.T) {
+func TestSingleSignature_Verify(t *testing.T) {
 	cdc, _ := app.MakeCodecs()
 
 	privKey := secp256k1.GenPrivKey()
@@ -416,7 +416,7 @@ func TestCosmosSingleSignature_Verify(t *testing.T) {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
-		signature *types.CosmosSingleSignature
+		signature *types.SingleSignature
 		pubKey    *codectypes.Any
 		plainText []byte
 		shouldErr bool
@@ -424,21 +424,21 @@ func TestCosmosSingleSignature_Verify(t *testing.T) {
 	}{
 		{
 			name:      "invalid pub key returns error",
-			signature: types.NewCosmosSingleSignature(types.COSMOS_SIGN_MODE_RAW, sigBz),
+			signature: types.NewSingleSignature(types.SIGNATURE_VALUE_ENCODING_RAW, sigBz),
 			pubKey:    invalidAny,
 			plainText: []byte("cosmos10m20h8fy0qp2a8f46zzjpvg8pfl8flajgxsvmk"),
 			shouldErr: true,
 		},
 		{
 			name:      "invalid signature returns error",
-			signature: types.NewCosmosSingleSignature(types.COSMOS_SIGN_MODE_RAW, sigBz),
+			signature: types.NewSingleSignature(types.SIGNATURE_VALUE_ENCODING_RAW, sigBz),
 			pubKey:    pubKeyAny,
 			plainText: []byte("value"),
 			shouldErr: true,
 		},
 		{
 			name:      "valid data returns no error",
-			signature: types.NewCosmosSingleSignature(types.COSMOS_SIGN_MODE_RAW, sigBz),
+			signature: types.NewSingleSignature(types.SIGNATURE_VALUE_ENCODING_RAW, sigBz),
 			pubKey:    pubKeyAny,
 			plainText: []byte("cosmos10m20h8fy0qp2a8f46zzjpvg8pfl8flajgxsvmk"),
 			shouldErr: false,
@@ -468,15 +468,15 @@ func TestCosmosMultiSignature_GetSignMode(t *testing.T) {
 		store       func(ctx sdk.Context)
 		signature   *types.CosmosMultiSignature
 		shouldErr   bool
-		expSignMode types.CosmosSignMode
+		expSignMode types.SignatureValueEncoding
 	}{
 		{
 			name: "different sign modes return error",
 			signature: types.NewCosmosMultiSignature(nil, []types.CosmosSignature{
-				types.NewCosmosSingleSignature(types.COSMOS_SIGN_MODE_DIRECT, nil),
+				types.NewSingleSignature(types.SIGNATURE_VALUE_ENCODING_COSMOS_DIRECT, nil),
 				types.NewCosmosMultiSignature(nil, []types.CosmosSignature{
-					types.NewCosmosSingleSignature(types.COSMOS_SIGN_MODE_RAW, nil),
-					types.NewCosmosSingleSignature(types.COSMOS_SIGN_MODE_DIRECT, nil),
+					types.NewSingleSignature(types.SIGNATURE_VALUE_ENCODING_RAW, nil),
+					types.NewSingleSignature(types.SIGNATURE_VALUE_ENCODING_COSMOS_DIRECT, nil),
 				}),
 			}),
 			shouldErr: true,
@@ -484,21 +484,21 @@ func TestCosmosMultiSignature_GetSignMode(t *testing.T) {
 		{
 			name: "correct sign modes return proper value",
 			signature: types.NewCosmosMultiSignature(nil, []types.CosmosSignature{
-				types.NewCosmosSingleSignature(types.COSMOS_SIGN_MODE_RAW, nil),
+				types.NewSingleSignature(types.SIGNATURE_VALUE_ENCODING_RAW, nil),
 				types.NewCosmosMultiSignature(nil, []types.CosmosSignature{
-					types.NewCosmosSingleSignature(types.COSMOS_SIGN_MODE_RAW, nil),
-					types.NewCosmosSingleSignature(types.COSMOS_SIGN_MODE_RAW, nil),
+					types.NewSingleSignature(types.SIGNATURE_VALUE_ENCODING_RAW, nil),
+					types.NewSingleSignature(types.SIGNATURE_VALUE_ENCODING_RAW, nil),
 				}),
 			}),
 			shouldErr:   false,
-			expSignMode: types.COSMOS_SIGN_MODE_RAW,
+			expSignMode: types.SIGNATURE_VALUE_ENCODING_RAW,
 		},
 	}
 
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			signMode, err := tc.signature.GetSignMode()
+			signMode, err := tc.signature.GetSignatureValueEncoding()
 			if tc.shouldErr {
 				require.Error(t, err)
 			} else {
@@ -521,7 +521,7 @@ func TestCosmosMultiSignature_Validate(t *testing.T) {
 		{
 			name: "invalid direct value returns error",
 			signature: types.NewCosmosMultiSignature(nil, []types.CosmosSignature{
-				types.NewCosmosSingleSignature(types.COSMOS_SIGN_MODE_DIRECT, nil),
+				types.NewSingleSignature(types.SIGNATURE_VALUE_ENCODING_COSMOS_DIRECT, nil),
 			}),
 			plainText: cdc.MustMarshal(&types.Bech32Address{Prefix: "cosmos"}),
 			owner:     "cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae",
@@ -530,7 +530,7 @@ func TestCosmosMultiSignature_Validate(t *testing.T) {
 		{
 			name: "valid direct value returns no error",
 			signature: types.NewCosmosMultiSignature(nil, []types.CosmosSignature{
-				types.NewCosmosSingleSignature(types.COSMOS_SIGN_MODE_DIRECT, nil),
+				types.NewSingleSignature(types.SIGNATURE_VALUE_ENCODING_COSMOS_DIRECT, nil),
 			}),
 			plainText: cdc.MustMarshal(&tx.SignDoc{BodyBytes: cdc.MustMarshal(&tx.TxBody{Memo: "cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae"})}),
 			owner:     "cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae",
@@ -539,7 +539,7 @@ func TestCosmosMultiSignature_Validate(t *testing.T) {
 		{
 			name: "invalid amino value returns error",
 			signature: types.NewCosmosMultiSignature(nil, []types.CosmosSignature{
-				types.NewCosmosSingleSignature(types.COSMOS_SIGN_MODE_AMINO, nil),
+				types.NewSingleSignature(types.SIGNATURE_VALUE_ENCODING_COSMOS_AMINO, nil),
 			}),
 			plainText: amino.MustMarshalJSON(&legacytx.StdSignDoc{Memo: ""}),
 			owner:     "cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae",
@@ -548,7 +548,7 @@ func TestCosmosMultiSignature_Validate(t *testing.T) {
 		{
 			name: "valid amino value returns error",
 			signature: types.NewCosmosMultiSignature(nil, []types.CosmosSignature{
-				types.NewCosmosSingleSignature(types.COSMOS_SIGN_MODE_AMINO, nil),
+				types.NewSingleSignature(types.SIGNATURE_VALUE_ENCODING_COSMOS_AMINO, nil),
 			}),
 			plainText: amino.MustMarshalJSON(&legacytx.StdSignDoc{Memo: "cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae"}),
 			owner:     "cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae",
@@ -557,7 +557,7 @@ func TestCosmosMultiSignature_Validate(t *testing.T) {
 		{
 			name: "invalid raw value returns error",
 			signature: types.NewCosmosMultiSignature(nil, []types.CosmosSignature{
-				types.NewCosmosSingleSignature(types.COSMOS_SIGN_MODE_RAW, nil),
+				types.NewSingleSignature(types.SIGNATURE_VALUE_ENCODING_RAW, nil),
 			}),
 			plainText: []byte(""),
 			owner:     "cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae",
@@ -566,7 +566,7 @@ func TestCosmosMultiSignature_Validate(t *testing.T) {
 		{
 			name: "valid raw value returns no error",
 			signature: types.NewCosmosMultiSignature(nil, []types.CosmosSignature{
-				types.NewCosmosSingleSignature(types.COSMOS_SIGN_MODE_RAW, nil),
+				types.NewSingleSignature(types.SIGNATURE_VALUE_ENCODING_RAW, nil),
 			}),
 			plainText: []byte("cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae"),
 			owner:     "cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae",
@@ -823,7 +823,7 @@ func TestEVMSignature_Verify(t *testing.T) {
 	sigBz, err := hex.DecodeString("fc036f35f3d1aee08fbb49048f91eb8fc7fc0d83553067a3a70ce25d039e74aa310fd488dd0c493e75ab3923df4cc6b077ee9309df1501583ca330d1c7c1ff6b1b")
 	require.NoError(t, err)
 
-	invalidAny, err := codectypes.NewAnyWithValue(&types.CosmosSingleSignature{})
+	invalidAny, err := codectypes.NewAnyWithValue(&types.SingleSignature{})
 	require.NoError(t, err)
 
 	testCases := []struct {
@@ -1105,7 +1105,7 @@ func TestChainLink_Validate(t *testing.T) {
 			chainLink: types.NewChainLink(
 				"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
 				types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
-				types.NewProof(secp256k1.GenPrivKey().PubKey(), &types.CosmosSingleSignature{}, "="),
+				types.NewProof(secp256k1.GenPrivKey().PubKey(), &types.SingleSignature{}, "="),
 				types.NewChainConfig("cosmos"),
 				time.Now(),
 			),

@@ -38,7 +38,7 @@ func TestLinkChainAccountPacketData_Validate(t *testing.T) {
 			name: "invalid source proof returns error",
 			packet: types.NewLinkChainAccountPacketData(
 				types.NewBech32Address("cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70", "cosmos"),
-				types.NewProof(secp256k1.GenPrivKey().PubKey(), &types.CosmosSingleSignature{}, "wrong"),
+				types.NewProof(secp256k1.GenPrivKey().PubKey(), &types.SingleSignature{}, "wrong"),
 				types.NewChainConfig("cosmos"),
 				"cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70",
 				types.NewProof(
@@ -98,7 +98,7 @@ func TestLinkChainAccountPacketData_Validate(t *testing.T) {
 				),
 				types.NewChainConfig("cosmos"),
 				"cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70",
-				types.NewProof(secp256k1.GenPrivKey().PubKey(), &types.CosmosSingleSignature{}, "wrong"),
+				types.NewProof(secp256k1.GenPrivKey().PubKey(), &types.SingleSignature{}, "wrong"),
 			),
 			shouldErr: true,
 		},

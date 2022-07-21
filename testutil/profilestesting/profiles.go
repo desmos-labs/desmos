@@ -80,7 +80,7 @@ func SingleCosmosSignatureFromHex(hexEncodedSignature string) types.Signature {
 	if err != nil {
 		panic(err)
 	}
-	return types.NewCosmosSingleSignature(types.COSMOS_SIGN_MODE_RAW, sig)
+	return types.NewSingleSignature(types.SIGNATURE_VALUE_ENCODING_RAW, sig)
 }
 
 // MultiCosmosSignatureFromHex convert the hex-encoded string of the MultiSignature Any value to CosmosSignatureData

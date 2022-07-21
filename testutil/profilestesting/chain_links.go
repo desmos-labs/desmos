@@ -53,7 +53,7 @@ func (a ChainLinkAccount) Bech32Address() *types.Bech32Address {
 }
 
 func (a ChainLinkAccount) Bech32SignatureData(signedValue string) types.CosmosSignature {
-	return types.NewCosmosSingleSignature(types.COSMOS_SIGN_MODE_RAW, a.Sign(signedValue))
+	return types.NewSingleSignature(types.SIGNATURE_VALUE_ENCODING_RAW, a.Sign(signedValue))
 }
 
 func (a ChainLinkAccount) Bech32Proof(user string) types.Proof {
