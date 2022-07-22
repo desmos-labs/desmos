@@ -51,10 +51,7 @@ func (s *IntegrationTestSuite) TestCmdQueryProfile() {
 				s.network.Validators[1].Address.String(),
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			shouldErr: false,
-			expectedOutput: types.QueryProfileResponse{
-				Profile: nil,
-			},
+			shouldErr: true,
 		},
 		{
 			name: "existing profile is returned properly",

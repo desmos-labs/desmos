@@ -30,10 +30,9 @@ func (suite *KeeperTestSuite) TestQueryServer_Profile() {
 			shouldErr: true,
 		},
 		{
-			name:        "profile not found",
-			req:         types.NewQueryProfileRequest("cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa"),
-			shouldErr:   false,
-			expResponse: &types.QueryProfileResponse{Profile: nil},
+			name:      "profile not found returns error",
+			req:       types.NewQueryProfileRequest("cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa"),
+			shouldErr: true,
 		},
 		{
 			name: "found profile using DTag",
