@@ -4963,7 +4963,7 @@ paths:
           format: boolean
       tags:
         - Query
-  /desmos/subspaces/v2/subspaces:
+  /desmos/subspaces/v3/subspaces:
     get:
       summary: Subspaces queries all the subspaces inside Desmos
       operationId: Subspaces
@@ -5122,7 +5122,7 @@ paths:
           format: boolean
       tags:
         - Query
-  '/desmos/subspaces/v2/subspaces/{subspace_id}':
+  '/desmos/subspaces/v3/subspaces/{subspace_id}':
     get:
       summary: >-
         Subspace queries all the information about the subspace with the given
@@ -5200,7 +5200,7 @@ paths:
           format: uint64
       tags:
         - Query
-  '/desmos/subspaces/v2/subspaces/{subspace_id}/groups':
+  '/desmos/subspaces/v3/subspaces/{subspace_id}/groups':
     get:
       summary: >-
         UserGroups queries all the groups that are present inside the subspace
@@ -5374,7 +5374,7 @@ paths:
           format: boolean
       tags:
         - Query
-  '/desmos/subspaces/v2/subspaces/{subspace_id}/groups/{group_id}':
+  '/desmos/subspaces/v3/subspaces/{subspace_id}/groups/{group_id}':
     get:
       summary: |-
         UserGroup queries the user group having the given id inside the specific
@@ -5459,7 +5459,7 @@ paths:
           format: int64
       tags:
         - Query
-  '/desmos/subspaces/v2/subspaces/{subspace_id}/groups/{group_id}/members':
+  '/desmos/subspaces/v3/subspaces/{subspace_id}/groups/{group_id}/members':
     get:
       summary: UserGroupMembers queries all the members of a given user group
       operationId: UserGroupMembers
@@ -5598,7 +5598,7 @@ paths:
           format: boolean
       tags:
         - Query
-  '/desmos/subspaces/v2/subspaces/{subspace_id}/permissions/{user}':
+  '/desmos/subspaces/v3/subspaces/{subspace_id}/permissions/{user}':
     get:
       summary: UserPermissions queries the permissions for the given user
       operationId: UserPermissions
@@ -5696,7 +5696,7 @@ paths:
           format: int64
       tags:
         - Query
-  '/desmos/subspaces/v2/{subspace_id}/sections':
+  '/desmos/subspaces/v3/{subspace_id}/sections':
     get:
       summary: Sections allows to query for the sections of a specific subspace
       operationId: Sections
@@ -5849,7 +5849,7 @@ paths:
           format: boolean
       tags:
         - Query
-  '/desmos/subspaces/v2/{subspace_id}/sections/{section_id}':
+  '/desmos/subspaces/v3/{subspace_id}/sections/{section_id}':
     get:
       summary: Section queries all the information about the section with the given id
       operationId: Section

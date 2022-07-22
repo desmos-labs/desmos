@@ -14,45 +14,45 @@ service Query {
 
   // Subspaces queries all the subspaces inside Desmos
   rpc Subspaces(QuerySubspacesRequest) returns (QuerySubspacesResponse) {
-    option (google.api.http).get = "/desmos/subspaces/v2/subspaces";
+    option (google.api.http).get = "/desmos/subspaces/v3/subspaces";
   }
 
   // Subspace queries all the information about the subspace with the given id
   rpc Subspace(QuerySubspaceRequest) returns (QuerySubspaceResponse) {
     option (google.api.http).get =
-        "/desmos/subspaces/v2/subspaces/{subspace_id}";
+        "/desmos/subspaces/v3/subspaces/{subspace_id}";
   }
 
   // Sections allows to query for the sections of a specific subspace
   rpc Sections(QuerySectionsRequest) returns (QuerySectionsResponse) {
     option (google.api.http).get =
-        "/desmos/subspaces/v2/{subspace_id}/sections";
+        "/desmos/subspaces/v3/{subspace_id}/sections";
   }
 
   // Section queries all the information about the section with the given id
   rpc Section(QuerySectionRequest) returns (QuerySectionResponse) {
     option (google.api.http).get =
-        "/desmos/subspaces/v2/{subspace_id}/sections/{section_id}";
+        "/desmos/subspaces/v3/{subspace_id}/sections/{section_id}";
   }
 
   // UserGroups queries all the groups that are present inside the subspace with
   // the given id
   rpc UserGroups(QueryUserGroupsRequest) returns (QueryUserGroupsResponse) {
     option (google.api.http).get =
-        "/desmos/subspaces/v2/subspaces/{subspace_id}/groups";
+        "/desmos/subspaces/v3/subspaces/{subspace_id}/groups";
   }
 
   // UserGroup queries the user group having the given id inside the specific
   // subspace
   rpc UserGroup(QueryUserGroupRequest) returns (QueryUserGroupResponse) {
     option (google.api.http).get =
-        "/desmos/subspaces/v2/subspaces/{subspace_id}/groups/{group_id}";
+        "/desmos/subspaces/v3/subspaces/{subspace_id}/groups/{group_id}";
   }
 
   // UserGroupMembers queries all the members of a given user group
   rpc UserGroupMembers(QueryUserGroupMembersRequest)
       returns (QueryUserGroupMembersResponse) {
-    option (google.api.http).get = "/desmos/subspaces/v2/subspaces/"
+    option (google.api.http).get = "/desmos/subspaces/v3/subspaces/"
                                    "{subspace_id}/groups/{group_id}/members";
   }
 
@@ -60,7 +60,7 @@ service Query {
   rpc UserPermissions(QueryUserPermissionsRequest)
       returns (QueryUserPermissionsResponse) {
     option (google.api.http).get =
-        "/desmos/subspaces/v2/subspaces/{subspace_id}/permissions/{user}";
+        "/desmos/subspaces/v3/subspaces/{subspace_id}/permissions/{user}";
   }
 }
 

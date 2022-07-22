@@ -518,42 +518,42 @@ A user can query the `subspaces` module using REST endpoints.
 The `Subspaces` endpoint allows users to query all the subspaces inside Desmos.
 
 ````
-/desmos/subspaces/v2/subspaces
+/desmos/subspaces/v3/subspaces
 ````
 
 ### Subspace
 The `Subspace` endpoint allows users to query a subspace associated with the given ID.
 
 ````
-/desmos/subspaces/v2/subspaces/{subspace_id}
+/desmos/subspaces/v3/subspaces/{subspace_id}
 ````
 
 ### Sections
 The `Sections` endpoint allows users to query the sections associated with the given subspace ID.
 
 ````
-/desmos/subspaces/v2/{subspace_id}/sections
+/desmos/subspaces/v3/{subspace_id}/sections
 ````
 
 ### Section
 The `Section` endpoint allows users to query a section with the given ID associated with the subspace with the given ID.
 
 ````
-/desmos/subspaces/v2/{subspace_id}/sections/{section_id}
+/desmos/subspaces/v3/{subspace_id}/sections/{section_id}
 ````
 
 ### UserGroups
 The `UserGroups` endpoint allows users to query all the user groups associated with a given subspace ID.
 
 ````
-/desmos/subspaces/v2/subspaces/{subspace_id}/groups
+/desmos/subspaces/v3/subspaces/{subspace_id}/groups
 ````
 
 ### UserGroup
 The `UserGroup` endpoint allows users to query a specific user group with the given ID associated with a given subspace ID.
 
 ````
-/desmos/subspaces/v2/subspaces/{subspace_id}/groups/{group_id}
+/desmos/subspaces/v3/subspaces/{subspace_id}/groups/{group_id}
 ````
 
 ### UserGroupMembers
@@ -561,7 +561,7 @@ The `UserGroupMembers` endpoint allows users to query all the members of the use
 subspace with the given ID.
 
 ````
-/desmos/subspaces/v2/subspaces/{subspace_id}/groups/{group_id}/members
+/desmos/subspaces/v3/subspaces/{subspace_id}/groups/{group_id}/members
 ````
 
 ### UserPermissions
@@ -569,5 +569,5 @@ The `UserPermissions` endpoint allows users to query all the user's permissions 
 and the section with the given ID.
 
 ````
-/desmos/subspaces/v2/subspaces/{subspace_id}/permissions/{user}
+/desmos/subspaces/v3/subspaces/{subspace_id}/permissions/{user}
 ````
