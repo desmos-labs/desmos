@@ -1,8 +1,8 @@
 syntax = "proto3";
-package desmos.subspaces.v2;
+package desmos.subspaces.v3;
 
 import "gogoproto/gogo.proto";
-import "desmos/subspaces/v2/models.proto";
+import "desmos/subspaces/v3/models.proto";
 
 option go_package = "github.com/desmos-labs/desmos/v4/x/subspaces/types";
 
@@ -256,8 +256,12 @@ message MsgCreateUserGroup {
   repeated string default_permissions = 5
       [ (gogoproto.moretags) = "yaml:\"default_permissions\"" ];
 
+  // Initial members to be put inside the group
+  repeated string initial_members = 6
+      [ (gogoproto.moretags) = "yaml:\"initial_members\"" ];
+
   // Creator of the group
-  string creator = 6 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
+  string creator = 7 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
 }
 
 // MsgCreateUserGroupResponse defines the Msg/CreateUserGroup response type

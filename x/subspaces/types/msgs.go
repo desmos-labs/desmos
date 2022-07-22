@@ -407,6 +407,7 @@ func NewMsgCreateUserGroup(
 	name string,
 	description string,
 	permissions Permissions,
+	initialMembers []string,
 	creator string,
 ) *MsgCreateUserGroup {
 	return &MsgCreateUserGroup{
@@ -415,6 +416,7 @@ func NewMsgCreateUserGroup(
 		Name:               name,
 		Description:        description,
 		DefaultPermissions: permissions,
+		InitialMembers:     initialMembers,
 		Creator:            creator,
 	}
 }
@@ -437,6 +439,13 @@ func (msg MsgCreateUserGroup) ValidateBasic() error {
 
 	if !ArePermissionsValid(msg.DefaultPermissions) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid permissions: %s", msg.DefaultPermissions)
+	}
+
+	for _, member := range msg.InitialMembers {
+		_, err := sdk.AccAddressFromBech32(member)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid member address: %s", member)
+		}
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.Creator)

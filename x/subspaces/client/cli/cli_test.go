@@ -964,6 +964,8 @@ func (s *IntegrationTestSuite) TestCmdCreateUserGroup() {
 			name: "valid data returns no error",
 			args: []string{
 				"2", "testing-group",
+				fmt.Sprintf("--%s=%s", cli.FlagPermissions, types.PermissionSetPermissions),
+				fmt.Sprintf("--%s=%s", cli.FlagInitialMembers, "cosmos1g4yzh3q3grf804t4y4fuynrvrxtshgxy7j783f"),
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),

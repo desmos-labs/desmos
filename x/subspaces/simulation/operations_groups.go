@@ -44,6 +44,7 @@ func SimulateMsgCreateUserGroup(
 			update.Name,
 			update.Description,
 			permissions,
+			nil,
 			creator.Address.String(),
 		)
 
