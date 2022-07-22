@@ -1,0 +1,6 @@
+type: fix
+module: x/profiles
+pull_request: 971
+description: fix profile query returns nil to error if profile does not exist
+backward_compatible: true
+date: 2022-07-22T06:27:36.4265228Z
