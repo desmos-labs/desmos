@@ -1,7 +1,6 @@
 type: feat
 module: x/subspaces
 pull_request: 974
-description: Added `initial_members` field to `MsgCreateUserGroup` to allow setting
-  initial group members
+description: Allow setting initial group members when creating a user group
 backward_compatible: false
 date: 2022-07-22T06:48:59.416978528Z
