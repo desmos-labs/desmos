@@ -1,6 +1,0 @@
-type: feat
-module: x/profiles
-pull_request: 723
-description: Added expiration time to application links
-backward_compatible: false
-date: 2022-01-24T14:49:03.724641Z

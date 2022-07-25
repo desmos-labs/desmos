@@ -1,6 +1,0 @@
-type: fix
-module: x/profiles
-pull_request: 971
-description: "`QueryProfile` now returns an error instead of `nil` when a profile is not found"
-backward_compatible: false
-date: 2022-07-22T06:27:36.4265228Z
