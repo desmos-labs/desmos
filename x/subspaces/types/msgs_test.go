@@ -582,6 +582,7 @@ var msgCreateUserGroup = types.NewMsgCreateUserGroup(
 	"Group",
 	"Description",
 	types.NewPermissions(types.PermissionEditSubspace),
+	[]string{"cosmos16yhs7fgqnf6fjm4tftv66g2smtmee62wyg780l"},
 	"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 )
 
@@ -607,6 +608,7 @@ func TestMsgCreateUserGroup_ValidateBasic(t *testing.T) {
 				"group",
 				"description",
 				types.NewPermissions(types.PermissionEditSubspace),
+				[]string{"cosmos16yhs7fgqnf6fjm4tftv66g2smtmee62wyg780l"},
 				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 			),
 			shouldErr: true,
@@ -619,6 +621,7 @@ func TestMsgCreateUserGroup_ValidateBasic(t *testing.T) {
 				"",
 				"description",
 				types.NewPermissions(types.PermissionEditSubspace),
+				[]string{"cosmos16yhs7fgqnf6fjm4tftv66g2smtmee62wyg780l"},
 				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 			),
 			shouldErr: true,
@@ -631,6 +634,20 @@ func TestMsgCreateUserGroup_ValidateBasic(t *testing.T) {
 				"group",
 				"description",
 				types.NewPermissions("INVALID"),
+				[]string{"cosmos16yhs7fgqnf6fjm4tftv66g2smtmee62wyg780l"},
+				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid initial member returns error",
+			msg: types.NewMsgCreateUserGroup(
+				1,
+				1,
+				"group",
+				"description",
+				types.NewPermissions(types.PermissionEditSubspace),
+				[]string{""},
 				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 			),
 			shouldErr: true,
@@ -643,6 +660,7 @@ func TestMsgCreateUserGroup_ValidateBasic(t *testing.T) {
 				"group",
 				"description",
 				types.NewPermissions(types.PermissionEditSubspace),
+				[]string{"cosmos16yhs7fgqnf6fjm4tftv66g2smtmee62wyg780l"},
 				"cosmos1m0czrla04f7rp3zg7dsgc4kl",
 			),
 			shouldErr: true,
@@ -667,7 +685,7 @@ func TestMsgCreateUserGroup_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgCreateUserGroup_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgCreateUserGroup","value":{"creator":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","default_permissions":["EDIT_SUBSPACE"],"description":"Description","name":"Group","subspace_id":"1"}}`
+	expected := `{"type":"desmos/MsgCreateUserGroup","value":{"creator":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","default_permissions":["EDIT_SUBSPACE"],"description":"Description","initial_members":["cosmos16yhs7fgqnf6fjm4tftv66g2smtmee62wyg780l"],"name":"Group","subspace_id":"1"}}`
 	require.Equal(t, expected, string(msgCreateUserGroup.GetSignBytes()))
 }
 

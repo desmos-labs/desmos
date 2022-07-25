@@ -23,13 +23,14 @@ import (
 // DONTCOVER
 
 const (
-	FlagName        = "name"
-	FlagDescription = "description"
-	FlagParent      = "parent"
-	FlagSection     = "section"
-	FlagTreasury    = "treasury"
-	FlagOwner       = "owner"
-	FlagPermissions = "permissions"
+	FlagName           = "name"
+	FlagDescription    = "description"
+	FlagParent         = "parent"
+	FlagSection        = "section"
+	FlagTreasury       = "treasury"
+	FlagOwner          = "owner"
+	FlagPermissions    = "permissions"
+	FlagInitialMembers = "initial-members"
 )
 
 // NewTxCmd returns a new command to perform subspaces transactions
@@ -459,6 +460,7 @@ Multiple permissions must be specified separating them with a comma (,).`, FlagD
 %s tx subspaces groups create 1 "Admins" \
   --description "Group of the subspace admins" \
   --permissions "WRITE,MODERATE_CONTENT,SET_USER_PERMISSIONS" \
+  --initial-members "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53,cosmos1g4yzh3q3grf804t4y4fuynrvrxtshgxy7j783f" \
   --from alice
 `, version.AppName),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -494,7 +496,12 @@ Multiple permissions must be specified separating them with a comma (,).`, FlagD
 				permissions = types.CombinePermissions(append(permissions, arg)...)
 			}
 
-			msg := types.NewMsgCreateUserGroup(subspaceID, sectionID, name, description, permissions, clientCtx.FromAddress.String())
+			initialMembers, err := cmd.Flags().GetStringSlice(FlagInitialMembers)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgCreateUserGroup(subspaceID, sectionID, name, description, permissions, initialMembers, clientCtx.FromAddress.String())
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}
@@ -506,6 +513,8 @@ Multiple permissions must be specified separating them with a comma (,).`, FlagD
 	cmd.Flags().Uint32(FlagSection, 0, "Id of the section inside which to create the group")
 	cmd.Flags().String(FlagDescription, "", "Description of the group")
 	cmd.Flags().StringSlice(FlagPermissions, nil, "Permissions of the group")
+	cmd.Flags().StringSlice(FlagInitialMembers, nil, "Initial members of the group")
+
 	flags.AddTxFlagsToCmd(cmd)
 
 	return cmd

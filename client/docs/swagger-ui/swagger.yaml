@@ -4963,7 +4963,7 @@ paths:
           format: boolean
       tags:
         - Query
-  /desmos/subspaces/v2/subspaces:
+  /desmos/subspaces/v3/subspaces:
     get:
       summary: Subspaces queries all the subspaces inside Desmos
       operationId: Subspaces
@@ -5122,7 +5122,7 @@ paths:
           format: boolean
       tags:
         - Query
-  '/desmos/subspaces/v2/subspaces/{subspace_id}':
+  '/desmos/subspaces/v3/subspaces/{subspace_id}':
     get:
       summary: >-
         Subspace queries all the information about the subspace with the given
@@ -5200,7 +5200,7 @@ paths:
           format: uint64
       tags:
         - Query
-  '/desmos/subspaces/v2/subspaces/{subspace_id}/groups':
+  '/desmos/subspaces/v3/subspaces/{subspace_id}/groups':
     get:
       summary: >-
         UserGroups queries all the groups that are present inside the subspace
@@ -5374,7 +5374,7 @@ paths:
           format: boolean
       tags:
         - Query
-  '/desmos/subspaces/v2/subspaces/{subspace_id}/groups/{group_id}':
+  '/desmos/subspaces/v3/subspaces/{subspace_id}/groups/{group_id}':
     get:
       summary: |-
         UserGroup queries the user group having the given id inside the specific
@@ -5459,7 +5459,7 @@ paths:
           format: int64
       tags:
         - Query
-  '/desmos/subspaces/v2/subspaces/{subspace_id}/groups/{group_id}/members':
+  '/desmos/subspaces/v3/subspaces/{subspace_id}/groups/{group_id}/members':
     get:
       summary: UserGroupMembers queries all the members of a given user group
       operationId: UserGroupMembers
@@ -5598,7 +5598,7 @@ paths:
           format: boolean
       tags:
         - Query
-  '/desmos/subspaces/v2/subspaces/{subspace_id}/permissions/{user}':
+  '/desmos/subspaces/v3/subspaces/{subspace_id}/permissions/{user}':
     get:
       summary: UserPermissions queries the permissions for the given user
       operationId: UserPermissions
@@ -5696,7 +5696,7 @@ paths:
           format: int64
       tags:
         - Query
-  '/desmos/subspaces/v2/{subspace_id}/sections':
+  '/desmos/subspaces/v3/{subspace_id}/sections':
     get:
       summary: Sections allows to query for the sections of a specific subspace
       operationId: Sections
@@ -5849,7 +5849,7 @@ paths:
           format: boolean
       tags:
         - Query
-  '/desmos/subspaces/v2/{subspace_id}/sections/{section_id}':
+  '/desmos/subspaces/v3/{subspace_id}/sections/{section_id}':
     get:
       summary: Section queries all the information about the section with the given id
       operationId: Section
@@ -16205,7 +16205,7 @@ definitions:
       Blocked
 
       user.
-  desmos.subspaces.v2.PermissionDetail:
+  desmos.subspaces.v3.PermissionDetail:
     type: object
     properties:
       subspace_id:
@@ -16242,7 +16242,7 @@ definitions:
               type: string
             title: Permissions set to the group
     title: PermissionDetail contains the details data of a permission
-  desmos.subspaces.v2.PermissionDetail.Group:
+  desmos.subspaces.v3.PermissionDetail.Group:
     type: object
     properties:
       group_id:
@@ -16255,7 +16255,7 @@ definitions:
           type: string
         title: Permissions set to the group
     title: Group is a permission that has been set to a user group
-  desmos.subspaces.v2.PermissionDetail.User:
+  desmos.subspaces.v3.PermissionDetail.User:
     type: object
     properties:
       user:
@@ -16267,7 +16267,7 @@ definitions:
           type: string
         title: Permissions set to the user
     title: User is a permission that has been set to a specific user
-  desmos.subspaces.v2.QuerySectionResponse:
+  desmos.subspaces.v3.QuerySectionResponse:
     type: object
     properties:
       section:
@@ -16293,7 +16293,7 @@ definitions:
             title: (optional) Description of the section
         title: Section contains the data of a single subspace section
     title: QuerySectionResponse is the response type for Query/Section RPC method
-  desmos.subspaces.v2.QuerySectionsResponse:
+  desmos.subspaces.v3.QuerySectionsResponse:
     type: object
     properties:
       sections:
@@ -16346,7 +16346,7 @@ definitions:
                    PageResponse page = 2;
            }
     title: QuerySectionsResponse is the response type for Query/Sections RPC method
-  desmos.subspaces.v2.QuerySubspaceResponse:
+  desmos.subspaces.v3.QuerySubspaceResponse:
     type: object
     properties:
       subspace:
@@ -16381,7 +16381,7 @@ definitions:
             title: the creation time of the subspace
         title: Subspace contains all the data of a Desmos subspace
     title: QuerySubspaceResponse is the response type for the Query/Subspace method
-  desmos.subspaces.v2.QuerySubspacesResponse:
+  desmos.subspaces.v3.QuerySubspacesResponse:
     type: object
     properties:
       subspaces:
@@ -16445,7 +16445,7 @@ definitions:
     title: |-
       QuerySubspacesResponse is the response type for the Query/Subspaces RPC
       method
-  desmos.subspaces.v2.QueryUserGroupMembersResponse:
+  desmos.subspaces.v3.QueryUserGroupMembersResponse:
     type: object
     properties:
       members:
@@ -16480,7 +16480,7 @@ definitions:
     title: |-
       QueryUserGroupMembersResponse is the response type for the
       Query/UserGroupMembers RPC method
-  desmos.subspaces.v2.QueryUserGroupResponse:
+  desmos.subspaces.v3.QueryUserGroupResponse:
     type: object
     properties:
       group:
@@ -16515,7 +16515,7 @@ definitions:
     title: |-
       QueryUserGroupResponse is the response type for the Query/UserGroup RPC
       method
-  desmos.subspaces.v2.QueryUserGroupsResponse:
+  desmos.subspaces.v3.QueryUserGroupsResponse:
     type: object
     properties:
       groups:
@@ -16577,7 +16577,7 @@ definitions:
     title: |-
       QueryUserGroupsResponse is the response type for the Query/UserGroups RPC
       method
-  desmos.subspaces.v2.QueryUserPermissionsResponse:
+  desmos.subspaces.v3.QueryUserPermissionsResponse:
     type: object
     properties:
       permissions:
@@ -16626,7 +16626,7 @@ definitions:
     title: |-
       QueryUserPermissionsRequest is the response type for the
       Query/UserPermissions method
-  desmos.subspaces.v2.Section:
+  desmos.subspaces.v3.Section:
     type: object
     properties:
       subspace_id:
@@ -16648,7 +16648,7 @@ definitions:
         type: string
         title: (optional) Description of the section
     title: Section contains the data of a single subspace section
-  desmos.subspaces.v2.Subspace:
+  desmos.subspaces.v3.Subspace:
     type: object
     properties:
       id:
@@ -16679,7 +16679,7 @@ definitions:
         format: date-time
         title: the creation time of the subspace
     title: Subspace contains all the data of a Desmos subspace
-  desmos.subspaces.v2.UserGroup:
+  desmos.subspaces.v3.UserGroup:
     type: object
     properties:
       subspace_id:

@@ -1,5 +1,5 @@
 syntax = "proto3";
-package desmos.subspaces.v2.authz;
+package desmos.subspaces.v3.authz;
 
 import "gogoproto/gogo.proto";
 import "cosmos_proto/cosmos.proto";

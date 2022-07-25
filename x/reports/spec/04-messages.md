@@ -11,7 +11,7 @@ slug: messages
 A report can be created using the `MsgCreateReport`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/v4.1.0/proto/desmos/reports/v1/msgs.proto#L33-L58
+https://github.com/desmos-labs/desmos/blob/master/proto/desmos/reports/v1/msgs.proto#L33-L58
 ```
 
 It's expected to fail if:
@@ -26,7 +26,7 @@ It's expected to fail if:
 A report can be deleted using the `MsgDeleteReport`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/v4.1.0/proto/desmos/reports/v1/msgs.proto#L76-L92
+https://github.com/desmos-labs/desmos/blob/master/proto/desmos/reports/v1/msgs.proto#L76-L92
 ```
 
 It's expected to fail if:
@@ -38,7 +38,7 @@ It's expected to fail if:
 A standard reason can be supported within a subspace using the `MsgSupportStandardReason`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/v4.1.0/proto/desmos/reports/v1/msgs.proto#L97-L114
+https://github.com/desmos-labs/desmos/blob/master/proto/desmos/reports/v1/msgs.proto#L97-L114
 ```
 
 It's expected to fail if:
@@ -50,7 +50,7 @@ It's expected to fail if:
 A reason can be added to a subspace using the `MsgAddReason`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/v4.1.0/proto/desmos/reports/v1/msgs.proto#L126-L143
+https://github.com/desmos-labs/desmos/blob/master/proto/desmos/reports/v1/msgs.proto#L126-L143
 ```
 
 It's expected to fail if:
@@ -62,7 +62,7 @@ It's expected to fail if:
 A previously added reason can be removed using the `MsgRemoveReason`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/v4.1.0/proto/desmos/reports/v1/msgs.proto#L154-L171
+https://github.com/desmos-labs/desmos/blob/master/proto/desmos/reports/v1/msgs.proto#L154-L171
 ```
 
 It's expected to fail if:

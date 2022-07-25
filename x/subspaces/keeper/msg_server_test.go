@@ -1398,6 +1398,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateUserGroup() {
 				"group",
 				"description",
 				types.NewPermissions(types.PermissionEditSubspace),
+				nil,
 				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 			),
 			shouldErr: true,
@@ -1421,6 +1422,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateUserGroup() {
 				"group",
 				"description",
 				types.NewPermissions(types.PermissionEditSubspace),
+				nil,
 				"cosmos1y4emx0mm4ncva9mnv9yvjrm7nrq3psvmwhk9ll",
 			),
 			shouldErr: true,
@@ -1444,6 +1446,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateUserGroup() {
 				"group",
 				"description",
 				types.NewPermissions(types.PermissionEditSubspace),
+				nil,
 				"cosmos1y4emx0mm4ncva9mnv9yvjrm7nrq3psvmwhk9ll",
 			),
 			shouldErr: true,
@@ -1474,6 +1477,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateUserGroup() {
 				"group",
 				"description",
 				types.NewPermissions(types.PermissionEditSubspace),
+				nil,
 				"cosmos1y4emx0mm4ncva9mnv9yvjrm7nrq3psvmwhk9ll",
 			),
 			shouldErr: true,
@@ -1514,6 +1518,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateUserGroup() {
 				"another group",
 				"another description",
 				types.NewPermissions("invalid"),
+				nil,
 				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 			),
 			shouldErr: true,
@@ -1554,6 +1559,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateUserGroup() {
 				"another group",
 				"another description",
 				types.NewPermissions(types.PermissionEditSubspace),
+				[]string{"cosmos16yhs7fgqnf6fjm4tftv66g2smtmee62wyg780l"},
 				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 			),
 			shouldErr:   false,
@@ -1570,10 +1576,17 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateUserGroup() {
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyUserGroupID, "2"),
 				),
+				sdk.NewEvent(
+					types.EventTypeAddUserToGroup,
+					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					sdk.NewAttribute(types.AttributeKeyUserGroupID, "2"),
+					sdk.NewAttribute(types.AttributeKeyUser, "cosmos16yhs7fgqnf6fjm4tftv66g2smtmee62wyg780l"),
+				),
 			},
 			check: func(ctx sdk.Context) {
 				suite.Require().True(suite.k.HasUserGroup(ctx, 1, 1))
 				suite.Require().True(suite.k.HasUserGroup(ctx, 1, 2))
+				suite.Require().True(suite.k.IsMemberOfGroup(ctx, 1, 2, "cosmos16yhs7fgqnf6fjm4tftv66g2smtmee62wyg780l"))
 			},
 		},
 	}

@@ -421,6 +421,21 @@ func (k msgServer) CreateUserGroup(goCtx context.Context, msg *types.MsgCreateUs
 	// Update the id for the next group
 	k.SetNextGroupID(ctx, msg.SubspaceID, group.ID+1)
 
+	// Add the initial members, if any
+	var userEvents sdk.Events
+	for _, member := range msg.InitialMembers {
+		// Add the user to the group
+		k.AddUserToGroup(ctx, group.SubspaceID, group.ID, member)
+
+		// Add the events to the list of to emit
+		userEvents = append(userEvents, sdk.NewEvent(
+			types.EventTypeAddUserToGroup,
+			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", group.SubspaceID)),
+			sdk.NewAttribute(types.AttributeKeyUserGroupID, fmt.Sprintf("%d", group.ID)),
+			sdk.NewAttribute(types.AttributeKeyUser, member),
+		))
+	}
+
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
@@ -433,7 +448,7 @@ func (k msgServer) CreateUserGroup(goCtx context.Context, msg *types.MsgCreateUs
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyUserGroupID, fmt.Sprintf("%d", group.ID)),
 		),
-	})
+	}.AppendEvents(userEvents))
 
 	return &types.MsgCreateUserGroupResponse{GroupID: groupID}, nil
 }

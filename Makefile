@@ -364,7 +364,7 @@ COSMOS_URL 		 = https://raw.githubusercontent.com/cosmos/cosmos-sdk/v0.45.4/prot
 COSMOS_PROTO_URL = https://raw.githubusercontent.com/regen-network/cosmos-proto/master
 CONFIO_URL 		 = https://raw.githubusercontent.com/confio/ics23/v0.6.3
 IBC_URL 		 = https://raw.githubusercontent.com/cosmos/ibc-go/v3.1.0/proto/ibc
-EVMOS_URL 		 = https://raw.githubusercontent.com/evmos/ethermint/v0.17.1/proto/ethermint/
+ETHERMINT_URL 	 = https://raw.githubusercontent.com/evmos/ethermint/v0.17.1/proto/ethermint/
 
 TM_CRYPTO_TYPES     = third_party/proto/tendermint/crypto
 TM_ABCI_TYPES       = third_party/proto/tendermint/abci
@@ -377,7 +377,7 @@ GOGO_PROTO_TYPES    = third_party/proto/gogoproto
 COSMOS_TYPES 		= third_party/proto/cosmos
 COSMOS_PROTO_TYPES  = third_party/proto/cosmos_proto
 CONFIO_TYPES        = third_party/proto/confio
-EVMOS_TYPES 		= third_party/proto/evmos
+ETHERMINT_TYPES 	= third_party/proto/ethermint
 
 proto-update-deps:
 	@mkdir -p $(COSMOS_TYPES)/base/query/v1beta1
@@ -395,8 +395,8 @@ proto-update-deps:
 	@mkdir -p $(IBC_TYPES)/core/client/v1
 	@curl -sSL $(IBC_URL)/core/client/v1/client.proto > $(IBC_TYPES)/core/client/v1/client.proto
 
-	@mkdir -p $(EVMOS_TYPES)/crypto/v1/ethsecp256k1
-	@curl -sSL $(EVMOS_URL)crypto/v1/ethsecp256k1/keys.proto > $(EVMOS_TYPES)/crypto/v1/ethsecp256k1/keys.proto
+	@mkdir -p $(ETHERMINT_TYPES)/crypto/v1/ethsecp256k1
+	@curl -sSL $(ETHERMINT_URL)crypto/v1/ethsecp256k1/keys.proto > $(ETHERMINT_TYPES)/crypto/v1/ethsecp256k1/keys.proto
 
 	@mkdir -p $(COSMOS_TYPES)/tx/signing/v1beta1
 	@curl -sSL $(COSMOS_URL)/tx/signing/v1beta1/signing.proto > $(COSMOS_TYPES)/tx/signing/v1beta1/signing.proto
