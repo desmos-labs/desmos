@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	v420 "github.com/desmos-labs/desmos/v4/app/upgrades/v420"
+
 	"github.com/desmos-labs/desmos/v4/x/reactions"
 	reactionstypes "github.com/desmos-labs/desmos/v4/x/reactions/types"
 
@@ -20,7 +22,6 @@ import (
 	v320 "github.com/desmos-labs/desmos/v4/app/upgrades/v320"
 	v400 "github.com/desmos-labs/desmos/v4/app/upgrades/v400"
 	v410 "github.com/desmos-labs/desmos/v4/app/upgrades/v410"
-
 	profilesv4 "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v4"
 
 	"github.com/cosmos/cosmos-sdk/version"
@@ -1065,6 +1066,7 @@ func (app *DesmosApp) registerUpgradeHandlers() {
 	app.registerUpgrade(v320.NewUpgrade(app.mm, app.configurator))
 	app.registerUpgrade(v400.NewUpgrade(app.mm, app.configurator))
 	app.registerUpgrade(v410.NewUpgrade(app.mm, app.configurator))
+	app.registerUpgrade(v420.NewUpgrade(app.mm, app.configurator))
 }
 
 // registerUpgrade registers the given upgrade to be supported by the app
