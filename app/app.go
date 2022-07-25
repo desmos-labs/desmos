@@ -8,8 +8,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	v420 "github.com/desmos-labs/desmos/v4/app/upgrades/v420"
-
 	"github.com/desmos-labs/desmos/v4/x/reactions"
 	reactionstypes "github.com/desmos-labs/desmos/v4/x/reactions/types"
 
@@ -22,6 +20,7 @@ import (
 	v320 "github.com/desmos-labs/desmos/v4/app/upgrades/v320"
 	v400 "github.com/desmos-labs/desmos/v4/app/upgrades/v400"
 	v410 "github.com/desmos-labs/desmos/v4/app/upgrades/v410"
+	v420 "github.com/desmos-labs/desmos/v4/app/upgrades/v420"
 	profilesv4 "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v4"
 
 	"github.com/cosmos/cosmos-sdk/version"
