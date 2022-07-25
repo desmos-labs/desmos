@@ -16,8 +16,6 @@ while [ ${CNT} -lt $ITER ]; do
   echo "====> Test n. $CNT"
   curr_block=$(curl -s $NODE/status | jq -r '.result.sync_info.latest_block_height')
 
-  docker logs desmosnode0
-
   if [ ! -z ${curr_block} ] ; then
     break
   fi
