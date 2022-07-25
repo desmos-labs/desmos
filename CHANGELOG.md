@@ -2,6 +2,23 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
+## Version 4.2.0
+### Features
+#### Profiles
+- ([\#723](https://github.com/desmos-labs/desmos/pull/723)) Added expiration time to application links
+- ([\#887](https://github.com/desmos-labs/desmos/pull/887)) Added the ability to specify per-chain default external links
+- ([\#968](https://github.com/desmos-labs/desmos/pull/968)) Added the support for EVM-specific chain link signatures
+
+#### Subspaces
+- ([\#974](https://github.com/desmos-labs/desmos/pull/974)) Allow setting initial group members when creating a user group
+
+### Bug Fixes
+#### Profiles
+- ([\#971](https://github.com/desmos-labs/desmos/pull/971)) `QueryProfile` now returns an error instead of `nil` when a profile is not found
+
+#### Posts
+- ([\#964](https://github.com/desmos-labs/desmos/pull/964)) Do not allow to answer a poll after voting period ends
+
 ## Version 4.1.0
 ### Features
 #### Posts
