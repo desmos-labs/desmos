@@ -1,0 +1,6 @@
+type: fix
+module: x/posts
+pull_request: 978
+description: Fixed the REST endpoints version
+backward_compatible: true
+date: 2022-07-27T10:02:20.481025995Z
