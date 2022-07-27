@@ -6,7 +6,7 @@ require (
 	github.com/CosmWasm/wasmd v0.23.1-0.20220303200417-f35a13fa1209
 	github.com/armon/go-metrics v0.4.0
 	github.com/btcsuite/btcd v0.22.1
-	github.com/cosmos/cosmos-sdk v0.45.4
+	github.com/cosmos/cosmos-sdk v0.46.0
 	github.com/cosmos/go-bip39 v1.0.0
 	github.com/cosmos/ibc-go/v3 v3.1.0
 	github.com/ethereum/go-ethereum v1.10.18
@@ -264,7 +264,7 @@ replace (
 	github.com/CosmWasm/wasmd => github.com/desmos-labs/wasmd v0.23.1-0.20220525160858-4494e885f34a
 
 	// Our cosmos-sdk branch is: https://github.com/desmos-labs/cosmos-sdk v0.45.x-desmos
-	github.com/cosmos/cosmos-sdk => github.com/desmos-labs/cosmos-sdk v0.43.0-alpha1.0.20220620111621-ec38a43a60c9
+	// github.com/cosmos/cosmos-sdk => github.com/desmos-labs/cosmos-sdk v0.43.0-alpha1.0.20220620111621-ec38a43a60c9
 
 	// Replace the Cosmos Ledger app with the Desmos fork
 	github.com/cosmos/ledger-cosmos-go => github.com/desmos-labs/ledger-desmos-go v0.11.2-0.20210814121638-5d87e392e8a9
@@ -274,8 +274,4 @@ replace (
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.7.0
 
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
-
-	// Latest grpc doesn't work with with our modified proto compiler, so we need to enforce
-	// the following version across all dependencies.
-	google.golang.org/grpc => google.golang.org/grpc v1.33.2
 )

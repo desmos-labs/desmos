@@ -44,7 +44,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 	maccPerms := simapp.GetMaccPerms()
 	encodingConfig := simapp.MakeTestEncodingConfig()
 
-	suite.cdc = encodingConfig.Marshaler
+	suite.cdc = encodingConfig.Codec
 	suite.legacyAmino = encodingConfig.Amino
 	suite.ctx = suite.app.NewContext(false, tmproto.Header{})
 
