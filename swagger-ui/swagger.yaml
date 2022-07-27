@@ -5921,7 +5921,7 @@ paths:
           format: int64
       tags:
         - Query
-  /desmos/posts/v1/params:
+  /desmos/posts/v2/params:
     get:
       summary: Params queries the module parameters
       operationId: PostsParams
@@ -6133,7 +6133,7 @@ paths:
                         }
       tags:
         - Query
-  '/desmos/posts/v1/subspaces/{subspace_id}/posts':
+  '/desmos/posts/v2/subspaces/{subspace_id}/posts':
     get:
       summary: SubspacePosts queries all the posts inside a given subspace
       operationId: SubspacePosts
@@ -6608,7 +6608,7 @@ paths:
           format: boolean
       tags:
         - Query
-  '/desmos/posts/v1/subspaces/{subspace_id}/posts/{post_id}':
+  '/desmos/posts/v2/subspaces/{subspace_id}/posts/{post_id}':
     get:
       summary: Post queries for a single post inside a given subspace
       operationId: Post
@@ -6994,7 +6994,7 @@ paths:
           format: uint64
       tags:
         - Query
-  '/desmos/posts/v1/subspaces/{subspace_id}/posts/{post_id}/attachments':
+  '/desmos/posts/v2/subspaces/{subspace_id}/posts/{post_id}/attachments':
     get:
       summary: PostAttachments queries the attachments of the post having the given id
       operationId: PostAttachments
@@ -7498,7 +7498,7 @@ paths:
           format: boolean
       tags:
         - Query
-  '/desmos/posts/v1/subspaces/{subspace_id}/posts/{post_id}/polls/{poll_id}/answers':
+  '/desmos/posts/v2/subspaces/{subspace_id}/posts/{post_id}/polls/{poll_id}/answers':
     get:
       summary: PollAnswers queries the answers for the poll having the given id
       operationId: PollAnswers
@@ -7842,7 +7842,7 @@ paths:
           format: boolean
       tags:
         - Query
-  '/desmos/posts/v1/subspaces/{subspace_id}/sections/{section_id}/posts':
+  '/desmos/posts/v2/subspaces/{subspace_id}/sections/{section_id}/posts':
     get:
       summary: SectionPosts queries all the posts inside a given section
       operationId: SectionPosts
