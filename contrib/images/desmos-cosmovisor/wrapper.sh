@@ -21,7 +21,7 @@ fi
 
 # Run the command
 if [ -d "$(dirname "${DESMOSDHOME}"/"${LOG}")" ]; then
-  "${BINARY}" "run" "$@" --home "${DESMOSDHOME}" | tee "${DESMOSDHOME}/${LOG}"
+  "${BINARY}" "$@" --home "${DESMOSDHOME}" | tee "${DESMOSDHOME}/${LOG}"
 else
-  "${BINARY}" "run" "$@" --home "${DESMOSDHOME}"
+  "${BINARY}" "$@" --home "${DESMOSDHOME}"
 fi

@@ -9,6 +9,7 @@ ENV GOBIN /go/bin
 # Set working directory for the build
 WORKDIR /go/src/github.com/cosmos/cosmos-sdk
 RUN git clone https://github.com/cosmos/cosmos-sdk.git /go/src/github.com/cosmos/cosmos-sdk
+RUN git checkout tags/cosmovisor/v1.0.0
 RUN cd /go/src/github.com/cosmos/cosmos-sdk/cosmovisor
 RUN make cosmovisor
 

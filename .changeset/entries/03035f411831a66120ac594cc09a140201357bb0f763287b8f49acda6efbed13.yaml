@@ -1,6 +1,0 @@
-type: feat
-module: x/profiles
-pull_request: 968
-description: Added the support for EVM-specific chain link signatures
-backward_compatible: false
-date: 2022-07-18T11:42:01.267511323Z
