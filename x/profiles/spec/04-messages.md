@@ -91,7 +91,7 @@ It's expected to fail if the chain link does not exist.
 A new default external address can be set using `MsgSetDefaultExternalAddress`.
 
 ```js reference
-TODO: update it after upgrading
+https://github.com/desmos-labs/desmos/blob/master/proto/desmos/profiles/v3/msgs_chain_links.proto#L63-L72
 ```
 
 It's expected to fail if the chain link does not exist.
