@@ -20,7 +20,7 @@ jobs:
       - name: Setup Go 🧰
         uses: actions/setup-go@v3
         with:
-          go-version: 1.17
+          go-version: 1.18
 
       - name: Unshallow
         run: git fetch --prune --unshallow --tags --force
@@ -49,7 +49,7 @@ jobs:
 #      - name: Setup Go 🧰
 #        uses: actions/setup-go@v3
 #        with:
-#          go-version: 1.17
+#          go-version: 1.18
 #
 #      - name: Build the binary 🏭
 #        run: |
@@ -82,7 +82,7 @@ jobs:
 #      - name: Setup Go 🧰
 #        uses: actions/setup-go@v3
 #        with:
-#          go-version: 1.17
+#          go-version: 1.18
 #
 #      - name: Compute diff 📜
 #        uses: technote-space/get-diff-action@v6.1.0
@@ -131,7 +131,7 @@ jobs:
 #      - name: Setup Go 🧰
 #        uses: actions/setup-go@v3
 #        with:
-#          go-version: 1.17
+#          go-version: 1.18
 #
 #      - name: Build the binary 🏭
 #        run: |
