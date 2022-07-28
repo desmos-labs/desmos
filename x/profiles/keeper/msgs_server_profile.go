@@ -7,7 +7,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 var _ types.MsgServer = &msgServer{}
@@ -22,6 +22,7 @@ func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 	return &msgServer{keeper}
 }
 
+// SaveProfile defines a rpc method for MsgSaveProfile
 func (k msgServer) SaveProfile(goCtx context.Context, msg *types.MsgSaveProfile) (*types.MsgSaveProfileResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -61,21 +62,30 @@ func (k msgServer) SaveProfile(goCtx context.Context, msg *types.MsgSaveProfile)
 	}
 
 	// Save the profile
-	err = k.StoreProfile(ctx, updated)
+	err = k.Keeper.SaveProfile(ctx, updated)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
-	ctx.EventManager().EmitEvent(sdk.NewEvent(
-		types.EventTypeProfileSaved,
-		sdk.NewAttribute(types.AttributeProfileDTag, updated.DTag),
-		sdk.NewAttribute(types.AttributeProfileCreator, updated.GetAddress().String()),
-		sdk.NewAttribute(types.AttributeProfileCreationTime, updated.CreationDate.Format(time.RFC3339Nano)),
-	))
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator),
+		),
+		sdk.NewEvent(
+			types.EventTypeProfileSaved,
+			sdk.NewAttribute(types.AttributeKeyProfileDTag, updated.DTag),
+			sdk.NewAttribute(types.AttributeKeyProfileCreator, updated.GetAddress().String()),
+			sdk.NewAttribute(types.AttributeKeyProfileCreationTime, updated.CreationDate.Format(time.RFC3339Nano)),
+		),
+	})
 
 	return &types.MsgSaveProfileResponse{}, nil
 }
 
+// DeleteProfile defines a rpc method for MsgDeleteProfile
 func (k msgServer) DeleteProfile(goCtx context.Context, msg *types.MsgDeleteProfile) (*types.MsgDeleteProfileResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -84,10 +94,18 @@ func (k msgServer) DeleteProfile(goCtx context.Context, msg *types.MsgDeleteProf
 		return nil, err
 	}
 
-	ctx.EventManager().EmitEvent(sdk.NewEvent(
-		types.EventTypeProfileDeleted,
-		sdk.NewAttribute(types.AttributeProfileCreator, msg.Creator),
-	))
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator),
+		),
+		sdk.NewEvent(
+			types.EventTypeProfileDeleted,
+			sdk.NewAttribute(types.AttributeKeyProfileCreator, msg.Creator),
+		),
+	})
 
 	return &types.MsgDeleteProfileResponse{}, nil
 }

@@ -5,18 +5,17 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 // ExportGenesis returns the GenesisState associated with the given context
 func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 	return types.NewGenesisState(
 		k.GetDTagTransferRequests(ctx),
-		k.GetAllRelationships(ctx),
-		k.GetAllUsersBlocks(ctx),
 		k.GetParams(ctx),
 		k.GetPort(ctx),
 		k.GetChainLinks(ctx),
+		k.GetDefaultExternalAddressEntries(ctx),
 		k.GetApplicationLinks(ctx),
 	)
 }
@@ -29,7 +28,7 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) []abci.Val
 	// Initialize the Profiles
 	k.ak.IterateAccounts(ctx, func(account authtypes.AccountI) (stop bool) {
 		if profile, ok := (account).(*types.Profile); ok {
-			err := k.StoreProfile(ctx, profile)
+			err := k.SaveProfile(ctx, profile)
 			if err != nil {
 				panic(err)
 			}
@@ -40,22 +39,6 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) []abci.Val
 	// Store the transfer requests
 	for _, request := range data.DTagTransferRequests {
 		err := k.SaveDTagTransferRequest(ctx, request)
-		if err != nil {
-			panic(err)
-		}
-	}
-
-	// Store the relationships
-	for _, relationship := range data.Relationships {
-		err := k.SaveRelationship(ctx, relationship)
-		if err != nil {
-			panic(err)
-		}
-	}
-
-	// Store the user blocks
-	for _, userBlock := range data.Blocks {
-		err := k.SaveUserBlock(ctx, userBlock)
 		if err != nil {
 			panic(err)
 		}
@@ -79,6 +62,10 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) []abci.Val
 		if err != nil {
 			panic(err)
 		}
+	}
+
+	for _, entry := range data.DefaultExternalAddresses {
+		k.SaveDefaultExternalAddress(ctx, entry.Owner, entry.ChainName, entry.Target)
 	}
 
 	// Store the application links

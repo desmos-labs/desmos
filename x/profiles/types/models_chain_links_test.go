@@ -3,7 +3,7 @@ package types_test
 import (
 	"encoding/hex"
 
-	"github.com/desmos-labs/desmos/v2/testutil"
+	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
 
 	"github.com/mr-tron/base58"
 
@@ -18,14 +18,36 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/types/multisig"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/bech32"
+	"github.com/cosmos/cosmos-sdk/types/tx"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
+	"github.com/cosmos/cosmos-sdk/x/auth/legacy/legacytx"
 
-	"github.com/desmos-labs/desmos/v2/app"
+	"github.com/desmos-labs/desmos/v4/app"
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
+
+func TestUnmarshalSignature(t *testing.T) {
+	_, amino := app.MakeCodecs()
+
+	expectedMemo := "desmos16c60y8t8vra27zjg2arlcd58dck9cwn7p6fwtd"
+
+	aminoSigBytes := "7b226163636f756e745f6e756d626572223a2230222c22636861696e5f6964223a22616b6173686e65742d32222c22666565223a7b22616d6f756e74223a5b7b22616d6f756e74223a2230222c2264656e6f6d223a22616b74227d5d2c22676173223a2231227d2c226d656d6f223a226465736d6f7331366336307938743876726132377a6a673261726c6364353864636b3963776e37703666777464222c226d736773223a5b5d2c2273657175656e6365223a2230227d"
+	aminoSigBz, err := hex.DecodeString(aminoSigBytes)
+	require.NoError(t, err)
+
+	var stdSigDoc legacytx.StdSignDoc
+	err = amino.UnmarshalJSON(aminoSigBz, &stdSigDoc)
+	require.NoError(t, err)
+	require.Equal(t, expectedMemo, stdSigDoc.Memo)
+
+	directSigBytes := "6465736d6f7331366336307938743876726132377a6a673261726c6364353864636b3963776e37703666777464"
+	directSigBz, err := hex.DecodeString(directSigBytes)
+	require.NoError(t, err)
+	require.Equal(t, expectedMemo, string(directSigBz))
+}
 
 func TestChainConfig_Validate(t *testing.T) {
 	testCases := []struct {
@@ -71,6 +93,50 @@ func TestChainConfig_Validate(t *testing.T) {
 
 // --------------------------------------------------------------------------------------------------------------------
 
+func TestProof_GetSignature(t *testing.T) {
+	pubKeyAny, err := codectypes.NewAnyWithValue(secp256k1.GenPrivKey().PubKey())
+	require.NoError(t, err)
+
+	testCases := []struct {
+		name         string
+		proof        types.Proof
+		shouldErr    bool
+		expSignature types.Signature
+	}{
+		{
+			name: "invalid signature returns error",
+			proof: types.Proof{
+				PubKey:    pubKeyAny,
+				Signature: pubKeyAny,
+				PlainText: "74657874",
+			},
+			shouldErr: true,
+		},
+		{
+			name: "valid signature is returned properly",
+			proof: types.NewProof(
+				secp256k1.GenPrivKey().PubKey(),
+				profilestesting.SingleSignatureFromHex("74657874"),
+				"74657874",
+			),
+			expSignature: profilestesting.SingleSignatureFromHex("74657874"),
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			signature, err := tc.proof.GetSignature()
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+				require.Equal(t, tc.expSignature, signature)
+			}
+		})
+	}
+}
+
 func TestProof_Validate(t *testing.T) {
 	pubKeyAny, err := codectypes.NewAnyWithValue(secp256k1.GenPrivKey().PubKey())
 	require.NoError(t, err)
@@ -92,19 +158,19 @@ func TestProof_Validate(t *testing.T) {
 		},
 		{
 			name:      "empty plain text returns error",
-			proof:     types.NewProof(secp256k1.GenPrivKey().PubKey(), testutil.SingleSignatureProtoFromHex("74657874"), ""),
+			proof:     types.NewProof(secp256k1.GenPrivKey().PubKey(), profilestesting.SingleSignatureFromHex("74657874"), ""),
 			shouldErr: true,
 		},
 		{
 			name:      "invalid plain text format returns error",
-			proof:     types.NewProof(secp256k1.GenPrivKey().PubKey(), testutil.SingleSignatureProtoFromHex("74657874"), "="),
+			proof:     types.NewProof(secp256k1.GenPrivKey().PubKey(), profilestesting.SingleSignatureFromHex("74657874"), "="),
 			shouldErr: true,
 		},
 		{
 			name: "valid proof returns no error",
 			proof: types.NewProof(
 				secp256k1.GenPrivKey().PubKey(),
-				testutil.SingleSignatureProtoFromHex("74657874"),
+				profilestesting.SingleSignatureFromHex("74657874"),
 				"74657874",
 			),
 			shouldErr: false,
@@ -125,179 +191,126 @@ func TestProof_Validate(t *testing.T) {
 	}
 }
 
-// generatePubKeyAndMultiSignatureData generates a new multi sig public key made of the given amount of
-// individual public keys. Then, it uses the generated public key to sign the given message and returns the
-// obtained MultiSignatureData instance.
-func generatePubKeyAndMultiSignatureData(t *testing.T, n int, msg []byte) (cryptotypes.PubKey, types.SignatureData) {
+// generateMultiSigKeys returns the given amount of private keys, and a new multi sig public key made of such keys
+func generateMultiSigKeys(n int) ([]cryptotypes.PrivKey, cryptotypes.PubKey) {
+	privKeys := make([]cryptotypes.PrivKey, n)
 	pubKeys := make([]cryptotypes.PubKey, n)
-	cosmosMultisig := multisig.NewMultisig(n)
 	for i := 0; i < n; i++ {
 		// Generate the private key
-		privkey := secp256k1.GenPrivKey()
-		pubKeys[i] = privkey.PubKey()
+		privKeys[i] = secp256k1.GenPrivKey()
+		pubKeys[i] = privKeys[i].PubKey()
+	}
 
+	return privKeys, kmultisig.NewLegacyAminoPubKey(n, pubKeys)
+}
+
+// generateCosmosMultiSigSignature uses the given private keys to sign the given message using the multi sig algorithm,
+// and returns the obtained MultiSignatureData instance.
+func generateCosmosMultiSigSignature(t *testing.T, privKeys []cryptotypes.PrivKey, msg []byte) *types.CosmosMultiSignature {
+	cosmosMultisig := multisig.NewMultisig(len(privKeys))
+	pubKeys := make([]cryptotypes.PubKey, len(privKeys))
+	for i, privKey := range privKeys {
+		pubKeys[i] = privKey.PubKey()
+	}
+
+	for i, privKey := range privKeys {
 		// Sign the message using the generated private key
-		sig, err := privkey.Sign(msg)
+		sig, err := privKey.Sign(msg)
 		require.NoError(t, err)
 
 		// Build the signature data for the single signature and add it to the multi signature data
-		sigData := &signing.SingleSignatureData{Signature: sig}
-		err = multisig.AddSignatureFromPubKey(cosmosMultisig, sigData, pubKeys[i], pubKeys)
+		sigData := &signing.SingleSignatureData{SignMode: signing.SignMode_SIGN_MODE_TEXTUAL, Signature: sig}
+		err = multisig.AddSignatureFromPubKey(cosmosMultisig, sigData, privKeys[i].PubKey(), pubKeys)
 		require.NoError(t, err)
 	}
 
-	sigData, err := types.SignatureDataFromCosmosSignatureData(cosmosMultisig)
+	// Generate the signature data object
+	signature, err := types.CosmosSignatureDataToSignature(cosmosMultisig)
 	require.NoError(t, err)
-
-	return kmultisig.NewLegacyAminoPubKey(n, pubKeys), sigData
+	return signature.(*types.CosmosMultiSignature)
 }
 
 func TestProof_Verify(t *testing.T) {
-	plainText := "tc"
-
-	// Bech32
-	bech32PrivKey := secp256k1.GenPrivKey()
-	bech32PubKey := bech32PrivKey.PubKey()
-	bech32Addr, err := sdk.Bech32ifyAddressBytes("cosmos", bech32PubKey.Address())
+	privKeyBz, err := hex.DecodeString("bb98111da675930d32f79451fa8d05f188289699558c17148a5d9c82cdb31d1fe04fb0a0d9e689b436b59eff9676d7f2d788244cc4ccfc5768fe117efbd0f9d3")
 	require.NoError(t, err)
+	privKey := ed25519.PrivKey{Key: privKeyBz}
 
-	bech32Sig, err := bech32PrivKey.Sign([]byte(plainText))
-	require.NoError(t, err)
-	bech32SigData := &types.SingleSignatureData{
-		Mode:      signing.SignMode_SIGN_MODE_DIRECT,
-		Signature: bech32Sig,
-	}
-	anySigData, err := codectypes.NewAnyWithValue(bech32SigData)
+	pubKey := privKey.PubKey()
+	pubKeyAny, err := codectypes.NewAnyWithValue(pubKey)
 	require.NoError(t, err)
 
-	// Base58
-	base58PrivKeyBz, err := hex.DecodeString("bb98111da675930d32f79451fa8d05f188289699558c17148a5d9c82cdb31d1fe04fb0a0d9e689b436b59eff9676d7f2d788244cc4ccfc5768fe117efbd0f9d3")
-	require.NoError(t, err)
-	base58PrivKey := ed25519.PrivKey{Key: base58PrivKeyBz}
-	base58PubKey := base58PrivKey.PubKey()
-	base58Addr := base58.Encode(base58PubKey.Bytes())
-
-	base58Sig, err := base58PrivKey.Sign([]byte(plainText))
-	require.NoError(t, err)
-	base58SigData := &types.SingleSignatureData{
-		Mode:      signing.SignMode_SIGN_MODE_DIRECT,
-		Signature: base58Sig,
-	}
-
-	// Hex
-	hexPrivKeyBz, err := hex.DecodeString("2842d8f3701d16711b9ee320f32efe38e6b0891e243eaf6515250e7b006de53e")
-	require.NoError(t, err)
-	hexPrivKey := secp256k1.PrivKey{Key: hexPrivKeyBz}
-	hexPubKey := hexPrivKey.PubKey()
-
-	hexAddr := "0x941991947B6eC9F5537bcaC30C1295E8154Df4cC"
-	hexSig, err := hexPrivKey.Sign([]byte(plainText))
-	require.NoError(t, err)
-	hexSigData := &types.SingleSignatureData{
-		Mode:      signing.SignMode_SIGN_MODE_DIRECT,
-		Signature: hexSig,
-	}
-
-	// Multisig
-	multisigPubKey, multisigData := generatePubKeyAndMultiSignatureData(t, 3, []byte(plainText))
-	multisigAddr, err := sdk.Bech32ifyAddressBytes("cosmos", multisigPubKey.Address())
-	require.NoError(t, err)
-	validMultisigDataAny, err := codectypes.NewAnyWithValue(multisigData)
+	anotherPubKey := secp256k1.GenPrivKey().PubKey()
+	anotherPubKeyAny, err := codectypes.NewAnyWithValue(anotherPubKey)
 	require.NoError(t, err)
 
-	validaPubKeyAny, err := codectypes.NewAnyWithValue(bech32PubKey)
+	sigBz, err := privKey.Sign([]byte("cosmos1u55ywhk6thmhnxs7yn8vh8v7eznckcqjevnadx"))
 	require.NoError(t, err)
-	invalidAny, err := codectypes.NewAnyWithValue(bech32PrivKey)
+	signature := types.NewSingleSignature(types.SIGNATURE_VALUE_TYPE_RAW, sigBz)
+	sigAny, err := codectypes.NewAnyWithValue(signature)
+	require.NoError(t, err)
+
+	invalidAny, err := codectypes.NewAnyWithValue(&types.SingleSignature{})
 	require.NoError(t, err)
 
 	testCases := []struct {
 		name        string
 		proof       types.Proof
+		owner       string
 		addressData types.AddressData
 		shouldErr   bool
 	}{
 		{
-			name:        "invalid public key value returns error",
-			proof:       types.Proof{PubKey: invalidAny, Signature: anySigData, PlainText: hex.EncodeToString([]byte(plainText))},
-			addressData: types.NewBech32Address(bech32Addr, "cosmos"),
+			name:        "invalid value returns error",
+			proof:       types.Proof{PubKey: pubKeyAny, Signature: sigAny, PlainText: "value"},
+			owner:       "cosmos1u55ywhk6thmhnxs7yn8vh8v7eznckcqjevnadx",
+			addressData: types.NewBase58Address(base58.Encode(pubKey.Bytes())),
 			shouldErr:   true,
 		},
 		{
-			name:        "invalid signature value returns error",
-			proof:       types.Proof{PubKey: validaPubKeyAny, Signature: invalidAny, PlainText: hex.EncodeToString([]byte(plainText))},
-			addressData: types.NewBech32Address(bech32Addr, "cosmos"),
+			name:        "incorrect signature type returns error",
+			proof:       types.Proof{PubKey: pubKeyAny, Signature: invalidAny, PlainText: "76616C7565"},
+			owner:       "cosmos1u55ywhk6thmhnxs7yn8vh8v7eznckcqjevnadx",
+			addressData: types.NewBase58Address(base58.Encode(pubKey.Bytes())),
 			shouldErr:   true,
 		},
 		{
-			name:        "wrong plain text returns error",
-			proof:       types.NewProof(bech32PubKey, bech32SigData, "wrong"),
-			addressData: types.NewBech32Address(bech32Addr, "cosmos"),
+			name:        "invalid signature returns error",
+			proof:       types.Proof{PubKey: invalidAny, Signature: sigAny, PlainText: "76616C7565"},
+			owner:       "cosmos1u55ywhk6thmhnxs7yn8vh8v7eznckcqjevnadx",
+			addressData: types.NewBase58Address(base58.Encode(pubKey.Bytes())),
 			shouldErr:   true,
 		},
 		{
-			name:        "wrong signature returns error",
-			proof:       types.NewProof(bech32PubKey, testutil.SingleSignatureProtoFromHex("74657874"), hex.EncodeToString([]byte(plainText))),
-			addressData: types.NewBech32Address(bech32Addr, "cosmos"),
+			name: "wrong signature returns error",
+			proof: types.Proof{
+				PubKey:    anotherPubKeyAny,
+				Signature: sigAny,
+				PlainText: "636F736D6F73317535357977686B3674686D686E787337796E387668387637657A6E636B63716A65766E616478",
+			},
+			owner:       "cosmos1u55ywhk6thmhnxs7yn8vh8v7eznckcqjevnadx",
+			addressData: types.NewBase58Address(base58.Encode(pubKey.Bytes())),
 			shouldErr:   true,
 		},
 		{
-			name:        "wrong Bech32 address returns error",
-			proof:       types.NewProof(bech32PubKey, bech32SigData, hex.EncodeToString([]byte(plainText))),
-			addressData: types.NewBech32Address("cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn", "cosmos"),
+			name: "wrong signature returns error",
+			proof: types.Proof{
+				PubKey:    pubKeyAny,
+				Signature: sigAny,
+				PlainText: "636F736D6F73317535357977686B3674686D686E787337796E387668387637657A6E636B63716A65766E616478",
+			},
+			owner:       "cosmos1u55ywhk6thmhnxs7yn8vh8v7eznckcqjevnadx",
+			addressData: types.NewBase58Address(base58.Encode(anotherPubKey.Bytes())),
 			shouldErr:   true,
 		},
 		{
-			name:        "wrong Base58 address returns error",
-			proof:       types.NewProof(base58PubKey, base58SigData, hex.EncodeToString([]byte(plainText))),
-			addressData: types.NewBase58Address("HWQ14mk82aRMAad2TdxFHbeqLeUGo5SiBxTXyZyTesJT"),
-			shouldErr:   true,
-		},
-		{
-			name:        "wrong Hex address returns error",
-			proof:       types.NewProof(hexPubKey, hexSigData, hex.EncodeToString([]byte(plainText))),
-			addressData: types.NewHexAddress("0xcdAFfbFd8c131464fEE561e3d9b585141e403719", "0x"),
-			shouldErr:   true,
-		},
-		{
-			name:        "invalid Multisig pubkey returns error",
-			proof:       types.Proof{PubKey: invalidAny, Signature: validMultisigDataAny, PlainText: hex.EncodeToString([]byte(plainText))},
-			addressData: types.NewBech32Address("cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn", "cosmos"),
-			shouldErr:   true,
-		},
-		{
-			name:        "wrong Multisig address returns error",
-			proof:       types.NewProof(multisigPubKey, multisigData, hex.EncodeToString([]byte(plainText))),
-			addressData: types.NewBech32Address("cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn", "cosmos"),
-			shouldErr:   true,
-		},
-		{
-			name:        "wrong Multisig pubkey returns error",
-			proof:       types.NewProof(bech32PubKey, multisigData, hex.EncodeToString([]byte(plainText))),
-			addressData: types.NewBech32Address("cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn", "cosmos"),
-			shouldErr:   true,
-		},
-		{
-			name:        "correct proof with Base58 address returns no error",
-			proof:       types.NewProof(base58PubKey, base58SigData, hex.EncodeToString([]byte(plainText))),
-			addressData: types.NewBase58Address(base58Addr),
-			shouldErr:   false,
-		},
-		{
-			name:        "correct proof with Bech32 address returns no error",
-			proof:       types.NewProof(bech32PubKey, bech32SigData, hex.EncodeToString([]byte(plainText))),
-			addressData: types.NewBech32Address(bech32Addr, "cosmos"),
-			shouldErr:   false,
-		},
-		{
-			name:        "correct proof with Hex address returns no error",
-			proof:       types.NewProof(hexPubKey, hexSigData, hex.EncodeToString([]byte(plainText))),
-			addressData: types.NewHexAddress(hexAddr, "0x"),
-			shouldErr:   false,
-		},
-		{
-			name:        "correct proof with multisig address returns no error",
-			proof:       types.NewProof(multisigPubKey, multisigData, hex.EncodeToString([]byte(plainText))),
-			addressData: types.NewBech32Address(multisigAddr, "cosmos"),
+			name: "valid data returns no error",
+			proof: types.Proof{
+				PubKey:    pubKeyAny,
+				Signature: sigAny,
+				PlainText: "636F736D6F73317535357977686B3674686D686E787337796E387668387637657A6E636B63716A65766E616478",
+			},
+			owner:       "cosmos1u55ywhk6thmhnxs7yn8vh8v7eznckcqjevnadx",
+			addressData: types.NewBase58Address(base58.Encode(pubKey.Bytes())),
 			shouldErr:   false,
 		},
 	}
@@ -305,13 +318,491 @@ func TestProof_Verify(t *testing.T) {
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			cdc, _ := app.MakeCodecs()
-			err := tc.proof.Verify(cdc, tc.addressData)
-
+			cdc, legacyAmino := app.MakeCodecs()
+			err := tc.proof.Verify(cdc, legacyAmino, tc.owner, tc.addressData)
 			if tc.shouldErr {
 				require.Error(t, err)
 			} else {
 				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+func TestValidateDirectTxValue(t *testing.T) {
+	cdc, _ := app.MakeCodecs()
+	testCases := []struct {
+		name         string
+		value        []byte
+		expectedMemo string
+		shouldErr    bool
+	}{
+		{
+			name:         "invalid message returns error",
+			value:        cdc.MustMarshal(&types.Bech32Address{Prefix: "cosmos"}),
+			expectedMemo: "memo",
+			shouldErr:    true,
+		},
+		{
+			name:         "wrong memo returns error",
+			value:        cdc.MustMarshal(&tx.SignDoc{BodyBytes: cdc.MustMarshal(&tx.TxBody{Memo: "memo"})}),
+			expectedMemo: "other memo",
+			shouldErr:    true,
+		},
+		{
+			name:         "valid data returns no error",
+			value:        cdc.MustMarshal(&tx.SignDoc{BodyBytes: cdc.MustMarshal(&tx.TxBody{Memo: "memo"})}),
+			expectedMemo: "memo",
+			shouldErr:    false,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := types.ValidateDirectTxValue(tc.value, tc.expectedMemo, cdc)
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestValidateAminoTxValue(t *testing.T) {
+	_, legacyAmino := app.MakeCodecs()
+	testCases := []struct {
+		name         string
+		value        []byte
+		expectedMemo string
+		shouldErr    bool
+	}{
+		{
+			name:         "invalid message returns error",
+			value:        legacyAmino.MustMarshalJSON(&types.Bech32Address{}),
+			expectedMemo: "memo",
+			shouldErr:    true,
+		},
+		{
+			name:         "wrong memo returns error",
+			value:        legacyAmino.MustMarshalJSON(&legacytx.StdSignDoc{}),
+			expectedMemo: "memo",
+			shouldErr:    true,
+		},
+		{
+			name:         "valid data returns no error",
+			value:        legacyAmino.MustMarshalJSON(&legacytx.StdSignDoc{Memo: "memo"}),
+			expectedMemo: "memo",
+			shouldErr:    false,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := types.ValidateAminoTxValue(tc.value, tc.expectedMemo, legacyAmino)
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestValidateRawValue(t *testing.T) {
+	testCases := []struct {
+		name          string
+		value         []byte
+		expectedValue string
+		shouldErr     bool
+	}{
+		{
+			name:          "wrong value returns error",
+			value:         []byte(""),
+			expectedValue: "value",
+			shouldErr:     true,
+		},
+		{
+			name:          "correct value returns no error",
+			value:         []byte("value"),
+			expectedValue: "value",
+			shouldErr:     false,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := types.ValidateRawValue(tc.value, tc.expectedValue)
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestValidatePersonalSignValue(t *testing.T) {
+	testCases := []struct {
+		name          string
+		value         []byte
+		expectedValue string
+		shouldErr     bool
+	}{
+		{
+			name:          "wrong value returns error",
+			value:         []byte(""),
+			expectedValue: "value",
+			shouldErr:     true,
+		},
+		{
+			name:          "correct value returns no error",
+			value:         []byte("\x19Ethereum Signed Message:\n45desmos16c60y8t8vra27zjg2arlcd58dck9cwn7p6fwtd"),
+			expectedValue: "desmos16c60y8t8vra27zjg2arlcd58dck9cwn7p6fwtd",
+			shouldErr:     false,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := types.ValidatePersonalSignValue(tc.value, tc.expectedValue)
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+func TestSingleSignature_Validate(t *testing.T) {
+	cdc, amino := app.MakeCodecs()
+	testCases := []struct {
+		name      string
+		signature *types.SingleSignature
+		plainText []byte
+		owner     string
+		shouldErr bool
+	}{
+		{
+			name:      "invalid direct value returns error",
+			signature: types.NewSingleSignature(types.SIGNATURE_VALUE_TYPE_COSMOS_DIRECT, nil),
+			plainText: cdc.MustMarshal(&types.Bech32Address{Prefix: "cosmos"}),
+			owner:     "cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae",
+			shouldErr: true,
+		},
+		{
+			name:      "valid direct value returns no error",
+			signature: types.NewSingleSignature(types.SIGNATURE_VALUE_TYPE_COSMOS_DIRECT, nil),
+			plainText: cdc.MustMarshal(&tx.SignDoc{BodyBytes: cdc.MustMarshal(&tx.TxBody{Memo: "cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae"})}),
+			owner:     "cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae",
+			shouldErr: false,
+		},
+		{
+			name:      "invalid amino value returns error",
+			signature: types.NewSingleSignature(types.SIGNATURE_VALUE_TYPE_COSMOS_AMINO, nil),
+			plainText: amino.MustMarshalJSON(&legacytx.StdSignDoc{Memo: ""}),
+			owner:     "cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae",
+			shouldErr: true,
+		},
+		{
+			name:      "valid amino value returns error",
+			signature: types.NewSingleSignature(types.SIGNATURE_VALUE_TYPE_COSMOS_AMINO, nil),
+			plainText: amino.MustMarshalJSON(&legacytx.StdSignDoc{Memo: "cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae"}),
+			owner:     "cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae",
+			shouldErr: false,
+		},
+		{
+			name:      "invalid raw value returns error",
+			signature: types.NewSingleSignature(types.SIGNATURE_VALUE_TYPE_RAW, nil),
+			plainText: []byte(""),
+			owner:     "cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae",
+			shouldErr: true,
+		},
+		{
+			name:      "valid raw value returns no error",
+			signature: types.NewSingleSignature(types.SIGNATURE_VALUE_TYPE_RAW, nil),
+			plainText: []byte("cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae"),
+			owner:     "cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae",
+			shouldErr: false,
+		},
+		{
+			name:      "invalid personal sign value returns error",
+			signature: types.NewSingleSignature(types.SIGNATURE_VALUE_TYPE_EVM_PERSONAL_SIGN, nil),
+			plainText: []byte("\x19Ethereum Signed Message:\n5value"),
+			owner:     "cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae",
+			shouldErr: true,
+		},
+		{
+			name:      "valid personal sign value returns no error",
+			signature: types.NewSingleSignature(types.SIGNATURE_VALUE_TYPE_EVM_PERSONAL_SIGN, nil),
+			plainText: []byte("\x19Ethereum Signed Message:\n45cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae"),
+			owner:     "cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae",
+			shouldErr: false,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.signature.Validate(cdc, amino, tc.plainText, tc.owner)
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestSingleSignature_Verify(t *testing.T) {
+	cdc, _ := app.MakeCodecs()
+
+	privKey := secp256k1.GenPrivKey()
+	pubKey := privKey.PubKey()
+	pubKeyAny, err := codectypes.NewAnyWithValue(pubKey)
+	require.NoError(t, err)
+
+	sigBz, err := privKey.Sign([]byte("cosmos10m20h8fy0qp2a8f46zzjpvg8pfl8flajgxsvmk"))
+	require.NoError(t, err)
+
+	invalidAny, err := codectypes.NewAnyWithValue(privKey)
+	require.NoError(t, err)
+
+	testCases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		signature *types.SingleSignature
+		pubKey    *codectypes.Any
+		plainText []byte
+		shouldErr bool
+		expPubKey cryptotypes.PubKey
+	}{
+		{
+			name:      "invalid pub key returns error",
+			signature: types.NewSingleSignature(types.SIGNATURE_VALUE_TYPE_RAW, sigBz),
+			pubKey:    invalidAny,
+			plainText: []byte("cosmos10m20h8fy0qp2a8f46zzjpvg8pfl8flajgxsvmk"),
+			shouldErr: true,
+		},
+		{
+			name:      "invalid signature returns error",
+			signature: types.NewSingleSignature(types.SIGNATURE_VALUE_TYPE_RAW, sigBz),
+			pubKey:    pubKeyAny,
+			plainText: []byte("value"),
+			shouldErr: true,
+		},
+		{
+			name:      "valid data returns no error",
+			signature: types.NewSingleSignature(types.SIGNATURE_VALUE_TYPE_RAW, sigBz),
+			pubKey:    pubKeyAny,
+			plainText: []byte("cosmos10m20h8fy0qp2a8f46zzjpvg8pfl8flajgxsvmk"),
+			shouldErr: false,
+			expPubKey: pubKey,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			pubKey, err := tc.signature.Verify(cdc, tc.pubKey, tc.plainText)
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+				require.True(t, tc.expPubKey.Equals(pubKey))
+			}
+		})
+	}
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+func TestCosmosMultiSignature_GetValueType(t *testing.T) {
+	testCases := []struct {
+		name         string
+		store        func(ctx sdk.Context)
+		signature    *types.CosmosMultiSignature
+		shouldErr    bool
+		expValueType types.SignatureValueType
+	}{
+		{
+			name: "different sign modes return error",
+			signature: types.NewCosmosMultiSignature(nil, []types.Signature{
+				types.NewSingleSignature(types.SIGNATURE_VALUE_TYPE_COSMOS_DIRECT, nil),
+				types.NewCosmosMultiSignature(nil, []types.Signature{
+					types.NewSingleSignature(types.SIGNATURE_VALUE_TYPE_RAW, nil),
+					types.NewSingleSignature(types.SIGNATURE_VALUE_TYPE_COSMOS_DIRECT, nil),
+				}),
+			}),
+			shouldErr: true,
+		},
+		{
+			name: "correct sign modes return proper value",
+			signature: types.NewCosmosMultiSignature(nil, []types.Signature{
+				types.NewSingleSignature(types.SIGNATURE_VALUE_TYPE_RAW, nil),
+				types.NewCosmosMultiSignature(nil, []types.Signature{
+					types.NewSingleSignature(types.SIGNATURE_VALUE_TYPE_RAW, nil),
+					types.NewSingleSignature(types.SIGNATURE_VALUE_TYPE_RAW, nil),
+				}),
+			}),
+			shouldErr:    false,
+			expValueType: types.SIGNATURE_VALUE_TYPE_RAW,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			signMode, err := tc.signature.GetValueType()
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+				require.Equal(t, tc.expValueType, signMode)
+			}
+		})
+	}
+}
+
+func TestCosmosMultiSignature_Validate(t *testing.T) {
+	cdc, amino := app.MakeCodecs()
+	testCases := []struct {
+		name      string
+		signature *types.CosmosMultiSignature
+		plainText []byte
+		owner     string
+		shouldErr bool
+	}{
+		{
+			name: "invalid direct value returns error",
+			signature: types.NewCosmosMultiSignature(nil, []types.Signature{
+				types.NewSingleSignature(types.SIGNATURE_VALUE_TYPE_COSMOS_DIRECT, nil),
+			}),
+			plainText: cdc.MustMarshal(&types.Bech32Address{Prefix: "cosmos"}),
+			owner:     "cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae",
+			shouldErr: true,
+		},
+		{
+			name: "valid direct value returns no error",
+			signature: types.NewCosmosMultiSignature(nil, []types.Signature{
+				types.NewSingleSignature(types.SIGNATURE_VALUE_TYPE_COSMOS_DIRECT, nil),
+			}),
+			plainText: cdc.MustMarshal(&tx.SignDoc{BodyBytes: cdc.MustMarshal(&tx.TxBody{Memo: "cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae"})}),
+			owner:     "cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae",
+			shouldErr: false,
+		},
+		{
+			name: "invalid amino value returns error",
+			signature: types.NewCosmosMultiSignature(nil, []types.Signature{
+				types.NewSingleSignature(types.SIGNATURE_VALUE_TYPE_COSMOS_AMINO, nil),
+			}),
+			plainText: amino.MustMarshalJSON(&legacytx.StdSignDoc{Memo: ""}),
+			owner:     "cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae",
+			shouldErr: true,
+		},
+		{
+			name: "valid amino value returns error",
+			signature: types.NewCosmosMultiSignature(nil, []types.Signature{
+				types.NewSingleSignature(types.SIGNATURE_VALUE_TYPE_COSMOS_AMINO, nil),
+			}),
+			plainText: amino.MustMarshalJSON(&legacytx.StdSignDoc{Memo: "cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae"}),
+			owner:     "cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae",
+			shouldErr: false,
+		},
+		{
+			name: "invalid raw value returns error",
+			signature: types.NewCosmosMultiSignature(nil, []types.Signature{
+				types.NewSingleSignature(types.SIGNATURE_VALUE_TYPE_RAW, nil),
+			}),
+			plainText: []byte(""),
+			owner:     "cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae",
+			shouldErr: true,
+		},
+		{
+			name: "valid raw value returns no error",
+			signature: types.NewCosmosMultiSignature(nil, []types.Signature{
+				types.NewSingleSignature(types.SIGNATURE_VALUE_TYPE_RAW, nil),
+			}),
+			plainText: []byte("cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae"),
+			owner:     "cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae",
+			shouldErr: false,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.signature.Validate(cdc, amino, tc.plainText, tc.owner)
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestCosmosMultiSignature_Verify(t *testing.T) {
+	cdc, _ := app.MakeCodecs()
+
+	privKeys, pubKey := generateMultiSigKeys(3)
+	pubKeyAny, err := codectypes.NewAnyWithValue(pubKey)
+	require.NoError(t, err)
+
+	invalidAny, err := codectypes.NewAnyWithValue(&types.CosmosMultiSignature{})
+	require.NoError(t, err)
+
+	testCases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		signature *types.CosmosMultiSignature
+		pubKey    *codectypes.Any
+		plainText []byte
+		shouldErr bool
+		expPubKey cryptotypes.PubKey
+	}{
+		{
+			name:      "invalid pub key returns error",
+			signature: generateCosmosMultiSigSignature(t, privKeys, []byte("cosmos1vfvst0mr79nzzxsk65uuhfklmwrnsfadhtn977")),
+			pubKey:    invalidAny,
+			plainText: []byte("cosmos1vfvst0mr79nzzxsk65uuhfklmwrnsfadhtn977"),
+			shouldErr: true,
+		},
+		{
+			name:      "invalid signature returns error",
+			signature: generateCosmosMultiSigSignature(t, privKeys, []byte("cosmos1vfvst0mr79nzzxsk65uuhfklmwrnsfadhtn977")),
+			pubKey:    pubKeyAny,
+			plainText: []byte("value"),
+			shouldErr: true,
+		},
+		{
+			name:      "valid data returns no error",
+			signature: generateCosmosMultiSigSignature(t, privKeys, []byte("cosmos1vfvst0mr79nzzxsk65uuhfklmwrnsfadhtn977")),
+			pubKey:    pubKeyAny,
+			plainText: []byte("cosmos1vfvst0mr79nzzxsk65uuhfklmwrnsfadhtn977"),
+			shouldErr: false,
+			expPubKey: pubKey,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			pubKey, err := tc.signature.Verify(cdc, tc.pubKey, tc.plainText)
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+				require.True(t, tc.expPubKey.Equals(pubKey))
 			}
 		})
 	}
@@ -478,24 +969,24 @@ func TestHexAddress_GetValue(t *testing.T) {
 
 func TestUnpackAddressData(t *testing.T) {
 	testCases := []struct {
-		name        string
-		address     *codectypes.Any
-		shouldError bool
+		name      string
+		address   *codectypes.Any
+		shouldErr bool
 	}{
 		{
-			name:        "invalid address returns error",
-			address:     testutil.NewAny(secp256k1.GenPrivKey()),
-			shouldError: true,
+			name:      "invalid address returns error",
+			address:   profilestesting.NewAny(secp256k1.GenPrivKey()),
+			shouldErr: true,
 		},
 		{
-			name:        "valid Bech32 data returns no error",
-			address:     testutil.NewAny(types.NewBech32Address("cosmos1tdgrkvx2qgjk0uqsmdhm6dcz6wvwh9f8t37x0k", "cosmos")),
-			shouldError: false,
+			name:      "valid Bech32 data returns no error",
+			address:   profilestesting.NewAny(types.NewBech32Address("cosmos1tdgrkvx2qgjk0uqsmdhm6dcz6wvwh9f8t37x0k", "cosmos")),
+			shouldErr: false,
 		},
 		{
-			name:        "valid Base58 data returns no error",
-			address:     testutil.NewAny(types.NewBase58Address("5AfetAwZzftP8i5JBNatzWeccfXd4KvKq6TRfAvacFaN")),
-			shouldError: false,
+			name:      "valid Base58 data returns no error",
+			address:   profilestesting.NewAny(types.NewBase58Address("5AfetAwZzftP8i5JBNatzWeccfXd4KvKq6TRfAvacFaN")),
+			shouldErr: false,
 		},
 	}
 
@@ -505,7 +996,7 @@ func TestUnpackAddressData(t *testing.T) {
 			cdc, _ := app.MakeCodecs()
 			_, err := types.UnpackAddressData(cdc, tc.address)
 
-			if tc.shouldError {
+			if tc.shouldErr {
 				require.Error(t, err)
 			} else {
 				require.NoError(t, err)
@@ -527,7 +1018,7 @@ func TestChainLink_Validate(t *testing.T) {
 			name: "empty address returns error",
 			chainLink: types.ChainLink{
 				User:         "cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
-				Proof:        types.NewProof(secp256k1.GenPrivKey().PubKey(), testutil.SingleSignatureProtoFromHex("74657874"), "74657874"),
+				Proof:        types.NewProof(secp256k1.GenPrivKey().PubKey(), profilestesting.SingleSignatureFromHex("74657874"), "74657874"),
 				ChainConfig:  types.NewChainConfig("cosmos"),
 				CreationTime: time.Now(),
 			},
@@ -538,7 +1029,7 @@ func TestChainLink_Validate(t *testing.T) {
 			chainLink: types.NewChainLink(
 				"",
 				types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
-				types.NewProof(secp256k1.GenPrivKey().PubKey(), testutil.SingleSignatureProtoFromHex("74657874"), "74657874"),
+				types.NewProof(secp256k1.GenPrivKey().PubKey(), profilestesting.SingleSignatureFromHex("74657874"), "74657874"),
 				types.NewChainConfig("cosmos"),
 				time.Now(),
 			),
@@ -549,7 +1040,7 @@ func TestChainLink_Validate(t *testing.T) {
 			chainLink: types.NewChainLink(
 				"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
 				types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
-				types.NewProof(secp256k1.GenPrivKey().PubKey(), &types.SingleSignatureData{}, "="),
+				types.NewProof(secp256k1.GenPrivKey().PubKey(), &types.SingleSignature{}, "="),
 				types.NewChainConfig("cosmos"),
 				time.Now(),
 			),
@@ -560,7 +1051,7 @@ func TestChainLink_Validate(t *testing.T) {
 			chainLink: types.NewChainLink(
 				"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
 				types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
-				types.NewProof(secp256k1.GenPrivKey().PubKey(), testutil.SingleSignatureProtoFromHex("74657874"), "74657874"),
+				types.NewProof(secp256k1.GenPrivKey().PubKey(), profilestesting.SingleSignatureFromHex("74657874"), "74657874"),
 				types.NewChainConfig(""),
 				time.Now(),
 			),
@@ -571,7 +1062,7 @@ func TestChainLink_Validate(t *testing.T) {
 			chainLink: types.NewChainLink(
 				"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
 				types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
-				types.NewProof(secp256k1.GenPrivKey().PubKey(), testutil.SingleSignatureProtoFromHex("74657874"), "74657874"),
+				types.NewProof(secp256k1.GenPrivKey().PubKey(), profilestesting.SingleSignatureFromHex("74657874"), "74657874"),
 				types.NewChainConfig("cosmos"),
 				time.Time{},
 			),
@@ -582,7 +1073,7 @@ func TestChainLink_Validate(t *testing.T) {
 			chainLink: types.NewChainLink(
 				"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
 				types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
-				types.NewProof(secp256k1.GenPrivKey().PubKey(), testutil.SingleSignatureProtoFromHex("74657874"), "74657874"),
+				types.NewProof(secp256k1.GenPrivKey().PubKey(), profilestesting.SingleSignatureFromHex("74657874"), "74657874"),
 				types.NewChainConfig("cosmos"),
 				time.Now(),
 			),
@@ -614,7 +1105,7 @@ func TestChainLinkMarshaling(t *testing.T) {
 	chainLink := types.NewChainLink(
 		"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
 		types.NewBech32Address(addr, "cosmos"),
-		types.NewProof(pubKey, testutil.SingleSignatureProtoFromHex("74657874"), "plain-text"),
+		types.NewProof(pubKey, profilestesting.SingleSignatureFromHex("74657874"), "plain-text"),
 		types.NewChainConfig("cosmos"),
 		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 	)

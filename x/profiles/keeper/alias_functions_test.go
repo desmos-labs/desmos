@@ -3,14 +3,14 @@ package keeper_test
 import (
 	"time"
 
-	"github.com/desmos-labs/desmos/v2/testutil"
+	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
 
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 func (suite *KeeperTestSuite) TestKeeper_IterateProfile() {
@@ -51,7 +51,7 @@ func (suite *KeeperTestSuite) TestKeeper_IterateProfile() {
 	}
 
 	for _, profile := range profiles {
-		err := suite.k.StoreProfile(suite.ctx, profile)
+		err := suite.k.SaveProfile(suite.ctx, profile)
 		suite.Require().NoError(err)
 	}
 
@@ -79,11 +79,11 @@ func (suite *KeeperTestSuite) TestKeeper_GetProfiles() {
 		{
 			name: "non empty profiles list is returned properly",
 			store: func(ctx sdk.Context) {
-				profile := testutil.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
-				suite.Require().NoError(suite.k.StoreProfile(ctx, profile))
+				profile := profilestesting.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profile))
 			},
 			expProfiles: []*types.Profile{
-				testutil.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
+				profilestesting.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 			},
 		},
 		{
@@ -129,8 +129,8 @@ func (suite *KeeperTestSuite) TestKeeper_IterateUserIncomingDTagTransferRequests
 	}
 
 	for _, request := range requests {
-		profile := testutil.ProfileFromAddr(address)
-		err := suite.k.StoreProfile(suite.ctx, profile)
+		profile := profilestesting.ProfileFromAddr(address)
+		err := suite.k.SaveProfile(suite.ctx, profile)
 		suite.Require().NoError(err)
 
 		err = suite.k.SaveDTagTransferRequest(suite.ctx, request)
@@ -162,6 +162,7 @@ func (suite *KeeperTestSuite) TestKeeper_IterateUserApplicationLinks() {
 			),
 			nil,
 			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+			time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 		),
 		types.NewApplicationLink(
 			address,
@@ -175,6 +176,7 @@ func (suite *KeeperTestSuite) TestKeeper_IterateUserApplicationLinks() {
 			),
 			nil,
 			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+			time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 		),
 		types.NewApplicationLink(
 			address,
@@ -188,13 +190,14 @@ func (suite *KeeperTestSuite) TestKeeper_IterateUserApplicationLinks() {
 			),
 			nil,
 			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+			time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 		),
 	}
 
 	ctx, _ := suite.ctx.CacheContext()
 
 	for _, link := range links {
-		suite.ak.SetAccount(ctx, testutil.ProfileFromAddr(link.User))
+		suite.ak.SetAccount(ctx, profilestesting.ProfileFromAddr(link.User))
 
 		err := suite.k.SaveApplicationLink(ctx, link)
 		suite.Require().NoError(err)
@@ -224,6 +227,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetApplicationLinks() {
 			),
 			nil,
 			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+			time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 		),
 		types.NewApplicationLink(
 			address,
@@ -237,6 +241,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetApplicationLinks() {
 			),
 			nil,
 			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+			time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 		),
 		types.NewApplicationLink(
 			address,
@@ -250,19 +255,108 @@ func (suite *KeeperTestSuite) TestKeeper_GetApplicationLinks() {
 			),
 			nil,
 			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+			time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 		),
 	}
 
 	ctx, _ := suite.ctx.CacheContext()
 
 	for _, link := range links {
-		suite.ak.SetAccount(ctx, testutil.ProfileFromAddr(link.User))
+		suite.ak.SetAccount(ctx, profilestesting.ProfileFromAddr(link.User))
 
 		err := suite.k.SaveApplicationLink(ctx, link)
 		suite.Require().NoError(err)
 	}
 
 	suite.Require().Equal(links, suite.k.GetApplicationLinks(ctx))
+}
+
+func (suite *KeeperTestSuite) TestKeeper_IterateExpiringApplicationLinks() {
+	testCases := []struct {
+		name     string
+		setupCtx func(ctx sdk.Context) sdk.Context
+		store    func(ctx sdk.Context)
+		expLinks []types.ApplicationLink
+	}{
+		{
+			name: "expiring links are iterated properly",
+			setupCtx: func(ctx sdk.Context) sdk.Context {
+				return ctx.WithBlockTime(time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC))
+			},
+			store: func(ctx sdk.Context) {
+				suite.ak.SetAccount(ctx, profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"))
+
+				err := suite.k.SaveApplicationLink(ctx, types.NewApplicationLink(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					types.NewData("github", "github-user"),
+					types.ApplicationLinkStateInitialized,
+					types.NewOracleRequest(
+						0,
+						1,
+						types.NewOracleRequestCallData("github", "call_data"),
+						"client_id",
+					),
+					nil,
+					time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				))
+				suite.Require().NoError(err)
+
+				err = suite.k.SaveApplicationLink(ctx, types.NewApplicationLink(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					types.NewData("reddit", "reddit-user"),
+					types.ApplicationLinkStateInitialized,
+					types.NewOracleRequest(
+						0,
+						1,
+						types.NewOracleRequestCallData("reddit", "call_data"),
+						"client_id2",
+					),
+					nil,
+					time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+				))
+				suite.Require().NoError(err)
+			},
+			expLinks: []types.ApplicationLink{
+				types.NewApplicationLink(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					types.NewData("github", "github-user"),
+					types.ApplicationLinkStateInitialized,
+					types.NewOracleRequest(
+						0,
+						1,
+						types.NewOracleRequestCallData("github", "call_data"),
+						"client_id",
+					),
+					nil,
+					time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				),
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.setupCtx != nil {
+				ctx = tc.setupCtx(ctx)
+			}
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			var iteratedLinks []types.ApplicationLink
+			suite.k.IterateExpiringApplicationLinks(ctx, func(index int64, link types.ApplicationLink) (stop bool) {
+				iteratedLinks = append(iteratedLinks, link)
+				return false
+			})
+
+			suite.Require().Equal(tc.expLinks, iteratedLinks)
+		})
+	}
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -291,7 +385,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetChainLinks() {
 						types.NewChainLink(
 							"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 							types.NewBech32Address("cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f", "cosmos"),
-							types.NewProof(pub1, testutil.SingleSignatureProtoFromHex("1234"), "plain_text"),
+							types.NewProof(pub1, profilestesting.SingleSignatureFromHex("1234"), "plain_text"),
 							types.NewChainConfig("cosmos"),
 							time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 						),
@@ -304,7 +398,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetChainLinks() {
 						types.NewChainLink(
 							"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 							types.NewBech32Address("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs", "cosmos"),
-							types.NewProof(pub2, testutil.SingleSignatureProtoFromHex("1234"), "plain_text"),
+							types.NewProof(pub2, profilestesting.SingleSignatureFromHex("1234"), "plain_text"),
 							types.NewChainConfig("cosmos"),
 							time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 						),
@@ -315,14 +409,14 @@ func (suite *KeeperTestSuite) TestKeeper_GetChainLinks() {
 				types.NewChainLink(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					types.NewBech32Address("cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f", "cosmos"),
-					types.NewProof(pub1, testutil.SingleSignatureProtoFromHex("1234"), "plain_text"),
+					types.NewProof(pub1, profilestesting.SingleSignatureFromHex("1234"), "plain_text"),
 					types.NewChainConfig("cosmos"),
 					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 				),
 				types.NewChainLink(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					types.NewBech32Address("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs", "cosmos"),
-					types.NewProof(pub2, testutil.SingleSignatureProtoFromHex("1234"), "plain_text"),
+					types.NewProof(pub2, profilestesting.SingleSignatureFromHex("1234"), "plain_text"),
 					types.NewChainConfig("cosmos"),
 					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 				),

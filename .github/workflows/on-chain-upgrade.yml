@@ -22,17 +22,17 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
-      GENESIS_DESMOS_VERSION: "v2.3.0-mainnet"
-      GENESIS_URL: "https://raw.githubusercontent.com/RiccardoM/desmos-states/master/desmos-mainnet-1160425.json"
-      UPGRADE_NAME: "v2.3.1"
+      GENESIS_DESMOS_VERSION: "v4.1.0"
+      GENESIS_URL: "https://raw.githubusercontent.com/RiccardoM/desmos-states/master/morpheus-apollo-2-6608740.json"
+      UPGRADE_NAME: "v4.2.0"
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup Go 🧰
-        uses: actions/setup-go@v2.1.5
+        uses: actions/setup-go@v3
         with:
-          go-version: 1.15
+          go-version: 1.17
 
       - name: Install Desmos 🔧
         run: make clean install

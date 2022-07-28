@@ -5,7 +5,9 @@ package simulation
 import (
 	"math/rand"
 
-	"github.com/desmos-labs/desmos/v2/testutil/simtesting"
+	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
+
+	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
 
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 
@@ -16,13 +18,13 @@ import (
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/keeper"
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/keeper"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 // SimulateMsgRequestDTagTransfer tests and runs a single MsgRequestDTagTransfer
 func SimulateMsgRequestDTagTransfer(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -35,7 +37,7 @@ func SimulateMsgRequestDTagTransfer(
 
 		msg := types.NewMsgRequestDTagTransfer(sender.Address.String(), receiver.GetAddress().String())
 
-		err = simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{sender.PrivKey})
+		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{sender.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRequestDTagTransfer"), nil, err
 		}
@@ -85,7 +87,7 @@ func randomDTagRequestTransferFields(
 
 // SimulateMsgAcceptDTagTransfer tests and runs a single MsgAcceptDTagTransfer
 func SimulateMsgAcceptDTagTransfer(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -97,7 +99,7 @@ func SimulateMsgAcceptDTagTransfer(
 		}
 
 		msg := types.NewMsgAcceptDTagTransferRequest(dTag, request.Sender, request.Receiver)
-		err = simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{acc.PrivKey})
+		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{acc.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgAcceptDTagTransfer"), nil, err
 		}
@@ -136,7 +138,7 @@ func randomDTagAcceptRequestTransferFields(
 
 // SimulateMsgRefuseDTagTransfer tests and runs a single MsgRefuseDTagTransfer
 func SimulateMsgRefuseDTagTransfer(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -148,7 +150,7 @@ func SimulateMsgRefuseDTagTransfer(
 		}
 
 		msg := types.NewMsgRefuseDTagTransferRequest(sender.Address.String(), receiver.Address.String())
-		err = simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{receiver.PrivKey})
+		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{receiver.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRefuseDTagTransfer"), nil, err
 		}
@@ -165,24 +167,28 @@ func randomRefuseDTagTransferFields(
 		return simtypes.Account{}, simtypes.Account{}, true
 	}
 
-	// Get random accounts
-	sender, _ := simtypes.RandomAcc(r, accs)
-	receiver, _ := simtypes.RandomAcc(r, accs)
-
-	// skip if the two addresses are equals
-	if sender.Equals(receiver) {
+	// Get a random request
+	requests := k.GetDTagTransferRequests(ctx)
+	if len(requests) == 0 {
 		return simtypes.Account{}, simtypes.Account{}, true
 	}
+	request := RandomDTagTransferRequest(r, requests)
 
-	req := types.NewDTagTransferRequest(
-		"dtag",
-		sender.Address.String(),
-		receiver.Address.String(),
-	)
-	err := k.SaveDTagTransferRequest(ctx, req)
-	if err != nil {
+	// Get the sender account
+	senderAddr, _ := sdk.AccAddressFromBech32(request.Sender)
+	senderAcc := GetSimAccount(senderAddr, accs)
+	if senderAcc == nil {
 		return simtypes.Account{}, simtypes.Account{}, true
 	}
+	sender := *senderAcc
+
+	// Get the receiver account
+	receiverAddr, _ := sdk.AccAddressFromBech32(request.Receiver)
+	receiverAcc := GetSimAccount(receiverAddr, accs)
+	if receiverAcc == nil {
+		return simtypes.Account{}, simtypes.Account{}, true
+	}
+	receiver := *receiverAcc
 
 	return sender, receiver, false
 }
@@ -191,7 +197,7 @@ func randomRefuseDTagTransferFields(
 
 // SimulateMsgCancelDTagTransfer tests and runs a single MsgCancelDTagTransfer
 func SimulateMsgCancelDTagTransfer(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -207,7 +213,7 @@ func SimulateMsgCancelDTagTransfer(
 			receiver.Address.String(),
 		)
 
-		err = simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{sender.PrivKey})
+		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{sender.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, err
 		}
@@ -224,20 +230,28 @@ func randomCancelDTagTransferFields(
 		return simtypes.Account{}, simtypes.Account{}, true
 	}
 
-	// Get random accounts
-	sender, _ := simtypes.RandomAcc(r, accs)
-	receiver, _ := simtypes.RandomAcc(r, accs)
-
-	// skip if the two addresses are equals
-	if receiver.Equals(sender) {
+	// Get a random request
+	requests := k.GetDTagTransferRequests(ctx)
+	if len(requests) == 0 {
 		return simtypes.Account{}, simtypes.Account{}, true
 	}
+	request := RandomDTagTransferRequest(r, requests)
 
-	req := types.NewDTagTransferRequest("dtag", sender.Address.String(), receiver.Address.String())
-	err := k.SaveDTagTransferRequest(ctx, req)
-	if err != nil {
+	// Get the sender account
+	senderAddr, _ := sdk.AccAddressFromBech32(request.Sender)
+	senderAcc := GetSimAccount(senderAddr, accs)
+	if senderAcc == nil {
 		return simtypes.Account{}, simtypes.Account{}, true
 	}
+	sender := *senderAcc
+
+	// Get the receiver account
+	receiverAddr, _ := sdk.AccAddressFromBech32(request.Receiver)
+	receiverAcc := GetSimAccount(receiverAddr, accs)
+	if receiverAcc == nil {
+		return simtypes.Account{}, simtypes.Account{}, true
+	}
+	receiver := *receiverAcc
 
 	return sender, receiver, false
 }

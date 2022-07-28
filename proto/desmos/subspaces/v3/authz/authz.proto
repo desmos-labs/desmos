@@ -1,0 +1,21 @@
+syntax = "proto3";
+package desmos.subspaces.v3.authz;
+
+import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+import "cosmos/base/v1beta1/coin.proto";
+
+option go_package = "github.com/desmos-labs/desmos/v4/x/subspaces/authz";
+
+// GenericSubspaceAuthorization defines an authorization to perform any
+// operation only inside a specific subspace.
+message GenericSubspaceAuthorization {
+  option (cosmos_proto.implements_interface) = "Authorization";
+
+  // Ids of the subspaces inside which to grant the permission
+  repeated uint64 subspaces_ids = 1 [ (gogoproto.customname) = "SubspacesIDs" ];
+
+  // Msg, identified by it's type URL, to grant unrestricted permissions to
+  // execute within the subspace
+  string msg = 2;
+}

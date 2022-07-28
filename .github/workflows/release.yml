@@ -11,136 +11,136 @@ on:
       - "v[0-9]+.[0-9]+.[0-9]+-mainnet" # Push events to matching v*-mainnet, i.e. v1.0-mainnet, v20.15.10-mainnet
 
 jobs:
-  release:
+  Release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup Go 🧰
-        uses: actions/setup-go@v2.1.5
+        uses: actions/setup-go@v3
         with:
-          go-version: 1.15
+          go-version: 1.17
 
       - name: Unshallow
         run: git fetch --prune --unshallow --tags --force
 
       - name: Create release 📜
-        uses: goreleaser/goreleaser-action@v2.8.1
+        uses: goreleaser/goreleaser-action@v3.0.0
         with:
           args: release --rm-dist --release-notes ./RELEASE_CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  build-macos:
-    name: Build MacOS binary
-    runs-on: macos-10.15
-    steps:
-      - name: Checkout 🛎️
-        uses: actions/checkout@v2
-
-      - name: Unshallow
-        run: git fetch --prune --unshallow --tags --force
-
-      - name: Set variables
-        run: |
-          echo "VERSION=$(git describe --always | sed 's/^v//')" >> $GITHUB_ENV
-
-      - name: Setup Go 🧰
-        uses: actions/setup-go@v2.1.5
-        with:
-          go-version: 1.15
-
-      - name: Build the binary 🏭
-        run: |
-          LEDGER_ENABLED=true make build
-          mv build/desmos "build/desmos-$VERSION-darwin-amd64"
-
-      - name: Upload the artifacts 📤
-        uses: actions/upload-artifact@v2
-        with:
-          name: 'darwin-amd64'
-          path: 'build/*darwin*amd64*'
-
-  build-linux:
-    name: Build Linux binaries
-    runs-on: ubuntu-18.04
-    strategy:
-      matrix:
-        go-arch: [ "amd64", "arm64" ]
-    steps:
-      - name: Checkout 🛎️
-        uses: actions/checkout@v2
-
-      - name: Fetch tags
-        run: git fetch --prune --unshallow --tags --force
-
-      - name: Set variables
-        run: |
-          echo "VERSION=$(git describe --always | sed 's/^v//')" >> $GITHUB_ENV
-
-      - name: Setup Go 🧰
-        uses: actions/setup-go@v2.1.5
-        with:
-          go-version: 1.15
-
-      - name: Compute diff 📜
-        uses: technote-space/get-diff-action@v6.0.1
-        id: git_diff
-        with:
-          PATTERNS: |
-            **/**.go
-            go.mod
-            go.sum
-
-      - name: Build 🔨
-        run: |
-          GOARCH=${{ matrix.go-arch }} LEDGER_ENABLED=true make build
-          mv build/desmos "build/desmos-$VERSION-linux-${{ matrix.go-arch }}"
-
-      - name: Upload the linux/amd64 artifact 📤
-        uses: actions/upload-artifact@v2
-        with:
-          name: 'linux-amd64'
-          path: 'build/*linux*amd64*'
-
-      - name: Upload the linux/arm64 artifact 📤
-        uses: actions/upload-artifact@v2
-        with:
-          name: 'linux-arm64'
-          path: 'build/*linux*arm64*'
-
-  build-windows:
-    name: Build Windows binary
-    runs-on: windows-latest
-    steps:
-      - name: Setting up dependencies
-        run: |
-          choco install make
-
-      - name: Checkout 🛎️
-        uses: actions/checkout@v2
-
-      - name: Fetch tags
-        run: git fetch --prune --unshallow --tags --force
-
-      - name: Set variables
-        run: |
-          Add-Content -Path $env:GITHUB_ENV -Value "VERSION=$(git describe --always | sed 's/^v//')"
-
-      - name: Setup Go 🧰
-        uses: actions/setup-go@v2.1.5
-        with:
-          go-version: 1.15
-
-      - name: Build the binary 🏭
-        run: |
-          make LEDGER_ENABLED=true build
-          echo "build/desmos-$env:VERSION-$env:COMMIT-windows-amd64.exe"
-          mv build/desmos.exe "build/desmos-$env:VERSION-windows-amd64.exe"
-
-      - name: Upload the artifacts 📤
-        uses: actions/upload-artifact@v2
-        with:
-          name: 'windows-amd64'
-          path: 'build/*windows*amd64*'
+#  Build-MacOS:
+#    name: Build MacOS binary
+#    runs-on: macos-10.15
+#    steps:
+#      - name: Checkout 🛎️
+#        uses: actions/checkout@v3
+#
+#      - name: Unshallow
+#        run: git fetch --prune --unshallow --tags --force
+#
+#      - name: Set variables
+#        run: |
+#          echo "VERSION=$(git describe --always | sed 's/^v//')" >> $GITHUB_ENV
+#
+#      - name: Setup Go 🧰
+#        uses: actions/setup-go@v3
+#        with:
+#          go-version: 1.17
+#
+#      - name: Build the binary 🏭
+#        run: |
+#          LEDGER_ENABLED=true make build
+#          mv build/desmos "build/desmos-$VERSION-darwin-amd64"
+#
+#      - name: Upload the artifacts 📤
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: 'darwin-amd64'
+#          path: 'build/*darwin*amd64*'
+#
+#  Build-Linux:
+#    name: Build Linux binaries
+#    runs-on: ubuntu-18.04
+#    strategy:
+#      matrix:
+#        go-arch: [ "amd64", "arm64" ]
+#    steps:
+#      - name: Checkout 🛎️
+#        uses: actions/checkout@v3
+#
+#      - name: Fetch tags
+#        run: git fetch --prune --unshallow --tags --force
+#
+#      - name: Set variables
+#        run: |
+#          echo "VERSION=$(git describe --always | sed 's/^v//')" >> $GITHUB_ENV
+#
+#      - name: Setup Go 🧰
+#        uses: actions/setup-go@v3
+#        with:
+#          go-version: 1.17
+#
+#      - name: Compute diff 📜
+#        uses: technote-space/get-diff-action@v6.1.0
+#        id: git_diff
+#        with:
+#          PATTERNS: |
+#            **/**.go
+#            go.mod
+#            go.sum
+#
+#      - name: Build 🔨
+#        run: |
+#          GOARCH=${{ matrix.go-arch }} LEDGER_ENABLED=true make build
+#          mv build/desmos "build/desmos-$VERSION-linux-${{ matrix.go-arch }}"
+#
+#      - name: Upload the linux/amd64 artifact 📤
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: 'linux-amd64'
+#          path: 'build/*linux*amd64*'
+#
+#      - name: Upload the linux/arm64 artifact 📤
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: 'linux-arm64'
+#          path: 'build/*linux*arm64*'
+#
+#  Build-Windows:
+#    name: Build Windows binary
+#    runs-on: windows-latest
+#    steps:
+#      - name: Setting up dependencies
+#        run: |
+#          choco install make
+#
+#      - name: Checkout 🛎️
+#        uses: actions/checkout@v3
+#
+#      - name: Fetch tags
+#        run: git fetch --prune --unshallow --tags --force
+#
+#      - name: Set variables
+#        run: |
+#          Add-Content -Path $env:GITHUB_ENV -Value "VERSION=$(git describe --always | sed 's/^v//')"
+#
+#      - name: Setup Go 🧰
+#        uses: actions/setup-go@v3
+#        with:
+#          go-version: 1.17
+#
+#      - name: Build the binary 🏭
+#        run: |
+#          make LEDGER_ENABLED=true build
+#          echo "build/desmos-$env:VERSION-$env:COMMIT-windows-amd64.exe"
+#          mv build/desmos.exe "build/desmos-$env:VERSION-windows-amd64.exe"
+#
+#      - name: Upload the artifacts 📤
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: 'windows-amd64'
+#          path: 'build/*windows*amd64*'

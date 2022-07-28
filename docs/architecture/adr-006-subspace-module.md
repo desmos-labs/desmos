@@ -5,13 +5,14 @@
 - December 15th, 2021: Initial draft;
 - December 16th, 2021: First review;
 - January 06th, 2022: Second review;
-- January 13th, 2021: Third review;
-- January 14th, 2021: Fourth review;
-- January 17th, 2021: Fifth review.
+- January 13th, 2022: Third review;
+- January 14th, 2022: Fourth review;
+- January 17th, 2022: Fifth review;
+- February 10th, 2022: Sixth review.
 
 ## Status
 
-PROPOSED
+ACCEPTED Implemented
 
 ## Abstract
 This ADR defines the `x/subspaces` module which allows users to create and manage the representation of different social networks inside which contents will be created.  
@@ -58,67 +59,86 @@ type Subspace struct {
 }
 ```
 
-#### ACL
-In order to easily implement an ACL, we will use a simple set of keys made as follows: 
-```
-ACLPrefix + Subspace ID + <Group name | User Address> -> ACL Value
-```
+#### Permissions
+Since each subspace is thought to represent an independent application, we SHOULD allow different subspaces owners to set different permissions for each user. 
 
-The `ACL Value` will be a simple binary value allowing us to perform bitwise operations to combine the following different permissions: 
+For this reason, we will implement an ACL (*Access Control List*) system that can be customized for each subspace. Each ACL MUST support setting permissions for both individual users and user groups.
+
+##### Permission value
+To easily implement a composable system, we will use byte-based permissions: each value will be represented by an integer value, and composed permissions can be obtained by using the byte-wide *or* (`|`) operator. Also, this will allow us to easily check whether a user has a specific permission by using the byte-wide *and* (`&`) operator.
 
 ```go
 const (
-  // Identifies users that can create content inside the subspace
-  PermissionWrite           = 0b000001
-  
-  // Allows users to moderate contents of other users (e.g. deleting it) 
-  PermissionModerateContent = 0b000010
-  
-  // Allows to add a link for this subspace
-  PermissionAddLink         = 0b000100
-  
-  // Allows to change the information of the subspace
-  PermissionChangeInfo      = 0b001000
-  
-  // Allows to set other users' permissions (except PermissionSetPermissions). 
-  // This includes managing user groups and the associated permissions
-  PermissionSetPermissions  = 0b010000
+    // PermissionNothing represents the permission to do nothing
+    PermissionNothing = Permission(0b000000)
+    
+    // PermissionWrite identifies users that can create content inside the subspace
+    PermissionWrite = Permission(0b000001)
+    
+    // PermissionModerateContent allows users to moderate contents of other users (e.g. deleting it)
+    PermissionModerateContent = Permission(0b000010)
+    
+    // PermissionChangeInfo allows to change the information of the subspace
+    PermissionChangeInfo = Permission(0b000100)
+    
+    // PermissionManageGroups allows users to manage user groups and members
+    PermissionManageGroups = Permission(0b001000)
+    
+    // PermissionSetPermissions allows users to set other users' permissions (except PermissionSetPermissions).
+    // This includes managing user groups and the associated permissions
+    PermissionSetPermissions = Permission(0b010000)
+    
+    // PermissionDeleteSubspace allows users to delete the subspace.
+    PermissionDeleteSubspace = Permission(0b100000)
+    
+    // PermissionEverything allows to do everything.
+    // This should usually be reserved only to the owner (which has it by default)
+    PermissionEverything = Permission(0b111111)
 )
-```
 
-> **Note**:  
-> Only the `Owner` account will be able to grant other users the `PermissionSetPermissions`
-
-Using this kind of permissions will allow us to easily set permissions and check whether a user has a permission or not: 
-```go
-userPermissions := PermissionWrite | PermissionAddLink | PermissionChangeInfo
+userPermissions := PermissionWrite | PermissionManageGroups | PermissionChangeInfo
 
 canWrite := (userPermissions & PermissionWrite) == PermissionWrite  // True
 canModerateContent := (userPermissions & PermissionModerateContent) == PermissionModerateContent // False
 ```
 
-##### Group permissions 
-In order to simplify the handling of multiple users' permissions, we SHOULD allow subspace admins to set group-wide permissions. 
-Each group will be represented by its own name, which can be defined by the admins themselves, and each group will have the same importance as others.
-We reserve the group name `Others` to identify all the users that are not part of any other group (i.e. those users who are not registered inside a subspace).
+> **Note**:  
+> Only the `Owner` account will be able to grant other users the `PermissionSetPermissions`
 
-While checking a user permission to do something, the following actions will be performed: 
-1. get the permissions set for that specific user;
-2. get all the permissions for all the groups the user is part of; 
-3. compute the resulting permission associated to the user using the `OR` operator.
+##### User groups
+In order to properly implement user groups, we are going to define the following structure: 
 
-In order to properly store groups and members information, the following store keys will be used: 
-``` 
-// Store the belonging of a group to a subspace
-SubspaceGroupPrefix + Subspace ID + Group name -> 0x01
+```golang
+type UserGroup struct {
+    // SubspaceID represents the ID of the subspace inside which the group exists
+    SubspaceID  uint64
+    // Unique id that identifies the group inside the subspace
+    ID          uint32
+    // Human-readable name of the user group
+    Name        string
+    // Optional description of the group
+    Description string
+    // Permissions that will be granted to all the users inside this group
+    Permissions uint32
+}
 
-// Store the belonging of a user to a specific subspace group
-UserGroupPrefix + Subspace ID + Group name + User Address -> 0x01 
 ```
 
-In both cases, the `0x01` value is used only as a placeholder to make it possible for the key to exist.
+The `ID` of each group will be a sequential value starting from `1` for each subspace.
 
-These keys will allow us to iterate over all the users that are part of a group as well as all the groups inside a subspace. This will allow clients to easily get all the groups of a subspace and the users that are part of such groups. On the other hand, it will make it harder to get all the groups that a user is part of. The decision to prioritize the first instead of the latter is made to make sure that permission checking is sufficiently fast: since subspace will have a limited amount of groups, it will be quite inexpensive to iterate over all of them and check if a given user is part of each group.
+The user group with ID `0` will be used to identify a default user group that contains all users that are not part of any other group. This will be useful if a subspace owner wants to assign a default permission to all users (e.g. they want all users to be able to post inside that subspace by default making that subspace not require a specific registration). This group will be present by default on all subspaces, and it will only be possible to edit its permissions or details. It won't be possible to delete it nor to remove or add people to it.
+
+To store a group and its members, we will use the following key: 
+```
+GroupPrefix + SubspaceID + GroupID -> Group
+```
+This will allow us to easily iterate over all the groups inside a subspace.
+
+At the same time, to store each member of a group we will use the following store keys:
+```
+GroupMemberPrefix + SubspaceID + GroupID + <User address> -> 0x01
+```
+In this case, the `0x01` value is just a placeholder that allows the key to exist. This key will allow us to easily iterate over all the members of a subspace, as well as to check whether a user is part of a group or not. 
 
 ### `Msg` Service
 We will allow the following operations to be performed.
@@ -126,14 +146,17 @@ We will allow the following operations to be performed.
 **Subspace administration**
 * Create a subspace
 * Edit a subspace
+* Set a group's permissions
+* Delete a subspace
 
 **Content management**
 * Delete contents that do not respect the ToS
 
 **Groups management**
 * Create a new group
-* Delete a group
+* Edit a group
 * Set group permissions
+* Delete a group
 
 **Users management**
 * Add a user to a group
@@ -153,7 +176,14 @@ service Msg {
   
   // CreateUserGroup allows to create a new user group
   rpc CreateUserGroup(MsgCreateUserGroup) returns (MsgCreateUserGroupResponse);
-  
+
+  // EditUserGroup allows to edit a user group
+  rpc EditUserGroup(MsgEditUserGroup) returns (MsgEditUserGroupResponse);
+
+  // SetUserGroupPermissions allows to set the permissions for a specific group
+  rpc SetUserGroupPermissions(MsgSetUserGroupPermissions)
+      returns (MsgSetUserGroupPermissionsResponse);
+
   // DeleteUserGroup allows to delete an existing user group
   rpc DeleteUserGroup(MsgDeleteUserGroup) returns (MsgDeleteUserGroupResponse);
   
@@ -164,14 +194,14 @@ service Msg {
   rpc RemoveUserFromUserGroup(MsgRemoveUserFromUserGroup) returns (MsgRemoveUserFromUserGroupResponse); 
   
   // SetPermissions allows to set the permissions of a user or user group
-  rpc SetPermissions(MsgSetPermissions) returns (MsgSetPermissionsResponse);
+  rpc SetUserPermissions(MsgSetUserPermissions) returns (MsgSetUserPermissionsResponse);
 }
 
 message MsgCreateSubspace {
   string name = 1;
   string description = 2;
-  string owner = 3;
-  string treasury = 4;
+  string treasury = 3;
+  string owner = 4;
   string creator = 5;
 }
 
@@ -180,28 +210,57 @@ message MsgCreateSubspaceResponse {
 }
 
 message MsgEditSubspace {
-  uint64 id = 1;
+  uint64 subspace_id = 1;
   string name = 2;
   string description = 3;
-  string owner = 4;
-  string treasury = 5;
+  string treasury = 4;
+  string owner = 5;
   string signer = 6;
 }
 
 message MsgEditSubspaceResponse {}
 
+message MsgDeleteSubspace {
+  uint64 subspace_id = 1;
+  string signer = 2;
+}
+
+message MsgDeleteSubspaceResponse {}
+
 message MsgCreateUserGroup {
   uint64 subspace_id = 1;
-  string group_name = 2;
-  bytes default_permissions = 3;
+  string name = 2;
+  string description = 3;
+  bytes default_permissions = 4;
+  string creator = 5;
+}
+
+message MsgCreateUserGroupResponse {
+  uint32 group_id = 1;
+}
+
+message MsgEditUserGroup {
+  uint64 subspace_id = 1;
+  uint32 group_id = 2;
+  string name = 3;
+  string description = 4;
+  string signer = 5;
+}
+
+message MsgEditUserGroupResponse {}
+
+message MsgSetUserGroupPermissions {
+  uint64 subspace_id = 1;
+  uint32 group_id = 2;
+  uint32 permissions = 3;
   string signer = 4;
 }
 
-message MsgCreateUserGroupResponse {}
+message MsgSetUserGroupPermissionsResponse {}
 
 message MsgDeleteUserGroup {
   uint64 subspace_id = 1;
-  string group_name = 2;
+  uint32 group_id = 2;
   string signer = 3;
 }
 
@@ -209,8 +268,8 @@ message MsgDeleteUserGroupResponse {}
 
 message MsgAddUserToUserGroup { 
   uint64 subspace_id = 1;
-  string user = 2;
-  string group_name = 3;
+  uint32 group_id = 2;
+  string user = 3;
   string signer = 4;
 }
 
@@ -218,21 +277,21 @@ message MsgAddUserToUserGroupResponse {}
 
 message MsgRemoveUserFromUserGroup {
   uint64 subspace_id = 1;
-  string user = 2; 
-  string group_name = 3; 
+  uint32 group_id = 2;
+  string user = 3; 
   string signer = 4;
 }
 
 message MsgRemoveUserFromUserGroupResponse {}
 
-message MsgSetPermissions {
+message MsgSetUserPermissions {
   uint64 subspace_id = 1;
-  string target = 2;
+  string user = 2;
   bytes permissions = 3;
   string signer = 4;
 }
 
-message MsgSetPermissionsResponse {}
+message MsgSetUserPermissionsResponse {}
 ```
 
 ## Consequences

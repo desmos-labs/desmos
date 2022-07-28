@@ -11,10 +11,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/cosmos/cosmos-sdk/version"
-	clienttypes "github.com/cosmos/ibc-go/v2/modules/core/02-client/types"
-	channelutils "github.com/cosmos/ibc-go/v2/modules/core/04-channel/client/utils"
+	clienttypes "github.com/cosmos/ibc-go/v3/modules/core/02-client/types"
+	channelutils "github.com/cosmos/ibc-go/v3/modules/core/04-channel/client/utils"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 const (
@@ -34,7 +34,7 @@ Timeout height can be set by passing in the height string in the form {revision}
 Relative timeouts are added to the block height and block timestamp queried from the latest consensus state corresponding 
 to the counterparty channel. Any timeout set to 0 is disabled.`),
 		Example: fmt.Sprintf(
-			"%s tx profiles link-app [src-port] [src-channel] [application] [username] [verification-call-data]",
+			`%s tx profiles link-app "profiles" "channel-0" "twitter" "twitter_user" "7B22757365726E616D65223A22526963636172"`,
 			version.AppName),
 		Args: cobra.ExactArgs(5),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -111,7 +111,7 @@ func GetCmdUnlinkApplication() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "unlink-app [application] [username]",
 		Short:   "Unlink a centralized application account from your Desmos profile",
-		Example: fmt.Sprintf("%s tx profiles unlink-app [application] [username]", version.AppName),
+		Example: fmt.Sprintf(`%s tx profiles unlink-app "twitter" "twitter_user"`, version.AppName),
 		Args:    cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -139,9 +139,14 @@ func GetCmdUnlinkApplication() *cobra.Command {
 // GetCmdQueryApplicationsLinks returns the command allowing to query the application links, optionally associated with a user
 func GetCmdQueryApplicationsLinks() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "app-links [[user]]",
-		Short: "Get all the application links with optional user address and pagination",
-		Args:  cobra.RangeArgs(0, 1),
+		Use:   "app-links [[user]] [[application]] [[username]]",
+		Short: "Get all the application links with optional user address, application, username and pagination",
+		Example: fmt.Sprintf(`%s query profiles app-links --page=2 --limit=100
+%s query profiles app-links desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud
+%s query profiles app-links desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud "twitter"
+%s query profiles app-links desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud "twitter" "twitter_user"
+`, version.AppName, version.AppName, version.AppName, version.AppName),
+		Args: cobra.RangeArgs(0, 3),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
@@ -150,8 +155,18 @@ func GetCmdQueryApplicationsLinks() *cobra.Command {
 			queryClient := types.NewQueryClient(clientCtx)
 
 			var user string
-			if len(args) == 1 {
+			if len(args) > 0 {
 				user = args[0]
+			}
+
+			var application string
+			if len(args) > 1 {
+				application = args[1]
+			}
+
+			var username string
+			if len(args) > 2 {
+				username = args[2]
 			}
 
 			pageReq, err := client.ReadPageRequest(cmd.Flags())
@@ -161,7 +176,7 @@ func GetCmdQueryApplicationsLinks() *cobra.Command {
 
 			res, err := queryClient.ApplicationLinks(
 				context.Background(),
-				&types.QueryApplicationLinksRequest{User: user, Pagination: pageReq},
+				types.NewQueryApplicationLinksRequest(user, application, username, pageReq),
 			)
 			if err != nil {
 				return err
@@ -173,6 +188,56 @@ func GetCmdQueryApplicationsLinks() *cobra.Command {
 
 	flags.AddQueryFlagsToCmd(cmd)
 	flags.AddPaginationFlagsToCmd(cmd, "app links")
+
+	return cmd
+}
+
+// GetCmdQueryApplicationLinkOwners returns the command allowing to query the application link owners, optionally associated with a target
+func GetCmdQueryApplicationLinkOwners() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "app-link-owners [[application]] [[username]]",
+		Short: "Get all the application link owners with optional application, username and pagination",
+		Example: fmt.Sprintf(`%s query profiles app-link-owners --page=2 --limit=100
+%s query profiles app-link-owners "twitter"
+%s query profiles app-link-owners "twitter" "twitter_user"
+`, version.AppName, version.AppName, version.AppName),
+		Args: cobra.RangeArgs(0, 2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			var application string
+			if len(args) > 0 {
+				application = args[0]
+			}
+
+			var username string
+			if len(args) > 1 {
+				username = args[1]
+			}
+
+			pageReq, err := client.ReadPageRequest(cmd.Flags())
+			if err != nil {
+				return err
+			}
+
+			res, err := queryClient.ApplicationLinkOwners(
+				context.Background(),
+				types.NewQueryApplicationLinkOwnersRequest(application, username, pageReq),
+			)
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
+
+	flags.AddQueryFlagsToCmd(cmd)
+	flags.AddPaginationFlagsToCmd(cmd, "app link owners")
 
 	return cmd
 }

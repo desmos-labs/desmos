@@ -22,12 +22,12 @@ jobs:
     if: "!contains(github.event.head_commit.message, 'skip-sims')"
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup Go 🧰
-        uses: actions/setup-go@v2.1.5
+        uses: actions/setup-go@v3
         with:
-          go-version: 1.15
+          go-version: 1.17
 
       - name: Build 🔨
         run: make build
@@ -37,114 +37,108 @@ jobs:
     needs: build
     steps:
       - name: Setup Go 🧰
-        uses: actions/setup-go@v2.1.5
+        uses: actions/setup-go@v3
         with:
-          go-version: 1.15
+          go-version: 1.17
 
       - name: Install runsim 🏃
         run: export GO111MODULE="on" && go get github.com/cosmos/tools/cmd/runsim@v1.0.0
 
       - name: Cache 💾
-        uses: actions/cache@v2.1.7
+        uses: actions/cache@v3
         with:
           path: ~/go/bin
           key: ${{ runner.os }}-go-runsim-binary
 
   Test-Sim-Import-Export:
     runs-on: ubuntu-latest
-    needs: [build, install-runsim]
+    needs: [ build, install-runsim ]
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup Go 🧰
-        uses: actions/setup-go@v2.1.5
+        uses: actions/setup-go@v3
         with:
-          go-version: 1.15
+          go-version: 1.17
 
       - name: Compute diff 📜
-        uses: technote-space/get-diff-action@v6.0.1
+        uses: technote-space/get-diff-action@v6.1.0
         with:
-          SUFFIX_FILTER: |
-            .go
-            .mod
-            .sum
-          SET_ENV_NAME_INSERTIONS: 1
-          SET_ENV_NAME_LINES: 1
+          PATTERNS: |
+            **/**.go
+            go.mod
+            go.sum
 
       - name: Cache 💾
-        uses: actions/cache@v2.1.7
+        uses: actions/cache@v3
         with:
           path: ~/go/bin
           key: ${{ runner.os }}-go-runsim-binary
-        if: "env.GIT_DIFF != ''"
+        if: env.GIT_DIFF
 
       - name: Run test sim import-export ↔️
         run: make test-sim-import-export
-        if: "env.GIT_DIFF != ''"
+        if: env.GIT_DIFF
 
   Test-Sim-After-Import:
     runs-on: ubuntu-latest
-    needs: [build, install-runsim]
+    needs: [ build, install-runsim ]
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup Go 🧰
-        uses: actions/setup-go@v2.1.5
+        uses: actions/setup-go@v3
         with:
-          go-version: 1.15
+          go-version: 1.17
 
       - name: Compute diff 📜
-        uses: technote-space/get-diff-action@v6.0.1
+        uses: technote-space/get-diff-action@v6.1.0
         with:
-          SUFFIX_FILTER: |
-            .go
-            .mod
-            .sum
-          SET_ENV_NAME_INSERTIONS: 1
-          SET_ENV_NAME_LINES: 1
+          PATTERNS: |
+            **/**.go
+            go.mod
+            go.sum
 
       - name: Cache 💾
-        uses: actions/cache@v2.1.7
+        uses: actions/cache@v3
         with:
           path: ~/go/bin
           key: ${{ runner.os }}-go-runsim-binary
-        if: "env.GIT_DIFF != ''"
+        if: env.GIT_DIFF
 
       - name: Run test sim after-import ⬅️
         run: make test-sim-after-import
-        if: "env.GIT_DIFF != ''"
+        if: env.GIT_DIFF
 
   Test-Sim-Multi-Seed-Short:
     runs-on: ubuntu-latest
-    needs: [build, install-runsim]
+    needs: [ build, install-runsim ]
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup Go 🧰
-        uses: actions/setup-go@v2.1.5
+        uses: actions/setup-go@v3
         with:
-          go-version: 1.15
+          go-version: 1.17
 
       - name: Compute diff 📜
-        uses: technote-space/get-diff-action@v6.0.1
+        uses: technote-space/get-diff-action@v6.1.0
         with:
-          SUFFIX_FILTER: |
-            .go
-            .mod
-            .sum
-          SET_ENV_NAME_INSERTIONS: 1
-          SET_ENV_NAME_LINES: 1
+          PATTERNS: |
+            **/**.go
+            go.mod
+            go.sum
 
       - name: Cache 💾
-        uses: actions/cache@v2.1.7
+        uses: actions/cache@v3
         with:
           path: ~/go/bin
           key: ${{ runner.os }}-go-runsim-binary
-        if: "env.GIT_DIFF != ''"
+        if: env.GIT_DIFF
 
       - name: Run test sim multi-seed-short ⏱️
         run: make test-sim-multi-seed-short
-        if: "env.GIT_DIFF != ''"
+        if: env.GIT_DIFF

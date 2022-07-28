@@ -1,3 +1,6 @@
+//go:build norace
+// +build norace
+
 package cli_test
 
 import (
@@ -8,8 +11,8 @@ import (
 
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 
-	"github.com/desmos-labs/desmos/v2/app"
-	"github.com/desmos-labs/desmos/v2/x/profiles/client/utils"
+	"github.com/desmos-labs/desmos/v4/app"
+	"github.com/desmos-labs/desmos/v4/x/profiles/client/utils"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
@@ -22,8 +25,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/desmos-labs/desmos/v2/testutil"
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/testutil"
+	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 const (
@@ -39,11 +43,11 @@ type Keys struct {
 type IntegrationTestSuite struct {
 	suite.Suite
 
-	cfg         network.Config
-	network     *network.Network
-	keyBase     keyring.Keyring
-	keys        Keys
-	testProfile *types.Profile
+	cfg                  network.Config
+	network              *network.Network
+	keyBase              keyring.Keyring
+	keys                 Keys
+	testChainLinkAccount profilestesting.ChainLinkAccount
 }
 
 func TestIntegrationTestSuite(t *testing.T) {
@@ -109,26 +113,12 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	var profilesData types.GenesisState
 	s.Require().NoError(cfg.Codec.UnmarshalJSON(genesisState[types.ModuleName], &profilesData))
 
+	profilesData.Params = types.DefaultParams()
 	profilesData.DTagTransferRequests = []types.DTagTransferRequest{
 		types.NewDTagTransferRequest(
 			"dtag",
 			"cosmos122u6u9gpdr2rp552fkkvlgyecjlmtqhkascl5a",
 			"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
-		),
-	}
-	profilesData.Blocks = []types.UserBlock{
-		types.NewUserBlock(
-			addr.String(),
-			"cosmos1zs70glquczqgt83g03jnvcqppu4jjj8yjxwlvh",
-			"Test block",
-			"",
-		),
-	}
-	profilesData.Relationships = []types.Relationship{
-		types.NewRelationship(
-			addr.String(),
-			"cosmos1zs70glquczqgt83g03jnvcqppu4jjj8yjxwlvh",
-			"",
 		),
 	}
 	profilesData.ApplicationLinks = []types.ApplicationLink{
@@ -144,30 +134,23 @@ func (s *IntegrationTestSuite) SetupSuite() {
 			),
 			nil,
 			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+			time.Date(9999, 1, 1, 00, 00, 00, 000, time.UTC),
 		),
 	}
 
-	profilesData.Params = types.DefaultParams()
-
-	pubKey := testutil.PubKeyFromBech32(
-		"cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d",
-	)
-	s.Require().NoError(err)
-
-	stringAddr, err := sdk.Bech32ifyAddressBytes("cosmos", pubKey.Address())
-	s.Require().NoError(err)
-
+	s.testChainLinkAccount = profilestesting.GetChainLinkAccount("cosmos", "cosmos")
 	profilesData.ChainLinks = []types.ChainLink{
-		types.NewChainLink(
+		s.testChainLinkAccount.GetBech32ChainLink(
 			"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
-			types.NewBech32Address(stringAddr, "cosmos"),
-			types.NewProof(
-				pubKey,
-				testutil.SingleSignatureProtoFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
-				"74657874",
-			),
-			types.NewChainConfig("cosmos"),
 			time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
+		),
+	}
+
+	profilesData.DefaultExternalAddresses = []types.DefaultExternalAddressEntry{
+		types.NewDefaultExternalAddressEntry(
+			"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
+			s.testChainLinkAccount.ChainName(),
+			s.testChainLinkAccount.Bech32Address().GetValue(),
 		),
 	}
 
@@ -225,7 +208,7 @@ func (s *IntegrationTestSuite) writeChainLinkJSONFile(filePath string) {
 
 	jsonData := utils.NewChainLinkJSON(
 		types.NewBech32Address(addStr, "cosmos"),
-		types.NewProof(srcKey.PubKey(), testutil.SingleSignatureProtoFromHex(hex.EncodeToString(sigBz)), hex.EncodeToString([]byte(plainText))),
+		types.NewProof(srcKey.PubKey(), profilestesting.SingleSignatureFromHex(hex.EncodeToString(sigBz)), hex.EncodeToString([]byte(plainText))),
 		types.NewChainConfig("cosmos"),
 	)
 

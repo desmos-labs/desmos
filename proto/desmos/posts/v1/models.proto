@@ -1,0 +1,274 @@
+syntax = "proto3";
+package desmos.posts.v1;
+
+import "gogoproto/gogo.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+import "cosmos_proto/cosmos.proto";
+
+option go_package = "github.com/desmos-labs/desmos/v4/x/posts/legacy/v2";
+
+// Post contains all the information about a single post
+message Post {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  // Id of the subspace inside which the post has been created
+  uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
+
+  // Id of the section inside which the post has been created
+  uint32 section_id = 2 [ (gogoproto.customname) = "SectionID" ];
+
+  // Unique id of the post
+  uint64 id = 3 [ (gogoproto.customname) = "ID" ];
+
+  // (optional) External id for this post
+  string external_id = 4 [ (gogoproto.customname) = "ExternalID" ];
+
+  // (optional) Text of the post
+  string text = 5;
+
+  // (optional) Entities connected to this post
+  Entities entities = 6;
+
+  // Author of the post
+  string author = 7;
+
+  // (optional) Id of the original post of the conversation
+  uint64 conversation_id = 8 [ (gogoproto.customname) = "ConversationID" ];
+
+  // A list this posts references (either as a reply, repost or quote)
+  repeated PostReference referenced_posts = 9 [ (gogoproto.nullable) = false ];
+
+  // Reply settings of this post
+  ReplySetting reply_settings = 10;
+
+  // Creation date of the post
+  google.protobuf.Timestamp creation_date = 11
+      [ (gogoproto.nullable) = false, (gogoproto.stdtime) = true ];
+
+  // (optional) Last edited time of the post
+  google.protobuf.Timestamp last_edited_date = 12
+      [ (gogoproto.stdtime) = true ];
+}
+
+// PostReference contains the details of a post reference
+message PostReference {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  // Type of reference
+  PostReferenceType type = 1;
+
+  // Id of the referenced post
+  uint64 post_id = 2 [ (gogoproto.customname) = "PostID" ];
+
+  // Position of the reference inside the post's text. This should be used only
+  // with the type set to TYPE_QUOTE
+  uint64 position = 3;
+}
+
+// PostReferenceType represents the different types of references
+enum PostReferenceType {
+  option (gogoproto.goproto_enum_prefix) = false;
+
+  // No reference specified
+  POST_REFERENCE_TYPE_UNSPECIFIED = 0;
+
+  // This reference represents a reply to the specified post
+  POST_REFERENCE_TYPE_REPLY = 1;
+
+  // This reference represents a quote of the specified post
+  POST_REFERENCE_TYPE_QUOTE = 2;
+
+  // This reference represents a repost of the specified post
+  POST_REFERENCE_TYPE_REPOST = 3;
+}
+
+// Contains the details of entities parsed out of the post text
+message Entities {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  repeated Tag hashtags = 1 [ (gogoproto.nullable) = false ];
+  repeated Tag mentions = 2 [ (gogoproto.nullable) = false ];
+  repeated Url urls = 3 [ (gogoproto.nullable) = false ];
+}
+
+// ReplySetting contains the possible reply settings that a post can have
+enum ReplySetting {
+  option (gogoproto.goproto_enum_prefix) = false;
+
+  // No reply setting specified
+  REPLY_SETTING_UNSPECIFIED = 0;
+
+  // Everyone will be able to reply to this post
+  REPLY_SETTING_EVERYONE = 1;
+
+  // Only followers of the author will be able to reply to this post
+  REPLY_SETTING_FOLLOWERS = 2;
+
+  // Only the author mutual followers will be able to reply to this post
+  REPLY_SETTING_MUTUAL = 3;
+
+  // Only people mentioned inside this post will be able to reply
+  REPLY_SETTING_MENTIONS = 4;
+}
+
+// Tag represents a generic tag
+message Tag {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  // Index of the character inside the text at which the tag starts
+  uint64 start = 1;
+
+  // Index of the character inside the text at which the tag ends
+  uint64 end = 2;
+
+  // Tag reference (user address, hashtag value, etc)
+  string tag = 3;
+}
+
+// Url contains the details of a generic URL
+message Url {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  // Index of the character inside the text at which the URL starts
+  uint64 start = 1;
+
+  // Index of the character inside the text at which the URL ends
+  uint64 end = 2;
+
+  // Value of the URL where the user should be redirected to
+  string url = 3;
+
+  // (optional) Display value of the URL
+  string display_url = 4;
+}
+
+// Attachment contains the data of a single post attachment
+message Attachment {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  // Id of the subspace inside which the post to which this attachment should be
+  // connected is
+  uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
+
+  // Id of the subspace section inside which the post to which this attachment
+  // should be connected is
+  uint32 section_id = 2 [ (gogoproto.customname) = "SectionID" ];
+
+  // Id of the post to which this attachment should be connected
+  uint64 post_id = 3 [ (gogoproto.customname) = "PostID" ];
+
+  // Id of this attachment
+  uint32 id = 4 [ (gogoproto.customname) = "ID" ];
+
+  // Content of the attachment
+  google.protobuf.Any content = 5
+      [ (cosmos_proto.accepts_interface) = "AttachmentContent" ];
+}
+
+// Media represents a media attachment
+message Media {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+  option (cosmos_proto.implements_interface) = "AttachmentContent";
+
+  string uri = 2;
+  string mime_type = 3;
+}
+
+// Poll represents a poll attachment
+message Poll {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+  option (cosmos_proto.implements_interface) = "AttachmentContent";
+
+  // Question of the poll
+  string question = 1;
+
+  // Answers the users can choose from
+  repeated ProvidedAnswer provided_answers = 2 [ (gogoproto.nullable) = false ];
+
+  // Date at which the poll will close
+  google.protobuf.Timestamp end_date = 3
+      [ (gogoproto.nullable) = false, (gogoproto.stdtime) = true ];
+
+  // Whether the poll allows multiple choices from the same user or not
+  bool allows_multiple_answers = 4;
+
+  // Whether the poll allows to edit an answer or not
+  bool allows_answer_edits = 5;
+
+  // Final poll results
+  PollTallyResults final_tally_results = 6;
+
+  // Provided answer contains the details of a possible poll answer
+  message ProvidedAnswer {
+    option (gogoproto.equal) = true;
+    option (gogoproto.goproto_stringer) = true;
+
+    // (optional) Text of the answer
+    string text = 1;
+
+    // Attachments of the answer
+    repeated Attachment attachments = 2 [ (gogoproto.nullable) = false ];
+  }
+}
+
+// UserAnswer represents a user answer to a poll
+message UserAnswer {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  // Subspace id inside which the post related to this attachment is located
+  uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
+
+  // Section id inside which the post related to this attachment is located
+  uint32 section_id = 2 [ (gogoproto.customname) = "SectionID" ];
+
+  // Id of the post associated to this attachment
+  uint64 post_id = 3 [ (gogoproto.customname) = "PostID" ];
+
+  // Id of the poll to which this answer is associated
+  uint32 poll_id = 4 [ (gogoproto.customname) = "PollID" ];
+
+  // Indexes of the answers inside the ProvidedAnswers array
+  repeated uint32 answers_indexes = 5;
+
+  // Address of the user answering the poll
+  string user = 6;
+}
+
+// PollTallyResults contains the tally results for a poll
+message PollTallyResults {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  repeated AnswerResult results = 1 [ (gogoproto.nullable) = false ];
+
+  // AnswerResult contains the result of a single poll provided answer
+  message AnswerResult {
+    option (gogoproto.equal) = true;
+    option (gogoproto.goproto_stringer) = true;
+
+    // Index of the answer inside the poll's ProvidedAnswers slice
+    uint32 answer_index = 1;
+
+    // Number of votes the answer has received
+    uint64 votes = 2;
+  }
+}
+
+// Params contains the parameters for the posts module
+message Params {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  // Maximum length of the post text
+  uint32 max_text_length = 1;
+}

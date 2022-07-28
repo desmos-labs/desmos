@@ -1,0 +1,342 @@
+syntax = "proto3";
+package desmos.posts.v2;
+
+import "gogoproto/gogo.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+import "cosmos_proto/cosmos.proto";
+
+option go_package = "github.com/desmos-labs/desmos/v4/x/posts/types";
+
+// Post contains all the information about a single post
+message Post {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  // Id of the subspace inside which the post has been created
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+
+  // Id of the section inside which the post has been created
+  uint32 section_id = 2 [
+    (gogoproto.customname) = "SectionID",
+    (gogoproto.moretags) = "yaml:\"section_id\""
+  ];
+
+  // Unique id of the post
+  uint64 id = 3
+      [ (gogoproto.customname) = "ID", (gogoproto.moretags) = "yaml:\"id\"" ];
+
+  // (optional) External id for this post
+  string external_id = 4 [
+    (gogoproto.customname) = "ExternalID",
+    (gogoproto.moretags) = "yaml:\"external_id\""
+  ];
+
+  // (optional) Text of the post
+  string text = 5 [ (gogoproto.moretags) = "yaml:\"text\"" ];
+
+  // (optional) Entities connected to this post
+  Entities entities = 6 [ (gogoproto.moretags) = "yaml:\"entities\"" ];
+
+  // Tags related to this post, useful for categorization
+  repeated string tags = 7 [ (gogoproto.moretags) = "yaml:\"tags\"" ];
+
+  // Author of the post
+  string author = 8 [ (gogoproto.moretags) = "yaml:\"author\"" ];
+
+  // (optional) Id of the original post of the conversation
+  uint64 conversation_id = 9 [
+    (gogoproto.customname) = "ConversationID",
+    (gogoproto.moretags) = "yaml:\"conversation_id\""
+  ];
+
+  // A list this posts references (either as a reply, repost or quote)
+  repeated PostReference referenced_posts = 10 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"referenced_posts\""
+  ];
+
+  // Reply settings of this post
+  ReplySetting reply_settings = 11
+      [ (gogoproto.moretags) = "yaml:\"reply_settings\"" ];
+
+  // Creation date of the post
+  google.protobuf.Timestamp creation_date = 12 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true,
+    (gogoproto.moretags) = "yaml:\"creation_date\""
+  ];
+
+  // (optional) Last edited time of the post
+  google.protobuf.Timestamp last_edited_date = 13 [
+    (gogoproto.stdtime) = true,
+    (gogoproto.moretags) = "yaml:\"last_edited_date\""
+  ];
+}
+
+// PostReference contains the details of a post reference
+message PostReference {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  // Type of reference
+  PostReferenceType type = 1 [ (gogoproto.moretags) = "yaml:\"type\"" ];
+
+  // Id of the referenced post
+  uint64 post_id = 2 [
+    (gogoproto.customname) = "PostID",
+    (gogoproto.moretags) = "yaml:\"post_id\""
+  ];
+
+  // Position of the reference inside the post's text. This should be used only
+  // with the type set to TYPE_QUOTE
+  uint64 position = 3 [ (gogoproto.moretags) = "yaml:\"position\"" ];
+}
+
+// PostReferenceType represents the different types of references
+enum PostReferenceType {
+  option (gogoproto.goproto_enum_prefix) = false;
+
+  // No reference specified
+  POST_REFERENCE_TYPE_UNSPECIFIED = 0;
+
+  // This reference represents a reply to the specified post
+  POST_REFERENCE_TYPE_REPLY = 1;
+
+  // This reference represents a quote of the specified post
+  POST_REFERENCE_TYPE_QUOTE = 2;
+
+  // This reference represents a repost of the specified post
+  POST_REFERENCE_TYPE_REPOST = 3;
+}
+
+// Contains the details of entities parsed out of the post text
+message Entities {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  // Hashtags represent inside the post text
+  repeated TextTag hashtags = 1 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"hashtags\""
+  ];
+
+  // Mentions present inside the post text
+  repeated TextTag mentions = 2 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"mentions\""
+  ];
+
+  // Links present inside the post text
+  repeated Url urls = 3
+      [ (gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"urls\"" ];
+}
+
+// ReplySetting contains the possible reply settings that a post can have
+enum ReplySetting {
+  option (gogoproto.goproto_enum_prefix) = false;
+
+  // No reply setting specified
+  REPLY_SETTING_UNSPECIFIED = 0;
+
+  // Everyone will be able to reply to this post
+  REPLY_SETTING_EVERYONE = 1;
+
+  // Only followers of the author will be able to reply to this post
+  REPLY_SETTING_FOLLOWERS = 2;
+
+  // Only the author mutual followers will be able to reply to this post
+  REPLY_SETTING_MUTUAL = 3;
+
+  // Only people mentioned inside this post will be able to reply
+  REPLY_SETTING_MENTIONS = 4;
+}
+
+// TextTag represents a tag within the post text
+message TextTag {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  // Index of the character inside the text at which the tag starts
+  uint64 start = 1 [ (gogoproto.moretags) = "yaml:\"start\"" ];
+
+  // Index of the character inside the text at which the tag ends
+  uint64 end = 2 [ (gogoproto.moretags) = "yaml:\"end\"" ];
+
+  // Tag reference (user address, hashtag value, etc)
+  string tag = 3 [ (gogoproto.moretags) = "yaml:\"tag\"" ];
+}
+
+// Url contains the details of a generic URL
+message Url {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  // Index of the character inside the text at which the URL starts
+  uint64 start = 1 [ (gogoproto.moretags) = "yaml:\"start\"" ];
+
+  // Index of the character inside the text at which the URL ends
+  uint64 end = 2 [ (gogoproto.moretags) = "yaml:\"end\"" ];
+
+  // Value of the URL where the user should be redirected to
+  string url = 3 [ (gogoproto.moretags) = "yaml:\"url\"" ];
+
+  // (optional) Display value of the URL
+  string display_url = 4 [ (gogoproto.moretags) = "yaml:\"display_url\"" ];
+}
+
+// Attachment contains the data of a single post attachment
+message Attachment {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  // Id of the subspace inside which the post to which this attachment should be
+  // connected is
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+
+  // Id of the post to which this attachment should be connected
+  uint64 post_id = 2 [
+    (gogoproto.customname) = "PostID",
+    (gogoproto.moretags) = "yaml:\"post_id\""
+  ];
+
+  // If of this attachment
+  uint32 id = 3
+      [ (gogoproto.customname) = "ID", (gogoproto.moretags) = "yaml:\"id\"" ];
+
+  // Content of the attachment
+  google.protobuf.Any content = 4 [
+    (cosmos_proto.accepts_interface) = "AttachmentContent",
+    (gogoproto.moretags) = "yaml:\"content\""
+  ];
+}
+
+// Media represents a media attachment
+message Media {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+  option (cosmos_proto.implements_interface) = "AttachmentContent";
+
+  string uri = 2 [ (gogoproto.moretags) = "yaml:\"uri\"" ];
+  string mime_type = 3 [ (gogoproto.moretags) = "yaml:\"mime_type\"" ];
+}
+
+// Poll represents a poll attachment
+message Poll {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+  option (cosmos_proto.implements_interface) = "AttachmentContent";
+
+  // Question of the poll
+  string question = 1 [ (gogoproto.moretags) = "yaml:\"question\"" ];
+
+  // Answers the users can choose from
+  repeated ProvidedAnswer provided_answers = 2 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"provided_answers\""
+  ];
+
+  // Date at which the poll will close
+  google.protobuf.Timestamp end_date = 3 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true,
+    (gogoproto.moretags) = "yaml:\"end_date\""
+  ];
+
+  // Whether the poll allows multiple choices from the same user or not
+  bool allows_multiple_answers = 4
+      [ (gogoproto.moretags) = "yaml:\"allows_multiple_answers\"" ];
+
+  // Whether the poll allows to edit an answer or not
+  bool allows_answer_edits = 5
+      [ (gogoproto.moretags) = "yaml:\"allows_answers_edits\"" ];
+
+  // Final poll results
+  PollTallyResults final_tally_results = 6
+      [ (gogoproto.moretags) = "yaml:\"final_tally_results\"" ];
+
+  // Provided answer contains the details of a possible poll answer
+  message ProvidedAnswer {
+    option (gogoproto.equal) = true;
+    option (gogoproto.goproto_stringer) = true;
+
+    // (optional) Text of the answer
+    string text = 1 [ (gogoproto.moretags) = "yaml:\"text\"" ];
+
+    // Attachments of the answer
+    repeated Attachment attachments = 2 [
+      (gogoproto.nullable) = false,
+      (gogoproto.moretags) = "yaml:\"attachments\""
+    ];
+  }
+}
+
+// UserAnswer represents a user answer to a poll
+message UserAnswer {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  // Subspace id inside which the post related to this attachment is located
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+
+  // Id of the post associated to this attachment
+  uint64 post_id = 2 [
+    (gogoproto.customname) = "PostID",
+    (gogoproto.moretags) = "yaml:\"post_id\""
+  ];
+
+  // Id of the poll to which this answer is associated
+  uint32 poll_id = 3 [
+    (gogoproto.customname) = "PollID",
+    (gogoproto.moretags) = "yaml:\"poll_id\""
+  ];
+
+  // Indexes of the answers inside the ProvidedAnswers array
+  repeated uint32 answers_indexes = 4
+      [ (gogoproto.moretags) = "yaml:\"answers_indexes\"" ];
+
+  // Address of the user answering the poll
+  string user = 5 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+}
+
+// PollTallyResults contains the tally results for a poll
+message PollTallyResults {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  repeated AnswerResult results = 1 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"results\""
+  ];
+
+  // AnswerResult contains the result of a single poll provided answer
+  message AnswerResult {
+    option (gogoproto.equal) = true;
+    option (gogoproto.goproto_stringer) = true;
+
+    // Index of the answer inside the poll's ProvidedAnswers slice
+    uint32 answer_index = 1 [ (gogoproto.moretags) = "yaml:\"answer_index\"" ];
+
+    // Number of votes the answer has received
+    uint64 votes = 2 [ (gogoproto.moretags) = "yaml:\"votes\"" ];
+  }
+}
+
+// Params contains the parameters for the posts module
+message Params {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  // Maximum length of the post text
+  uint32 max_text_length = 1
+      [ (gogoproto.moretags) = "yaml:\"max_text_length\"" ];
+}

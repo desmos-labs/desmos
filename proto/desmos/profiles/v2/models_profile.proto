@@ -1,0 +1,59 @@
+syntax = "proto3";
+package desmos.profiles.v2;
+
+import "gogoproto/gogo.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+import "cosmos_proto/cosmos.proto";
+
+option go_package = "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v5/types";
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// Profile represents a generic first on Desmos, containing the information of a
+// single user
+message Profile {
+  option (gogoproto.goproto_getters) = false;
+  option (gogoproto.goproto_stringer) = false;
+
+  // Account represents the base Cosmos account associated with this profile
+  google.protobuf.Any account = 1
+      [ (cosmos_proto.accepts_interface) = "AccountI" ];
+
+  // DTag represents the unique tag of this profile
+  string dtag = 2 [
+    (gogoproto.moretags) = "yaml:\"dtag\"",
+    (gogoproto.customname) = "DTag"
+  ];
+
+  // Nickname contains the custom human readable name of the profile
+  string nickname = 3 [ (gogoproto.moretags) = "yaml:\"nickname\"" ];
+
+  // Bio contains the biography of the profile
+  string bio = 4 [ (gogoproto.moretags) = "yaml:\"bio\"" ];
+
+  // Pictures contains the data about the pictures associated with he profile
+  Pictures pictures = 5 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"pictures\""
+  ];
+
+  // CreationTime represents the time in which the profile has been created
+  google.protobuf.Timestamp creation_date = 6 [
+    (gogoproto.stdtime) = true,
+    (gogoproto.moretags) = "yaml:\"creation_date\"",
+    (gogoproto.nullable) = false
+  ];
+}
+
+// Pictures contains the data of a user profile's related pictures
+message Pictures {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  // Profile contains the URL to the profile picture
+  string profile = 1 [ (gogoproto.moretags) = "yaml:\"profile\"" ];
+
+  // Cover contains the URL to the cover picture
+  string cover = 2 [ (gogoproto.moretags) = "yaml:\"cover\"" ];
+}

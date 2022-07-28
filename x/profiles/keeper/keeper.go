@@ -14,16 +14,19 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/tendermint/tendermint/libs/log"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 // Keeper maintains the link to data storage and exposes getter/setter methods for the various parts of the state machine
 type Keeper struct {
 	storeKey      sdk.StoreKey
 	cdc           codec.BinaryCodec
+	legacyAmino   *codec.LegacyAmino
 	paramSubspace paramstypes.Subspace
+	hooks         types.ProfilesHooks
 
 	ak authkeeper.AccountKeeper
+	rk types.RelationshipsKeeper
 
 	channelKeeper types.ChannelKeeper
 	portKeeper    types.PortKeeper
@@ -38,9 +41,11 @@ type Keeper struct {
 //    This is used to get the address of a user based on a DTag
 func NewKeeper(
 	cdc codec.BinaryCodec,
+	legacyAmino *codec.LegacyAmino,
 	storeKey sdk.StoreKey,
 	paramSpace paramstypes.Subspace,
 	ak authkeeper.AccountKeeper,
+	rk types.RelationshipsKeeper,
 	channelKeeper types.ChannelKeeper,
 	portKeeper types.PortKeeper,
 	scopedKeeper types.ScopedKeeper,
@@ -52,8 +57,10 @@ func NewKeeper(
 	return Keeper{
 		storeKey:      storeKey,
 		cdc:           cdc,
+		legacyAmino:   legacyAmino,
 		paramSubspace: paramSpace,
 		ak:            ak,
+		rk:            rk,
 		channelKeeper: channelKeeper,
 		portKeeper:    portKeeper,
 		scopedKeeper:  scopedKeeper,
@@ -63,6 +70,22 @@ func NewKeeper(
 // Logger returns a module-specific logger.
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", "x/"+types.ModuleName)
+}
+
+// SetHooks allows to set the profiles hooks
+func (k *Keeper) SetHooks(ph types.ProfilesHooks) *Keeper {
+	if k.hooks != nil {
+		panic("cannot set profiles hooks twice")
+	}
+
+	k.hooks = ph
+	return k
+}
+
+// IsUserBlocked returns true if the provided blocker has blocked the given user for the given subspace.
+// If the provided subspace is empty, all subspaces will be checked
+func (k Keeper) IsUserBlocked(ctx sdk.Context, user, blocker string) bool {
+	return k.rk.HasUserBlocked(ctx, user, blocker, 0)
 }
 
 // storeProfileWithoutDTagCheck stores the given profile inside the current context
@@ -89,14 +112,17 @@ func (k Keeper) storeProfileWithoutDTagCheck(ctx sdk.Context, profile *types.Pro
 	// Store the account inside the auth keeper
 	k.ak.SetAccount(ctx, profile)
 
-	k.Logger(ctx).Info("stored profile", "DTag", profile.DTag, "from", profile.GetAddress())
+	k.Logger(ctx).Info("saved profile", "DTag", profile.DTag, "from", profile.GetAddress())
+
+	k.AfterProfileSaved(ctx, profile)
+
 	return nil
 }
 
-// StoreProfile stores the given profile inside the current context.
+// SaveProfile stores the given profile inside the current context.
 // It assumes that the given profile has already been validated.
 // It returns an error if a profile with the same DTag from a different creator already exists
-func (k Keeper) StoreProfile(ctx sdk.Context, profile *types.Profile) error {
+func (k Keeper) SaveProfile(ctx sdk.Context, profile *types.Profile) error {
 	addr := k.GetAddressFromDTag(ctx, profile.DTag)
 	if addr != "" && addr != profile.GetAddress().String() {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
@@ -149,12 +175,6 @@ func (k Keeper) RemoveProfile(ctx sdk.Context, address string) error {
 	store := ctx.KVStore(k.storeKey)
 	store.Delete(types.DTagStoreKey(profile.DTag))
 
-	// Delete all the blocks
-	k.DeleteAllUserBlocks(ctx, address)
-
-	// Delete all the relationships
-	k.DeleteAllUserRelationships(ctx, address)
-
 	// Delete all DTag transfer requests made towards this account
 	k.DeleteAllUserIncomingDTagTransferRequests(ctx, address)
 
@@ -166,6 +186,8 @@ func (k Keeper) RemoveProfile(ctx sdk.Context, address string) error {
 
 	// Delete the profile data by replacing the stored account
 	k.ak.SetAccount(ctx, profile.GetAccount())
+
+	k.AfterProfileDeleted(ctx, profile)
 
 	return nil
 }

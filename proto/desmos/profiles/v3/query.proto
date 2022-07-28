@@ -1,0 +1,80 @@
+syntax = "proto3";
+package desmos.profiles.v3;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/any.proto";
+import "desmos/profiles/v3/query_profile.proto";
+import "desmos/profiles/v3/query_dtag_requests.proto";
+import "desmos/profiles/v3/query_params.proto";
+import "desmos/profiles/v3/query_chain_links.proto";
+import "desmos/profiles/v3/query_app_links.proto";
+import "cosmos_proto/cosmos.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+
+option go_package = "github.com/desmos-labs/desmos/v4/x/profiles/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  // Profile queries the profile of a specific user given their DTag or address.
+  // If the queried user does not have a profile, the returned response will
+  // contain a null profile.
+  rpc Profile(QueryProfileRequest) returns (QueryProfileResponse) {
+    option (google.api.http).get = "/desmos/profiles/v3/profiles/{user}";
+  }
+
+  // IncomingDTagTransferRequests queries all the DTag transfers requests that
+  // have been made towards the user with the given address
+  rpc IncomingDTagTransferRequests(QueryIncomingDTagTransferRequestsRequest)
+      returns (QueryIncomingDTagTransferRequestsResponse) {
+    option (google.api.http).get = "/desmos/profiles/v3/dtag-transfer-requests";
+  }
+
+  // ChainLinks queries the chain links associated to the given user, if
+  // provided. Otherwise it queries all the chain links stored.
+  rpc ChainLinks(QueryChainLinksRequest) returns (QueryChainLinksResponse) {
+    option (google.api.http).get = "/desmos/profiles/v3/chain-links";
+  }
+
+  // ChainLinkOwners queries for the owners of chain links, optionally searching
+  // for a specific chain name and external address
+  rpc ChainLinkOwners(QueryChainLinkOwnersRequest)
+      returns (QueryChainLinkOwnersResponse) {
+    option (google.api.http).get = "/desmos/profiles/v3/chain-links/owners";
+  }
+
+  // DefaultExternalAddresses queries the default addresses associated to the
+  // given user and (optionally) chain name
+  rpc DefaultExternalAddresses(QueryDefaultExternalAddressesRequest)
+      returns (QueryDefaultExternalAddressesResponse) {
+    option (google.api.http).get =
+        "/desmos/profiles/v3/default-external-addresses";
+  }
+
+  // ApplicationLinks queries the applications links associated to the given
+  // user, if provided. Otherwise, it queries all the application links stored.
+  rpc ApplicationLinks(QueryApplicationLinksRequest)
+      returns (QueryApplicationLinksResponse) {
+    option (google.api.http).get = "/desmos/profiles/v3/app-links";
+  }
+
+  // ApplicationLinkByClientID queries a single application link for a given
+  // client id.
+  rpc ApplicationLinkByClientID(QueryApplicationLinkByClientIDRequest)
+      returns (QueryApplicationLinkByClientIDResponse) {
+    option (google.api.http).get =
+        "/desmos/profiles/v3/app-links/clients/{client_id}";
+  }
+
+  // ApplicationLinkOwners queries for the owners of applications links,
+  // optionally searching for a specific application and username.
+  rpc ApplicationLinkOwners(QueryApplicationLinkOwnersRequest)
+      returns (QueryApplicationLinkOwnersResponse) {
+    option (google.api.http).get = "/desmos/profiles/v3/app-links/owners";
+  }
+
+  // Params queries the profiles module params
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/desmos/profiles/v3/params";
+  }
+}

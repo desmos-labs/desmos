@@ -1,6 +1,0 @@
-type: feat
-module: x/profiles
-pull_request: 708
-description: Added support for multisig chain links
-backward_compatible: false
-date: 2022-01-12T03:49:42.2638125Z

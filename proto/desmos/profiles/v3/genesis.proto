@@ -1,0 +1,54 @@
+syntax = "proto3";
+package desmos.profiles.v3;
+
+import "gogoproto/gogo.proto";
+import "desmos/profiles/v3/models_params.proto";
+import "desmos/profiles/v3/models_profile.proto";
+import "desmos/profiles/v3/models_dtag_requests.proto";
+import "desmos/profiles/v3/models_chain_links.proto";
+import "desmos/profiles/v3/models_app_links.proto";
+
+option go_package = "github.com/desmos-labs/desmos/v4/x/profiles/types";
+
+// GenesisState defines the profiles module's genesis state.
+message GenesisState {
+  option (gogoproto.goproto_getters) = false;
+
+  repeated desmos.profiles.v3.DTagTransferRequest dtag_transfer_requests = 1 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"dtag_transfer_requests\"",
+    (gogoproto.customname) = "DTagTransferRequests"
+  ];
+
+  repeated desmos.profiles.v3.ChainLink chain_links = 2 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"chain_links\""
+  ];
+
+  repeated ApplicationLink application_links = 3 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"application_links\""
+  ];
+
+  repeated DefaultExternalAddressEntry default_external_addresses = 4 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"default_external_addresses\""
+  ];
+
+  string ibc_port_id = 5 [
+    (gogoproto.moretags) = "yaml:\"ibc_port_id\"",
+    (gogoproto.customname) = "IBCPortID"
+  ];
+
+  desmos.profiles.v3.Params params = 6 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"params\""
+  ];
+}
+
+// DefaultExternalAddressEntry contains the data of a default extnernal address
+message DefaultExternalAddressEntry {
+  string owner = 1;
+  string chain_name = 2;
+  string target = 3;
+}

@@ -1,3 +1,6 @@
+//go:build norace
+// +build norace
+
 package chainlink_test
 
 import (
@@ -5,7 +8,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/desmos-labs/desmos/v2/app/desmos/cmd/chainlink/types"
+	"github.com/desmos-labs/desmos/v4/app/desmos/cmd/chainlink/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -14,7 +17,7 @@ import (
 	authclient "github.com/cosmos/cosmos-sdk/x/auth/client"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/desmos-labs/desmos/v2/app"
+	"github.com/desmos-labs/desmos/v4/app"
 )
 
 func TestCreateJSONChainLinkSuite(t *testing.T) {
@@ -24,8 +27,10 @@ func TestCreateJSONChainLinkSuite(t *testing.T) {
 type CreateJSONChainLinkTestSuite struct {
 	suite.Suite
 
-	Codec     codec.Codec
-	ClientCtx client.Context
+	Codec       codec.Codec
+	LegacyAmino *codec.LegacyAmino
+	ClientCtx   client.Context
+	Owner       string
 }
 
 func (suite *CreateJSONChainLinkTestSuite) SetupSuite() {
@@ -34,7 +39,9 @@ func (suite *CreateJSONChainLinkTestSuite) SetupSuite() {
 
 	encodingConfig := app.MakeTestEncodingConfig()
 	suite.Codec = encodingConfig.Marshaler
+	suite.LegacyAmino = encodingConfig.Amino
 	suite.ClientCtx = client.Context{}.WithOutput(os.Stdout).WithTxConfig(encodingConfig.TxConfig)
+	suite.Owner = "desmos1n8345tvzkg3jumkm859r2qz0v6xsc3henzddcj"
 }
 
 func (suite *CreateJSONChainLinkTestSuite) TempFile() string {
@@ -45,6 +52,7 @@ func (suite *CreateJSONChainLinkTestSuite) TempFile() string {
 
 func (suite *CreateJSONChainLinkTestSuite) GetPubKeyFromTxFile(txFile string) cryptotypes.PubKey {
 	parsedTx, err := authclient.ReadTxFromFile(suite.ClientCtx, txFile)
+	suite.Require().NoError(err)
 
 	txBuilder, err := suite.ClientCtx.TxConfig.WrapTxBuilder(parsedTx)
 	suite.Require().NoError(err)
@@ -86,6 +94,11 @@ func (mock MockGetter) GetChain() (types.Chain, error) {
 // GetFilename implements ChainLinkReferenceGetter
 func (mock MockGetter) GetFilename() (string, error) {
 	return mock.FileName, nil
+}
+
+// GetOwner implements ChainLinkReferenceGetter
+func (mock MockGetter) GetOwner() (string, error) {
+	return "desmos1n8345tvzkg3jumkm859r2qz0v6xsc3henzddcj", nil
 }
 
 // GetMnemonic implements SingleSignatureAccountReferenceGetter

@@ -3,12 +3,30 @@ package types
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
-	connectiontypes "github.com/cosmos/ibc-go/v2/modules/core/03-connection/types"
-	channeltypes "github.com/cosmos/ibc-go/v2/modules/core/04-channel/types"
-	ibcexported "github.com/cosmos/ibc-go/v2/modules/core/exported"
+	connectiontypes "github.com/cosmos/ibc-go/v3/modules/core/03-connection/types"
+	channeltypes "github.com/cosmos/ibc-go/v3/modules/core/04-channel/types"
+	ibcexported "github.com/cosmos/ibc-go/v3/modules/core/exported"
+
+	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
 // DONTCOVER
+
+// SubspacesKeeper represents the expected keeper used to interact with subspaces
+type SubspacesKeeper interface {
+	// HasSubspace tells if the subspace with the given id exists
+	HasSubspace(ctx sdk.Context, subspaceID uint64) bool
+
+	// GetAllSubspaces returns all the subspaces stored
+	GetAllSubspaces(ctx sdk.Context) []subspacestypes.Subspace
+}
+
+// RelationshipsKeeper represents the expected keeper used to interact with relationships
+type RelationshipsKeeper interface {
+	// IsUserBlocked returns true if the provided blocker has blocked the given user for the given subspace.
+	// If the provided subspace is empty, all subspaces will be checked
+	HasUserBlocked(ctx sdk.Context, user, blocker string, subspaceID uint64) bool
+}
 
 // ChannelKeeper defines the expected IBC channel keeper
 type ChannelKeeper interface {

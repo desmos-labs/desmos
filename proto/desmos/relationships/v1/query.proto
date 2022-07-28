@@ -1,0 +1,88 @@
+syntax = "proto3";
+package desmos.relationships.v1;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/any.proto";
+import "cosmos_proto/cosmos.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+
+import "desmos/relationships/v1/models.proto";
+
+option go_package = "github.com/desmos-labs/desmos/v4/x/relationships/types";
+
+// Query defines the gRPC querier service.
+service Query {
+
+  // Relationships queries all relationships present inside a specific subspace
+  rpc Relationships(QueryRelationshipsRequest)
+      returns (QueryRelationshipsResponse) {
+    option (google.api.http).get = "/desmos/relationships/v1/relationships";
+  }
+
+  // Blocks queries the blocks for the given user, if provided.
+  // Otherwise, it queries all the stored blocks.
+  rpc Blocks(QueryBlocksRequest) returns (QueryBlocksResponse) {
+    option (google.api.http).get = "/desmos/relationships/v1/blocks";
+  }
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// QueryRelationshipsRequest is the request type for the
+// Query/Relationships RPC method.
+message QueryRelationshipsRequest {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  // subspace to query the relationships for
+  uint64 subspace_id = 1;
+
+  // optional address of the user for which to query the relationships
+  string user = 2;
+
+  // optional address of the counterparty of the relationships (used only if the
+  // user is provided)
+  string counterparty = 3;
+
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 4;
+}
+
+// QueryRelationshipsResponse is the response type for the
+// Query/Relationships RPC method.
+message QueryRelationshipsResponse {
+  repeated desmos.relationships.v1.Relationship relationships = 1
+      [ (gogoproto.nullable) = false ];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// QueryBlocksRequest is the request type for the Query/Blocks RPC
+// endpoint
+message QueryBlocksRequest {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  // subspace to query the blocks for
+  uint64 subspace_id = 1;
+
+  // optional address of the blocker to query the blocks for
+  string blocker = 2;
+
+  // optional address of the blocked user to query the block for (used only if
+  // the blocker is provided)
+  string blocked = 3;
+
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 4;
+}
+
+// QueryBlocksResponse is the response type for the Query/Blocks RPC
+// method.
+message QueryBlocksResponse {
+  repeated desmos.relationships.v1.UserBlock blocks = 1
+      [ (gogoproto.nullable) = false ];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}

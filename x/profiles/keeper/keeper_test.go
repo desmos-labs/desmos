@@ -4,14 +4,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/desmos-labs/desmos/v2/testutil"
+	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
-func (suite *KeeperTestSuite) TestKeeper_StoreProfile() {
+func (suite *KeeperTestSuite) TestKeeper_SaveProfile() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -22,9 +22,9 @@ func (suite *KeeperTestSuite) TestKeeper_StoreProfile() {
 		{
 			name: "existent profile with different creator returns error",
 			store: func(ctx sdk.Context) {
-				profile := testutil.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
+				profile := profilestesting.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
 				profile.DTag = "DTag"
-				suite.Require().NoError(suite.k.StoreProfile(ctx, profile))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profile))
 			},
 			profile: suite.CheckProfileNoError(types.NewProfile(
 				"DTag",
@@ -32,16 +32,16 @@ func (suite *KeeperTestSuite) TestKeeper_StoreProfile() {
 				"",
 				types.NewPictures("", ""),
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
-				testutil.AccountFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")),
+				profilestesting.AccountFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")),
 			),
 			shouldErr: true,
 		},
 		{
 			name: "existing profile is updated correctly",
 			store: func(ctx sdk.Context) {
-				profile := testutil.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
+				profile := profilestesting.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
 				profile.DTag = "Old DTag"
-				suite.Require().NoError(suite.k.StoreProfile(ctx, profile))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profile))
 
 				// Save a DTag transfer request
 				request := types.NewDTagTransferRequest(
@@ -51,7 +51,7 @@ func (suite *KeeperTestSuite) TestKeeper_StoreProfile() {
 				)
 				suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, request))
 			},
-			profile:   testutil.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
+			profile:   profilestesting.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 			shouldErr: false,
 			check: func(ctx sdk.Context) {
 				profile, found, err := suite.k.GetProfile(ctx, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
@@ -73,7 +73,7 @@ func (suite *KeeperTestSuite) TestKeeper_StoreProfile() {
 				tc.store(ctx)
 			}
 
-			err := suite.k.StoreProfile(ctx, tc.profile)
+			err := suite.k.SaveProfile(ctx, tc.profile)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -104,13 +104,13 @@ func (suite *KeeperTestSuite) TestKeeper_GetProfile() {
 		{
 			name: "found profile is returned properly",
 			store: func(ctx sdk.Context) {
-				profile := testutil.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
-				suite.Require().NoError(suite.k.StoreProfile(ctx, profile))
+				profile := profilestesting.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profile))
 			},
 			address:    "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 			shouldErr:  false,
 			expFound:   true,
-			expProfile: testutil.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
+			expProfile: profilestesting.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 		},
 		{
 			name:      "not found profile returns no error",
@@ -153,9 +153,9 @@ func (suite *KeeperTestSuite) TestKeeper_GetAddressFromDTag() {
 		{
 			name: "valid profile returns correct address",
 			store: func(ctx sdk.Context) {
-				profile := testutil.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
+				profile := profilestesting.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
 				profile.DTag = "DTag"
-				suite.Require().NoError(suite.k.StoreProfile(ctx, profile))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profile))
 			},
 			DTag:    "dtag",
 			expAddr: "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
@@ -197,8 +197,8 @@ func (suite *KeeperTestSuite) TestKeeper_RemoveProfile() {
 		{
 			name: "found profile is deleted properly",
 			store: func(ctx sdk.Context) {
-				profile := testutil.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
-				suite.Require().NoError(suite.k.StoreProfile(ctx, profile))
+				profile := profilestesting.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profile))
 			},
 			address:   "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 			shouldErr: false,
@@ -249,7 +249,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 					"https://tc.com/cover-pic",
 				),
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
-				testutil.AccountFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
+				profilestesting.AccountFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 			)),
 			shouldErr: true,
 		},
@@ -265,7 +265,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 				),
 
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
-				testutil.AccountFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
+				profilestesting.AccountFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 			)),
 			shouldErr: true,
 		},
@@ -281,7 +281,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 				),
 
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
-				testutil.AccountFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
+				profilestesting.AccountFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 			)),
 			shouldErr: true,
 		},
@@ -296,7 +296,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 					"https://tc.com/cover-pic",
 				),
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
-				testutil.AccountFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
+				profilestesting.AccountFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 			)),
 			shouldErr: true,
 		},
@@ -311,7 +311,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 					"https://tc.com/cover-pic",
 				),
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
-				testutil.AccountFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
+				profilestesting.AccountFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 			)),
 			shouldErr: true,
 		},
@@ -326,7 +326,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 					"https://tc.com/cover-pic",
 				),
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
-				testutil.AccountFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
+				profilestesting.AccountFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 			)),
 			shouldErr: true,
 		},
@@ -341,7 +341,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 					"htts://tc.com/cover-pic",
 				),
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
-				testutil.AccountFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
+				profilestesting.AccountFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 			)),
 			shouldErr: true,
 		},
@@ -356,7 +356,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 					"https://tc.com/cover-pic",
 				),
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
-				testutil.AccountFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
+				profilestesting.AccountFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 			)),
 			shouldErr: false,
 		},

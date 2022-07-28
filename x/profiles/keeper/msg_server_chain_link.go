@@ -4,11 +4,14 @@ import (
 	"context"
 	"time"
 
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
+// LinkChainAccount defines a rpc method for MsgLinkChainAccount
 func (k msgServer) LinkChainAccount(goCtx context.Context, msg *types.MsgLinkChainAccount) (*types.MsgLinkChainAccountResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -23,30 +26,82 @@ func (k msgServer) LinkChainAccount(goCtx context.Context, msg *types.MsgLinkCha
 		return nil, err
 	}
 
-	ctx.EventManager().EmitEvent(sdk.NewEvent(
-		types.EventTypeLinkChainAccount,
-		sdk.NewAttribute(types.AttributeChainLinkSourceAddress, srcAddrData.GetValue()),
-		sdk.NewAttribute(types.AttributeChainLinkSourceChainName, msg.ChainConfig.Name),
-		sdk.NewAttribute(types.AttributeChainLinkDestinationAddress, msg.Signer),
-		sdk.NewAttribute(types.AttributeChainLinkCreationTime, link.CreationTime.Format(time.RFC3339Nano)),
-	))
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Signer),
+		),
+		sdk.NewEvent(
+			types.EventTypeLinkChainAccount,
+			sdk.NewAttribute(types.AttributeKeyChainLinkExternalAddress, srcAddrData.GetValue()),
+			sdk.NewAttribute(types.AttributeKeyChainLinkChainName, msg.ChainConfig.Name),
+			sdk.NewAttribute(types.AttributeKeyChainLinkOwner, msg.Signer),
+			sdk.NewAttribute(types.AttributeKeyChainLinkCreationTime, link.CreationTime.Format(time.RFC3339Nano)),
+		),
+	})
 
 	return &types.MsgLinkChainAccountResponse{}, nil
 }
 
+// UnlinkChainAccount defines a rpc method for MsgUnlinkChainAccount
 func (k msgServer) UnlinkChainAccount(goCtx context.Context, msg *types.MsgUnlinkChainAccount) (*types.MsgUnlinkChainAccountResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if err := k.DeleteChainLink(ctx, msg.Owner, msg.ChainName, msg.Target); err != nil {
-		return &types.MsgUnlinkChainAccountResponse{}, err
+	// Get the chain link
+	link, found := k.GetChainLink(ctx, msg.Owner, msg.ChainName, msg.Target)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrNotFound, "chain link not found")
 	}
 
-	ctx.EventManager().EmitEvent(sdk.NewEvent(
-		types.EventTypeUnlinkChainAccount,
-		sdk.NewAttribute(types.AttributeChainLinkSourceAddress, msg.Target),
-		sdk.NewAttribute(types.AttributeChainLinkSourceChainName, msg.ChainName),
-		sdk.NewAttribute(types.AttributeChainLinkDestinationAddress, msg.Owner),
-	))
+	// Delete the link
+	k.DeleteChainLink(ctx, link)
+
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Owner),
+		),
+		sdk.NewEvent(
+			types.EventTypeUnlinkChainAccount,
+			sdk.NewAttribute(types.AttributeKeyChainLinkExternalAddress, msg.Target),
+			sdk.NewAttribute(types.AttributeKeyChainLinkChainName, msg.ChainName),
+			sdk.NewAttribute(types.AttributeKeyChainLinkOwner, msg.Owner),
+		),
+	})
 
 	return &types.MsgUnlinkChainAccountResponse{}, nil
+}
+
+// SetDefaultExternalAddress defines a rpc method for MsgSetDefaultExternalAddress
+func (k msgServer) SetDefaultExternalAddress(goCtx context.Context, msg *types.MsgSetDefaultExternalAddress) (*types.MsgSetDefaultExternalAddressResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Get the chain link
+	_, found := k.GetChainLink(ctx, msg.Signer, msg.ChainName, msg.Target)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrNotFound, "chain link not found")
+	}
+
+	k.SaveDefaultExternalAddress(ctx, msg.Signer, msg.ChainName, msg.Target)
+
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Signer),
+		),
+		sdk.NewEvent(
+			types.EventTypeSetDefaultExternalAddress,
+			sdk.NewAttribute(types.AttributeKeyChainLinkChainName, msg.ChainName),
+			sdk.NewAttribute(types.AttributeKeyChainLinkExternalAddress, msg.Target),
+			sdk.NewAttribute(types.AttributeKeyChainLinkOwner, msg.Signer),
+		),
+	})
+
+	return &types.MsgSetDefaultExternalAddressResponse{}, nil
 }

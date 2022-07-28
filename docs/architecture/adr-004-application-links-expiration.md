@@ -11,11 +11,11 @@
 
 ## Status
 
-PROPOSED
+ACCEPTED Implemented
 
 ## Abstract
 
-Currently when a user links a centralized application with their Desmos profile, the created link contains a timestamp of when it has been created.   
+Currently, when a user links a centralized application with their Desmos profile, the created link contains a timestamp of when it has been created.   
 Since centralized applications' username can be switched and sold, we SHOULD implement an "expiration date" system on links. 
 This means that after a certain amount of time passes, the link will be automatically marked deleted and the user has to connect it again in order to keep it valid.
 
@@ -61,11 +61,10 @@ from the previous versions to the one that will include the additions contained 
 
 (none known)
 
-## Further Discussions
-
 ## Test Cases [optional]
+
 - The expired `AppLinks` are deleted correctly when they expire.
-- 
+
 ## References
 
 - Issue [#516](https://github.com/desmos-labs/desmos/issues/516)

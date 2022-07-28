@@ -1,3 +1,6 @@
+//go:build norace
+// +build norace
+
 package cli_test
 
 import (
@@ -12,22 +15,16 @@ import (
 	"github.com/golang/protobuf/proto"
 	tmcli "github.com/tendermint/tendermint/libs/cli"
 
-	"github.com/desmos-labs/desmos/v2/testutil"
-	"github.com/desmos-labs/desmos/v2/x/profiles/client/cli"
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/client/cli"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 func (s *IntegrationTestSuite) TestCmdQueryChainLinks() {
 	val := s.network.Validators[0]
-
-	pubKey := testutil.PubKeyFromBech32(
-		"cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d",
-	)
-
 	useCases := []struct {
 		name           string
 		args           []string
-		expectErr      bool
+		shouldErr      bool
 		expectedOutput types.QueryChainLinksResponse
 	}{
 		{
@@ -35,29 +32,11 @@ func (s *IntegrationTestSuite) TestCmdQueryChainLinks() {
 			args: []string{
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			expectErr: false,
+			shouldErr: false,
 			expectedOutput: types.QueryChainLinksResponse{
 				Links: []types.ChainLink{
-					types.NewChainLink(
+					s.testChainLinkAccount.GetBech32ChainLink(
 						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
-						types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
-						types.NewProof(
-							pubKey,
-							testutil.SingleSignatureProtoFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
-							"74657874",
-						),
-						types.NewChainConfig("cosmos"),
-						time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
-					),
-					types.NewChainLink(
-						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
-						types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
-						types.NewProof(
-							pubKey,
-							testutil.SingleSignatureProtoFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
-							"74657874",
-						),
-						types.NewChainConfig("cosmos"),
 						time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
 					),
 				},
@@ -73,7 +52,7 @@ func (s *IntegrationTestSuite) TestCmdQueryChainLinks() {
 				val.Address.String(),
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			expectErr: false,
+			shouldErr: false,
 			expectedOutput: types.QueryChainLinksResponse{
 				Links: []types.ChainLink{},
 				Pagination: &query.PageResponse{
@@ -88,29 +67,11 @@ func (s *IntegrationTestSuite) TestCmdQueryChainLinks() {
 				"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			expectErr: false,
+			shouldErr: false,
 			expectedOutput: types.QueryChainLinksResponse{
 				Links: []types.ChainLink{
-					types.NewChainLink(
+					s.testChainLinkAccount.GetBech32ChainLink(
 						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
-						types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
-						types.NewProof(
-							pubKey,
-							testutil.SingleSignatureProtoFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
-							"74657874",
-						),
-						types.NewChainConfig("cosmos"),
-						time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
-					),
-					types.NewChainLink(
-						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
-						types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
-						types.NewProof(
-							pubKey,
-							testutil.SingleSignatureProtoFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
-							"74657874",
-						),
-						types.NewChainConfig("cosmos"),
 						time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
 					),
 				},
@@ -130,17 +91,197 @@ func (s *IntegrationTestSuite) TestCmdQueryChainLinks() {
 			clientCtx := val.ClientCtx
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, uc.args)
 
-			if uc.expectErr {
+			if uc.shouldErr {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
 
 				var response types.QueryChainLinksResponse
-				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), &response), out.String())
-
+				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(uc.expectedOutput.Pagination, response.Pagination)
-				for i, link := range response.Links {
-					s.Require().True(link.Equal(response.Links[i]))
+				for i := range uc.expectedOutput.Links {
+					s.Require().True(uc.expectedOutput.Links[i].Equal(response.Links[i]))
+				}
+			}
+		})
+	}
+}
+
+func (s *IntegrationTestSuite) TestCmdQueryChainLinkOwners() {
+	val := s.network.Validators[0]
+	target := s.testChainLinkAccount.GetBech32ChainLink(
+		"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
+		time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
+	).GetAddressData().GetValue()
+
+	useCases := []struct {
+		name           string
+		args           []string
+		shouldErr      bool
+		expectedOutput types.QueryChainLinkOwnersResponse
+	}{
+		{
+			name: "existing chain link owners are returned properly",
+			args: []string{
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			shouldErr: false,
+			expectedOutput: types.QueryChainLinkOwnersResponse{
+				Owners: []types.QueryChainLinkOwnersResponse_ChainLinkOwnerDetails{
+					{
+						User:      "cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
+						ChainName: "cosmos",
+						Target:    target,
+					},
+				},
+				Pagination: &query.PageResponse{
+					NextKey: nil,
+					Total:   0,
+				},
+			},
+		},
+		{
+			name: "empty array is returned properly",
+			args: []string{
+				"desmos",
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			shouldErr: false,
+			expectedOutput: types.QueryChainLinkOwnersResponse{
+				Owners: []types.QueryChainLinkOwnersResponse_ChainLinkOwnerDetails{},
+				Pagination: &query.PageResponse{
+					NextKey: nil,
+					Total:   0,
+				},
+			},
+		},
+		{
+			name: "existing chain link owners of the given chain name are returned properly",
+			args: []string{
+				"cosmos",
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			shouldErr: false,
+			expectedOutput: types.QueryChainLinkOwnersResponse{
+				Owners: []types.QueryChainLinkOwnersResponse_ChainLinkOwnerDetails{
+					{
+						User:      "cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
+						ChainName: "cosmos",
+						Target:    target,
+					},
+				},
+				Pagination: &query.PageResponse{
+					NextKey: nil,
+					Total:   0,
+				},
+			},
+		},
+	}
+
+	for _, uc := range useCases {
+		uc := uc
+
+		s.Run(uc.name, func() {
+			cmd := cli.GetCmdQueryChainLinkOwners()
+			clientCtx := val.ClientCtx
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, uc.args)
+
+			if uc.shouldErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+
+				var response types.QueryChainLinkOwnersResponse
+				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().Equal(uc.expectedOutput.Pagination, response.Pagination)
+				s.Require().Equal(uc.expectedOutput.Owners, response.Owners)
+			}
+		})
+	}
+}
+
+func (s *IntegrationTestSuite) TestCmdQueryDefaultExternalAddresses() {
+	val := s.network.Validators[0]
+	useCases := []struct {
+		name           string
+		args           []string
+		shouldErr      bool
+		expectedOutput types.QueryDefaultExternalAddressesResponse
+	}{
+		{
+			name: "all default chain links are returned properly",
+			args: []string{
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			shouldErr: false,
+			expectedOutput: types.QueryDefaultExternalAddressesResponse{
+				Links: []types.ChainLink{
+					s.testChainLinkAccount.GetBech32ChainLink(
+						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
+						time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
+					),
+				},
+				Pagination: &query.PageResponse{
+					NextKey: nil,
+					Total:   0,
+				},
+			},
+		},
+		{
+			name: "empty array is returned properly",
+			args: []string{
+				val.Address.String(),
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			shouldErr: false,
+			expectedOutput: types.QueryDefaultExternalAddressesResponse{
+				Links: []types.ChainLink{},
+				Pagination: &query.PageResponse{
+					NextKey: nil,
+					Total:   0,
+				},
+			},
+		},
+		{
+			name: "existing chain links of the given owner are returned properly",
+			args: []string{
+				"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			shouldErr: false,
+			expectedOutput: types.QueryDefaultExternalAddressesResponse{
+				Links: []types.ChainLink{
+					s.testChainLinkAccount.GetBech32ChainLink(
+						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
+						time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
+					),
+				},
+				Pagination: &query.PageResponse{
+					NextKey: nil,
+					Total:   0,
+				},
+			},
+		},
+	}
+
+	for _, uc := range useCases {
+		uc := uc
+
+		s.Run(uc.name, func() {
+			cmd := cli.GetCmdQueryDefaultExternalAddresses()
+			clientCtx := val.ClientCtx
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, uc.args)
+
+			if uc.shouldErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+
+				var response types.QueryChainLinksResponse
+				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().Equal(uc.expectedOutput.Pagination, response.Pagination)
+				for i := range uc.expectedOutput.Links {
+					s.Require().True(uc.expectedOutput.Links[i].Equal(response.Links[i]))
 				}
 			}
 		})
@@ -155,10 +296,10 @@ func (s *IntegrationTestSuite) TestCmdLinkChainAccount() {
 	s.writeChainLinkJSONFile(filePath)
 
 	testCases := []struct {
-		name     string
-		args     []string
-		expErr   bool
-		respType proto.Message
+		name      string
+		args      []string
+		shouldErr bool
+		respType  proto.Message
 	}{
 		{
 			name: "could not get destination key returns error",
@@ -166,8 +307,8 @@ func (s *IntegrationTestSuite) TestCmdLinkChainAccount() {
 				"src",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, ""),
 			},
-			expErr:   true,
-			respType: &sdk.TxResponse{},
+			shouldErr: true,
+			respType:  &sdk.TxResponse{},
 		},
 		{
 			name: "could not get source key returns error",
@@ -175,8 +316,8 @@ func (s *IntegrationTestSuite) TestCmdLinkChainAccount() {
 				"wrong",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, "dest"),
 			},
-			expErr:   true,
-			respType: &sdk.TxResponse{},
+			shouldErr: true,
+			respType:  &sdk.TxResponse{},
 		},
 		{
 			name: "valid request works properly",
@@ -187,8 +328,8 @@ func (s *IntegrationTestSuite) TestCmdLinkChainAccount() {
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 			},
-			expErr:   false,
-			respType: &sdk.TxResponse{},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
 		},
 	}
 
@@ -199,7 +340,7 @@ func (s *IntegrationTestSuite) TestCmdLinkChainAccount() {
 			cmd := cli.GetCmdLinkChainAccount()
 			out, err := clitestutil.ExecTestCLICmd(cliCtx, cmd, tc.args)
 
-			if tc.expErr {
+			if tc.shouldErr {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
@@ -215,10 +356,10 @@ func (s *IntegrationTestSuite) TestCmdUnlinkChainAccount() {
 	src, err := s.keyBase.Key("src")
 	s.Require().NoError(err)
 	testCases := []struct {
-		name     string
-		args     []string
-		expErr   bool
-		respType proto.Message
+		name      string
+		args      []string
+		shouldErr bool
+		respType  proto.Message
 	}{
 		{
 			name: "empty chain name returns error",
@@ -226,8 +367,8 @@ func (s *IntegrationTestSuite) TestCmdUnlinkChainAccount() {
 				"",
 				src.GetAddress().String(),
 			},
-			expErr:   true,
-			respType: &sdk.TxResponse{},
+			shouldErr: true,
+			respType:  &sdk.TxResponse{},
 		},
 		{
 			name: "empty address returns error",
@@ -235,8 +376,8 @@ func (s *IntegrationTestSuite) TestCmdUnlinkChainAccount() {
 				"cosmos",
 				"",
 			},
-			expErr:   true,
-			respType: &sdk.TxResponse{},
+			shouldErr: true,
+			respType:  &sdk.TxResponse{},
 		},
 		{
 			name: "valid request works properly",
@@ -248,8 +389,8 @@ func (s *IntegrationTestSuite) TestCmdUnlinkChainAccount() {
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 			},
-			expErr:   false,
-			respType: &sdk.TxResponse{},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
 		},
 	}
 
@@ -260,7 +401,68 @@ func (s *IntegrationTestSuite) TestCmdUnlinkChainAccount() {
 			cmd := cli.GetCmdUnlinkChainAccount()
 			out, err := clitestutil.ExecTestCLICmd(cliCtx, cmd, tc.args)
 
-			if tc.expErr {
+			if tc.shouldErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+				s.Require().NoError(cliCtx.Codec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+			}
+		})
+	}
+}
+
+func (s *IntegrationTestSuite) TestCmdSetDefaultExternalAddress() {
+	cliCtx := s.network.Validators[0].ClientCtx
+	cliCtx.Keyring = s.keyBase
+	src, err := s.keyBase.Key("src")
+	s.Require().NoError(err)
+	testCases := []struct {
+		name      string
+		args      []string
+		shouldErr bool
+		respType  proto.Message
+	}{
+		{
+			name: "empty chain name returns error",
+			args: []string{
+				"",
+				src.GetAddress().String(),
+			},
+			shouldErr: true,
+			respType:  &sdk.TxResponse{},
+		},
+		{
+			name: "empty address returns error",
+			args: []string{
+				"cosmos",
+				"",
+			},
+			shouldErr: true,
+			respType:  &sdk.TxResponse{},
+		},
+		{
+			name: "valid request works properly",
+			args: []string{
+				"cosmos",
+				src.GetAddress().String(),
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, dstKeyName),
+				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+			},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdSetDefaultExternalAddress()
+			out, err := clitestutil.ExecTestCLICmd(cliCtx, cmd, tc.args)
+
+			if tc.shouldErr {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)

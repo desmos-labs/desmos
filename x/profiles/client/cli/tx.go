@@ -4,7 +4,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/spf13/cobra"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 // DONTCOVER
@@ -27,12 +27,9 @@ func NewTxCmd() *cobra.Command {
 		GetCmdAcceptDTagTransfer(),
 		GetCmdRefuseDTagTransfer(),
 		GetCmdCancelDTagTransfer(),
-		GetCmdCreateRelationship(),
-		GetCmdDeleteRelationship(),
-		GetCmdBlockUser(),
-		GetCmdUnblockUser(),
 		GetCmdLinkChainAccount(),
 		GetCmdUnlinkChainAccount(),
+		GetCmdSetDefaultExternalAddress(),
 		GetCmdLinkApplication(),
 		GetCmdUnlinkApplication(),
 	)

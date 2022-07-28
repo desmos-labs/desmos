@@ -1,0 +1,108 @@
+syntax = "proto3";
+package desmos.subspaces.v1;
+
+import "gogoproto/gogo.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/desmos-labs/desmos/v4/x/subspaces/legacy/v2";
+
+// Subspace contains all the data of a Desmos subspace
+message Subspace {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  // Unique id that identifies the subspace
+  uint64 id = 1
+      [ (gogoproto.customname) = "ID", (gogoproto.moretags) = "yaml:\"id\"" ];
+
+  // Human-readable name of the subspace
+  string name = 2 [ (gogoproto.moretags) = "yaml:\"name\"" ];
+
+  // Optional description of this subspace
+  string description = 3 [ (gogoproto.moretags) = "yaml:\"description\"" ];
+
+  // Represents the account that is associated with the subspace and
+  // should be used to connect external applications to verify this subspace
+  string treasury = 4 [ (gogoproto.moretags) = "yaml:\"treasury\"" ];
+
+  // Address of the user that owns the subspace
+  string owner = 5 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
+
+  // Address of the subspace creator
+  string creator = 6 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
+
+  // the creation time of the subspace
+  google.protobuf.Timestamp creation_time = 7 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true,
+    (gogoproto.moretags) = "yaml:\"creation_time\""
+  ];
+}
+
+// UserGroup represents a group of users
+message UserGroup {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  // ID of the subspace inside which this group exists
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+
+  // Unique id that identifies the group
+  uint32 id = 2
+      [ (gogoproto.customname) = "ID", (gogoproto.moretags) = "yaml:\"id\"" ];
+
+  // Human-readable name of the user group
+  string name = 3 [ (gogoproto.moretags) = "yaml:\"name\"" ];
+
+  // Optional description of this group
+  string description = 4 [ (gogoproto.moretags) = "yaml:\"description\"" ];
+
+  // Permissions that will be granted to all the users part of this group
+  uint32 permissions = 5 [ (gogoproto.moretags) = "yaml:\"permissions\"" ];
+}
+
+// PermissionDetail contains the details data of a permission
+message PermissionDetail {
+  option (gogoproto.goproto_getters) = false;
+  option (gogoproto.equal) = true;
+
+  // sum is the oneof that specifies whether this represents a user or
+  // group permission detail
+  oneof sum {
+    // User represents a user permission
+    User user = 1;
+
+    // Group represents a group permission
+    Group group = 2;
+  }
+
+  // User is a permission that has been set to a specific user
+  message User {
+    option (gogoproto.goproto_getters) = false;
+    option (gogoproto.equal) = true;
+
+    // User for which the permission was set
+    string user = 1 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+
+    // Permission set to the user
+    uint32 permission = 2 [ (gogoproto.moretags) = "yaml:\"permission\"" ];
+  }
+
+  // Group is a permission that has been set to a user group
+  message Group {
+    option (gogoproto.goproto_getters) = false;
+    option (gogoproto.equal) = true;
+
+    // Unique id of the group
+    uint32 group_id = 1 [
+      (gogoproto.customname) = "GroupID",
+      (gogoproto.moretags) = "yaml:\"group_id\""
+    ];
+
+    // Permission set to the group
+    uint32 permission = 2;
+  }
+}

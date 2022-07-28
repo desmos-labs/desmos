@@ -1,6 +1,12 @@
 package types
 
-import "strings"
+import (
+	"bytes"
+	"strings"
+	"time"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+)
 
 // DONTCOVER
 
@@ -15,35 +21,34 @@ const (
 	ActionAcceptDTagTransfer        = "accept_dtag_transfer_request"
 	ActionRefuseDTagTransferRequest = "refuse_dtag_transfer_request"
 	ActionCancelDTagTransferRequest = "cancel_dtag_transfer_request"
-	ActionCreateRelationship        = "create_relationship"
-	ActionDeleteRelationship        = "delete_relationship"
-	ActionBlockUser                 = "block_user"
-	ActionUnblockUser               = "unblock_user"
 	ActionLinkChainAccount          = "link_chain_account"
 	ActionUnlinkChainAccount        = "unlink_chain_account"
 	ActionLinkApplication           = "link_application"
 	ActionUnlinkApplication         = "unlink_application"
+	ActionSetDefaultExternalAddress = "set_default_external_address"
 
 	DoNotModify = "[do-not-modify]"
 
 	// IBCPortID is the default port id that profiles module binds to.
 	IBCPortID = "ibc-profiles"
-
-	// Version defines the current version the IBC profiles module supports
-	Version = "desmos-1"
 )
 
 var (
-	DTagPrefix                    = []byte("dtag")
-	DTagTransferRequestPrefix     = []byte("transfer_request")
-	RelationshipsStorePrefix      = []byte("relationships")
-	UsersBlocksStorePrefix        = []byte("users_blocks")
-	ChainLinksPrefix              = []byte("chain_links")
-	UserApplicationLinkPrefix     = []byte("user_application_link")
-	ApplicationLinkClientIDPrefix = []byte("client_id")
+	Separator = []byte{0x00}
 
 	// IBCPortKey defines the key to store the port ID in store
 	IBCPortKey = []byte{0x01}
+
+	DTagPrefix                    = []byte{0x10}
+	DTagTransferRequestPrefix     = []byte{0x11}
+	ChainLinksPrefix              = []byte{0x12}
+	ApplicationLinkPrefix         = []byte{0x13}
+	ApplicationLinkClientIDPrefix = []byte{0x14}
+
+	ChainLinkChainPrefix         = []byte{0x15}
+	ApplicationLinkAppPrefix     = []byte{0x16}
+	ExpiringAppLinkTimePrefix    = []byte{0x17}
+	DefaultExternalAddressPrefix = []byte{0x18}
 )
 
 // DTagStoreKey turns a DTag into the key used to store the address associated with it into the store
@@ -63,63 +68,118 @@ func DTagTransferRequestStoreKey(sender, recipient string) []byte {
 	return append(IncomingDTagTransferRequestsPrefix(recipient), []byte(sender)...)
 }
 
-// UserRelationshipsPrefix returns the prefix used to store all relationships created
-// by the user with the given address
-func UserRelationshipsPrefix(user string) []byte {
-	return append(RelationshipsStorePrefix, []byte(user)...)
-}
-
-// UserRelationshipsSubspacePrefix returns the prefix used to store all the relationships created by the user
-// with the given address for the subspace having the given id
-func UserRelationshipsSubspacePrefix(user, subspace string) []byte {
-	return append(UserRelationshipsPrefix(user), []byte(subspace)...)
-}
-
-// RelationshipsStoreKey returns the store key used to store the relationships containing the given data
-func RelationshipsStoreKey(user, subspace, recipient string) []byte {
-	return append(UserRelationshipsSubspacePrefix(user, subspace), []byte(recipient)...)
-}
-
-// BlockerPrefix returns the store prefix used to store the blocks created by the given blocker
-func BlockerPrefix(blocker string) []byte {
-	return append(UsersBlocksStorePrefix, []byte(blocker)...)
-}
-
-// BlockerSubspacePrefix returns the store prefix used to store the blocks that the given blocker
-// has created inside the specified subspace
-func BlockerSubspacePrefix(blocker string, subspace string) []byte {
-	return append(BlockerPrefix(blocker), []byte(subspace)...)
-}
-
-// UserBlockStoreKey returns the store key used to save the block made by the given blocker,
-// inside the specified subspace and towards the given blocked user
-func UserBlockStoreKey(blocker string, subspace string, blockedUser string) []byte {
-	return append(BlockerSubspacePrefix(blocker, subspace), []byte(blockedUser)...)
-}
-
 // UserChainLinksPrefix returns the store prefix used to identify all the chain links for the given user
 func UserChainLinksPrefix(user string) []byte {
 	return append(ChainLinksPrefix, []byte(user)...)
 }
 
+// UserChainLinksChainPrefix returns the store prefix used to identify all the chain links for the given user and chain
+func UserChainLinksChainPrefix(user, chainName string) []byte {
+	return append(UserChainLinksPrefix(user), []byte(chainName)...)
+}
+
 // ChainLinksStoreKey returns the store key used to store the chain links containing the given data
 func ChainLinksStoreKey(user, chainName, address string) []byte {
-	return append(UserChainLinksPrefix(user), []byte(chainName+address)...)
+	return append(UserChainLinksChainPrefix(user, chainName), []byte(address)...)
+}
+
+// ChainLinkChainKey returns the key used to store all the chain links associated to the chain with the given name
+func ChainLinkChainKey(chainName string) []byte {
+	return append(ChainLinkChainPrefix, []byte(chainName)...)
+}
+
+// ChainLinkChainAddressKey returns the key used to store all the links for the given chain and external address
+func ChainLinkChainAddressKey(chainName, address string) []byte {
+	return append(ChainLinkChainKey(chainName), append(Separator, []byte(address)...)...)
+}
+
+// ChainLinkOwnerKey returns the key to store the owner of the chain link to the given chain and external address
+func ChainLinkOwnerKey(chainName, target, owner string) []byte {
+	return append(ChainLinkChainAddressKey(chainName, target), append(Separator, []byte(owner)...)...)
+}
+
+// GetChainLinkOwnerData returns the application link chain name, target and owner from the given key
+func GetChainLinkOwnerData(key []byte) (chainName, target, owner string) {
+	cleanedKey := bytes.TrimPrefix(key, ChainLinkChainPrefix)
+	values := bytes.Split(cleanedKey, Separator)
+	return string(values[0]), string(values[1]), string(values[2])
+}
+
+// OwnerDefaultExternalAddressPrefix returns the store prefix used to identify all the default external addresses
+// for the given owner
+func OwnerDefaultExternalAddressPrefix(owner string) []byte {
+	return append(DefaultExternalAddressPrefix, []byte(owner)...)
+}
+
+// DefaultExternalAddressKey returns the key used to store the address of the chain link which is set as
+// default external address
+func DefaultExternalAddressKey(owner, chainName string) []byte {
+	return append(OwnerDefaultExternalAddressPrefix(owner), append(Separator, []byte(chainName)...)...)
+}
+
+// GetDefaultExternalAddressData returns the owner, chain name from a given DefaultExternalAddressKey
+func GetDefaultExternalAddressData(key []byte) (owner string, chainName string) {
+	cleanedKey := bytes.TrimPrefix(key, DefaultExternalAddressPrefix)
+	values := bytes.Split(cleanedKey, Separator)
+	return string(values[0]), string(values[1])
 }
 
 // UserApplicationLinksPrefix returns the store prefix used to identify all the application links for the given user
 func UserApplicationLinksPrefix(user string) []byte {
-	return append(UserApplicationLinkPrefix, []byte(user)...)
+	return append(ApplicationLinkPrefix, []byte(user)...)
+}
+
+// UserApplicationLinksApplicationPrefix returns the store prefix used to identify all the application
+// links for the given user and application
+func UserApplicationLinksApplicationPrefix(user, application string) []byte {
+	return append(UserApplicationLinksPrefix(user), []byte(strings.ToLower(application))...)
 }
 
 // UserApplicationLinkKey returns the key used to store the data about the application link
 // of the given user for the specified application and username
 func UserApplicationLinkKey(user, application, username string) []byte {
-	return append(UserApplicationLinksPrefix(user), []byte(strings.ToLower(application)+strings.ToLower(username))...)
+	return append(UserApplicationLinksApplicationPrefix(user, application), []byte(strings.ToLower(username))...)
 }
 
 // ApplicationLinkClientIDKey returns the key used to store the reference to the application link
 // associated with the specified client id
 func ApplicationLinkClientIDKey(clientID string) []byte {
 	return append(ApplicationLinkClientIDPrefix, []byte(clientID)...)
+}
+
+// ApplicationLinkAppKey returns the key used to store all the application
+// links associated to the given application
+func ApplicationLinkAppKey(application string) []byte {
+	return append(ApplicationLinkAppPrefix, []byte(application)...)
+}
+
+// ApplicationLinkAppUsernameKey returns the key used to store all the application
+// links for the given application and username
+func ApplicationLinkAppUsernameKey(application, username string) []byte {
+	return append(ApplicationLinkAppKey(application), append(Separator, []byte(username)...)...)
+}
+
+// ApplicationLinkOwnerKey returns the key used to store the given owner associating it to the application link
+// having the provided application and username
+func ApplicationLinkOwnerKey(application, username, owner string) []byte {
+	return append(ApplicationLinkAppUsernameKey(application, username), append(Separator, []byte(owner)...)...)
+}
+
+// GetApplicationLinkOwnerData returns the application, username and owner from a given ApplicationLinkOwnerKey
+func GetApplicationLinkOwnerData(key []byte) (application, username, owner string) {
+	cleanedKey := bytes.TrimPrefix(key, ApplicationLinkAppPrefix)
+	values := bytes.Split(cleanedKey, Separator)
+	return string(values[0]), string(values[1]), string(values[2])
+}
+
+// ApplicationLinkExpiringTimePrefix returns the store prefix used to identify the
+// expiration time for application links
+func ApplicationLinkExpiringTimePrefix(expirationTime time.Time) []byte {
+	return append(ExpiringAppLinkTimePrefix, sdk.FormatTimeBytes(expirationTime)...)
+}
+
+// ApplicationLinkExpiringTimeKey returns the key used to store the expirationTime
+// of the application link associated with the given clientID
+func ApplicationLinkExpiringTimeKey(expirationTime time.Time, clientID string) []byte {
+	return append(ApplicationLinkExpiringTimePrefix(expirationTime), []byte(clientID)...)
 }

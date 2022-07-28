@@ -5,11 +5,11 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/server"
 
-	"github.com/desmos-labs/desmos/v2/app"
+	"github.com/desmos-labs/desmos/v4/app"
 
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
 
-	"github.com/desmos-labs/desmos/v2/app/desmos/cmd"
+	"github.com/desmos-labs/desmos/v4/app/desmos/cmd"
 )
 
 func main() {

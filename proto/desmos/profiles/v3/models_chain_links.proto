@@ -1,0 +1,180 @@
+syntax = "proto3";
+package desmos.profiles.v3;
+
+import "gogoproto/gogo.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+import "cosmos_proto/cosmos.proto";
+import "cosmos/tx/signing/v1beta1/signing.proto";
+import "cosmos/crypto/multisig/v1beta1/multisig.proto";
+
+option go_package = "github.com/desmos-labs/desmos/v4/x/profiles/types";
+
+// ChainLink contains the data representing either an inter- or cross- chain
+// link
+message ChainLink {
+  option (gogoproto.goproto_getters) = false;
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  // User defines the destination profile address to link
+  string user = 1 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+
+  // Address contains the data of the external chain address to be connected
+  // with the Desmos profile
+  google.protobuf.Any address = 2 [
+    (gogoproto.moretags) = "yaml:\"address\"",
+    (cosmos_proto.accepts_interface) = "AddressData"
+  ];
+
+  // Proof contains the ownership proof of the external chain address
+  Proof proof = 3
+      [ (gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"proof\"" ];
+
+  // ChainConfig contains the configuration of the external chain
+  ChainConfig chain_config = 4 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"chain_config\""
+  ];
+
+  // CreationTime represents the time in which the link has been created
+  google.protobuf.Timestamp creation_time = 5 [
+    (gogoproto.stdtime) = true,
+    (gogoproto.moretags) = "yaml:\"creation_time\"",
+    (gogoproto.nullable) = false
+  ];
+}
+
+// ChainConfig contains the data of the chain with which the link is made.
+message ChainConfig {
+  option (gogoproto.goproto_getters) = false;
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  string name = 1 [ (gogoproto.moretags) = "yaml:\"name\"" ];
+}
+
+// Proof contains all the data used to verify a signature when linking an
+// account to a profile
+message Proof {
+  option (gogoproto.goproto_getters) = false;
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  // PubKey represents the public key associated with the address for which to
+  // prove the ownership
+  google.protobuf.Any pub_key = 1 [ (gogoproto.moretags) = "yaml:\"pub_key\"" ];
+
+  // Signature represents the hex-encoded signature of the PlainText value
+  google.protobuf.Any signature = 2 [
+    (cosmos_proto.accepts_interface) = "Signature",
+    (gogoproto.moretags) = "yaml:\"signature\""
+  ];
+
+  // PlainText represents the hex-encoded value signed in order to produce the
+  // Signature
+  string plain_text = 3 [ (gogoproto.moretags) = "yaml:\"plain_text\"" ];
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// Bech32Address represents a Bech32-encoded address
+message Bech32Address {
+  option (gogoproto.goproto_getters) = false;
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+  option (cosmos_proto.implements_interface) = "AddressData";
+
+  // Value represents the Bech-32 encoded address value
+  string value = 1 [ (gogoproto.moretags) = "yaml:\"value\"" ];
+
+  // Prefix represents the HRP of the Bech32 address
+  string prefix = 2 [ (gogoproto.moretags) = "yaml:\"prefix\"" ];
+}
+
+// Base58Address represents a Base58-encoded address
+message Base58Address {
+  option (gogoproto.goproto_getters) = false;
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+  option (cosmos_proto.implements_interface) = "AddressData";
+
+  // Value contains the Base58-encoded address
+  string value = 1 [ (gogoproto.moretags) = "yaml:\"value\"" ];
+}
+
+// HexAddress represents an Hex-encoded address
+// NOTE: Currently it only supports keccak256-uncompressed addresses
+message HexAddress {
+  option (gogoproto.goproto_getters) = false;
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+  option (cosmos_proto.implements_interface) = "AddressData";
+
+  // Value represents the hex address value
+  string value = 1 [ (gogoproto.moretags) = "yaml:\"value\"" ];
+
+  // Prefix represents the optional prefix used during address encoding (e.g.
+  // 0x)
+  string prefix = 2 [ (gogoproto.moretags) = "yaml:\"prefix\"" ];
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// SingleSignature is the signature data for a single signer
+message SingleSignature {
+  option (gogoproto.goproto_getters) = false;
+  option (gogoproto.equal) = true;
+  option (cosmos_proto.implements_interface) = "Signature";
+
+  // Type represents the type of the signature value
+  SignatureValueType value_type = 1
+      [ (gogoproto.moretags) = "yaml:\"value_type\"" ];
+
+  // Signature is the raw signature bytes
+  bytes signature = 2 [ (gogoproto.moretags) = "yaml:\"signature\"" ];
+}
+
+// SignatureValueType specifies all the possible signature types
+enum SignatureValueType {
+  option (gogoproto.goproto_enum_prefix) = false;
+
+  // SIGNATURE_VALUE_TYPE_UNSPECIFIED specifies an unknown signing mode
+  // and will be rejected
+  SIGNATURE_VALUE_TYPE_UNSPECIFIED = 0;
+
+  // SIGNATURE_VALUE_TYPE_RAW should be used when the value has been
+  // signed as a raw byte array
+  SIGNATURE_VALUE_TYPE_RAW = 1;
+
+  // SIGNATURE_VALUE_TYPE_COSMOS_DIRECT should be used when the signed
+  // value has been encoded as a Protobuf transaction containing the owner
+  // address inside its memo field
+  SIGNATURE_VALUE_TYPE_COSMOS_DIRECT = 2;
+
+  // SIGNATURE_VALUE_TYPE_COSMOS_AMINO should be used when the value has
+  // been encoded as an Amino transaction containing the owner address inside
+  // its memo field
+  SIGNATURE_VALUE_TYPE_COSMOS_AMINO = 3;
+
+  // SIGNATURE_VALUE_TYPE_EVM_PERSONAL_SIGN should be used when the value
+  // has been encoded following the EVM personal_sign specification
+  SIGNATURE_VALUE_TYPE_EVM_PERSONAL_SIGN = 4;
+}
+
+// CosmosMultiSignature is the signature data for a multisig public key
+message CosmosMultiSignature {
+  option (gogoproto.goproto_getters) = false;
+  option (gogoproto.equal) = true;
+  option (cosmos_proto.implements_interface) = "Signature";
+
+  // Bitarray specifies which keys within the multisig are signing
+  cosmos.crypto.multisig.v1beta1.CompactBitArray bit_array = 1
+      [ (gogoproto.moretags) = "yaml:\"bit_array\"" ];
+
+  // Signatures is the signatures of the multi-signature
+  repeated google.protobuf.Any signatures = 2 [
+    (cosmos_proto.accepts_interface) = "Signature",
+    (gogoproto.moretags) = "yaml:\"signatures\""
+  ];
+}

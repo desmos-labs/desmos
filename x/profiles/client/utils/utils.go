@@ -1,18 +1,19 @@
-// Package utils
-// nolint: interfacer
 package utils
+
+// DONTCOVER
 
 import (
 	"io/ioutil"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 )
 
 // NewChainLinkJSON allows to build a new ChainLinkJSON instance
+// nolint: interfacer
 func NewChainLinkJSON(data types.AddressData, proof types.Proof, chainConfig types.ChainConfig) ChainLinkJSON {
 	any, err := codectypes.NewAnyWithValue(data)
 	if err != nil {

@@ -11,7 +11,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 func ParamChanges(r *rand.Rand) []simtypes.ParamChange {
@@ -47,6 +47,12 @@ func ParamChanges(r *rand.Rand) []simtypes.ParamChange {
 					`{"script_id":"%d", "ask_count":"%d", "min_count":"%d", "prepare_gas":"%d", "execute_gas":"%d", "fee_amount":%s}`,
 					params.ScriptID, params.AskCount, params.MinCount, params.PrepareGas, params.ExecuteGas, string(feeAmountBz),
 				)
+			},
+		),
+		simulation.NewSimParamChange(types.ModuleName, string(types.AppLinksParamsKey),
+			func(r *rand.Rand) string {
+				params := RandomAppLinksParams(r)
+				return fmt.Sprintf(`{"validity_duration":"%d"}`, params.ValidityDuration)
 			},
 		),
 	}

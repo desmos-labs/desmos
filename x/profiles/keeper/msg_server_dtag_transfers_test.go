@@ -3,36 +3,37 @@ package keeper_test
 import (
 	"fmt"
 
-	"github.com/desmos-labs/desmos/v2/testutil"
+	relationshipstypes "github.com/desmos-labs/desmos/v4/x/relationships/types"
+
+	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/keeper"
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/keeper"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 func (suite *KeeperTestSuite) TestMsgServer_RequestDTagTransfer() {
 	testCases := []struct {
-		name         string
-		store        func(ctx sdk.Context)
-		storedBlocks []types.UserBlock
-		msg          *types.MsgRequestDTagTransfer
-		shouldErr    bool
-		expEvents    sdk.Events
+		name      string
+		store     func(ctx sdk.Context)
+		msg       *types.MsgRequestDTagTransfer
+		shouldErr bool
+		expEvents sdk.Events
 	}{
 		{
 			name: "blocked receiver making request returns error",
 			store: func(ctx sdk.Context) {
-				block := types.NewUserBlock(
+				suite.Require().NoError(suite.k.SaveProfile(ctx,
+					profilestesting.ProfileFromAddr("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")))
+				suite.Require().NoError(suite.k.SaveProfile(ctx,
+					profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")))
+				suite.rk.SaveUserBlock(ctx, relationshipstypes.NewUserBlock(
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"This user has been blocked",
-					"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
-				)
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocker)))
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocked)))
-				suite.Require().NoError(suite.k.SaveUserBlock(ctx, block))
-
+					0,
+				))
 			},
 			msg: types.NewMsgRequestDTagTransfer(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -56,7 +57,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RequestDTagTransfer() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				)
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(request.Receiver)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr(request.Receiver)))
 				suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, request))
 			},
 			msg: types.NewMsgRequestDTagTransfer(
@@ -68,7 +69,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RequestDTagTransfer() {
 		{
 			name: "not already present request is saved correctly",
 			store: func(ctx sdk.Context) {
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")))
 			},
 			msg: types.NewMsgRequestDTagTransfer(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -77,10 +78,16 @@ func (suite *KeeperTestSuite) TestMsgServer_RequestDTagTransfer() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
+					sdk.EventTypeMessage,
+					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgRequestDTagTransfer{})),
+					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+				),
+				sdk.NewEvent(
 					types.EventTypeDTagTransferRequest,
-					sdk.NewAttribute(types.AttributeDTagToTrade, fmt.Sprintf("%s-dtag", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")),
-					sdk.NewAttribute(types.AttributeRequestSender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
-					sdk.NewAttribute(types.AttributeRequestReceiver, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+					sdk.NewAttribute(types.AttributeKeyDTagToTrade, fmt.Sprintf("%s-dtag", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")),
+					sdk.NewAttribute(types.AttributeKeyRequestSender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+					sdk.NewAttribute(types.AttributeKeyRequestReceiver, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 				),
 			},
 		},
@@ -130,7 +137,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CancelDTagTransfer() {
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				)
 
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(request.Receiver)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr(request.Receiver)))
 				suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, request))
 			},
 			msg: types.NewMsgCancelDTagTransferRequest(
@@ -140,9 +147,15 @@ func (suite *KeeperTestSuite) TestMsgServer_CancelDTagTransfer() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
+					sdk.EventTypeMessage,
+					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgCancelDTagTransferRequest{})),
+					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+				),
+				sdk.NewEvent(
 					types.EventTypeDTagTransferCancel,
-					sdk.NewAttribute(types.AttributeRequestSender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
-					sdk.NewAttribute(types.AttributeRequestReceiver, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+					sdk.NewAttribute(types.AttributeKeyRequestSender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+					sdk.NewAttribute(types.AttributeKeyRequestReceiver, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 				),
 			},
 		},
@@ -216,13 +229,13 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptDTagTransfer() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				)
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(request.Sender)))
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(request.Receiver)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr(request.Sender)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr(request.Receiver)))
 				suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, request))
 
-				profile := testutil.ProfileFromAddr("cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn")
+				profile := profilestesting.ProfileFromAddr("cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn")
 				profile.DTag = "NewDTag"
-				suite.Require().NoError(suite.k.StoreProfile(ctx, profile))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profile))
 			},
 			msg: types.NewMsgAcceptDTagTransferRequest(
 				"newDtag",
@@ -239,13 +252,13 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptDTagTransfer() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				)
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(request.Sender)))
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(request.Receiver)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr(request.Sender)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr(request.Receiver)))
 				suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, request))
 
-				profile := testutil.ProfileFromAddr("cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn")
+				profile := profilestesting.ProfileFromAddr("cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn")
 				profile.DTag = "dtag"
-				suite.Require().NoError(suite.k.StoreProfile(ctx, profile))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profile))
 			},
 			msg: types.NewMsgAcceptDTagTransferRequest(
 				"NewDTag",
@@ -264,9 +277,9 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptDTagTransfer() {
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				)
 
-				receiverProfile := testutil.ProfileFromAddr(request.Receiver)
+				receiverProfile := profilestesting.ProfileFromAddr(request.Receiver)
 				receiverProfile.DTag = "DTag"
-				suite.Require().NoError(suite.k.StoreProfile(ctx, receiverProfile))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, receiverProfile))
 				suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, request))
 			},
 			msg: types.NewMsgAcceptDTagTransferRequest(
@@ -277,11 +290,17 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptDTagTransfer() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
+					sdk.EventTypeMessage,
+					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgAcceptDTagTransferRequest{})),
+					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+				),
+				sdk.NewEvent(
 					types.EventTypeDTagTransferAccept,
-					sdk.NewAttribute(types.AttributeDTagToTrade, "DTag"),
-					sdk.NewAttribute(types.AttributeNewDTag, "NewDtag"),
-					sdk.NewAttribute(types.AttributeRequestSender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
-					sdk.NewAttribute(types.AttributeRequestReceiver, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+					sdk.NewAttribute(types.AttributeKeyDTagToTrade, "DTag"),
+					sdk.NewAttribute(types.AttributeKeyNewDTag, "NewDtag"),
+					sdk.NewAttribute(types.AttributeKeyRequestSender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+					sdk.NewAttribute(types.AttributeKeyRequestReceiver, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 				),
 			},
 		},
@@ -293,10 +312,10 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptDTagTransfer() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				)
-				receiverProfile := testutil.ProfileFromAddr(request.Receiver)
+				receiverProfile := profilestesting.ProfileFromAddr(request.Receiver)
 				receiverProfile.DTag = "DTag"
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(request.Sender)))
-				suite.Require().NoError(suite.k.StoreProfile(ctx, receiverProfile))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr(request.Sender)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, receiverProfile))
 				suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, request))
 			},
 			msg: types.NewMsgAcceptDTagTransferRequest(
@@ -306,11 +325,17 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptDTagTransfer() {
 			),
 			expEvents: sdk.Events{
 				sdk.NewEvent(
+					sdk.EventTypeMessage,
+					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgAcceptDTagTransferRequest{})),
+					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+				),
+				sdk.NewEvent(
 					types.EventTypeDTagTransferAccept,
-					sdk.NewAttribute(types.AttributeDTagToTrade, "DTag"),
-					sdk.NewAttribute(types.AttributeNewDTag, "NewDtag"),
-					sdk.NewAttribute(types.AttributeRequestSender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
-					sdk.NewAttribute(types.AttributeRequestReceiver, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+					sdk.NewAttribute(types.AttributeKeyDTagToTrade, "DTag"),
+					sdk.NewAttribute(types.AttributeKeyNewDTag, "NewDtag"),
+					sdk.NewAttribute(types.AttributeKeyRequestSender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+					sdk.NewAttribute(types.AttributeKeyRequestReceiver, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 				),
 			},
 		},
@@ -322,12 +347,12 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptDTagTransfer() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				)
-				receiverProfile := testutil.ProfileFromAddr(request.Receiver)
+				receiverProfile := profilestesting.ProfileFromAddr(request.Receiver)
 				receiverProfile.DTag = "receiverDTag"
-				senderProfile := testutil.ProfileFromAddr(request.Sender)
+				senderProfile := profilestesting.ProfileFromAddr(request.Sender)
 				senderProfile.DTag = "senderDTag"
-				suite.Require().NoError(suite.k.StoreProfile(ctx, senderProfile))
-				suite.Require().NoError(suite.k.StoreProfile(ctx, receiverProfile))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, senderProfile))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, receiverProfile))
 				suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, request))
 			},
 			msg: types.NewMsgAcceptDTagTransferRequest(
@@ -337,11 +362,17 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptDTagTransfer() {
 			),
 			expEvents: sdk.Events{
 				sdk.NewEvent(
+					sdk.EventTypeMessage,
+					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgAcceptDTagTransferRequest{})),
+					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+				),
+				sdk.NewEvent(
 					types.EventTypeDTagTransferAccept,
-					sdk.NewAttribute(types.AttributeDTagToTrade, "receiverDTag"),
-					sdk.NewAttribute(types.AttributeNewDTag, "senderDTag"),
-					sdk.NewAttribute(types.AttributeRequestSender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
-					sdk.NewAttribute(types.AttributeRequestReceiver, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+					sdk.NewAttribute(types.AttributeKeyDTagToTrade, "receiverDTag"),
+					sdk.NewAttribute(types.AttributeKeyNewDTag, "senderDTag"),
+					sdk.NewAttribute(types.AttributeKeyRequestSender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+					sdk.NewAttribute(types.AttributeKeyRequestReceiver, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 				),
 			},
 			check: func(ctx sdk.Context) {
@@ -403,7 +434,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RefuseDTagTransfer() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				)
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(request.Receiver)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr(request.Receiver)))
 				suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, request))
 			},
 			msg: types.NewMsgRefuseDTagTransferRequest(
@@ -413,9 +444,15 @@ func (suite *KeeperTestSuite) TestMsgServer_RefuseDTagTransfer() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
+					sdk.EventTypeMessage,
+					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgRefuseDTagTransferRequest{})),
+					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+				),
+				sdk.NewEvent(
 					types.EventTypeDTagTransferRefuse,
-					sdk.NewAttribute(types.AttributeRequestSender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
-					sdk.NewAttribute(types.AttributeRequestReceiver, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+					sdk.NewAttribute(types.AttributeKeyRequestSender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+					sdk.NewAttribute(types.AttributeKeyRequestReceiver, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 				),
 			},
 		},

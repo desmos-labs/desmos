@@ -1,6 +1,0 @@
-type: fix
-module: none
-pull_request: 693
-description: Added missing server version
-backward_compatible: true
-date: 2021-12-15T08:52:26.164169076Z

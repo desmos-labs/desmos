@@ -5,11 +5,10 @@ import "gogoproto/gogo.proto";
 import "google/protobuf/any.proto";
 import "google/protobuf/timestamp.proto";
 import "cosmos_proto/cosmos.proto";
-import "desmos/profiles/v1beta1/models_chain_links.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v2/x/profiles/types";
+option go_package = "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v4/types";
 
-// ___________________________________________________________________________________________________________________
+// --------------------------------------------------------------------------------------------------------------------
 
 // Profile represents a generic first on Desmos, containing the information of a
 // single user

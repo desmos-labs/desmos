@@ -1,5 +1,6 @@
 run:
   tests: false
+  timeout: 5m
   skip-dirs:
     - pkg
 
@@ -10,32 +11,25 @@ linters:
     - deadcode
     - depguard
     - dogsled
-    # - errcheck
+    - exportloopref
     - goconst
     - gocritic
     - gofmt
     - goimports
-    - golint
     - gosec
     - gosimple
     - govet
     - ineffassign
-    - interfacer
-    - maligned
     - misspell
     - nakedret
-    - prealloc
-    - scopelint
+    - nolintlint
     - staticcheck
     - structcheck
     - stylecheck
     - typecheck
     - unconvert
-    - unused
     - unparam
-    - misspell
-    # - wsl
-    - nolintlint
+    - unused
 
 issues:
   exclude-rules:
@@ -51,6 +45,13 @@ issues:
     - text: "ST1003:"
       linters:
         - stylecheck
+
+    # FIXME: Disabled until golangci-lint updates stylecheck with this fix:
+    # https://github.com/dominikh/go-tools/issues/389
+    - text: "ST1016:"
+      linters:
+        - stylecheck
+
     # TODO: Remove these when we are ready to drop support for Legacy Amino
     - text: "SA1019: codec.LegacyAmino is deprecated"
       linters:
@@ -62,10 +63,10 @@ issues:
       linters:
         - staticcheck
 
-    # TODO: Remove this once we have implemented expected_keepers for all the modules
-    - text: "`bk` can be `github.com/cosmos/cosmos-sdk/x/simulation.BankKeeper`"
+    - path: "migrations"
+      text: "SA1019:"
       linters:
-        - interfacer
+        - staticcheck
   max-issues-per-linter: 10000
   max-same-issues: 10000
 

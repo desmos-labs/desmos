@@ -12,8 +12,16 @@ jobs:
   Generate-Swagger-and-Deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout 🛎️
-        uses: actions/checkout@v2
+      - name: Checkout PR 🛎️
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: actions/checkout@v3
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - name: Checkout branch 🛎️
+        if: ${{ github.event_name != 'pull_request' }}
+        uses: actions/checkout@v3
         with:
           persist-credentials: false
 
@@ -21,9 +29,16 @@ jobs:
         run:
           make proto-swagger-gen
 
+      - name: Commit ✅
+        uses: endbug/add-and-commit@v9
+        with:
+          add: "client/docs"
+          message: "Updated Swagger definition"
+          push: true
+
       - name: Deploy 🚀
         if: github.ref == 'refs/heads/master'
-        uses: JamesIves/github-pages-deploy-action@v4.2.2
+        uses: JamesIves/github-pages-deploy-action@v4.4.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: swagger-pages

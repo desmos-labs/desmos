@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 func TestApplicationLink_Validate(t *testing.T) {
@@ -32,6 +32,7 @@ func TestApplicationLink_Validate(t *testing.T) {
 				),
 				nil,
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
 			shouldErr: true,
 		},
@@ -52,6 +53,7 @@ func TestApplicationLink_Validate(t *testing.T) {
 				),
 				nil,
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
 			shouldErr: true,
 		},
@@ -72,6 +74,7 @@ func TestApplicationLink_Validate(t *testing.T) {
 				),
 				nil,
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
 			shouldErr: true,
 		},
@@ -92,6 +95,7 @@ func TestApplicationLink_Validate(t *testing.T) {
 				),
 				nil,
 				time.Time{},
+				time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
 			shouldErr: true,
 		},
@@ -112,6 +116,7 @@ func TestApplicationLink_Validate(t *testing.T) {
 				),
 				types.NewErrorResult(""),
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
 			shouldErr: true,
 		},
@@ -132,6 +137,49 @@ func TestApplicationLink_Validate(t *testing.T) {
 				),
 				types.NewSuccessResult("value", "signature"),
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid expiration time returns error",
+			link: types.NewApplicationLink(
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				types.NewData("twitter", "twitteruser"),
+				types.ApplicationLinkStateInitialized,
+				types.NewOracleRequest(
+					0,
+					1,
+					types.NewOracleRequestCallData(
+						"twitter",
+						"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",
+					),
+					"client_id",
+				),
+				nil,
+				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				time.Time{},
+			),
+			shouldErr: true,
+		},
+		{
+			name: "expiration time before creation time returns error",
+			link: types.NewApplicationLink(
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				types.NewData("twitter", "twitteruser"),
+				types.ApplicationLinkStateInitialized,
+				types.NewOracleRequest(
+					0,
+					1,
+					types.NewOracleRequestCallData(
+						"twitter",
+						"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",
+					),
+					"client_id",
+				),
+				nil,
+				time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
+				time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
 			shouldErr: true,
 		},
@@ -152,6 +200,7 @@ func TestApplicationLink_Validate(t *testing.T) {
 				),
 				nil,
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
 			shouldErr: false,
 		},

@@ -8,13 +8,38 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/desmos-labs/desmos/v4/x/reactions"
+	reactionstypes "github.com/desmos-labs/desmos/v4/x/reactions/types"
+
+	postskeeper "github.com/desmos-labs/desmos/v4/x/posts/keeper"
+	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
+
+	"github.com/desmos-labs/desmos/v4/app/upgrades"
+	v300 "github.com/desmos-labs/desmos/v4/app/upgrades/v300"
+	v310 "github.com/desmos-labs/desmos/v4/app/upgrades/v310"
+	v320 "github.com/desmos-labs/desmos/v4/app/upgrades/v320"
+	v400 "github.com/desmos-labs/desmos/v4/app/upgrades/v400"
+	v410 "github.com/desmos-labs/desmos/v4/app/upgrades/v410"
+	v420 "github.com/desmos-labs/desmos/v4/app/upgrades/v420"
+
+	profilesv4 "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v4"
+
 	"github.com/cosmos/cosmos-sdk/version"
 
+	"github.com/desmos-labs/desmos/v4/x/posts"
+	"github.com/desmos-labs/desmos/v4/x/relationships"
+	relationshipstypes "github.com/desmos-labs/desmos/v4/x/relationships/types"
+
+	"github.com/desmos-labs/desmos/v4/x/fees"
+	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
+	feestypes "github.com/desmos-labs/desmos/v4/x/fees/types"
+
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
+	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 	"github.com/cosmos/cosmos-sdk/x/authz"
 	"github.com/cosmos/cosmos-sdk/x/feegrant"
 
-	ibcclient "github.com/cosmos/ibc-go/v2/modules/core/02-client"
+	ibcclient "github.com/cosmos/ibc-go/v3/modules/core/02-client"
 
 	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
 	"github.com/prometheus/client_golang/prometheus"
@@ -68,22 +93,34 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/mint"
 	mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
-	ibctransfer "github.com/cosmos/ibc-go/v2/modules/apps/transfer"
-	ibctransferkeeper "github.com/cosmos/ibc-go/v2/modules/apps/transfer/keeper"
-	ibctransfertypes "github.com/cosmos/ibc-go/v2/modules/apps/transfer/types"
-	ibc "github.com/cosmos/ibc-go/v2/modules/core"
-	ibcclientclient "github.com/cosmos/ibc-go/v2/modules/core/02-client/client"
-	ibcclienttypes "github.com/cosmos/ibc-go/v2/modules/core/02-client/types"
-	porttypes "github.com/cosmos/ibc-go/v2/modules/core/05-port/types"
-	ibchost "github.com/cosmos/ibc-go/v2/modules/core/24-host"
-	ibckeeper "github.com/cosmos/ibc-go/v2/modules/core/keeper"
+	ibctransfer "github.com/cosmos/ibc-go/v3/modules/apps/transfer"
+	ibctransferkeeper "github.com/cosmos/ibc-go/v3/modules/apps/transfer/keeper"
+	ibctransfertypes "github.com/cosmos/ibc-go/v3/modules/apps/transfer/types"
+	ibc "github.com/cosmos/ibc-go/v3/modules/core"
+	ibcclientclient "github.com/cosmos/ibc-go/v3/modules/core/02-client/client"
+	ibcclienttypes "github.com/cosmos/ibc-go/v3/modules/core/02-client/types"
+	porttypes "github.com/cosmos/ibc-go/v3/modules/core/05-port/types"
+	ibchost "github.com/cosmos/ibc-go/v3/modules/core/24-host"
+	ibckeeper "github.com/cosmos/ibc-go/v3/modules/core/keeper"
 
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
 	upgradeclient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles"
-	profileskeeper "github.com/desmos-labs/desmos/v2/x/profiles/keeper"
-	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles"
+	profileskeeper "github.com/desmos-labs/desmos/v4/x/profiles/keeper"
+	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
+	reactionskeeper "github.com/desmos-labs/desmos/v4/x/reactions/keeper"
+	relationshipskeeper "github.com/desmos-labs/desmos/v4/x/relationships/keeper"
+	"github.com/desmos-labs/desmos/v4/x/reports"
+	reportskeeper "github.com/desmos-labs/desmos/v4/x/reports/keeper"
+	reportstypes "github.com/desmos-labs/desmos/v4/x/reports/types"
+	"github.com/desmos-labs/desmos/v4/x/subspaces"
+	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
+	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
+
+	"github.com/desmos-labs/desmos/v4/x/supply"
+	supplykeeper "github.com/desmos-labs/desmos/v4/x/supply/keeper"
+	supplytypes "github.com/desmos-labs/desmos/v4/x/supply/types"
 
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -96,7 +133,6 @@ import (
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
 
-	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
@@ -159,14 +195,35 @@ func GetEnabledProposals() []wasm.ProposalType {
 
 // GetWasmOpts parses appOpts and add wasm opt to the given options array.
 // if telemetry is enabled, the wasmVM cache metrics are activated.
-func GetWasmOpts(appOpts servertypes.AppOptions) []wasm.Option {
+func GetWasmOpts(
+	appOpts servertypes.AppOptions,
+	cdc codec.Codec,
+	profilesKeeper profileskeeper.Keeper,
+	subspacesKeeper subspaceskeeper.Keeper,
+	relationshipsKeeper relationshipskeeper.Keeper,
+	postsKeeper postskeeper.Keeper,
+	reportsKeeper reportskeeper.Keeper,
+	reactionsKeeper reactionskeeper.Keeper,
+) []wasm.Option {
 	var wasmOpts []wasm.Option
 	if cast.ToBool(appOpts.Get("telemetry.enabled")) {
 		wasmOpts = append(wasmOpts, wasmkeeper.WithVMCacheMetrics(prometheus.DefaultRegisterer))
 	}
 
-	// add any custom opts under here
-	// wasmOpts = append(wasmOpts, wasmkeeper.With...)
+	customQueryPlugin := NewDesmosCustomQueryPlugin(
+		cdc,
+		profilesKeeper,
+		subspacesKeeper,
+		relationshipsKeeper,
+		postsKeeper,
+		reportsKeeper,
+		reactionsKeeper,
+	)
+	customMessageEncoder := NewDesmosCustomMessageEncoder(cdc)
+
+	wasmOpts = append(wasmOpts, wasmkeeper.WithGasRegister(NewDesmosWasmGasRegister()))
+	wasmOpts = append(wasmOpts, wasmkeeper.WithQueryPlugins(&customQueryPlugin))
+	wasmOpts = append(wasmOpts, wasmkeeper.WithMessageEncoders(&customMessageEncoder))
 
 	return wasmOpts
 }
@@ -209,6 +266,13 @@ var (
 
 		// Custom modules
 		profiles.AppModuleBasic{},
+		relationships.AppModuleBasic{},
+		subspaces.AppModuleBasic{},
+		posts.AppModuleBasic{},
+		reports.AppModuleBasic{},
+		reactions.AppModuleBasic{},
+		fees.AppModuleBasic{},
+		supply.AppModuleBasic{},
 	)
 
 	// Module account permissions
@@ -268,7 +332,14 @@ type DesmosApp struct {
 	ScopedWasmKeeper        capabilitykeeper.ScopedKeeper
 
 	// Custom modules
-	ProfileKeeper profileskeeper.Keeper
+	FeesKeeper          feeskeeper.Keeper
+	SubspacesKeeper     subspaceskeeper.Keeper
+	ProfileKeeper       profileskeeper.Keeper
+	RelationshipsKeeper relationshipskeeper.Keeper
+	PostsKeeper         postskeeper.Keeper
+	ReportsKeeper       reportskeeper.Keeper
+	ReactionsKeeper     reactionskeeper.Keeper
+	SupplyKeeper        supplykeeper.Keeper
 
 	// Module Manager
 	mm *module.Manager
@@ -315,7 +386,9 @@ func NewDesmosApp(
 		authzkeeper.StoreKey, wasm.StoreKey,
 
 		// Custom modules
-		profilestypes.StoreKey,
+		profilestypes.StoreKey, relationshipstypes.StoreKey, subspacestypes.StoreKey,
+		poststypes.StoreKey, reportstypes.StoreKey, reactionstypes.StoreKey,
+		feestypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -374,7 +447,6 @@ func NewDesmosApp(
 
 	app.FeeGrantKeeper = feegrantkeeper.NewKeeper(appCodec, keys[feegrant.StoreKey], app.AccountKeeper)
 	app.UpgradeKeeper = upgradekeeper.NewKeeper(skipUpgradeHeights, keys[upgradetypes.StoreKey], appCodec, homePath, app.BaseApp)
-	app.registerUpgradeHandlers()
 
 	// register the staking hooks
 	// NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks
@@ -399,28 +471,111 @@ func NewDesmosApp(
 
 	// Create Transfer Keepers
 	app.TransferKeeper = ibctransferkeeper.NewKeeper(
-		appCodec, keys[ibctransfertypes.StoreKey], app.GetSubspace(ibctransfertypes.ModuleName),
-		app.IBCKeeper.ChannelKeeper, &app.IBCKeeper.PortKeeper,
-		app.AccountKeeper, app.BankKeeper, scopedIBCTransferKeeper,
+		appCodec,
+		keys[ibctransfertypes.StoreKey],
+		app.GetSubspace(ibctransfertypes.ModuleName),
+		app.IBCKeeper.ChannelKeeper,
+		app.IBCKeeper.ChannelKeeper,
+		&app.IBCKeeper.PortKeeper,
+		app.AccountKeeper,
+		app.BankKeeper,
+		scopedIBCTransferKeeper,
 	)
 	transferModule := ibctransfer.NewAppModule(app.TransferKeeper)
+	transferIBCModule := ibctransfer.NewIBCModule(app.TransferKeeper)
 
-	// Create profiles keeper
+	// Create fees keeper
+	app.FeesKeeper = feeskeeper.NewKeeper(app.appCodec, app.GetSubspace(feestypes.ModuleName))
+
+	// Create subspaces keeper and module
+	subspacesKeeper := subspaceskeeper.NewKeeper(app.appCodec, keys[subspacestypes.StoreKey])
+
+	// Create the relationships keeper
+	app.RelationshipsKeeper = relationshipskeeper.NewKeeper(
+		appCodec,
+		keys[relationshipstypes.StoreKey],
+		&subspacesKeeper,
+	)
+
+	// Create profiles keeper and module
 	app.ProfileKeeper = profileskeeper.NewKeeper(
 		app.appCodec,
+		app.legacyAmino,
 		keys[profilestypes.StoreKey],
 		app.GetSubspace(profilestypes.ModuleName),
 		app.AccountKeeper,
+		app.RelationshipsKeeper,
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper,
 		scopedProfilesKeeper,
 	)
-	profilesModule := profiles.NewAppModule(appCodec, legacyAmino, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper)
+	profilesModule := profiles.NewAppModule(
+		appCodec,
+		legacyAmino,
+		app.ProfileKeeper,
+		app.AccountKeeper,
+		app.BankKeeper,
+		app.FeesKeeper,
+	)
+	profilesIBCModule := profiles.NewIBCModule(app.appCodec, app.ProfileKeeper)
+
+	// Create posts keeper and module
+	postsKeeper := postskeeper.NewKeeper(
+		app.appCodec,
+		keys[poststypes.StoreKey],
+		app.GetSubspace(poststypes.ModuleName),
+		app.ProfileKeeper,
+		&subspacesKeeper,
+		app.RelationshipsKeeper,
+	)
+
+	// Create reports keeper
+	app.ReportsKeeper = reportskeeper.NewKeeper(
+		app.appCodec,
+		keys[reportstypes.StoreKey],
+		app.GetSubspace(reportstypes.ModuleName),
+		app.ProfileKeeper,
+		&subspacesKeeper,
+		app.RelationshipsKeeper,
+		&postsKeeper,
+	)
+
+	// Create reactions keeper
+	app.ReactionsKeeper = reactionskeeper.NewKeeper(
+		app.appCodec,
+		keys[reactionstypes.StoreKey],
+		app.ProfileKeeper,
+		&subspacesKeeper,
+		app.RelationshipsKeeper,
+		&postsKeeper,
+	)
+
+	// Register the posts hooks
+	// NOTE: postsKeeper above is passed by reference, so that it will contain these hooks
+	app.PostsKeeper = *postsKeeper.SetHooks(
+		poststypes.NewMultiPostsHooks(
+			app.ReportsKeeper.Hooks(),
+			app.ReactionsKeeper.Hooks(),
+		),
+	)
+
+	// Register the subspaces hooks
+	// NOTE: subspacesKeeper above is passed by reference, so that it will contain these hooks
+	app.SubspacesKeeper = *subspacesKeeper.SetHooks(
+		subspacestypes.NewMultiSubspacesHooks(
+			app.RelationshipsKeeper.Hooks(),
+			app.PostsKeeper.Hooks(),
+			app.ReportsKeeper.Hooks(),
+			app.ReactionsKeeper.Hooks(),
+		),
+	)
+
+	app.SupplyKeeper = supplykeeper.NewKeeper(app.appCodec, app.AccountKeeper, app.BankKeeper, app.DistrKeeper)
 
 	// Create static IBC router, add transfer route, then set and seal it
 	ibcRouter := porttypes.NewRouter()
-	ibcRouter.AddRoute(ibctransfertypes.ModuleName, transferModule)
-	ibcRouter.AddRoute(profilestypes.ModuleName, profilesModule)
+	ibcRouter.AddRoute(ibctransfertypes.ModuleName, transferIBCModule)
+	ibcRouter.AddRoute(profilestypes.ModuleName, profilesIBCModule)
 
 	// create evidence keeper with router
 	evidenceKeeper := evidencekeeper.NewKeeper(
@@ -440,7 +595,16 @@ func NewDesmosApp(
 	}
 
 	supportedFeatures := "iterator,staking,stargate"
-	wasmOpts := GetWasmOpts(appOpts)
+	wasmOpts := GetWasmOpts(
+		appOpts,
+		app.appCodec,
+		app.ProfileKeeper,
+		app.SubspacesKeeper,
+		app.RelationshipsKeeper,
+		app.PostsKeeper,
+		app.ReportsKeeper,
+		app.ReactionsKeeper,
+	)
 
 	// The last arguments can contain custom message handlers, and custom query handlers,
 	// if we want to allow any custom callbacks
@@ -510,10 +674,17 @@ func NewDesmosApp(
 		params.NewAppModule(app.ParamsKeeper),
 		authzmodule.NewAppModule(appCodec, app.AuthzKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
 		transferModule,
-		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper),
+		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
 
 		// Custom modules
+		fees.NewAppModule(app.appCodec, app.FeesKeeper),
+		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		profilesModule,
+		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv4.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
+		posts.NewAppModule(appCodec, app.PostsKeeper, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
+		reports.NewAppModule(appCodec, app.ReportsKeeper, app.SubspacesKeeper, app.PostsKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
+		reactions.NewAppModule(appCodec, app.ReactionsKeeper, app.SubspacesKeeper, app.PostsKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
+		supply.NewAppModule(appCodec, legacyAmino, app.SupplyKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -522,25 +693,137 @@ func NewDesmosApp(
 	// NOTE: staking module is required if HistoricalEntries param > 0
 	// NOTE: capability module's beginblocker must come before any modules using capabilities (e.g. IBC)
 	app.mm.SetOrderBeginBlockers(
-		upgradetypes.ModuleName, capabilitytypes.ModuleName, minttypes.ModuleName, distrtypes.ModuleName, slashingtypes.ModuleName,
-		evidencetypes.ModuleName, stakingtypes.ModuleName, ibchost.ModuleName,
+		upgradetypes.ModuleName,
+		capabilitytypes.ModuleName,
+		minttypes.ModuleName,
+		distrtypes.ModuleName,
+		slashingtypes.ModuleName,
+		evidencetypes.ModuleName,
+		stakingtypes.ModuleName,
+		authtypes.ModuleName,
+		banktypes.ModuleName,
+		govtypes.ModuleName,
+		crisistypes.ModuleName,
+		genutiltypes.ModuleName,
+		authz.ModuleName,
+		feegrant.ModuleName,
+		paramstypes.ModuleName,
+		vestingtypes.ModuleName,
+		ibchost.ModuleName,
+		ibctransfertypes.ModuleName,
+		wasm.ModuleName,
+
+		feestypes.ModuleName,
+		subspacestypes.ModuleName,
+		relationshipstypes.ModuleName,
+		profilestypes.ModuleName,
+		poststypes.ModuleName,
+		reportstypes.ModuleName,
+		reactionstypes.ModuleName,
+		supplytypes.ModuleName,
 	)
-	app.mm.SetOrderEndBlockers(crisistypes.ModuleName, govtypes.ModuleName, stakingtypes.ModuleName)
+	app.mm.SetOrderEndBlockers(
+		crisistypes.ModuleName,
+		govtypes.ModuleName,
+		stakingtypes.ModuleName,
+		capabilitytypes.ModuleName,
+		authtypes.ModuleName,
+		banktypes.ModuleName,
+		distrtypes.ModuleName,
+		slashingtypes.ModuleName,
+		minttypes.ModuleName,
+		genutiltypes.ModuleName,
+		evidencetypes.ModuleName,
+		authz.ModuleName,
+		feegrant.ModuleName,
+		paramstypes.ModuleName,
+		upgradetypes.ModuleName,
+		vestingtypes.ModuleName,
+		ibchost.ModuleName,
+		ibctransfertypes.ModuleName,
+		wasm.ModuleName,
+
+		feestypes.ModuleName,
+		subspacestypes.ModuleName,
+		relationshipstypes.ModuleName,
+		profilestypes.ModuleName,
+		poststypes.ModuleName,
+		reportstypes.ModuleName,
+		reactionstypes.ModuleName,
+		supplytypes.ModuleName,
+	)
 
 	// NOTE: The genutils module must occur after staking so that pools are
 	// properly initialized with tokens from genesis accounts.
+	// NOTE: The genutils module must also occur after auth so that it can access the params from auth.
 	// NOTE: Capability module must occur first so that it can initialize any capabilities
 	// so that other modules that want to create or claim capabilities afterwards in InitChain
 	// can do so safely.
-	// NOTE: The crisis module should occur after all other modules to run the invariants at genesis correctly
 	app.mm.SetOrderInitGenesis(
-		capabilitytypes.ModuleName, authtypes.ModuleName, banktypes.ModuleName, distrtypes.ModuleName, stakingtypes.ModuleName,
-		slashingtypes.ModuleName, govtypes.ModuleName, minttypes.ModuleName,
-		ibchost.ModuleName, genutiltypes.ModuleName, evidencetypes.ModuleName, authz.ModuleName, ibctransfertypes.ModuleName,
-		feegrant.ModuleName, wasm.ModuleName,
+		capabilitytypes.ModuleName,
+		authtypes.ModuleName,
+		banktypes.ModuleName,
+		distrtypes.ModuleName,
+		stakingtypes.ModuleName,
+		slashingtypes.ModuleName,
+		govtypes.ModuleName,
+		minttypes.ModuleName,
+		genutiltypes.ModuleName,
+		evidencetypes.ModuleName,
+		authz.ModuleName,
+		feegrant.ModuleName,
+		paramstypes.ModuleName,
+		upgradetypes.ModuleName,
+		vestingtypes.ModuleName,
+		ibchost.ModuleName,
+		ibctransfertypes.ModuleName,
+		wasm.ModuleName,
 
 		// Custom modules
+		feestypes.ModuleName,
+		subspacestypes.ModuleName,
 		profilestypes.ModuleName,
+		relationshipstypes.ModuleName,
+		poststypes.ModuleName,
+		reportstypes.ModuleName,
+		reactionstypes.ModuleName,
+		supplytypes.ModuleName,
+
+		crisistypes.ModuleName,
+	)
+
+	// NOTE: The auth module must occur before everyone else. All other modules can be sorted
+	// alphabetically (default order)
+	// NOTE: The relationships module must occur before the profiles module, or all relationships will be deleted
+	app.mm.SetOrderMigrations(
+		authtypes.ModuleName,
+		authz.ModuleName,
+		banktypes.ModuleName,
+		capabilitytypes.ModuleName,
+		distrtypes.ModuleName,
+		evidencetypes.ModuleName,
+		feegrant.ModuleName,
+		genutiltypes.ModuleName,
+		govtypes.ModuleName,
+		ibchost.ModuleName,
+		minttypes.ModuleName,
+		slashingtypes.ModuleName,
+		stakingtypes.ModuleName,
+		ibctransfertypes.ModuleName,
+		paramstypes.ModuleName,
+		upgradetypes.ModuleName,
+		vestingtypes.ModuleName,
+		wasm.ModuleName,
+
+		// Custom modules
+		feestypes.ModuleName,
+		subspacestypes.ModuleName,
+		relationshipstypes.ModuleName,
+		profilestypes.ModuleName,
+		poststypes.ModuleName,
+		reportstypes.ModuleName,
+		reactionstypes.ModuleName,
+		supplytypes.ModuleName,
 
 		crisistypes.ModuleName,
 	)
@@ -549,6 +832,8 @@ func NewDesmosApp(
 	app.mm.RegisterRoutes(app.Router(), app.QueryRouter(), encodingConfig.Amino)
 	app.configurator = module.NewConfigurator(app.appCodec, app.MsgServiceRouter(), app.GRPCQueryRouter())
 	app.mm.RegisterServices(app.configurator)
+
+	app.registerUpgradeHandlers()
 
 	// add test gRPC service for testing gRPC queries in isolation
 	testdata.RegisterQueryServer(app.GRPCQueryRouter(), testdata.QueryImpl{})
@@ -572,10 +857,17 @@ func NewDesmosApp(
 		authzmodule.NewAppModule(appCodec, app.AuthzKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
 		ibc.NewAppModule(app.IBCKeeper),
 		transferModule,
-		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper),
+		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
 
 		// Custom modules
-		profiles.NewAppModule(app.appCodec, legacyAmino, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper),
+		fees.NewAppModule(appCodec, app.FeesKeeper),
+		supply.NewAppModule(appCodec, legacyAmino, app.SupplyKeeper),
+		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
+		profilesModule,
+		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv4.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
+		posts.NewAppModule(appCodec, app.PostsKeeper, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
+		reports.NewAppModule(appCodec, app.ReportsKeeper, app.SubspacesKeeper, app.PostsKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
+		reactions.NewAppModule(appCodec, app.ReactionsKeeper, app.SubspacesKeeper, app.PostsKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 	)
 
 	app.sm.RegisterStoreDecoders()
@@ -597,7 +889,8 @@ func NewDesmosApp(
 				FeegrantKeeper:  app.FeeGrantKeeper,
 				SigGasConsumer:  ante.DefaultSigVerificationGasConsumer,
 			},
-			IBCChannelkeeper:  app.IBCKeeper.ChannelKeeper,
+			IBCkeeper:         app.IBCKeeper,
+			FeesKeeper:        app.FeesKeeper,
 			TxCounterStoreKey: keys[wasm.StoreKey],
 			WasmConfig:        wasmConfig,
 		},
@@ -753,7 +1046,7 @@ func (app *DesmosApp) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.API
 
 	// register swagger API from root so that other applications can override easily
 	if apiConfig.Swagger {
-		RegisterSwaggerAPI(clientCtx, apiSvr.Router)
+		RegisterSwaggerAPI(apiSvr.Router)
 	}
 }
 
@@ -766,26 +1059,33 @@ func (app *DesmosApp) RegisterTendermintService(clientCtx client.Context) {
 	tmservice.RegisterTendermintService(app.BaseApp.GRPCQueryRouter(), clientCtx, app.interfaceRegistry)
 }
 
+// registerUpgradeHandlers registers all the upgrade handlers that are supported by the app
 func (app *DesmosApp) registerUpgradeHandlers() {
-	app.UpgradeKeeper.SetUpgradeHandler("v2.3.1", func(ctx sdk.Context, plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
-		return app.mm.RunMigrations(ctx, app.configurator, fromVM)
-	})
+	app.registerUpgrade(v300.NewUpgrade(app.mm, app.configurator))
+	app.registerUpgrade(v310.NewUpgrade(app.mm, app.configurator))
+	app.registerUpgrade(v320.NewUpgrade(app.mm, app.configurator))
+	app.registerUpgrade(v400.NewUpgrade(app.mm, app.configurator))
+	app.registerUpgrade(v410.NewUpgrade(app.mm, app.configurator))
+	app.registerUpgrade(v420.NewUpgrade(app.mm, app.configurator))
+}
+
+// registerUpgrade registers the given upgrade to be supported by the app
+func (app *DesmosApp) registerUpgrade(upgrade upgrades.Upgrade) {
+	app.UpgradeKeeper.SetUpgradeHandler(upgrade.Name(), upgrade.Handler())
 
 	upgradeInfo, err := app.UpgradeKeeper.ReadUpgradeInfoFromDisk()
 	if err != nil {
 		panic(err)
 	}
 
-	if upgradeInfo.Name == "v2.3.1" && !app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
-		storeUpgrades := storetypes.StoreUpgrades{}
-
+	if upgradeInfo.Name == upgrade.Name() && !app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
 		// Configure store loader that checks if version == upgradeHeight and applies store upgrades
-		app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, &storeUpgrades))
+		app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, upgrade.StoreUpgrades()))
 	}
 }
 
 // RegisterSwaggerAPI registers swagger route with API Server
-func RegisterSwaggerAPI(ctx client.Context, rtr *mux.Router) {
+func RegisterSwaggerAPI(rtr *mux.Router) {
 	statikFS, err := fs.New()
 	if err != nil {
 		panic(err)
@@ -820,7 +1120,12 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(ibchost.ModuleName)
 	paramsKeeper.Subspace(wasm.ModuleName)
 
+	paramsKeeper.Subspace(feestypes.ModuleName)
+	paramsKeeper.Subspace(subspacestypes.ModuleName)
 	paramsKeeper.Subspace(profilestypes.ModuleName)
+	paramsKeeper.Subspace(poststypes.ModuleName)
+	paramsKeeper.Subspace(reportstypes.ModuleName)
+	paramsKeeper.Subspace(reactionstypes.ModuleName)
 
 	return paramsKeeper
 }

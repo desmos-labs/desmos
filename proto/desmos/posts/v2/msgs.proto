@@ -1,0 +1,274 @@
+syntax = "proto3";
+package desmos.posts.v2;
+
+import "gogoproto/gogo.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+import "cosmos_proto/cosmos.proto";
+
+import "desmos/posts/v2/models.proto";
+
+option go_package = "github.com/desmos-labs/desmos/v4/x/posts/types";
+
+// Msg defines the posts Msg service.
+service Msg {
+  // CreatePost allows to create a new post
+  rpc CreatePost(MsgCreatePost) returns (MsgCreatePostResponse);
+
+  // EditPost allows to edit an existing post
+  rpc EditPost(MsgEditPost) returns (MsgEditPostResponse);
+
+  // DeletePost allows to delete an existing post
+  rpc DeletePost(MsgDeletePost) returns (MsgDeletePostResponse);
+
+  // AddPostAttachment allows to add a new attachment to a post
+  rpc AddPostAttachment(MsgAddPostAttachment)
+      returns (MsgAddPostAttachmentResponse);
+
+  // RemovePostAttachment allows to remove an attachment from a post
+  rpc RemovePostAttachment(MsgRemovePostAttachment)
+      returns (MsgRemovePostAttachmentResponse);
+
+  // AnswerPoll allows to answer a post poll
+  rpc AnswerPoll(MsgAnswerPoll) returns (MsgAnswerPollResponse);
+}
+
+// MsgCreatePost represents the message to be used to create a post.
+message MsgCreatePost {
+  // Id of the subspace inside which the post must be created
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+
+  // Id of the section inside which the post must be created
+  uint32 section_id = 2 [
+    (gogoproto.customname) = "SectionID",
+    (gogoproto.moretags) = "yaml:\"section_id\""
+  ];
+
+  // (optional) External id for this post
+  string external_id = 3 [
+    (gogoproto.customname) = "ExternalID",
+    (gogoproto.moretags) = "yaml:\"external_id\""
+  ];
+
+  // (optional) Text of the post
+  string text = 4 [ (gogoproto.moretags) = "yaml:\"text\"" ];
+
+  // (optional) Entities connected to this post
+  Entities entities = 5 [ (gogoproto.moretags) = "yaml:\"entities\"" ];
+
+  // Tags connected to this post
+  repeated string tags = 6 [ (gogoproto.moretags) = "yaml:\"tags\"" ];
+
+  // Attachments of the post
+  repeated google.protobuf.Any attachments = 7 [
+    (cosmos_proto.accepts_interface) = "AttachmentContent",
+    (gogoproto.moretags) = "yaml:\"attachments\""
+  ];
+
+  // Author of the post
+  string author = 8 [ (gogoproto.moretags) = "yaml:\"author\"" ];
+
+  // (optional) Id of the original post of the conversation
+  uint64 conversation_id = 9 [
+    (gogoproto.customname) = "ConversationID",
+    (gogoproto.moretags) = "yaml:\"conversation_id\""
+  ];
+
+  // Reply settings of this post
+  ReplySetting reply_settings = 10
+      [ (gogoproto.moretags) = "yaml:\"reply_settings\"" ];
+
+  // A list this posts references (either as a reply, repost or quote)
+  repeated PostReference referenced_posts = 11 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"referenced_posts\""
+  ];
+}
+
+// MsgCreatePostResponse defines the Msg/CreatePost response type.
+message MsgCreatePostResponse {
+  // Id of the newly created post
+  uint64 post_id = 1 [
+    (gogoproto.customname) = "PostID",
+    (gogoproto.moretags) = "yaml:\"post_id\""
+  ];
+
+  // Creation date of the post
+  google.protobuf.Timestamp creation_date = 2 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true,
+    (gogoproto.moretags) = "yaml:\"creation_date\""
+  ];
+}
+
+// MsgEditPost represents the message to be used to edit a post.
+message MsgEditPost {
+  // Id of the subspace inside which the post is
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+
+  // Id of the post to edit
+  uint64 post_id = 2 [
+    (gogoproto.customname) = "PostID",
+    (gogoproto.moretags) = "yaml:\"post_id\""
+  ];
+
+  // New text of the post. If set to [do-not-modify] it will change the current
+  // post's text.
+  string text = 3 [ (gogoproto.moretags) = "yaml:\"text\"" ];
+
+  // New entities connected to this post. These will always replace the current
+  // post's entities
+  Entities entities = 4 [ (gogoproto.moretags) = "yaml:\"entities\"" ];
+
+  // New tags connected to this post. These will always replace the current
+  // post's tags
+  repeated string tags = 5 [ (gogoproto.moretags) = "yaml:\"tags\"" ];
+
+  // Editor of the post
+  string editor = 6 [ (gogoproto.moretags) = "yaml:\"editor\"" ];
+}
+
+// MsgCreatePostResponse defines the Msg/EditPost response type.
+message MsgEditPostResponse {
+  // Edit date of the post
+  google.protobuf.Timestamp edit_date = 1 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true,
+    (gogoproto.moretags) = "yaml:\"edit_date\""
+  ];
+}
+
+// MsgDeletePost represents the message used when deleting a post.
+message MsgDeletePost {
+  // Id of the subspace containing the post
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+
+  // Id of the post to be deleted
+  uint64 post_id = 2 [
+    (gogoproto.customname) = "PostID",
+    (gogoproto.moretags) = "yaml:\"post_id\""
+  ];
+
+  // User that is deleting the post
+  string signer = 3 [ (gogoproto.moretags) = "yaml:\"signer\"" ];
+}
+
+// MsgDeletePostResponse represents the Msg/DeletePost response type
+message MsgDeletePostResponse {}
+
+// MsgAddPostAttachment represents the message that should be
+// used when adding an attachment to post
+message MsgAddPostAttachment {
+  // Id of the subspace containing the post
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+
+  // Id of the post to which to add the attachment
+  uint64 post_id = 2 [
+    (gogoproto.customname) = "PostID",
+    (gogoproto.moretags) = "yaml:\"post_id\""
+  ];
+
+  // Content of the attachment
+  google.protobuf.Any content = 3 [
+    (cosmos_proto.accepts_interface) = "AttachmentContent",
+    (gogoproto.moretags) = "yaml:\"content\""
+  ];
+
+  // Editor of the post
+  string editor = 4 [ (gogoproto.moretags) = "yaml:\"editor\"" ];
+}
+
+// MsgAddPostAttachmentResponse defines the Msg/AddPostAttachment response type.
+message MsgAddPostAttachmentResponse {
+  // New id of the uploaded attachment
+  uint32 attachment_id = 1 [
+    (gogoproto.customname) = "AttachmentID",
+    (gogoproto.moretags) = "yaml:\"attachment_id\""
+  ];
+
+  // Edit date of the post
+  google.protobuf.Timestamp edit_date = 2 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true,
+    (gogoproto.moretags) = "yaml:\"edit_date\""
+  ];
+}
+
+// MsgRemovePostAttachment represents the message to be used when
+// removing an attachment from a post
+message MsgRemovePostAttachment {
+  // Id of the subspace containing the post
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+
+  // Id of the post from which to remove the attachment
+  uint64 post_id = 2 [
+    (gogoproto.customname) = "PostID",
+    (gogoproto.moretags) = "yaml:\"post_id\""
+  ];
+
+  // Id of the attachment to be removed
+  uint32 attachment_id = 3 [
+    (gogoproto.customname) = "AttachmentID",
+    (gogoproto.moretags) = "yaml:\"attachment_id\""
+  ];
+
+  // User that is removing the attachment
+  string editor = 4 [ (gogoproto.moretags) = "yaml:\"editor\"" ];
+}
+
+// MsgRemovePostAttachmentResponse defines the
+// Msg/RemovePostAttachment response type.
+message MsgRemovePostAttachmentResponse {
+  // Edit date of the post
+  google.protobuf.Timestamp edit_date = 1 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true,
+    (gogoproto.moretags) = "yaml:\"edit_date\""
+  ];
+}
+
+// MsgAnswerPoll represents the message used to answer a poll
+message MsgAnswerPoll {
+  // Id of the subspace containing the post
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+
+  // Id of the post that contains the poll to be answered
+  uint64 post_id = 2 [
+    (gogoproto.customname) = "PostID",
+    (gogoproto.moretags) = "yaml:\"post_id\""
+  ];
+
+  // Id of the poll to be answered
+  uint32 poll_id = 3 [
+    (gogoproto.customname) = "PollID",
+    (gogoproto.moretags) = "yaml:\"poll_id\""
+  ];
+
+  // Indexes of the answer inside the ProvidedAnswers array
+  repeated uint32 answers_indexes = 4
+      [ (gogoproto.moretags) = "yaml:\"answers_indexes\"" ];
+
+  // Address of the user answering the poll
+  string signer = 5 [ (gogoproto.moretags) = "yaml:\"signer\"" ];
+}
+
+// MsgAnswerPollResponse represents the MSg/AnswerPoll response type
+message MsgAnswerPollResponse {}

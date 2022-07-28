@@ -9,11 +9,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	authsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
 
-	"github.com/desmos-labs/desmos/v2/app"
-	"github.com/desmos-labs/desmos/v2/app/desmos/cmd/chainlink/getter"
-	"github.com/desmos-labs/desmos/v2/app/desmos/cmd/chainlink/types"
-	"github.com/desmos-labs/desmos/v2/x/profiles/client/utils"
-	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/app"
+	"github.com/desmos-labs/desmos/v4/app/desmos/cmd/chainlink/getter"
+	"github.com/desmos-labs/desmos/v4/app/desmos/cmd/chainlink/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/client/utils"
+	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 // AccountChainLinkJSONBuilder implements the ChainLinkJSONBuilder for multi signature accounts
@@ -86,7 +86,7 @@ func (b *AccountChainLinkJSONBuilder) BuildChainLinkJSON(chain types.Chain) (uti
 		return utils.ChainLinkJSON{}, err
 	}
 
-	sigData, err := profilestypes.SignatureDataFromCosmosSignatureData(sigs[0].Data)
+	sigData, err := profilestypes.CosmosSignatureDataToSignature(sigs[0].Data)
 	if err != nil {
 		return utils.ChainLinkJSON{}, err
 	}

@@ -2,12 +2,159 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
+## Version 4.2.0
+### Features
+#### Profiles
+- ([\#723](https://github.com/desmos-labs/desmos/pull/723)) Added expiration time to application links
+- ([\#887](https://github.com/desmos-labs/desmos/pull/887)) Added the ability to specify per-chain default external links
+- ([\#968](https://github.com/desmos-labs/desmos/pull/968)) Added the support for EVM-specific chain link signatures
+
+#### Subspaces
+- ([\#974](https://github.com/desmos-labs/desmos/pull/974)) Allow setting initial group members when creating a user group
+
+### Bug Fixes
+#### Profiles
+- ([\#971](https://github.com/desmos-labs/desmos/pull/971)) `QueryProfile` now returns an error instead of `nil` when a profile is not found
+
+#### Posts
+- ([\#964](https://github.com/desmos-labs/desmos/pull/964)) Do not allow to answer a poll after voting period ends
+
+## Version 4.1.0
+### Features
+#### Posts
+- ([\#941](https://github.com/desmos-labs/desmos/pull/941)) Allow to specify start and end indexes of tags and post references even when a post text is stored outside the chain
+- ([\#942](https://github.com/desmos-labs/desmos/pull/942)) Allow to specify a post tags for content categorization
+
+### Bug Fixes
+#### Profiles
+- ([\#954](https://github.com/desmos-labs/desmos/pull/954)) Added missing unlink messages WASM parsers
+
+#### Subspaces
+- ([\#945](https://github.com/desmos-labs/desmos/pull/945)) Allow to specify the section id inside user permissions query
+
+#### Reactions
+- ([\#940](https://github.com/desmos-labs/desmos/pull/940)) Fixed wrong event types and missing attributes
+
+#### Reports
+- ([\#955](https://github.com/desmos-labs/desmos/pull/955)) Fixed wrong CLI commands naming
+- ([\#961](https://github.com/desmos-labs/desmos/pull/961)) Fixed the JSON fields used to deserialize report create and delete report messages received from CosmWASM
+
+### Dependencies
+- ([\#946](https://github.com/desmos-labs/desmos/pull/946)) Updated WASM parser to be compatible with `cosmwasm-std v1.0.0`
+
+## Version 4.0.1
+### Bug fixes
+#### Other
+- ([\#952](https://github.com/desmos-labs/desmos/pull/952)) Fixed how the `v.4.0.0` upgrade is handled
+
+## Version 4.0.0
+### Features
+#### Subspaces
+- ([\#866](https://github.com/desmos-labs/desmos/pull/866)) Added support for subspaces sections
+- ([\#886](https://github.com/desmos-labs/desmos/pull/886)) Improved how permissions are managed
+- ([\#919](https://github.com/desmos-labs/desmos/pull/919)) Added the ability to create a GenericSubspaceAuthorization to authorize operations only inside a specific subspace
+
+#### Posts
+- ([\#847](https://github.com/desmos-labs/desmos/pull/847)) Added the new `x/posts` module
+
+#### Reactions
+- ([\#898](https://github.com/desmos-labs/desmos/pull/898)) Added the new `x/reactions` module
+
+#### Reports
+- ([\#860](https://github.com/desmos-labs/desmos/pull/860)) Added the new `x/reports` module
+
+#### Other
+- ([\#822](https://github.com/desmos-labs/desmos/pull/822)) Added CosmWASM messages and queries parsers for all modules
+- ([\#919](https://github.com/desmos-labs/desmos/pull/919)) Added proper support for `x/authz`
+
+### Dependencies
+- ([\#875](https://github.com/desmos-labs/desmos/pull/875)) Updated ibc-go to v3.0.0 and wasmd to v0.27.0
+
+## Version 3.2.0
+### Bug Fixes
+#### Supply
+- ([\#883](https://github.com/desmos-labs/desmos/pull/883)) Removed a wrongfully added supply store key
+
+## Version 3.1.0
+### Features
+#### Profiles
+- ([\#793](https://github.com/desmos-labs/desmos/pull/793)) Added the ability to reverse search application links and chain links
+
+#### Fees
+- ([\#796](https://github.com/desmos-labs/desmos/pull/796)) Added the new `x/fees` module
+
+#### Supply
+- ([\#782](https://github.com/desmos-labs/desmos/pull/782)) Added the new `x/supply` module
+
+### Bug Fixes
+#### Profiles
+- ([\#831](https://github.com/desmos-labs/desmos/pull/831)) Renamed the `dtag_transfer_requests` REST endpoint to `dtag-transfer-requests`
+- ([\#832](https://github.com/desmos-labs/desmos/pull/832)) Fixed the CLI commands expected number of arguments
+- ([\#840](https://github.com/desmos-labs/desmos/pull/840)) Added missing profiles query commands
+
+#### Subspaces
+- ([\#801](https://github.com/desmos-labs/desmos/pull/801)) Added permissions sanitization
+- ([\#802](https://github.com/desmos-labs/desmos/pull/802)) Made it not possible for users to set their own permissions
+- ([\#805](https://github.com/desmos-labs/desmos/pull/805)) Added missing required permission when creating user groups
+- ([\#815](https://github.com/desmos-labs/desmos/pull/815)) Fixed wrong Proto files notations and added missing CLI commands
+- ([\#849](https://github.com/desmos-labs/desmos/pull/849)) Added correct Amino encoding support
+
+#### Relationships
+- ([\#838](https://github.com/desmos-labs/desmos/pull/838)) Replaced store keys to use less disk space
+
+#### Other
+- ([\#829](https://github.com/desmos-labs/desmos/pull/829)) Added missing events and events attributes
+
+### Dependencies
+- ([\#812](https://github.com/desmos-labs/desmos/pull/812)) Updated CosmWASM to v1.0.0-beta10
+- ([\#844](https://github.com/desmos-labs/desmos/pull/844)) Updated Cosmos SDK to v0.45.5
+
+## Version 3.0.1
+### Bug Fixes
+#### Other
+- ([\#843](https://github.com/desmos-labs/desmos/pull/843)) Fixed the default home path inside the export command
+
+## Version 3.0.0
+### Notes
+This version introduces breaking changes to the `x/profiles` Protobuf definitions. Particularly:
+- all profiles types are now inside the `desmos/profiles/v2` package (it was `desmos/profiles/v1beta1`)
+- relationships and user blocks models and queries have been moved to the `desmos/relationships/v1` package (it was `desmos/profiles/v1beta1`)
+
+This requires all the clients to re-generate the Protobuf implementations in order to be compatible with the new version of the chain. Using previously generated models will result in errors when broadcasting messages and reading data from the chain itself.
+
+### Features
+#### Profiles
+- ([\#688](https://github.com/desmos-labs/desmos/pull/688)) Added support for hex addresses inside chain links
+- ([\#708](https://github.com/desmos-labs/desmos/pull/708)) Added support for multisig chain links
+- ([\#785](https://github.com/desmos-labs/desmos/pull/785)) Added keeper hooks
+
+#### Subspaces
+- ([\#728](https://github.com/desmos-labs/desmos/pull/728)) Added the new `x/subspaces` module
+
+#### Relationships
+- ([\#750](https://github.com/desmos-labs/desmos/pull/750)) Split relationships and user blocks into the new `x/relationships` module
+
+#### Other
+- ([\#717](https://github.com/desmos-labs/desmos/pull/717)) Added IBC AnteHandler
+- ([\#720](https://github.com/desmos-labs/desmos/pull/720)) Added CosmWasm module
+
+### Bug Fixes
+#### Profiles
+- ([\#759](https://github.com/desmos-labs/desmos/pull/759)) Added the emission of missing events
+- ([\#784](https://github.com/desmos-labs/desmos/pull/784)) Fixed how the profiles data are deleted (DTag transfer requests, chain links and application links)
+
+#### Other
+- ([\#693](https://github.com/desmos-labs/desmos/pull/693)) Added missing server version
+
+### Dependencies
+- ([\#716](https://github.com/desmos-labs/desmos/pull/716)) Updated IBC to v2.0.2
+- ([\#769](https://github.com/desmos-labs/desmos/pull/769)) Updated Cosmos SDK to v0.45.1
+
 ## Version 2.3.1
 ### Bug Fixes
 #### Profiles
 - ([\#679](https://github.com/desmos-labs/desmos/pull/679)) Fixed the vesting accounts not working after the 2.3.0 upgrade
 - ([\#680](https://github.com/desmos-labs/desmos/pull/680)) Fixed the wrong serialization of the AddressData interface when using Amino
-
 
 ## Version 2.2.1
 ### Dependencies
@@ -111,7 +258,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Added the ability to paginate the relationships of a profile ([\#467](https://github.com/desmos-labs/desmos/issues/467))
 - Added the ability to paginate user blocks ([\#495](https://github.com/desmos-labs/desmos/issues/495))
 - Added the ability to paginate incoming DTag transfer requests ([\#519](https://github.com/desmos-labs/desmos/pull/519))
-- Added the possibility to connect external chain accounts to a Desmos profile ([\#192](https://github.com/desmos-labs/desmos/issues/192))  
+- Added the possibility to connect external chain accounts to a Desmos profile ([\#192](https://github.com/desmos-labs/desmos/issues/192))
 - Added the possibility to verify a profile with an external application ([\#472](https://github.com/desmos-labs/desmos/issues/472))
 - Added the ability to edit whether users can comment on a post or not ([\#446](https://github.com/desmos-labs/desmos/issues/446))
 - Added the ability to paginate the registered reactions ([\#471](https://github.com/desmos-labs/desmos/issues/471))
@@ -152,7 +299,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Bug fixes
 - Added missing `CommunitySpendProposal` handler ([\#421](https://github.com/desmos-labs/desmos/issues/421))
- 
+
 ## Version 0.16.2
 ### Changes
 - Renamed profile's `moniker` into `nickname` ([\#413](https://github.com/desmos-labs/desmos/issues/413))

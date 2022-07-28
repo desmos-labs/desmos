@@ -5,9 +5,8 @@ import "gogoproto/gogo.proto";
 import "google/protobuf/any.proto";
 import "google/protobuf/timestamp.proto";
 import "cosmos_proto/cosmos.proto";
-import "desmos/profiles/v1beta1/models_chain_links.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v2/x/profiles/types";
+option go_package = "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v4/types";
 
 // Relationship is the struct of a relationship.
 // It represent the concept of "follow" of traditional social networks.
@@ -17,7 +16,10 @@ message Relationship {
 
   string creator = 1 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
   string recipient = 2 [ (gogoproto.moretags) = "yaml:\"recipient\"" ];
-  string subspace = 3 [ (gogoproto.moretags) = "yaml:\"subspace\"" ];
+  string subspace_id = 3 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace\""
+  ];
 }
 
 // UserBlock represents the fact that the Blocker has blocked the given Blocked
@@ -35,7 +37,10 @@ message UserBlock {
   // Reason represents the optional reason the user has been blocked for.
   string reason = 3 [ (gogoproto.moretags) = "yaml:\"reason\"" ];
 
-  // Subspace contains the ID of the subspace inside which the user should be
-  // blocked
-  string subspace = 4 [ (gogoproto.moretags) = "yaml:\"subspace\"" ];
+  // SubspaceID represents the ID of the subspace inside which the user should
+  // be blocked
+  string subspace_id = 4 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace\""
+  ];
 }

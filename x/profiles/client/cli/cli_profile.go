@@ -10,7 +10,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/spf13/cobra"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 func GetCmdSaveProfile() *cobra.Command {
@@ -66,9 +66,10 @@ func GetCmdSaveProfile() *cobra.Command {
 // GetCmdDeleteProfile returns the command used to delete an existing profile
 func GetCmdDeleteProfile() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "delete",
-		Short: "Delete an existent profile related to the user's address",
-		Args:  cobra.NoArgs,
+		Use:     "delete",
+		Short:   "Delete an existent profile related to the user's address",
+		Example: fmt.Sprintf(`%s tx profiles delete`, version.AppName),
+		Args:    cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -96,7 +97,9 @@ func GetCmdQueryProfile() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "profile [address_or_dtag]",
 		Short: "Retrieve the profile having the specified user address or profile dtag, if any.",
-		Args:  cobra.ExactArgs(1),
+		Example: fmt.Sprintf(`%s query profiles desmos12a2y7fflz6g4e5gn0mh0n9dkrzllj0q5vx7c6t
+%s query profiles Alice`, version.AppName, version.AppName),
+		Args: cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {

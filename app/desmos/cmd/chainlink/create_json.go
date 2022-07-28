@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"github.com/desmos-labs/desmos/v2/app/desmos/cmd/chainlink/builder"
-	chainlinktypes "github.com/desmos-labs/desmos/v2/app/desmos/cmd/chainlink/getter"
+	"github.com/desmos-labs/desmos/v4/app/desmos/cmd/chainlink/builder"
+	chainlinktypes "github.com/desmos-labs/desmos/v4/app/desmos/cmd/chainlink/getter"
 
 	"github.com/spf13/cobra"
 
-	"github.com/desmos-labs/desmos/v2/app"
+	"github.com/desmos-labs/desmos/v4/app"
 )
 
 // GetCreateChainLinkJSON returns the command allowing to generate the chain link JSON
@@ -46,7 +46,12 @@ Providing an invalid transaction (either with an account-number or sequence not 
 				return err
 			}
 
-			chainLinkJSON, err := provider(isSingleSignatureAccount).BuildChainLinkJSON(chain)
+			owner, err := getter.GetOwner()
+			if err != nil {
+				return err
+			}
+
+			chainLinkJSON, err := provider(owner, isSingleSignatureAccount).BuildChainLinkJSON(chain)
 			if err != nil {
 				return err
 			}

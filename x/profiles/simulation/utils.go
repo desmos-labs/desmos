@@ -12,7 +12,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 var (
@@ -101,6 +101,12 @@ func RandomDTagTransferRequest(r *rand.Rand, requests []types.DTagTransferReques
 	return requests[idx]
 }
 
+// RandomChainLink picks and returns a random chain link from an array of chain links
+func RandomChainLink(r *rand.Rand, links []types.ChainLink) types.ChainLink {
+	idx := r.Intn(len(links))
+	return links[idx]
+}
+
 // RandomDTag return a random DTag
 func RandomDTag(r *rand.Rand) string {
 	// DTag must be at least 3 characters and at most 30
@@ -173,24 +179,8 @@ func RandomOracleParams(r *rand.Rand) types.OracleParams {
 	)
 }
 
-// RandomRelationship picks and returns a random relationships from an array
-func RandomRelationship(r *rand.Rand, relationships []types.Relationship) types.Relationship {
-	idx := r.Intn(len(relationships))
-	return relationships[idx]
-}
-
-// RandomSubspace returns a random post subspace from the above random subspaces
-func RandomSubspace(_ *rand.Rand) string {
-	return ""
-}
-
-// RandomUserBlock picks and returns a random user block from an array
-func RandomUserBlock(r *rand.Rand, userBlocks []types.UserBlock) types.UserBlock {
-	idx := r.Intn(len(userBlocks))
-	return userBlocks[idx]
-}
-
-// RandomDTagTransferRequests returns a new random DTag transfer request from the ones given
-func RandomDTagTransferRequests(r *rand.Rand, requests []types.DTagTransferRequest) types.DTagTransferRequest {
-	return requests[r.Intn(len(requests))-1]
+// RandomAppLinksParams return a random appLinks param
+func RandomAppLinksParams(r *rand.Rand) types.AppLinksParams {
+	randomDuration := time.Duration(simtypes.RandIntBetween(r, 60*60*24*14, 60*60*24*7*4*6)) * time.Second
+	return types.NewAppLinksParams(randomDuration)
 }

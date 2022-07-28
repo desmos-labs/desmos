@@ -1,109 +1,41 @@
 package keeper
 
 import (
-	"github.com/cosmos/cosmos-sdk/codec"
-	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	v043 "github.com/cosmos/cosmos-sdk/x/auth/legacy/v043"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	"github.com/cosmos/cosmos-sdk/x/auth/vesting/exported"
-	"github.com/gogo/protobuf/grpc"
+	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
-
-	v210 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v210"
-
-	v200 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v200"
+	v4 "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v4"
+	v5 "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v5"
+	v6 "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v6"
 )
 
 // DONTCOVER
 
 // Migrator is a struct for handling in-place store migrations.
 type Migrator struct {
-	keeper      Keeper
-	queryServer grpc.Server
-	amino       *codec.LegacyAmino
+	keeper Keeper
+	ak     authkeeper.AccountKeeper
 }
 
 // NewMigrator returns a new Migrator
-func NewMigrator(keeper Keeper, amino *codec.LegacyAmino, queryServer grpc.Server) Migrator {
+func NewMigrator(ak authkeeper.AccountKeeper, keeper Keeper) Migrator {
 	return Migrator{
-		keeper:      keeper,
-		amino:       amino,
-		queryServer: queryServer,
+		keeper: keeper,
+		ak:     ak,
 	}
 }
 
-// Migrate1to2 migrates from version 1 to 2.
-func (m Migrator) Migrate1to2(ctx sdk.Context) error {
-	return v200.MigrateStore(ctx, m.keeper.storeKey, m.keeper.paramSubspace, m.keeper.cdc, m.amino)
+// Migrate4to5 migrates from version 4 to 5.
+func (m Migrator) Migrate4to5(ctx sdk.Context) error {
+	return v4.MigrateStore(ctx, m.ak, m.keeper.storeKey, m.keeper.legacyAmino, m.keeper.cdc)
 }
 
-// Migrate2to3 migrates from version 2 to 3.
-func (m Migrator) Migrate2to3(ctx sdk.Context) error {
-	return v210.MigrateStore(ctx, m.keeper.storeKey, m.keeper.cdc)
+// Migrate5to6 migrates from version 5 to 6.
+func (m Migrator) Migrate5to6(ctx sdk.Context) error {
+	return v5.MigrateStore(ctx, m.keeper.storeKey, m.keeper.cdc, m.keeper.legacyAmino)
 }
 
-// Migrate3to4 migrates from version 3 to 4.
-func (m Migrator) Migrate3to4(ctx sdk.Context) error {
-	var iterErr error
-
-	m.keeper.ak.IterateAccounts(ctx, func(account authtypes.AccountI) (stop bool) {
-
-		// If the account is a profile, migrate the profile
-		if profile, ok := account.(*types.Profile); ok {
-			err := m.migrateProfile(ctx, profile)
-			if err != nil {
-				iterErr = err
-				return true
-			}
-			return false
-		}
-
-		// If the account is not a profile migrate it normally
-		wb, err := v043.MigrateAccount(ctx, account, m.queryServer)
-		if err != nil {
-			iterErr = err
-			return true
-		}
-
-		if wb == nil {
-			return false
-		}
-
-		m.keeper.ak.SetAccount(ctx, wb)
-		return false
-	})
-
-	return iterErr
-}
-
-func (m Migrator) migrateProfile(ctx sdk.Context, profile *types.Profile) error {
-	// Do not migrate those profiles that are not based on a VestingAccount
-	vestingAcc, ok := profile.GetAccount().(exported.VestingAccount)
-	if !ok {
-		return nil
-	}
-
-	// Migrate the underlying vesting account
-	wb, err := v043.MigrateAccount(ctx, vestingAcc, m.queryServer)
-	if err != nil {
-		return err
-	}
-
-	if wb == nil {
-		return nil
-	}
-
-	// Serialize the underlying vesting account back into the Profile
-	accAny, err := codectypes.NewAnyWithValue(wb)
-	if err != nil {
-		return err
-	}
-	profile.Account = accAny
-
-	// Store the new Profile as a VestingProfile instead of a common Profile
-	// This will grant that future operations that deal with VestingAccount instances are carried out properly
-	m.keeper.ak.SetAccount(ctx, profile)
-	return nil
+// Migrate6to7 migrates from version 6 to 7.
+func (m Migrator) Migrate6to7(ctx sdk.Context) error {
+	return v6.MigrateStore(ctx, m.keeper.ak, m.keeper.storeKey, m.keeper.legacyAmino, m.keeper.cdc)
 }

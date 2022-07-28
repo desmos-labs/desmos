@@ -1,0 +1,113 @@
+syntax = "proto3";
+package desmos.subspaces.v3;
+
+import "gogoproto/gogo.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/desmos-labs/desmos/v4/x/subspaces/types";
+
+// Subspace contains all the data of a Desmos subspace
+message Subspace {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  // Unique id that identifies the subspace
+  uint64 id = 1
+      [ (gogoproto.customname) = "ID", (gogoproto.moretags) = "yaml:\"id\"" ];
+
+  // Human-readable name of the subspace
+  string name = 2 [ (gogoproto.moretags) = "yaml:\"name\"" ];
+
+  // Optional description of this subspace
+  string description = 3 [ (gogoproto.moretags) = "yaml:\"description\"" ];
+
+  // Represents the account that is associated with the subspace and
+  // should be used to connect external applications to verify this subspace
+  string treasury = 4 [ (gogoproto.moretags) = "yaml:\"treasury\"" ];
+
+  // Address of the user that owns the subspace
+  string owner = 5 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
+
+  // Address of the subspace creator
+  string creator = 6 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
+
+  // the creation time of the subspace
+  google.protobuf.Timestamp creation_time = 7 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true,
+    (gogoproto.moretags) = "yaml:\"creation_time\""
+  ];
+}
+
+// Section contains the data of a single subspace section
+message Section {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  // Id of the subspace inside which the section exists
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+
+  // Unique id of the section within the subspace
+  uint32 id = 2
+      [ (gogoproto.customname) = "ID", (gogoproto.moretags) = "yaml:\"id\"" ];
+
+  // (optional) Id of the parent section
+  uint32 parent_id = 3 [
+    (gogoproto.customname) = "ParentID",
+    (gogoproto.moretags) = "yaml:\"parent_id\""
+  ];
+
+  // Name of the section within the subspace
+  string name = 4 [ (gogoproto.moretags) = "yaml:\"name\"" ];
+
+  // (optional) Description of the section
+  string description = 5 [ (gogoproto.moretags) = "yaml:\"description\"" ];
+}
+
+// UserGroup represents a group of users
+message UserGroup {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  // ID of the subspace inside which this group exists
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+
+  // (optional) Id of the section inside which this group is valid
+  uint32 section_id = 2 [
+    (gogoproto.customname) = "SectionID",
+    (gogoproto.moretags) = "yaml:\"section_id\""
+  ];
+
+  // Unique id that identifies the group
+  uint32 id = 3
+      [ (gogoproto.customname) = "ID", (gogoproto.moretags) = "yaml:\"id\"" ];
+
+  // Human-readable name of the user group
+  string name = 4 [ (gogoproto.moretags) = "yaml:\"name\"" ];
+
+  // Optional description of this group
+  string description = 5 [ (gogoproto.moretags) = "yaml:\"description\"" ];
+
+  // Permissions that will be granted to all the users part of this group
+  repeated string permissions = 6 [
+    (gogoproto.castrepeated) = "Permissions",
+    (gogoproto.moretags) = "yaml:\"permissions\""
+  ];
+}
+
+// UserPermission represents a single Access Control List entry
+message UserPermission {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
+  uint32 section_id = 2 [ (gogoproto.customname) = "SectionID" ];
+  string user = 3;
+  repeated string permissions = 4 [ (gogoproto.castrepeated) = "Permissions" ];
+}

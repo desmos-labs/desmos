@@ -3,16 +3,52 @@
   "info": {
     "title": "Desmos - REST and gRPC Gateway docs",
     "description": "A REST interface for state queries",
-    "version": "1.0.0"
+    "version": "3.0.0"
   },
   "apis": [
     {
-      "url": "./tmp-swagger-gen/desmos/profiles/v1beta1/query.swagger.json",
+      "url": "./tmp-swagger-gen/desmos/profiles/v3/query.swagger.json",
       "operationIds": {
         "rename": {
           "Params": "ProfilesParams"
         }
       }
+    },
+    {
+      "url": "./tmp-swagger-gen/desmos/relationships/v1/query.swagger.json"
+    },
+    {
+      "url": "./tmp-swagger-gen/desmos/subspaces/v3/query.swagger.json"
+    },
+    {
+      "url": "./tmp-swagger-gen/desmos/posts/v2/query.swagger.json",
+      "operationIds": {
+        "rename": {
+          "Params": "PostsParams"
+        }
+      }
+    },
+    {
+      "url": "./tmp-swagger-gen/desmos/reactions/v1/query.swagger.json"
+    },
+    {
+      "url": "./tmp-swagger-gen/desmos/reports/v1/query.swagger.json",
+      "operationIds": {
+        "rename": {
+          "Params": "ReportsParams"
+        }
+      }
+    },
+    {
+      "url": "./tmp-swagger-gen/desmos/fees/v1/query.swagger.json",
+      "operationIds": {
+        "rename": {
+          "Params": "FeesParams"
+        }
+      }
+    },
+    {
+      "url": "./tmp-swagger-gen/desmos/supply/v1/query.swagger.json"
     }
   ]
 }

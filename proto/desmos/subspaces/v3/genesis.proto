@@ -1,0 +1,49 @@
+syntax = "proto3";
+package desmos.subspaces.v3;
+
+import "gogoproto/gogo.proto";
+import "desmos/subspaces/v3/models.proto";
+
+option go_package = "github.com/desmos-labs/desmos/v4/x/subspaces/types";
+
+// GenesisState contains the data of the genesis state for the subspaces module
+message GenesisState {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  uint64 initial_subspace_id = 1
+      [ (gogoproto.customname) = "InitialSubspaceID" ];
+
+  repeated SubspaceData subspaces_data = 2 [ (gogoproto.nullable) = false ];
+
+  repeated Subspace subspaces = 3 [ (gogoproto.nullable) = false ];
+
+  repeated Section sections = 4 [ (gogoproto.nullable) = false ];
+
+  repeated UserPermission user_permissions = 5 [ (gogoproto.nullable) = false ];
+
+  repeated UserGroup user_groups = 6 [ (gogoproto.nullable) = false ];
+
+  repeated UserGroupMemberEntry user_groups_members = 7
+      [ (gogoproto.nullable) = false ];
+}
+
+// SubspaceData contains the genesis data for a single subspace
+message SubspaceData {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
+  uint32 next_group_id = 2 [ (gogoproto.customname) = "NextGroupID" ];
+  uint32 next_section_id = 3 [ (gogoproto.customname) = "NextSectionID" ];
+}
+
+// UserGroupMemberEntry contains the details of a user group member
+message UserGroupMemberEntry {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
+  uint32 group_id = 2 [ (gogoproto.customname) = "GroupID" ];
+  string user = 3;
+}
