@@ -1,0 +1,6 @@
+type: fix
+module: x/subspaces
+pull_request: 981
+description: Added missing subspaces authorizations migration
+backward_compatible: true
+date: 2022-07-29T08:13:00.050919588Z
