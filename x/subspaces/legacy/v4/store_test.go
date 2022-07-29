@@ -78,7 +78,7 @@ func TestMigrateStore(t *testing.T) {
 				tc.store(ctx)
 			}
 
-			err := v4.MigrateStore(ctx, keys[authzkeeper.StoreKey], cdc)
+			err := v4.MigrateStore(ctx, authzKeeper, cdc)
 			if tc.shouldErr {
 				require.Error(t, err)
 			} else {
