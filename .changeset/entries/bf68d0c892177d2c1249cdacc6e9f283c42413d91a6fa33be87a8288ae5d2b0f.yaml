@@ -1,0 +1,6 @@
+type: fix
+module: x/profiles
+pull_request: 980
+description: Added missing params migration
+backward_compatible: false
+date: 2022-07-29T08:15:08.462224891Z
