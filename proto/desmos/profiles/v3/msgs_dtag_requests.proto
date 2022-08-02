@@ -12,9 +12,6 @@ option go_package = "github.com/desmos-labs/desmos/v4/x/profiles/types";
 // MsgRequestDTagTransfer represents the message used to request the DTag
 // transfer to another user.
 message MsgRequestDTagTransfer {
-  option (gogoproto.equal) = false;
-  option (gogoproto.goproto_getters) = false;
-
   // Receiver contains the address of the request receiver that owns the DTag to
   // transfer if the request is accepted
   string receiver = 1 [ (gogoproto.moretags) = "yaml:\"receiver\"" ];
@@ -33,9 +30,6 @@ message MsgRequestDTagTransferResponse {}
 // MsgCancelDTagTransferRequest represents the message used to cancel a DTag
 // transfer request.
 message MsgCancelDTagTransferRequest {
-  option (gogoproto.equal) = false;
-  option (gogoproto.goproto_getters) = false;
-
   // Receiver contains the address of the request receiver
   string receiver = 1 [ (gogoproto.moretags) = "yaml:\"receiver\"" ];
 
@@ -52,9 +46,6 @@ message MsgCancelDTagTransferRequestResponse {}
 // MsgAcceptDTagTransferRequest represents the message used to accept a DTag
 // transfer request.
 message MsgAcceptDTagTransferRequest {
-  option (gogoproto.equal) = false;
-  option (gogoproto.goproto_getters) = false;
-
   // NewDTag represents the DTag that the request receiver will obtain if they
   // accept the request
   string new_dtag = 1 [
@@ -78,9 +69,6 @@ message MsgAcceptDTagTransferRequestResponse {}
 // MsgRefuseDTagTransferRequest represents the message used to refuse a DTag
 // transfer request.
 message MsgRefuseDTagTransferRequest {
-  option (gogoproto.equal) = false;
-  option (gogoproto.goproto_getters) = false;
-
   // Sender represents the request sender
   string sender = 1 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
 
