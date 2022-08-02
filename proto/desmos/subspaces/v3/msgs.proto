@@ -73,7 +73,7 @@ message MsgCreateSubspace {
   // (optional) Treasury address associated to this subspace
   string treasury = 3 [ (gogoproto.moretags) = "yaml:\"treasury\"" ];
 
-  // (optional) Owner of this subspace. If not specified, the cretor will be the
+  // (optional) Owner of this subspace. If not specified, the creator will be the
   // default owner.
   string owner = 4 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
 
