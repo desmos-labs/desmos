@@ -1,0 +1,6 @@
+type: fix
+module: x/profiles
+pull_request: 986
+description: Added missing default external address messages wasm support
+backward_compatible: true
+date: 2022-08-02T10:35:59.1749414Z

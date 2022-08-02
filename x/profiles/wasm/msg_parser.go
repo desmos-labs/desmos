@@ -48,6 +48,8 @@ func (parser MsgsParser) ParseCustomMsgs(contractAddr sdk.AccAddress, data json.
 		return commons.HandleWasmMsg(parser.cdc, *msg.LinkChainAccount, &types.MsgLinkChainAccount{})
 	case msg.UnlinkChainAccount != nil:
 		return commons.HandleWasmMsg(parser.cdc, *msg.UnlinkChainAccount, &types.MsgUnlinkChainAccount{})
+	case msg.SetDefaultExternalAddress != nil:
+		return commons.HandleWasmMsg(parser.cdc, *msg.SetDefaultExternalAddress, &types.MsgSetDefaultExternalAddress{})
 	case msg.LinkApplication != nil:
 		return commons.HandleWasmMsg(parser.cdc, *msg.LinkApplication, &types.MsgLinkApplication{})
 	case msg.UnlinkApplication != nil:

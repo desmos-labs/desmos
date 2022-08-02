@@ -167,6 +167,20 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 			)},
 		},
 		{
+			name: "set default external address json message is parsed correctly",
+			msg: buildSetDefaultExternalAddressRequest(cdc, types.NewMsgSetDefaultExternalAddress(
+				"cosmos",
+				"cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0",
+				"cosmos1u9hgsqfpe3snftr7p7fsyja3wtlmj2sgf2w9yl",
+			)),
+			shouldErr: false,
+			expMsgs: []sdk.Msg{types.NewMsgSetDefaultExternalAddress(
+				"cosmos",
+				"cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0",
+				"cosmos1u9hgsqfpe3snftr7p7fsyja3wtlmj2sgf2w9yl",
+			)},
+		},
+		{
 			name: "link application json message is parsed correctly",
 			msg: buildLinkApplicationRequest(cdc, types.NewMsgLinkApplication(
 				types.NewData("twitter", "twitteruser"),
