@@ -86,6 +86,12 @@ func buildUnlinkChainAccountRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessag
 	return bz
 }
 
+func buildSetDefaultExternalAddressRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
+	raw := json.RawMessage(cdc.MustMarshalJSON(msg))
+	bz, _ := json.Marshal(types.ProfilesMsg{SetDefaultExternalAddress: &raw})
+	return bz
+}
+
 func buildLinkApplicationRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
 	raw := json.RawMessage(cdc.MustMarshalJSON(msg))
 	bz, _ := json.Marshal(types.ProfilesMsg{LinkApplication: &raw})
@@ -119,6 +125,12 @@ func buildChainLinksQueryRequest(cdc codec.Codec, query *types.QueryChainLinksRe
 func buildChainLinkOwnersQueryRequest(cdc codec.Codec, query *types.QueryChainLinkOwnersRequest) json.RawMessage {
 	raw := json.RawMessage(cdc.MustMarshalJSON(query))
 	bz, _ := json.Marshal(types.ProfilesQuery{ChainLinkOwners: &raw})
+	return bz
+}
+
+func buildDefaultExternalAddressesQueryRequest(cdc codec.Codec, query *types.QueryDefaultExternalAddressesRequest) json.RawMessage {
+	raw := json.RawMessage(cdc.MustMarshalJSON(query))
+	bz, _ := json.Marshal(types.ProfilesQuery{DefaultExternalAddresses: &raw})
 	return bz
 }
 
