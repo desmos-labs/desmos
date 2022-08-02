@@ -11,23 +11,31 @@ option go_package = "github.com/desmos-labs/desmos/v4/x/profiles/types";
 
 // MsgSaveProfile represents a message to save a profile.
 message MsgSaveProfile {
-  option (gogoproto.equal) = false;
-  option (gogoproto.goproto_getters) = false;
-
+  // DTag of the profile. If it shouldn't be changed, [do-no-modify] can be used
+  // instead.
   string dtag = 1 [
     (gogoproto.moretags) = "yaml:\"dtag\"",
     (gogoproto.customname) = "DTag"
   ];
 
+  // Nickname of the profile. If it shouldn't be changed, [do-no-modify] can be
+  // used instead.
   string nickname = 2 [ (gogoproto.moretags) = "yaml:\"nickname\"" ];
 
+  // Bio of the profile. If it shouldn't be changed, [do-no-modify] can be used
+  // instead.
   string bio = 3 [ (gogoproto.moretags) = "yaml:\"bio\"" ];
 
+  // URL to the profile picture. If it shouldn't be changed, [do-no-modify] can
+  // be used instead.
   string profile_picture = 4
       [ (gogoproto.moretags) = "yaml:\"profile_picture\"" ];
 
+  // URL to the profile cover. If it shouldn't be changed, [do-no-modify] can be
+  // used instead.
   string cover_picture = 5 [ (gogoproto.moretags) = "yaml:\"cover_picture\"" ];
 
+  // Address of the user associated to the profile
   string creator = 6 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
 }
 
@@ -38,9 +46,7 @@ message MsgSaveProfileResponse {}
 
 // MsgDeleteProfile represents the message used to delete an existing profile.
 message MsgDeleteProfile {
-  option (gogoproto.equal) = false;
-  option (gogoproto.goproto_getters) = false;
-
+  // Address associated to the profile to be deleted
   string creator = 1 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
 }
 
