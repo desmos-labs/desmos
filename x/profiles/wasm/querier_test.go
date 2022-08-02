@@ -142,6 +142,51 @@ func (suite *TestSuite) TestProfilesWasmQuerier_QueryCustom() {
 			),
 		},
 		{
+			name: "default external addresses request is parsed correctly",
+			request: buildDefaultExternalAddressesQueryRequest(suite.cdc, types.NewQueryDefaultExternalAddressesRequest(
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", "", nil)),
+			store: func(ctx sdk.Context) {
+				store := ctx.KVStore(suite.storeKey)
+				link := types.NewChainLink(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
+					types.NewProof(
+						profilestesting.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
+						profilestesting.SingleSignatureFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
+						"74657874",
+					),
+					types.NewChainConfig("cosmos"),
+					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				)
+				store.Set(
+					types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, link.GetAddressData().GetValue()),
+					suite.cdc.MustMarshal(&link),
+				)
+				store.Set(
+					types.DefaultExternalAddressKey("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", "cosmos"),
+					[]byte("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+				)
+			},
+			shouldErr: false,
+			expResponse: suite.cdc.MustMarshalJSON(
+				&types.QueryDefaultExternalAddressesResponse{
+					Links: []types.ChainLink{
+						types.NewChainLink(
+							"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+							types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
+							types.NewProof(
+								profilestesting.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
+								profilestesting.SingleSignatureFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
+								"74657874",
+							),
+							types.NewChainConfig("cosmos"),
+							time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						),
+					},
+					Pagination: &query.PageResponse{NextKey: nil, Total: 1}},
+			),
+		},
+		{
 			name: "app links request is parsed properly",
 			request: buildAppLinksQueryRequest(suite.cdc, types.NewQueryApplicationLinksRequest(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
