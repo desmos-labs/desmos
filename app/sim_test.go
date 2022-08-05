@@ -8,6 +8,10 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
+
+	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/types/module"
 
 	reactionstypes "github.com/desmos-labs/desmos/v4/x/reactions/types"
 
@@ -141,7 +145,7 @@ func TestFullAppSimulation(t *testing.T) {
 		t,
 		os.Stdout,
 		app.BaseApp,
-		simapp.AppStateFn(app.AppCodec(), app.SimulationManager()),
+		AppStateFn(app.AppCodec(), app.SimulationManager()),
 		simtypes.RandomAccounts,
 		simapp.SimulationOperations(app, app.AppCodec(), config),
 		app.ModuleAccountAddrs(),
@@ -182,7 +186,7 @@ func TestAppImportExport(t *testing.T) {
 		t,
 		os.Stdout,
 		app.BaseApp,
-		simapp.AppStateFn(app.AppCodec(), app.SimulationManager()),
+		AppStateFn(app.AppCodec(), app.SimulationManager()),
 		simtypes.RandomAccounts,
 		simapp.SimulationOperations(app, app.AppCodec(), config),
 		app.ModuleAccountAddrs(),
@@ -294,7 +298,7 @@ func TestAppSimulationAfterImport(t *testing.T) {
 		t,
 		os.Stdout,
 		app.BaseApp,
-		simapp.AppStateFn(app.AppCodec(), app.SimulationManager()),
+		AppStateFn(app.AppCodec(), app.SimulationManager()),
 		simtypes.RandomAccounts,
 		simapp.SimulationOperations(app, app.AppCodec(), config),
 		app.ModuleAccountAddrs(),
@@ -345,7 +349,7 @@ func TestAppSimulationAfterImport(t *testing.T) {
 		t,
 		os.Stdout,
 		newApp.BaseApp,
-		simapp.AppStateFn(app.AppCodec(), app.SimulationManager()),
+		AppStateFn(app.AppCodec(), app.SimulationManager()),
 		simtypes.RandomAccounts,
 		simapp.SimulationOperations(newApp, newApp.AppCodec(), config),
 		newApp.ModuleAccountAddrs(),
@@ -398,7 +402,7 @@ func TestAppStateDeterminism(t *testing.T) {
 				t,
 				os.Stdout,
 				app.BaseApp,
-				simapp.AppStateFn(app.AppCodec(), app.SimulationManager()),
+				AppStateFn(app.AppCodec(), app.SimulationManager()),
 				simtypes.RandomAccounts,
 				simapp.SimulationOperations(app, app.AppCodec(), config),
 				app.ModuleAccountAddrs(),
@@ -422,4 +426,16 @@ func TestAppStateDeterminism(t *testing.T) {
 			}
 		}
 	}
+}
+
+// AppStateFn returns the initial application state using a genesis or the simulation parameters.
+// It panics if the user provides files for both of them.
+// If a file is not given for the genesis or the sim params, it creates a randomized one.
+func AppStateFn(codec codec.Codec, manager *module.SimulationManager) simtypes.AppStateFn {
+	// quick hack to setup app state genesis with our app modules
+	simapp.ModuleBasics = ModuleBasics
+	if simapp.FlagGenesisTimeValue == 0 { // always set to have a block time, required by CosmWasm
+		simapp.FlagGenesisTimeValue = time.Now().Unix()
+	}
+	return simapp.AppStateFn(codec, manager)
 }
