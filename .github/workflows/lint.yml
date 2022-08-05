@@ -31,10 +31,5 @@ jobs:
             .sum
 
       - name: Run lint ✅
-        uses: golangci/golangci-lint-action@v3
-        with:
-          # Required: the version of golangci-lint is required and must be specified without patch version: we always use the latest patch version.
-          version: v1.28
-          args: --timeout 15m
-          github-token: ${{ secrets.github_token }}
         if: "env.GIT_DIFF != ''"
+        run: make lint
