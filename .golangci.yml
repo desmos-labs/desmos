@@ -56,6 +56,9 @@ issues:
     - text: 'SA1019: "github.com/cosmos/cosmos-sdk/types/bech32/legacybech32" is deprecated'
       linters:
         - staticcheck
+    - text: "SA1019: legacybech32.UnmarshalPubKey is deprecated"
+      linters:
+        - staticcheck
 
     - path: "migrations"
       text: "SA1019:"
