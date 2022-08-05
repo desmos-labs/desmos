@@ -1,6 +1,6 @@
 module github.com/desmos-labs/desmos/v4
 
-go 1.17
+go 1.18
 
 require (
 	github.com/CosmWasm/wasmd v0.23.1-0.20220303200417-f35a13fa1209
