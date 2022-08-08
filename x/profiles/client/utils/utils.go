@@ -13,7 +13,7 @@ import (
 )
 
 // NewChainLinkJSON allows to build a new ChainLinkJSON instance
-// nolint: interfacer
+//nolint:interfacer
 func NewChainLinkJSON(data types.AddressData, proof types.Proof, chainConfig types.ChainConfig) ChainLinkJSON {
 	any, err := codectypes.NewAnyWithValue(data)
 	if err != nil {
