@@ -47,7 +47,7 @@ func (c ChainConfig) Validate() error {
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewProof is a constructor function for Proof
-// nolint:interfacer
+//nolint:interfacer
 func NewProof(pubKey cryptotypes.PubKey, signature Signature, plainText string) Proof {
 	pubKeyAny, err := codectypes.NewAnyWithValue(pubKey)
 	if err != nil {
@@ -648,7 +648,7 @@ func UnpackAddressData(unpacker codectypes.AnyUnpacker, addressAny *codectypes.A
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewChainLink returns a new ChainLink instance
-// nolint:interfacer
+//nolint:interfacer
 func NewChainLink(user string, address AddressData, proof Proof, chainConfig ChainConfig, creationTime time.Time) ChainLink {
 	addressAny, err := codectypes.NewAnyWithValue(address)
 	if err != nil {
