@@ -48,7 +48,7 @@ syntax = "proto3";
 
 // Address contains the data of an external address
 message Address {
-  // Hex-encoded value of the address
+  // Encoded value of the address
   string value = 1;
   
   // Algorithm that has been used in order to generate the address starting from the public key bytes
