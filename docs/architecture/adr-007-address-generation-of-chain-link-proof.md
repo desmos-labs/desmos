@@ -55,7 +55,7 @@ message Address {
   GenerationAlgorithm generation_algorithm = 2;
   
   // Algorithm that needs to be used to properly encode the address 
-  google.proto.Any encoding = 3 [ (cosmos_proto.accepts_interface) = "AddressEncoding" ];
+  google.proto.Any encoding_algorithm = 3 [ (cosmos_proto.accepts_interface) = "AddressEncoding" ];
 }
 
 // GenerationAlgorithm represents various address generation algorithms
