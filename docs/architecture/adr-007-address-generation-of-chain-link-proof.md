@@ -84,6 +84,9 @@ message Bech32Encoding {
 // Base58Encoding represents the encoding algorithm based on the Base58 format
 message Base58Encoding {
   option (cosmos_proto.implements_interface) = "AddressEncoding";
+
+  // Prefix to be used
+  string prefix = 1;
 }
 
 // HexEncoding represents the encoding algorithm based on the Hex format
