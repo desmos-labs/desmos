@@ -158,3 +158,4 @@ Since this update will affect all the instances of `AddressData` by completely c
 - [Ethereum address](https://ethereum.org/en/developers/docs/accounts/#account-creation)
 - [Solana address](https://docs.solana.com/terminology#account)
 - [Elrond address](https://docs.elrond.com/technology/glossary/)
+- [Polkadot address](https://wiki.polkadot.network/docs/learn-accounts#address-format)
