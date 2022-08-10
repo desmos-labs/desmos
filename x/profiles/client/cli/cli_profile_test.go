@@ -1,3 +1,6 @@
+//go:build norace
+// +build norace
+
 package cli_test
 
 import (
@@ -13,8 +16,8 @@ import (
 	"github.com/golang/protobuf/proto"
 	tmcli "github.com/tendermint/tendermint/libs/cli"
 
-	"github.com/desmos-labs/desmos/v3/x/profiles/client/cli"
-	"github.com/desmos-labs/desmos/v3/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/client/cli"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 func (s *IntegrationTestSuite) TestCmdQueryProfile() {
@@ -48,10 +51,7 @@ func (s *IntegrationTestSuite) TestCmdQueryProfile() {
 				s.network.Validators[1].Address.String(),
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			shouldErr: false,
-			expectedOutput: types.QueryProfileResponse{
-				Profile: nil,
-			},
+			shouldErr: true,
 		},
 		{
 			name: "existing profile is returned properly",

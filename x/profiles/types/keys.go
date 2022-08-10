@@ -3,6 +3,9 @@ package types
 import (
 	"bytes"
 	"strings"
+	"time"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // DONTCOVER
@@ -22,14 +25,12 @@ const (
 	ActionUnlinkChainAccount        = "unlink_chain_account"
 	ActionLinkApplication           = "link_application"
 	ActionUnlinkApplication         = "unlink_application"
+	ActionSetDefaultExternalAddress = "set_default_external_address"
 
 	DoNotModify = "[do-not-modify]"
 
 	// IBCPortID is the default port id that profiles module binds to.
 	IBCPortID = "ibc-profiles"
-
-	// Version defines the current version the IBC profiles module supports
-	Version = "desmos-1"
 )
 
 var (
@@ -44,8 +45,10 @@ var (
 	ApplicationLinkPrefix         = []byte{0x13}
 	ApplicationLinkClientIDPrefix = []byte{0x14}
 
-	ChainLinkChainPrefix     = []byte{0x15}
-	ApplicationLinkAppPrefix = []byte{0x16}
+	ChainLinkChainPrefix         = []byte{0x15}
+	ApplicationLinkAppPrefix     = []byte{0x16}
+	ExpiringAppLinkTimePrefix    = []byte{0x17}
+	DefaultExternalAddressPrefix = []byte{0x18}
 )
 
 // DTagStoreKey turns a DTag into the key used to store the address associated with it into the store
@@ -102,6 +105,25 @@ func GetChainLinkOwnerData(key []byte) (chainName, target, owner string) {
 	return string(values[0]), string(values[1]), string(values[2])
 }
 
+// OwnerDefaultExternalAddressPrefix returns the store prefix used to identify all the default external addresses
+// for the given owner
+func OwnerDefaultExternalAddressPrefix(owner string) []byte {
+	return append(DefaultExternalAddressPrefix, []byte(owner)...)
+}
+
+// DefaultExternalAddressKey returns the key used to store the address of the chain link which is set as
+// default external address
+func DefaultExternalAddressKey(owner, chainName string) []byte {
+	return append(OwnerDefaultExternalAddressPrefix(owner), append(Separator, []byte(chainName)...)...)
+}
+
+// GetDefaultExternalAddressData returns the owner, chain name from a given DefaultExternalAddressKey
+func GetDefaultExternalAddressData(key []byte) (owner string, chainName string) {
+	cleanedKey := bytes.TrimPrefix(key, DefaultExternalAddressPrefix)
+	values := bytes.Split(cleanedKey, Separator)
+	return string(values[0]), string(values[1])
+}
+
 // UserApplicationLinksPrefix returns the store prefix used to identify all the application links for the given user
 func UserApplicationLinksPrefix(user string) []byte {
 	return append(ApplicationLinkPrefix, []byte(user)...)
@@ -148,4 +170,16 @@ func GetApplicationLinkOwnerData(key []byte) (application, username, owner strin
 	cleanedKey := bytes.TrimPrefix(key, ApplicationLinkAppPrefix)
 	values := bytes.Split(cleanedKey, Separator)
 	return string(values[0]), string(values[1]), string(values[2])
+}
+
+// ApplicationLinkExpiringTimePrefix returns the store prefix used to identify the
+// expiration time for application links
+func ApplicationLinkExpiringTimePrefix(expirationTime time.Time) []byte {
+	return append(ExpiringAppLinkTimePrefix, sdk.FormatTimeBytes(expirationTime)...)
+}
+
+// ApplicationLinkExpiringTimeKey returns the key used to store the expirationTime
+// of the application link associated with the given clientID
+func ApplicationLinkExpiringTimeKey(expirationTime time.Time, clientID string) []byte {
+	return append(ApplicationLinkExpiringTimePrefix(expirationTime), []byte(clientID)...)
 }

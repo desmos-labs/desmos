@@ -2,4 +2,5 @@ Dockerfile
 Vagrantfile
 
 build/
+node_modules/
 coverage.txt

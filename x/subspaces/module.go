@@ -6,12 +6,16 @@ import (
 	"fmt"
 	"math/rand"
 
-	"github.com/desmos-labs/desmos/v3/x/subspaces/simulation"
+	"github.com/desmos-labs/desmos/v4/x/subspaces/authz"
 
-	"github.com/desmos-labs/desmos/v3/x/subspaces/client/cli"
+	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
 
-	"github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
-	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v4/x/subspaces/simulation"
+
+	"github.com/desmos-labs/desmos/v4/x/subspaces/client/cli"
+
+	"github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
+	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -28,7 +32,7 @@ import (
 )
 
 const (
-	consensusVersion = 2
+	consensusVersion = 3
 )
 
 // type check to ensure the interface is properly implemented
@@ -87,6 +91,7 @@ func (AppModuleBasic) GetQueryCmd() *cobra.Command {
 
 // RegisterInterfaces registers interfaces and implementations of the subspaces module.
 func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) {
+	authz.RegisterInterfaces(registry)
 	types.RegisterInterfaces(registry)
 }
 
@@ -98,6 +103,7 @@ type AppModule struct {
 	keeper keeper.Keeper
 	ak     authkeeper.AccountKeeper
 	bk     bankkeeper.Keeper
+	fk     feeskeeper.Keeper
 }
 
 // RegisterServices registers module services.
@@ -110,17 +116,22 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 	if err != nil {
 		panic(err)
 	}
+	err = cfg.RegisterMigration(types.ModuleName, 2, m.Migrate2to3)
+	if err != nil {
+		panic(err)
+	}
 }
 
 // NewAppModule creates a new AppModule Object
 func NewAppModule(
-	cdc codec.Codec, keeper keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	cdc codec.Codec, keeper keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
 ) AppModule {
 	return AppModule{
 		AppModuleBasic: AppModuleBasic{cdc: cdc},
 		keeper:         keeper,
 		ak:             ak,
 		bk:             bk,
+		fk:             fk,
 	}
 }
 
@@ -207,5 +218,5 @@ func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
 
 // WeightedOperations returns the all the subspaces module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
-	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.ak, am.bk)
+	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.ak, am.bk, am.fk)
 }

@@ -1,0 +1,11 @@
+package types
+
+const (
+	ModuleName = "supply"
+	RouterKey  = ModuleName
+
+	QuerierRoute = ModuleName
+
+	QueryCirculatingSupply = "circulatingSupply"
+	QueryTotalSupply       = "totalSupply"
+)

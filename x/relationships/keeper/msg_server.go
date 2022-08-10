@@ -7,7 +7,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/desmos-labs/desmos/v3/x/relationships/types"
+	"github.com/desmos-labs/desmos/v4/x/relationships/types"
 )
 
 var _ types.MsgServer = &msgServer{}
@@ -49,6 +49,7 @@ func (k msgServer) CreateRelationship(goCtx context.Context, msg *types.MsgCreat
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.Signer),
 		),
 		sdk.NewEvent(
@@ -83,10 +84,11 @@ func (k msgServer) DeleteRelationship(goCtx context.Context, msg *types.MsgDelet
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.Signer),
 		),
 		sdk.NewEvent(
-			types.EventTypeRelationshipsDeleted,
+			types.EventTypeRelationshipDeleted,
 			sdk.NewAttribute(types.AttributeRelationshipCreator, msg.Signer),
 			sdk.NewAttribute(types.AttributeRelationshipCounterparty, msg.Counterparty),
 			sdk.NewAttribute(types.AttributeKeySubspace, fmt.Sprintf("%d", msg.SubspaceID)),
@@ -117,6 +119,7 @@ func (k msgServer) BlockUser(goCtx context.Context, msg *types.MsgBlockUser) (*t
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.Blocker),
 		),
 		sdk.NewEvent(
@@ -151,6 +154,7 @@ func (k msgServer) UnblockUser(goCtx context.Context, msg *types.MsgUnblockUser)
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.Blocker),
 		),
 		sdk.NewEvent(

@@ -1,10 +1,12 @@
 package keeper
 
 import (
+	"bytes"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	"github.com/desmos-labs/desmos/v3/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 // IterateProfiles iterates through the Profiles set and performs the provided function
@@ -131,6 +133,54 @@ func (k Keeper) GetApplicationLinks(ctx sdk.Context) []types.ApplicationLink {
 	return links
 }
 
+// IterateExpiringApplicationLinks iterates through all the expiring application links references.
+// The key will be skipped and deleted if the application link has already been deleted.
+func (k Keeper) IterateExpiringApplicationLinks(ctx sdk.Context, fn func(index int64, link types.ApplicationLink) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+
+	iterator := sdk.KVStorePrefixIterator(store, types.ExpiringAppLinkTimePrefix)
+	defer iterator.Close()
+
+	i := int64(0)
+	for ; iterator.Valid(); iterator.Next() {
+		// This iterator has the following key and value structure:
+		// ExpiringAppLinkTimePrefix | Expiration Time | Client ID ->  Client ID
+		//
+		// This means that in order to get the expired application links we need to:
+		// 1. Extract the Expiration Time from the iterator key
+		// 2. If the Expiration Time has passed, get the application link by using the Client ID from the iterator value
+
+		// First, we remove the prefix from the key, so we are left with the Expiration Time and Client ID
+		trimmedPrefixKey := bytes.TrimPrefix(iterator.Key(), types.ExpiringAppLinkTimePrefix)
+
+		// Second, we remove the Client ID from the trimmed key, so we are left only with the Expiration Time
+		expiringTime, err := sdk.ParseTimeBytes(bytes.TrimSuffix(trimmedPrefixKey, iterator.Value()))
+		if err != nil {
+			panic(err)
+		}
+
+		// Third, we get the Client ID from the iterator value
+		clientIDKey := types.ApplicationLinkClientIDKey(string(iterator.Value()))
+
+		// Skip if application link has been deleted already
+		if !store.Has(clientIDKey) {
+			store.Delete(iterator.Key())
+			continue
+		}
+
+		// Check if the expiration time has passed (the application link is expired)
+		if ctx.BlockTime().After(expiringTime) {
+			applicationKey := store.Get(clientIDKey)
+			link := types.MustUnmarshalApplicationLink(k.cdc, store.Get(applicationKey))
+			stop := fn(i, link)
+			if stop {
+				break
+			}
+		}
+		i++
+	}
+}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 // IterateChainLinks iterates through the chain links and perform the provided function
@@ -169,6 +219,23 @@ func (k Keeper) IterateUserChainLinks(ctx sdk.Context, user string, fn func(inde
 	}
 }
 
+// IterateUserChainLinksByChain iterates through the chain links related to the given user by the chain having the given chain name and perform the provided function
+func (k Keeper) IterateUserChainLinksByChain(ctx sdk.Context, user string, chainName string, fn func(link types.ChainLink) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+
+	iterator := sdk.KVStorePrefixIterator(store, types.UserChainLinksChainPrefix(user, chainName))
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		link := types.MustUnmarshalChainLink(k.cdc, iterator.Value())
+
+		stop := fn(link)
+		if stop {
+			break
+		}
+	}
+}
+
 // GetChainLinks allows to returns the list of all stored chain links
 func (k Keeper) GetChainLinks(ctx sdk.Context) []types.ChainLink {
 	var links []types.ChainLink
@@ -177,4 +244,32 @@ func (k Keeper) GetChainLinks(ctx sdk.Context) []types.ChainLink {
 		return false
 	})
 	return links
+}
+
+// IterateDefaultExternalAddresses iterates through the default external addresses and performs the provided function
+func (k Keeper) IterateDefaultExternalAddresses(ctx sdk.Context, fn func(entry types.DefaultExternalAddressEntry) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+
+	iterator := sdk.KVStorePrefixIterator(store, types.DefaultExternalAddressPrefix)
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		owner, chainName := types.GetDefaultExternalAddressData(iterator.Key())
+		target := string(iterator.Value())
+		stop := fn(types.NewDefaultExternalAddressEntry(owner, chainName, target))
+		if stop {
+			break
+		}
+	}
+}
+
+// GetDefaultExternalAddressEntries returns a slice of DefaultExternalAddressEntry objects containing the details of all the
+// default exnternal address entries stored inside the current context
+func (k Keeper) GetDefaultExternalAddressEntries(ctx sdk.Context) []types.DefaultExternalAddressEntry {
+	var entries []types.DefaultExternalAddressEntry
+	k.IterateDefaultExternalAddresses(ctx, func(entry types.DefaultExternalAddressEntry) (stop bool) {
+		entries = append(entries, entry)
+		return false
+	})
+	return entries
 }

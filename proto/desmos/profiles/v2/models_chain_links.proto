@@ -8,7 +8,7 @@ import "cosmos_proto/cosmos.proto";
 import "cosmos/tx/signing/v1beta1/signing.proto";
 import "cosmos/crypto/multisig/v1beta1/multisig.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v3/x/profiles/types";
+option go_package = "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v5/types";
 
 // ChainLink contains the data representing either an inter- or cross- chain
 // link

@@ -3,12 +3,12 @@ package keeper_test
 import (
 	"time"
 
-	"github.com/desmos-labs/desmos/v3/testutil"
+	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 
-	"github.com/desmos-labs/desmos/v3/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 func (suite *KeeperTestSuite) TestQueryServer_Profile() {
@@ -30,35 +30,34 @@ func (suite *KeeperTestSuite) TestQueryServer_Profile() {
 			shouldErr: true,
 		},
 		{
-			name:        "profile not found",
-			req:         types.NewQueryProfileRequest("cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa"),
-			shouldErr:   false,
-			expResponse: &types.QueryProfileResponse{Profile: nil},
+			name:      "profile not found returns error",
+			req:       types.NewQueryProfileRequest("cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa"),
+			shouldErr: true,
 		},
 		{
 			name: "found profile using DTag",
 			store: func(ctx sdk.Context) {
-				profile := testutil.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")
+				profile := profilestesting.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")
 				err := suite.k.SaveProfile(ctx, profile)
 				suite.Require().NoError(err)
 			},
 			req:       types.NewQueryProfileRequest("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x-dtag"),
 			shouldErr: false,
 			expResponse: &types.QueryProfileResponse{
-				Profile: testutil.NewAny(testutil.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")),
+				Profile: profilestesting.NewAny(profilestesting.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")),
 			},
 		},
 		{
 			name: "found profile using address",
 			store: func(ctx sdk.Context) {
-				profile := testutil.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")
+				profile := profilestesting.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")
 				err := suite.k.SaveProfile(ctx, profile)
 				suite.Require().NoError(err)
 			},
 			req:       types.NewQueryProfileRequest("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x"),
 			shouldErr: false,
 			expResponse: &types.QueryProfileResponse{
-				Profile: testutil.NewAny(testutil.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")),
+				Profile: profilestesting.NewAny(profilestesting.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")),
 			},
 		},
 	}
@@ -104,7 +103,7 @@ func (suite *KeeperTestSuite) TestQueryServer_IncomingDTagTransferRequests() {
 					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 				)
-				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr(request.Receiver)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr(request.Receiver)))
 				suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, request))
 
 				request = types.NewDTagTransferRequest(
@@ -112,7 +111,7 @@ func (suite *KeeperTestSuite) TestQueryServer_IncomingDTagTransferRequests() {
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 				)
-				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr(request.Receiver)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr(request.Receiver)))
 				suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, request))
 			},
 			req: types.NewQueryIncomingDTagTransferRequestsRequest(
@@ -132,7 +131,7 @@ func (suite *KeeperTestSuite) TestQueryServer_IncomingDTagTransferRequests() {
 			name: "valid request with pagination",
 			store: func(ctx sdk.Context) {
 				receiver := "cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x"
-				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr(receiver)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr(receiver)))
 
 				request := types.NewDTagTransferRequest(
 					"dtag",
@@ -165,10 +164,10 @@ func (suite *KeeperTestSuite) TestQueryServer_IncomingDTagTransferRequests() {
 			name: "valid request without user",
 			store: func(ctx sdk.Context) {
 				receiver1 := "cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x"
-				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr(receiver1)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr(receiver1)))
 
 				receiver2 := "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"
-				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr(receiver2)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr(receiver2)))
 
 				request := types.NewDTagTransferRequest(
 					"dtag",
@@ -239,8 +238,8 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinks() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
 					types.NewProof(
-						testutil.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
-						testutil.SingleSignatureProtoFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
+						profilestesting.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
+						profilestesting.SingleSignatureFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
 						"74657874",
 					),
 					types.NewChainConfig("cosmos"),
@@ -255,8 +254,8 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinks() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					types.NewBech32Address("cosmos19s242dxhxgzlsdmfjjg38jgfwhxca7569g84sw", "cosmos"),
 					types.NewProof(
-						testutil.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
-						testutil.SingleSignatureProtoFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
+						profilestesting.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
+						profilestesting.SingleSignatureFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
 						"74657874",
 					),
 					types.NewChainConfig("cosmos"),
@@ -277,8 +276,8 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinks() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					types.NewBech32Address("cosmos19s242dxhxgzlsdmfjjg38jgfwhxca7569g84sw", "cosmos"),
 					types.NewProof(
-						testutil.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
-						testutil.SingleSignatureProtoFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
+						profilestesting.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
+						profilestesting.SingleSignatureFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
 						"74657874",
 					),
 					types.NewChainConfig("cosmos"),
@@ -288,8 +287,8 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinks() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
 					types.NewProof(
-						testutil.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
-						testutil.SingleSignatureProtoFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
+						profilestesting.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
+						profilestesting.SingleSignatureFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
 						"74657874",
 					),
 					types.NewChainConfig("cosmos"),
@@ -305,8 +304,8 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinks() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
 					types.NewProof(
-						testutil.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
-						testutil.SingleSignatureProtoFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
+						profilestesting.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
+						profilestesting.SingleSignatureFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
 						"74657874",
 					),
 					types.NewChainConfig("cosmos"),
@@ -321,8 +320,8 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinks() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					types.NewBech32Address("cosmos19s242dxhxgzlsdmfjjg38jgfwhxca7569g84sw", "cosmos"),
 					types.NewProof(
-						testutil.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
-						testutil.SingleSignatureProtoFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
+						profilestesting.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
+						profilestesting.SingleSignatureFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
 						"74657874",
 					),
 					types.NewChainConfig("cosmos"),
@@ -337,8 +336,8 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinks() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					types.NewBech32Address("cosmos19s242dxhxgzlsdmfjjg38jgfwhxca7569g84sw", "cosmos"),
 					types.NewProof(
-						testutil.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
-						testutil.SingleSignatureProtoFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
+						profilestesting.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
+						profilestesting.SingleSignatureFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
 						"74657874",
 					),
 					types.NewChainConfig("likecoin"),
@@ -361,8 +360,8 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinks() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					types.NewBech32Address("cosmos19s242dxhxgzlsdmfjjg38jgfwhxca7569g84sw", "cosmos"),
 					types.NewProof(
-						testutil.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
-						testutil.SingleSignatureProtoFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
+						profilestesting.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
+						profilestesting.SingleSignatureFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
 						"74657874",
 					),
 					types.NewChainConfig("cosmos"),
@@ -372,8 +371,8 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinks() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
 					types.NewProof(
-						testutil.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
-						testutil.SingleSignatureProtoFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
+						profilestesting.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
+						profilestesting.SingleSignatureFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
 						"74657874",
 					),
 					types.NewChainConfig("cosmos"),
@@ -389,8 +388,8 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinks() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
 					types.NewProof(
-						testutil.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
-						testutil.SingleSignatureProtoFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
+						profilestesting.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
+						profilestesting.SingleSignatureFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
 						"74657874",
 					),
 					types.NewChainConfig("cosmos"),
@@ -405,8 +404,8 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinks() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					types.NewBech32Address("cosmos19s242dxhxgzlsdmfjjg38jgfwhxca7569g84sw", "cosmos"),
 					types.NewProof(
-						testutil.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
-						testutil.SingleSignatureProtoFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
+						profilestesting.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
+						profilestesting.SingleSignatureFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
 						"74657874",
 					),
 					types.NewChainConfig("cosmos"),
@@ -429,8 +428,8 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinks() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					types.NewBech32Address("cosmos19s242dxhxgzlsdmfjjg38jgfwhxca7569g84sw", "cosmos"),
 					types.NewProof(
-						testutil.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
-						testutil.SingleSignatureProtoFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
+						profilestesting.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
+						profilestesting.SingleSignatureFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
 						"74657874",
 					),
 					types.NewChainConfig("cosmos"),
@@ -447,8 +446,8 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinks() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
 					types.NewProof(
-						testutil.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
-						testutil.SingleSignatureProtoFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
+						profilestesting.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
+						profilestesting.SingleSignatureFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
 						"74657874",
 					),
 					types.NewChainConfig("cosmos"),
@@ -463,8 +462,8 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinks() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					types.NewBech32Address("cosmos19s242dxhxgzlsdmfjjg38jgfwhxca7569g84sw", "cosmos"),
 					types.NewProof(
-						testutil.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
-						testutil.SingleSignatureProtoFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
+						profilestesting.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
+						profilestesting.SingleSignatureFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
 						"74657874",
 					),
 					types.NewChainConfig("cosmos"),
@@ -486,8 +485,8 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinks() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					types.NewBech32Address("cosmos19s242dxhxgzlsdmfjjg38jgfwhxca7569g84sw", "cosmos"),
 					types.NewProof(
-						testutil.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
-						testutil.SingleSignatureProtoFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
+						profilestesting.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
+						profilestesting.SingleSignatureFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
 						"74657874",
 					),
 					types.NewChainConfig("cosmos"),
@@ -519,8 +518,8 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinks() {
 }
 
 func (suite *KeeperTestSuite) TestQueryServer_ChainLinkOwners() {
-	firstAccount := testutil.GetChainLinkAccount("cosmos", "cosmos")
-	secondAccount := testutil.GetChainLinkAccount("likecoin", "cosmos")
+	firstAccount := profilestesting.GetChainLinkAccount("cosmos", "cosmos")
+	secondAccount := profilestesting.GetChainLinkAccount("likecoin", "cosmos")
 
 	testCases := []struct {
 		name      string
@@ -532,7 +531,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinkOwners() {
 		{
 			name: "query without any data returns everything",
 			store: func(ctx sdk.Context) {
-				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")))
 				suite.Require().NoError(suite.k.SaveChainLink(ctx, firstAccount.GetBech32ChainLink(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
@@ -560,7 +559,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinkOwners() {
 		{
 			name: "query with chain name returns the correct data",
 			store: func(ctx sdk.Context) {
-				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")))
 				suite.Require().NoError(suite.k.SaveChainLink(ctx, firstAccount.GetBech32ChainLink(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
@@ -583,7 +582,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinkOwners() {
 		{
 			name: "query with chain name and target returns the correct data",
 			store: func(ctx sdk.Context) {
-				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")))
 				suite.Require().NoError(suite.k.SaveChainLink(ctx, firstAccount.GetBech32ChainLink(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
@@ -624,6 +623,95 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinkOwners() {
 	}
 }
 
+func (suite *KeeperTestSuite) TestQueryServer_DefaultExternalAddresses() {
+	firstAccount := profilestesting.GetChainLinkAccount("cosmos", "cosmos")
+	firstChainLink := firstAccount.GetBech32ChainLink(
+		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+		time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
+	)
+
+	secondAccount := profilestesting.GetChainLinkAccount("likecoin", "cosmos")
+	secondChainLink := secondAccount.GetBech32ChainLink(
+		"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+		time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
+	)
+
+	testCases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		request   *types.QueryDefaultExternalAddressesRequest
+		shouldErr bool
+		expected  []types.ChainLink
+	}{
+		{
+			name: "query without any data returns everything",
+			store: func(ctx sdk.Context) {
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")))
+
+				suite.Require().NoError(suite.k.SaveChainLink(ctx, firstChainLink))
+				suite.Require().NoError(suite.k.SaveChainLink(ctx, secondChainLink))
+
+				suite.k.SaveDefaultExternalAddress(ctx, firstChainLink.User, firstChainLink.ChainConfig.Name, firstChainLink.GetAddressData().GetValue())
+				suite.k.SaveDefaultExternalAddress(ctx, secondChainLink.User, secondChainLink.ChainConfig.Name, secondChainLink.GetAddressData().GetValue())
+			},
+			request:   types.NewQueryDefaultExternalAddressesRequest("", "", nil),
+			shouldErr: false,
+			expected:  []types.ChainLink{firstChainLink, secondChainLink},
+		},
+		{
+			name: "query with owner returns correct data",
+			store: func(ctx sdk.Context) {
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")))
+
+				suite.Require().NoError(suite.k.SaveChainLink(ctx, firstChainLink))
+				suite.Require().NoError(suite.k.SaveChainLink(ctx, secondChainLink))
+
+				suite.k.SaveDefaultExternalAddress(ctx, firstChainLink.User, firstChainLink.ChainConfig.Name, firstChainLink.GetAddressData().GetValue())
+				suite.k.SaveDefaultExternalAddress(ctx, secondChainLink.User, secondChainLink.ChainConfig.Name, secondChainLink.GetAddressData().GetValue())
+			},
+			request:   types.NewQueryDefaultExternalAddressesRequest("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "", nil),
+			shouldErr: false,
+			expected:  []types.ChainLink{firstChainLink},
+		},
+		{
+			name: "query with owner and chain name returns correct data",
+			store: func(ctx sdk.Context) {
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")))
+
+				suite.Require().NoError(suite.k.SaveChainLink(ctx, firstChainLink))
+				suite.Require().NoError(suite.k.SaveChainLink(ctx, secondChainLink))
+
+				suite.k.SaveDefaultExternalAddress(ctx, firstChainLink.User, firstChainLink.ChainConfig.Name, firstChainLink.GetAddressData().GetValue())
+				suite.k.SaveDefaultExternalAddress(ctx, secondChainLink.User, secondChainLink.ChainConfig.Name, secondChainLink.GetAddressData().GetValue())
+			},
+			request:   types.NewQueryDefaultExternalAddressesRequest("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos", nil),
+			shouldErr: false,
+			expected:  []types.ChainLink{firstChainLink},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			res, err := suite.k.DefaultExternalAddresses(sdk.WrapSDKContext(ctx), tc.request)
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(tc.expected, res.Links)
+			}
+		})
+	}
+}
+
 func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinks() {
 	testCases := []struct {
 		name                string
@@ -641,7 +729,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinks() {
 		{
 			name: "valid request with application",
 			store: func(ctx sdk.Context) {
-				profile := testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+				profile := profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 				suite.ak.SetAccount(ctx, profile)
 
 				suite.Require().NoError(suite.k.SaveApplicationLink(
@@ -661,6 +749,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinks() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 					)),
 				)
 				suite.Require().NoError(suite.k.SaveApplicationLink(
@@ -680,6 +769,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinks() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 					),
 				))
 			},
@@ -706,13 +796,14 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinks() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 				),
 			},
 		},
 		{
 			name: "valid request with application and username",
 			store: func(ctx sdk.Context) {
-				profile := testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+				profile := profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 				suite.ak.SetAccount(ctx, profile)
 
 				suite.Require().NoError(suite.k.SaveApplicationLink(
@@ -732,6 +823,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinks() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 					)),
 				)
 				suite.Require().NoError(suite.k.SaveApplicationLink(
@@ -751,6 +843,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinks() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 					),
 				))
 			},
@@ -777,13 +870,14 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinks() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 				),
 			},
 		},
 		{
 			name: "valid request without pagination",
 			store: func(ctx sdk.Context) {
-				profile := testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+				profile := profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 				suite.ak.SetAccount(ctx, profile)
 
 				suite.Require().NoError(suite.k.SaveApplicationLink(
@@ -803,6 +897,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinks() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 					)),
 				)
 				suite.Require().NoError(suite.k.SaveApplicationLink(
@@ -822,6 +917,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinks() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 					),
 				))
 			},
@@ -846,6 +942,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinks() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 				),
 				types.NewApplicationLink(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -862,13 +959,14 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinks() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 				),
 			},
 		},
 		{
 			name: "valid paginated request returns proper response",
 			store: func(ctx sdk.Context) {
-				profile := testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+				profile := profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 				suite.ak.SetAccount(ctx, profile)
 
 				suite.Require().NoError(suite.k.SaveApplicationLink(
@@ -888,6 +986,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinks() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 					)),
 				)
 				suite.Require().NoError(suite.k.SaveApplicationLink(
@@ -907,6 +1006,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinks() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 					),
 				))
 			},
@@ -933,6 +1033,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinks() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 				),
 			},
 		},
@@ -973,7 +1074,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkByClientID() {
 		{
 			name: "valid request returns proper response",
 			store: func(ctx sdk.Context) {
-				profile := testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+				profile := profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 				suite.ak.SetAccount(ctx, profile)
 
 				suite.Require().NoError(suite.k.SaveApplicationLink(
@@ -992,6 +1093,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkByClientID() {
 							"client_id",
 						),
 						nil,
+						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 					)),
 				)
@@ -1012,6 +1114,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkByClientID() {
 					"client_id",
 				),
 				nil,
+				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
 		},
@@ -1047,7 +1150,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkOwners() {
 		{
 			name: "query without any data returns everything",
 			store: func(ctx sdk.Context) {
-				profile := testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+				profile := profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 				suite.ak.SetAccount(ctx, profile)
 
 				suite.Require().NoError(suite.k.SaveApplicationLink(
@@ -1067,10 +1170,11 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkOwners() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 					)),
 				)
 
-				profile = testutil.ProfileFromAddr("cosmos1ngzeux3j0vfkps0779y0c8pnrmszlg0hekp5um")
+				profile = profilestesting.ProfileFromAddr("cosmos1ngzeux3j0vfkps0779y0c8pnrmszlg0hekp5um")
 				suite.ak.SetAccount(ctx, profile)
 
 				suite.Require().NoError(suite.k.SaveApplicationLink(
@@ -1090,6 +1194,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkOwners() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 					)),
 				)
 			},
@@ -1111,7 +1216,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkOwners() {
 		{
 			name: "query with application returns the correct data",
 			store: func(ctx sdk.Context) {
-				profile := testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+				profile := profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 				suite.ak.SetAccount(ctx, profile)
 
 				suite.Require().NoError(suite.k.SaveApplicationLink(
@@ -1131,10 +1236,11 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkOwners() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 					)),
 				)
 
-				profile = testutil.ProfileFromAddr("cosmos1ngzeux3j0vfkps0779y0c8pnrmszlg0hekp5um")
+				profile = profilestesting.ProfileFromAddr("cosmos1ngzeux3j0vfkps0779y0c8pnrmszlg0hekp5um")
 				suite.ak.SetAccount(ctx, profile)
 
 				suite.Require().NoError(suite.k.SaveApplicationLink(
@@ -1154,10 +1260,11 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkOwners() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 					)),
 				)
 
-				profile = testutil.ProfileFromAddr("cosmos1pxsak5c7ke5tz3d8alawuzu3cayr9s65ce7njr")
+				profile = profilestesting.ProfileFromAddr("cosmos1pxsak5c7ke5tz3d8alawuzu3cayr9s65ce7njr")
 				suite.ak.SetAccount(ctx, profile)
 
 				suite.Require().NoError(suite.k.SaveApplicationLink(
@@ -1177,6 +1284,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkOwners() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 					)),
 				)
 			},
@@ -1198,7 +1306,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkOwners() {
 		{
 			name: "query with application and username returns the correct data",
 			store: func(ctx sdk.Context) {
-				profile := testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+				profile := profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 				suite.ak.SetAccount(ctx, profile)
 
 				suite.Require().NoError(suite.k.SaveApplicationLink(
@@ -1218,10 +1326,11 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkOwners() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 					)),
 				)
 
-				profile = testutil.ProfileFromAddr("cosmos1ngzeux3j0vfkps0779y0c8pnrmszlg0hekp5um")
+				profile = profilestesting.ProfileFromAddr("cosmos1ngzeux3j0vfkps0779y0c8pnrmszlg0hekp5um")
 				suite.ak.SetAccount(ctx, profile)
 
 				suite.Require().NoError(suite.k.SaveApplicationLink(
@@ -1241,10 +1350,11 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkOwners() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 					)),
 				)
 
-				profile = testutil.ProfileFromAddr("cosmos1mrmyggajlv0k3mlrhergjjnt75srn5y5u5a83x")
+				profile = profilestesting.ProfileFromAddr("cosmos1mrmyggajlv0k3mlrhergjjnt75srn5y5u5a83x")
 				suite.ak.SetAccount(ctx, profile)
 
 				suite.Require().NoError(suite.k.SaveApplicationLink(
@@ -1264,6 +1374,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkOwners() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 					)),
 				)
 			},

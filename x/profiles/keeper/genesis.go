@@ -5,7 +5,7 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/desmos-labs/desmos/v3/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 // ExportGenesis returns the GenesisState associated with the given context
@@ -15,6 +15,7 @@ func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 		k.GetParams(ctx),
 		k.GetPort(ctx),
 		k.GetChainLinks(ctx),
+		k.GetDefaultExternalAddressEntries(ctx),
 		k.GetApplicationLinks(ctx),
 	)
 }
@@ -61,6 +62,10 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) []abci.Val
 		if err != nil {
 			panic(err)
 		}
+	}
+
+	for _, entry := range data.DefaultExternalAddresses {
+		k.SaveDefaultExternalAddress(ctx, entry.Owner, entry.ChainName, entry.Target)
 	}
 
 	// Store the application links

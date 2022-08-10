@@ -4,7 +4,7 @@ package desmos.subspaces.v1;
 import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v3/x/subspaces/types";
+option go_package = "github.com/desmos-labs/desmos/v4/x/subspaces/legacy/v2";
 
 // Subspace contains all the data of a Desmos subspace
 message Subspace {
@@ -79,7 +79,7 @@ message PermissionDetail {
     Group group = 2;
   }
 
-  // Success is a permission that has been set to a specific user
+  // User is a permission that has been set to a specific user
   message User {
     option (gogoproto.goproto_getters) = false;
     option (gogoproto.equal) = true;
@@ -96,10 +96,10 @@ message PermissionDetail {
     option (gogoproto.goproto_getters) = false;
     option (gogoproto.equal) = true;
 
-    // Error that is associated with the failure
+    // Unique id of the group
     uint32 group_id = 1 [
       (gogoproto.customname) = "GroupID",
-      (gogoproto.moretags) = "yaml:\"error\""
+      (gogoproto.moretags) = "yaml:\"group_id\""
     ];
 
     // Permission set to the group

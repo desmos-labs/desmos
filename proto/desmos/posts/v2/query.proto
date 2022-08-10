@@ -1,0 +1,155 @@
+syntax = "proto3";
+package desmos.posts.v2;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+
+import "desmos/posts/v2/models.proto";
+
+option go_package = "github.com/desmos-labs/desmos/v4/x/posts/types";
+
+// Query defines the gRPC querier service
+service Query {
+  // SubspacePosts queries all the posts inside a given subspace
+  rpc SubspacePosts(QuerySubspacePostsRequest)
+      returns (QuerySubspacePostsResponse) {
+    option (google.api.http).get =
+        "/desmos/posts/v2/subspaces/{subspace_id}/posts";
+  }
+
+  // SectionPosts queries all the posts inside a given section
+  rpc SectionPosts(QuerySectionPostsRequest)
+      returns (QuerySectionPostsResponse) {
+    option (google.api.http).get =
+        "/desmos/posts/v2/subspaces/{subspace_id}/sections/{section_id}/posts";
+  }
+
+  // Post queries for a single post inside a given subspace
+  rpc Post(QueryPostRequest) returns (QueryPostResponse) {
+    option (google.api.http).get =
+        "/desmos/posts/v2/subspaces/{subspace_id}/posts/{post_id}";
+  }
+
+  // PostAttachments queries the attachments of the post having the given id
+  rpc PostAttachments(QueryPostAttachmentsRequest)
+      returns (QueryPostAttachmentsResponse) {
+    option (google.api.http).get =
+        "/desmos/posts/v2/subspaces/{subspace_id}/posts/{post_id}/attachments";
+  }
+
+  // PollAnswers queries the answers for the poll having the given id
+  rpc PollAnswers(QueryPollAnswersRequest) returns (QueryPollAnswersResponse) {
+    option (google.api.http).get =
+        "/desmos/posts/v2/subspaces/{subspace_id}/posts/"
+        "{post_id}/polls/{poll_id}/answers";
+  }
+
+  // Params queries the module parameters
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/desmos/posts/v2/params";
+  }
+}
+
+// QuerySubspacePostsRequest is the request type for the Query/SubspacePosts RPC
+// method
+message QuerySubspacePostsRequest {
+  // Id of the subspace to query the posts for
+  uint64 subspace_id = 1;
+
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+// QuerySubspacePostsResponse is the response type for the Query/SubspacePosts
+// RPC method
+message QuerySubspacePostsResponse {
+  repeated Post posts = 1 [ (gogoproto.nullable) = false ];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QuerySectionPostsRequest is the request type for the Query/SectionPosts RPC
+// method
+message QuerySectionPostsRequest {
+  // Id of the subspace to query the posts for
+  uint64 subspace_id = 1;
+
+  // Id of the section to query the posts for
+  uint32 section_id = 2;
+
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+// QuerySectionPostsResponse is the response type for the Query/SectionPosts RPC
+// method
+message QuerySectionPostsResponse {
+  repeated Post posts = 1 [ (gogoproto.nullable) = false ];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QueryPostRequest is the request type for the Query/Post RPC method
+message QueryPostRequest {
+  // Id of the subspace inside which the post lies
+  uint64 subspace_id = 1;
+
+  // Id of the post to query for
+  uint64 post_id = 2;
+}
+
+// QueryPostResponse is the response type for the Query/Post RPC method
+message QueryPostResponse { Post post = 1 [ (gogoproto.nullable) = false ]; }
+
+// QueryPostsRequest is the request type for the Query/PostAttachments RPC
+// method
+message QueryPostAttachmentsRequest {
+  // Id of the subspace where the post is stored
+  uint64 subspace_id = 1;
+
+  // Id of the post to query the attachments for
+  uint64 post_id = 2;
+
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+// QueryPostAttachmentsResponse is the response type for the
+// Query/PostAttachments RPC method
+message QueryPostAttachmentsResponse {
+  repeated Attachment attachments = 1 [ (gogoproto.nullable) = false ];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QueryPollAnswersRequest is the request type for the Query/PollAnswers RPC
+// method
+message QueryPollAnswersRequest {
+  // Id of the subspace where the post is stored
+  uint64 subspace_id = 1;
+
+  // Id of the post that holds the poll
+  uint64 post_id = 2;
+
+  // Id of the poll to query the answers for
+  uint32 poll_id = 3;
+
+  // (Optional) Address of the user to query the responses for
+  string user = 4;
+
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 5;
+}
+
+// QueryPollAnswersResponse is the response type for the Query/PollAnswers RPC
+// method
+message QueryPollAnswersResponse {
+  repeated UserAnswer answers = 1 [ (gogoproto.nullable) = false ];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QueryParamsRequest is the request type for the Query/Params RPC method
+message QueryParamsRequest {}
+
+// QueryParamsResponse is the response type for the Query/Params RPC method
+message QueryParamsResponse {
+  Params params = 1 [ (gogoproto.nullable) = false ];
+}

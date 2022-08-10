@@ -1,0 +1,75 @@
+syntax = "proto3";
+package desmos.profiles.v3;
+
+option go_package = "github.com/desmos-labs/desmos/v4/x/profiles/types";
+
+import "desmos/profiles/v3/models_app_links.proto";
+
+import "gogoproto/gogo.proto";
+import "ibc/core/client/v1/client.proto";
+
+// MsgLinkApplication defines a msg to connect a profile with a
+// centralized application account (eg. Twitter, GitHub, etc).
+message MsgLinkApplication {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  // The sender of the connection request
+  string sender = 1 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
+
+  // LinkData contains the data related to the application to which connect
+  Data link_data = 2 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"link_data\""
+  ];
+
+  // Hex encoded call data that will be sent to the data source in order to
+  // verify the link
+  string call_data = 3 [ (gogoproto.moretags) = "yaml:\"call_data\"" ];
+
+  // The port on which the packet will be sent
+  string source_port = 4 [ (gogoproto.moretags) = "yaml:\"source_port\"" ];
+
+  // The channel by which the packet will be sent
+  string source_channel = 5
+      [ (gogoproto.moretags) = "yaml:\"source_channel\"" ];
+
+  // Timeout height relative to the current block height.
+  // The timeout is disabled when set to 0.
+  ibc.core.client.v1.Height timeout_height = 6 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"timeout_height\""
+  ];
+
+  // Timeout timestamp (in nanoseconds) relative to the current block timestamp.
+  // The timeout is disabled when set to 0.
+  uint64 timeout_timestamp = 7
+      [ (gogoproto.moretags) = "yaml:\"timeout_timestamp\"" ];
+}
+
+// MsgLinkApplicationResponse defines the Msg/LinkApplication
+// response type.
+message MsgLinkApplicationResponse {}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+// MsgUnlinkApplication defines a msg to delete an application link from a user
+// profile
+message MsgUnlinkApplication {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  // Application represents the name of the application to unlink
+  string application = 1 [ (gogoproto.moretags) = "yaml:\"application\"" ];
+
+  // Username represents the username inside the application to unlink
+  string username = 2 [ (gogoproto.moretags) = "yaml:\"username\"" ];
+
+  // Signer represents the Desmos account to which the application should be
+  // unlinked
+  string signer = 3 [ (gogoproto.moretags) = "yaml:\"signer\"" ];
+}
+
+// MsgUnlinkApplicationResponse defines the Msg/UnlinkApplication response
+// type.
+message MsgUnlinkApplicationResponse {}

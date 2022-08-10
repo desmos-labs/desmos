@@ -1,3 +1,6 @@
+//go:build norace
+// +build norace
+
 package cli_test
 
 import (
@@ -8,8 +11,8 @@ import (
 
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 
-	"github.com/desmos-labs/desmos/v3/app"
-	"github.com/desmos-labs/desmos/v3/x/profiles/client/utils"
+	"github.com/desmos-labs/desmos/v4/app"
+	"github.com/desmos-labs/desmos/v4/x/profiles/client/utils"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
@@ -22,8 +25,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/desmos-labs/desmos/v3/testutil"
-	"github.com/desmos-labs/desmos/v3/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/testutil"
+	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 const (
@@ -43,7 +47,7 @@ type IntegrationTestSuite struct {
 	network              *network.Network
 	keyBase              keyring.Keyring
 	keys                 Keys
-	testChainLinkAccount testutil.ChainLinkAccount
+	testChainLinkAccount profilestesting.ChainLinkAccount
 }
 
 func TestIntegrationTestSuite(t *testing.T) {
@@ -130,14 +134,23 @@ func (s *IntegrationTestSuite) SetupSuite() {
 			),
 			nil,
 			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+			time.Date(9999, 1, 1, 00, 00, 00, 000, time.UTC),
 		),
 	}
 
-	s.testChainLinkAccount = testutil.GetChainLinkAccount("cosmos", "cosmos")
+	s.testChainLinkAccount = profilestesting.GetChainLinkAccount("cosmos", "cosmos")
 	profilesData.ChainLinks = []types.ChainLink{
 		s.testChainLinkAccount.GetBech32ChainLink(
 			"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
 			time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
+		),
+	}
+
+	profilesData.DefaultExternalAddresses = []types.DefaultExternalAddressEntry{
+		types.NewDefaultExternalAddressEntry(
+			"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
+			s.testChainLinkAccount.ChainName(),
+			s.testChainLinkAccount.Bech32Address().GetValue(),
 		),
 	}
 
@@ -195,7 +208,7 @@ func (s *IntegrationTestSuite) writeChainLinkJSONFile(filePath string) {
 
 	jsonData := utils.NewChainLinkJSON(
 		types.NewBech32Address(addStr, "cosmos"),
-		types.NewProof(srcKey.PubKey(), testutil.SingleSignatureProtoFromHex(hex.EncodeToString(sigBz)), hex.EncodeToString([]byte(plainText))),
+		types.NewProof(srcKey.PubKey(), profilestesting.SingleSignatureFromHex(hex.EncodeToString(sigBz)), hex.EncodeToString([]byte(plainText))),
 		types.NewChainConfig("cosmos"),
 	)
 

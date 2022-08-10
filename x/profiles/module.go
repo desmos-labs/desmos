@@ -6,6 +6,11 @@ import (
 	"fmt"
 	"math/rand"
 
+	v4 "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v4/types"
+	v5 "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v5/types"
+
+	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
@@ -20,15 +25,14 @@ import (
 	"github.com/spf13/cobra"
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/desmos-labs/desmos/v3/x/profiles/client/cli"
-	"github.com/desmos-labs/desmos/v3/x/profiles/keeper"
-	v4 "github.com/desmos-labs/desmos/v3/x/profiles/legacy/v4"
-	"github.com/desmos-labs/desmos/v3/x/profiles/simulation"
-	"github.com/desmos-labs/desmos/v3/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/client/cli"
+	"github.com/desmos-labs/desmos/v4/x/profiles/keeper"
+	"github.com/desmos-labs/desmos/v4/x/profiles/simulation"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 const (
-	consensusVersion = 6
+	consensusVersion = 7
 )
 
 // type check to ensure the interface is properly implemented
@@ -89,6 +93,7 @@ func (AppModuleBasic) GetQueryCmd() *cobra.Command {
 // RegisterInterfaces registers interfaces and implementations of the profiles module.
 func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) {
 	v4.RegisterInterfaces(registry)
+	v5.RegisterInterfaces(registry)
 	types.RegisterInterfaces(registry)
 }
 
@@ -100,6 +105,7 @@ type AppModule struct {
 	keeper keeper.Keeper
 	ak     authkeeper.AccountKeeper
 	bk     bankkeeper.Keeper
+	fk     feeskeeper.Keeper
 }
 
 // RegisterServices registers module services.
@@ -107,12 +113,16 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
 	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
 
-	m := keeper.NewMigrator(am.ak, am.keeper, cfg.QueryServer())
+	m := keeper.NewMigrator(am.ak, am.keeper)
 	err := cfg.RegisterMigration(types.ModuleName, 4, m.Migrate4to5)
 	if err != nil {
 		panic(err)
 	}
-	err = cfg.RegisterMigration(types.ModuleName, 5, m.Migrate5To6)
+	err = cfg.RegisterMigration(types.ModuleName, 5, m.Migrate5to6)
+	if err != nil {
+		panic(err)
+	}
+	err = cfg.RegisterMigration(types.ModuleName, 6, m.Migrate6to7)
 	if err != nil {
 		panic(err)
 	}
@@ -121,13 +131,14 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 // NewAppModule creates a new AppModule Object
 func NewAppModule(
 	cdc codec.Codec, legacyAmino *codec.LegacyAmino,
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
 ) AppModule {
 	return AppModule{
 		AppModuleBasic: AppModuleBasic{cdc: cdc, legacyAmino: legacyAmino},
 		keeper:         k,
 		ak:             ak,
 		bk:             bk,
+		fk:             fk,
 	}
 }
 
@@ -178,7 +189,8 @@ func (AppModule) ConsensusVersion() uint64 {
 }
 
 // BeginBlock returns the begin blocker for the profiles module.
-func (am AppModule) BeginBlock(_ sdk.Context, _ abci.RequestBeginBlock) {
+func (am AppModule) BeginBlock(ctx sdk.Context, _ abci.RequestBeginBlock) {
+	BeginBlocker(ctx, am.keeper)
 }
 
 // EndBlock returns the end blocker for the profiles module. It returns no validator
@@ -214,5 +226,5 @@ func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
 
 // WeightedOperations returns the all the profiles module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
-	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.ak, am.bk)
+	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.ak, am.bk, am.fk)
 }

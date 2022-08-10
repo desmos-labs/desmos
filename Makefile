@@ -13,6 +13,8 @@ MOCKS_DIR = $(CURDIR)/tests/mocks
 HTTPS_GIT := https://github.com/desmos-labs/desmos.git
 DOCKER := $(shell which docker)
 DOCKER_BUF := $(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace bufbuild/buf
+BENCH_COUNT ?= 5
+REF_NAME ?= $(shell git symbolic-ref HEAD --short | tr / - 2>/dev/null)
 
 export GO111MODULE = on
 
@@ -61,6 +63,10 @@ ldflags = -X 'github.com/cosmos/cosmos-sdk/version.Name=Desmos' \
     -X 'github.com/cosmos/cosmos-sdk/version.Commit=$(COMMIT)' \
   	-X "github.com/cosmos/cosmos-sdk/version.BuildTags=$(build_tags_comma_sep)" \
   	-X "github.com/tendermint/tendermint/version.TMCoreSemVer=$(TENDERMINT_VERSION)"
+
+ifeq ($(LINK_STATICALLY),true)
+  ldflags += -linkmode=external -extldflags "-Wl,-z,muldefs -static"
+endif
 
 ifneq ($(GOSUM),)
   ldflags += -X github.com/cosmos/cosmos-sdk/version.VendorDirHash=$(shell $(GOSUM) go.sum)
@@ -112,14 +118,17 @@ BUILD_TARGETS := build install
 
 build: BUILD_ARGS=-o $(BUILDDIR)/
 
-build-alpine: go.sum
+create-builder: go.sum
+	$(MAKE) -C contrib/images desmos-builder CONTEXT=$(CURDIR)
+
+build-alpine: create-builder
 	mkdir -p $(BUILDDIR)
 	$(DOCKER) build -f Dockerfile --rm --tag desmoslabs/desmos-alpine .
 	$(DOCKER) create --name desmos-alpine --rm desmoslabs/desmos-alpine
 	$(DOCKER) cp desmos-alpine:/usr/bin/desmos $(BUILDDIR)/desmos
 	$(DOCKER) rm desmos-alpine
 
-build-linux: go.sum
+build-linux: create-builder
 	mkdir -p $(BUILDDIR)
 	$(DOCKER) build -f Dockerfile-ubuntu --rm --tag desmoslabs/desmos-linux .
 	$(DOCKER) create --name desmos-linux desmoslabs/desmos-linux
@@ -267,18 +276,24 @@ test-cover:
 .PHONY: test-cover
 
 benchmark:
-	@go test -mod=readonly -bench=. $(PACKAGES_NOSIMULATION)
+	@go test -mod=readonly -bench=. -count=$(BENCH_COUNT) -run=^a  ./... >bench-$(REF_NAME).txt
+	@test -s $(GOPATH)/bin/benchstat || GO111MODULE=off GOFLAGS= GOBIN=$(GOPATH)/bin go get -u golang.org/x/perf/cmd/benchstat
+	@test -e bench-master.txt && benchstat bench-master.txt bench-$(REF_NAME).txt || benchstat bench-$(REF_NAME).txt
 .PHONY: benchmark
 
 ###############################################################################
 ###                                Linting                                  ###
 ###############################################################################
+golangci_lint_cmd=github.com/golangci/golangci-lint/cmd/golangci-lint
 
 lint:
-	golangci-lint run --out-format=tab --timeout=10m
+	@echo "--> Running linter"
+	@go run $(golangci_lint_cmd) run --timeout=10m
 
 lint-fix:
-	golangci-lint run --fix --out-format=tab --issues-exit-code=0 --timeout=10m
+	@echo "--> Running linter"
+	@go run $(golangci_lint_cmd) run --fix --out-format=tab --issues-exit-code=0
+
 .PHONY: lint lint-fix
 
 format:
@@ -286,6 +301,20 @@ format:
 	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -name '*.pb.go' -not -path "./venv" | xargs misspell -w
 	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -name '*.pb.go' -not -path "./venv" | xargs goimports -w -local github.com/desmos-labs/desmos
 .PHONY: format
+
+###############################################################################
+###                                  Types                                  ###
+###############################################################################
+
+EVMOS_URL 		 = https://raw.githubusercontent.com/evmos/ethermint/v0.17.1/crypto/
+CRYPTO_TYPES 	 = types/crypto
+
+update-deps-types:
+	@mkdir -p $(CRYPTO_TYPES)/ethsecp256k1
+	@curl -sSL $(EVMOS_URL)/ethsecp256k1/keys.pb.go > $(CRYPTO_TYPES)/ethsecp256k1/keys.pb.go
+	@curl -sSL $(EVMOS_URL)/ethsecp256k1/ethsecp256k1.go > $(CRYPTO_TYPES)/ethsecp256k1/ethsecp256k1.go
+
+.PHONY: update-deps-types
 
 ###############################################################################
 ###                                Protobuf                                 ###
@@ -329,12 +358,13 @@ proto-lint:
 proto-check-breaking:
 	@$(DOCKER_BUF) breaking --against $(HTTPS_GIT)#branch=master
 
-TM_URL           = https://raw.githubusercontent.com/tendermint/tendermint/v0.34.16/proto/tendermint
+TM_URL           = https://raw.githubusercontent.com/tendermint/tendermint/v0.34.19/proto/tendermint
 GOGO_PROTO_URL   = https://raw.githubusercontent.com/regen-network/protobuf/cosmos
-COSMOS_URL 		 = https://raw.githubusercontent.com/cosmos/cosmos-sdk/v0.45.1/proto/cosmos
+COSMOS_URL 		 = https://raw.githubusercontent.com/cosmos/cosmos-sdk/v0.45.4/proto/cosmos
 COSMOS_PROTO_URL = https://raw.githubusercontent.com/regen-network/cosmos-proto/master
 CONFIO_URL 		 = https://raw.githubusercontent.com/confio/ics23/v0.6.3
-IBC_URL 		 = https://raw.githubusercontent.com/cosmos/ibc-go/v2.2.0/proto/ibc
+IBC_URL 		 = https://raw.githubusercontent.com/cosmos/ibc-go/v3.1.0/proto/ibc
+ETHERMINT_URL 	 = https://raw.githubusercontent.com/evmos/ethermint/v0.17.1/proto/ethermint/
 
 TM_CRYPTO_TYPES     = third_party/proto/tendermint/crypto
 TM_ABCI_TYPES       = third_party/proto/tendermint/abci
@@ -347,7 +377,7 @@ GOGO_PROTO_TYPES    = third_party/proto/gogoproto
 COSMOS_TYPES 		= third_party/proto/cosmos
 COSMOS_PROTO_TYPES  = third_party/proto/cosmos_proto
 CONFIO_TYPES        = third_party/proto/confio
-IBC_TYPES		 	= third_party/proto/ibc
+ETHERMINT_TYPES 	= third_party/proto/ethermint
 
 proto-update-deps:
 	@mkdir -p $(COSMOS_TYPES)/base/query/v1beta1
@@ -364,6 +394,9 @@ proto-update-deps:
 
 	@mkdir -p $(IBC_TYPES)/core/client/v1
 	@curl -sSL $(IBC_URL)/core/client/v1/client.proto > $(IBC_TYPES)/core/client/v1/client.proto
+
+	@mkdir -p $(ETHERMINT_TYPES)/crypto/v1/ethsecp256k1
+	@curl -sSL $(ETHERMINT_URL)crypto/v1/ethsecp256k1/keys.proto > $(ETHERMINT_TYPES)/crypto/v1/ethsecp256k1/keys.proto
 
 	@mkdir -p $(COSMOS_TYPES)/tx/signing/v1beta1
 	@curl -sSL $(COSMOS_URL)/tx/signing/v1beta1/signing.proto > $(COSMOS_TYPES)/tx/signing/v1beta1/signing.proto

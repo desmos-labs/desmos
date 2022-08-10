@@ -8,9 +8,16 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/msgservice"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting/exported"
+	authzcodec "github.com/cosmos/cosmos-sdk/x/authz/codec"
+
+	"github.com/desmos-labs/desmos/v4/types/crypto/ethsecp256k1"
 )
 
 func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
+	// Register custom key types
+	cdc.RegisterConcrete(&ethsecp256k1.PubKey{}, ethsecp256k1.PubKeyName, nil)
+	cdc.RegisterConcrete(&ethsecp256k1.PrivKey{}, ethsecp256k1.PrivKeyName, nil)
+
 	cdc.RegisterConcrete(MsgSaveProfile{}, "desmos/MsgSaveProfile", nil)
 	cdc.RegisterConcrete(MsgDeleteProfile{}, "desmos/MsgDeleteProfile", nil)
 	cdc.RegisterConcrete(MsgRequestDTagTransfer{}, "desmos/MsgRequestDTagTransfer", nil)
@@ -19,6 +26,7 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(MsgRefuseDTagTransferRequest{}, "desmos/MsgRefuseDTagTransferRequest", nil)
 	cdc.RegisterConcrete(MsgLinkChainAccount{}, "desmos/MsgLinkChainAccount", nil)
 	cdc.RegisterConcrete(MsgUnlinkChainAccount{}, "desmos/MsgUnlinkChainAccount", nil)
+	cdc.RegisterConcrete(MsgSetDefaultExternalAddress{}, "desmos/MsgSetDefaultExternalAddress", nil)
 	cdc.RegisterConcrete(MsgLinkApplication{}, "desmos/MsgLinkApplication", nil)
 	cdc.RegisterConcrete(MsgUnlinkApplication{}, "desmos/MsgUnlinkApplication", nil)
 
@@ -27,9 +35,9 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&Base58Address{}, "desmos/Base58Address", nil)
 	cdc.RegisterConcrete(&HexAddress{}, "desmos/HexAddress", nil)
 
-	cdc.RegisterInterface((*SignatureData)(nil), nil)
-	cdc.RegisterConcrete(&SingleSignatureData{}, "desmos/SingleSignatureData", nil)
-	cdc.RegisterConcrete(&MultiSignatureData{}, "desmos/MultiSignatureData", nil)
+	cdc.RegisterInterface((*Signature)(nil), nil)
+	cdc.RegisterConcrete(&SingleSignature{}, "desmos/SingleSignature", nil)
+	cdc.RegisterConcrete(&CosmosMultiSignature{}, "desmos/CosmosMultiSignature", nil)
 
 	cdc.RegisterConcrete(&Profile{}, "desmos/Profile", nil)
 }
@@ -39,17 +47,17 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 	registry.RegisterImplementations((*exported.VestingAccount)(nil), &Profile{})
 	registry.RegisterImplementations((*authtypes.GenesisAccount)(nil), &Profile{})
 	registry.RegisterInterface(
-		"desmos.profiles.v2.AddressData",
+		"desmos.profiles.v3.AddressData",
 		(*AddressData)(nil),
 		&Bech32Address{},
 		&Base58Address{},
 		&HexAddress{},
 	)
 	registry.RegisterInterface(
-		"desmos.profiles.v2.Signature",
-		(*SignatureData)(nil),
-		&SingleSignatureData{},
-		&MultiSignatureData{},
+		"desmos.profiles.v3.Signature",
+		(*Signature)(nil),
+		&SingleSignature{},
+		&CosmosMultiSignature{},
 	)
 
 	registry.RegisterImplementations((*sdk.Msg)(nil),
@@ -63,6 +71,7 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 		&MsgUnlinkChainAccount{},
 		&MsgLinkApplication{},
 		&MsgUnlinkApplication{},
+		&MsgSetDefaultExternalAddress{},
 	)
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
@@ -85,4 +94,9 @@ var (
 func init() {
 	RegisterLegacyAminoCodec(amino)
 	cryptocodec.RegisterCrypto(amino)
+	sdk.RegisterLegacyAminoCodec(amino)
+
+	// Register all Amino interfaces and concrete types on the authz Amino codec so that this can later be
+	// used to properly serialize MsgGrant and MsgExec instances
+	RegisterLegacyAminoCodec(authzcodec.Amino)
 }

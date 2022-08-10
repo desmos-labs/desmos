@@ -11,10 +11,10 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v3/app"
+	"github.com/desmos-labs/desmos/v4/app"
 
-	"github.com/desmos-labs/desmos/v3/x/profiles/simulation"
-	"github.com/desmos-labs/desmos/v3/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/simulation"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 func TestDecodeStore(t *testing.T) {
@@ -43,6 +43,7 @@ func TestDecodeStore(t *testing.T) {
 		types.OracleRequest{},
 		nil,
 		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+		time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 	)
 
 	kvPairs := kv.Pairs{Pairs: []kv.Pair{
@@ -74,6 +75,20 @@ func TestDecodeStore(t *testing.T) {
 			Value: cdc.MustMarshal(&applicationLink),
 		},
 		{
+			Key: types.ApplicationLinkExpiringTimeKey(
+				time.Date(2022, 1, 1, 0, 0, 00, 000, time.UTC),
+				"client_id",
+			),
+			Value: []byte("client_id"),
+		},
+		{
+			Key: types.DefaultExternalAddressKey(
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				"cosmos",
+			),
+			Value: []byte("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+		},
+		{
 			Key:   []byte("invalid"),
 			Value: []byte("value"),
 		},
@@ -85,8 +100,10 @@ func TestDecodeStore(t *testing.T) {
 	}{
 		{"DTags", fmt.Sprintf("DTagAddressA: %s\nDTagAddressB: %s\n", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")},
 		{"DTag transfer request", fmt.Sprintf("RequestA: %s\nRequestB: %s\n", request, request)},
-		{"Chain link", fmt.Sprintf("Chain link A: %s\nChain link B: %s\n", chainLink, chainLink)},
-		{"Application link", fmt.Sprintf("Application link A: %s\nApplication link B: %s\n", &applicationLink, &applicationLink)},
+		{"Chain link", fmt.Sprintf("ChainLinkA: %s\nChainLinkB: %s\n", chainLink, chainLink)},
+		{"Application link", fmt.Sprintf("ApplicationLinkA: %s\nApplicationLinkB: %s\n", &applicationLink, &applicationLink)},
+		{"Expiring Application link", fmt.Sprintf("ExpiringClientIDA: %s\nExpiringClientIDB: %s\n", "client_id", "client_id")},
+		{"External address", fmt.Sprintf("ExternalAddressA: %s\nExternalAddressB: %s\n", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")},
 		{"other", ""},
 	}
 

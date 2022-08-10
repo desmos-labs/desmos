@@ -4,15 +4,18 @@ package simulation
 
 import (
 	"fmt"
+	"time"
 
-	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
+
+	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	"github.com/cosmos/cosmos-sdk/types/module"
 
-	"github.com/desmos-labs/desmos/v3/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 // RandomizedGenState generates a random GenesisState for profile
@@ -46,6 +49,8 @@ func RandomizedGenState(simsState *module.SimulationState) {
 		panic(err)
 	}
 
+	chainLinks := randomChainLinks(profiles, simsState)
+
 	profileGenesis := types.NewGenesisState(
 		randomDTagTransferRequests(profiles, simsState, simsState.Rand.Intn(profilesNumber)),
 		types.NewParams(
@@ -53,9 +58,11 @@ func RandomizedGenState(simsState *module.SimulationState) {
 			RandomDTagParams(simsState.Rand),
 			RandomBioParams(simsState.Rand),
 			RandomOracleParams(simsState.Rand),
+			RandomAppLinksParams(simsState.Rand),
 		),
 		types.IBCPortID,
-		nil,
+		chainLinks,
+		getDefaultExternalAddressEntries(chainLinks),
 		nil,
 	)
 
@@ -132,6 +139,60 @@ func randomDTagTransferRequests(
 func containsDTagTransferRequest(slice []types.DTagTransferRequest, request types.DTagTransferRequest) bool {
 	for _, req := range slice {
 		if req.Sender == request.Sender && req.Receiver == request.Receiver {
+			return true
+		}
+	}
+	return false
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+// randomChainLinks returns randomly generated genesis chain links
+func randomChainLinks(
+	profiles []*types.Profile, simsState *module.SimulationState,
+) []types.ChainLink {
+	linksNumber := simsState.Rand.Intn(100)
+	links := make([]types.ChainLink, linksNumber)
+	for i := 0; i < linksNumber; {
+		// Get a random profile
+		profile := RandomProfile(simsState.Rand, profiles)
+		chainAccount := profilestesting.GetChainLinkAccount("cosmos", "cosmos")
+		link := chainAccount.GetBech32ChainLink(profile.GetAddress().String(), time.Date(2022, 6, 9, 0, 0, 0, 0, time.UTC))
+
+		if !containsChainLink(links, link) {
+			links[i] = link
+			i++
+		}
+	}
+	return links
+}
+
+func containsChainLink(slice []types.ChainLink, link types.ChainLink) bool {
+	for _, l := range slice {
+		if l.User == link.User && l.Address.Equal(link.Address) && l.ChainConfig.Name == link.ChainConfig.Name {
+			return true
+		}
+	}
+	return false
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+// getDefaultExternalAddressEntries returns randomly generated genesis default external address entries
+func getDefaultExternalAddressEntries(links []types.ChainLink) []types.DefaultExternalAddressEntry {
+	entries := make([]types.DefaultExternalAddressEntry, 0, len(links))
+	for _, link := range links {
+		entry := types.NewDefaultExternalAddressEntry(link.User, link.ChainConfig.Name, link.GetAddressData().GetValue())
+		if !containsDefaultExternalAddressEntry(entries, entry) {
+			entries = append(entries, entry)
+		}
+	}
+	return entries
+}
+
+func containsDefaultExternalAddressEntry(slice []types.DefaultExternalAddressEntry, entry types.DefaultExternalAddressEntry) bool {
+	for _, e := range slice {
+		if e.Owner == entry.Owner && e.ChainName == entry.ChainName {
 			return true
 		}
 	}

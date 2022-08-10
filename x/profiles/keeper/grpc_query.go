@@ -13,7 +13,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/query"
 
-	"github.com/desmos-labs/desmos/v3/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 var _ types.QueryServer = Keeper{}
@@ -47,7 +47,7 @@ func (k Keeper) Profile(ctx context.Context, request *types.QueryProfileRequest)
 	}
 
 	if !found {
-		return &types.QueryProfileResponse{Profile: nil}, nil
+		return nil, status.Errorf(codes.NotFound, "profile for dtag/address %s not found", dTagOrAddress)
 	}
 
 	accountAny, err := codectypes.NewAnyWithValue(account)
@@ -139,7 +139,8 @@ func (k Keeper) ChainLinkOwners(ctx context.Context, request *types.QueryChainLi
 	ownersStore := prefix.NewStore(store, ownersPrefix)
 	pageRes, err := query.Paginate(ownersStore, request.Pagination, func(key []byte, value []byte) error {
 		// Re-add the prefix because the prefix store trims it out, and we need it to get the data
-		keyWithPrefix := append(ownersPrefix, key...)
+		keyWithPrefix := append([]byte(nil), ownersPrefix...)
+		keyWithPrefix = append(keyWithPrefix, key...)
 		chainName, target, user := types.GetChainLinkOwnerData(keyWithPrefix)
 
 		owners = append(owners, types.QueryChainLinkOwnersResponse_ChainLinkOwnerDetails{
@@ -156,6 +157,41 @@ func (k Keeper) ChainLinkOwners(ctx context.Context, request *types.QueryChainLi
 	}
 
 	return &types.QueryChainLinkOwnersResponse{Owners: owners, Pagination: pageRes}, nil
+}
+
+// DefaultExternalAddresses implements the Query/DefaultExternalAddresses gRPC method
+func (k Keeper) DefaultExternalAddresses(ctx context.Context, request *types.QueryDefaultExternalAddressesRequest) (*types.QueryDefaultExternalAddressesResponse, error) {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	store := sdkCtx.KVStore(k.storeKey)
+
+	defaultPrefix := types.DefaultExternalAddressPrefix
+	switch {
+	case request.Owner != "" && request.ChainName != "":
+		defaultPrefix = types.DefaultExternalAddressKey(request.Owner, request.ChainName)
+	case request.Owner != "":
+		defaultPrefix = types.OwnerDefaultExternalAddressPrefix(request.Owner)
+	}
+
+	var links []types.ChainLink
+	defaultStore := prefix.NewStore(store, defaultPrefix)
+	pageRes, err := query.Paginate(defaultStore, request.Pagination, func(key []byte, value []byte) error {
+		// Re-add the prefix because the prefix store trims it out, and we need it to get the data
+		keyWithPrefix := append([]byte(nil), defaultPrefix...)
+		keyWithPrefix = append(keyWithPrefix, key...)
+		owner, chainName := types.GetDefaultExternalAddressData(keyWithPrefix)
+		link, found := k.GetChainLink(sdkCtx, owner, chainName, string(value))
+		if !found {
+			return sdkerrors.Wrap(sdkerrors.ErrNotFound, "chain link not found")
+		}
+		links = append(links, link)
+		return nil
+	})
+
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &types.QueryDefaultExternalAddressesResponse{Links: links, Pagination: pageRes}, nil
 }
 
 // ApplicationLinks implements the Query/ApplicationLinks gRPC method
@@ -227,7 +263,8 @@ func (k Keeper) ApplicationLinkOwners(ctx context.Context, request *types.QueryA
 	ownersStore := prefix.NewStore(store, ownersPrefix)
 	pageRes, err := query.Paginate(ownersStore, request.Pagination, func(key []byte, value []byte) error {
 		// Re-add the prefix because the prefix store trims it out, and we need it to get the data
-		keyWithPrefix := append(ownersPrefix, key...)
+		keyWithPrefix := append([]byte(nil), ownersPrefix...)
+		keyWithPrefix = append(keyWithPrefix, key...)
 		application, username, user := types.GetApplicationLinkOwnerData(keyWithPrefix)
 
 		owners = append(owners, types.QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails{

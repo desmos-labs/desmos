@@ -8,10 +8,10 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v3/app"
+	"github.com/desmos-labs/desmos/v4/app"
 
-	"github.com/desmos-labs/desmos/v3/x/relationships/simulation"
-	"github.com/desmos-labs/desmos/v3/x/relationships/types"
+	"github.com/desmos-labs/desmos/v4/x/relationships/simulation"
+	"github.com/desmos-labs/desmos/v4/x/relationships/types"
 )
 
 func TestDecodeStore(t *testing.T) {
@@ -55,8 +55,8 @@ func TestDecodeStore(t *testing.T) {
 		name        string
 		expectedLog string
 	}{
-		{"Relationship", fmt.Sprintf("Relationships A: %s\nRelationships B: %s\n", &relationship, &relationship)},
-		{"User block", fmt.Sprintf("User block A: %s\nUser block B: %s\n", &userBlock, &userBlock)},
+		{"Relationship", fmt.Sprintf("RelationshipA: %s\nRelationshipB: %s\n", &relationship, &relationship)},
+		{"User Block", fmt.Sprintf("UserBlockA: %s\nUserBlockB: %s\n", &userBlock, &userBlock)},
 		{"other", ""},
 	}
 

@@ -1,0 +1,34 @@
+syntax = "proto3";
+package desmos.reports.v1;
+
+import "gogoproto/gogo.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+import "cosmos_proto/cosmos.proto";
+
+import "desmos/reports/v1/models.proto";
+
+option go_package = "github.com/desmos-labs/desmos/v4/x/reports/types";
+
+// GenesisState defines the reports module's genesis state.
+message GenesisState {
+  option (gogoproto.goproto_getters) = false;
+
+  repeated SubspaceDataEntry subspaces_data = 1
+      [ (gogoproto.nullable) = false ];
+  repeated Reason reasons = 2 [ (gogoproto.nullable) = false ];
+  repeated Report reports = 3 [ (gogoproto.nullable) = false ];
+  Params params = 4 [ (gogoproto.nullable) = false ];
+}
+
+// SubspaceDataEntry contains the data related to a single subspace
+message SubspaceDataEntry {
+  // Id of the subspace to which the data relates
+  uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
+
+  // Id of the next reason inside the subspace
+  uint32 reason_id = 2 [ (gogoproto.customname) = "ReasonID" ];
+
+  // Id of the next report inside the subspace
+  uint64 report_id = 3 [ (gogoproto.customname) = "ReportID" ];
+}

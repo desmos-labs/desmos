@@ -11,10 +11,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v3/app"
-	"github.com/desmos-labs/desmos/v3/testutil"
-	"github.com/desmos-labs/desmos/v3/x/profiles/client/utils"
-	"github.com/desmos-labs/desmos/v3/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/app"
+	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
+	"github.com/desmos-labs/desmos/v4/x/profiles/client/utils"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 func TestParseLinkAccountJSON(t *testing.T) {
@@ -34,7 +34,7 @@ func TestParseLinkAccountJSON(t *testing.T) {
 
 	jsonData := utils.NewChainLinkJSON(
 		types.NewBech32Address(addStr, "cosmos"),
-		types.NewProof(pubKey, testutil.SingleSignatureProtoFromHex(hex.EncodeToString(sigBz)), plainText),
+		types.NewProof(pubKey, profilestesting.SingleSignatureFromHex(hex.EncodeToString(sigBz)), plainText),
 		types.NewChainConfig("cosmos"),
 	)
 

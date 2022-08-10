@@ -1,0 +1,37 @@
+syntax = "proto3";
+package desmos.profiles.v3;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/any.proto";
+import "desmos/profiles/v3/models_dtag_requests.proto";
+import "cosmos_proto/cosmos.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+
+option go_package = "github.com/desmos-labs/desmos/v4/x/profiles/types";
+
+// QueryIncomingDTagTransferRequestsRequest is the request type for the
+// Query/IncomingDTagTransferRequests RPC endpoint
+message QueryIncomingDTagTransferRequestsRequest {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  // (optional) Receiver represents the address of the user to which query the
+  // incoming requests for
+  string receiver = 1;
+
+  // Pagination defines an optional pagination for the request
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+// QueryIncomingDTagTransferRequestsResponse is the response type for the
+// Query/IncomingDTagTransferRequests RPC method.
+message QueryIncomingDTagTransferRequestsResponse {
+  // Requests represent the list of all the DTag transfer requests made towards
+  // the user
+  repeated desmos.profiles.v3.DTagTransferRequest requests = 1
+      [ (gogoproto.nullable) = false ];
+
+  // Pagination defines the pagination response
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}

@@ -1,0 +1,209 @@
+syntax = "proto3";
+package desmos.reactions.v1;
+
+import "gogoproto/gogo.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+import "cosmos_proto/cosmos.proto";
+
+import "desmos/reactions/v1/models.proto";
+
+option go_package = "github.com/desmos-labs/desmos/v4/x/reactions/types";
+
+// Msg defines the reactions Msg service.
+service Msg {
+  // AddReaction allows to add a post reaction
+  rpc AddReaction(MsgAddReaction) returns (MsgAddReactionResponse);
+
+  // RemoveReaction allows to remove an existing post reaction
+  rpc RemoveReaction(MsgRemoveReaction) returns (MsgRemoveReactionResponse);
+
+  // AddRegisteredReaction allows to registered a new supported reaction
+  rpc AddRegisteredReaction(MsgAddRegisteredReaction)
+      returns (MsgAddRegisteredReactionResponse);
+
+  // EditRegisteredReaction allows to edit a registered reaction
+  rpc EditRegisteredReaction(MsgEditRegisteredReaction)
+      returns (MsgEditRegisteredReactionResponse);
+
+  // RemoveRegisteredReaction allows to remove an existing supported reaction
+  rpc RemoveRegisteredReaction(MsgRemoveRegisteredReaction)
+      returns (MsgRemoveRegisteredReactionResponse);
+
+  // SetReactionsParams allows to set the reactions params
+  rpc SetReactionsParams(MsgSetReactionsParams)
+      returns (MsgSetReactionsParamsResponse);
+}
+
+// MsgAddReaction represents the message to be used to add a post reaction
+message MsgAddReaction {
+  // Id of the subspace inside which the post to react to is
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+
+  // Id of the post to react to
+  uint64 post_id = 2 [
+    (gogoproto.customname) = "PostID",
+    (gogoproto.moretags) = "yaml:\"post_id\""
+  ];
+
+  // Value of the reaction
+  google.protobuf.Any value = 3 [
+    (gogoproto.moretags) = "yaml:\"value\"",
+    (cosmos_proto.accepts_interface) = "ReactionValue"
+  ];
+
+  // User reacting to the post
+  string user = 4 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+}
+
+// MsgAddReactionResponse represents the Msg/AddReaction response type
+message MsgAddReactionResponse {
+  // Id of the newly added reaction
+  uint32 reaction_id = 1 [
+    (gogoproto.customname) = "ReactionID",
+    (gogoproto.moretags) = "yaml:\"reaction_id\""
+  ];
+}
+
+// MsgRemoveReaction represents the message to be used to remove an
+// existing reaction from a post
+message MsgRemoveReaction {
+  // Id of the subspace inside which the reaction to remove is
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+
+  // Id of the post from which to remove the reaction
+  uint64 post_id = 2 [
+    (gogoproto.customname) = "PostID",
+    (gogoproto.moretags) = "yaml:\"post_id\""
+  ];
+
+  // Id of the reaction to be removed
+  uint32 reaction_id = 3 [
+    (gogoproto.customname) = "ReactionID",
+    (gogoproto.moretags) = "yaml:\"reaction_id\""
+  ];
+
+  // User removing the reaction
+  string user = 4 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+}
+
+// MsgRemoveReactionResponse represents the Msg/RemoveReaction response type
+message MsgRemoveReactionResponse {}
+
+// MsgAddRegisteredReaction represents the message to be used to
+// register a new supported reaction
+message MsgAddRegisteredReaction {
+  // Id of the subspace inside which this reaction should be registered
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+
+  // Shorthand code of the reaction
+  string shorthand_code = 2
+      [ (gogoproto.moretags) = "yaml:\"shorthand_code\"" ];
+
+  // Display value of the reaction
+  string display_value = 3 [ (gogoproto.moretags) = "yaml:\"display_value\"" ];
+
+  // User adding the supported reaction
+  string user = 4 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+}
+
+// MsgAddRegisteredReactionResponse represents the
+// Msg/AddRegisteredReaction response type
+message MsgAddRegisteredReactionResponse {
+  // Id of the newly registered reaction
+  uint32 registered_reaction_id = 1 [
+    (gogoproto.customname) = "RegisteredReactionID",
+    (gogoproto.moretags) = "yaml:\"registered_reaction_id\""
+  ];
+}
+
+// MsgEditRegisteredReaction represents the message to be used to edit a
+// registered reaction
+message MsgEditRegisteredReaction {
+  // Id of the subspace inside which the reaction to edit is
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+
+  // Id of the registered reaction to edit
+  uint32 registered_reaction_id = 2 [
+    (gogoproto.customname) = "RegisteredReactionID",
+    (gogoproto.moretags) = "yaml:\"registered_reaction_id\""
+  ];
+
+  // New shorthand code to be set
+  string shorthand_code = 3
+      [ (gogoproto.moretags) = "yaml:\"shorthand_code\"" ];
+
+  // Display value to be set
+  string display_value = 4 [ (gogoproto.moretags) = "yaml:\"display_value\"" ];
+
+  // User editing the registered reaction
+  string user = 5 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+}
+
+// MsgEditRegisteredReactionResponse represents the Msg/EditRegisteredReaction
+// response type
+message MsgEditRegisteredReactionResponse {}
+
+// MsgRemoveRegisteredReaction represents the message to be used to
+// remove an existing registered reaction
+message MsgRemoveRegisteredReaction {
+  // Id of the subspace from which to remove the registered reaction
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+
+  // Id of the registered reaction to be removed
+  uint32 registered_reaction_id = 2 [
+    (gogoproto.customname) = "RegisteredReactionID",
+    (gogoproto.moretags) = "yaml:\"registered_reaction_id\""
+  ];
+
+  // User removing the registered reaction
+  string user = 3 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+}
+
+// MsgRemoveRegisteredReactionResponse represents the
+// Msg/RemoveRegisteredReaction response type
+message MsgRemoveRegisteredReactionResponse {}
+
+// MsgSetReactionsParams represents the message to be used when setting
+// a subspace reactions params
+message MsgSetReactionsParams {
+  // Id of the subspace for which to set the params
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+
+  // Params related to RegisteredReactionValue reactions
+  RegisteredReactionValueParams registered_reaction = 2 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"registered_reaction\""
+  ];
+
+  // Params related to FreeTextValue reactions
+  FreeTextValueParams free_text = 3 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"free_text\""
+  ];
+
+  // User setting the params
+  string user = 4 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+}
+
+// MsgSetReactionsParamsResponse represents the Msg/SetReactionsParams response
+// type
+message MsgSetReactionsParamsResponse {}

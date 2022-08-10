@@ -3,6 +3,7 @@ package types
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
@@ -11,17 +12,19 @@ import (
 
 const (
 	// DefaultParamsSpace represents the default paramspace for the Params keeper
-	DefaultParamsSpace = ModuleName
+	DefaultParamsSpace           = ModuleName
+	FourteenDaysCorrectionFactor = time.Hour * 24 * 14 // This value is the equivalent of 14 days in minutes
 )
 
 // Default profile paramsModule
 var (
-	DefaultMinNicknameLength = sdk.NewInt(2)
-	DefaultMaxNicknameLength = sdk.NewInt(1000) // Longest name on earth count 954 chars
-	DefaultRegEx             = `^[A-Za-z0-9_]+$`
-	DefaultMinDTagLength     = sdk.NewInt(3)
-	DefaultMaxDTagLength     = sdk.NewInt(30)
-	DefaultMaxBioLength      = sdk.NewInt(1000)
+	DefaultMinNicknameLength        = sdk.NewInt(2)
+	DefaultMaxNicknameLength        = sdk.NewInt(1000) // Longest name on earth count 954 chars
+	DefaultRegEx                    = `^[A-Za-z0-9_]+$`
+	DefaultMinDTagLength            = sdk.NewInt(3)
+	DefaultMaxDTagLength            = sdk.NewInt(30)
+	DefaultMaxBioLength             = sdk.NewInt(1000)
+	DefaultAppLinksValidityDuration = time.Hour * 24 * 365 // 1 year
 )
 
 // Parameters store keys
@@ -30,6 +33,7 @@ var (
 	DTagParamsKey     = []byte("DTagParams")
 	BioParamsKey      = []byte("MaxBioLen")
 	OracleParamsKey   = []byte("OracleParams")
+	AppLinksParamsKey = []byte("AppLinksParams")
 )
 
 // ___________________________________________________________________________________________________________________
@@ -41,12 +45,13 @@ func ParamKeyTable() paramstypes.KeyTable {
 }
 
 // NewParams creates a new ProfileParams obj
-func NewParams(nickname NicknameParams, dTag DTagParams, bio BioParams, oracle OracleParams) Params {
+func NewParams(nickname NicknameParams, dTag DTagParams, bio BioParams, oracle OracleParams, appLinks AppLinksParams) Params {
 	return Params{
 		Nickname: nickname,
 		DTag:     dTag,
 		Bio:      bio,
 		Oracle:   oracle,
+		AppLinks: appLinks,
 	}
 }
 
@@ -57,6 +62,7 @@ func DefaultParams() Params {
 		DTag:     DefaultDTagParams(),
 		Bio:      DefaultBioParams(),
 		Oracle:   DefaultOracleParams(),
+		AppLinks: DefaultAppLinksParams(),
 	}
 }
 
@@ -68,6 +74,7 @@ func (params *Params) ParamSetPairs() paramstypes.ParamSetPairs {
 		paramstypes.NewParamSetPair(DTagParamsKey, &params.DTag, ValidateDTagParams),
 		paramstypes.NewParamSetPair(BioParamsKey, &params.Bio, ValidateBioParams),
 		paramstypes.NewParamSetPair(OracleParamsKey, &params.Oracle, ValidateOracleParams),
+		paramstypes.NewParamSetPair(AppLinksParamsKey, &params.AppLinks, ValidateAppLinksParams),
 	}
 }
 
@@ -85,7 +92,11 @@ func (params Params) Validate() error {
 		return err
 	}
 
-	return ValidateOracleParams(params.Oracle)
+	if err := ValidateOracleParams(params.Oracle); err != nil {
+		return err
+	}
+
+	return ValidateAppLinksParams(params.AppLinks)
 }
 
 // ___________________________________________________________________________________________________________________
@@ -253,6 +264,31 @@ func ValidateOracleParams(i interface{}) error {
 	err := params.FeeAmount.Validate()
 	if err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// ___________________________________________________________________________________________________________________
+
+func NewAppLinksParams(validityDuration time.Duration) AppLinksParams {
+	return AppLinksParams{
+		ValidityDuration: validityDuration,
+	}
+}
+
+func DefaultAppLinksParams() AppLinksParams {
+	return NewAppLinksParams(DefaultAppLinksValidityDuration)
+}
+
+func ValidateAppLinksParams(i interface{}) error {
+	params, isAppLinksParams := i.(AppLinksParams)
+	if !isAppLinksParams {
+		return fmt.Errorf("invalid parameters type: %s", i)
+	}
+
+	if params.ValidityDuration < FourteenDaysCorrectionFactor {
+		return fmt.Errorf("validity duration must be not less than 14 days: %s", params.ValidityDuration)
 	}
 
 	return nil

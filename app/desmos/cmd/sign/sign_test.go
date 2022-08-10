@@ -1,3 +1,6 @@
+//go:build norace
+// +build norace
+
 package sign_test
 
 import (
@@ -6,7 +9,7 @@ import (
 	"os"
 	"testing"
 
-	cmd "github.com/desmos-labs/desmos/v3/app/desmos/cmd/sign"
+	cmd "github.com/desmos-labs/desmos/v4/app/desmos/cmd/sign"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -16,7 +19,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v3/app"
+	"github.com/desmos-labs/desmos/v4/app"
 )
 
 func TestGetSignCmd(t *testing.T) {

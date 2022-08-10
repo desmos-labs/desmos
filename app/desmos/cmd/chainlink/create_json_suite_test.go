@@ -1,3 +1,6 @@
+//go:build norace
+// +build norace
+
 package chainlink_test
 
 import (
@@ -5,7 +8,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/desmos-labs/desmos/v3/app/desmos/cmd/chainlink/types"
+	"github.com/desmos-labs/desmos/v4/app/desmos/cmd/chainlink/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -14,7 +17,7 @@ import (
 	authclient "github.com/cosmos/cosmos-sdk/x/auth/client"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/desmos-labs/desmos/v3/app"
+	"github.com/desmos-labs/desmos/v4/app"
 )
 
 func TestCreateJSONChainLinkSuite(t *testing.T) {

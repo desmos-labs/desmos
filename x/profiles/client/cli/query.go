@@ -4,7 +4,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/spf13/cobra"
 
-	"github.com/desmos-labs/desmos/v3/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 // DONTCOVER
@@ -24,7 +24,10 @@ func GetQueryCmd() *cobra.Command {
 		GetCmdQueryDTagRequests(),
 		GetCmdQueryParams(),
 		GetCmdQueryChainLinks(),
+		GetCmdQueryChainLinkOwners(),
+		GetCmdQueryDefaultExternalAddresses(),
 		GetCmdQueryApplicationsLinks(),
+		GetCmdQueryApplicationLinkOwners(),
 	)
 	return profileQueryCmd
 }

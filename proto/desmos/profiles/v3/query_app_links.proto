@@ -1,0 +1,86 @@
+syntax = "proto3";
+package desmos.profiles.v3;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/any.proto";
+import "desmos/profiles/v3/models_app_links.proto";
+import "cosmos_proto/cosmos.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+
+option go_package = "github.com/desmos-labs/desmos/v4/x/profiles/types";
+
+// QueryUserApplicationLinkRequest represents the request used when querying an
+// application link using an application name and username for a given user
+message QueryApplicationLinksRequest {
+  // (Optional) User contains the Desmos profile address associated for which
+  // the link should be searched for
+  string user = 1;
+
+  // (Optional) Application represents the application name associated with the
+  // link. Used only if user is also set.
+  string application = 2;
+
+  // Username represents the username inside the application associated with the
+  // link. Used only if application is also set.
+  string username = 3;
+
+  // Pagination defines an optional pagination for the request
+  cosmos.base.query.v1beta1.PageRequest pagination = 4;
+}
+
+// QueryApplicationLinksResponse represents the response to the query used
+// to get the application links for a specific user
+message QueryApplicationLinksResponse {
+  repeated ApplicationLink links = 1 [ (gogoproto.nullable) = false ];
+
+  // Pagination defines the pagination response
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QueryApplicationLinkByClientIDRequest contains the data of the request that
+// can be used to get an application link based on a client id
+message QueryApplicationLinkByClientIDRequest {
+  // ClientID represents the ID of the client to which search the link for
+  string client_id = 1;
+}
+
+// QueryApplicationLinkByClientIDResponse contains the data returned by the
+// request allowing to get an application link using a client id
+message QueryApplicationLinkByClientIDResponse {
+  ApplicationLink link = 1 [ (gogoproto.nullable) = false ];
+}
+
+// QueryApplicationLinkOwnersRequest contains the data of the request that can
+// be used to get application link owners
+message QueryApplicationLinkOwnersRequest {
+  // (Optional) Application name to search link owners of. If not specified, all
+  // links stored will be searched instead.
+  string application = 1;
+
+  // (Optional) Username to search for. This will only be used if the
+  // application is specified as well
+  string username = 2;
+
+  // Pagination defines an optional pagination for the request
+  cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+// QueryApplicationLinkOwnersResponse contains the data returned by the request
+// allowing to get application link owners.
+message QueryApplicationLinkOwnersResponse {
+  // ApplicationLinkOwnerDetails contains the details of a single application
+  // link owner
+  message ApplicationLinkOwnerDetails {
+    string user = 1;
+    string application = 2;
+    string username = 3;
+  }
+
+  // Addresses of the application links owners
+  repeated ApplicationLinkOwnerDetails owners = 1
+      [ (gogoproto.nullable) = false ];
+
+  // Pagination defines the pagination response
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
