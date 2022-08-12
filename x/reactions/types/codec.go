@@ -14,12 +14,12 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&RegisteredReactionValue{}, "desmos/RegisteredReactionValue", nil)
 	cdc.RegisterConcrete(&FreeTextValue{}, "desmos/FreeTextValue", nil)
 
-	cdc.RegisterConcrete(MsgAddReaction{}, "desmos/MsgAddReaction", nil)
-	cdc.RegisterConcrete(MsgRemoveReaction{}, "desmos/MsgRemoveReaction", nil)
-	cdc.RegisterConcrete(MsgAddRegisteredReaction{}, "desmos/MsgAddRegisteredReaction", nil)
-	cdc.RegisterConcrete(MsgEditRegisteredReaction{}, "desmos/MsgEditRegisteredReaction", nil)
-	cdc.RegisterConcrete(MsgRemoveRegisteredReaction{}, "desmos/MsgRemoveRegisteredReaction", nil)
-	cdc.RegisterConcrete(MsgSetReactionsParams{}, "desmos/MsgSetReactionsParams", nil)
+	cdc.RegisterConcrete(&MsgAddReaction{}, "desmos/MsgAddReaction", nil)
+	cdc.RegisterConcrete(&MsgRemoveReaction{}, "desmos/MsgRemoveReaction", nil)
+	cdc.RegisterConcrete(&MsgAddRegisteredReaction{}, "desmos/MsgAddRegisteredReaction", nil)
+	cdc.RegisterConcrete(&MsgEditRegisteredReaction{}, "desmos/MsgEditRegisteredReaction", nil)
+	cdc.RegisterConcrete(&MsgRemoveRegisteredReaction{}, "desmos/MsgRemoveRegisteredReaction", nil)
+	cdc.RegisterConcrete(&MsgSetReactionsParams{}, "desmos/MsgSetReactionsParams", nil)
 }
 
 func RegisterInterfaces(registry types.InterfaceRegistry) {
