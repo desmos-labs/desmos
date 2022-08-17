@@ -1,6 +1,6 @@
 # Chain link
 
-## Upgradation guide of test cases
+## Updated guide of test cases
 
 ### Multisignature chain link account
 
