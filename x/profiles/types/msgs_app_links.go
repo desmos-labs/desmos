@@ -11,7 +11,7 @@ import (
 )
 
 // NewMsgLinkApplication creates a new MsgLinkApplication instance
-// nolint:interfacer
+//nolint:interfacer
 func NewMsgLinkApplication(
 	linkData Data, callData string, sender string,
 	sourcePort, sourceChannel string, timeoutHeight clienttypes.Height, timeoutTimestamp uint64,
@@ -84,7 +84,7 @@ func (msg MsgLinkApplication) GetSigners() []sdk.AccAddress {
 // -------------------------------------------------------------------------------------------------------------------
 
 // NewMsgUnlinkApplication creates a new MsgUnlinkApplication instance
-// nolint:interfacer
+//nolint:interfacer
 func NewMsgUnlinkApplication(application, username string, signer string) *MsgUnlinkApplication {
 	return &MsgUnlinkApplication{
 		Application: application,
