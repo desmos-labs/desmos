@@ -10,6 +10,9 @@ var (
 	// PermissionWrite identifies users that can create content inside the subspace
 	PermissionWrite = subspacestypes.RegisterPermission("write content")
 
+	// PermissionComment identifies users that can comment posts inside the subspace
+	PermissionComment = subspacestypes.RegisterPermission("comment content")
+
 	// PermissionInteractWithContent allows users to interact with content inside the subspace (eg. polls)
 	PermissionInteractWithContent = subspacestypes.RegisterPermission("interact with content")
 
