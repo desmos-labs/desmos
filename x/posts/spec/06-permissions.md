@@ -12,7 +12,8 @@ of the following permissions.
 
 | **Permission Value**    | **Permission Description**                    | 
 |:------------------------|:----------------------------------------------|
-| `WRITE_CONTENT`         | Allows to create contents                     |
+| `WRITE_CONTENT`         | Allows to create any kind of contents         |
+| `COMMENT_CONTENT`       | Allows only to comment existing contents      |
 | `INTERACT_WITH_CONTENT` | Allows to interact with contents (e.g. polls) |
 | `EDIT_OWN_CONTENT`      | Allows to edit the owned contents             |
 | `MODERATE_CONTENT`      | Allows to moderate users' contents            |
