@@ -44,9 +44,11 @@ func (k msgServer) CreatePost(goCtx context.Context, msg *types.MsgCreatePost) (
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace section with id %d not found", msg.SectionID)
 	}
 
-	// Check the permission to create content
-	if !k.HasPermission(ctx, msg.SubspaceID, msg.SectionID, msg.Author, types.PermissionWrite) {
-		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot create content inside this subspace")
+	// Check the permission to create this post
+	canWrite := k.HasPermission(ctx, msg.SubspaceID, msg.SectionID, msg.Author, types.PermissionWrite)
+	canComment := msg.ConversationID != 0 && k.HasPermission(ctx, msg.SubspaceID, msg.SectionID, msg.Author, types.PermissionComment)
+	if !canWrite && !canComment {
+		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot create posts nor comment inside this section")
 	}
 
 	// Get the next post id

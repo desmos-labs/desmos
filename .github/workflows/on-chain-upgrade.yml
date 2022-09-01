@@ -24,7 +24,7 @@ jobs:
     env:
       GENESIS_DESMOS_VERSION: "v4.1.0"
       GENESIS_URL: "https://raw.githubusercontent.com/RiccardoM/desmos-states/master/morpheus-apollo-2-6608740.json"
-      UPGRADE_NAME: "v4.2.0"
+      UPGRADE_NAME: "v4.3.0"
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v3
@@ -32,7 +32,7 @@ jobs:
       - name: Setup Go 🧰
         uses: actions/setup-go@v3
         with:
-          go-version: 1.17
+          go-version: 1.18
 
       - name: Install Desmos 🔧
         run: make clean install

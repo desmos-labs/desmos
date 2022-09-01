@@ -9,7 +9,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-// nolint:interfacer
+//nolint:interfacer
 func NewMsgLinkChainAccount(
 	chainAddress AddressData,
 	proof Proof,

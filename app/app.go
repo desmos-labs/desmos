@@ -21,6 +21,7 @@ import (
 	v400 "github.com/desmos-labs/desmos/v4/app/upgrades/v400"
 	v410 "github.com/desmos-labs/desmos/v4/app/upgrades/v410"
 	v420 "github.com/desmos-labs/desmos/v4/app/upgrades/v420"
+	v430 "github.com/desmos-labs/desmos/v4/app/upgrades/v430"
 
 	profilesv4 "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v4"
 
@@ -678,7 +679,7 @@ func NewDesmosApp(
 
 		// Custom modules
 		fees.NewAppModule(app.appCodec, app.FeesKeeper),
-		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
+		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AuthzKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		profilesModule,
 		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv4.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		posts.NewAppModule(appCodec, app.PostsKeeper, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
@@ -862,7 +863,7 @@ func NewDesmosApp(
 		// Custom modules
 		fees.NewAppModule(appCodec, app.FeesKeeper),
 		supply.NewAppModule(appCodec, legacyAmino, app.SupplyKeeper),
-		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
+		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AuthzKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		profilesModule,
 		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv4.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		posts.NewAppModule(appCodec, app.PostsKeeper, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
@@ -1067,6 +1068,7 @@ func (app *DesmosApp) registerUpgradeHandlers() {
 	app.registerUpgrade(v400.NewUpgrade(app.mm, app.configurator))
 	app.registerUpgrade(v410.NewUpgrade(app.mm, app.configurator))
 	app.registerUpgrade(v420.NewUpgrade(app.mm, app.configurator))
+	app.registerUpgrade(v430.NewUpgrade(app.mm, app.configurator))
 }
 
 // registerUpgrade registers the given upgrade to be supported by the app

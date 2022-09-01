@@ -6,6 +6,10 @@ import (
 	"fmt"
 	"math/rand"
 
+	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
+
+	v2 "github.com/desmos-labs/desmos/v4/x/subspaces/legacy/v2"
+
 	"github.com/desmos-labs/desmos/v4/x/subspaces/authz"
 
 	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
@@ -32,7 +36,7 @@ import (
 )
 
 const (
-	consensusVersion = 3
+	consensusVersion = 4
 )
 
 // type check to ensure the interface is properly implemented
@@ -91,8 +95,9 @@ func (AppModuleBasic) GetQueryCmd() *cobra.Command {
 
 // RegisterInterfaces registers interfaces and implementations of the subspaces module.
 func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) {
-	authz.RegisterInterfaces(registry)
+	v2.RegisterInterfaces(registry)
 	types.RegisterInterfaces(registry)
+	authz.RegisterInterfaces(registry)
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -101,6 +106,7 @@ func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) 
 type AppModule struct {
 	AppModuleBasic
 	keeper keeper.Keeper
+	authzk authzkeeper.Keeper
 	ak     authkeeper.AccountKeeper
 	bk     bankkeeper.Keeper
 	fk     feeskeeper.Keeper
@@ -111,7 +117,7 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
 	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
 
-	m := keeper.NewMigrator(am.keeper)
+	m := keeper.NewMigrator(am.keeper, am.authzk)
 	err := cfg.RegisterMigration(types.ModuleName, 1, m.Migrate1to2)
 	if err != nil {
 		panic(err)
@@ -120,15 +126,21 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 	if err != nil {
 		panic(err)
 	}
+	err = cfg.RegisterMigration(types.ModuleName, 3, m.Migrate3to4)
+	if err != nil {
+		panic(err)
+	}
 }
 
 // NewAppModule creates a new AppModule Object
 func NewAppModule(
-	cdc codec.Codec, keeper keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	cdc codec.Codec, keeper keeper.Keeper, authzKeeper authzkeeper.Keeper,
+	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
 ) AppModule {
 	return AppModule{
 		AppModuleBasic: AppModuleBasic{cdc: cdc},
 		keeper:         keeper,
+		authzk:         authzKeeper,
 		ak:             ak,
 		bk:             bk,
 		fk:             fk,

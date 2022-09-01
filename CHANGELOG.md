@@ -2,6 +2,17 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
+## Version 4.3.0
+### Bug Fixes
+#### Profiles
+- ([\#980](https://github.com/desmos-labs/desmos/pull/980)) Added missing params migration
+
+#### Subspaces
+- ([\#981](https://github.com/desmos-labs/desmos/pull/981)) Added missing subspaces authorizations migration
+
+#### Posts
+- ([\#978](https://github.com/desmos-labs/desmos/pull/978)) Fixed the REST endpoints version
+
 ## Version 4.2.0
 ### Features
 #### Profiles
