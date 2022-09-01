@@ -85,7 +85,7 @@ message Bech32Encoding {
 message Base58Encoding {
   option (cosmos_proto.implements_interface) = "AddressEncoding";
 
-  // Prefix to be used
+  // (optional) Prefix to be used
   string prefix = 1;
 }
 
