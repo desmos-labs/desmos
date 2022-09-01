@@ -159,3 +159,4 @@ Since this update will affect all the instances of `AddressData` by completely c
 - [Solana address](https://docs.solana.com/terminology#account)
 - [Elrond address](https://docs.elrond.com/technology/glossary/)
 - [Polkadot address](https://wiki.polkadot.network/docs/learn-accounts#address-format)
+- Issue [#724](https://github.com/desmos-labs/desmos/issues/724).
