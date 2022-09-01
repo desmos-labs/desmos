@@ -51,4 +51,5 @@ jobs:
           key: ${{ runner.os }}-bench-${{ (github.event.pull_request.base.sha != github.event.after) && github.event.pull_request.base.sha || github.event.after }}
 
       - name: Run benchmarks 🧮
+        if: env.GIT_DIFF
         run: REF_NAME=${GITHUB_REF##*/} make benchmark
