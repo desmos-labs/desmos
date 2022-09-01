@@ -1,6 +1,0 @@
-type: feat
-module: x/posts
-pull_request: 998
-description: Allow to set the permission to only comment content
-backward_compatible: true
-date: 2022-08-31T14:45:52.132548182Z

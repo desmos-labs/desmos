@@ -1,6 +1,0 @@
-type: deps
-module: none
-pull_request: 988
-description: Updated wasmd to `v0.28.0`
-backward_compatible: true
-date: 2022-08-05T08:33:05.978844466Z
