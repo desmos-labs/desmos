@@ -277,7 +277,7 @@ test-cover:
 
 benchmark:
 	@go test -mod=readonly -bench=. -count=$(BENCH_COUNT) -run=^a  ./... >bench-$(REF_NAME).txt
-	@test -s $(GOPATH)/bin/benchstat || GO111MODULE=off GOFLAGS= GOBIN=$(GOPATH)/bin go install golang.org/x/perf/cmd/benchstat
+	@test -s $(GOPATH)/bin/benchstat || GO111MODULE=off GOFLAGS= GOBIN=$(GOPATH)/bin go install -u golang.org/x/perf/cmd/benchstat
 	@test -e bench-master.txt && benchstat bench-master.txt bench-$(REF_NAME).txt || benchstat bench-$(REF_NAME).txt
 .PHONY: benchmark
 
