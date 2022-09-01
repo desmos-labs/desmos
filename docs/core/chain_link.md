@@ -1,10 +1,10 @@
 # Chain link
 
-## Upgradation guide of test cases
+## Updated guide of test cases
 
 ### Multisignature chain link account
 
-After the proto version of `x/profiles` upgrades, the test case of multi signature chain link account test case must be updated to the specified version as well since the type uri of it will be `/desmos.profiles.{new-proto-version}.CosmosMultiSignature`. The process of upgrading is as follows:
+After the upgrade of the proto version of `x/profiles`, the test case of multi signature chain link account test case must be updated to the specified version as well since the type uri of it will be `/desmos.profiles.{new-proto-version}.CosmosMultiSignature`. The process of upgrading is as follows:
 
 #### 1. Create a tx.json with the content as follows:
 
