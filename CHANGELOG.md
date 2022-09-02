@@ -12,8 +12,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - ([\#986](https://github.com/desmos-labs/desmos/pull/986)) Added missing WASM support for default external address messages
 
 ### Dependencies
-- ([\#988](https://github.com/desmos-labs/desmos/pull/988)) Updated Cosmos SDK to `v0.45.7`
 - ([\#988](https://github.com/desmos-labs/desmos/pull/988)) Updated wasmd to `v0.28.0`
+- ([\#1000](https://github.com/desmos-labs/desmos/pull/1000)) Updated Cosmos SDK to `v0.45.8`
 
 ## Version 4.3.0
 ### Bug Fixes
