@@ -24,7 +24,7 @@ jobs:
     env:
       GENESIS_DESMOS_VERSION: "v4.3.0"
       GENESIS_URL: "https://raw.githubusercontent.com/RiccardoM/desmos-states/master/morpheus-apollo-2-7199960.json"
-      UPGRADE_NAME: "v4.4.0"
+      UPGRADE_NAME: "v4.4.1"
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v3
