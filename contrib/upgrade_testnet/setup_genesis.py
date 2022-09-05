@@ -1,8 +1,9 @@
 import json
 import os
-import requests
-import sys
 import re
+import sys
+
+import requests
 
 args = sys.argv[1:]
 
@@ -14,30 +15,29 @@ genesis_url = args[2]
 chain_state_file = f"{build_dir}/state.json"
 output_file = f"{build_dir}/output_state.json"
 
-request_pattern = r"""version https://git-lfs.github.com/spec/v1
+# Get git LFS info
+with requests.get(genesis_url) as r:
+    request_match = re.match(r"""version https://git-lfs.github.com/spec/v1
 oid sha256:(?P<hash>.*?)
 size (?P<size>.*?)
-"""
-genesis_file_hash=""
-genesis_file_size=0
-# Get git lfs info
-with requests.get(genesis_url) as r:
-    request_match = re.match(request_pattern, r.text)
+""", r.text)
     genesis_file_hash = request_match.group('hash')
     genesis_file_size = int(request_match.group('size'))
 
-repo_pattern = r"https://raw.githubusercontent.com/(?P<organization>.*?)/(?P<name>.*?)/master/morpheus-apollo-2-7199960.json"
-repo_match =  re.match(repo_pattern, genesis_url)
-repo_organization = repo_match.group('organization')
-repo_name = repo_match.group('name')
-chain_state_lfs_url = "https://github.com/{}/{}.git/info/lfs/objects/batch".format(repo_organization, repo_name)
-chain_state_lfs_data = {"operation": "download", "transfer": ["basic"], "objects": [{"oid": genesis_file_hash, "size": genesis_file_size}]}
+repo_match = re.match(r"https://raw.githubusercontent.com/(?P<organization>.*?)/(?P<name>.*?)/.*.json", genesis_url)
+repo_organization, repo_name = repo_match.group('organization'), repo_match.group('name')
+chain_state_lfs_url = f"https://github.com/{repo_organization}/{repo_name}.git/info/lfs/objects/batch"
+chain_state_lfs_data = {
+    'operation': 'download',
+    'transfer': ['basic'],
+    'objects': [{'oid': genesis_file_hash, 'size': genesis_file_size}]
+}
 chain_state_lfs_headers = {'content-type': 'application/json', 'accept': 'application/vnd.git-lfs+json'}
-chain_state_url=""
-# Get chain state url from lfs api
+
+# Get chain state url from LFS api
 with requests.post(chain_state_lfs_url, headers=chain_state_lfs_headers, data=json.dumps(chain_state_lfs_data)) as r:
     res = r.json()
-    chain_state_url= res['objects'][0]['actions']['download']['href']
+    chain_state_url = res['objects'][0]['actions']['download']['href']
 
 # Get the chain state inside the build dir
 with requests.get(chain_state_url) as r, open(chain_state_file, 'w') as f:
@@ -79,7 +79,8 @@ with open(chain_state_file, 'r') as chain_state_f, open(genesis_file, 'r') as ge
     genesis['app_state']['ibc'] = chain_state['app_state']['ibc']
     genesis['app_state']['profiles'] = chain_state['app_state']['profiles']
 
-    custom_modules = ['profiles', 'relationships', 'subspaces', 'posts', 'reports', 'reactions', 'fees', 'supply', 'wasm']
+    custom_modules = ['profiles', 'relationships', 'subspaces', 'posts', 'reports', 'reactions', 'fees', 'supply',
+                      'wasm']
     for module in custom_modules:
         if module in chain_state['app_state']:
             genesis['app_state'][module] = chain_state['app_state'][module]
