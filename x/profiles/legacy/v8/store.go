@@ -32,8 +32,10 @@ func MigrateStore(ctx sdk.Context, storeKey sdk.StoreKey, cdc codec.BinaryCodec,
 	return nil
 }
 
-// migrateChainLinks migrates the chain links from v5 to v7 by changing the various Protobuf interface types.
-// The migration from v5 to v6 is skipped because the two types are identical (from v5 to v6 no changes were made).
+// migrateChainLinks migrates the chain links from v8 to v9 by updating their signature value type accordingly.
+// During the migration from v6 to v7 there was an error which ended up setting all chain link value types to
+// SIGNATURE_VALUE_TYPE_COSMOS_DIRECT. This script fixes that by setting the proper value type based on the plain
+// text encode that has been used when creating the signature.
 func migrateChainLinks(store sdk.KVStore, cdc codec.BinaryCodec, amino *codec.LegacyAmino) error {
 	chainLinksStore := prefix.NewStore(store, types.ChainLinksPrefix)
 	iterator := chainLinksStore.Iterator(nil, nil)
