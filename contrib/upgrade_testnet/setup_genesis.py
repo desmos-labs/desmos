@@ -2,6 +2,7 @@ import json
 import os
 import requests
 import sys
+import re
 
 args = sys.argv[1:]
 
@@ -9,9 +10,34 @@ args = sys.argv[1:]
 build_dir = args[0]
 genesis_file = f"{build_dir}/node0/desmos/config/genesis.json"
 
-chain_state_url = args[2]
+genesis_url = args[2]
 chain_state_file = f"{build_dir}/state.json"
 output_file = f"{build_dir}/output_state.json"
+
+request_pattern = r"""version https://git-lfs.github.com/spec/v1
+oid sha256:(?P<hash>.*?)
+size (?P<size>.*?)
+"""
+genesis_file_hash=""
+genesis_file_size=0
+# Get git lfs info
+with requests.get(genesis_url) as r:
+    request_match = re.match(request_pattern, r.text)
+    genesis_file_hash = request_match.group('hash')
+    genesis_file_size = int(request_match.group('size'))
+
+repo_pattern = r"https://raw.githubusercontent.com/(?P<organization>.*?)/(?P<name>.*?)/master/morpheus-apollo-2-7199960.json"
+repo_match =  re.match(repo_pattern, genesis_url)
+repo_organization = repo_match.group('organization')
+repo_name = repo_match.group('name')
+chain_state_lfs_url = "https://github.com/{}/{}.git/info/lfs/objects/batch".format(repo_organization, repo_name)
+chain_state_lfs_data = {"operation": "download", "transfer": ["basic"], "objects": [{"oid": genesis_file_hash, "size": genesis_file_size}]}
+chain_state_lfs_headers = {'content-type': 'application/json', 'accept': 'application/vnd.git-lfs+json'}
+chain_state_url=""
+# Get chain state url from lfs api
+with requests.post(chain_state_lfs_url, headers=chain_state_lfs_headers, data=json.dumps(chain_state_lfs_data)) as r:
+    res = r.json()
+    chain_state_url= res['objects'][0]['actions']['download']['href']
 
 # Get the chain state inside the build dir
 with requests.get(chain_state_url) as r, open(chain_state_file, 'w') as f:
