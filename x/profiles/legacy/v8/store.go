@@ -50,7 +50,10 @@ func migrateChainLinks(store sdk.KVStore, cdc codec.BinaryCodec, amino *codec.Le
 		chainLinks = append(chainLinks, chainLink)
 	}
 
-	for i, chainLink := range chainLinks {
+	for _, chainLink := range chainLinks {
+		// Avoid implicit memory aliasing
+		chainLink := chainLink
+
 		var signature types.Signature
 		err := cdc.UnpackAny(chainLink.Proof.Signature, &signature)
 		if err != nil {
@@ -78,7 +81,7 @@ func migrateChainLinks(store sdk.KVStore, cdc codec.BinaryCodec, amino *codec.Le
 		// Set the link inside the store to update it
 		store.Set(
 			types.ChainLinksStoreKey(chainLink.User, chainLink.ChainConfig.Name, chainLink.GetAddressData().GetValue()),
-			cdc.MustMarshal(&chainLinks[i]),
+			cdc.MustMarshal(&chainLink),
 		)
 	}
 
