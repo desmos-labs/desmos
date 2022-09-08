@@ -63,7 +63,7 @@ func TestMigrateStore(t *testing.T) {
 		check     func(ctx sdk.Context)
 	}{
 		{
-			name: "chain links are migrated properly - COSMOS_AMINO plain text",
+			name: "chain links are migrated properly - SIGNATURE_VALUE_TYPE_COSMOS_AMINO",
 			store: func(ctx sdk.Context) {
 				kvStore := ctx.KVStore(keys[types.StoreKey])
 
@@ -113,7 +113,7 @@ func TestMigrateStore(t *testing.T) {
 			},
 		},
 		{
-			name: "chain links are migrated properly - COSMOS_DIRECT plain text",
+			name: "chain links are migrated properly - SIGNATURE_VALUE_TYPE_COSMOS_DIRECT",
 			store: func(ctx sdk.Context) {
 				kvStore := ctx.KVStore(keys[types.StoreKey])
 
@@ -160,6 +160,56 @@ func TestMigrateStore(t *testing.T) {
 				valueType, err := signature.GetValueType()
 				require.NoError(t, err)
 				require.Equal(t, types.SIGNATURE_VALUE_TYPE_COSMOS_DIRECT, valueType)
+			},
+		},
+		{
+			name: "chain links are migrated properly - SIGNATURE_VALUE_TYPE_RAW",
+			store: func(ctx sdk.Context) {
+				kvStore := ctx.KVStore(keys[types.StoreKey])
+
+				signature, err := hex.DecodeString("1234")
+				require.NoError(t, err)
+
+				chainLink := types.NewChainLink(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					types.NewBech32Address("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs", "cosmos"),
+					types.NewProof(
+						pubKey,
+						&types.SingleSignature{
+							ValueType: types.SIGNATURE_VALUE_TYPE_COSMOS_DIRECT,
+							Signature: signature,
+						},
+						"0aba010a88010a1c2f636f736d6f732e62616e6b2e7631626574",
+					),
+					types.NewChainConfig("cosmos"),
+					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+				)
+				kvStore.Set(
+					types.ChainLinksStoreKey(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"cosmos",
+						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
+					),
+					cdc.MustMarshal(&chainLink),
+				)
+			},
+			shouldErr: false,
+			check: func(ctx sdk.Context) {
+				kvStore := ctx.KVStore(keys[types.StoreKey])
+
+				// Make sure the signature type has been updated correctly
+				var stored types.ChainLink
+				cdc.MustUnmarshal(kvStore.Get(types.ChainLinksStoreKey(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos",
+					"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
+				)), &stored)
+				signature, err := stored.Proof.GetSignature()
+				require.NoError(t, err)
+
+				valueType, err := signature.GetValueType()
+				require.NoError(t, err)
+				require.Equal(t, types.SIGNATURE_VALUE_TYPE_RAW, valueType)
 			},
 		},
 		{
