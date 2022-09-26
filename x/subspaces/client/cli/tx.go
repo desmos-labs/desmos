@@ -627,7 +627,8 @@ func GetCmdSetUserGroupPermissions() *cobra.Command {
 It is mandatory to specify at least one permission to be set.
 When specifying multiple permissions, they must be separated by a comma (,).`,
 		Example: fmt.Sprintf(`
-%s tx subspaces groups set-permissions 1 1 "WRITE,MODERATE_CONTENT,SET_USER_PERMISSIONS" \
+%s tx subspaces groups set-permissions 1 1 "WRITE_CONTENT,INTERACT_WITH_CONTENT,EDIT_OWN_CONTENT,MODERATE_CONTENT,
+EDIT_SUBSPACE,DELETE_SUBSPACE,MANAGE_SECTIONS,MANAGE_GROUPS,SET_PERMISSIONS,EVERYTHING" \
   --from alice
 `, version.AppName),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -802,7 +803,8 @@ When specifying multiple permissions, they must be separated by a comma (,).`,
 		Example: fmt.Sprintf(`
 %s tx subspaces set-user-permissions 1 \
   desmos1463vltcqk6ql6zpk0g6s595jjcrzk4804hyqw7 \
-  "WRITE,MODERATE_CONTENT,SET_USER_PERMISSIONS" \
+  "WRITE_CONTENT,INTERACT_WITH_CONTENT,EDIT_OWN_CONTENT,MODERATE_CONTENT,
+EDIT_SUBSPACE,DELETE_SUBSPACE,MANAGE_SECTIONS,MANAGE_GROUPS,SET_PERMISSIONS,EVERYTHING" \
   --from alice
 `, version.AppName),
 		RunE: func(cmd *cobra.Command, args []string) error {
