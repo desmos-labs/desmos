@@ -1,5 +1,5 @@
 // Package types
-// nolint: interfacer
+//nolint:interfacer
 package types
 
 import (

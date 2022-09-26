@@ -11,9 +11,6 @@ import "ibc/core/client/v1/client.proto";
 // MsgLinkApplication defines a msg to connect a profile with a
 // centralized application account (eg. Twitter, GitHub, etc).
 message MsgLinkApplication {
-  option (gogoproto.equal) = false;
-  option (gogoproto.goproto_getters) = false;
-
   // The sender of the connection request
   string sender = 1 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
 
@@ -56,9 +53,6 @@ message MsgLinkApplicationResponse {}
 // MsgUnlinkApplication defines a msg to delete an application link from a user
 // profile
 message MsgUnlinkApplication {
-  option (gogoproto.equal) = false;
-  option (gogoproto.goproto_getters) = false;
-
   // Application represents the name of the application to unlink
   string application = 1 [ (gogoproto.moretags) = "yaml:\"application\"" ];
 

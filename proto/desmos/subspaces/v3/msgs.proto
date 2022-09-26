@@ -64,18 +64,26 @@ service Msg {
 
 // MsgCreateSubspace represents the message used to create a subspace
 message MsgCreateSubspace {
-  option (gogoproto.equal) = false;
-  option (gogoproto.goproto_getters) = false;
-
+  // Name of the subspace
   string name = 1 [ (gogoproto.moretags) = "yaml:\"name\"" ];
+
+  // (optional) Description of the subspace
   string description = 2 [ (gogoproto.moretags) = "yaml:\"description\"" ];
+
+  // (optional) Treasury address associated to this subspace
   string treasury = 3 [ (gogoproto.moretags) = "yaml:\"treasury\"" ];
+
+  // (optional) Owner of this subspace. If not specified, the creator will be the
+  // default owner.
   string owner = 4 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
+
+  // Address creating the subspace
   string creator = 5 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
 }
 
 // MsgCreateSubspaceResponse defines the Msg/CreateSubspace response type
 message MsgCreateSubspaceResponse {
+  // Id of the newly created subspace id
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
@@ -84,18 +92,29 @@ message MsgCreateSubspaceResponse {
 
 // MsgEditSubspace represents the message used to edit a subspace fields
 message MsgEditSubspace {
-  option (gogoproto.equal) = false;
-  option (gogoproto.goproto_getters) = false;
-
+  // Id of the subspace to edit
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
 
+  // New name of the subspace. If it shouldn't be changed, use [do-not-modify]
+  // instead.
   string name = 2 [ (gogoproto.moretags) = "yaml:\"name\"" ];
+
+  // New description of the subspace. If it shouldn't be changed, use
+  // [do-not-modify] instead.
   string description = 3 [ (gogoproto.moretags) = "yaml:\"description\"" ];
+
+  // New treasury address of the subspace. If it shouldn't be changed, use
+  // [do-not-modify] instead.
   string treasury = 4 [ (gogoproto.moretags) = "yaml:\"treasury\"" ];
+
+  // New owner of the subspace. If it shouldn't be changed, use [do-not-modify]
+  // instead.
   string owner = 5 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
+
+  // Address of the user editing the subspace
   string signer = 6 [ (gogoproto.moretags) = "yaml:\"signer\"" ];
 }
 
@@ -104,13 +123,13 @@ message MsgEditSubspaceResponse {}
 
 // MsgDeleteSubspace represents the message used to delete a subspace
 message MsgDeleteSubspace {
-  option (gogoproto.equal) = false;
-  option (gogoproto.goproto_getters) = false;
-
+  // Id of the subspace to delete
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
+
+  // Address of the user deleting the subspace
   string signer = 2 [ (gogoproto.moretags) = "yaml:\"signer\"" ];
 }
 

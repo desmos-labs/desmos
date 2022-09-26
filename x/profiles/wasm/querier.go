@@ -40,6 +40,8 @@ func (querier ProfilesWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMes
 		return querier.handleChainLinksRequest(ctx, *query.ChainLinks)
 	case query.ChainLinkOwners != nil:
 		return querier.handleChainLinkOwnersRequest(ctx, *query.ChainLinkOwners)
+	case query.DefaultExternalAddresses != nil:
+		return querier.handleDefaultExternalAddressesRequest(ctx, *query.DefaultExternalAddresses)
 	case query.ApplicationLinks != nil:
 		return querier.handleApplicationLinksRequest(ctx, *query.ApplicationLinks)
 	case query.ApplicationLinkByClientID != nil:
@@ -110,6 +112,24 @@ func (querier ProfilesWasmQuerier) handleChainLinkOwnersRequest(ctx sdk.Context,
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 	res, err := querier.profilesKeeper.ChainLinkOwners(sdk.WrapSDKContext(ctx), &req)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+	bz, err = querier.cdc.MarshalJSON(res)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+	}
+
+	return bz, nil
+}
+
+func (querier ProfilesWasmQuerier) handleDefaultExternalAddressesRequest(ctx sdk.Context, request json.RawMessage) (bz []byte, err error) {
+	var req types.QueryDefaultExternalAddressesRequest
+	err = querier.cdc.UnmarshalJSON(request, &req)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
+	}
+	res, err := querier.profilesKeeper.DefaultExternalAddresses(sdk.WrapSDKContext(ctx), &req)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}

@@ -2,6 +2,23 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
+## Version 4.4.1
+### Features
+- ([\#1002](https://github.com/desmos-labs/desmos/pull/1002)) Added missing on-chain upgrade handler
+
+## Version 4.4.0
+### Features
+#### Posts
+- ([\#998](https://github.com/desmos-labs/desmos/pull/998)) Allow to set the permission to only comment content
+
+### Bug Fixes
+#### Profiles
+- ([\#986](https://github.com/desmos-labs/desmos/pull/986)) Added missing WASM support for default external address messages
+
+### Dependencies
+- ([\#988](https://github.com/desmos-labs/desmos/pull/988)) Updated wasmd to `v0.28.0`
+- ([\#1000](https://github.com/desmos-labs/desmos/pull/1000)) Updated Cosmos SDK to `v0.45.8`
+
 ## Version 4.3.0
 ### Bug Fixes
 #### Profiles
