@@ -36,8 +36,8 @@ type MsgCreateSubspace struct {
 	Description string `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty" yaml:"description"`
 	// (optional) Treasury address associated to this subspace
 	Treasury string `protobuf:"bytes,3,opt,name=treasury,proto3" json:"treasury,omitempty" yaml:"treasury"`
-	// (optional) Owner of this subspace. If not specified, the cretor will be the
-	// default owner.
+	// (optional) Owner of this subspace. If not specified, the creator will be
+	// the default owner.
 	Owner string `protobuf:"bytes,4,opt,name=owner,proto3" json:"owner,omitempty" yaml:"owner"`
 	// Address creating the subspace
 	Creator string `protobuf:"bytes,5,opt,name=creator,proto3" json:"creator,omitempty" yaml:"creator"`

@@ -27,11 +27,13 @@ service Msg {
 // MsgCreateRelationship represents a message to create a relationship
 // between two users on a specific subspace.
 message MsgCreateRelationship {
-  option (gogoproto.equal) = false;
-  option (gogoproto.goproto_getters) = false;
-
+  // User creating the relationship
   string signer = 1 [ (gogoproto.moretags) = "yaml:\"signer\"" ];
+
+  // Counterparty of the relationship (i.e. user to be followed)
   string counterparty = 2 [ (gogoproto.moretags) = "yaml:\"counterparty\"" ];
+
+  // Subspace id inside which the relationship will be valid
   uint64 subspace_id = 3 [
     (gogoproto.customname) = "SubspaceID",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
@@ -47,8 +49,13 @@ message MsgCreateRelationshipResponse {}
 // MsgDeleteRelationship represents a message to delete the relationship
 // between two users.
 message MsgDeleteRelationship {
+  // User that created the relationship
   string signer = 1 [ (gogoproto.moretags) = "yaml:\"signer\"" ];
+
+  // Counterparty of the relationship that should be deleted
   string counterparty = 2 [ (gogoproto.moretags) = "yaml:\"counterparty\"" ];
+
+  // Id of the subspace inside which the relationship to delete exists
   uint64 subspace_id = 3 [
     (gogoproto.customname) = "SubspaceID",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
@@ -64,9 +71,16 @@ message MsgDeleteRelationshipResponse {}
 // MsgBlockUser represents a message to block another user specifying an
 // optional reason.
 message MsgBlockUser {
+  // Address of the user blocking the other user
   string blocker = 1 [ (gogoproto.moretags) = "yaml:\"blocker\"" ];
+
+  // Address of the user that should be blocked
   string blocked = 2 [ (gogoproto.moretags) = "yaml:\"blocked\"" ];
+
+  // (optional) Reason why the user has been blocked
   string reason = 3 [ (gogoproto.moretags) = "yaml:\"reason\"" ];
+
+  // Id of the subspace inside which the user should be blocked
   uint64 subspace_id = 4 [
     (gogoproto.customname) = "SubspaceID",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
@@ -80,8 +94,13 @@ message MsgBlockUserResponse {}
 
 // MsgUnblockUser represents a message to unblock a previously blocked user.
 message MsgUnblockUser {
+  // Address of the user that blocked another user
   string blocker = 1 [ (gogoproto.moretags) = "yaml:\"blocker\"" ];
+
+  // Address of the user that should be unblocked
   string blocked = 2 [ (gogoproto.moretags) = "yaml:\"blocked\"" ];
+
+  // Id of the subspace inside which the user should be unblocked
   uint64 subspace_id = 4 [
     (gogoproto.customname) = "SubspaceID",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
