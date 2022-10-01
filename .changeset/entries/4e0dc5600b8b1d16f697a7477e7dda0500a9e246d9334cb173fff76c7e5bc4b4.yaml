@@ -1,6 +1,0 @@
-type: fix
-module: x/relationships
-pull_request: 1010
-description: Add full support for MsgCreateRelationship when used with GenericSubspaceAuthorization
-backward_compatible: true
-date: 2022-09-29T22:12:01.869216253Z

@@ -2,6 +2,14 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
+## Version 4.5.0
+### Bug Fixes
+#### Relationships
+- ([\#1010](https://github.com/desmos-labs/desmos/pull/1010)) Added full support for `MsgCreateRelationship` when used with `GenericSubspaceAuthorization`
+
+#### Subspaces
+- ([\#1008](https://github.com/desmos-labs/desmos/pull/1008)) Fixed outdated CLI examples
+
 ## Version 4.4.1
 ### Features
 - ([\#1002](https://github.com/desmos-labs/desmos/pull/1002)) Added missing on-chain upgrade handler
