@@ -87,7 +87,7 @@ func (k msgServer) EditSubspace(goCtx context.Context, msg *types.MsgEditSubspac
 	}
 
 	// Update the subspace and validate it
-	updated := subspace.Update(types.NewSubspaceUpdate(msg.Name, msg.Description, msg.Owner, msg.Treasury))
+	updated := subspace.Update(types.NewSubspaceUpdate(msg.Name, msg.Description, msg.Treasury, msg.Owner))
 	err = updated.Validate()
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
