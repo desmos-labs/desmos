@@ -43,7 +43,7 @@ func (a GenericSubspaceAuthorization) Accept(ctx sdk.Context, msg sdk.Msg) (auth
 		return authz.AcceptResponse{Accept: false}, nil
 
 	default:
-		return authz.AcceptResponse{}, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "unknown msg type")
+		return authz.AcceptResponse{}, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "unsupported subspace msg type")
 	}
 }
 
