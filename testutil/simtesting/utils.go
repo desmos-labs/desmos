@@ -36,7 +36,6 @@ func SendMsg(
 
 	txGen := simappparams.MakeTestEncodingConfig().TxConfig
 	tx, err := helpers.GenTx(
-		r,
 		txGen,
 		[]sdk.Msg{msg},
 		fees,
