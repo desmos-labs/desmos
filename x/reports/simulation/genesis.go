@@ -47,6 +47,10 @@ func RandomizeGenState(simState *module.SimulationState) {
 
 // randomReasons return a randomly generated slice of reasons
 func randomReasons(r *rand.Rand, subspaces []subspacestypes.Subspace) []types.Reason {
+	if len(subspaces) == 0 {
+		return nil
+	}
+
 	reasonNumber := r.Intn(20)
 	reasons := make([]types.Reason, reasonNumber)
 	for i := 0; i < reasonNumber; i++ {

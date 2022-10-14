@@ -44,6 +44,10 @@ func RandomizeGenState(simState *module.SimulationState) {
 
 // randomPosts returns randomly generated genesis posts
 func randomPosts(r *rand.Rand, subspaces []subspacestypes.Subspace, accs []simtypes.Account, params types.Params) (posts []types.Post) {
+	if len(subspaces) == 0 {
+		return nil
+	}
+
 	postsNumber := uint64(r.Intn(100))
 	posts = make([]types.Post, postsNumber)
 	for index := uint64(0); index < postsNumber; index++ {
