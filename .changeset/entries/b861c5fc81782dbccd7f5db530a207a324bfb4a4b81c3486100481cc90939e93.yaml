@@ -1,0 +1,6 @@
+type: deps
+module: none
+pull_request: 1020
+description: Udated github.com/cosmos/cosmos-sdk to v0.45.9
+backward_compatible: true
+date: 2022-10-14T18:20:34.364044593Z
