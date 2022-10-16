@@ -3,10 +3,10 @@ module github.com/desmos-labs/desmos/v4
 go 1.18
 
 require (
-	github.com/CosmWasm/wasmd v0.23.1-0.20220303200417-f35a13fa1209
+	github.com/CosmWasm/wasmd v0.29.1
 	github.com/armon/go-metrics v0.4.1
 	github.com/btcsuite/btcd v0.22.2
-	github.com/cosmos/cosmos-sdk v0.45.8
+	github.com/cosmos/cosmos-sdk v0.45.9
 	github.com/cosmos/go-bip39 v1.0.0
 	github.com/cosmos/ibc-go/v3 v3.3.0
 	github.com/ethereum/go-ethereum v1.10.18
@@ -71,7 +71,7 @@ require (
 	github.com/confio/ics23/go v0.7.0 // indirect
 	github.com/cosmos/btcutil v1.0.4 // indirect
 	github.com/cosmos/gorocksdb v1.2.0 // indirect
-	github.com/cosmos/iavl v0.19.1 // indirect
+	github.com/cosmos/iavl v0.19.3 // indirect
 	github.com/cosmos/ledger-cosmos-go v0.11.1 // indirect
 	github.com/cosmos/ledger-go v0.9.2 // indirect
 	github.com/creachadair/taskgroup v0.3.2 // indirect
@@ -271,8 +271,11 @@ replace (
 	// Our wasmd branch is: https://github.com/desmos-labs/wasmd v0.28.x-desmos
 	github.com/CosmWasm/wasmd => github.com/desmos-labs/wasmd v0.23.1-0.20220805070205-552a24097faf
 
+	//dragons
+	github.com/confio/ics23/go => github.com/cosmos/cosmos-sdk/ics23/go v0.8.0
+
 	// Our cosmos-sdk branch is: https://github.com/desmos-labs/cosmos-sdk v0.45.x-desmos
-	github.com/cosmos/cosmos-sdk => github.com/desmos-labs/cosmos-sdk v0.43.0-alpha1.0.20220901100415-9b5b590d4347
+	github.com/cosmos/cosmos-sdk => github.com/desmos-labs/cosmos-sdk v0.45.9-desmos
 
 	// Replace the Cosmos Ledger app with the Desmos fork
 	github.com/cosmos/ledger-cosmos-go => github.com/desmos-labs/ledger-desmos-go v0.11.2-0.20210814121638-5d87e392e8a9

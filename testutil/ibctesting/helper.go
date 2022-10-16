@@ -2,7 +2,6 @@ package ibctesting
 
 import (
 	"encoding/json"
-	"math/rand"
 	"testing"
 	"time"
 
@@ -153,9 +152,7 @@ func SignCheckDeliver(
 	t *testing.T, txCfg client.TxConfig, app *bam.BaseApp, header tmproto.Header, msgs []sdk.Msg,
 	chainID string, accNums, accSeqs []uint64, expSimPass, expPass bool, priv ...cryptotypes.PrivKey,
 ) (sdk.GasInfo, *sdk.Result, error) {
-
 	tx, err := helpers.GenTx(
-		rand.New(rand.NewSource(time.Now().UnixNano())),
 		txCfg,
 		msgs,
 		sdk.Coins{sdk.NewInt64Coin(sdk.DefaultBondDenom, 0)},
