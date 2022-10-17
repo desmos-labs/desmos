@@ -51,9 +51,13 @@ func randomSubspaces(r *rand.Rand, accs []simtypes.Account) (subspaces []types.S
 
 // randomSections generates a random slice of sections
 func randomSections(r *rand.Rand, subspaces []types.Subspace) (sections []types.Section) {
-	sectionsNumer := r.Intn(20)
-	sections = make([]types.Section, sectionsNumer)
-	for i := 0; i < sectionsNumer; i++ {
+	if len(subspaces) == 0 {
+		return nil
+	}
+
+	sectionsNumber := r.Intn(20)
+	sections = make([]types.Section, sectionsNumber)
+	for i := 0; i < sectionsNumber; i++ {
 		subspace := RandomSubspace(r, subspaces)
 
 		// Generate a random section
@@ -148,6 +152,10 @@ func getSubspacesDataEntries(
 
 // randomACL generates a random slice of ACL entries
 func randomACL(r *rand.Rand, accounts []simtypes.Account, subspaces []types.Subspace) (entries []types.UserPermission) {
+	if len(subspaces) == 0 {
+		return nil
+	}
+
 	aclEntriesNumber := r.Intn(40)
 	entries = make([]types.UserPermission, aclEntriesNumber)
 	for index := 0; index < aclEntriesNumber; index++ {

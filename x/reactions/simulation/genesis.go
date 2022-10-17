@@ -46,6 +46,10 @@ func RandomizedGenState(simState *module.SimulationState) {
 
 // randomRegisteredReactions returns a slice of randomly generated registered reactions
 func randomRegisteredReactions(r *rand.Rand, subspaces []subspacestypes.Subspace) []types.RegisteredReaction {
+	if len(subspaces) == 0 {
+		return nil
+	}
+
 	reactionsNumber := r.Intn(50)
 	reactions := make([]types.RegisteredReaction, reactionsNumber)
 	for i := 0; i < reactionsNumber; i++ {
@@ -62,6 +66,10 @@ func randomRegisteredReactions(r *rand.Rand, subspaces []subspacestypes.Subspace
 
 // getSubspacesData returns the SubspacesDataEntry slice based on the given data
 func getSubspacesData(subspaces []subspacestypes.Subspace, reactions []types.RegisteredReaction) []types.SubspaceDataEntry {
+	if len(subspaces) == 0 {
+		return nil
+	}
+
 	entries := make([]types.SubspaceDataEntry, len(subspaces))
 	for i, subspace := range subspaces {
 		// Get the max reaction id

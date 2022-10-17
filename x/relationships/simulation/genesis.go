@@ -59,6 +59,10 @@ func RandomizedGenState(simsState *module.SimulationState) {
 func randomRelationships(
 	r *rand.Rand, accounts []authtypes.GenesisAccount, subspaces []subspacestypes.Subspace, number int,
 ) []types.Relationship {
+	if len(subspaces) == 0 {
+		return nil
+	}
+
 	relationships := make([]types.Relationship, number)
 	for index := 0; index < number; {
 		user := RandomGenesisAccount(r, accounts)
@@ -102,6 +106,10 @@ func containsRelationship(slice []types.Relationship, relationship types.Relatio
 func randomUsersBlocks(
 	r *rand.Rand, accounts []authtypes.GenesisAccount, subspaces []subspacestypes.Subspace, number int,
 ) []types.UserBlock {
+	if len(subspaces) == 0 {
+		return nil
+	}
+
 	usersBlocks := make([]types.UserBlock, number)
 	for index := 0; index < number; {
 		blocker := RandomGenesisAccount(r, accounts)
