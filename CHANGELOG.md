@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
+## Version 2.3.2
+### Bug fixes
+- Replaced ICS-23 implementation with Dragonberry fix
+
 ## Version 2.3.1
 ### Bug Fixes
 #### Profiles
@@ -111,7 +115,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Added the ability to paginate the relationships of a profile ([\#467](https://github.com/desmos-labs/desmos/issues/467))
 - Added the ability to paginate user blocks ([\#495](https://github.com/desmos-labs/desmos/issues/495))
 - Added the ability to paginate incoming DTag transfer requests ([\#519](https://github.com/desmos-labs/desmos/pull/519))
-- Added the possibility to connect external chain accounts to a Desmos profile ([\#192](https://github.com/desmos-labs/desmos/issues/192))  
+- Added the possibility to connect external chain accounts to a Desmos profile ([\#192](https://github.com/desmos-labs/desmos/issues/192))
 - Added the possibility to verify a profile with an external application ([\#472](https://github.com/desmos-labs/desmos/issues/472))
 - Added the ability to edit whether users can comment on a post or not ([\#446](https://github.com/desmos-labs/desmos/issues/446))
 - Added the ability to paginate the registered reactions ([\#471](https://github.com/desmos-labs/desmos/issues/471))
@@ -152,7 +156,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Bug fixes
 - Added missing `CommunitySpendProposal` handler ([\#421](https://github.com/desmos-labs/desmos/issues/421))
- 
+
 ## Version 0.16.2
 ### Changes
 - Renamed profile's `moniker` into `nickname` ([\#413](https://github.com/desmos-labs/desmos/issues/413))
