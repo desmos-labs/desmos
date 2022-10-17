@@ -1,6 +1,0 @@
-type: fix
-module: x/subspaces
-pull_request: 1014
-description: Fixed the argument order when editing a subspace
-backward_compatible: true
-date: 2022-10-11T07:27:41.5528426Z
