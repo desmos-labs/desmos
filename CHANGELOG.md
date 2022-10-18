@@ -2,6 +2,14 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
+## Version 4.6.0
+### Bug Fixes
+#### Subspaces
+- ([\#1014](https://github.com/desmos-labs/desmos/pull/1014)) Fixed the argument order when editing a subspace
+
+### Dependencies
+- ([\#1020](https://github.com/desmos-labs/desmos/pull/1020)) Updated Cosmos SDK to `v0.45.9`
+
 ## Version 4.5.0
 ### Bug Fixes
 #### Relationships
