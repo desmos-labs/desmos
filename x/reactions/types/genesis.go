@@ -145,7 +145,7 @@ func containsDuplicatedPostDataEntry(entries []PostDataEntry, entry PostDataEntr
 func containsDuplicatedReaction(reactions []Reaction, reaction Reaction) bool {
 	var count = 0
 	for _, s := range reactions {
-		if s.SubspaceID == reaction.SubspaceID && s.ID == reaction.ID {
+		if s.SubspaceID == reaction.SubspaceID && s.PostID == reaction.PostID && s.ID == reaction.ID {
 			count++
 		}
 	}
