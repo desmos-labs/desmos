@@ -26,7 +26,7 @@ func (k Keeper) getSubspaceDataEntries(ctx sdk.Context) []types.SubspaceDataEntr
 	k.sk.IterateSubspaces(ctx, func(subspace subspacestypes.Subspace) (stop bool) {
 		nextRegisteredReactionID, err := k.GetNextRegisteredReactionID(ctx, subspace.ID)
 		if err != nil {
-			panic(err)
+			nextRegisteredReactionID = 1
 		}
 
 		entries = append(entries, types.NewSubspaceDataEntry(subspace.ID, nextRegisteredReactionID))
@@ -42,7 +42,7 @@ func (k Keeper) getPostDataEntries(ctx sdk.Context) []types.PostDataEntry {
 	k.pk.IteratePosts(ctx, func(post poststypes.Post) (stop bool) {
 		nextReactionID, err := k.GetNextReactionID(ctx, post.SubspaceID, post.ID)
 		if err != nil {
-			panic(err)
+			nextReactionID = 1
 		}
 
 		entries = append(entries, types.NewPostDataEntry(post.SubspaceID, post.ID, nextReactionID))
