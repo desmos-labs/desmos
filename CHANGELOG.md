@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
+## Version 4.6.2
+### Bug Fixes
+#### Other
+- ([\#1028](https://github.com/desmos-labs/desmos/pull/1028)) Fixed the export command not running properly in some cases
+
 ## Version 4.6.1
 ### Build
 - ([\#1026](https://github.com/desmos-labs/desmos/pull/1026)) Updated `wasmvm` to `v1.1.1`
