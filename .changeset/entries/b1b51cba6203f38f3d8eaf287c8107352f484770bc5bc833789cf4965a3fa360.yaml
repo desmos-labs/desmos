@@ -1,6 +1,0 @@
-type: feat
-module: other
-pull_request: 1031
-description: Add missing `BaseApp` options when creating a new `DesmosApp` instance
-backward_compatible: true
-date: 2022-10-25T15:03:04.293007201Z

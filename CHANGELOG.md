@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
+## Version 4.6.3
+### Bug Fixes
+#### Other
+- ([\#1031](https://github.com/desmos-labs/desmos/pull/1031)) Add missing `BaseApp` options when creating a new `DesmosApp` instance
+
 ## Version 4.6.2
 ### Bug Fixes
 #### Other
