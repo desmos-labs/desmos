@@ -25,6 +25,7 @@ import (
 	v441 "github.com/desmos-labs/desmos/v4/app/upgrades/v441"
 	v450 "github.com/desmos-labs/desmos/v4/app/upgrades/v450"
 	v460 "github.com/desmos-labs/desmos/v4/app/upgrades/v460"
+	v470 "github.com/desmos-labs/desmos/v4/app/upgrades/v470"
 
 	profilesv4 "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v4"
 
@@ -1078,6 +1079,7 @@ func (app *DesmosApp) registerUpgradeHandlers() {
 	app.registerUpgrade(v441.NewUpgrade(app.mm, app.configurator))
 	app.registerUpgrade(v450.NewUpgrade(app.mm, app.configurator))
 	app.registerUpgrade(v460.NewUpgrade(app.mm, app.configurator))
+	app.registerUpgrade(v470.NewUpgrade(app.mm, app.configurator, app.BankKeeper))
 }
 
 // registerUpgrade registers the given upgrade to be supported by the app
