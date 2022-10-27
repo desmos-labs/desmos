@@ -54,7 +54,7 @@ func (u *Upgrade) Handler() upgradetypes.UpgradeHandler {
 					Aliases:  []string{"Daric"},
 				},
 			},
-			Base:    "udsm",
+			Base:    "udaric",
 			Display: "daric",
 			Name:    "Daric",
 			Symbol:  "",
