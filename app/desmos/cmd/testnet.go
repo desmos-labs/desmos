@@ -10,7 +10,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/desmos-labs/desmos/v4/app"
+	"github.com/cosmos/cosmos-sdk/testutil"
 
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	"github.com/spf13/cobra"
@@ -184,7 +184,7 @@ func InitTestnet(
 			return err
 		}
 
-		addr, secret, err := server.GenerateSaveCoinKeyFromPath(kb, nodeDirName, true, algo, app.FullFundraiserPath)
+		addr, secret, err := testutil.GenerateSaveCoinKey(kb, nodeDirName, "", true, algo)
 		if err != nil {
 			_ = os.RemoveAll(outputDir)
 			return err

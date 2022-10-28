@@ -46,6 +46,7 @@ import (
 
 	ibcclient "github.com/cosmos/ibc-go/v3/modules/core/02-client"
 
+	nodeservice "github.com/cosmos/cosmos-sdk/client/grpc/node"
 	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
 	"github.com/prometheus/client_golang/prometheus"
 
@@ -1065,6 +1066,10 @@ func (app *DesmosApp) RegisterTxService(clientCtx client.Context) {
 
 func (app *DesmosApp) RegisterTendermintService(clientCtx client.Context) {
 	tmservice.RegisterTendermintService(app.BaseApp.GRPCQueryRouter(), clientCtx, app.interfaceRegistry)
+}
+
+func (app *DesmosApp) RegisterNodeService(clientCtx client.Context) {
+	nodeservice.RegisterNodeService(clientCtx, app.GRPCQueryRouter())
 }
 
 // registerUpgradeHandlers registers all the upgrade handlers that are supported by the app
