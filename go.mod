@@ -3,12 +3,12 @@ module github.com/desmos-labs/desmos/v4
 go 1.18
 
 require (
-	github.com/CosmWasm/wasmd v0.29.0
+	github.com/CosmWasm/wasmd v0.0.0-00010101000000-000000000000
 	github.com/armon/go-metrics v0.4.1
 	github.com/btcsuite/btcd v0.22.2
 	github.com/cosmos/cosmos-sdk v0.45.10
 	github.com/cosmos/go-bip39 v1.0.0
-	github.com/cosmos/ibc-go/v3 v3.3.0
+	github.com/cosmos/ibc-go/v3 v3.3.1
 	github.com/ethereum/go-ethereum v1.10.18
 	github.com/ghodss/yaml v1.0.0
 	github.com/gogo/protobuf v1.3.3
