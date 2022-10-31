@@ -25,6 +25,7 @@ import (
 	v441 "github.com/desmos-labs/desmos/v4/app/upgrades/v441"
 	v450 "github.com/desmos-labs/desmos/v4/app/upgrades/v450"
 	v460 "github.com/desmos-labs/desmos/v4/app/upgrades/v460"
+	v470 "github.com/desmos-labs/desmos/v4/app/upgrades/v470"
 
 	profilesv4 "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v4"
 
@@ -45,6 +46,7 @@ import (
 
 	ibcclient "github.com/cosmos/ibc-go/v3/modules/core/02-client"
 
+	nodeservice "github.com/cosmos/cosmos-sdk/client/grpc/node"
 	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
 	"github.com/prometheus/client_golang/prometheus"
 
@@ -1066,6 +1068,10 @@ func (app *DesmosApp) RegisterTendermintService(clientCtx client.Context) {
 	tmservice.RegisterTendermintService(app.BaseApp.GRPCQueryRouter(), clientCtx, app.interfaceRegistry)
 }
 
+func (app *DesmosApp) RegisterNodeService(clientCtx client.Context) {
+	nodeservice.RegisterNodeService(clientCtx, app.GRPCQueryRouter())
+}
+
 // registerUpgradeHandlers registers all the upgrade handlers that are supported by the app
 func (app *DesmosApp) registerUpgradeHandlers() {
 	app.registerUpgrade(v300.NewUpgrade(app.mm, app.configurator))
@@ -1078,6 +1084,7 @@ func (app *DesmosApp) registerUpgradeHandlers() {
 	app.registerUpgrade(v441.NewUpgrade(app.mm, app.configurator))
 	app.registerUpgrade(v450.NewUpgrade(app.mm, app.configurator))
 	app.registerUpgrade(v460.NewUpgrade(app.mm, app.configurator))
+	app.registerUpgrade(v470.NewUpgrade(app.mm, app.configurator, app.BankKeeper))
 }
 
 // registerUpgrade registers the given upgrade to be supported by the app
