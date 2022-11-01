@@ -5,6 +5,8 @@ import (
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
+	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 
 	feestypes "github.com/desmos-labs/desmos/v4/x/fees/types"
@@ -23,13 +25,15 @@ var (
 type Upgrade struct {
 	mm           *module.Manager
 	configurator module.Configurator
+	bk           bankkeeper.Keeper
 }
 
 // NewUpgrade returns a new Upgrade instance
-func NewUpgrade(mm *module.Manager, configurator module.Configurator) *Upgrade {
+func NewUpgrade(mm *module.Manager, configurator module.Configurator, bk bankkeeper.Keeper) *Upgrade {
 	return &Upgrade{
 		mm:           mm,
 		configurator: configurator,
+		bk:           bk,
 	}
 }
 
@@ -43,6 +47,27 @@ func (u *Upgrade) Handler() upgradetypes.UpgradeHandler {
 	return func(ctx sdk.Context, plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
 		// We set the modules initial versions to 1 because we need to run the migrations
 		fromVM[relationshipstypes.ModuleName] = 1
+
+		// Set the coin metadata
+		u.bk.SetDenomMetaData(ctx, banktypes.Metadata{
+			Description: "The token of Desmos",
+			DenomUnits: []*banktypes.DenomUnit{
+				{
+					Denom:    "udsm",
+					Exponent: 0,
+					Aliases:  nil,
+				},
+				{
+					Denom:    "DSM",
+					Exponent: 6,
+					Aliases:  nil,
+				},
+			},
+			Base:    "udsm",
+			Display: "DSM",
+			Name:    "Desmos DSM",
+			Symbol:  "DSM",
+		})
 
 		// Do nothing here as we don't have anything particular in this update
 		return u.mm.RunMigrations(ctx, u.configurator, fromVM)
