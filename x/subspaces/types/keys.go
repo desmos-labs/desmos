@@ -41,6 +41,7 @@ var (
 	UserPermissionsStorePrefix = []byte{0x05}
 	SectionIDPrefix            = []byte{0x06}
 	SectionsPrefix             = []byte{0x07}
+	AllowancePrefix            = []byte{0x08}
 )
 
 // GetSubspaceIDBytes returns the byte representation of the subspaceID
@@ -204,4 +205,10 @@ func SplitUserAddressPermissionKey(key []byte) (subspaceID uint64, sectionID uin
 	sectionID = GetSectionIDFromBytes(key[lenSubspaceID : lenSubspaceID+lenSectionID])
 	user = GetAddressFromBytes(key[lenSubspaceID+lenSectionID:])
 	return subspaceID, sectionID, user
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+func FeeAllowanceKey(granter string, grantee string, subspaceId uint64) []byte {
+	return append(append(AllowancePrefix, []byte(granter+grantee)...), GetSubspaceIDBytes(subspaceId)...)
 }

@@ -3,6 +3,8 @@ package desmos.subspaces.v3;
 
 import "gogoproto/gogo.proto";
 import "desmos/subspaces/v3/models.proto";
+import "google/protobuf/any.proto";
+import "cosmos_proto/cosmos.proto";
 
 option go_package = "github.com/desmos-labs/desmos/v4/x/subspaces/types";
 
@@ -58,6 +60,8 @@ service Msg {
   // SetUserPermissions allows to set the permissions for a specific user
   rpc SetUserPermissions(MsgSetUserPermissions)
       returns (MsgSetUserPermissionsResponse);
+
+  rpc GrantAllowance(MsgGrantAllowance) returns (MsgGrantAllowanceResponse);
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -479,3 +483,14 @@ message MsgSetUserPermissions {
 // MsgSetUserPermissionsResponse defines the Msg/SetPermissionsResponse
 // response type
 message MsgSetUserPermissionsResponse {}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+message MsgGrantAllowance {
+  uint64 subspace_id = 1;
+  string granter = 2;
+  string grantee = 3;
+  google.protobuf.Any allowance = 4 [(cosmos_proto.accepts_interface) = "FeeAllowanceI"];
+}
+
+message MsgGrantAllowanceResponse {}
