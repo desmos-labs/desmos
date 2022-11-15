@@ -28,6 +28,21 @@ We will implement a subspace-specified fee grant process base on `x/feegrant` th
 3. Desmos executes the subspace fee grant transaction successfully;
 4. the user can use the service without any tokens inside the specified subspace, the fees will be paid by the fees provider.
 
+```mermaid
+sequenceDiagram
+    participant User
+    participant Fees Provider
+    participant Desmos
+    
+    User->>Fees Provider: 1. ask for a subspace fee grant
+    Fees Provider->>Desmos: 2. send subspace fee grant tx
+    Desmos->>Desmos: 3. Execute subspace fee grant
+    Desmos-->>Fees Provider:  return ok
+    Fees Provider-->>User: return ok
+
+    User->>Desmos: use app by sending subspace tx
+```
+
 ### DeductFeeDecorator
 
 Currently, `x/auth` provides a `DeductFeeDecorator` based on `x/feegrant` to execute the action deducting fees from the signer/feepayer of a transaction. We will build a new subspace-specified `DeductFeeDecorator` to replace the current one.
@@ -36,12 +51,13 @@ The new subspace-specified `DeductFeeDecorator` will operate the fees with the p
 
 ```mermaid
 graph TD
-  id1([Start]) --> id2{Are all subspace msgs?}
-  id2 -- YES --> id3[Subspace<br /> DeductFeeDecorator]
-  id2 -- NO --> id4[Feegrant<br /> DeductFeeDecorator]
-  id3 --> id5[Deduct fees]
-  id4 --> id5
-  id5 --> id6[End]
+  id1([Start]) --> id2[Check transaction]
+  id2 --> id3{Are all subspace msgs?}
+  id3 -- YES --> id4[Subspace<br /> DeductFeeDecorator]
+  id3 -- NO --> id5[Feegrant<br /> DeductFeeDecorator]
+  id4 --> id6[Deduct fees]
+  id5 --> id6
+  id6 --> id7[End]
 ```
 
 ### Types
