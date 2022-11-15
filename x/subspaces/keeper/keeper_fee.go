@@ -32,6 +32,9 @@ func (k Keeper) GrantAllowance(ctx sdk.Context, granter, grantee sdk.AccAddress,
 func (k Keeper) GetAllowance(ctx sdk.Context, granter, grantee sdk.AccAddress, subspaceId uint64) (feegrant.FeeAllowanceI, error) {
 	store := ctx.KVStore(k.storeKey)
 	key := types.FeeAllowanceKey(granter.String(), grantee.String(), subspaceId)
+	if !store.Has(key) {
+		return nil, nil
+	}
 	bz := store.Get(key)
 	var feegrant feegrant.Grant
 	if err := k.cdc.Unmarshal(bz, &feegrant); err != nil {

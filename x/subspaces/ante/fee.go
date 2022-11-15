@@ -6,10 +6,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
-	accountkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
-	feegrantkeeper "github.com/cosmos/cosmos-sdk/x/feegrant/keeper"
 
 	"github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
@@ -17,12 +14,27 @@ import (
 
 type DeductFeeDecorator struct {
 	adfd ante.DeductFeeDecorator
-	ak   accountkeeper.AccountKeeper
-	bk   bankkeeper.Keeper
+	ak   AccountKeeper
+	bk   BankKeeper
 	sk   keeper.Keeper
 }
 
-func NewDeductFeeDecorator(ak accountkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feegrantkeeper.Keeper, sk keeper.Keeper) DeductFeeDecorator {
+type AccountKeeper interface {
+	GetParams(ctx sdk.Context) authtypes.Params
+	GetAccount(ctx sdk.Context, addr sdk.AccAddress) authtypes.AccountI
+	SetAccount(ctx sdk.Context, acc authtypes.AccountI)
+	GetModuleAddress(moduleName string) sdk.AccAddress
+}
+
+type BankKeeper interface {
+	SendCoinsFromAccountToModule(ctx sdk.Context, senderAddr sdk.AccAddress, recipientModule string, amt sdk.Coins) error
+}
+
+type FeegrantKeeper interface {
+	UseGrantedFees(ctx sdk.Context, granter, grantee sdk.AccAddress, fee sdk.Coins, msgs []sdk.Msg) error
+}
+
+func NewDeductFeeDecorator(ak AccountKeeper, bk BankKeeper, fk FeegrantKeeper, sk keeper.Keeper) DeductFeeDecorator {
 	return DeductFeeDecorator{
 		adfd: ante.NewDeductFeeDecorator(ak, bk, fk),
 		ak:   ak,

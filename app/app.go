@@ -899,6 +899,7 @@ func NewDesmosApp(
 				SigGasConsumer:  ante.DefaultSigVerificationGasConsumer,
 			},
 			IBCkeeper:         app.IBCKeeper,
+			SubspacesKeeper:   app.SubspacesKeeper,
 			FeesKeeper:        app.FeesKeeper,
 			TxCounterStoreKey: keys[wasm.StoreKey],
 			WasmConfig:        wasmConfig,

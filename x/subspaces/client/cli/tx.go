@@ -65,7 +65,7 @@ func NewTxCmd() *cobra.Command {
 
 func GetCmdFeeGrant() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "grant [subspace-id] [grantee]",
+		Use:   "fee-grant [subspace-id] [grantee]",
 		Short: "Grant Fee allowance to an address",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -147,7 +147,7 @@ func GetCmdFeeGrant() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			msg := types.NewMsgGrantAllowance(subspaceID, args[1], clientCtx.FromAddress.String(), grant)
+			msg := types.NewMsgGrantAllowance(subspaceID, clientCtx.FromAddress.String(), args[1], grant)
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}
