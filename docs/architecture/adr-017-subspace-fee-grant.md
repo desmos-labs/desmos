@@ -40,7 +40,7 @@ sequenceDiagram
     Desmos-->>Fees Provider:  return ok
     Fees Provider-->>User: return ok
 
-    User->>Desmos: use app by sending subspace tx
+    User->>Desmos: 4. use app with subspace tx
 ```
 
 ### DeductFeeDecorator
