@@ -18,7 +18,7 @@ Currently, one of the major problems of current Web3 services is complicated to 
 - what `transaction` is and why they need some DSM to broadcast it;
 - get some DSM either via an on-ramp or by swapping existing funds.
 
-The `x/feegrant` gives the possibility to pay fees for the users, meaning that users can use the service without understanding how Web3 works behind, but the fee grant allowance is not subspace-specified so subspace fees provider might unexpected pay the fees of the transactions inside another subspace.
+The `x/feegrant` gives the possibility to pay fees for the users, meaning that users can use the service without understanding how Web3 works behind. However, the fee grant allowance is not subspace-specified so subspace fees provider might unexpected pay the fees of the transactions inside another subspace.
 
 ## Decision
 
