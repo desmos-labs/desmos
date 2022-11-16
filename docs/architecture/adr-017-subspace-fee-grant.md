@@ -184,7 +184,7 @@ The proposed solution introduces a new set of store keys, it is completely backw
 ### Negative
 
 - Storing extra subspace grant info takes up more storage space;
-- Slow down the transaction operation since having more check in the deducting fees phase.
+- Having more check in the deducting fees phase slow down the transaction operation.
 
 ### Neutral
 
