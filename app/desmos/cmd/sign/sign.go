@@ -34,7 +34,7 @@ func GetSignCmd() *cobra.Command {
 			txFactory := tx.NewFactoryCLI(clientCtx, f)
 
 			from, _ := cmd.Flags().GetString(flags.FlagFrom)
-			_, fromName, _, err := client.GetFromFields(clientCtx.WithGenerateOnly(true), txFactory.Keybase(), from)
+			_, fromName, _, err := client.GetFromFields(clientCtx, txFactory.Keybase(), from)
 			if err != nil {
 				return fmt.Errorf("error getting account from keybase: %w", err)
 			}
