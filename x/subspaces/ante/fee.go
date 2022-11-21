@@ -44,22 +44,22 @@ func NewDeductFeeDecorator(ak AccountKeeper, bk BankKeeper, fk FeegrantKeeper, s
 }
 
 func (dfd DeductFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, next sdk.AnteHandler) (newCtx sdk.Context, err error) {
-	if id, ok := isValidSubspaseMsgs(tx.GetMsgs()); ok {
+	if id, ok := isValidSubspaceMsgs(tx.GetMsgs()); ok {
 		return dfd.anteHandle(ctx, tx, simulate, next, id)
 	}
 	return dfd.adfd.AnteHandle(ctx, tx, simulate, next)
 }
 
-func isValidSubspaseMsgs(msgs []sdk.Msg) (uint64, bool) {
+func isValidSubspaceMsgs(msgs []sdk.Msg) (uint64, bool) {
 	subspaceId := uint64(0)
 	for _, msg := range msgs {
-		subsbaseMsg, ok := msg.(types.SubspaceMsg)
+		subspaceMsg, ok := msg.(types.SubspaceMsg)
 		if !ok {
 			return 0, false
 		}
 		if subspaceId == 0 {
-			subspaceId = subsbaseMsg.GetSubspaceID()
-		} else if subspaceId == subsbaseMsg.GetSubspaceID() {
+			subspaceId = subspaceMsg.GetSubspaceID()
+		} else if subspaceId == subspaceMsg.GetSubspaceID() {
 			return 0, false
 		}
 	}
