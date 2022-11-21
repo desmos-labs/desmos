@@ -76,7 +76,7 @@ sequenceDiagram
 Currently, `x/auth` provides a `DeductFeeDecorator` based on `x/feegrant` to execute the action deducting fees from the signer/feepayer of a transaction. We will build a new subspace-specified `DeductFeeDecorator` to replace the current one.
 
 The new subspace-specified `DeductFeeDecorator` will operate the fees with the process as follows:
-1. get the subspace and group where allowance exists from transaction memo with the format like `subspace-1-0` meaning that the target allowance is inside the subspace 1 group 0 (default group), if memo is empty or invalid then apply `x/auth` `DeductFeeDecorator`; 
+1. get the subspace and group where allowance exists from transaction memo with the format like `subspace-1-1` meaning that the target allowance is inside the subspace 1 group 1, if memo is empty or invalid then apply `x/auth` `DeductFeeDecorator`; 
 2. check all the subspace messages in the transaction are to the same target subspace, if not then return an error;
 3. apply `x/subspaces` `DeductFeeDecorator` if the  the grant exists, or return an error;
 4. deduct the fees from the fee payer.
