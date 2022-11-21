@@ -76,9 +76,9 @@ sequenceDiagram
 Currently, `x/auth` provides a `DeductFeeDecorator` based on `x/feegrant` to execute the action deducting fees from the signer/feepayer of a transaction. We will build a new subspace-specified `DeductFeeDecorator` to replace the current one.
 
 The new subspace-specified `DeductFeeDecorator` will operate the fees with the process as follows:
-1. get the allowance should be checked from transaction memo with the format like `subspace-1-0` meaning that the target fee grant is specified to subspace 1 group 0(default group), if memo is empty or invalid then apply `x/auth` `DeductFeeDecorator`; 
-2. check all the messages in the transaction are the subspace messages and all of them are to the target subspace, if messages are not to the same target subspace then return error;
-3. apply `x/subspaces` `DeductFeeDecorator` if the transaction contains subspace messages from the same subspace and the grant exists, or return error;
+1. get the subspace and group where allowance exists from transaction memo with the format like `subspace-1-0` meaning that the target allowance is inside the subspace 1 group 0 (default group), if memo is empty or invalid then apply `x/auth` `DeductFeeDecorator`; 
+2. check all the subspace messages in the transaction are to the same target subspace, if not then return an error;
+3. apply `x/subspaces` `DeductFeeDecorator` if the  the grant exists, or return an error;
 4. deduct the fees from the fee payer.
 
 ```mermaid
@@ -124,7 +124,7 @@ message GroupGrant {
 
 ### Store
 
-#### Group allowance
+#### Group grant
 
 In order to simplify granters to manage the group allowance, the granted group allowance will be stored in the keys having the structure like:
 ```
@@ -133,7 +133,7 @@ SubspaceGroupAllowancePrefix | SubspaceID | GranterAddress | GroupID | -> Protob
 
 This structure allows granters to easily manage the group allowance inside a subspace by iterating over all allowances for the granters, which will be the most used query.
 
-### Group user allowance record
+### Group allowance record for users
 
 In order to record the rest of spend or periodic limit, the granted group allowance for user will be stored in the keys having the structure as follows:
 
