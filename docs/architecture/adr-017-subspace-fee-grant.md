@@ -2,7 +2,8 @@
 
 ## Changelog
 
-- Nov 14th, 2022: First draft
+- Nov 14th, 2022: First draft;
+- Nov 21th, 2022: First reviewed.
 
 ## Status
 
@@ -22,7 +23,7 @@ The `x/feegrant` gives the possibility to pay fees for the users, meaning that u
 
 ## Decision
 
-We will implement a subspace-specified fee grant process base on `x/feegrant` that allows subspace fees providers to pay fees for the users inside the specified subspace. The process of that a subspace fees provider support a user fees will be as follows:
+We will implement a subspace-specified fee grant process base on `x/feegrant` that allows subspace fees providers to pay fees for the users inside the specified subspace.The process of that a subspace fees provider support a user fees will be as follows:
 1. the user asks fees provider a fee grant inside the specified subspace;
 2. the fees provider send a subspace fee grant transaction to Desmos;
 3. Desmos executes the subspace fee grant transaction successfully;
@@ -44,26 +45,55 @@ sequenceDiagram
     Desmos-->>User: return ok
 ```
 
+In order to simplify the allowance management for the fees providers, we will also implement the subspace group fee grant to allow fees providers to grant an allowance to a group, the process will be like:
+1. the fees provider creates a group;
+2. the fees provider grants an allowance to the group;
+3. the user asks for a subspace fee grant;
+4. the fee provider adds the user to the group;
+5. the user can use the service without any tokens inside the specified subspace, the fees will be paid by the fees provider.
+```mermaid
+sequenceDiagram
+    participant User
+    participant Fees Provider
+    participant Desmos
+    
+    Fees Provider->>Desmos: 1. create a group
+    Desmos-->>Fees Provider: return ok
+    Fees Provider->>Desmos: 2. grant an allowance to the group
+    Desmos-->>Fees Provider: return ok
+    
+    User->>Fees Provider: 3. ask for a subspace fee grant
+    Fees Provider->>Desmos: 4. add the user to the group
+    Desmos-->>Fees Provider:  return ok
+    Fees Provider-->>User: return ok
+
+    User->>Desmos: 5. use app with subspace tx
+    Desmos-->>User: return ok
+```
+
 ### DeductFeeDecorator
 
 Currently, `x/auth` provides a `DeductFeeDecorator` based on `x/feegrant` to execute the action deducting fees from the signer/feepayer of a transaction. We will build a new subspace-specified `DeductFeeDecorator` to replace the current one.
 
 The new subspace-specified `DeductFeeDecorator` will operate the fees with the process as follows:
-1. check all the messages in the transaction are the subspace messages and all of them are to the same subspace;
-2. apply `x/subspaces` `DeductFeeDecorator` if the transaction contains subspace messages from the same subspace and the grant exists, or apply `x/auth` `DeductFeeDecorator`;
-3. deduct the fees from the fee payer.
+1. get the allowance should be checked from transaction memo with the format like `subspace-1-0` meaning that the target fee grant is specified to subspace 1 group 0(default group), if memo is empty or invalid then apply `x/auth` `DeductFeeDecorator`; 
+2. check all the messages in the transaction are the subspace messages and all of them are to the target subspace, if messages are not to the same target subspace then return error;
+3. apply `x/subspaces` `DeductFeeDecorator` if the transaction contains subspace messages from the same subspace and the grant exists, or return error;
+4. deduct the fees from the fee payer.
 
 ```mermaid
 graph TD
-  id1([Start]) --> id2[Check transaction]
-  id2 --> id3{Are all subspace msgs<br/ >from the same subspace?}
-  id3 -- YES --> id4{Does have the grant?}
-  id3 -- NO --> id5[apply Auth<br />DeductFeeDecorator]
-  id4 -- YES --> id6[apply Subspace<br />DeductFeeDecorator]
+  id1([Start]) --> id2{Check transaction memo}
+  id2 -- Valid subspace memo --> id3{Are all msgs from<br/ > the same subspace?}
+  id3 -- YES --> id4{Does the grant exist?}
+  id3 -- NO --> id5[Error]
+  id4 -- YES --> id6[Apply Subspace<br />DeductFeeDecorator]
   id4 -- NO --> id5
-  id5 --> id7[Deduct fees]
-  id6 --> id7
-  id7 --> id8[End]
+  id6 --> id9[Deduct fees]
+  id2 -- Invalid subspace memo --> id7[Apply Auth<br />DeductFeeDecorator]
+  id7 --> id9
+  id5 --> id8[End]
+  id9 --> id8
 ```
 
 ### Types
@@ -76,32 +106,79 @@ Currently, `x/feegrant` provides the `FeeAllowanceI` and the implementations for
 
 As `Allowance`, `x/feegrant` has `Grant` object to record all full context, which contains `granter`, `grantee` and what kind of `allowance` is granted. We will reuse it to store in the subspace namespace KVStore.
 
-### Store
-Each subspace fee granted allowance will be stored in the keys having the structure as follows:
-```
-SubspaceAllowancePrefix | SubspaceID | GranterAddress | GranteeAddress |-> Protobuf(Grant)
+#### GroupGrant
+
+To show the group grant, we will implement the `GroupGrant` object to record all full context containing `granter`, `group_id` and what kind of `allowance` is granted, the structure will be as follows:
+```protobuf
+message GroupGrant {
+    // granter is the address of the user granting an allowance of their funds.
+  string granter = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
+  // the id of the group being granted an allowance of another user's funds.
+  uint32 group_id = 2;
+
+  // allowance can be any of basic, periodic, allowed fee allowance.
+  google.protobuf.Any allowance = 3 [(cosmos_proto.accepts_interface) = "FeeAllowanceI"];
+}
 ```
 
-This would allow granters to easily manage their grants inside a subspace by iterating over all grants for the granters, which will be the most used query. In the other hand, grantees must know who the granter is when using the application, they can directly find their grant with O(1) time complexity.
+### Store
+
+#### Group allowance
+
+In order to simplify granters to manage the group allowance, the granted group allowance will be stored in the keys having the structure like:
+```
+SubspaceGroupAllowancePrefix | SubspaceID | GranterAddress | GroupID | -> Protobuf(GroupGrant)
+```
+
+This structure allows granters to easily manage the group allowance inside a subspace by iterating over all allowances for the granters, which will be the most used query.
+
+### Group user allowance record
+
+In order to record the rest of spend or periodic limit, the granted group allowance for user will be stored in the keys having the structure as follows:
+
+```
+SubspaceGroupAllowanceRecordPrefix | SubspaceID | GranterAddress | GroupID | GranteeAddress | -> Protobuf(GroupGrant)
+```
+
+**Note** After updating group members or allowance, the records of influenced users should be refreshed.
+
+#### User grant
+
+Each subspace fee granted allowance will be stored in the keys having the structure as follows:
+```
+SubspaceUserAllowancePrefix | SubspaceID | GranterAddress | GranteeAddress |-> Protobuf(Grant)
+```
+
+This structure allows granters to easily manage their grants inside a subspace by iterating over all grants for the granters, which will be the most used query. In the other hand, grantees must know who the granter is when using the application, they can directly find their grant with O(1) time complexity.
+
 
 ### `Msg` Service
 
 In order to allow subspace fees providers to grant an allowance for the users, we will have the following operations:
 
-- grant an allowance
-- revoke an allowance  
+- grant an allowance to a user
+- revoke an allowance to a user
+- grant an allowance to a group
+- revoke an allowance to a group
 
 ```protobuf
 service Msg {
-    // GrantAllowance allows the granter to grant a fee allowance to the grantee.
-    rpc GrantAllowance(MsgGrantAllowance) returns(MsgGrantAllowanceResponse);
+    // GrantUserAllowance allows the granter to grant a fee allowance to the grantee.
+    rpc GrantUserAllowance(MsgGrantUserAllowance) returns(MsgGrantUserAllowanceResponse);
 
-    // RevokeAllowance allows a granter to revoke any existing allowance that has to been granted to the grantee.
-    rpc RevokeAllowance(MsgRevokeAllowance) returns(MsgRevokeAllowanceResponse);
+    // RevokeUserAllowance allows a granter to revoke any existing allowance that has to been granted to the grantee.
+    rpc RevokeUserAllowance(MsgRevokeUserAllowance) returns(MsgRevokeUserAllowanceResponse);
+
+    // GrantGroupAllowance allows the granter to grant a fee allowance to the group.
+    rpc GrantGroupAllowance(MsgGrantGroupAllowance) returns(MsgGrantGroupAllowanceResponse);
+
+    // RevokeGroupAllowance allows a granter to revoke any existing allowance that has to been granted to the group.
+    rpc RevokeGroupAllowance(MsgRevokeGroupAllowance) returns(MsgRevokeGroupAllowanceResponse);
 }
 
-// MsgGrantAllowance adds permission for the grantee to spend up allowance of fees from the granter inside the given subspace.
-message MsgGrantAllowance {
+// MsgGrantUserAllowance adds permissions for the grantee to spend up allowance of fees from the granter inside the given subspace.
+message MsgGrantUserAllowance {
     // the id of the subspace where the granter grants the allowance to the grantee.
     uint64 subspace_id = 1;
 
@@ -115,11 +192,11 @@ message MsgGrantAllowance {
     google.protobuf.Any allowance = 4 [(cosmos_proto.accepts_interface) = "FeeAllowanceI"];
 }
 
-// MsgGrantAllowanceResponse defines the Msg/GrantAllowanceResponse response type.
-message MsgGrantAllowanceResponse {}
+// MsgGrantUserAllowanceResponse defines the Msg/GrantAllowanceResponse response type.
+message MsgGrantUserAllowanceResponse {}
 
-// MsgRevokeAllowance removes any existing allowance from granter to grantee inside the subspace.
-message MsgRevokeAllowance {
+// MsgRevokeUserAllowance removes any existing allowance from granter to the grantee inside the subspace.
+message MsgRevokeUserAllowance {
     // the id of the subspace where the granter grants the allowance to the grantee.
     uint64 subspace_id = 1;
 
@@ -130,24 +207,61 @@ message MsgRevokeAllowance {
     string grantee = 3;
 }
 
-// MsgRevokeAllowanceResponse defines the Msg/RevokeAllowanceResponse response type.
-message MsgRevokeAllowanceResponse {}
+// MsgRevokeUserAllowanceResponse defines the Msg/RevokeAllowanceResponse response type.
+message MsgRevokeUserAllowanceResponse {}
+
+// MsgGrantGroupAllowance adds permissions for the group to spend up allowance of fees from the granter inside the given subspace.
+message MsgGrantGroupAllowance {
+    // the id of the subspace where the granter grants the allowance to the grantee.
+    uint64 subspace_id = 1;
+
+    // the id of the group being granted an allowance of another user's funds.  
+    uint32 group_id = 2;
+
+    // the address of the user granting an allowance of their funds.
+    string granter = 3;
+
+    // allowance can be any of fee allowances which implements FeeAllowanceI.
+    google.protobuf.Any allowance = 4 [(cosmos_proto.accepts_interface) = "FeeAllowanceI"];
+}
+
+// MsgGrantGroupAllowanceResponse defines the Msg/GrantAllowanceResponse response type.
+message MsgGrantGroupAllowanceResponse {}
+
+// MsgRevokeGroupAllowance removes any existing allowance from granter to the group inside the subspace.
+message MsgRevokeGroupAllowance {
+    // the id of the subspace where the granter grants the allowance to the group.
+    uint64 subspace_id = 1;
+
+    // the id of the group being granted an allowance of another user's funds.
+    uint32 group_id = 2;
+
+    // the address of the user granting an allowance of their funds.
+    string granter = 3;
+}
+
+// MsgRevokeGroupAllowanceResponse defines the Msg/RevokeAllowanceResponse response type.
+message MsgRevokeUserAllowanceResponse {}
 ```
 
 ### `Query` Service
 
-In order to allow clients to easily query for allowances we will implement a new query:
+In order to allow clients to easily query for allowances we will implement a new queries:
 
 ```protobuf
 service Query {
-    // Allowances returns all the grants .
-    rpc Allowances(QueryAllowancesRequest) returns (QueryAllowancesResponse) {
-        option (google.api.http).get = "/desmos/subspaces/v3/subspaces/{subspace_id}/granter/{granter}/allowances";
+    // UserAllowances returns all the grants for users.
+    rpc UserAllowances(QueryUserAllowancesRequest) returns (QueryAllowancesResponse) {
+        option (google.api.http).get = "/desmos/subspaces/v3/subspaces/{subspace_id}/granter/{granter}/users/allowances";
+    }
+    // GroupAllowances returns all the grants for groups.
+    rpc GroupAllowances(QueryGroupAllowancesRequest) returns(QueryGroupAllowancesResponse) {
+        option (google.api.http).get = "/desmos/subspaces/v3/subspaces/{subspace_id}/granter/{granter}/groups/allowances";
     }
 }
 
-// QueryAllowancesRequest is the request type for the Query/Allowances RPC method.
-message QueryAllowancesRequest {
+// QueryUserAllowancesRequest is the request type for the Query/UserAllowances RPC method.
+message QueryUserAllowancesRequest {
     // the id of the subspace where the granter grants the allowance to the grantee.
     uint64 subspace_id = 1;
 
@@ -161,10 +275,34 @@ message QueryAllowancesRequest {
     cosmos.base.query.v1beta1.PageRequest pagination = 4;
 }
 
-// QueryAllowancesResponse is the response type for the Query/Allowances RPC method.
-message QueryAllowancesResponse {
+// QueryUserAllowancesResponse is the response type for the Query/UserAllowances RPC method.
+message QueryUserAllowancesResponse {
     // allowances are allowance's granted for grantee by granter.
     repeated cosmos.feegrant.v1beta1.Grant allowances = 1;
+
+    // pagination defines an pagination for the response.
+    cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QueryGroupAllowancesRequest is the request type for the Query/GroupAllowances RPC method.
+message QueryGroupAllowancesRequest {
+    // the id of the subspace where the granter grants the allowance to the grantee.
+    uint64 subspace_id = 1;
+
+    // the address of the user granting an allowance of their funds.
+    string granter = 2;
+
+    // (Optional) the id of the group being granted an allowance of another user's funds.
+    uint32 group_id = 3;
+
+    // pagination defines an pagination for the request.
+    cosmos.base.query.v1beta1.PageRequest pagination = 4;
+}
+
+// QueryGroupAllowancesResponse is the response type for the Query/GroupAllowances RPC method.
+message QueryGroupAllowancesResponse {
+    // allowances are allowance's granted for grantee by granter.
+    repeated cosmos.subspace.v3.GroupGrant allowances = 1;
 
     // pagination defines an pagination for the response.
     cosmos.base.query.v1beta1.PageResponse pagination = 2;
