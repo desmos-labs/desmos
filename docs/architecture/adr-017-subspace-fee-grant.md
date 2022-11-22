@@ -19,11 +19,11 @@ Currently, one of the major problems of current Web3 services is complicated to 
 - what `transaction` is and why they need some DSM to broadcast it;
 - get some DSM either via an on-ramp or by swapping existing funds.
 
-The `x/feegrant` gives the possibility to pay fees for the users, meaning that users can use the service without understanding how Web3 works behind. However, the `x/feegrant` allowance is not subspace-specified so subspace fees providers might unexpected pay the fees of the transactions inside another subspace.
+The `x/feegrant` gives the possibility to pay fees for the users, meaning that users can use the service without understanding how Web3 works behind. However, the `x/feegrant` allowance is not subspace-specified so subspace fees providers might unexpected pay the fees of the transactions to any other subspaces.
 
 ## Decision
 
-We will implement a subspace-specified fee grant process base on `x/feegrant` that allows subspace fees providers to pay fees for the users inside the specified subspace.The process of that a subspace fees provider support a user fees will be as follows:
+We will implement a subspace-specified fee grant process based on `x/feegrant` that allows subspace fees providers to pay fees for the users inside the specified subspace. The process of a subspace fees provider supports a user fees will be as follows:
 1. the user asks fees provider a fee grant inside the specified subspace;
 2. the fees provider send a subspace fee grant transaction to Desmos;
 3. Desmos executes the subspace fee grant transaction successfully;
@@ -41,14 +41,14 @@ sequenceDiagram
     Desmos-->>Fees Provider:  return ok
     Fees Provider-->>User: return ok
 
-    User->>Desmos: 4. use app with subspace tx
+    User->>Desmos: 4. use app without tokens
     Desmos-->>User: return ok
 ```
 
-In order to simplify the allowance management for the fees providers, we will also implement the subspace group fee grant to allow fees providers to grant an allowance to a group, the process will be like:
+In order to simplify the allowance management for the fees providers, we will also implement the subspace group fee grant to allow fees providers to grant an allowance to a group, then all the users in the group can share the grant. The process of the user asks for a group fee grant will be like:
 1. the fees provider creates a group;
 2. the fees provider grants an allowance to the group;
-3. the user asks for a subspace fee grant;
+3. the user asks for a subspace group fee grant;
 4. the fee provider adds the user to the group;
 5. the user can use the service without any tokens inside the specified subspace, the fees will be paid by the fees provider.
 ```mermaid
@@ -67,26 +67,26 @@ sequenceDiagram
     Desmos-->>Fees Provider:  return ok
     Fees Provider-->>User: return ok
 
-    User->>Desmos: 5. use app with subspace tx
+    User->>Desmos: 5. use app without tokens
     Desmos-->>User: return ok
 ```
 
 ### DeductFeeDecorator
 
-Currently, `x/auth` provides a `DeductFeeDecorator` based on `x/feegrant` to execute the action deducting fees from the signer/feepayer of a transaction. We will build a new subspace-specified `DeductFeeDecorator` to replace the current one.
+Currently, `x/auth` provides a `DeductFeeDecorator` based on `x/feegrant` to execute the action deducting the fees of a transaction from the signer/feepayer. We will build a new subspace-specified `DeductFeeDecorator` to replace the current one.
 
-The new subspace-specified `DeductFeeDecorator` will operate the fees with the process as follows:
+The new subspace-specified `DeductFeeDecorator` will deal with the fees with the process as follows:
 1. check all the messages in the transaction are the subspace messages and all of them are to the same subspace;
-2. apply `x/subspaces` `DeductFeeDecorator` if the transaction contains subspace messages from the same subspace and the grant exists, or apply `x/auth` `DeductFeeDecorator`;
+2. apply `x/subspaces` `DeductFeeDecorator` if the transaction contains subspace messages from the same subspace and the user/group fee grant exists, or apply `x/auth` `DeductFeeDecorator`;
 3. deduct the fees from the fee payer.
 
 ```mermaid
 graph TD
   id1([Start]) --> id2[Check transaction]
-  id2 --> id3{Are all subspace msgs<br/ >from the same subspace?}
-  id3 -- YES --> id4{Does have the grant?}
-  id3 -- NO --> id5[Apply Auth<br />DeductFeeDecorator]
-  id4 -- YES --> id6[Apply Subspace<br />DeductFeeDecorator]
+  id2 --> id3{Are all subspace msgs<br/ >to the same subspace?}
+  id3 -- YES --> id4{Is the user/group grant exist?}
+  id3 -- NO --> id5[Apply `x/auth`<br />DeductFeeDecorator]
+  id4 -- YES --> id6[Apply `x/subspaces`<br />DeductFeeDecorator]
   id4 -- NO --> id5
   id5 --> id7[Deduct fees]
   id6 --> id7
@@ -97,7 +97,7 @@ graph TD
 
 #### Allowance
 
-Currently, `x/feegrant` provides the `FeeAllowanceI` and the implementations for it, like `BasicAllowance`, `AllowedMsgAllowance` and `PeriodicAllowance`. Each of them already have the operation process to deal with the allowance. We will reuse them to be the allowance object inside the `x/subspace`.
+Currently, `x/feegrant` provides an interface `FeeAllowanceI` and the implementations for the interface like `BasicAllowance`, `AllowedMsgAllowance` and `PeriodicAllowance`. Each of them already have the operation process to deal with the allowance. We will reuse them to be the allowance object inside the `x/subspace`.
 
 #### Grant
 
@@ -128,7 +128,7 @@ In order to simplify granters to manage the group allowance, the granted group a
 SubspaceGroupAllowancePrefix | SubspaceID | GranterAddress | GroupID | -> Protobuf(GroupGrant)
 ```
 
-This structure allows granters to easily manage the group allowance inside a subspace by iterating over all allowances for the granters, which will be the most used query.
+This structure allows granters to easily manage the group allowance inside a subspace by iterating over all allowances for the granters, which will be the most used query. In the other hand, grantees must know who the granter is when using the application, they can find their grant with O(N) time complexity, N is the number of granted groups by the granter.
 
 #### User grant
 
@@ -309,7 +309,8 @@ The proposed solution introduces a new set of store keys, it is completely backw
 ### Negative
 
 - Storing extra subspace grant info takes up more storage space;
-- Having more check in the deducting fees phase slow down the transaction operation.
+- Having more check in the deducting fees phase slow down the transaction operation;
+- Removing expired allowances at the block begin phase increases the block production time.  
 
 ### Neutral
 
