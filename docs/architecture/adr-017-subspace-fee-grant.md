@@ -76,24 +76,21 @@ sequenceDiagram
 Currently, `x/auth` provides a `DeductFeeDecorator` based on `x/feegrant` to execute the action deducting fees from the signer/feepayer of a transaction. We will build a new subspace-specified `DeductFeeDecorator` to replace the current one.
 
 The new subspace-specified `DeductFeeDecorator` will operate the fees with the process as follows:
-1. get the subspace and group where allowance exists from transaction memo with the format like `subspace-1-1` meaning that the target allowance is inside the subspace 1 group 1, if memo is empty or invalid then apply `x/auth` `DeductFeeDecorator`; 
-2. check all the subspace messages in the transaction are to the same target subspace, if not then return an error;
-3. apply `x/subspaces` `DeductFeeDecorator` if the  the grant exists, or return an error;
-4. deduct the fees from the fee payer.
+1. check all the messages in the transaction are the subspace messages and all of them are to the same subspace;
+2. apply `x/subspaces` `DeductFeeDecorator` if the transaction contains subspace messages from the same subspace and the grant exists, or apply `x/auth` `DeductFeeDecorator`;
+3. deduct the fees from the fee payer.
 
 ```mermaid
 graph TD
-  id1([Start]) --> id2{Check transaction memo}
-  id2 -- Valid subspace memo --> id3{Are all msgs from<br/ > the same subspace?}
-  id3 -- YES --> id4{Does the grant exist?}
-  id3 -- NO --> id5[Error]
+  id1([Start]) --> id2[Check transaction]
+  id2 --> id3{Are all subspace msgs<br/ >from the same subspace?}
+  id3 -- YES --> id4{Does have the grant?}
+  id3 -- NO --> id5[Apply Auth<br />DeductFeeDecorator]
   id4 -- YES --> id6[Apply Subspace<br />DeductFeeDecorator]
   id4 -- NO --> id5
-  id6 --> id9[Deduct fees]
-  id2 -- Invalid subspace memo --> id7[Apply Auth<br />DeductFeeDecorator]
-  id7 --> id9
-  id5 --> id8[End]
-  id9 --> id8
+  id5 --> id7[Deduct fees]
+  id6 --> id7
+  id7 --> id8[End]
 ```
 
 ### Types
@@ -132,16 +129,6 @@ SubspaceGroupAllowancePrefix | SubspaceID | GranterAddress | GroupID | -> Protob
 ```
 
 This structure allows granters to easily manage the group allowance inside a subspace by iterating over all allowances for the granters, which will be the most used query.
-
-### Group allowance record for users
-
-In order to record the rest of spend or periodic limit, the granted group allowance for user will be stored in the keys having the structure as follows:
-
-```
-SubspaceGroupAllowanceRecordPrefix | SubspaceID | GranterAddress | GroupID | GranteeAddress | -> Protobuf(GroupGrant)
-```
-
-**Note** After updating group members or allowance, the records of influenced users should be refreshed.
 
 #### User grant
 
