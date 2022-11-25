@@ -4,14 +4,13 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	"github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
 )
 
 type DeductFeeDecorator struct {
 	authDeductAnte ante.DeductFeeDecorator
 	ak             AccountKeeper
 	bk             BankKeeper
-	sk             keeper.Keeper
+	sk             SubspacesKeeper
 }
 
 type AccountKeeper interface {
@@ -27,4 +26,8 @@ type BankKeeper interface {
 
 type FeegrantKeeper interface {
 	UseGrantedFees(ctx sdk.Context, granter, grantee sdk.AccAddress, fee sdk.Coins, msgs []sdk.Msg) error
+}
+
+type SubspacesKeeper interface {
+	UseGrantedFees(ctx sdk.Context, subspaceID uint64, granter, grantee sdk.AccAddress, fee sdk.Coins, msgs []sdk.Msg) error
 }

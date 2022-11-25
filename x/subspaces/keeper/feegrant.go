@@ -8,16 +8,6 @@ import (
 
 // GrantUserAllowance creates a new grant
 func (k Keeper) GrantUserAllowance(ctx sdk.Context, subspaceID uint64, granter, grantee string, feeAllowance feegrant.FeeAllowanceI) error {
-	// create an account for the grantee if it is not in account state
-	granteeAddr, err := sdk.AccAddressFromBech32(grantee)
-	if err != nil {
-		return err
-	}
-	granteeAcc := k.ak.GetAccount(ctx, granteeAddr)
-	if granteeAcc == nil {
-		granteeAcc = k.ak.NewAccountWithAddress(ctx, granteeAddr)
-		k.ak.SetAccount(ctx, granteeAcc)
-	}
 	store := ctx.KVStore(k.storeKey)
 	key := types.UserAllowanceKey(subspaceID, granter, grantee)
 	grant, err := types.NewUserGrant(subspaceID, granter, grantee, feeAllowance)

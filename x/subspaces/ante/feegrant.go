@@ -44,7 +44,7 @@ func isValidSubspaceMsgs(msgs []sdk.Msg) (uint64, bool) {
 	return subspaceId, true
 }
 
-func (dfd DeductFeeDecorator) anteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, next sdk.AnteHandler, subspaceId uint64) (newCtx sdk.Context, err error) {
+func (dfd DeductFeeDecorator) anteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, next sdk.AnteHandler, subspaceID uint64) (newCtx sdk.Context, err error) {
 	feeTx, ok := tx.(sdk.FeeTx)
 	if !ok {
 		return ctx, sdkerrors.Wrap(sdkerrors.ErrTxDecode, "Tx must be a FeeTx")
@@ -62,7 +62,7 @@ func (dfd DeductFeeDecorator) anteHandle(ctx sdk.Context, tx sdk.Tx, simulate bo
 	// this works with only when feegrant enabled.
 	if feeGranter != nil {
 		if !feeGranter.Equals(feePayer) {
-			err := dfd.sk.UseGrantedFees(ctx, subspaceId, feeGranter, feePayer, fee, tx.GetMsgs())
+			err := dfd.sk.UseGrantedFees(ctx, subspaceID, feeGranter, feePayer, fee, tx.GetMsgs())
 			if err != nil {
 				return ctx, sdkerrors.Wrapf(err, "%s not allowed to pay fees from %s", feeGranter, feePayer)
 			}

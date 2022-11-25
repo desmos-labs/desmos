@@ -114,7 +114,7 @@ func buildUserPermissionsQueryRequest(cdc codec.Codec, query *types.QueryUserPer
 	return bz
 }
 
-type Testsuite struct {
+type TestSuite struct {
 	suite.Suite
 
 	cdc            codec.Codec
@@ -124,7 +124,7 @@ type Testsuite struct {
 	storeKey       sdk.StoreKey
 }
 
-func (suite *Testsuite) SetupTest() {
+func (suite *TestSuite) SetupTest() {
 	// Define store keys
 	keys := sdk.NewMemoryStoreKeys(types.StoreKey, paramstypes.StoreKey)
 
@@ -149,5 +149,5 @@ func (suite *Testsuite) SetupTest() {
 }
 
 func TestKeeperTestSuite(t *testing.T) {
-	suite.Run(t, new(Testsuite))
+	suite.Run(t, new(TestSuite))
 }
