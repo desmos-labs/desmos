@@ -41,7 +41,8 @@ var (
 	UserPermissionsStorePrefix = []byte{0x05}
 	SectionIDPrefix            = []byte{0x06}
 	SectionsPrefix             = []byte{0x07}
-	AllowancePrefix            = []byte{0x08}
+	UserAllowancePrefix        = []byte{0x08}
+	GroupAllowancePrefix       = []byte{0x09}
 )
 
 // GetSubspaceIDBytes returns the byte representation of the subspaceID
@@ -209,6 +210,26 @@ func SplitUserAddressPermissionKey(key []byte) (subspaceID uint64, sectionID uin
 
 // --------------------------------------------------------------------------------------------------------------------
 
-func FeeAllowanceKey(granter string, grantee string, subspaceId uint64) []byte {
-	return append(append(AllowancePrefix, []byte(granter+grantee)...), GetSubspaceIDBytes(subspaceId)...)
+func SubspaceUserAllowancePrefix(subspaceId uint64) []byte {
+	return append(UserAllowancePrefix, GetSubspaceIDBytes(subspaceId)...)
+}
+
+func GranterUserAllowancePrefix(subspaceId uint64, granter string) []byte {
+	return append(SubspaceUserAllowancePrefix(subspaceId), GetAddressBytes(granter)...)
+}
+
+func UserAllowanceKey(subspaceId uint64, granter string, grantee string) []byte {
+	return append(GranterUserAllowancePrefix(subspaceId, granter), GetAddressBytes(grantee)...)
+}
+
+func SubspaceGroupAllowancePrefix(subspaceId uint64) []byte {
+	return append(GroupAllowancePrefix, GetSubspaceIDBytes(subspaceId)...)
+}
+
+func GranterGroupAllowancePrefix(subspaceId uint64, granter string) []byte {
+	return append(SubspaceGroupAllowancePrefix(subspaceId), GetAddressBytes(granter)...)
+}
+
+func GroupAllowanceKey(subspaceId uint64, granter string, groupID uint32) []byte {
+	return append(GranterGroupAllowancePrefix(subspaceId, granter), GetGroupIDBytes(groupID)...)
 }

@@ -4,11 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	feegranttypes "github.com/cosmos/cosmos-sdk/x/feegrant"
-	proto "github.com/gogo/protobuf/proto"
 )
 
 // SubspaceMsg represents a generic message that is related to a subspace
@@ -35,7 +32,6 @@ var (
 	_ sdk.Msg = &MsgAddUserToUserGroup{}
 	_ sdk.Msg = &MsgRemoveUserFromUserGroup{}
 	_ sdk.Msg = &MsgSetUserPermissions{}
-	_ sdk.Msg = &MsgGrantAllowance{}
 )
 
 // NewMsgCreateSubspace creates a new MsgCreateSubspace instance
@@ -842,61 +838,4 @@ func (msg MsgSetUserPermissions) GetSignBytes() []byte {
 func (msg MsgSetUserPermissions) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Signer)
 	return []sdk.AccAddress{addr}
-}
-
-// --------------------------------------------------------------------------------------------------------------------
-
-func NewMsgGrantAllowance(subspaceId uint64, granter string, grantee string, allowance feegranttypes.FeeAllowanceI) *MsgGrantAllowance {
-	msg, ok := allowance.(proto.Message)
-	if !ok {
-		panic("cannot proto marshal allowance")
-	}
-	any, err := types.NewAnyWithValue(msg)
-	if err != nil {
-		panic("failed to pack allowance to any type")
-	}
-	return &MsgGrantAllowance{
-		SubspaceId: subspaceId,
-		Granter:    granter,
-		Grantee:    grantee,
-		Allowance:  any,
-	}
-}
-
-func (msg MsgGrantAllowance) ValidateBasic() error {
-	return nil
-}
-
-func (msg MsgGrantAllowance) GetSigners() []sdk.AccAddress {
-	granter, err := sdk.AccAddressFromBech32(msg.Granter)
-	if err != nil {
-		panic(err)
-	}
-	return []sdk.AccAddress{granter}
-}
-
-func (msg MsgGrantAllowance) Type() string {
-	return sdk.MsgTypeURL(&msg)
-}
-
-func (msg MsgGrantAllowance) Route() string {
-	return sdk.MsgTypeURL(&msg)
-}
-
-func (msg MsgGrantAllowance) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
-}
-
-func (msg MsgGrantAllowance) GetFeeAllowanceI() (feegranttypes.FeeAllowanceI, error) {
-	allowance, ok := msg.Allowance.GetCachedValue().(feegranttypes.FeeAllowanceI)
-	if !ok {
-		return nil, sdkerrors.Wrap(ErrNoAllowance, "failed to get allowance")
-	}
-
-	return allowance, nil
-}
-
-func (msg MsgGrantAllowance) UnpackInterfaces(unpacker types.AnyUnpacker) error {
-	var allowance feegranttypes.FeeAllowanceI
-	return unpacker.UnpackAny(msg.Allowance, &allowance)
 }

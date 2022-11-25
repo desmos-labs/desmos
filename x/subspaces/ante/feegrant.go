@@ -12,34 +12,12 @@ import (
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
-type DeductFeeDecorator struct {
-	adfd ante.DeductFeeDecorator
-	ak   AccountKeeper
-	bk   BankKeeper
-	sk   keeper.Keeper
-}
-
-type AccountKeeper interface {
-	GetParams(ctx sdk.Context) authtypes.Params
-	GetAccount(ctx sdk.Context, addr sdk.AccAddress) authtypes.AccountI
-	SetAccount(ctx sdk.Context, acc authtypes.AccountI)
-	GetModuleAddress(moduleName string) sdk.AccAddress
-}
-
-type BankKeeper interface {
-	SendCoinsFromAccountToModule(ctx sdk.Context, senderAddr sdk.AccAddress, recipientModule string, amt sdk.Coins) error
-}
-
-type FeegrantKeeper interface {
-	UseGrantedFees(ctx sdk.Context, granter, grantee sdk.AccAddress, fee sdk.Coins, msgs []sdk.Msg) error
-}
-
 func NewDeductFeeDecorator(ak AccountKeeper, bk BankKeeper, fk FeegrantKeeper, sk keeper.Keeper) DeductFeeDecorator {
 	return DeductFeeDecorator{
-		adfd: ante.NewDeductFeeDecorator(ak, bk, fk),
-		ak:   ak,
-		bk:   bk,
-		sk:   sk,
+		authDeductAnte: ante.NewDeductFeeDecorator(ak, bk, fk),
+		ak:             ak,
+		bk:             bk,
+		sk:             sk,
 	}
 }
 
@@ -47,7 +25,7 @@ func (dfd DeductFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bo
 	if id, ok := isValidSubspaceMsgs(tx.GetMsgs()); ok {
 		return dfd.anteHandle(ctx, tx, simulate, next, id)
 	}
-	return dfd.adfd.AnteHandle(ctx, tx, simulate, next)
+	return dfd.authDeductAnte.AnteHandle(ctx, tx, simulate, next)
 }
 
 func isValidSubspaceMsgs(msgs []sdk.Msg) (uint64, bool) {
@@ -84,7 +62,7 @@ func (dfd DeductFeeDecorator) anteHandle(ctx sdk.Context, tx sdk.Tx, simulate bo
 	// this works with only when feegrant enabled.
 	if feeGranter != nil {
 		if !feeGranter.Equals(feePayer) {
-			err := dfd.sk.UseGrantedFees(ctx, feeGranter, feePayer, subspaceId, fee, tx.GetMsgs())
+			err := dfd.sk.UseGrantedFees(ctx, subspaceId, feeGranter, feePayer, fee, tx.GetMsgs())
 			if err != nil {
 				return ctx, sdkerrors.Wrapf(err, "%s not allowed to pay fees from %s", feeGranter, feePayer)
 			}

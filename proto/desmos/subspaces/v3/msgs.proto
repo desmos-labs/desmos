@@ -61,7 +61,9 @@ service Msg {
   rpc SetUserPermissions(MsgSetUserPermissions)
       returns (MsgSetUserPermissionsResponse);
 
-  rpc GrantAllowance(MsgGrantAllowance) returns (MsgGrantAllowanceResponse);
+  rpc GrantUserAllowance(MsgGrantUserAllowance) returns (MsgGrantUserAllowanceResponse);
+
+  rpc GrantGroupAllowance(MsgGrantGroupAllowance) returns (MsgGrantGroupAllowanceResponse);
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -486,11 +488,38 @@ message MsgSetUserPermissionsResponse {}
 
 // --------------------------------------------------------------------------------------------------------------------
 
-message MsgGrantAllowance {
-  uint64 subspace_id = 1;
-  string granter = 2;
-  string grantee = 3;
+message MsgGrantUserAllowance {
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+  string granter = 2  [
+    (gogoproto.moretags) = "yaml:\"granter\""
+  ];
+  string grantee = 3  [
+    (gogoproto.moretags) = "yaml:\"grantee\""
+  ];
   google.protobuf.Any allowance = 4 [(cosmos_proto.accepts_interface) = "FeeAllowanceI"];
 }
 
-message MsgGrantAllowanceResponse {}
+message MsgGrantUserAllowanceResponse {}
+
+message MsgGrantGroupAllowance {
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+  string granter = 2 [
+    (gogoproto.moretags) = "yaml:\"granter\""
+  ];
+  uint32 group_id = 3 [
+    (gogoproto.customname) = "GroupID",
+    (gogoproto.moretags) = "yaml:\"group_id\""
+  ];
+  google.protobuf.Any allowance = 4 [
+    (gogoproto.moretags) = "yaml:\"allowance\"",
+    (cosmos_proto.accepts_interface) = "FeeAllowanceI"
+  ];
+}
+
+message MsgGrantGroupAllowanceResponse {}

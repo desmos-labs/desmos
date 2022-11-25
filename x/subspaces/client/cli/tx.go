@@ -147,7 +147,7 @@ func GetCmdFeeGrant() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			msg := types.NewMsgGrantAllowance(subspaceID, clientCtx.FromAddress.String(), args[1], grant)
+			msg := types.NewMsgGrantUserAllowance(subspaceID, clientCtx.FromAddress.String(), args[1], grant)
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}
