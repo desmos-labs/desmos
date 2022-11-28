@@ -33,19 +33,6 @@ The new subspace-specified `DeductFeeDecorator` will work as follows:
 1. check if all the messages in the transaction are messages related to the same subspace;
 2. if the transaction contains subspace messages from the same subspace and a fee grant exists, run the `x/subspaces` `DeductFeeDecorator`; otherwise run the `x/auth` `DeductFeeDecorator`,
 
-```mermaid
-graph TD
-  id1([Start]) --> id2[Check transaction]
-  id2 --> id3{Are all subspace msgs<br/ >to the same subspace?}
-  id3 -- YES --> id4{Is the user/group grant exist?}
-  id3 -- NO --> id5[Apply `x/auth`<br />DeductFeeDecorator]
-  id4 -- YES --> id6[Apply `x/subspaces`<br />DeductFeeDecorator]
-  id4 -- NO --> id5
-  id5 --> id7[Deduct fees]
-  id6 --> id7
-  id7 --> id8[End]
-```
-
 ### Types
 
 #### Allowance
