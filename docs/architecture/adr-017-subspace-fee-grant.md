@@ -45,7 +45,10 @@ The `x/feegrant` module provides a `Grant` object used to store the `granter`, `
 
 #### GroupGrant
 
-To show the group grant, we will implement the `GroupGrant` object to record all full context containing `granter`, `group_id` and what kind of `allowance` is granted, the structure will be as follows:
+#### Group Grant
+
+In order to represent a fee grant granted to a user group, we will implement a `GroupGrant` type. This will contain the `granter`, `group_id` and what kind of `allowance` is granted to the group:
+
 ```protobuf
 message GroupGrant {
     // granter is the address of the user granting an allowance of their funds.
