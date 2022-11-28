@@ -1,0 +1,56 @@
+---
+id: subspace-user-group
+title: subspace_user_group
+hide_table_of_contents: false
+---
+
+
+fetch data from the table: "subspace_user_group"
+
+```graphql
+subspace_user_group(
+  distinct_on: [subspace_user_group_select_column!]
+  limit: Int
+  offset: Int
+  order_by: [subspace_user_group_order_by!]
+  where: subspace_user_group_bool_exp
+): [subspace_user_group!]!
+```
+
+
+### Arguments
+
+#### [`distinct_on`](#) ([`[subspace_user_group_select_column!]`](../enums/subspace-user-group-select-column))
+
+distinct select on columns
+
+
+#### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+
+#### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+
+#### [`order_by`](#) ([`[subspace_user_group_order_by!]`](../inputs/subspace-user-group-order-by))
+
+sort the rows by one or more columns
+
+
+#### [`where`](#) ([`subspace_user_group_bool_exp`](../inputs/subspace-user-group-bool-exp))
+
+filter the rows returned
+
+
+### Type
+
+#### [`subspace_user_group`](../objects/subspace-user-group)
+
+columns and relationships of "subspace_user_group"
+
+
+
+

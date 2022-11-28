@@ -1,0 +1,96 @@
+---
+id: reaction-aggregate-fields
+title: reaction_aggregate_fields
+hide_table_of_contents: false
+---
+
+
+aggregate fields of "reaction"
+
+```graphql
+type reaction_aggregate_fields {
+  avg: reaction_avg_fields
+  count(
+  columns: [reaction_select_column!]
+  distinct: Boolean
+): Int!
+  max: reaction_max_fields
+  min: reaction_min_fields
+  stddev: reaction_stddev_fields
+  stddev_pop: reaction_stddev_pop_fields
+  stddev_samp: reaction_stddev_samp_fields
+  sum: reaction_sum_fields
+  var_pop: reaction_var_pop_fields
+  var_samp: reaction_var_samp_fields
+  variance: reaction_variance_fields
+}
+```
+
+
+### Fields
+
+#### [`avg`](#) ([`reaction_avg_fields`](../objects/reaction-avg-fields))
+
+
+
+
+#### [`count`](#) ([`Int!`](../scalars/int))
+
+
+- ##### [`columns`](#) ([`[reaction_select_column!]`](../enums/reaction-select-column))
+
+
+
+
+- ##### [`distinct`](#) ([`Boolean`](../scalars/boolean))
+
+
+
+
+#### [`max`](#) ([`reaction_max_fields`](../objects/reaction-max-fields))
+
+
+
+
+#### [`min`](#) ([`reaction_min_fields`](../objects/reaction-min-fields))
+
+
+
+
+#### [`stddev`](#) ([`reaction_stddev_fields`](../objects/reaction-stddev-fields))
+
+
+
+
+#### [`stddev_pop`](#) ([`reaction_stddev_pop_fields`](../objects/reaction-stddev-pop-fields))
+
+
+
+
+#### [`stddev_samp`](#) ([`reaction_stddev_samp_fields`](../objects/reaction-stddev-samp-fields))
+
+
+
+
+#### [`sum`](#) ([`reaction_sum_fields`](../objects/reaction-sum-fields))
+
+
+
+
+#### [`var_pop`](#) ([`reaction_var_pop_fields`](../objects/reaction-var-pop-fields))
+
+
+
+
+#### [`var_samp`](#) ([`reaction_var_samp_fields`](../objects/reaction-var-samp-fields))
+
+
+
+
+#### [`variance`](#) ([`reaction_variance_fields`](../objects/reaction-variance-fields))
+
+
+
+
+
+

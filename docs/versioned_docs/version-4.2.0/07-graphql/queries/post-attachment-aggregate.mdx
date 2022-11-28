@@ -1,0 +1,56 @@
+---
+id: post-attachment-aggregate
+title: post_attachment_aggregate
+hide_table_of_contents: false
+---
+
+
+fetch aggregated fields from the table: "post_attachment"
+
+```graphql
+post_attachment_aggregate(
+  distinct_on: [post_attachment_select_column!]
+  limit: Int
+  offset: Int
+  order_by: [post_attachment_order_by!]
+  where: post_attachment_bool_exp
+): post_attachment_aggregate!
+```
+
+
+### Arguments
+
+#### [`distinct_on`](#) ([`[post_attachment_select_column!]`](../enums/post-attachment-select-column))
+
+distinct select on columns
+
+
+#### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+
+#### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+
+#### [`order_by`](#) ([`[post_attachment_order_by!]`](../inputs/post-attachment-order-by))
+
+sort the rows by one or more columns
+
+
+#### [`where`](#) ([`post_attachment_bool_exp`](../inputs/post-attachment-bool-exp))
+
+filter the rows returned
+
+
+### Type
+
+#### [`post_attachment_aggregate`](../objects/post-attachment-aggregate)
+
+aggregated selection of "post_attachment"
+
+
+
+

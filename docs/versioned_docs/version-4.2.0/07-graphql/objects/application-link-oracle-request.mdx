@@ -1,0 +1,54 @@
+---
+id: application-link-oracle-request
+title: application_link_oracle_request
+hide_table_of_contents: false
+---
+
+
+columns and relationships of "application_link_oracle_request"
+
+```graphql
+type application_link_oracle_request {
+  application_link: application_link!
+  call_data(
+  path: String
+): jsonb!
+  client_id: String!
+  request_id: bigint!
+  script_id: bigint!
+}
+```
+
+
+### Fields
+
+#### [`application_link`](#) ([`application_link!`](../objects/application-link))
+
+An object relationship
+
+
+#### [`call_data`](#) ([`jsonb!`](../scalars/jsonb))
+
+
+- ##### [`path`](#) ([`String`](../scalars/string))
+
+JSON select path
+
+
+#### [`client_id`](#) ([`String!`](../scalars/string))
+
+
+
+
+#### [`request_id`](#) ([`bigint!`](../scalars/bigint))
+
+
+
+
+#### [`script_id`](#) ([`bigint!`](../scalars/bigint))
+
+
+
+
+
+

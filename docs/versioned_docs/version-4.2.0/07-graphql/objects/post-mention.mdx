@@ -1,0 +1,49 @@
+---
+id: post-mention
+title: post_mention
+hide_table_of_contents: false
+---
+
+
+columns and relationships of "post_mention"
+
+```graphql
+type post_mention {
+  end_index: bigint!
+  mention: profile
+  mention_address: String!
+  post: post!
+  start_index: bigint!
+}
+```
+
+
+### Fields
+
+#### [`end_index`](#) ([`bigint!`](../scalars/bigint))
+
+
+
+
+#### [`mention`](#) ([`profile`](../objects/profile))
+
+An object relationship
+
+
+#### [`mention_address`](#) ([`String!`](../scalars/string))
+
+
+
+
+#### [`post`](#) ([`post!`](../objects/post))
+
+An object relationship
+
+
+#### [`start_index`](#) ([`bigint!`](../scalars/bigint))
+
+
+
+
+
+

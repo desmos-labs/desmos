@@ -1,0 +1,56 @@
+---
+id: reports-params
+title: reports_params
+hide_table_of_contents: false
+---
+
+
+fetch data from the table: "reports_params"
+
+```graphql
+reports_params(
+  distinct_on: [reports_params_select_column!]
+  limit: Int
+  offset: Int
+  order_by: [reports_params_order_by!]
+  where: reports_params_bool_exp
+): [reports_params!]!
+```
+
+
+### Arguments
+
+#### [`distinct_on`](#) ([`[reports_params_select_column!]`](../enums/reports-params-select-column))
+
+distinct select on columns
+
+
+#### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+
+#### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+
+#### [`order_by`](#) ([`[reports_params_order_by!]`](../inputs/reports-params-order-by))
+
+sort the rows by one or more columns
+
+
+#### [`where`](#) ([`reports_params_bool_exp`](../inputs/reports-params-bool-exp))
+
+filter the rows returned
+
+
+### Type
+
+#### [`reports_params`](../objects/reports-params)
+
+columns and relationships of "reports_params"
+
+
+
+

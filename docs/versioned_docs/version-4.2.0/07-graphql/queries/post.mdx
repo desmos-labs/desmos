@@ -1,0 +1,56 @@
+---
+id: post
+title: post
+hide_table_of_contents: false
+---
+
+
+fetch data from the table: "post"
+
+```graphql
+post(
+  distinct_on: [post_select_column!]
+  limit: Int
+  offset: Int
+  order_by: [post_order_by!]
+  where: post_bool_exp
+): [post!]!
+```
+
+
+### Arguments
+
+#### [`distinct_on`](#) ([`[post_select_column!]`](../enums/post-select-column))
+
+distinct select on columns
+
+
+#### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+
+#### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+
+#### [`order_by`](#) ([`[post_order_by!]`](../inputs/post-order-by))
+
+sort the rows by one or more columns
+
+
+#### [`where`](#) ([`post_bool_exp`](../inputs/post-bool-exp))
+
+filter the rows returned
+
+
+### Type
+
+#### [`post`](../objects/post)
+
+columns and relationships of "post"
+
+
+
+

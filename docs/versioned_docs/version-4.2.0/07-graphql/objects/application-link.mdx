@@ -1,0 +1,101 @@
+---
+id: application-link
+title: application_link
+hide_table_of_contents: false
+---
+
+
+columns and relationships of "application_link"
+
+```graphql
+type application_link {
+  application: String!
+  application_link_oracle_requests(
+  distinct_on: [application_link_oracle_request_select_column!]
+  limit: Int
+  offset: Int
+  order_by: [application_link_oracle_request_order_by!]
+  where: application_link_oracle_request_bool_exp
+): [application_link_oracle_request!]!
+  creation_time: timestamp!
+  profile: profile!
+  result(
+  path: String
+): jsonb
+  state: String!
+  user_address: String!
+  username: String!
+}
+```
+
+
+### Fields
+
+#### [`application`](#) ([`String!`](../scalars/string))
+
+
+
+
+#### [`application_link_oracle_requests`](#) ([`[application_link_oracle_request!]!`](../objects/application-link-oracle-request))
+
+An array relationship
+- ##### [`distinct_on`](#) ([`[application_link_oracle_request_select_column!]`](../enums/application-link-oracle-request-select-column))
+
+distinct select on columns
+
+
+- ##### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+
+- ##### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+
+- ##### [`order_by`](#) ([`[application_link_oracle_request_order_by!]`](../inputs/application-link-oracle-request-order-by))
+
+sort the rows by one or more columns
+
+
+- ##### [`where`](#) ([`application_link_oracle_request_bool_exp`](../inputs/application-link-oracle-request-bool-exp))
+
+filter the rows returned
+
+
+#### [`creation_time`](#) ([`timestamp!`](../scalars/timestamp))
+
+
+
+
+#### [`profile`](#) ([`profile!`](../objects/profile))
+
+An object relationship
+
+
+#### [`result`](#) ([`jsonb`](../scalars/jsonb))
+
+
+- ##### [`path`](#) ([`String`](../scalars/string))
+
+JSON select path
+
+
+#### [`state`](#) ([`String!`](../scalars/string))
+
+
+
+
+#### [`user_address`](#) ([`String!`](../scalars/string))
+
+
+
+
+#### [`username`](#) ([`String!`](../scalars/string))
+
+
+
+
+
+

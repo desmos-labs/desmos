@@ -1,0 +1,6350 @@
+schema {
+  query: query_root
+  subscription: subscription_root
+}
+
+"""
+Boolean expression to compare columns of type "Boolean". All fields are combined with logical 'AND'.
+"""
+input Boolean_comparison_exp {
+  _eq: Boolean
+  _gt: Boolean
+  _gte: Boolean
+  _in: [Boolean!]
+  _is_null: Boolean
+  _lt: Boolean
+  _lte: Boolean
+  _neq: Boolean
+  _nin: [Boolean!]
+}
+
+"""
+Boolean expression to compare columns of type "String". All fields are combined with logical 'AND'.
+"""
+input String_comparison_exp {
+  _eq: String
+  _gt: String
+  _gte: String
+
+  """does the column match the given case-insensitive pattern"""
+  _ilike: String
+  _in: [String!]
+
+  """
+  does the column match the given POSIX regular expression, case insensitive
+  """
+  _iregex: String
+  _is_null: Boolean
+
+  """does the column match the given pattern"""
+  _like: String
+  _lt: String
+  _lte: String
+  _neq: String
+
+  """does the column NOT match the given case-insensitive pattern"""
+  _nilike: String
+  _nin: [String!]
+
+  """
+  does the column NOT match the given POSIX regular expression, case insensitive
+  """
+  _niregex: String
+
+  """does the column NOT match the given pattern"""
+  _nlike: String
+
+  """
+  does the column NOT match the given POSIX regular expression, case sensitive
+  """
+  _nregex: String
+
+  """does the column NOT match the given SQL regular expression"""
+  _nsimilar: String
+
+  """
+  does the column match the given POSIX regular expression, case sensitive
+  """
+  _regex: String
+
+  """does the column match the given SQL regular expression"""
+  _similar: String
+}
+
+scalar _int8
+
+"""
+Boolean expression to compare columns of type "_int8". All fields are combined with logical 'AND'.
+"""
+input _int8_comparison_exp {
+  _eq: _int8
+  _gt: _int8
+  _gte: _int8
+  _in: [_int8!]
+  _is_null: Boolean
+  _lt: _int8
+  _lte: _int8
+  _neq: _int8
+  _nin: [_int8!]
+}
+
+scalar _text
+
+"""
+Boolean expression to compare columns of type "_text". All fields are combined with logical 'AND'.
+"""
+input _text_comparison_exp {
+  _eq: _text
+  _gt: _text
+  _gte: _text
+  _in: [_text!]
+  _is_null: Boolean
+  _lt: _text
+  _lte: _text
+  _neq: _text
+  _nin: [_text!]
+}
+
+"""
+columns and relationships of "application_link"
+"""
+type application_link {
+  application: String!
+
+  """An array relationship"""
+  application_link_oracle_requests(
+    """distinct select on columns"""
+    distinct_on: [application_link_oracle_request_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [application_link_oracle_request_order_by!]
+
+    """filter the rows returned"""
+    where: application_link_oracle_request_bool_exp
+  ): [application_link_oracle_request!]!
+  creation_time: timestamp!
+
+  """An object relationship"""
+  profile: profile!
+  result(
+    """JSON select path"""
+    path: String
+  ): jsonb
+  state: String!
+  user_address: String!
+  username: String!
+}
+
+"""
+order by aggregate values of table "application_link"
+"""
+input application_link_aggregate_order_by {
+  count: order_by
+  max: application_link_max_order_by
+  min: application_link_min_order_by
+}
+
+"""
+Boolean expression to filter rows from the table "application_link". All fields are combined with a logical 'AND'.
+"""
+input application_link_bool_exp {
+  _and: [application_link_bool_exp!]
+  _not: application_link_bool_exp
+  _or: [application_link_bool_exp!]
+  application: String_comparison_exp
+  application_link_oracle_requests: application_link_oracle_request_bool_exp
+  creation_time: timestamp_comparison_exp
+  profile: profile_bool_exp
+  result: jsonb_comparison_exp
+  state: String_comparison_exp
+  user_address: String_comparison_exp
+  username: String_comparison_exp
+}
+
+"""
+order by max() on columns of table "application_link"
+"""
+input application_link_max_order_by {
+  application: order_by
+  creation_time: order_by
+  state: order_by
+  user_address: order_by
+  username: order_by
+}
+
+"""
+order by min() on columns of table "application_link"
+"""
+input application_link_min_order_by {
+  application: order_by
+  creation_time: order_by
+  state: order_by
+  user_address: order_by
+  username: order_by
+}
+
+"""
+columns and relationships of "application_link_oracle_request"
+"""
+type application_link_oracle_request {
+  """An object relationship"""
+  application_link: application_link!
+  call_data(
+    """JSON select path"""
+    path: String
+  ): jsonb!
+  client_id: String!
+  request_id: bigint!
+  script_id: bigint!
+}
+
+"""
+order by aggregate values of table "application_link_oracle_request"
+"""
+input application_link_oracle_request_aggregate_order_by {
+  avg: application_link_oracle_request_avg_order_by
+  count: order_by
+  max: application_link_oracle_request_max_order_by
+  min: application_link_oracle_request_min_order_by
+  stddev: application_link_oracle_request_stddev_order_by
+  stddev_pop: application_link_oracle_request_stddev_pop_order_by
+  stddev_samp: application_link_oracle_request_stddev_samp_order_by
+  sum: application_link_oracle_request_sum_order_by
+  var_pop: application_link_oracle_request_var_pop_order_by
+  var_samp: application_link_oracle_request_var_samp_order_by
+  variance: application_link_oracle_request_variance_order_by
+}
+
+"""
+order by avg() on columns of table "application_link_oracle_request"
+"""
+input application_link_oracle_request_avg_order_by {
+  request_id: order_by
+  script_id: order_by
+}
+
+"""
+Boolean expression to filter rows from the table "application_link_oracle_request". All fields are combined with a logical 'AND'.
+"""
+input application_link_oracle_request_bool_exp {
+  _and: [application_link_oracle_request_bool_exp!]
+  _not: application_link_oracle_request_bool_exp
+  _or: [application_link_oracle_request_bool_exp!]
+  application_link: application_link_bool_exp
+  call_data: jsonb_comparison_exp
+  client_id: String_comparison_exp
+  request_id: bigint_comparison_exp
+  script_id: bigint_comparison_exp
+}
+
+"""
+order by max() on columns of table "application_link_oracle_request"
+"""
+input application_link_oracle_request_max_order_by {
+  client_id: order_by
+  request_id: order_by
+  script_id: order_by
+}
+
+"""
+order by min() on columns of table "application_link_oracle_request"
+"""
+input application_link_oracle_request_min_order_by {
+  client_id: order_by
+  request_id: order_by
+  script_id: order_by
+}
+
+"""
+Ordering options when selecting data from "application_link_oracle_request".
+"""
+input application_link_oracle_request_order_by {
+  application_link: application_link_order_by
+  call_data: order_by
+  client_id: order_by
+  request_id: order_by
+  script_id: order_by
+}
+
+"""
+select columns of table "application_link_oracle_request"
+"""
+enum application_link_oracle_request_select_column {
+  """column name"""
+  call_data
+
+  """column name"""
+  client_id
+
+  """column name"""
+  request_id
+
+  """column name"""
+  script_id
+}
+
+"""
+order by stddev() on columns of table "application_link_oracle_request"
+"""
+input application_link_oracle_request_stddev_order_by {
+  request_id: order_by
+  script_id: order_by
+}
+
+"""
+order by stddev_pop() on columns of table "application_link_oracle_request"
+"""
+input application_link_oracle_request_stddev_pop_order_by {
+  request_id: order_by
+  script_id: order_by
+}
+
+"""
+order by stddev_samp() on columns of table "application_link_oracle_request"
+"""
+input application_link_oracle_request_stddev_samp_order_by {
+  request_id: order_by
+  script_id: order_by
+}
+
+"""
+order by sum() on columns of table "application_link_oracle_request"
+"""
+input application_link_oracle_request_sum_order_by {
+  request_id: order_by
+  script_id: order_by
+}
+
+"""
+order by var_pop() on columns of table "application_link_oracle_request"
+"""
+input application_link_oracle_request_var_pop_order_by {
+  request_id: order_by
+  script_id: order_by
+}
+
+"""
+order by var_samp() on columns of table "application_link_oracle_request"
+"""
+input application_link_oracle_request_var_samp_order_by {
+  request_id: order_by
+  script_id: order_by
+}
+
+"""
+order by variance() on columns of table "application_link_oracle_request"
+"""
+input application_link_oracle_request_variance_order_by {
+  request_id: order_by
+  script_id: order_by
+}
+
+"""Ordering options when selecting data from "application_link"."""
+input application_link_order_by {
+  application: order_by
+  application_link_oracle_requests_aggregate: application_link_oracle_request_aggregate_order_by
+  creation_time: order_by
+  profile: profile_order_by
+  result: order_by
+  state: order_by
+  user_address: order_by
+  username: order_by
+}
+
+"""
+select columns of table "application_link"
+"""
+enum application_link_select_column {
+  """column name"""
+  application
+
+  """column name"""
+  creation_time
+
+  """column name"""
+  result
+
+  """column name"""
+  state
+
+  """column name"""
+  user_address
+
+  """column name"""
+  username
+}
+
+scalar bigint
+
+"""
+Boolean expression to compare columns of type "bigint". All fields are combined with logical 'AND'.
+"""
+input bigint_comparison_exp {
+  _eq: bigint
+  _gt: bigint
+  _gte: bigint
+  _in: [bigint!]
+  _is_null: Boolean
+  _lt: bigint
+  _lte: bigint
+  _neq: bigint
+  _nin: [bigint!]
+}
+
+"""
+columns and relationships of "chain_link"
+"""
+type chain_link {
+  """An object relationship"""
+  chain_config: chain_link_chain_config!
+
+  """An array relationship"""
+  chain_link_proofs(
+    """distinct select on columns"""
+    distinct_on: [chain_link_proof_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [chain_link_proof_order_by!]
+
+    """filter the rows returned"""
+    where: chain_link_proof_bool_exp
+  ): [chain_link_proof!]!
+  creation_time: timestamp!
+  external_address: String!
+  height: bigint!
+
+  """An object relationship"""
+  profile: profile!
+
+  """An object relationship"""
+  proof: chain_link_proof
+  user_address: String!
+}
+
+"""
+order by aggregate values of table "chain_link"
+"""
+input chain_link_aggregate_order_by {
+  avg: chain_link_avg_order_by
+  count: order_by
+  max: chain_link_max_order_by
+  min: chain_link_min_order_by
+  stddev: chain_link_stddev_order_by
+  stddev_pop: chain_link_stddev_pop_order_by
+  stddev_samp: chain_link_stddev_samp_order_by
+  sum: chain_link_sum_order_by
+  var_pop: chain_link_var_pop_order_by
+  var_samp: chain_link_var_samp_order_by
+  variance: chain_link_variance_order_by
+}
+
+"""
+order by avg() on columns of table "chain_link"
+"""
+input chain_link_avg_order_by {
+  height: order_by
+}
+
+"""
+Boolean expression to filter rows from the table "chain_link". All fields are combined with a logical 'AND'.
+"""
+input chain_link_bool_exp {
+  _and: [chain_link_bool_exp!]
+  _not: chain_link_bool_exp
+  _or: [chain_link_bool_exp!]
+  chain_config: chain_link_chain_config_bool_exp
+  chain_link_proofs: chain_link_proof_bool_exp
+  creation_time: timestamp_comparison_exp
+  external_address: String_comparison_exp
+  height: bigint_comparison_exp
+  profile: profile_bool_exp
+  proof: chain_link_proof_bool_exp
+  user_address: String_comparison_exp
+}
+
+"""
+columns and relationships of "chain_link_chain_config"
+"""
+type chain_link_chain_config {
+  """An array relationship"""
+  chain_links(
+    """distinct select on columns"""
+    distinct_on: [chain_link_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [chain_link_order_by!]
+
+    """filter the rows returned"""
+    where: chain_link_bool_exp
+  ): [chain_link!]!
+  name: String!
+}
+
+"""
+Boolean expression to filter rows from the table "chain_link_chain_config". All fields are combined with a logical 'AND'.
+"""
+input chain_link_chain_config_bool_exp {
+  _and: [chain_link_chain_config_bool_exp!]
+  _not: chain_link_chain_config_bool_exp
+  _or: [chain_link_chain_config_bool_exp!]
+  chain_links: chain_link_bool_exp
+  name: String_comparison_exp
+}
+
+"""Ordering options when selecting data from "chain_link_chain_config"."""
+input chain_link_chain_config_order_by {
+  chain_links_aggregate: chain_link_aggregate_order_by
+  name: order_by
+}
+
+"""
+select columns of table "chain_link_chain_config"
+"""
+enum chain_link_chain_config_select_column {
+  """column name"""
+  name
+}
+
+"""
+order by max() on columns of table "chain_link"
+"""
+input chain_link_max_order_by {
+  creation_time: order_by
+  external_address: order_by
+  height: order_by
+  user_address: order_by
+}
+
+"""
+order by min() on columns of table "chain_link"
+"""
+input chain_link_min_order_by {
+  creation_time: order_by
+  external_address: order_by
+  height: order_by
+  user_address: order_by
+}
+
+"""Ordering options when selecting data from "chain_link"."""
+input chain_link_order_by {
+  chain_config: chain_link_chain_config_order_by
+  chain_link_proofs_aggregate: chain_link_proof_aggregate_order_by
+  creation_time: order_by
+  external_address: order_by
+  height: order_by
+  profile: profile_order_by
+  proof: chain_link_proof_order_by
+  user_address: order_by
+}
+
+"""
+columns and relationships of "chain_link_proof"
+"""
+type chain_link_proof {
+  """An object relationship"""
+  chain_link: chain_link!
+  plain_text: String!
+  public_key(
+    """JSON select path"""
+    path: String
+  ): jsonb!
+  signature: String!
+}
+
+"""
+order by aggregate values of table "chain_link_proof"
+"""
+input chain_link_proof_aggregate_order_by {
+  count: order_by
+  max: chain_link_proof_max_order_by
+  min: chain_link_proof_min_order_by
+}
+
+"""
+Boolean expression to filter rows from the table "chain_link_proof". All fields are combined with a logical 'AND'.
+"""
+input chain_link_proof_bool_exp {
+  _and: [chain_link_proof_bool_exp!]
+  _not: chain_link_proof_bool_exp
+  _or: [chain_link_proof_bool_exp!]
+  chain_link: chain_link_bool_exp
+  plain_text: String_comparison_exp
+  public_key: jsonb_comparison_exp
+  signature: String_comparison_exp
+}
+
+"""
+order by max() on columns of table "chain_link_proof"
+"""
+input chain_link_proof_max_order_by {
+  plain_text: order_by
+  signature: order_by
+}
+
+"""
+order by min() on columns of table "chain_link_proof"
+"""
+input chain_link_proof_min_order_by {
+  plain_text: order_by
+  signature: order_by
+}
+
+"""Ordering options when selecting data from "chain_link_proof"."""
+input chain_link_proof_order_by {
+  chain_link: chain_link_order_by
+  plain_text: order_by
+  public_key: order_by
+  signature: order_by
+}
+
+"""
+select columns of table "chain_link_proof"
+"""
+enum chain_link_proof_select_column {
+  """column name"""
+  plain_text
+
+  """column name"""
+  public_key
+
+  """column name"""
+  signature
+}
+
+"""
+select columns of table "chain_link"
+"""
+enum chain_link_select_column {
+  """column name"""
+  creation_time
+
+  """column name"""
+  external_address
+
+  """column name"""
+  height
+
+  """column name"""
+  user_address
+}
+
+"""
+order by stddev() on columns of table "chain_link"
+"""
+input chain_link_stddev_order_by {
+  height: order_by
+}
+
+"""
+order by stddev_pop() on columns of table "chain_link"
+"""
+input chain_link_stddev_pop_order_by {
+  height: order_by
+}
+
+"""
+order by stddev_samp() on columns of table "chain_link"
+"""
+input chain_link_stddev_samp_order_by {
+  height: order_by
+}
+
+"""
+order by sum() on columns of table "chain_link"
+"""
+input chain_link_sum_order_by {
+  height: order_by
+}
+
+"""
+order by var_pop() on columns of table "chain_link"
+"""
+input chain_link_var_pop_order_by {
+  height: order_by
+}
+
+"""
+order by var_samp() on columns of table "chain_link"
+"""
+input chain_link_var_samp_order_by {
+  height: order_by
+}
+
+"""
+order by variance() on columns of table "chain_link"
+"""
+input chain_link_variance_order_by {
+  height: order_by
+}
+
+"""
+columns and relationships of "dtag_transfer_requests"
+"""
+type dtag_transfer_requests {
+  """An object relationship"""
+  profile: profile!
+
+  """An object relationship"""
+  profileBySenderAddress: profile!
+  receiver_address: String!
+  sender_address: String!
+}
+
+"""
+order by aggregate values of table "dtag_transfer_requests"
+"""
+input dtag_transfer_requests_aggregate_order_by {
+  count: order_by
+  max: dtag_transfer_requests_max_order_by
+  min: dtag_transfer_requests_min_order_by
+}
+
+"""
+Boolean expression to filter rows from the table "dtag_transfer_requests". All fields are combined with a logical 'AND'.
+"""
+input dtag_transfer_requests_bool_exp {
+  _and: [dtag_transfer_requests_bool_exp!]
+  _not: dtag_transfer_requests_bool_exp
+  _or: [dtag_transfer_requests_bool_exp!]
+  profile: profile_bool_exp
+  profileBySenderAddress: profile_bool_exp
+  receiver_address: String_comparison_exp
+  sender_address: String_comparison_exp
+}
+
+"""
+order by max() on columns of table "dtag_transfer_requests"
+"""
+input dtag_transfer_requests_max_order_by {
+  receiver_address: order_by
+  sender_address: order_by
+}
+
+"""
+order by min() on columns of table "dtag_transfer_requests"
+"""
+input dtag_transfer_requests_min_order_by {
+  receiver_address: order_by
+  sender_address: order_by
+}
+
+"""Ordering options when selecting data from "dtag_transfer_requests"."""
+input dtag_transfer_requests_order_by {
+  profile: profile_order_by
+  profileBySenderAddress: profile_order_by
+  receiver_address: order_by
+  sender_address: order_by
+}
+
+"""
+select columns of table "dtag_transfer_requests"
+"""
+enum dtag_transfer_requests_select_column {
+  """column name"""
+  receiver_address
+
+  """column name"""
+  sender_address
+}
+
+scalar jsonb
+
+"""
+Boolean expression to compare columns of type "jsonb". All fields are combined with logical 'AND'.
+"""
+input jsonb_comparison_exp {
+  """is the column contained in the given json value"""
+  _contained_in: jsonb
+
+  """does the column contain the given json value at the top level"""
+  _contains: jsonb
+  _eq: jsonb
+  _gt: jsonb
+  _gte: jsonb
+
+  """does the string exist as a top-level key in the column"""
+  _has_key: String
+
+  """do all of these strings exist as top-level keys in the column"""
+  _has_keys_all: [String!]
+
+  """do any of these strings exist as top-level keys in the column"""
+  _has_keys_any: [String!]
+  _in: [jsonb!]
+  _is_null: Boolean
+  _lt: jsonb
+  _lte: jsonb
+  _neq: jsonb
+  _nin: [jsonb!]
+}
+
+"""column ordering options"""
+enum order_by {
+  """in ascending order, nulls last"""
+  asc
+
+  """in ascending order, nulls first"""
+  asc_nulls_first
+
+  """in ascending order, nulls last"""
+  asc_nulls_last
+
+  """in descending order, nulls first"""
+  desc
+
+  """in descending order, nulls first"""
+  desc_nulls_first
+
+  """in descending order, nulls last"""
+  desc_nulls_last
+}
+
+"""
+columns and relationships of "poll_answer"
+"""
+type poll_answer {
+  answers_indexes: _int8!
+
+  """An object relationship"""
+  post_attachment: post_attachment!
+  user_address: String!
+}
+
+"""
+aggregated selection of "poll_answer"
+"""
+type poll_answer_aggregate {
+  aggregate: poll_answer_aggregate_fields
+  nodes: [poll_answer!]!
+}
+
+"""
+aggregate fields of "poll_answer"
+"""
+type poll_answer_aggregate_fields {
+  count(columns: [poll_answer_select_column!], distinct: Boolean): Int!
+  max: poll_answer_max_fields
+  min: poll_answer_min_fields
+}
+
+"""
+Boolean expression to filter rows from the table "poll_answer". All fields are combined with a logical 'AND'.
+"""
+input poll_answer_bool_exp {
+  _and: [poll_answer_bool_exp!]
+  _not: poll_answer_bool_exp
+  _or: [poll_answer_bool_exp!]
+  answers_indexes: _int8_comparison_exp
+  post_attachment: post_attachment_bool_exp
+  user_address: String_comparison_exp
+}
+
+"""aggregate max on columns"""
+type poll_answer_max_fields {
+  user_address: String
+}
+
+"""aggregate min on columns"""
+type poll_answer_min_fields {
+  user_address: String
+}
+
+"""Ordering options when selecting data from "poll_answer"."""
+input poll_answer_order_by {
+  answers_indexes: order_by
+  post_attachment: post_attachment_order_by
+  user_address: order_by
+}
+
+"""
+select columns of table "poll_answer"
+"""
+enum poll_answer_select_column {
+  """column name"""
+  answers_indexes
+
+  """column name"""
+  user_address
+}
+
+"""
+columns and relationships of "post"
+"""
+type post {
+  """An array relationship"""
+  attachments(
+    """distinct select on columns"""
+    distinct_on: [post_attachment_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [post_attachment_order_by!]
+
+    """filter the rows returned"""
+    where: post_attachment_bool_exp
+  ): [post_attachment!]!
+
+  """An aggregate relationship"""
+  attachments_aggregate(
+    """distinct select on columns"""
+    distinct_on: [post_attachment_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [post_attachment_order_by!]
+
+    """filter the rows returned"""
+    where: post_attachment_bool_exp
+  ): post_attachment_aggregate!
+
+  """An object relationship"""
+  author: profile
+  author_address: String!
+
+  """An object relationship"""
+  conversation: post
+  creation_date: timestamp!
+  external_id: String
+
+  """An array relationship"""
+  hashtags(
+    """distinct select on columns"""
+    distinct_on: [post_hashtag_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [post_hashtag_order_by!]
+
+    """filter the rows returned"""
+    where: post_hashtag_bool_exp
+  ): [post_hashtag!]!
+  id: bigint!
+  last_edited_date: timestamp
+
+  """An array relationship"""
+  mentions(
+    """distinct select on columns"""
+    distinct_on: [post_mention_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [post_mention_order_by!]
+
+    """filter the rows returned"""
+    where: post_mention_bool_exp
+  ): [post_mention!]!
+
+  """An array relationship"""
+  posts(
+    """distinct select on columns"""
+    distinct_on: [post_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [post_order_by!]
+
+    """filter the rows returned"""
+    where: post_bool_exp
+  ): [post!]!
+
+  """An aggregate relationship"""
+  posts_aggregate(
+    """distinct select on columns"""
+    distinct_on: [post_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [post_order_by!]
+
+    """filter the rows returned"""
+    where: post_bool_exp
+  ): post_aggregate!
+
+  """An array relationship"""
+  reactions(
+    """distinct select on columns"""
+    distinct_on: [reaction_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [reaction_order_by!]
+
+    """filter the rows returned"""
+    where: reaction_bool_exp
+  ): [reaction!]!
+
+  """An aggregate relationship"""
+  reactions_aggregate(
+    """distinct select on columns"""
+    distinct_on: [reaction_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [reaction_order_by!]
+
+    """filter the rows returned"""
+    where: reaction_bool_exp
+  ): reaction_aggregate!
+
+  """An array relationship"""
+  references(
+    """distinct select on columns"""
+    distinct_on: [post_reference_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [post_reference_order_by!]
+
+    """filter the rows returned"""
+    where: post_reference_bool_exp
+  ): [post_reference!]!
+  reply_settings: String!
+
+  """An object relationship"""
+  section: subspace_section!
+
+  """An object relationship"""
+  subspace: subspace!
+  subspace_id: bigint!
+  text: String
+
+  """An array relationship"""
+  urls(
+    """distinct select on columns"""
+    distinct_on: [post_url_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [post_url_order_by!]
+
+    """filter the rows returned"""
+    where: post_url_bool_exp
+  ): [post_url!]!
+}
+
+"""
+aggregated selection of "post"
+"""
+type post_aggregate {
+  aggregate: post_aggregate_fields
+  nodes: [post!]!
+}
+
+"""
+aggregate fields of "post"
+"""
+type post_aggregate_fields {
+  avg: post_avg_fields
+  count(columns: [post_select_column!], distinct: Boolean): Int!
+  max: post_max_fields
+  min: post_min_fields
+  stddev: post_stddev_fields
+  stddev_pop: post_stddev_pop_fields
+  stddev_samp: post_stddev_samp_fields
+  sum: post_sum_fields
+  var_pop: post_var_pop_fields
+  var_samp: post_var_samp_fields
+  variance: post_variance_fields
+}
+
+"""
+order by aggregate values of table "post"
+"""
+input post_aggregate_order_by {
+  avg: post_avg_order_by
+  count: order_by
+  max: post_max_order_by
+  min: post_min_order_by
+  stddev: post_stddev_order_by
+  stddev_pop: post_stddev_pop_order_by
+  stddev_samp: post_stddev_samp_order_by
+  sum: post_sum_order_by
+  var_pop: post_var_pop_order_by
+  var_samp: post_var_samp_order_by
+  variance: post_variance_order_by
+}
+
+"""
+columns and relationships of "post_attachment"
+"""
+type post_attachment {
+  content(
+    """JSON select path"""
+    path: String
+  ): jsonb!
+  id: bigint!
+
+  """An object relationship"""
+  post: post!
+}
+
+"""
+aggregated selection of "post_attachment"
+"""
+type post_attachment_aggregate {
+  aggregate: post_attachment_aggregate_fields
+  nodes: [post_attachment!]!
+}
+
+"""
+aggregate fields of "post_attachment"
+"""
+type post_attachment_aggregate_fields {
+  avg: post_attachment_avg_fields
+  count(columns: [post_attachment_select_column!], distinct: Boolean): Int!
+  max: post_attachment_max_fields
+  min: post_attachment_min_fields
+  stddev: post_attachment_stddev_fields
+  stddev_pop: post_attachment_stddev_pop_fields
+  stddev_samp: post_attachment_stddev_samp_fields
+  sum: post_attachment_sum_fields
+  var_pop: post_attachment_var_pop_fields
+  var_samp: post_attachment_var_samp_fields
+  variance: post_attachment_variance_fields
+}
+
+"""
+order by aggregate values of table "post_attachment"
+"""
+input post_attachment_aggregate_order_by {
+  avg: post_attachment_avg_order_by
+  count: order_by
+  max: post_attachment_max_order_by
+  min: post_attachment_min_order_by
+  stddev: post_attachment_stddev_order_by
+  stddev_pop: post_attachment_stddev_pop_order_by
+  stddev_samp: post_attachment_stddev_samp_order_by
+  sum: post_attachment_sum_order_by
+  var_pop: post_attachment_var_pop_order_by
+  var_samp: post_attachment_var_samp_order_by
+  variance: post_attachment_variance_order_by
+}
+
+"""aggregate avg on columns"""
+type post_attachment_avg_fields {
+  id: Float
+}
+
+"""
+order by avg() on columns of table "post_attachment"
+"""
+input post_attachment_avg_order_by {
+  id: order_by
+}
+
+"""
+Boolean expression to filter rows from the table "post_attachment". All fields are combined with a logical 'AND'.
+"""
+input post_attachment_bool_exp {
+  _and: [post_attachment_bool_exp!]
+  _not: post_attachment_bool_exp
+  _or: [post_attachment_bool_exp!]
+  content: jsonb_comparison_exp
+  id: bigint_comparison_exp
+  post: post_bool_exp
+}
+
+"""aggregate max on columns"""
+type post_attachment_max_fields {
+  id: bigint
+}
+
+"""
+order by max() on columns of table "post_attachment"
+"""
+input post_attachment_max_order_by {
+  id: order_by
+}
+
+"""aggregate min on columns"""
+type post_attachment_min_fields {
+  id: bigint
+}
+
+"""
+order by min() on columns of table "post_attachment"
+"""
+input post_attachment_min_order_by {
+  id: order_by
+}
+
+"""Ordering options when selecting data from "post_attachment"."""
+input post_attachment_order_by {
+  content: order_by
+  id: order_by
+  post: post_order_by
+}
+
+"""
+select columns of table "post_attachment"
+"""
+enum post_attachment_select_column {
+  """column name"""
+  content
+
+  """column name"""
+  id
+}
+
+"""aggregate stddev on columns"""
+type post_attachment_stddev_fields {
+  id: Float
+}
+
+"""
+order by stddev() on columns of table "post_attachment"
+"""
+input post_attachment_stddev_order_by {
+  id: order_by
+}
+
+"""aggregate stddev_pop on columns"""
+type post_attachment_stddev_pop_fields {
+  id: Float
+}
+
+"""
+order by stddev_pop() on columns of table "post_attachment"
+"""
+input post_attachment_stddev_pop_order_by {
+  id: order_by
+}
+
+"""aggregate stddev_samp on columns"""
+type post_attachment_stddev_samp_fields {
+  id: Float
+}
+
+"""
+order by stddev_samp() on columns of table "post_attachment"
+"""
+input post_attachment_stddev_samp_order_by {
+  id: order_by
+}
+
+"""aggregate sum on columns"""
+type post_attachment_sum_fields {
+  id: bigint
+}
+
+"""
+order by sum() on columns of table "post_attachment"
+"""
+input post_attachment_sum_order_by {
+  id: order_by
+}
+
+"""aggregate var_pop on columns"""
+type post_attachment_var_pop_fields {
+  id: Float
+}
+
+"""
+order by var_pop() on columns of table "post_attachment"
+"""
+input post_attachment_var_pop_order_by {
+  id: order_by
+}
+
+"""aggregate var_samp on columns"""
+type post_attachment_var_samp_fields {
+  id: Float
+}
+
+"""
+order by var_samp() on columns of table "post_attachment"
+"""
+input post_attachment_var_samp_order_by {
+  id: order_by
+}
+
+"""aggregate variance on columns"""
+type post_attachment_variance_fields {
+  id: Float
+}
+
+"""
+order by variance() on columns of table "post_attachment"
+"""
+input post_attachment_variance_order_by {
+  id: order_by
+}
+
+"""aggregate avg on columns"""
+type post_avg_fields {
+  id: Float
+  subspace_id: Float
+}
+
+"""
+order by avg() on columns of table "post"
+"""
+input post_avg_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""
+Boolean expression to filter rows from the table "post". All fields are combined with a logical 'AND'.
+"""
+input post_bool_exp {
+  _and: [post_bool_exp!]
+  _not: post_bool_exp
+  _or: [post_bool_exp!]
+  attachments: post_attachment_bool_exp
+  author: profile_bool_exp
+  author_address: String_comparison_exp
+  conversation: post_bool_exp
+  creation_date: timestamp_comparison_exp
+  external_id: String_comparison_exp
+  hashtags: post_hashtag_bool_exp
+  id: bigint_comparison_exp
+  last_edited_date: timestamp_comparison_exp
+  mentions: post_mention_bool_exp
+  posts: post_bool_exp
+  reactions: reaction_bool_exp
+  references: post_reference_bool_exp
+  reply_settings: String_comparison_exp
+  section: subspace_section_bool_exp
+  subspace: subspace_bool_exp
+  subspace_id: bigint_comparison_exp
+  text: String_comparison_exp
+  urls: post_url_bool_exp
+}
+
+"""
+columns and relationships of "post_hashtag"
+"""
+type post_hashtag {
+  end_index: bigint!
+
+  """An object relationship"""
+  post: post!
+  start_index: bigint!
+  tag: String!
+}
+
+"""
+order by aggregate values of table "post_hashtag"
+"""
+input post_hashtag_aggregate_order_by {
+  avg: post_hashtag_avg_order_by
+  count: order_by
+  max: post_hashtag_max_order_by
+  min: post_hashtag_min_order_by
+  stddev: post_hashtag_stddev_order_by
+  stddev_pop: post_hashtag_stddev_pop_order_by
+  stddev_samp: post_hashtag_stddev_samp_order_by
+  sum: post_hashtag_sum_order_by
+  var_pop: post_hashtag_var_pop_order_by
+  var_samp: post_hashtag_var_samp_order_by
+  variance: post_hashtag_variance_order_by
+}
+
+"""
+order by avg() on columns of table "post_hashtag"
+"""
+input post_hashtag_avg_order_by {
+  end_index: order_by
+  start_index: order_by
+}
+
+"""
+Boolean expression to filter rows from the table "post_hashtag". All fields are combined with a logical 'AND'.
+"""
+input post_hashtag_bool_exp {
+  _and: [post_hashtag_bool_exp!]
+  _not: post_hashtag_bool_exp
+  _or: [post_hashtag_bool_exp!]
+  end_index: bigint_comparison_exp
+  post: post_bool_exp
+  start_index: bigint_comparison_exp
+  tag: String_comparison_exp
+}
+
+"""
+order by max() on columns of table "post_hashtag"
+"""
+input post_hashtag_max_order_by {
+  end_index: order_by
+  start_index: order_by
+  tag: order_by
+}
+
+"""
+order by min() on columns of table "post_hashtag"
+"""
+input post_hashtag_min_order_by {
+  end_index: order_by
+  start_index: order_by
+  tag: order_by
+}
+
+"""Ordering options when selecting data from "post_hashtag"."""
+input post_hashtag_order_by {
+  end_index: order_by
+  post: post_order_by
+  start_index: order_by
+  tag: order_by
+}
+
+"""
+select columns of table "post_hashtag"
+"""
+enum post_hashtag_select_column {
+  """column name"""
+  end_index
+
+  """column name"""
+  start_index
+
+  """column name"""
+  tag
+}
+
+"""
+order by stddev() on columns of table "post_hashtag"
+"""
+input post_hashtag_stddev_order_by {
+  end_index: order_by
+  start_index: order_by
+}
+
+"""
+order by stddev_pop() on columns of table "post_hashtag"
+"""
+input post_hashtag_stddev_pop_order_by {
+  end_index: order_by
+  start_index: order_by
+}
+
+"""
+order by stddev_samp() on columns of table "post_hashtag"
+"""
+input post_hashtag_stddev_samp_order_by {
+  end_index: order_by
+  start_index: order_by
+}
+
+"""
+order by sum() on columns of table "post_hashtag"
+"""
+input post_hashtag_sum_order_by {
+  end_index: order_by
+  start_index: order_by
+}
+
+"""
+order by var_pop() on columns of table "post_hashtag"
+"""
+input post_hashtag_var_pop_order_by {
+  end_index: order_by
+  start_index: order_by
+}
+
+"""
+order by var_samp() on columns of table "post_hashtag"
+"""
+input post_hashtag_var_samp_order_by {
+  end_index: order_by
+  start_index: order_by
+}
+
+"""
+order by variance() on columns of table "post_hashtag"
+"""
+input post_hashtag_variance_order_by {
+  end_index: order_by
+  start_index: order_by
+}
+
+"""aggregate max on columns"""
+type post_max_fields {
+  author_address: String
+  creation_date: timestamp
+  external_id: String
+  id: bigint
+  last_edited_date: timestamp
+  reply_settings: String
+  subspace_id: bigint
+  text: String
+}
+
+"""
+order by max() on columns of table "post"
+"""
+input post_max_order_by {
+  author_address: order_by
+  creation_date: order_by
+  external_id: order_by
+  id: order_by
+  last_edited_date: order_by
+  reply_settings: order_by
+  subspace_id: order_by
+  text: order_by
+}
+
+"""
+columns and relationships of "post_mention"
+"""
+type post_mention {
+  end_index: bigint!
+
+  """An object relationship"""
+  mention: profile
+  mention_address: String!
+
+  """An object relationship"""
+  post: post!
+  start_index: bigint!
+}
+
+"""
+order by aggregate values of table "post_mention"
+"""
+input post_mention_aggregate_order_by {
+  avg: post_mention_avg_order_by
+  count: order_by
+  max: post_mention_max_order_by
+  min: post_mention_min_order_by
+  stddev: post_mention_stddev_order_by
+  stddev_pop: post_mention_stddev_pop_order_by
+  stddev_samp: post_mention_stddev_samp_order_by
+  sum: post_mention_sum_order_by
+  var_pop: post_mention_var_pop_order_by
+  var_samp: post_mention_var_samp_order_by
+  variance: post_mention_variance_order_by
+}
+
+"""
+order by avg() on columns of table "post_mention"
+"""
+input post_mention_avg_order_by {
+  end_index: order_by
+  start_index: order_by
+}
+
+"""
+Boolean expression to filter rows from the table "post_mention". All fields are combined with a logical 'AND'.
+"""
+input post_mention_bool_exp {
+  _and: [post_mention_bool_exp!]
+  _not: post_mention_bool_exp
+  _or: [post_mention_bool_exp!]
+  end_index: bigint_comparison_exp
+  mention: profile_bool_exp
+  mention_address: String_comparison_exp
+  post: post_bool_exp
+  start_index: bigint_comparison_exp
+}
+
+"""
+order by max() on columns of table "post_mention"
+"""
+input post_mention_max_order_by {
+  end_index: order_by
+  mention_address: order_by
+  start_index: order_by
+}
+
+"""
+order by min() on columns of table "post_mention"
+"""
+input post_mention_min_order_by {
+  end_index: order_by
+  mention_address: order_by
+  start_index: order_by
+}
+
+"""Ordering options when selecting data from "post_mention"."""
+input post_mention_order_by {
+  end_index: order_by
+  mention: profile_order_by
+  mention_address: order_by
+  post: post_order_by
+  start_index: order_by
+}
+
+"""
+select columns of table "post_mention"
+"""
+enum post_mention_select_column {
+  """column name"""
+  end_index
+
+  """column name"""
+  mention_address
+
+  """column name"""
+  start_index
+}
+
+"""
+order by stddev() on columns of table "post_mention"
+"""
+input post_mention_stddev_order_by {
+  end_index: order_by
+  start_index: order_by
+}
+
+"""
+order by stddev_pop() on columns of table "post_mention"
+"""
+input post_mention_stddev_pop_order_by {
+  end_index: order_by
+  start_index: order_by
+}
+
+"""
+order by stddev_samp() on columns of table "post_mention"
+"""
+input post_mention_stddev_samp_order_by {
+  end_index: order_by
+  start_index: order_by
+}
+
+"""
+order by sum() on columns of table "post_mention"
+"""
+input post_mention_sum_order_by {
+  end_index: order_by
+  start_index: order_by
+}
+
+"""
+order by var_pop() on columns of table "post_mention"
+"""
+input post_mention_var_pop_order_by {
+  end_index: order_by
+  start_index: order_by
+}
+
+"""
+order by var_samp() on columns of table "post_mention"
+"""
+input post_mention_var_samp_order_by {
+  end_index: order_by
+  start_index: order_by
+}
+
+"""
+order by variance() on columns of table "post_mention"
+"""
+input post_mention_variance_order_by {
+  end_index: order_by
+  start_index: order_by
+}
+
+"""aggregate min on columns"""
+type post_min_fields {
+  author_address: String
+  creation_date: timestamp
+  external_id: String
+  id: bigint
+  last_edited_date: timestamp
+  reply_settings: String
+  subspace_id: bigint
+  text: String
+}
+
+"""
+order by min() on columns of table "post"
+"""
+input post_min_order_by {
+  author_address: order_by
+  creation_date: order_by
+  external_id: order_by
+  id: order_by
+  last_edited_date: order_by
+  reply_settings: order_by
+  subspace_id: order_by
+  text: order_by
+}
+
+"""Ordering options when selecting data from "post"."""
+input post_order_by {
+  attachments_aggregate: post_attachment_aggregate_order_by
+  author: profile_order_by
+  author_address: order_by
+  conversation: post_order_by
+  creation_date: order_by
+  external_id: order_by
+  hashtags_aggregate: post_hashtag_aggregate_order_by
+  id: order_by
+  last_edited_date: order_by
+  mentions_aggregate: post_mention_aggregate_order_by
+  posts_aggregate: post_aggregate_order_by
+  reactions_aggregate: reaction_aggregate_order_by
+  references_aggregate: post_reference_aggregate_order_by
+  reply_settings: order_by
+  section: subspace_section_order_by
+  subspace: subspace_order_by
+  subspace_id: order_by
+  text: order_by
+  urls_aggregate: post_url_aggregate_order_by
+}
+
+"""
+columns and relationships of "post_reference"
+"""
+type post_reference {
+  position_index: bigint
+
+  """An object relationship"""
+  post: post!
+  reference_id: bigint!
+  type: String!
+}
+
+"""
+order by aggregate values of table "post_reference"
+"""
+input post_reference_aggregate_order_by {
+  avg: post_reference_avg_order_by
+  count: order_by
+  max: post_reference_max_order_by
+  min: post_reference_min_order_by
+  stddev: post_reference_stddev_order_by
+  stddev_pop: post_reference_stddev_pop_order_by
+  stddev_samp: post_reference_stddev_samp_order_by
+  sum: post_reference_sum_order_by
+  var_pop: post_reference_var_pop_order_by
+  var_samp: post_reference_var_samp_order_by
+  variance: post_reference_variance_order_by
+}
+
+"""
+order by avg() on columns of table "post_reference"
+"""
+input post_reference_avg_order_by {
+  position_index: order_by
+  reference_id: order_by
+}
+
+"""
+Boolean expression to filter rows from the table "post_reference". All fields are combined with a logical 'AND'.
+"""
+input post_reference_bool_exp {
+  _and: [post_reference_bool_exp!]
+  _not: post_reference_bool_exp
+  _or: [post_reference_bool_exp!]
+  position_index: bigint_comparison_exp
+  post: post_bool_exp
+  reference_id: bigint_comparison_exp
+  type: String_comparison_exp
+}
+
+"""
+order by max() on columns of table "post_reference"
+"""
+input post_reference_max_order_by {
+  position_index: order_by
+  reference_id: order_by
+  type: order_by
+}
+
+"""
+order by min() on columns of table "post_reference"
+"""
+input post_reference_min_order_by {
+  position_index: order_by
+  reference_id: order_by
+  type: order_by
+}
+
+"""Ordering options when selecting data from "post_reference"."""
+input post_reference_order_by {
+  position_index: order_by
+  post: post_order_by
+  reference_id: order_by
+  type: order_by
+}
+
+"""
+select columns of table "post_reference"
+"""
+enum post_reference_select_column {
+  """column name"""
+  position_index
+
+  """column name"""
+  reference_id
+
+  """column name"""
+  type
+}
+
+"""
+order by stddev() on columns of table "post_reference"
+"""
+input post_reference_stddev_order_by {
+  position_index: order_by
+  reference_id: order_by
+}
+
+"""
+order by stddev_pop() on columns of table "post_reference"
+"""
+input post_reference_stddev_pop_order_by {
+  position_index: order_by
+  reference_id: order_by
+}
+
+"""
+order by stddev_samp() on columns of table "post_reference"
+"""
+input post_reference_stddev_samp_order_by {
+  position_index: order_by
+  reference_id: order_by
+}
+
+"""
+order by sum() on columns of table "post_reference"
+"""
+input post_reference_sum_order_by {
+  position_index: order_by
+  reference_id: order_by
+}
+
+"""
+order by var_pop() on columns of table "post_reference"
+"""
+input post_reference_var_pop_order_by {
+  position_index: order_by
+  reference_id: order_by
+}
+
+"""
+order by var_samp() on columns of table "post_reference"
+"""
+input post_reference_var_samp_order_by {
+  position_index: order_by
+  reference_id: order_by
+}
+
+"""
+order by variance() on columns of table "post_reference"
+"""
+input post_reference_variance_order_by {
+  position_index: order_by
+  reference_id: order_by
+}
+
+"""
+select columns of table "post"
+"""
+enum post_select_column {
+  """column name"""
+  author_address
+
+  """column name"""
+  creation_date
+
+  """column name"""
+  external_id
+
+  """column name"""
+  id
+
+  """column name"""
+  last_edited_date
+
+  """column name"""
+  reply_settings
+
+  """column name"""
+  subspace_id
+
+  """column name"""
+  text
+}
+
+"""aggregate stddev on columns"""
+type post_stddev_fields {
+  id: Float
+  subspace_id: Float
+}
+
+"""
+order by stddev() on columns of table "post"
+"""
+input post_stddev_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""aggregate stddev_pop on columns"""
+type post_stddev_pop_fields {
+  id: Float
+  subspace_id: Float
+}
+
+"""
+order by stddev_pop() on columns of table "post"
+"""
+input post_stddev_pop_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""aggregate stddev_samp on columns"""
+type post_stddev_samp_fields {
+  id: Float
+  subspace_id: Float
+}
+
+"""
+order by stddev_samp() on columns of table "post"
+"""
+input post_stddev_samp_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""aggregate sum on columns"""
+type post_sum_fields {
+  id: bigint
+  subspace_id: bigint
+}
+
+"""
+order by sum() on columns of table "post"
+"""
+input post_sum_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""
+columns and relationships of "post_url"
+"""
+type post_url {
+  display_value: String
+  end_index: bigint!
+
+  """An object relationship"""
+  post: post!
+  start_index: bigint!
+  url: String!
+}
+
+"""
+order by aggregate values of table "post_url"
+"""
+input post_url_aggregate_order_by {
+  avg: post_url_avg_order_by
+  count: order_by
+  max: post_url_max_order_by
+  min: post_url_min_order_by
+  stddev: post_url_stddev_order_by
+  stddev_pop: post_url_stddev_pop_order_by
+  stddev_samp: post_url_stddev_samp_order_by
+  sum: post_url_sum_order_by
+  var_pop: post_url_var_pop_order_by
+  var_samp: post_url_var_samp_order_by
+  variance: post_url_variance_order_by
+}
+
+"""
+order by avg() on columns of table "post_url"
+"""
+input post_url_avg_order_by {
+  end_index: order_by
+  start_index: order_by
+}
+
+"""
+Boolean expression to filter rows from the table "post_url". All fields are combined with a logical 'AND'.
+"""
+input post_url_bool_exp {
+  _and: [post_url_bool_exp!]
+  _not: post_url_bool_exp
+  _or: [post_url_bool_exp!]
+  display_value: String_comparison_exp
+  end_index: bigint_comparison_exp
+  post: post_bool_exp
+  start_index: bigint_comparison_exp
+  url: String_comparison_exp
+}
+
+"""
+order by max() on columns of table "post_url"
+"""
+input post_url_max_order_by {
+  display_value: order_by
+  end_index: order_by
+  start_index: order_by
+  url: order_by
+}
+
+"""
+order by min() on columns of table "post_url"
+"""
+input post_url_min_order_by {
+  display_value: order_by
+  end_index: order_by
+  start_index: order_by
+  url: order_by
+}
+
+"""Ordering options when selecting data from "post_url"."""
+input post_url_order_by {
+  display_value: order_by
+  end_index: order_by
+  post: post_order_by
+  start_index: order_by
+  url: order_by
+}
+
+"""
+select columns of table "post_url"
+"""
+enum post_url_select_column {
+  """column name"""
+  display_value
+
+  """column name"""
+  end_index
+
+  """column name"""
+  start_index
+
+  """column name"""
+  url
+}
+
+"""
+order by stddev() on columns of table "post_url"
+"""
+input post_url_stddev_order_by {
+  end_index: order_by
+  start_index: order_by
+}
+
+"""
+order by stddev_pop() on columns of table "post_url"
+"""
+input post_url_stddev_pop_order_by {
+  end_index: order_by
+  start_index: order_by
+}
+
+"""
+order by stddev_samp() on columns of table "post_url"
+"""
+input post_url_stddev_samp_order_by {
+  end_index: order_by
+  start_index: order_by
+}
+
+"""
+order by sum() on columns of table "post_url"
+"""
+input post_url_sum_order_by {
+  end_index: order_by
+  start_index: order_by
+}
+
+"""
+order by var_pop() on columns of table "post_url"
+"""
+input post_url_var_pop_order_by {
+  end_index: order_by
+  start_index: order_by
+}
+
+"""
+order by var_samp() on columns of table "post_url"
+"""
+input post_url_var_samp_order_by {
+  end_index: order_by
+  start_index: order_by
+}
+
+"""
+order by variance() on columns of table "post_url"
+"""
+input post_url_variance_order_by {
+  end_index: order_by
+  start_index: order_by
+}
+
+"""aggregate var_pop on columns"""
+type post_var_pop_fields {
+  id: Float
+  subspace_id: Float
+}
+
+"""
+order by var_pop() on columns of table "post"
+"""
+input post_var_pop_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""aggregate var_samp on columns"""
+type post_var_samp_fields {
+  id: Float
+  subspace_id: Float
+}
+
+"""
+order by var_samp() on columns of table "post"
+"""
+input post_var_samp_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""aggregate variance on columns"""
+type post_variance_fields {
+  id: Float
+  subspace_id: Float
+}
+
+"""
+order by variance() on columns of table "post"
+"""
+input post_variance_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""
+columns and relationships of "posts_params"
+"""
+type posts_params {
+  params(
+    """JSON select path"""
+    path: String
+  ): jsonb!
+}
+
+"""
+Boolean expression to filter rows from the table "posts_params". All fields are combined with a logical 'AND'.
+"""
+input posts_params_bool_exp {
+  _and: [posts_params_bool_exp!]
+  _not: posts_params_bool_exp
+  _or: [posts_params_bool_exp!]
+  params: jsonb_comparison_exp
+}
+
+"""Ordering options when selecting data from "posts_params"."""
+input posts_params_order_by {
+  params: order_by
+}
+
+"""
+select columns of table "posts_params"
+"""
+enum posts_params_select_column {
+  """column name"""
+  params
+}
+
+"""
+columns and relationships of "profile"
+"""
+type profile {
+  address: String!
+
+  """An array relationship"""
+  application_links(
+    """distinct select on columns"""
+    distinct_on: [application_link_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [application_link_order_by!]
+
+    """filter the rows returned"""
+    where: application_link_bool_exp
+  ): [application_link!]!
+  bio: String!
+
+  """An array relationship"""
+  chain_links(
+    """distinct select on columns"""
+    distinct_on: [chain_link_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [chain_link_order_by!]
+
+    """filter the rows returned"""
+    where: chain_link_bool_exp
+  ): [chain_link!]!
+  cover_pic: String!
+  creation_time: timestamp!
+  dtag: String!
+
+  """An array relationship"""
+  dtagTransferRequestsBySenderAddress(
+    """distinct select on columns"""
+    distinct_on: [dtag_transfer_requests_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [dtag_transfer_requests_order_by!]
+
+    """filter the rows returned"""
+    where: dtag_transfer_requests_bool_exp
+  ): [dtag_transfer_requests!]!
+
+  """An array relationship"""
+  dtag_transfer_requests(
+    """distinct select on columns"""
+    distinct_on: [dtag_transfer_requests_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [dtag_transfer_requests_order_by!]
+
+    """filter the rows returned"""
+    where: dtag_transfer_requests_bool_exp
+  ): [dtag_transfer_requests!]!
+  nickname: String!
+
+  """An array relationship"""
+  profileRelationshipsBySenderAddress(
+    """distinct select on columns"""
+    distinct_on: [profile_relationship_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [profile_relationship_order_by!]
+
+    """filter the rows returned"""
+    where: profile_relationship_bool_exp
+  ): [profile_relationship!]!
+
+  """An aggregate relationship"""
+  profileRelationshipsBySenderAddress_aggregate(
+    """distinct select on columns"""
+    distinct_on: [profile_relationship_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [profile_relationship_order_by!]
+
+    """filter the rows returned"""
+    where: profile_relationship_bool_exp
+  ): profile_relationship_aggregate!
+  profile_pic: String!
+
+  """An array relationship"""
+  profile_relationships(
+    """distinct select on columns"""
+    distinct_on: [profile_relationship_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [profile_relationship_order_by!]
+
+    """filter the rows returned"""
+    where: profile_relationship_bool_exp
+  ): [profile_relationship!]!
+
+  """An aggregate relationship"""
+  profile_relationships_aggregate(
+    """distinct select on columns"""
+    distinct_on: [profile_relationship_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [profile_relationship_order_by!]
+
+    """filter the rows returned"""
+    where: profile_relationship_bool_exp
+  ): profile_relationship_aggregate!
+
+  """An array relationship"""
+  userBlocksByBlockerAddress(
+    """distinct select on columns"""
+    distinct_on: [user_block_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [user_block_order_by!]
+
+    """filter the rows returned"""
+    where: user_block_bool_exp
+  ): [user_block!]!
+
+  """An aggregate relationship"""
+  userBlocksByBlockerAddress_aggregate(
+    """distinct select on columns"""
+    distinct_on: [user_block_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [user_block_order_by!]
+
+    """filter the rows returned"""
+    where: user_block_bool_exp
+  ): user_block_aggregate!
+
+  """An array relationship"""
+  user_blocks(
+    """distinct select on columns"""
+    distinct_on: [user_block_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [user_block_order_by!]
+
+    """filter the rows returned"""
+    where: user_block_bool_exp
+  ): [user_block!]!
+
+  """An aggregate relationship"""
+  user_blocks_aggregate(
+    """distinct select on columns"""
+    distinct_on: [user_block_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [user_block_order_by!]
+
+    """filter the rows returned"""
+    where: user_block_bool_exp
+  ): user_block_aggregate!
+}
+
+"""
+Boolean expression to filter rows from the table "profile". All fields are combined with a logical 'AND'.
+"""
+input profile_bool_exp {
+  _and: [profile_bool_exp!]
+  _not: profile_bool_exp
+  _or: [profile_bool_exp!]
+  address: String_comparison_exp
+  application_links: application_link_bool_exp
+  bio: String_comparison_exp
+  chain_links: chain_link_bool_exp
+  cover_pic: String_comparison_exp
+  creation_time: timestamp_comparison_exp
+  dtag: String_comparison_exp
+  dtagTransferRequestsBySenderAddress: dtag_transfer_requests_bool_exp
+  dtag_transfer_requests: dtag_transfer_requests_bool_exp
+  nickname: String_comparison_exp
+  profileRelationshipsBySenderAddress: profile_relationship_bool_exp
+  profile_pic: String_comparison_exp
+  profile_relationships: profile_relationship_bool_exp
+  userBlocksByBlockerAddress: user_block_bool_exp
+  user_blocks: user_block_bool_exp
+}
+
+"""Ordering options when selecting data from "profile"."""
+input profile_order_by {
+  address: order_by
+  application_links_aggregate: application_link_aggregate_order_by
+  bio: order_by
+  chain_links_aggregate: chain_link_aggregate_order_by
+  cover_pic: order_by
+  creation_time: order_by
+  dtag: order_by
+  dtagTransferRequestsBySenderAddress_aggregate: dtag_transfer_requests_aggregate_order_by
+  dtag_transfer_requests_aggregate: dtag_transfer_requests_aggregate_order_by
+  nickname: order_by
+  profileRelationshipsBySenderAddress_aggregate: profile_relationship_aggregate_order_by
+  profile_pic: order_by
+  profile_relationships_aggregate: profile_relationship_aggregate_order_by
+  userBlocksByBlockerAddress_aggregate: user_block_aggregate_order_by
+  user_blocks_aggregate: user_block_aggregate_order_by
+}
+
+"""
+columns and relationships of "profile_relationship"
+"""
+type profile_relationship {
+  """An object relationship"""
+  receiver: profile!
+  receiver_address: String!
+
+  """An object relationship"""
+  sender: profile!
+  sender_address: String!
+  subspace: String!
+}
+
+"""
+aggregated selection of "profile_relationship"
+"""
+type profile_relationship_aggregate {
+  aggregate: profile_relationship_aggregate_fields
+  nodes: [profile_relationship!]!
+}
+
+"""
+aggregate fields of "profile_relationship"
+"""
+type profile_relationship_aggregate_fields {
+  count(columns: [profile_relationship_select_column!], distinct: Boolean): Int!
+  max: profile_relationship_max_fields
+  min: profile_relationship_min_fields
+}
+
+"""
+order by aggregate values of table "profile_relationship"
+"""
+input profile_relationship_aggregate_order_by {
+  count: order_by
+  max: profile_relationship_max_order_by
+  min: profile_relationship_min_order_by
+}
+
+"""
+Boolean expression to filter rows from the table "profile_relationship". All fields are combined with a logical 'AND'.
+"""
+input profile_relationship_bool_exp {
+  _and: [profile_relationship_bool_exp!]
+  _not: profile_relationship_bool_exp
+  _or: [profile_relationship_bool_exp!]
+  receiver: profile_bool_exp
+  receiver_address: String_comparison_exp
+  sender: profile_bool_exp
+  sender_address: String_comparison_exp
+  subspace: String_comparison_exp
+}
+
+"""aggregate max on columns"""
+type profile_relationship_max_fields {
+  receiver_address: String
+  sender_address: String
+  subspace: String
+}
+
+"""
+order by max() on columns of table "profile_relationship"
+"""
+input profile_relationship_max_order_by {
+  receiver_address: order_by
+  sender_address: order_by
+  subspace: order_by
+}
+
+"""aggregate min on columns"""
+type profile_relationship_min_fields {
+  receiver_address: String
+  sender_address: String
+  subspace: String
+}
+
+"""
+order by min() on columns of table "profile_relationship"
+"""
+input profile_relationship_min_order_by {
+  receiver_address: order_by
+  sender_address: order_by
+  subspace: order_by
+}
+
+"""Ordering options when selecting data from "profile_relationship"."""
+input profile_relationship_order_by {
+  receiver: profile_order_by
+  receiver_address: order_by
+  sender: profile_order_by
+  sender_address: order_by
+  subspace: order_by
+}
+
+"""
+select columns of table "profile_relationship"
+"""
+enum profile_relationship_select_column {
+  """column name"""
+  receiver_address
+
+  """column name"""
+  sender_address
+
+  """column name"""
+  subspace
+}
+
+"""
+select columns of table "profile"
+"""
+enum profile_select_column {
+  """column name"""
+  address
+
+  """column name"""
+  bio
+
+  """column name"""
+  cover_pic
+
+  """column name"""
+  creation_time
+
+  """column name"""
+  dtag
+
+  """column name"""
+  nickname
+
+  """column name"""
+  profile_pic
+}
+
+"""
+columns and relationships of "profiles_params"
+"""
+type profiles_params {
+  params(
+    """JSON select path"""
+    path: String
+  ): jsonb!
+}
+
+"""
+Boolean expression to filter rows from the table "profiles_params". All fields are combined with a logical 'AND'.
+"""
+input profiles_params_bool_exp {
+  _and: [profiles_params_bool_exp!]
+  _not: profiles_params_bool_exp
+  _or: [profiles_params_bool_exp!]
+  params: jsonb_comparison_exp
+}
+
+"""Ordering options when selecting data from "profiles_params"."""
+input profiles_params_order_by {
+  params: order_by
+}
+
+"""
+select columns of table "profiles_params"
+"""
+enum profiles_params_select_column {
+  """column name"""
+  params
+}
+
+type query_root {
+  """
+  fetch data from the table: "application_link"
+  """
+  application_link(
+    """distinct select on columns"""
+    distinct_on: [application_link_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [application_link_order_by!]
+
+    """filter the rows returned"""
+    where: application_link_bool_exp
+  ): [application_link!]!
+
+  """
+  fetch data from the table: "application_link_oracle_request"
+  """
+  application_link_oracle_request(
+    """distinct select on columns"""
+    distinct_on: [application_link_oracle_request_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [application_link_oracle_request_order_by!]
+
+    """filter the rows returned"""
+    where: application_link_oracle_request_bool_exp
+  ): [application_link_oracle_request!]!
+
+  """
+  fetch data from the table: "chain_link"
+  """
+  chain_link(
+    """distinct select on columns"""
+    distinct_on: [chain_link_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [chain_link_order_by!]
+
+    """filter the rows returned"""
+    where: chain_link_bool_exp
+  ): [chain_link!]!
+
+  """
+  fetch data from the table: "chain_link_chain_config"
+  """
+  chain_link_chain_config(
+    """distinct select on columns"""
+    distinct_on: [chain_link_chain_config_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [chain_link_chain_config_order_by!]
+
+    """filter the rows returned"""
+    where: chain_link_chain_config_bool_exp
+  ): [chain_link_chain_config!]!
+
+  """
+  fetch data from the table: "chain_link_proof"
+  """
+  chain_link_proof(
+    """distinct select on columns"""
+    distinct_on: [chain_link_proof_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [chain_link_proof_order_by!]
+
+    """filter the rows returned"""
+    where: chain_link_proof_bool_exp
+  ): [chain_link_proof!]!
+
+  """An array relationship"""
+  dtag_transfer_requests(
+    """distinct select on columns"""
+    distinct_on: [dtag_transfer_requests_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [dtag_transfer_requests_order_by!]
+
+    """filter the rows returned"""
+    where: dtag_transfer_requests_bool_exp
+  ): [dtag_transfer_requests!]!
+
+  """
+  fetch data from the table: "poll_answer"
+  """
+  poll_answer(
+    """distinct select on columns"""
+    distinct_on: [poll_answer_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [poll_answer_order_by!]
+
+    """filter the rows returned"""
+    where: poll_answer_bool_exp
+  ): [poll_answer!]!
+
+  """
+  fetch aggregated fields from the table: "poll_answer"
+  """
+  poll_answer_aggregate(
+    """distinct select on columns"""
+    distinct_on: [poll_answer_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [poll_answer_order_by!]
+
+    """filter the rows returned"""
+    where: poll_answer_bool_exp
+  ): poll_answer_aggregate!
+
+  """
+  fetch data from the table: "post"
+  """
+  post(
+    """distinct select on columns"""
+    distinct_on: [post_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [post_order_by!]
+
+    """filter the rows returned"""
+    where: post_bool_exp
+  ): [post!]!
+
+  """
+  fetch aggregated fields from the table: "post"
+  """
+  post_aggregate(
+    """distinct select on columns"""
+    distinct_on: [post_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [post_order_by!]
+
+    """filter the rows returned"""
+    where: post_bool_exp
+  ): post_aggregate!
+
+  """
+  fetch data from the table: "post_attachment"
+  """
+  post_attachment(
+    """distinct select on columns"""
+    distinct_on: [post_attachment_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [post_attachment_order_by!]
+
+    """filter the rows returned"""
+    where: post_attachment_bool_exp
+  ): [post_attachment!]!
+
+  """
+  fetch aggregated fields from the table: "post_attachment"
+  """
+  post_attachment_aggregate(
+    """distinct select on columns"""
+    distinct_on: [post_attachment_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [post_attachment_order_by!]
+
+    """filter the rows returned"""
+    where: post_attachment_bool_exp
+  ): post_attachment_aggregate!
+
+  """
+  fetch data from the table: "post_hashtag"
+  """
+  post_hashtag(
+    """distinct select on columns"""
+    distinct_on: [post_hashtag_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [post_hashtag_order_by!]
+
+    """filter the rows returned"""
+    where: post_hashtag_bool_exp
+  ): [post_hashtag!]!
+
+  """
+  fetch data from the table: "post_mention"
+  """
+  post_mention(
+    """distinct select on columns"""
+    distinct_on: [post_mention_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [post_mention_order_by!]
+
+    """filter the rows returned"""
+    where: post_mention_bool_exp
+  ): [post_mention!]!
+
+  """
+  fetch data from the table: "post_reference"
+  """
+  post_reference(
+    """distinct select on columns"""
+    distinct_on: [post_reference_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [post_reference_order_by!]
+
+    """filter the rows returned"""
+    where: post_reference_bool_exp
+  ): [post_reference!]!
+
+  """
+  fetch data from the table: "post_url"
+  """
+  post_url(
+    """distinct select on columns"""
+    distinct_on: [post_url_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [post_url_order_by!]
+
+    """filter the rows returned"""
+    where: post_url_bool_exp
+  ): [post_url!]!
+
+  """
+  fetch data from the table: "posts_params"
+  """
+  posts_params(
+    """distinct select on columns"""
+    distinct_on: [posts_params_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [posts_params_order_by!]
+
+    """filter the rows returned"""
+    where: posts_params_bool_exp
+  ): [posts_params!]!
+
+  """
+  fetch data from the table: "profile"
+  """
+  profile(
+    """distinct select on columns"""
+    distinct_on: [profile_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [profile_order_by!]
+
+    """filter the rows returned"""
+    where: profile_bool_exp
+  ): [profile!]!
+
+  """fetch data from the table: "profile" using primary key columns"""
+  profile_by_pk(address: String!): profile
+
+  """
+  fetch data from the table: "profile_relationship"
+  """
+  profile_relationship(
+    """distinct select on columns"""
+    distinct_on: [profile_relationship_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [profile_relationship_order_by!]
+
+    """filter the rows returned"""
+    where: profile_relationship_bool_exp
+  ): [profile_relationship!]!
+
+  """
+  fetch aggregated fields from the table: "profile_relationship"
+  """
+  profile_relationship_aggregate(
+    """distinct select on columns"""
+    distinct_on: [profile_relationship_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [profile_relationship_order_by!]
+
+    """filter the rows returned"""
+    where: profile_relationship_bool_exp
+  ): profile_relationship_aggregate!
+
+  """
+  fetch data from the table: "profiles_params"
+  """
+  profiles_params(
+    """distinct select on columns"""
+    distinct_on: [profiles_params_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [profiles_params_order_by!]
+
+    """filter the rows returned"""
+    where: profiles_params_bool_exp
+  ): [profiles_params!]!
+
+  """
+  fetch data from the table: "reaction"
+  """
+  reaction(
+    """distinct select on columns"""
+    distinct_on: [reaction_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [reaction_order_by!]
+
+    """filter the rows returned"""
+    where: reaction_bool_exp
+  ): [reaction!]!
+
+  """
+  fetch aggregated fields from the table: "reaction"
+  """
+  reaction_aggregate(
+    """distinct select on columns"""
+    distinct_on: [reaction_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [reaction_order_by!]
+
+    """filter the rows returned"""
+    where: reaction_bool_exp
+  ): reaction_aggregate!
+
+  """
+  fetch data from the table: "report"
+  """
+  report(
+    """distinct select on columns"""
+    distinct_on: [report_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [report_order_by!]
+
+    """filter the rows returned"""
+    where: report_bool_exp
+  ): [report!]!
+
+  """
+  fetch aggregated fields from the table: "report"
+  """
+  report_aggregate(
+    """distinct select on columns"""
+    distinct_on: [report_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [report_order_by!]
+
+    """filter the rows returned"""
+    where: report_bool_exp
+  ): report_aggregate!
+
+  """
+  fetch data from the table: "report_reason"
+  """
+  report_reason(
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [report_reason_order_by!]
+
+    """filter the rows returned"""
+    where: report_reason_bool_exp
+  ): [report_reason!]!
+
+  """
+  fetch data from the table: "reports_params"
+  """
+  reports_params(
+    """distinct select on columns"""
+    distinct_on: [reports_params_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [reports_params_order_by!]
+
+    """filter the rows returned"""
+    where: reports_params_bool_exp
+  ): [reports_params!]!
+
+  """
+  fetch data from the table: "subspace"
+  """
+  subspace(
+    """distinct select on columns"""
+    distinct_on: [subspace_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [subspace_order_by!]
+
+    """filter the rows returned"""
+    where: subspace_bool_exp
+  ): [subspace!]!
+
+  """fetch data from the table: "subspace" using primary key columns"""
+  subspace_by_pk(id: bigint!): subspace
+
+  """
+  fetch data from the table: "subspace_free_text_params"
+  """
+  subspace_free_text_params(
+    """distinct select on columns"""
+    distinct_on: [subspace_free_text_params_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [subspace_free_text_params_order_by!]
+
+    """filter the rows returned"""
+    where: subspace_free_text_params_bool_exp
+  ): [subspace_free_text_params!]!
+
+  """
+  fetch data from the table: "subspace_free_text_params" using primary key columns
+  """
+  subspace_free_text_params_by_pk(subspace_id: bigint!): subspace_free_text_params
+
+  """
+  fetch data from the table: "subspace_registered_reaction"
+  """
+  subspace_registered_reaction(
+    """distinct select on columns"""
+    distinct_on: [subspace_registered_reaction_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [subspace_registered_reaction_order_by!]
+
+    """filter the rows returned"""
+    where: subspace_registered_reaction_bool_exp
+  ): [subspace_registered_reaction!]!
+
+  """
+  fetch data from the table: "subspace_registered_reaction_params"
+  """
+  subspace_registered_reaction_params(
+    """distinct select on columns"""
+    distinct_on: [subspace_registered_reaction_params_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [subspace_registered_reaction_params_order_by!]
+
+    """filter the rows returned"""
+    where: subspace_registered_reaction_params_bool_exp
+  ): [subspace_registered_reaction_params!]!
+
+  """
+  fetch data from the table: "subspace_registered_reaction_params" using primary key columns
+  """
+  subspace_registered_reaction_params_by_pk(subspace_id: bigint!): subspace_registered_reaction_params
+
+  """
+  fetch data from the table: "subspace_report_reason"
+  """
+  subspace_report_reason(
+    """distinct select on columns"""
+    distinct_on: [subspace_report_reason_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [subspace_report_reason_order_by!]
+
+    """filter the rows returned"""
+    where: subspace_report_reason_bool_exp
+  ): [subspace_report_reason!]!
+
+  """
+  fetch data from the table: "subspace_section"
+  """
+  subspace_section(
+    """distinct select on columns"""
+    distinct_on: [subspace_section_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [subspace_section_order_by!]
+
+    """filter the rows returned"""
+    where: subspace_section_bool_exp
+  ): [subspace_section!]!
+
+  """
+  fetch data from the table: "subspace_user_group"
+  """
+  subspace_user_group(
+    """distinct select on columns"""
+    distinct_on: [subspace_user_group_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [subspace_user_group_order_by!]
+
+    """filter the rows returned"""
+    where: subspace_user_group_bool_exp
+  ): [subspace_user_group!]!
+
+  """
+  fetch aggregated fields from the table: "subspace_user_group"
+  """
+  subspace_user_group_aggregate(
+    """distinct select on columns"""
+    distinct_on: [subspace_user_group_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [subspace_user_group_order_by!]
+
+    """filter the rows returned"""
+    where: subspace_user_group_bool_exp
+  ): subspace_user_group_aggregate!
+
+  """
+  fetch data from the table: "subspace_user_group_member"
+  """
+  subspace_user_group_member(
+    """distinct select on columns"""
+    distinct_on: [subspace_user_group_member_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [subspace_user_group_member_order_by!]
+
+    """filter the rows returned"""
+    where: subspace_user_group_member_bool_exp
+  ): [subspace_user_group_member!]!
+
+  """
+  fetch aggregated fields from the table: "subspace_user_group_member"
+  """
+  subspace_user_group_member_aggregate(
+    """distinct select on columns"""
+    distinct_on: [subspace_user_group_member_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [subspace_user_group_member_order_by!]
+
+    """filter the rows returned"""
+    where: subspace_user_group_member_bool_exp
+  ): subspace_user_group_member_aggregate!
+
+  """
+  fetch data from the table: "subspace_user_permission"
+  """
+  subspace_user_permission(
+    """distinct select on columns"""
+    distinct_on: [subspace_user_permission_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [subspace_user_permission_order_by!]
+
+    """filter the rows returned"""
+    where: subspace_user_permission_bool_exp
+  ): [subspace_user_permission!]!
+
+  """
+  fetch data from the table: "user_block"
+  """
+  user_block(
+    """distinct select on columns"""
+    distinct_on: [user_block_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [user_block_order_by!]
+
+    """filter the rows returned"""
+    where: user_block_bool_exp
+  ): [user_block!]!
+
+  """
+  fetch aggregated fields from the table: "user_block"
+  """
+  user_block_aggregate(
+    """distinct select on columns"""
+    distinct_on: [user_block_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [user_block_order_by!]
+
+    """filter the rows returned"""
+    where: user_block_bool_exp
+  ): user_block_aggregate!
+}
+
+"""
+columns and relationships of "reaction"
+"""
+type reaction {
+  author_address: String!
+  id: bigint!
+
+  """An object relationship"""
+  post: post!
+  value(
+    """JSON select path"""
+    path: String
+  ): jsonb!
+}
+
+"""
+aggregated selection of "reaction"
+"""
+type reaction_aggregate {
+  aggregate: reaction_aggregate_fields
+  nodes: [reaction!]!
+}
+
+"""
+aggregate fields of "reaction"
+"""
+type reaction_aggregate_fields {
+  avg: reaction_avg_fields
+  count(columns: [reaction_select_column!], distinct: Boolean): Int!
+  max: reaction_max_fields
+  min: reaction_min_fields
+  stddev: reaction_stddev_fields
+  stddev_pop: reaction_stddev_pop_fields
+  stddev_samp: reaction_stddev_samp_fields
+  sum: reaction_sum_fields
+  var_pop: reaction_var_pop_fields
+  var_samp: reaction_var_samp_fields
+  variance: reaction_variance_fields
+}
+
+"""
+order by aggregate values of table "reaction"
+"""
+input reaction_aggregate_order_by {
+  avg: reaction_avg_order_by
+  count: order_by
+  max: reaction_max_order_by
+  min: reaction_min_order_by
+  stddev: reaction_stddev_order_by
+  stddev_pop: reaction_stddev_pop_order_by
+  stddev_samp: reaction_stddev_samp_order_by
+  sum: reaction_sum_order_by
+  var_pop: reaction_var_pop_order_by
+  var_samp: reaction_var_samp_order_by
+  variance: reaction_variance_order_by
+}
+
+"""aggregate avg on columns"""
+type reaction_avg_fields {
+  id: Float
+}
+
+"""
+order by avg() on columns of table "reaction"
+"""
+input reaction_avg_order_by {
+  id: order_by
+}
+
+"""
+Boolean expression to filter rows from the table "reaction". All fields are combined with a logical 'AND'.
+"""
+input reaction_bool_exp {
+  _and: [reaction_bool_exp!]
+  _not: reaction_bool_exp
+  _or: [reaction_bool_exp!]
+  author_address: String_comparison_exp
+  id: bigint_comparison_exp
+  post: post_bool_exp
+  value: jsonb_comparison_exp
+}
+
+"""aggregate max on columns"""
+type reaction_max_fields {
+  author_address: String
+  id: bigint
+}
+
+"""
+order by max() on columns of table "reaction"
+"""
+input reaction_max_order_by {
+  author_address: order_by
+  id: order_by
+}
+
+"""aggregate min on columns"""
+type reaction_min_fields {
+  author_address: String
+  id: bigint
+}
+
+"""
+order by min() on columns of table "reaction"
+"""
+input reaction_min_order_by {
+  author_address: order_by
+  id: order_by
+}
+
+"""Ordering options when selecting data from "reaction"."""
+input reaction_order_by {
+  author_address: order_by
+  id: order_by
+  post: post_order_by
+  value: order_by
+}
+
+"""
+select columns of table "reaction"
+"""
+enum reaction_select_column {
+  """column name"""
+  author_address
+
+  """column name"""
+  id
+
+  """column name"""
+  value
+}
+
+"""aggregate stddev on columns"""
+type reaction_stddev_fields {
+  id: Float
+}
+
+"""
+order by stddev() on columns of table "reaction"
+"""
+input reaction_stddev_order_by {
+  id: order_by
+}
+
+"""aggregate stddev_pop on columns"""
+type reaction_stddev_pop_fields {
+  id: Float
+}
+
+"""
+order by stddev_pop() on columns of table "reaction"
+"""
+input reaction_stddev_pop_order_by {
+  id: order_by
+}
+
+"""aggregate stddev_samp on columns"""
+type reaction_stddev_samp_fields {
+  id: Float
+}
+
+"""
+order by stddev_samp() on columns of table "reaction"
+"""
+input reaction_stddev_samp_order_by {
+  id: order_by
+}
+
+"""aggregate sum on columns"""
+type reaction_sum_fields {
+  id: bigint
+}
+
+"""
+order by sum() on columns of table "reaction"
+"""
+input reaction_sum_order_by {
+  id: order_by
+}
+
+"""aggregate var_pop on columns"""
+type reaction_var_pop_fields {
+  id: Float
+}
+
+"""
+order by var_pop() on columns of table "reaction"
+"""
+input reaction_var_pop_order_by {
+  id: order_by
+}
+
+"""aggregate var_samp on columns"""
+type reaction_var_samp_fields {
+  id: Float
+}
+
+"""
+order by var_samp() on columns of table "reaction"
+"""
+input reaction_var_samp_order_by {
+  id: order_by
+}
+
+"""aggregate variance on columns"""
+type reaction_variance_fields {
+  id: Float
+}
+
+"""
+order by variance() on columns of table "reaction"
+"""
+input reaction_variance_order_by {
+  id: order_by
+}
+
+"""
+columns and relationships of "report"
+"""
+type report {
+  creation_date: timestamp!
+  id: bigint!
+  message: String
+
+  """An array relationship"""
+  reasons(
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [report_reason_order_by!]
+
+    """filter the rows returned"""
+    where: report_reason_bool_exp
+  ): [report_reason!]!
+  reporter_address: String!
+
+  """An object relationship"""
+  subspace: subspace!
+  subspace_id: bigint!
+  target(
+    """JSON select path"""
+    path: String
+  ): jsonb!
+}
+
+"""
+aggregated selection of "report"
+"""
+type report_aggregate {
+  aggregate: report_aggregate_fields
+  nodes: [report!]!
+}
+
+"""
+aggregate fields of "report"
+"""
+type report_aggregate_fields {
+  avg: report_avg_fields
+  count(columns: [report_select_column!], distinct: Boolean): Int!
+  max: report_max_fields
+  min: report_min_fields
+  stddev: report_stddev_fields
+  stddev_pop: report_stddev_pop_fields
+  stddev_samp: report_stddev_samp_fields
+  sum: report_sum_fields
+  var_pop: report_var_pop_fields
+  var_samp: report_var_samp_fields
+  variance: report_variance_fields
+}
+
+"""
+order by aggregate values of table "report"
+"""
+input report_aggregate_order_by {
+  avg: report_avg_order_by
+  count: order_by
+  max: report_max_order_by
+  min: report_min_order_by
+  stddev: report_stddev_order_by
+  stddev_pop: report_stddev_pop_order_by
+  stddev_samp: report_stddev_samp_order_by
+  sum: report_sum_order_by
+  var_pop: report_var_pop_order_by
+  var_samp: report_var_samp_order_by
+  variance: report_variance_order_by
+}
+
+"""aggregate avg on columns"""
+type report_avg_fields {
+  id: Float
+  subspace_id: Float
+}
+
+"""
+order by avg() on columns of table "report"
+"""
+input report_avg_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""
+Boolean expression to filter rows from the table "report". All fields are combined with a logical 'AND'.
+"""
+input report_bool_exp {
+  _and: [report_bool_exp!]
+  _not: report_bool_exp
+  _or: [report_bool_exp!]
+  creation_date: timestamp_comparison_exp
+  id: bigint_comparison_exp
+  message: String_comparison_exp
+  reasons: report_reason_bool_exp
+  reporter_address: String_comparison_exp
+  subspace: subspace_bool_exp
+  subspace_id: bigint_comparison_exp
+  target: jsonb_comparison_exp
+}
+
+"""aggregate max on columns"""
+type report_max_fields {
+  creation_date: timestamp
+  id: bigint
+  message: String
+  reporter_address: String
+  subspace_id: bigint
+}
+
+"""
+order by max() on columns of table "report"
+"""
+input report_max_order_by {
+  creation_date: order_by
+  id: order_by
+  message: order_by
+  reporter_address: order_by
+  subspace_id: order_by
+}
+
+"""aggregate min on columns"""
+type report_min_fields {
+  creation_date: timestamp
+  id: bigint
+  message: String
+  reporter_address: String
+  subspace_id: bigint
+}
+
+"""
+order by min() on columns of table "report"
+"""
+input report_min_order_by {
+  creation_date: order_by
+  id: order_by
+  message: order_by
+  reporter_address: order_by
+  subspace_id: order_by
+}
+
+"""Ordering options when selecting data from "report"."""
+input report_order_by {
+  creation_date: order_by
+  id: order_by
+  message: order_by
+  reasons_aggregate: report_reason_aggregate_order_by
+  reporter_address: order_by
+  subspace: subspace_order_by
+  subspace_id: order_by
+  target: order_by
+}
+
+"""
+columns and relationships of "report_reason"
+"""
+type report_reason {
+  """An object relationship"""
+  reason: subspace_report_reason!
+
+  """An object relationship"""
+  report: report!
+}
+
+"""
+order by aggregate values of table "report_reason"
+"""
+input report_reason_aggregate_order_by {
+  count: order_by
+}
+
+"""
+Boolean expression to filter rows from the table "report_reason". All fields are combined with a logical 'AND'.
+"""
+input report_reason_bool_exp {
+  _and: [report_reason_bool_exp!]
+  _not: report_reason_bool_exp
+  _or: [report_reason_bool_exp!]
+  reason: subspace_report_reason_bool_exp
+  report: report_bool_exp
+}
+
+"""Ordering options when selecting data from "report_reason"."""
+input report_reason_order_by {
+  reason: subspace_report_reason_order_by
+  report: report_order_by
+}
+
+"""
+select columns of table "report"
+"""
+enum report_select_column {
+  """column name"""
+  creation_date
+
+  """column name"""
+  id
+
+  """column name"""
+  message
+
+  """column name"""
+  reporter_address
+
+  """column name"""
+  subspace_id
+
+  """column name"""
+  target
+}
+
+"""aggregate stddev on columns"""
+type report_stddev_fields {
+  id: Float
+  subspace_id: Float
+}
+
+"""
+order by stddev() on columns of table "report"
+"""
+input report_stddev_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""aggregate stddev_pop on columns"""
+type report_stddev_pop_fields {
+  id: Float
+  subspace_id: Float
+}
+
+"""
+order by stddev_pop() on columns of table "report"
+"""
+input report_stddev_pop_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""aggregate stddev_samp on columns"""
+type report_stddev_samp_fields {
+  id: Float
+  subspace_id: Float
+}
+
+"""
+order by stddev_samp() on columns of table "report"
+"""
+input report_stddev_samp_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""aggregate sum on columns"""
+type report_sum_fields {
+  id: bigint
+  subspace_id: bigint
+}
+
+"""
+order by sum() on columns of table "report"
+"""
+input report_sum_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""aggregate var_pop on columns"""
+type report_var_pop_fields {
+  id: Float
+  subspace_id: Float
+}
+
+"""
+order by var_pop() on columns of table "report"
+"""
+input report_var_pop_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""aggregate var_samp on columns"""
+type report_var_samp_fields {
+  id: Float
+  subspace_id: Float
+}
+
+"""
+order by var_samp() on columns of table "report"
+"""
+input report_var_samp_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""aggregate variance on columns"""
+type report_variance_fields {
+  id: Float
+  subspace_id: Float
+}
+
+"""
+order by variance() on columns of table "report"
+"""
+input report_variance_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""
+columns and relationships of "reports_params"
+"""
+type reports_params {
+  params(
+    """JSON select path"""
+    path: String
+  ): jsonb!
+}
+
+"""
+Boolean expression to filter rows from the table "reports_params". All fields are combined with a logical 'AND'.
+"""
+input reports_params_bool_exp {
+  _and: [reports_params_bool_exp!]
+  _not: reports_params_bool_exp
+  _or: [reports_params_bool_exp!]
+  params: jsonb_comparison_exp
+}
+
+"""Ordering options when selecting data from "reports_params"."""
+input reports_params_order_by {
+  params: order_by
+}
+
+"""
+select columns of table "reports_params"
+"""
+enum reports_params_select_column {
+  """column name"""
+  params
+}
+
+type subscription_root {
+  """
+  fetch data from the table: "application_link"
+  """
+  application_link(
+    """distinct select on columns"""
+    distinct_on: [application_link_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [application_link_order_by!]
+
+    """filter the rows returned"""
+    where: application_link_bool_exp
+  ): [application_link!]!
+
+  """
+  fetch data from the table: "application_link_oracle_request"
+  """
+  application_link_oracle_request(
+    """distinct select on columns"""
+    distinct_on: [application_link_oracle_request_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [application_link_oracle_request_order_by!]
+
+    """filter the rows returned"""
+    where: application_link_oracle_request_bool_exp
+  ): [application_link_oracle_request!]!
+
+  """
+  fetch data from the table: "chain_link"
+  """
+  chain_link(
+    """distinct select on columns"""
+    distinct_on: [chain_link_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [chain_link_order_by!]
+
+    """filter the rows returned"""
+    where: chain_link_bool_exp
+  ): [chain_link!]!
+
+  """
+  fetch data from the table: "chain_link_chain_config"
+  """
+  chain_link_chain_config(
+    """distinct select on columns"""
+    distinct_on: [chain_link_chain_config_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [chain_link_chain_config_order_by!]
+
+    """filter the rows returned"""
+    where: chain_link_chain_config_bool_exp
+  ): [chain_link_chain_config!]!
+
+  """
+  fetch data from the table: "chain_link_proof"
+  """
+  chain_link_proof(
+    """distinct select on columns"""
+    distinct_on: [chain_link_proof_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [chain_link_proof_order_by!]
+
+    """filter the rows returned"""
+    where: chain_link_proof_bool_exp
+  ): [chain_link_proof!]!
+
+  """An array relationship"""
+  dtag_transfer_requests(
+    """distinct select on columns"""
+    distinct_on: [dtag_transfer_requests_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [dtag_transfer_requests_order_by!]
+
+    """filter the rows returned"""
+    where: dtag_transfer_requests_bool_exp
+  ): [dtag_transfer_requests!]!
+
+  """
+  fetch data from the table: "poll_answer"
+  """
+  poll_answer(
+    """distinct select on columns"""
+    distinct_on: [poll_answer_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [poll_answer_order_by!]
+
+    """filter the rows returned"""
+    where: poll_answer_bool_exp
+  ): [poll_answer!]!
+
+  """
+  fetch aggregated fields from the table: "poll_answer"
+  """
+  poll_answer_aggregate(
+    """distinct select on columns"""
+    distinct_on: [poll_answer_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [poll_answer_order_by!]
+
+    """filter the rows returned"""
+    where: poll_answer_bool_exp
+  ): poll_answer_aggregate!
+
+  """
+  fetch data from the table: "post"
+  """
+  post(
+    """distinct select on columns"""
+    distinct_on: [post_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [post_order_by!]
+
+    """filter the rows returned"""
+    where: post_bool_exp
+  ): [post!]!
+
+  """
+  fetch aggregated fields from the table: "post"
+  """
+  post_aggregate(
+    """distinct select on columns"""
+    distinct_on: [post_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [post_order_by!]
+
+    """filter the rows returned"""
+    where: post_bool_exp
+  ): post_aggregate!
+
+  """
+  fetch data from the table: "post_attachment"
+  """
+  post_attachment(
+    """distinct select on columns"""
+    distinct_on: [post_attachment_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [post_attachment_order_by!]
+
+    """filter the rows returned"""
+    where: post_attachment_bool_exp
+  ): [post_attachment!]!
+
+  """
+  fetch aggregated fields from the table: "post_attachment"
+  """
+  post_attachment_aggregate(
+    """distinct select on columns"""
+    distinct_on: [post_attachment_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [post_attachment_order_by!]
+
+    """filter the rows returned"""
+    where: post_attachment_bool_exp
+  ): post_attachment_aggregate!
+
+  """
+  fetch data from the table: "post_hashtag"
+  """
+  post_hashtag(
+    """distinct select on columns"""
+    distinct_on: [post_hashtag_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [post_hashtag_order_by!]
+
+    """filter the rows returned"""
+    where: post_hashtag_bool_exp
+  ): [post_hashtag!]!
+
+  """
+  fetch data from the table: "post_mention"
+  """
+  post_mention(
+    """distinct select on columns"""
+    distinct_on: [post_mention_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [post_mention_order_by!]
+
+    """filter the rows returned"""
+    where: post_mention_bool_exp
+  ): [post_mention!]!
+
+  """
+  fetch data from the table: "post_reference"
+  """
+  post_reference(
+    """distinct select on columns"""
+    distinct_on: [post_reference_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [post_reference_order_by!]
+
+    """filter the rows returned"""
+    where: post_reference_bool_exp
+  ): [post_reference!]!
+
+  """
+  fetch data from the table: "post_url"
+  """
+  post_url(
+    """distinct select on columns"""
+    distinct_on: [post_url_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [post_url_order_by!]
+
+    """filter the rows returned"""
+    where: post_url_bool_exp
+  ): [post_url!]!
+
+  """
+  fetch data from the table: "posts_params"
+  """
+  posts_params(
+    """distinct select on columns"""
+    distinct_on: [posts_params_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [posts_params_order_by!]
+
+    """filter the rows returned"""
+    where: posts_params_bool_exp
+  ): [posts_params!]!
+
+  """
+  fetch data from the table: "profile"
+  """
+  profile(
+    """distinct select on columns"""
+    distinct_on: [profile_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [profile_order_by!]
+
+    """filter the rows returned"""
+    where: profile_bool_exp
+  ): [profile!]!
+
+  """fetch data from the table: "profile" using primary key columns"""
+  profile_by_pk(address: String!): profile
+
+  """
+  fetch data from the table: "profile_relationship"
+  """
+  profile_relationship(
+    """distinct select on columns"""
+    distinct_on: [profile_relationship_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [profile_relationship_order_by!]
+
+    """filter the rows returned"""
+    where: profile_relationship_bool_exp
+  ): [profile_relationship!]!
+
+  """
+  fetch aggregated fields from the table: "profile_relationship"
+  """
+  profile_relationship_aggregate(
+    """distinct select on columns"""
+    distinct_on: [profile_relationship_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [profile_relationship_order_by!]
+
+    """filter the rows returned"""
+    where: profile_relationship_bool_exp
+  ): profile_relationship_aggregate!
+
+  """
+  fetch data from the table: "profiles_params"
+  """
+  profiles_params(
+    """distinct select on columns"""
+    distinct_on: [profiles_params_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [profiles_params_order_by!]
+
+    """filter the rows returned"""
+    where: profiles_params_bool_exp
+  ): [profiles_params!]!
+
+  """
+  fetch data from the table: "reaction"
+  """
+  reaction(
+    """distinct select on columns"""
+    distinct_on: [reaction_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [reaction_order_by!]
+
+    """filter the rows returned"""
+    where: reaction_bool_exp
+  ): [reaction!]!
+
+  """
+  fetch aggregated fields from the table: "reaction"
+  """
+  reaction_aggregate(
+    """distinct select on columns"""
+    distinct_on: [reaction_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [reaction_order_by!]
+
+    """filter the rows returned"""
+    where: reaction_bool_exp
+  ): reaction_aggregate!
+
+  """
+  fetch data from the table: "report"
+  """
+  report(
+    """distinct select on columns"""
+    distinct_on: [report_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [report_order_by!]
+
+    """filter the rows returned"""
+    where: report_bool_exp
+  ): [report!]!
+
+  """
+  fetch aggregated fields from the table: "report"
+  """
+  report_aggregate(
+    """distinct select on columns"""
+    distinct_on: [report_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [report_order_by!]
+
+    """filter the rows returned"""
+    where: report_bool_exp
+  ): report_aggregate!
+
+  """
+  fetch data from the table: "report_reason"
+  """
+  report_reason(
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [report_reason_order_by!]
+
+    """filter the rows returned"""
+    where: report_reason_bool_exp
+  ): [report_reason!]!
+
+  """
+  fetch data from the table: "reports_params"
+  """
+  reports_params(
+    """distinct select on columns"""
+    distinct_on: [reports_params_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [reports_params_order_by!]
+
+    """filter the rows returned"""
+    where: reports_params_bool_exp
+  ): [reports_params!]!
+
+  """
+  fetch data from the table: "subspace"
+  """
+  subspace(
+    """distinct select on columns"""
+    distinct_on: [subspace_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [subspace_order_by!]
+
+    """filter the rows returned"""
+    where: subspace_bool_exp
+  ): [subspace!]!
+
+  """fetch data from the table: "subspace" using primary key columns"""
+  subspace_by_pk(id: bigint!): subspace
+
+  """
+  fetch data from the table: "subspace_free_text_params"
+  """
+  subspace_free_text_params(
+    """distinct select on columns"""
+    distinct_on: [subspace_free_text_params_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [subspace_free_text_params_order_by!]
+
+    """filter the rows returned"""
+    where: subspace_free_text_params_bool_exp
+  ): [subspace_free_text_params!]!
+
+  """
+  fetch data from the table: "subspace_free_text_params" using primary key columns
+  """
+  subspace_free_text_params_by_pk(subspace_id: bigint!): subspace_free_text_params
+
+  """
+  fetch data from the table: "subspace_registered_reaction"
+  """
+  subspace_registered_reaction(
+    """distinct select on columns"""
+    distinct_on: [subspace_registered_reaction_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [subspace_registered_reaction_order_by!]
+
+    """filter the rows returned"""
+    where: subspace_registered_reaction_bool_exp
+  ): [subspace_registered_reaction!]!
+
+  """
+  fetch data from the table: "subspace_registered_reaction_params"
+  """
+  subspace_registered_reaction_params(
+    """distinct select on columns"""
+    distinct_on: [subspace_registered_reaction_params_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [subspace_registered_reaction_params_order_by!]
+
+    """filter the rows returned"""
+    where: subspace_registered_reaction_params_bool_exp
+  ): [subspace_registered_reaction_params!]!
+
+  """
+  fetch data from the table: "subspace_registered_reaction_params" using primary key columns
+  """
+  subspace_registered_reaction_params_by_pk(subspace_id: bigint!): subspace_registered_reaction_params
+
+  """
+  fetch data from the table: "subspace_report_reason"
+  """
+  subspace_report_reason(
+    """distinct select on columns"""
+    distinct_on: [subspace_report_reason_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [subspace_report_reason_order_by!]
+
+    """filter the rows returned"""
+    where: subspace_report_reason_bool_exp
+  ): [subspace_report_reason!]!
+
+  """
+  fetch data from the table: "subspace_section"
+  """
+  subspace_section(
+    """distinct select on columns"""
+    distinct_on: [subspace_section_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [subspace_section_order_by!]
+
+    """filter the rows returned"""
+    where: subspace_section_bool_exp
+  ): [subspace_section!]!
+
+  """
+  fetch data from the table: "subspace_user_group"
+  """
+  subspace_user_group(
+    """distinct select on columns"""
+    distinct_on: [subspace_user_group_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [subspace_user_group_order_by!]
+
+    """filter the rows returned"""
+    where: subspace_user_group_bool_exp
+  ): [subspace_user_group!]!
+
+  """
+  fetch aggregated fields from the table: "subspace_user_group"
+  """
+  subspace_user_group_aggregate(
+    """distinct select on columns"""
+    distinct_on: [subspace_user_group_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [subspace_user_group_order_by!]
+
+    """filter the rows returned"""
+    where: subspace_user_group_bool_exp
+  ): subspace_user_group_aggregate!
+
+  """
+  fetch data from the table: "subspace_user_group_member"
+  """
+  subspace_user_group_member(
+    """distinct select on columns"""
+    distinct_on: [subspace_user_group_member_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [subspace_user_group_member_order_by!]
+
+    """filter the rows returned"""
+    where: subspace_user_group_member_bool_exp
+  ): [subspace_user_group_member!]!
+
+  """
+  fetch aggregated fields from the table: "subspace_user_group_member"
+  """
+  subspace_user_group_member_aggregate(
+    """distinct select on columns"""
+    distinct_on: [subspace_user_group_member_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [subspace_user_group_member_order_by!]
+
+    """filter the rows returned"""
+    where: subspace_user_group_member_bool_exp
+  ): subspace_user_group_member_aggregate!
+
+  """
+  fetch data from the table: "subspace_user_permission"
+  """
+  subspace_user_permission(
+    """distinct select on columns"""
+    distinct_on: [subspace_user_permission_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [subspace_user_permission_order_by!]
+
+    """filter the rows returned"""
+    where: subspace_user_permission_bool_exp
+  ): [subspace_user_permission!]!
+
+  """
+  fetch data from the table: "user_block"
+  """
+  user_block(
+    """distinct select on columns"""
+    distinct_on: [user_block_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [user_block_order_by!]
+
+    """filter the rows returned"""
+    where: user_block_bool_exp
+  ): [user_block!]!
+
+  """
+  fetch aggregated fields from the table: "user_block"
+  """
+  user_block_aggregate(
+    """distinct select on columns"""
+    distinct_on: [user_block_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [user_block_order_by!]
+
+    """filter the rows returned"""
+    where: user_block_bool_exp
+  ): user_block_aggregate!
+}
+
+"""
+columns and relationships of "subspace"
+"""
+type subspace {
+  creation_time: timestamp!
+  creator_address: String!
+  description: String
+
+  """An object relationship"""
+  free_text_reactions_params: subspace_free_text_params!
+  id: bigint!
+  name: String!
+  owner_address: String!
+
+  """An array relationship"""
+  posts(
+    """distinct select on columns"""
+    distinct_on: [post_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [post_order_by!]
+
+    """filter the rows returned"""
+    where: post_bool_exp
+  ): [post!]!
+
+  """An aggregate relationship"""
+  posts_aggregate(
+    """distinct select on columns"""
+    distinct_on: [post_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [post_order_by!]
+
+    """filter the rows returned"""
+    where: post_bool_exp
+  ): post_aggregate!
+
+  """An array relationship"""
+  registered_reactions(
+    """distinct select on columns"""
+    distinct_on: [subspace_registered_reaction_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [subspace_registered_reaction_order_by!]
+
+    """filter the rows returned"""
+    where: subspace_registered_reaction_bool_exp
+  ): [subspace_registered_reaction!]!
+
+  """An object relationship"""
+  registered_reactions_params: subspace_registered_reaction_params
+
+  """An array relationship"""
+  report_reasons(
+    """distinct select on columns"""
+    distinct_on: [subspace_report_reason_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [subspace_report_reason_order_by!]
+
+    """filter the rows returned"""
+    where: subspace_report_reason_bool_exp
+  ): [subspace_report_reason!]!
+
+  """An array relationship"""
+  reports(
+    """distinct select on columns"""
+    distinct_on: [report_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [report_order_by!]
+
+    """filter the rows returned"""
+    where: report_bool_exp
+  ): [report!]!
+
+  """An aggregate relationship"""
+  reports_aggregate(
+    """distinct select on columns"""
+    distinct_on: [report_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [report_order_by!]
+
+    """filter the rows returned"""
+    where: report_bool_exp
+  ): report_aggregate!
+
+  """An array relationship"""
+  sections(
+    """distinct select on columns"""
+    distinct_on: [subspace_section_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [subspace_section_order_by!]
+
+    """filter the rows returned"""
+    where: subspace_section_bool_exp
+  ): [subspace_section!]!
+  treasury_address: String
+
+  """An array relationship"""
+  user_groups(
+    """distinct select on columns"""
+    distinct_on: [subspace_user_group_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [subspace_user_group_order_by!]
+
+    """filter the rows returned"""
+    where: subspace_user_group_bool_exp
+  ): [subspace_user_group!]!
+
+  """An aggregate relationship"""
+  user_groups_aggregate(
+    """distinct select on columns"""
+    distinct_on: [subspace_user_group_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [subspace_user_group_order_by!]
+
+    """filter the rows returned"""
+    where: subspace_user_group_bool_exp
+  ): subspace_user_group_aggregate!
+}
+
+"""
+Boolean expression to filter rows from the table "subspace". All fields are combined with a logical 'AND'.
+"""
+input subspace_bool_exp {
+  _and: [subspace_bool_exp!]
+  _not: subspace_bool_exp
+  _or: [subspace_bool_exp!]
+  creation_time: timestamp_comparison_exp
+  creator_address: String_comparison_exp
+  description: String_comparison_exp
+  free_text_reactions_params: subspace_free_text_params_bool_exp
+  id: bigint_comparison_exp
+  name: String_comparison_exp
+  owner_address: String_comparison_exp
+  posts: post_bool_exp
+  registered_reactions: subspace_registered_reaction_bool_exp
+  registered_reactions_params: subspace_registered_reaction_params_bool_exp
+  report_reasons: subspace_report_reason_bool_exp
+  reports: report_bool_exp
+  sections: subspace_section_bool_exp
+  treasury_address: String_comparison_exp
+  user_groups: subspace_user_group_bool_exp
+}
+
+"""
+columns and relationships of "subspace_free_text_params"
+"""
+type subspace_free_text_params {
+  enabled: Boolean!
+  max_length: bigint!
+  reg_ex: String
+
+  """An object relationship"""
+  subspace: subspace!
+  subspace_id: bigint!
+}
+
+"""
+Boolean expression to filter rows from the table "subspace_free_text_params". All fields are combined with a logical 'AND'.
+"""
+input subspace_free_text_params_bool_exp {
+  _and: [subspace_free_text_params_bool_exp!]
+  _not: subspace_free_text_params_bool_exp
+  _or: [subspace_free_text_params_bool_exp!]
+  enabled: Boolean_comparison_exp
+  max_length: bigint_comparison_exp
+  reg_ex: String_comparison_exp
+  subspace: subspace_bool_exp
+  subspace_id: bigint_comparison_exp
+}
+
+"""Ordering options when selecting data from "subspace_free_text_params"."""
+input subspace_free_text_params_order_by {
+  enabled: order_by
+  max_length: order_by
+  reg_ex: order_by
+  subspace: subspace_order_by
+  subspace_id: order_by
+}
+
+"""
+select columns of table "subspace_free_text_params"
+"""
+enum subspace_free_text_params_select_column {
+  """column name"""
+  enabled
+
+  """column name"""
+  max_length
+
+  """column name"""
+  reg_ex
+
+  """column name"""
+  subspace_id
+}
+
+"""Ordering options when selecting data from "subspace"."""
+input subspace_order_by {
+  creation_time: order_by
+  creator_address: order_by
+  description: order_by
+  free_text_reactions_params: subspace_free_text_params_order_by
+  id: order_by
+  name: order_by
+  owner_address: order_by
+  posts_aggregate: post_aggregate_order_by
+  registered_reactions_aggregate: subspace_registered_reaction_aggregate_order_by
+  registered_reactions_params: subspace_registered_reaction_params_order_by
+  report_reasons_aggregate: subspace_report_reason_aggregate_order_by
+  reports_aggregate: report_aggregate_order_by
+  sections_aggregate: subspace_section_aggregate_order_by
+  treasury_address: order_by
+  user_groups_aggregate: subspace_user_group_aggregate_order_by
+}
+
+"""
+columns and relationships of "subspace_registered_reaction"
+"""
+type subspace_registered_reaction {
+  display_value: String!
+  id: bigint!
+  shorthand_code: String!
+
+  """An object relationship"""
+  subspace: subspace!
+  subspace_id: bigint!
+}
+
+"""
+order by aggregate values of table "subspace_registered_reaction"
+"""
+input subspace_registered_reaction_aggregate_order_by {
+  avg: subspace_registered_reaction_avg_order_by
+  count: order_by
+  max: subspace_registered_reaction_max_order_by
+  min: subspace_registered_reaction_min_order_by
+  stddev: subspace_registered_reaction_stddev_order_by
+  stddev_pop: subspace_registered_reaction_stddev_pop_order_by
+  stddev_samp: subspace_registered_reaction_stddev_samp_order_by
+  sum: subspace_registered_reaction_sum_order_by
+  var_pop: subspace_registered_reaction_var_pop_order_by
+  var_samp: subspace_registered_reaction_var_samp_order_by
+  variance: subspace_registered_reaction_variance_order_by
+}
+
+"""
+order by avg() on columns of table "subspace_registered_reaction"
+"""
+input subspace_registered_reaction_avg_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""
+Boolean expression to filter rows from the table "subspace_registered_reaction". All fields are combined with a logical 'AND'.
+"""
+input subspace_registered_reaction_bool_exp {
+  _and: [subspace_registered_reaction_bool_exp!]
+  _not: subspace_registered_reaction_bool_exp
+  _or: [subspace_registered_reaction_bool_exp!]
+  display_value: String_comparison_exp
+  id: bigint_comparison_exp
+  shorthand_code: String_comparison_exp
+  subspace: subspace_bool_exp
+  subspace_id: bigint_comparison_exp
+}
+
+"""
+order by max() on columns of table "subspace_registered_reaction"
+"""
+input subspace_registered_reaction_max_order_by {
+  display_value: order_by
+  id: order_by
+  shorthand_code: order_by
+  subspace_id: order_by
+}
+
+"""
+order by min() on columns of table "subspace_registered_reaction"
+"""
+input subspace_registered_reaction_min_order_by {
+  display_value: order_by
+  id: order_by
+  shorthand_code: order_by
+  subspace_id: order_by
+}
+
+"""
+Ordering options when selecting data from "subspace_registered_reaction".
+"""
+input subspace_registered_reaction_order_by {
+  display_value: order_by
+  id: order_by
+  shorthand_code: order_by
+  subspace: subspace_order_by
+  subspace_id: order_by
+}
+
+"""
+columns and relationships of "subspace_registered_reaction_params"
+"""
+type subspace_registered_reaction_params {
+  enabled: Boolean!
+
+  """An object relationship"""
+  subspace: subspace!
+  subspace_id: bigint!
+}
+
+"""
+Boolean expression to filter rows from the table "subspace_registered_reaction_params". All fields are combined with a logical 'AND'.
+"""
+input subspace_registered_reaction_params_bool_exp {
+  _and: [subspace_registered_reaction_params_bool_exp!]
+  _not: subspace_registered_reaction_params_bool_exp
+  _or: [subspace_registered_reaction_params_bool_exp!]
+  enabled: Boolean_comparison_exp
+  subspace: subspace_bool_exp
+  subspace_id: bigint_comparison_exp
+}
+
+"""
+Ordering options when selecting data from "subspace_registered_reaction_params".
+"""
+input subspace_registered_reaction_params_order_by {
+  enabled: order_by
+  subspace: subspace_order_by
+  subspace_id: order_by
+}
+
+"""
+select columns of table "subspace_registered_reaction_params"
+"""
+enum subspace_registered_reaction_params_select_column {
+  """column name"""
+  enabled
+
+  """column name"""
+  subspace_id
+}
+
+"""
+select columns of table "subspace_registered_reaction"
+"""
+enum subspace_registered_reaction_select_column {
+  """column name"""
+  display_value
+
+  """column name"""
+  id
+
+  """column name"""
+  shorthand_code
+
+  """column name"""
+  subspace_id
+}
+
+"""
+order by stddev() on columns of table "subspace_registered_reaction"
+"""
+input subspace_registered_reaction_stddev_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""
+order by stddev_pop() on columns of table "subspace_registered_reaction"
+"""
+input subspace_registered_reaction_stddev_pop_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""
+order by stddev_samp() on columns of table "subspace_registered_reaction"
+"""
+input subspace_registered_reaction_stddev_samp_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""
+order by sum() on columns of table "subspace_registered_reaction"
+"""
+input subspace_registered_reaction_sum_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""
+order by var_pop() on columns of table "subspace_registered_reaction"
+"""
+input subspace_registered_reaction_var_pop_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""
+order by var_samp() on columns of table "subspace_registered_reaction"
+"""
+input subspace_registered_reaction_var_samp_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""
+order by variance() on columns of table "subspace_registered_reaction"
+"""
+input subspace_registered_reaction_variance_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""
+columns and relationships of "subspace_report_reason"
+"""
+type subspace_report_reason {
+  description: String
+  id: bigint!
+
+  """An object relationship"""
+  subspace: subspace!
+  subspace_id: bigint!
+  title: String!
+}
+
+"""
+order by aggregate values of table "subspace_report_reason"
+"""
+input subspace_report_reason_aggregate_order_by {
+  avg: subspace_report_reason_avg_order_by
+  count: order_by
+  max: subspace_report_reason_max_order_by
+  min: subspace_report_reason_min_order_by
+  stddev: subspace_report_reason_stddev_order_by
+  stddev_pop: subspace_report_reason_stddev_pop_order_by
+  stddev_samp: subspace_report_reason_stddev_samp_order_by
+  sum: subspace_report_reason_sum_order_by
+  var_pop: subspace_report_reason_var_pop_order_by
+  var_samp: subspace_report_reason_var_samp_order_by
+  variance: subspace_report_reason_variance_order_by
+}
+
+"""
+order by avg() on columns of table "subspace_report_reason"
+"""
+input subspace_report_reason_avg_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""
+Boolean expression to filter rows from the table "subspace_report_reason". All fields are combined with a logical 'AND'.
+"""
+input subspace_report_reason_bool_exp {
+  _and: [subspace_report_reason_bool_exp!]
+  _not: subspace_report_reason_bool_exp
+  _or: [subspace_report_reason_bool_exp!]
+  description: String_comparison_exp
+  id: bigint_comparison_exp
+  subspace: subspace_bool_exp
+  subspace_id: bigint_comparison_exp
+  title: String_comparison_exp
+}
+
+"""
+order by max() on columns of table "subspace_report_reason"
+"""
+input subspace_report_reason_max_order_by {
+  description: order_by
+  id: order_by
+  subspace_id: order_by
+  title: order_by
+}
+
+"""
+order by min() on columns of table "subspace_report_reason"
+"""
+input subspace_report_reason_min_order_by {
+  description: order_by
+  id: order_by
+  subspace_id: order_by
+  title: order_by
+}
+
+"""Ordering options when selecting data from "subspace_report_reason"."""
+input subspace_report_reason_order_by {
+  description: order_by
+  id: order_by
+  subspace: subspace_order_by
+  subspace_id: order_by
+  title: order_by
+}
+
+"""
+select columns of table "subspace_report_reason"
+"""
+enum subspace_report_reason_select_column {
+  """column name"""
+  description
+
+  """column name"""
+  id
+
+  """column name"""
+  subspace_id
+
+  """column name"""
+  title
+}
+
+"""
+order by stddev() on columns of table "subspace_report_reason"
+"""
+input subspace_report_reason_stddev_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""
+order by stddev_pop() on columns of table "subspace_report_reason"
+"""
+input subspace_report_reason_stddev_pop_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""
+order by stddev_samp() on columns of table "subspace_report_reason"
+"""
+input subspace_report_reason_stddev_samp_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""
+order by sum() on columns of table "subspace_report_reason"
+"""
+input subspace_report_reason_sum_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""
+order by var_pop() on columns of table "subspace_report_reason"
+"""
+input subspace_report_reason_var_pop_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""
+order by var_samp() on columns of table "subspace_report_reason"
+"""
+input subspace_report_reason_var_samp_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""
+order by variance() on columns of table "subspace_report_reason"
+"""
+input subspace_report_reason_variance_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""
+columns and relationships of "subspace_section"
+"""
+type subspace_section {
+  """An array relationship"""
+  children(
+    """distinct select on columns"""
+    distinct_on: [subspace_section_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [subspace_section_order_by!]
+
+    """filter the rows returned"""
+    where: subspace_section_bool_exp
+  ): [subspace_section!]!
+  description: String
+  id: bigint!
+  name: String!
+
+  """An object relationship"""
+  parent: subspace_section
+
+  """An array relationship"""
+  posts(
+    """distinct select on columns"""
+    distinct_on: [post_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [post_order_by!]
+
+    """filter the rows returned"""
+    where: post_bool_exp
+  ): [post!]!
+
+  """An aggregate relationship"""
+  posts_aggregate(
+    """distinct select on columns"""
+    distinct_on: [post_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [post_order_by!]
+
+    """filter the rows returned"""
+    where: post_bool_exp
+  ): post_aggregate!
+
+  """An object relationship"""
+  subspace: subspace!
+  subspace_id: bigint!
+
+  """An array relationship"""
+  user_groups(
+    """distinct select on columns"""
+    distinct_on: [subspace_user_group_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [subspace_user_group_order_by!]
+
+    """filter the rows returned"""
+    where: subspace_user_group_bool_exp
+  ): [subspace_user_group!]!
+
+  """An aggregate relationship"""
+  user_groups_aggregate(
+    """distinct select on columns"""
+    distinct_on: [subspace_user_group_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [subspace_user_group_order_by!]
+
+    """filter the rows returned"""
+    where: subspace_user_group_bool_exp
+  ): subspace_user_group_aggregate!
+
+  """An array relationship"""
+  user_permissions(
+    """distinct select on columns"""
+    distinct_on: [subspace_user_permission_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [subspace_user_permission_order_by!]
+
+    """filter the rows returned"""
+    where: subspace_user_permission_bool_exp
+  ): [subspace_user_permission!]!
+}
+
+"""
+order by aggregate values of table "subspace_section"
+"""
+input subspace_section_aggregate_order_by {
+  avg: subspace_section_avg_order_by
+  count: order_by
+  max: subspace_section_max_order_by
+  min: subspace_section_min_order_by
+  stddev: subspace_section_stddev_order_by
+  stddev_pop: subspace_section_stddev_pop_order_by
+  stddev_samp: subspace_section_stddev_samp_order_by
+  sum: subspace_section_sum_order_by
+  var_pop: subspace_section_var_pop_order_by
+  var_samp: subspace_section_var_samp_order_by
+  variance: subspace_section_variance_order_by
+}
+
+"""
+order by avg() on columns of table "subspace_section"
+"""
+input subspace_section_avg_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""
+Boolean expression to filter rows from the table "subspace_section". All fields are combined with a logical 'AND'.
+"""
+input subspace_section_bool_exp {
+  _and: [subspace_section_bool_exp!]
+  _not: subspace_section_bool_exp
+  _or: [subspace_section_bool_exp!]
+  children: subspace_section_bool_exp
+  description: String_comparison_exp
+  id: bigint_comparison_exp
+  name: String_comparison_exp
+  parent: subspace_section_bool_exp
+  posts: post_bool_exp
+  subspace: subspace_bool_exp
+  subspace_id: bigint_comparison_exp
+  user_groups: subspace_user_group_bool_exp
+  user_permissions: subspace_user_permission_bool_exp
+}
+
+"""
+order by max() on columns of table "subspace_section"
+"""
+input subspace_section_max_order_by {
+  description: order_by
+  id: order_by
+  name: order_by
+  subspace_id: order_by
+}
+
+"""
+order by min() on columns of table "subspace_section"
+"""
+input subspace_section_min_order_by {
+  description: order_by
+  id: order_by
+  name: order_by
+  subspace_id: order_by
+}
+
+"""Ordering options when selecting data from "subspace_section"."""
+input subspace_section_order_by {
+  children_aggregate: subspace_section_aggregate_order_by
+  description: order_by
+  id: order_by
+  name: order_by
+  parent: subspace_section_order_by
+  posts_aggregate: post_aggregate_order_by
+  subspace: subspace_order_by
+  subspace_id: order_by
+  user_groups_aggregate: subspace_user_group_aggregate_order_by
+  user_permissions_aggregate: subspace_user_permission_aggregate_order_by
+}
+
+"""
+select columns of table "subspace_section"
+"""
+enum subspace_section_select_column {
+  """column name"""
+  description
+
+  """column name"""
+  id
+
+  """column name"""
+  name
+
+  """column name"""
+  subspace_id
+}
+
+"""
+order by stddev() on columns of table "subspace_section"
+"""
+input subspace_section_stddev_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""
+order by stddev_pop() on columns of table "subspace_section"
+"""
+input subspace_section_stddev_pop_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""
+order by stddev_samp() on columns of table "subspace_section"
+"""
+input subspace_section_stddev_samp_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""
+order by sum() on columns of table "subspace_section"
+"""
+input subspace_section_sum_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""
+order by var_pop() on columns of table "subspace_section"
+"""
+input subspace_section_var_pop_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""
+order by var_samp() on columns of table "subspace_section"
+"""
+input subspace_section_var_samp_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""
+order by variance() on columns of table "subspace_section"
+"""
+input subspace_section_variance_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""
+select columns of table "subspace"
+"""
+enum subspace_select_column {
+  """column name"""
+  creation_time
+
+  """column name"""
+  creator_address
+
+  """column name"""
+  description
+
+  """column name"""
+  id
+
+  """column name"""
+  name
+
+  """column name"""
+  owner_address
+
+  """column name"""
+  treasury_address
+}
+
+"""
+columns and relationships of "subspace_user_group"
+"""
+type subspace_user_group {
+  description: String
+  id: bigint!
+
+  """An array relationship"""
+  members(
+    """distinct select on columns"""
+    distinct_on: [subspace_user_group_member_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [subspace_user_group_member_order_by!]
+
+    """filter the rows returned"""
+    where: subspace_user_group_member_bool_exp
+  ): [subspace_user_group_member!]!
+
+  """An aggregate relationship"""
+  members_aggregate(
+    """distinct select on columns"""
+    distinct_on: [subspace_user_group_member_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [subspace_user_group_member_order_by!]
+
+    """filter the rows returned"""
+    where: subspace_user_group_member_bool_exp
+  ): subspace_user_group_member_aggregate!
+  name: String!
+  permissions: _text!
+
+  """An object relationship"""
+  section: subspace_section!
+
+  """An object relationship"""
+  subspace: subspace!
+  subspace_id: bigint!
+}
+
+"""
+aggregated selection of "subspace_user_group"
+"""
+type subspace_user_group_aggregate {
+  aggregate: subspace_user_group_aggregate_fields
+  nodes: [subspace_user_group!]!
+}
+
+"""
+aggregate fields of "subspace_user_group"
+"""
+type subspace_user_group_aggregate_fields {
+  avg: subspace_user_group_avg_fields
+  count(columns: [subspace_user_group_select_column!], distinct: Boolean): Int!
+  max: subspace_user_group_max_fields
+  min: subspace_user_group_min_fields
+  stddev: subspace_user_group_stddev_fields
+  stddev_pop: subspace_user_group_stddev_pop_fields
+  stddev_samp: subspace_user_group_stddev_samp_fields
+  sum: subspace_user_group_sum_fields
+  var_pop: subspace_user_group_var_pop_fields
+  var_samp: subspace_user_group_var_samp_fields
+  variance: subspace_user_group_variance_fields
+}
+
+"""
+order by aggregate values of table "subspace_user_group"
+"""
+input subspace_user_group_aggregate_order_by {
+  avg: subspace_user_group_avg_order_by
+  count: order_by
+  max: subspace_user_group_max_order_by
+  min: subspace_user_group_min_order_by
+  stddev: subspace_user_group_stddev_order_by
+  stddev_pop: subspace_user_group_stddev_pop_order_by
+  stddev_samp: subspace_user_group_stddev_samp_order_by
+  sum: subspace_user_group_sum_order_by
+  var_pop: subspace_user_group_var_pop_order_by
+  var_samp: subspace_user_group_var_samp_order_by
+  variance: subspace_user_group_variance_order_by
+}
+
+"""aggregate avg on columns"""
+type subspace_user_group_avg_fields {
+  id: Float
+  subspace_id: Float
+}
+
+"""
+order by avg() on columns of table "subspace_user_group"
+"""
+input subspace_user_group_avg_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""
+Boolean expression to filter rows from the table "subspace_user_group". All fields are combined with a logical 'AND'.
+"""
+input subspace_user_group_bool_exp {
+  _and: [subspace_user_group_bool_exp!]
+  _not: subspace_user_group_bool_exp
+  _or: [subspace_user_group_bool_exp!]
+  description: String_comparison_exp
+  id: bigint_comparison_exp
+  members: subspace_user_group_member_bool_exp
+  name: String_comparison_exp
+  permissions: _text_comparison_exp
+  section: subspace_section_bool_exp
+  subspace: subspace_bool_exp
+  subspace_id: bigint_comparison_exp
+}
+
+"""aggregate max on columns"""
+type subspace_user_group_max_fields {
+  description: String
+  id: bigint
+  name: String
+  subspace_id: bigint
+}
+
+"""
+order by max() on columns of table "subspace_user_group"
+"""
+input subspace_user_group_max_order_by {
+  description: order_by
+  id: order_by
+  name: order_by
+  subspace_id: order_by
+}
+
+"""
+columns and relationships of "subspace_user_group_member"
+"""
+type subspace_user_group_member {
+  """An object relationship"""
+  group: subspace_user_group!
+  member_address: String!
+}
+
+"""
+aggregated selection of "subspace_user_group_member"
+"""
+type subspace_user_group_member_aggregate {
+  aggregate: subspace_user_group_member_aggregate_fields
+  nodes: [subspace_user_group_member!]!
+}
+
+"""
+aggregate fields of "subspace_user_group_member"
+"""
+type subspace_user_group_member_aggregate_fields {
+  count(columns: [subspace_user_group_member_select_column!], distinct: Boolean): Int!
+  max: subspace_user_group_member_max_fields
+  min: subspace_user_group_member_min_fields
+}
+
+"""
+order by aggregate values of table "subspace_user_group_member"
+"""
+input subspace_user_group_member_aggregate_order_by {
+  count: order_by
+  max: subspace_user_group_member_max_order_by
+  min: subspace_user_group_member_min_order_by
+}
+
+"""
+Boolean expression to filter rows from the table "subspace_user_group_member". All fields are combined with a logical 'AND'.
+"""
+input subspace_user_group_member_bool_exp {
+  _and: [subspace_user_group_member_bool_exp!]
+  _not: subspace_user_group_member_bool_exp
+  _or: [subspace_user_group_member_bool_exp!]
+  group: subspace_user_group_bool_exp
+  member_address: String_comparison_exp
+}
+
+"""aggregate max on columns"""
+type subspace_user_group_member_max_fields {
+  member_address: String
+}
+
+"""
+order by max() on columns of table "subspace_user_group_member"
+"""
+input subspace_user_group_member_max_order_by {
+  member_address: order_by
+}
+
+"""aggregate min on columns"""
+type subspace_user_group_member_min_fields {
+  member_address: String
+}
+
+"""
+order by min() on columns of table "subspace_user_group_member"
+"""
+input subspace_user_group_member_min_order_by {
+  member_address: order_by
+}
+
+"""
+Ordering options when selecting data from "subspace_user_group_member".
+"""
+input subspace_user_group_member_order_by {
+  group: subspace_user_group_order_by
+  member_address: order_by
+}
+
+"""
+select columns of table "subspace_user_group_member"
+"""
+enum subspace_user_group_member_select_column {
+  """column name"""
+  member_address
+}
+
+"""aggregate min on columns"""
+type subspace_user_group_min_fields {
+  description: String
+  id: bigint
+  name: String
+  subspace_id: bigint
+}
+
+"""
+order by min() on columns of table "subspace_user_group"
+"""
+input subspace_user_group_min_order_by {
+  description: order_by
+  id: order_by
+  name: order_by
+  subspace_id: order_by
+}
+
+"""Ordering options when selecting data from "subspace_user_group"."""
+input subspace_user_group_order_by {
+  description: order_by
+  id: order_by
+  members_aggregate: subspace_user_group_member_aggregate_order_by
+  name: order_by
+  permissions: order_by
+  section: subspace_section_order_by
+  subspace: subspace_order_by
+  subspace_id: order_by
+}
+
+"""
+select columns of table "subspace_user_group"
+"""
+enum subspace_user_group_select_column {
+  """column name"""
+  description
+
+  """column name"""
+  id
+
+  """column name"""
+  name
+
+  """column name"""
+  permissions
+
+  """column name"""
+  subspace_id
+}
+
+"""aggregate stddev on columns"""
+type subspace_user_group_stddev_fields {
+  id: Float
+  subspace_id: Float
+}
+
+"""
+order by stddev() on columns of table "subspace_user_group"
+"""
+input subspace_user_group_stddev_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""aggregate stddev_pop on columns"""
+type subspace_user_group_stddev_pop_fields {
+  id: Float
+  subspace_id: Float
+}
+
+"""
+order by stddev_pop() on columns of table "subspace_user_group"
+"""
+input subspace_user_group_stddev_pop_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""aggregate stddev_samp on columns"""
+type subspace_user_group_stddev_samp_fields {
+  id: Float
+  subspace_id: Float
+}
+
+"""
+order by stddev_samp() on columns of table "subspace_user_group"
+"""
+input subspace_user_group_stddev_samp_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""aggregate sum on columns"""
+type subspace_user_group_sum_fields {
+  id: bigint
+  subspace_id: bigint
+}
+
+"""
+order by sum() on columns of table "subspace_user_group"
+"""
+input subspace_user_group_sum_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""aggregate var_pop on columns"""
+type subspace_user_group_var_pop_fields {
+  id: Float
+  subspace_id: Float
+}
+
+"""
+order by var_pop() on columns of table "subspace_user_group"
+"""
+input subspace_user_group_var_pop_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""aggregate var_samp on columns"""
+type subspace_user_group_var_samp_fields {
+  id: Float
+  subspace_id: Float
+}
+
+"""
+order by var_samp() on columns of table "subspace_user_group"
+"""
+input subspace_user_group_var_samp_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""aggregate variance on columns"""
+type subspace_user_group_variance_fields {
+  id: Float
+  subspace_id: Float
+}
+
+"""
+order by variance() on columns of table "subspace_user_group"
+"""
+input subspace_user_group_variance_order_by {
+  id: order_by
+  subspace_id: order_by
+}
+
+"""
+columns and relationships of "subspace_user_permission"
+"""
+type subspace_user_permission {
+  permissions: _text!
+
+  """An object relationship"""
+  section: subspace_section!
+  user_address: String!
+}
+
+"""
+order by aggregate values of table "subspace_user_permission"
+"""
+input subspace_user_permission_aggregate_order_by {
+  count: order_by
+  max: subspace_user_permission_max_order_by
+  min: subspace_user_permission_min_order_by
+}
+
+"""
+Boolean expression to filter rows from the table "subspace_user_permission". All fields are combined with a logical 'AND'.
+"""
+input subspace_user_permission_bool_exp {
+  _and: [subspace_user_permission_bool_exp!]
+  _not: subspace_user_permission_bool_exp
+  _or: [subspace_user_permission_bool_exp!]
+  permissions: _text_comparison_exp
+  section: subspace_section_bool_exp
+  user_address: String_comparison_exp
+}
+
+"""
+order by max() on columns of table "subspace_user_permission"
+"""
+input subspace_user_permission_max_order_by {
+  user_address: order_by
+}
+
+"""
+order by min() on columns of table "subspace_user_permission"
+"""
+input subspace_user_permission_min_order_by {
+  user_address: order_by
+}
+
+"""Ordering options when selecting data from "subspace_user_permission"."""
+input subspace_user_permission_order_by {
+  permissions: order_by
+  section: subspace_section_order_by
+  user_address: order_by
+}
+
+"""
+select columns of table "subspace_user_permission"
+"""
+enum subspace_user_permission_select_column {
+  """column name"""
+  permissions
+
+  """column name"""
+  user_address
+}
+
+scalar timestamp
+
+"""
+Boolean expression to compare columns of type "timestamp". All fields are combined with logical 'AND'.
+"""
+input timestamp_comparison_exp {
+  _eq: timestamp
+  _gt: timestamp
+  _gte: timestamp
+  _in: [timestamp!]
+  _is_null: Boolean
+  _lt: timestamp
+  _lte: timestamp
+  _neq: timestamp
+  _nin: [timestamp!]
+}
+
+"""
+columns and relationships of "user_block"
+"""
+type user_block {
+  """An object relationship"""
+  blocked: profile!
+  blocked_user_address: String!
+
+  """An object relationship"""
+  blocker: profile!
+  blocker_address: String!
+  reason: String
+  subspace: String!
+}
+
+"""
+aggregated selection of "user_block"
+"""
+type user_block_aggregate {
+  aggregate: user_block_aggregate_fields
+  nodes: [user_block!]!
+}
+
+"""
+aggregate fields of "user_block"
+"""
+type user_block_aggregate_fields {
+  count(columns: [user_block_select_column!], distinct: Boolean): Int!
+  max: user_block_max_fields
+  min: user_block_min_fields
+}
+
+"""
+order by aggregate values of table "user_block"
+"""
+input user_block_aggregate_order_by {
+  count: order_by
+  max: user_block_max_order_by
+  min: user_block_min_order_by
+}
+
+"""
+Boolean expression to filter rows from the table "user_block". All fields are combined with a logical 'AND'.
+"""
+input user_block_bool_exp {
+  _and: [user_block_bool_exp!]
+  _not: user_block_bool_exp
+  _or: [user_block_bool_exp!]
+  blocked: profile_bool_exp
+  blocked_user_address: String_comparison_exp
+  blocker: profile_bool_exp
+  blocker_address: String_comparison_exp
+  reason: String_comparison_exp
+  subspace: String_comparison_exp
+}
+
+"""aggregate max on columns"""
+type user_block_max_fields {
+  blocked_user_address: String
+  blocker_address: String
+  reason: String
+  subspace: String
+}
+
+"""
+order by max() on columns of table "user_block"
+"""
+input user_block_max_order_by {
+  blocked_user_address: order_by
+  blocker_address: order_by
+  reason: order_by
+  subspace: order_by
+}
+
+"""aggregate min on columns"""
+type user_block_min_fields {
+  blocked_user_address: String
+  blocker_address: String
+  reason: String
+  subspace: String
+}
+
+"""
+order by min() on columns of table "user_block"
+"""
+input user_block_min_order_by {
+  blocked_user_address: order_by
+  blocker_address: order_by
+  reason: order_by
+  subspace: order_by
+}
+
+"""Ordering options when selecting data from "user_block"."""
+input user_block_order_by {
+  blocked: profile_order_by
+  blocked_user_address: order_by
+  blocker: profile_order_by
+  blocker_address: order_by
+  reason: order_by
+  subspace: order_by
+}
+
+"""
+select columns of table "user_block"
+"""
+enum user_block_select_column {
+  """column name"""
+  blocked_user_address
+
+  """column name"""
+  blocker_address
+
+  """column name"""
+  reason
+
+  """column name"""
+  subspace
+}

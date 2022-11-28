@@ -1,0 +1,48 @@
+---
+id: poll-answer-aggregate-fields
+title: poll_answer_aggregate_fields
+hide_table_of_contents: false
+---
+
+
+aggregate fields of "poll_answer"
+
+```graphql
+type poll_answer_aggregate_fields {
+  count(
+  columns: [poll_answer_select_column!]
+  distinct: Boolean
+): Int!
+  max: poll_answer_max_fields
+  min: poll_answer_min_fields
+}
+```
+
+
+### Fields
+
+#### [`count`](#) ([`Int!`](../scalars/int))
+
+
+- ##### [`columns`](#) ([`[poll_answer_select_column!]`](../enums/poll-answer-select-column))
+
+
+
+
+- ##### [`distinct`](#) ([`Boolean`](../scalars/boolean))
+
+
+
+
+#### [`max`](#) ([`poll_answer_max_fields`](../objects/poll-answer-max-fields))
+
+
+
+
+#### [`min`](#) ([`poll_answer_min_fields`](../objects/poll-answer-min-fields))
+
+
+
+
+
+

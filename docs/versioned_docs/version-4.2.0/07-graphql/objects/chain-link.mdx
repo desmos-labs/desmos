@@ -1,0 +1,96 @@
+---
+id: chain-link
+title: chain_link
+hide_table_of_contents: false
+---
+
+
+columns and relationships of "chain_link"
+
+```graphql
+type chain_link {
+  chain_config: chain_link_chain_config!
+  chain_link_proofs(
+  distinct_on: [chain_link_proof_select_column!]
+  limit: Int
+  offset: Int
+  order_by: [chain_link_proof_order_by!]
+  where: chain_link_proof_bool_exp
+): [chain_link_proof!]!
+  creation_time: timestamp!
+  external_address: String!
+  height: bigint!
+  profile: profile!
+  proof: chain_link_proof
+  user_address: String!
+}
+```
+
+
+### Fields
+
+#### [`chain_config`](#) ([`chain_link_chain_config!`](../objects/chain-link-chain-config))
+
+An object relationship
+
+
+#### [`chain_link_proofs`](#) ([`[chain_link_proof!]!`](../objects/chain-link-proof))
+
+An array relationship
+- ##### [`distinct_on`](#) ([`[chain_link_proof_select_column!]`](../enums/chain-link-proof-select-column))
+
+distinct select on columns
+
+
+- ##### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+
+- ##### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+
+- ##### [`order_by`](#) ([`[chain_link_proof_order_by!]`](../inputs/chain-link-proof-order-by))
+
+sort the rows by one or more columns
+
+
+- ##### [`where`](#) ([`chain_link_proof_bool_exp`](../inputs/chain-link-proof-bool-exp))
+
+filter the rows returned
+
+
+#### [`creation_time`](#) ([`timestamp!`](../scalars/timestamp))
+
+
+
+
+#### [`external_address`](#) ([`String!`](../scalars/string))
+
+
+
+
+#### [`height`](#) ([`bigint!`](../scalars/bigint))
+
+
+
+
+#### [`profile`](#) ([`profile!`](../objects/profile))
+
+An object relationship
+
+
+#### [`proof`](#) ([`chain_link_proof`](../objects/chain-link-proof))
+
+An object relationship
+
+
+#### [`user_address`](#) ([`String!`](../scalars/string))
+
+
+
+
+
+

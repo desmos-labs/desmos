@@ -1,0 +1,56 @@
+---
+id: subspace-section
+title: subspace_section
+hide_table_of_contents: false
+---
+
+
+fetch data from the table: "subspace_section"
+
+```graphql
+subspace_section(
+  distinct_on: [subspace_section_select_column!]
+  limit: Int
+  offset: Int
+  order_by: [subspace_section_order_by!]
+  where: subspace_section_bool_exp
+): [subspace_section!]!
+```
+
+
+### Arguments
+
+#### [`distinct_on`](#) ([`[subspace_section_select_column!]`](../enums/subspace-section-select-column))
+
+distinct select on columns
+
+
+#### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+
+#### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+
+#### [`order_by`](#) ([`[subspace_section_order_by!]`](../inputs/subspace-section-order-by))
+
+sort the rows by one or more columns
+
+
+#### [`where`](#) ([`subspace_section_bool_exp`](../inputs/subspace-section-bool-exp))
+
+filter the rows returned
+
+
+### Type
+
+#### [`subspace_section`](../objects/subspace-section)
+
+columns and relationships of "subspace_section"
+
+
+
+

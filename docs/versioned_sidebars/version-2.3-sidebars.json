@@ -1,0 +1,316 @@
+{
+  "version-2.3/docs": [
+    {
+      "type": "doc",
+      "id": "version-2.3/intro"
+    },
+    {
+      "type": "category",
+      "label": "Developers",
+      "collapsed": true,
+      "items": [
+        {
+          "type": "doc",
+          "id": "version-2.3/developers/overview"
+        },
+        {
+          "type": "category",
+          "collapsed": true,
+          "collapsible": true,
+          "label": "Types",
+          "items": [
+            {
+              "type": "category",
+              "collapsed": true,
+              "collapsible": true,
+              "label": "Profiles",
+              "items": [
+                {
+                  "type": "doc",
+                  "id": "version-2.3/developers/types/profiles/profile"
+                },
+                {
+                  "type": "doc",
+                  "id": "version-2.3/developers/types/profiles/profile-pictures"
+                },
+                {
+                  "type": "doc",
+                  "id": "version-2.3/developers/types/profiles/dtag-transfer-request"
+                },
+                {
+                  "type": "doc",
+                  "id": "version-2.3/developers/types/profiles/relationship"
+                },
+                {
+                  "type": "doc",
+                  "id": "version-2.3/developers/types/profiles/user-block"
+                },
+                {
+                  "type": "doc",
+                  "id": "version-2.3/developers/types/profiles/application-link"
+                },
+                {
+                  "type": "doc",
+                  "id": "version-2.3/developers/types/profiles/chain-link"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "category",
+          "collapsed": true,
+          "collapsible": true,
+          "label": "Transactions",
+          "items": [
+            {
+              "type": "category",
+              "collapsed": true,
+              "collapsible": true,
+              "label": "Profiles",
+              "items": [
+                {
+                  "type": "doc",
+                  "id": "version-2.3/developers/transactions/profiles/save-profile"
+                },
+                {
+                  "type": "doc",
+                  "id": "version-2.3/developers/transactions/profiles/delete-profile"
+                },
+                {
+                  "type": "doc",
+                  "id": "version-2.3/developers/transactions/profiles/request-dtag-transfer"
+                },
+                {
+                  "type": "doc",
+                  "id": "version-2.3/developers/transactions/profiles/accept-dtag-transfer-request"
+                },
+                {
+                  "type": "doc",
+                  "id": "version-2.3/developers/transactions/profiles/refuse-dtag-transfer-request"
+                },
+                {
+                  "type": "doc",
+                  "id": "version-2.3/developers/transactions/profiles/cancel-dtag-transfer-request"
+                },
+                {
+                  "type": "doc",
+                  "id": "version-2.3/developers/transactions/profiles/create-relationship"
+                },
+                {
+                  "type": "doc",
+                  "id": "version-2.3/developers/transactions/profiles/delete-relationship"
+                },
+                {
+                  "type": "doc",
+                  "id": "version-2.3/developers/transactions/profiles/block-user"
+                },
+                {
+                  "type": "doc",
+                  "id": "version-2.3/developers/transactions/profiles/unblock-user"
+                },
+                {
+                  "type": "doc",
+                  "id": "version-2.3/developers/transactions/profiles/link-application"
+                },
+                {
+                  "type": "doc",
+                  "id": "version-2.3/developers/transactions/profiles/unlink-application"
+                },
+                {
+                  "type": "doc",
+                  "id": "version-2.3/developers/transactions/profiles/link-chain-account"
+                },
+                {
+                  "type": "doc",
+                  "id": "version-2.3/developers/transactions/profiles/unlink-chain-account"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "category",
+          "collapsed": true,
+          "collapsible": true,
+          "label": "Queries",
+          "items": [
+            {
+              "type": "category",
+              "collapsed": true,
+              "collapsible": true,
+              "label": "Profiles",
+              "items": [
+                {
+                  "type": "doc",
+                  "id": "version-2.3/developers/queries/profiles/profile"
+                },
+                {
+                  "type": "doc",
+                  "id": "version-2.3/developers/queries/profiles/incoming-dtag-requests"
+                },
+                {
+                  "type": "doc",
+                  "id": "version-2.3/developers/queries/profiles/relationships"
+                },
+                {
+                  "type": "doc",
+                  "id": "version-2.3/developers/queries/profiles/blocked-users"
+                },
+                {
+                  "type": "doc",
+                  "id": "version-2.3/developers/queries/profiles/chain-links"
+                },
+                {
+                  "type": "doc",
+                  "id": "version-2.3/developers/queries/profiles/application-links"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "doc",
+          "id": "version-2.3/developers/observe-data"
+        },
+        {
+          "type": "doc",
+          "id": "version-2.3/developers/faq"
+        }
+      ],
+      "collapsible": true
+    },
+    {
+      "type": "category",
+      "label": "Running a Fullnode",
+      "collapsed": true,
+      "items": [
+        {
+          "type": "doc",
+          "id": "version-2.3/fullnode/overview"
+        },
+        {
+          "type": "doc",
+          "id": "version-2.3/fullnode/setup"
+        },
+        {
+          "type": "doc",
+          "id": "version-2.3/fullnode/update"
+        },
+        {
+          "type": "doc",
+          "id": "version-2.3/fullnode/rocksdb-installation"
+        },
+        {
+          "type": "doc",
+          "id": "version-2.3/fullnode/cosmovisor"
+        }
+      ],
+      "collapsible": true
+    },
+    {
+      "type": "category",
+      "label": "Validators",
+      "collapsed": true,
+      "items": [
+        {
+          "type": "doc",
+          "id": "version-2.3/validators/overview"
+        },
+        {
+          "type": "doc",
+          "id": "version-2.3/validators/setup"
+        },
+        {
+          "type": "doc",
+          "id": "version-2.3/validators/halting"
+        },
+        {
+          "type": "doc",
+          "id": "version-2.3/validators/migrating"
+        },
+        {
+          "type": "doc",
+          "id": "version-2.3/validators/common-problems"
+        },
+        {
+          "type": "doc",
+          "id": "version-2.3/validators/faq"
+        }
+      ],
+      "collapsible": true
+    },
+    {
+      "type": "category",
+      "label": "Testnets",
+      "collapsed": true,
+      "items": [
+        {
+          "type": "doc",
+          "id": "version-2.3/testnets/overview"
+        },
+        {
+          "type": "doc",
+          "id": "version-2.3/testnets/create-local"
+        },
+        {
+          "type": "category",
+          "collapsed": true,
+          "collapsible": true,
+          "label": "Join the public testnet",
+          "items": [
+            {
+              "type": "doc",
+              "id": "version-2.3/testnets/join-public/setup"
+            },
+            {
+              "type": "doc",
+              "id": "version-2.3/testnets/join-public/genesis-file"
+            },
+            {
+              "type": "doc",
+              "id": "version-2.3/testnets/join-public/seeds"
+            },
+            {
+              "type": "doc",
+              "id": "version-2.3/testnets/join-public/state-sync"
+            },
+            {
+              "type": "doc",
+              "id": "version-2.3/testnets/join-public/full-sync"
+            }
+          ]
+        }
+      ],
+      "collapsible": true
+    },
+    {
+      "type": "category",
+      "label": "Mainnet",
+      "collapsed": true,
+      "items": [
+        {
+          "type": "doc",
+          "id": "version-2.3/mainnet/genesis-file"
+        },
+        {
+          "type": "doc",
+          "id": "version-2.3/mainnet/seeds"
+        },
+        {
+          "type": "doc",
+          "id": "version-2.3/mainnet/state-sync"
+        },
+        {
+          "type": "doc",
+          "id": "version-2.3/mainnet/full-sync"
+        },
+        {
+          "type": "doc",
+          "id": "version-2.3/mainnet/security"
+        }
+      ],
+      "collapsible": true
+    }
+  ]
+}

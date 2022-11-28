@@ -1,0 +1,50 @@
+---
+id: report-reason
+title: report_reason
+hide_table_of_contents: false
+---
+
+
+fetch data from the table: "report_reason"
+
+```graphql
+report_reason(
+  limit: Int
+  offset: Int
+  order_by: [report_reason_order_by!]
+  where: report_reason_bool_exp
+): [report_reason!]!
+```
+
+
+### Arguments
+
+#### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+
+#### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+
+#### [`order_by`](#) ([`[report_reason_order_by!]`](../inputs/report-reason-order-by))
+
+sort the rows by one or more columns
+
+
+#### [`where`](#) ([`report_reason_bool_exp`](../inputs/report-reason-bool-exp))
+
+filter the rows returned
+
+
+### Type
+
+#### [`report_reason`](../objects/report-reason)
+
+columns and relationships of "report_reason"
+
+
+
+

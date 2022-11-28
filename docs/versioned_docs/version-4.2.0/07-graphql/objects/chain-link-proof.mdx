@@ -1,0 +1,48 @@
+---
+id: chain-link-proof
+title: chain_link_proof
+hide_table_of_contents: false
+---
+
+
+columns and relationships of "chain_link_proof"
+
+```graphql
+type chain_link_proof {
+  chain_link: chain_link!
+  plain_text: String!
+  public_key(
+  path: String
+): jsonb!
+  signature: String!
+}
+```
+
+
+### Fields
+
+#### [`chain_link`](#) ([`chain_link!`](../objects/chain-link))
+
+An object relationship
+
+
+#### [`plain_text`](#) ([`String!`](../scalars/string))
+
+
+
+
+#### [`public_key`](#) ([`jsonb!`](../scalars/jsonb))
+
+
+- ##### [`path`](#) ([`String`](../scalars/string))
+
+JSON select path
+
+
+#### [`signature`](#) ([`String!`](../scalars/string))
+
+
+
+
+
+

@@ -1,0 +1,388 @@
+---
+id: subspace
+title: subspace
+hide_table_of_contents: false
+---
+
+
+columns and relationships of "subspace"
+
+```graphql
+type subspace {
+  creation_time: timestamp!
+  creator_address: String!
+  description: String
+  free_text_reactions_params: subspace_free_text_params!
+  id: bigint!
+  name: String!
+  owner_address: String!
+  posts(
+  distinct_on: [post_select_column!]
+  limit: Int
+  offset: Int
+  order_by: [post_order_by!]
+  where: post_bool_exp
+): [post!]!
+  posts_aggregate(
+  distinct_on: [post_select_column!]
+  limit: Int
+  offset: Int
+  order_by: [post_order_by!]
+  where: post_bool_exp
+): post_aggregate!
+  registered_reactions(
+  distinct_on: [subspace_registered_reaction_select_column!]
+  limit: Int
+  offset: Int
+  order_by: [subspace_registered_reaction_order_by!]
+  where: subspace_registered_reaction_bool_exp
+): [subspace_registered_reaction!]!
+  registered_reactions_params: subspace_registered_reaction_params
+  report_reasons(
+  distinct_on: [subspace_report_reason_select_column!]
+  limit: Int
+  offset: Int
+  order_by: [subspace_report_reason_order_by!]
+  where: subspace_report_reason_bool_exp
+): [subspace_report_reason!]!
+  reports(
+  distinct_on: [report_select_column!]
+  limit: Int
+  offset: Int
+  order_by: [report_order_by!]
+  where: report_bool_exp
+): [report!]!
+  reports_aggregate(
+  distinct_on: [report_select_column!]
+  limit: Int
+  offset: Int
+  order_by: [report_order_by!]
+  where: report_bool_exp
+): report_aggregate!
+  sections(
+  distinct_on: [subspace_section_select_column!]
+  limit: Int
+  offset: Int
+  order_by: [subspace_section_order_by!]
+  where: subspace_section_bool_exp
+): [subspace_section!]!
+  treasury_address: String
+  user_groups(
+  distinct_on: [subspace_user_group_select_column!]
+  limit: Int
+  offset: Int
+  order_by: [subspace_user_group_order_by!]
+  where: subspace_user_group_bool_exp
+): [subspace_user_group!]!
+  user_groups_aggregate(
+  distinct_on: [subspace_user_group_select_column!]
+  limit: Int
+  offset: Int
+  order_by: [subspace_user_group_order_by!]
+  where: subspace_user_group_bool_exp
+): subspace_user_group_aggregate!
+}
+```
+
+
+### Fields
+
+#### [`creation_time`](#) ([`timestamp!`](../scalars/timestamp))
+
+
+
+
+#### [`creator_address`](#) ([`String!`](../scalars/string))
+
+
+
+
+#### [`description`](#) ([`String`](../scalars/string))
+
+
+
+
+#### [`free_text_reactions_params`](#) ([`subspace_free_text_params!`](../objects/subspace-free-text-params))
+
+An object relationship
+
+
+#### [`id`](#) ([`bigint!`](../scalars/bigint))
+
+
+
+
+#### [`name`](#) ([`String!`](../scalars/string))
+
+
+
+
+#### [`owner_address`](#) ([`String!`](../scalars/string))
+
+
+
+
+#### [`posts`](#) ([`[post!]!`](../objects/post))
+
+An array relationship
+- ##### [`distinct_on`](#) ([`[post_select_column!]`](../enums/post-select-column))
+
+distinct select on columns
+
+
+- ##### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+
+- ##### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+
+- ##### [`order_by`](#) ([`[post_order_by!]`](../inputs/post-order-by))
+
+sort the rows by one or more columns
+
+
+- ##### [`where`](#) ([`post_bool_exp`](../inputs/post-bool-exp))
+
+filter the rows returned
+
+
+#### [`posts_aggregate`](#) ([`post_aggregate!`](../objects/post-aggregate))
+
+An aggregate relationship
+- ##### [`distinct_on`](#) ([`[post_select_column!]`](../enums/post-select-column))
+
+distinct select on columns
+
+
+- ##### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+
+- ##### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+
+- ##### [`order_by`](#) ([`[post_order_by!]`](../inputs/post-order-by))
+
+sort the rows by one or more columns
+
+
+- ##### [`where`](#) ([`post_bool_exp`](../inputs/post-bool-exp))
+
+filter the rows returned
+
+
+#### [`registered_reactions`](#) ([`[subspace_registered_reaction!]!`](../objects/subspace-registered-reaction))
+
+An array relationship
+- ##### [`distinct_on`](#) ([`[subspace_registered_reaction_select_column!]`](../enums/subspace-registered-reaction-select-column))
+
+distinct select on columns
+
+
+- ##### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+
+- ##### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+
+- ##### [`order_by`](#) ([`[subspace_registered_reaction_order_by!]`](../inputs/subspace-registered-reaction-order-by))
+
+sort the rows by one or more columns
+
+
+- ##### [`where`](#) ([`subspace_registered_reaction_bool_exp`](../inputs/subspace-registered-reaction-bool-exp))
+
+filter the rows returned
+
+
+#### [`registered_reactions_params`](#) ([`subspace_registered_reaction_params`](../objects/subspace-registered-reaction-params))
+
+An object relationship
+
+
+#### [`report_reasons`](#) ([`[subspace_report_reason!]!`](../objects/subspace-report-reason))
+
+An array relationship
+- ##### [`distinct_on`](#) ([`[subspace_report_reason_select_column!]`](../enums/subspace-report-reason-select-column))
+
+distinct select on columns
+
+
+- ##### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+
+- ##### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+
+- ##### [`order_by`](#) ([`[subspace_report_reason_order_by!]`](../inputs/subspace-report-reason-order-by))
+
+sort the rows by one or more columns
+
+
+- ##### [`where`](#) ([`subspace_report_reason_bool_exp`](../inputs/subspace-report-reason-bool-exp))
+
+filter the rows returned
+
+
+#### [`reports`](#) ([`[report!]!`](../objects/report))
+
+An array relationship
+- ##### [`distinct_on`](#) ([`[report_select_column!]`](../enums/report-select-column))
+
+distinct select on columns
+
+
+- ##### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+
+- ##### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+
+- ##### [`order_by`](#) ([`[report_order_by!]`](../inputs/report-order-by))
+
+sort the rows by one or more columns
+
+
+- ##### [`where`](#) ([`report_bool_exp`](../inputs/report-bool-exp))
+
+filter the rows returned
+
+
+#### [`reports_aggregate`](#) ([`report_aggregate!`](../objects/report-aggregate))
+
+An aggregate relationship
+- ##### [`distinct_on`](#) ([`[report_select_column!]`](../enums/report-select-column))
+
+distinct select on columns
+
+
+- ##### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+
+- ##### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+
+- ##### [`order_by`](#) ([`[report_order_by!]`](../inputs/report-order-by))
+
+sort the rows by one or more columns
+
+
+- ##### [`where`](#) ([`report_bool_exp`](../inputs/report-bool-exp))
+
+filter the rows returned
+
+
+#### [`sections`](#) ([`[subspace_section!]!`](../objects/subspace-section))
+
+An array relationship
+- ##### [`distinct_on`](#) ([`[subspace_section_select_column!]`](../enums/subspace-section-select-column))
+
+distinct select on columns
+
+
+- ##### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+
+- ##### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+
+- ##### [`order_by`](#) ([`[subspace_section_order_by!]`](../inputs/subspace-section-order-by))
+
+sort the rows by one or more columns
+
+
+- ##### [`where`](#) ([`subspace_section_bool_exp`](../inputs/subspace-section-bool-exp))
+
+filter the rows returned
+
+
+#### [`treasury_address`](#) ([`String`](../scalars/string))
+
+
+
+
+#### [`user_groups`](#) ([`[subspace_user_group!]!`](../objects/subspace-user-group))
+
+An array relationship
+- ##### [`distinct_on`](#) ([`[subspace_user_group_select_column!]`](../enums/subspace-user-group-select-column))
+
+distinct select on columns
+
+
+- ##### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+
+- ##### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+
+- ##### [`order_by`](#) ([`[subspace_user_group_order_by!]`](../inputs/subspace-user-group-order-by))
+
+sort the rows by one or more columns
+
+
+- ##### [`where`](#) ([`subspace_user_group_bool_exp`](../inputs/subspace-user-group-bool-exp))
+
+filter the rows returned
+
+
+#### [`user_groups_aggregate`](#) ([`subspace_user_group_aggregate!`](../objects/subspace-user-group-aggregate))
+
+An aggregate relationship
+- ##### [`distinct_on`](#) ([`[subspace_user_group_select_column!]`](../enums/subspace-user-group-select-column))
+
+distinct select on columns
+
+
+- ##### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+
+- ##### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+
+- ##### [`order_by`](#) ([`[subspace_user_group_order_by!]`](../inputs/subspace-user-group-order-by))
+
+sort the rows by one or more columns
+
+
+- ##### [`where`](#) ([`subspace_user_group_bool_exp`](../inputs/subspace-user-group-bool-exp))
+
+filter the rows returned
+
+
+
+

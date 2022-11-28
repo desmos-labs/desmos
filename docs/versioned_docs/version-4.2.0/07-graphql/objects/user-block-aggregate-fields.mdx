@@ -1,0 +1,48 @@
+---
+id: user-block-aggregate-fields
+title: user_block_aggregate_fields
+hide_table_of_contents: false
+---
+
+
+aggregate fields of "user_block"
+
+```graphql
+type user_block_aggregate_fields {
+  count(
+  columns: [user_block_select_column!]
+  distinct: Boolean
+): Int!
+  max: user_block_max_fields
+  min: user_block_min_fields
+}
+```
+
+
+### Fields
+
+#### [`count`](#) ([`Int!`](../scalars/int))
+
+
+- ##### [`columns`](#) ([`[user_block_select_column!]`](../enums/user-block-select-column))
+
+
+
+
+- ##### [`distinct`](#) ([`Boolean`](../scalars/boolean))
+
+
+
+
+#### [`max`](#) ([`user_block_max_fields`](../objects/user-block-max-fields))
+
+
+
+
+#### [`min`](#) ([`user_block_min_fields`](../objects/user-block-min-fields))
+
+
+
+
+
+

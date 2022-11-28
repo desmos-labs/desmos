@@ -1,0 +1,56 @@
+---
+id: user-block-aggregate
+title: user_block_aggregate
+hide_table_of_contents: false
+---
+
+
+fetch aggregated fields from the table: "user_block"
+
+```graphql
+user_block_aggregate(
+  distinct_on: [user_block_select_column!]
+  limit: Int
+  offset: Int
+  order_by: [user_block_order_by!]
+  where: user_block_bool_exp
+): user_block_aggregate!
+```
+
+
+### Arguments
+
+#### [`distinct_on`](#) ([`[user_block_select_column!]`](../enums/user-block-select-column))
+
+distinct select on columns
+
+
+#### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+
+#### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+
+#### [`order_by`](#) ([`[user_block_order_by!]`](../inputs/user-block-order-by))
+
+sort the rows by one or more columns
+
+
+#### [`where`](#) ([`user_block_bool_exp`](../inputs/user-block-bool-exp))
+
+filter the rows returned
+
+
+### Type
+
+#### [`user_block_aggregate`](../objects/user-block-aggregate)
+
+aggregated selection of "user_block"
+
+
+
+

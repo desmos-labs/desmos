@@ -1,0 +1,61 @@
+---
+id: reaction-bool-exp
+title: reaction_bool_exp
+hide_table_of_contents: false
+---
+
+
+Boolean expression to filter rows from the table "reaction". All fields are combined with a logical 'AND'.
+
+```graphql
+input reaction_bool_exp {
+  _and: [reaction_bool_exp!]
+  _not: reaction_bool_exp
+  _or: [reaction_bool_exp!]
+  author_address: String_comparison_exp
+  id: bigint_comparison_exp
+  post: post_bool_exp
+  value: jsonb_comparison_exp
+}
+```
+
+
+### Fields
+
+#### [`_and`](#) ([`[reaction_bool_exp!]`](../inputs/reaction-bool-exp))
+
+
+
+
+#### [`_not`](#) ([`reaction_bool_exp`](../inputs/reaction-bool-exp))
+
+
+
+
+#### [`_or`](#) ([`[reaction_bool_exp!]`](../inputs/reaction-bool-exp))
+
+
+
+
+#### [`author_address`](#) ([`String_comparison_exp`](../inputs/string-comparison-exp))
+
+
+
+
+#### [`id`](#) ([`bigint_comparison_exp`](../inputs/bigint-comparison-exp))
+
+
+
+
+#### [`post`](#) ([`post_bool_exp`](../inputs/post-bool-exp))
+
+
+
+
+#### [`value`](#) ([`jsonb_comparison_exp`](../inputs/jsonb-comparison-exp))
+
+
+
+
+
+

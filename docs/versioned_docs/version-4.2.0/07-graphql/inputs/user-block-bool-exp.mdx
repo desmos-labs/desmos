@@ -1,0 +1,73 @@
+---
+id: user-block-bool-exp
+title: user_block_bool_exp
+hide_table_of_contents: false
+---
+
+
+Boolean expression to filter rows from the table "user_block". All fields are combined with a logical 'AND'.
+
+```graphql
+input user_block_bool_exp {
+  _and: [user_block_bool_exp!]
+  _not: user_block_bool_exp
+  _or: [user_block_bool_exp!]
+  blocked: profile_bool_exp
+  blocked_user_address: String_comparison_exp
+  blocker: profile_bool_exp
+  blocker_address: String_comparison_exp
+  reason: String_comparison_exp
+  subspace: String_comparison_exp
+}
+```
+
+
+### Fields
+
+#### [`_and`](#) ([`[user_block_bool_exp!]`](../inputs/user-block-bool-exp))
+
+
+
+
+#### [`_not`](#) ([`user_block_bool_exp`](../inputs/user-block-bool-exp))
+
+
+
+
+#### [`_or`](#) ([`[user_block_bool_exp!]`](../inputs/user-block-bool-exp))
+
+
+
+
+#### [`blocked`](#) ([`profile_bool_exp`](../inputs/profile-bool-exp))
+
+
+
+
+#### [`blocked_user_address`](#) ([`String_comparison_exp`](../inputs/string-comparison-exp))
+
+
+
+
+#### [`blocker`](#) ([`profile_bool_exp`](../inputs/profile-bool-exp))
+
+
+
+
+#### [`blocker_address`](#) ([`String_comparison_exp`](../inputs/string-comparison-exp))
+
+
+
+
+#### [`reason`](#) ([`String_comparison_exp`](../inputs/string-comparison-exp))
+
+
+
+
+#### [`subspace`](#) ([`String_comparison_exp`](../inputs/string-comparison-exp))
+
+
+
+
+
+

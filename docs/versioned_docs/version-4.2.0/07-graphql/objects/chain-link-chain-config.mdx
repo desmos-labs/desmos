@@ -1,0 +1,60 @@
+---
+id: chain-link-chain-config
+title: chain_link_chain_config
+hide_table_of_contents: false
+---
+
+
+columns and relationships of "chain_link_chain_config"
+
+```graphql
+type chain_link_chain_config {
+  chain_links(
+  distinct_on: [chain_link_select_column!]
+  limit: Int
+  offset: Int
+  order_by: [chain_link_order_by!]
+  where: chain_link_bool_exp
+): [chain_link!]!
+  name: String!
+}
+```
+
+
+### Fields
+
+#### [`chain_links`](#) ([`[chain_link!]!`](../objects/chain-link))
+
+An array relationship
+- ##### [`distinct_on`](#) ([`[chain_link_select_column!]`](../enums/chain-link-select-column))
+
+distinct select on columns
+
+
+- ##### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+
+- ##### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+
+- ##### [`order_by`](#) ([`[chain_link_order_by!]`](../inputs/chain-link-order-by))
+
+sort the rows by one or more columns
+
+
+- ##### [`where`](#) ([`chain_link_bool_exp`](../inputs/chain-link-bool-exp))
+
+filter the rows returned
+
+
+#### [`name`](#) ([`String!`](../scalars/string))
+
+
+
+
+
+
