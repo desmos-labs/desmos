@@ -11,7 +11,7 @@ PROPOSED
 
 ## Abstract
 
-This ADR introduces a new subspace-based fee grant method, which allows subspace service providers to pay the fees of subspace related transactions for the users.
+This ADR introduces a new subspace-based fee grant method, which allows subspace owners/admins to pay the fees of subspace-related transactions on behalf of the users.
 
 ## Context
 
