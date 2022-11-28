@@ -37,7 +37,7 @@ The new subspace-specified `DeductFeeDecorator` will work as follows:
 
 #### Allowance
 
-Currently, `x/feegrant` provides an interface `FeeAllowanceI` and the implementations for the interface like `BasicAllowance`, `AllowedMsgAllowance` and `PeriodicAllowance`. Each of them already have the operation process to deal with the allowance. We will reuse them to be the allowance object inside the `x/subspace`.
+The `x/feegrant` module already provides an interface (`FeeAllowanceI`) to represent a generic allowance, along with a set if useful implementatations like `BasicAllowance`, `AllowedMsgAllowance` and `PeriodicAllowance`. Since we are not going to introduce new kinds of allowances, nor we are going to edit how an allowance is represented, we will reuse these types.
 
 #### Grant
 
