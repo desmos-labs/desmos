@@ -3,7 +3,7 @@
 ## Changelog
 
 - Nov 14th, 2022: First draft;
-- Nov 21th, 2022: First reviewed.
+- Nov 21th, 2022: First review.
 
 ## Status
 
