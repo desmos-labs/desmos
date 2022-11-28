@@ -39,9 +39,9 @@ The new subspace-specified `DeductFeeDecorator` will work as follows:
 
 The `x/feegrant` module already provides an interface (`FeeAllowanceI`) to represent a generic allowance, along with a set if useful implementatations like `BasicAllowance`, `AllowedMsgAllowance` and `PeriodicAllowance`. Since we are not going to introduce new kinds of allowances, nor we are going to edit how an allowance is represented, we will reuse these types.
 
-#### Grant
+#### User Grant
 
-As `Allowance`, `x/feegrant` has `Grant` object to record all full context, which contains `granter`, `grantee` and what kind of `allowance` is granted. We will reuse it to store in the subspace namespace KVStore.
+The `x/feegrant` module provides a `Grant` object used to store the `granter`, `grantee` and what kind of `allowance` is granted to a specific user. Since this is enough information for us as well, we will use the same object to store user-related fee grants.
 
 #### GroupGrant
 
