@@ -19,7 +19,7 @@ Currently, one of the major problems of current Web3 services is complicated to 
 - what `transaction` is and why they need some DSM to broadcast it;
 - get some DSM either via an on-ramp or by swapping existing funds.
 
-The `x/feegrant` gives the possibility to pay fees for the users, meaning that users can use the service without understanding how Web3 works behind. However, the `x/feegrant` allowance is not subspace-specified so subspace fees providers might unexpected pay the fees of the transactions to any other subspaces.
+The `x/feegrant` gives the possibility to pay fees for the users, meaning that users can use the service without understanding how Web3 works behind. However, the `x/feegrant` allowance is not subspace-specified so subspace fees providers might unexpectedly pay the fees of the transactions to any other subspaces.
 
 ## Decision
 
@@ -37,13 +37,11 @@ The new subspace-specified `DeductFeeDecorator` will work as follows:
 
 #### Allowance
 
-The `x/feegrant` module already provides an interface (`FeeAllowanceI`) to represent a generic allowance, along with a set if useful implementatations like `BasicAllowance`, `AllowedMsgAllowance` and `PeriodicAllowance`. Since we are not going to introduce new kinds of allowances, nor we are going to edit how an allowance is represented, we will reuse these types.
+The `x/feegrant` module already provides an interface (`FeeAllowanceI`) to represent a generic allowance, along with a set of useful implementations like `BasicAllowance`, `AllowedMsgAllowance` and `PeriodicAllowance`. Since we are not going to introduce new kinds of allowances, nor we are going to edit how an allowance is represented, we will reuse these types.
 
 #### User Grant
 
 The `x/feegrant` module provides a `Grant` object used to store the `granter`, `grantee` and what kind of `allowance` is granted to a specific user. Since this is enough information for us as well, we will use the same object to store user-related fee grants.
-
-#### GroupGrant
 
 #### Group Grant
 
