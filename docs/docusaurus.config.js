@@ -1,5 +1,6 @@
 module.exports = {
   title: 'Desmos documentation',
+  staticDirectories: ['static'],
   tagline: 'Desmos network official documentation for developers and validators',
   url: 'https://test-docs.desmos.network',
   baseUrl: '/',
