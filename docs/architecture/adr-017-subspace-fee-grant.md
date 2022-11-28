@@ -23,53 +23,7 @@ The `x/feegrant` gives the possibility to pay fees for the users, meaning that u
 
 ## Decision
 
-We will implement a subspace-specified fee grant process based on `x/feegrant` that allows subspace fees providers to pay fees for the users inside the specified subspace. The process of a subspace fees provider supports a user fees will be as follows:
-1. the user asks fees provider a fee grant inside the specified subspace;
-2. the fees provider send a subspace fee grant transaction to Desmos;
-3. Desmos executes the subspace fee grant transaction successfully;
-4. the user can use the service without any tokens inside the specified subspace, the fees will be paid by the fees provider.
-
-```mermaid
-sequenceDiagram
-    participant User
-    participant Fees Provider
-    participant Desmos
-    
-    User->>Fees Provider: 1. ask for a subspace fee grant
-    Fees Provider->>Desmos: 2. send subspace fee grant tx
-    Desmos->>Desmos: 3. execute subspace fee grant tx
-    Desmos-->>Fees Provider:  return ok
-    Fees Provider-->>User: return ok
-
-    User->>Desmos: 4. use app without tokens
-    Desmos-->>User: return ok
-```
-
-In order to simplify the allowance management for the fees providers, we will also implement the subspace group fee grant to allow fees providers to grant an allowance to a group, then all the users in the group can share the grant. The process of the user asks for a group fee grant will be like:
-1. the fees provider creates a group;
-2. the fees provider grants an allowance to the group;
-3. the user asks for a subspace group fee grant;
-4. the fee provider adds the user to the group;
-5. the user can use the service without any tokens inside the specified subspace, the fees will be paid by the fees provider.
-```mermaid
-sequenceDiagram
-    participant User
-    participant Fees Provider
-    participant Desmos
-    
-    Fees Provider->>Desmos: 1. create a group
-    Desmos-->>Fees Provider: return ok
-    Fees Provider->>Desmos: 2. grant an allowance to the group
-    Desmos-->>Fees Provider: return ok
-    
-    User->>Fees Provider: 3. ask for a subspace fee grant
-    Fees Provider->>Desmos: 4. add the user to the group
-    Desmos-->>Fees Provider:  return ok
-    Fees Provider-->>User: return ok
-
-    User->>Desmos: 5. use app without tokens
-    Desmos-->>User: return ok
-```
+We will implement a subspace-specified fee grant process based on `x/feegrant` that allows subspace fees providers to pay fees for the users inside the specified subspace. This system will allow subspace owners/admins to issue a fee grant towards either a users group or a single user, so that they can later leverage this grant to execute subspace-related transactions without having to worry about paying fees.
 
 ### DeductFeeDecorator
 
