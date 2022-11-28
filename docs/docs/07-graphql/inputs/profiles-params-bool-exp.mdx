@@ -1,0 +1,32 @@
+---
+id: profiles-params-bool-exp
+title: profiles_params_bool_exp
+hide_table_of_contents: false
+---
+
+Boolean expression to filter rows from the table "profiles_params". All fields are combined with a logical 'AND'.
+
+```graphql
+input profiles_params_bool_exp {
+  _and: [profiles_params_bool_exp!]
+  _not: profiles_params_bool_exp
+  _or: [profiles_params_bool_exp!]
+  height: bigint_comparison_exp
+  one_row_id: Boolean_comparison_exp
+  params: jsonb_comparison_exp
+}
+```
+
+### Fields
+
+#### [`_and`](#) ([`[profiles_params_bool_exp!]`](../inputs/profiles-params-bool-exp))
+
+#### [`_not`](#) ([`profiles_params_bool_exp`](../inputs/profiles-params-bool-exp))
+
+#### [`_or`](#) ([`[profiles_params_bool_exp!]`](../inputs/profiles-params-bool-exp))
+
+#### [`height`](#) ([`bigint_comparison_exp`](../inputs/bigint-comparison-exp))
+
+#### [`one_row_id`](#) ([`Boolean_comparison_exp`](../inputs/boolean-comparison-exp))
+
+#### [`params`](#) ([`jsonb_comparison_exp`](../inputs/jsonb-comparison-exp))

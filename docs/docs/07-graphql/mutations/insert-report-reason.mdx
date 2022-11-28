@@ -1,0 +1,30 @@
+---
+id: insert-report-reason
+title: insert_report_reason
+hide_table_of_contents: false
+---
+
+insert data into the table: "report_reason"
+
+```graphql
+insert_report_reason(
+  objects: [report_reason_insert_input!]!
+  on_conflict: report_reason_on_conflict
+): report_reason_mutation_response
+```
+
+### Arguments
+
+#### [`objects`](#) ([`[report_reason_insert_input!]!`](../inputs/report-reason-insert-input))
+
+the rows to be inserted
+
+#### [`on_conflict`](#) ([`report_reason_on_conflict`](../inputs/report-reason-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`report_reason_mutation_response`](../objects/report-reason-mutation-response)
+
+response of any mutation on the table "report_reason"

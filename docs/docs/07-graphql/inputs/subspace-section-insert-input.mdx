@@ -1,0 +1,53 @@
+---
+id: subspace-section-insert-input
+title: subspace_section_insert_input
+hide_table_of_contents: false
+---
+
+input type for inserting data into table "subspace_section"
+
+```graphql
+input subspace_section_insert_input {
+  children: subspace_section_arr_rel_insert_input
+  description: String
+  height: bigint
+  id: bigint
+  name: String
+  parent: subspace_section_obj_rel_insert_input
+  parent_row_id: bigint
+  posts: post_arr_rel_insert_input
+  row_id: Int
+  subspace: subspace_obj_rel_insert_input
+  subspace_id: bigint
+  user_groups: subspace_user_group_arr_rel_insert_input
+  user_permissions: subspace_user_permission_arr_rel_insert_input
+}
+```
+
+### Fields
+
+#### [`children`](#) ([`subspace_section_arr_rel_insert_input`](../inputs/subspace-section-arr-rel-insert-input))
+
+#### [`description`](#) ([`String`](../scalars/string))
+
+#### [`height`](#) ([`bigint`](../scalars/bigint))
+
+#### [`id`](#) ([`bigint`](../scalars/bigint))
+
+#### [`name`](#) ([`String`](../scalars/string))
+
+#### [`parent`](#) ([`subspace_section_obj_rel_insert_input`](../inputs/subspace-section-obj-rel-insert-input))
+
+#### [`parent_row_id`](#) ([`bigint`](../scalars/bigint))
+
+#### [`posts`](#) ([`post_arr_rel_insert_input`](../inputs/post-arr-rel-insert-input))
+
+#### [`row_id`](#) ([`Int`](../scalars/int))
+
+#### [`subspace`](#) ([`subspace_obj_rel_insert_input`](../inputs/subspace-obj-rel-insert-input))
+
+#### [`subspace_id`](#) ([`bigint`](../scalars/bigint))
+
+#### [`user_groups`](#) ([`subspace_user_group_arr_rel_insert_input`](../inputs/subspace-user-group-arr-rel-insert-input))
+
+#### [`user_permissions`](#) ([`subspace_user_permission_arr_rel_insert_input`](../inputs/subspace-user-permission-arr-rel-insert-input))

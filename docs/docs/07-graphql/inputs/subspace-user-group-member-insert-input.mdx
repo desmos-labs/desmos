@@ -1,0 +1,29 @@
+---
+id: subspace-user-group-member-insert-input
+title: subspace_user_group_member_insert_input
+hide_table_of_contents: false
+---
+
+input type for inserting data into table "subspace_user_group_member"
+
+```graphql
+input subspace_user_group_member_insert_input {
+  group: subspace_user_group_obj_rel_insert_input
+  group_row_id: bigint
+  height: bigint
+  member_address: String
+  row_id: Int
+}
+```
+
+### Fields
+
+#### [`group`](#) ([`subspace_user_group_obj_rel_insert_input`](../inputs/subspace-user-group-obj-rel-insert-input))
+
+#### [`group_row_id`](#) ([`bigint`](../scalars/bigint))
+
+#### [`height`](#) ([`bigint`](../scalars/bigint))
+
+#### [`member_address`](#) ([`String`](../scalars/string))
+
+#### [`row_id`](#) ([`Int`](../scalars/int))

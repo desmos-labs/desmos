@@ -1,0 +1,41 @@
+---
+id: post-hashtag-bool-exp
+title: post_hashtag_bool_exp
+hide_table_of_contents: false
+---
+
+Boolean expression to filter rows from the table "post_hashtag". All fields are combined with a logical 'AND'.
+
+```graphql
+input post_hashtag_bool_exp {
+  _and: [post_hashtag_bool_exp!]
+  _not: post_hashtag_bool_exp
+  _or: [post_hashtag_bool_exp!]
+  end_index: bigint_comparison_exp
+  post: post_bool_exp
+  post_row_id: bigint_comparison_exp
+  row_id: Int_comparison_exp
+  start_index: bigint_comparison_exp
+  tag: String_comparison_exp
+}
+```
+
+### Fields
+
+#### [`_and`](#) ([`[post_hashtag_bool_exp!]`](../inputs/post-hashtag-bool-exp))
+
+#### [`_not`](#) ([`post_hashtag_bool_exp`](../inputs/post-hashtag-bool-exp))
+
+#### [`_or`](#) ([`[post_hashtag_bool_exp!]`](../inputs/post-hashtag-bool-exp))
+
+#### [`end_index`](#) ([`bigint_comparison_exp`](../inputs/bigint-comparison-exp))
+
+#### [`post`](#) ([`post_bool_exp`](../inputs/post-bool-exp))
+
+#### [`post_row_id`](#) ([`bigint_comparison_exp`](../inputs/bigint-comparison-exp))
+
+#### [`row_id`](#) ([`Int_comparison_exp`](../inputs/int-comparison-exp))
+
+#### [`start_index`](#) ([`bigint_comparison_exp`](../inputs/bigint-comparison-exp))
+
+#### [`tag`](#) ([`String_comparison_exp`](../inputs/string-comparison-exp))

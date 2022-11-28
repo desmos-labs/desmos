@@ -1,0 +1,45 @@
+---
+id: subspace-section-aggregate
+title: subspace_section_aggregate
+hide_table_of_contents: false
+---
+
+fetch aggregated fields from the table: "subspace_section"
+
+```graphql
+subspace_section_aggregate(
+  distinct_on: [subspace_section_select_column!]
+  limit: Int
+  offset: Int
+  order_by: [subspace_section_order_by!]
+  where: subspace_section_bool_exp
+): subspace_section_aggregate!
+```
+
+### Arguments
+
+#### [`distinct_on`](#) ([`[subspace_section_select_column!]`](../enums/subspace-section-select-column))
+
+distinct select on columns
+
+#### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+#### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+#### [`order_by`](#) ([`[subspace_section_order_by!]`](../inputs/subspace-section-order-by))
+
+sort the rows by one or more columns
+
+#### [`where`](#) ([`subspace_section_bool_exp`](../inputs/subspace-section-bool-exp))
+
+filter the rows returned
+
+### Type
+
+#### [`subspace_section_aggregate`](../objects/subspace-section-aggregate)
+
+aggregated selection of "subspace_section"

@@ -1,0 +1,30 @@
+---
+id: insert-subspace
+title: insert_subspace
+hide_table_of_contents: false
+---
+
+insert data into the table: "subspace"
+
+```graphql
+insert_subspace(
+  objects: [subspace_insert_input!]!
+  on_conflict: subspace_on_conflict
+): subspace_mutation_response
+```
+
+### Arguments
+
+#### [`objects`](#) ([`[subspace_insert_input!]!`](../inputs/subspace-insert-input))
+
+the rows to be inserted
+
+#### [`on_conflict`](#) ([`subspace_on_conflict`](../inputs/subspace-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`subspace_mutation_response`](../objects/subspace-mutation-response)
+
+response of any mutation on the table "subspace"

@@ -1,0 +1,35 @@
+---
+id: post-reference-insert-input
+title: post_reference_insert_input
+hide_table_of_contents: false
+---
+
+input type for inserting data into table "post_reference"
+
+```graphql
+input post_reference_insert_input {
+  position_index: bigint
+  post: post_obj_rel_insert_input
+  post_row_id: bigint
+  reference: post_obj_rel_insert_input
+  reference_row_id: bigint
+  row_id: Int
+  type: String
+}
+```
+
+### Fields
+
+#### [`position_index`](#) ([`bigint`](../scalars/bigint))
+
+#### [`post`](#) ([`post_obj_rel_insert_input`](../inputs/post-obj-rel-insert-input))
+
+#### [`post_row_id`](#) ([`bigint`](../scalars/bigint))
+
+#### [`reference`](#) ([`post_obj_rel_insert_input`](../inputs/post-obj-rel-insert-input))
+
+#### [`reference_row_id`](#) ([`bigint`](../scalars/bigint))
+
+#### [`row_id`](#) ([`Int`](../scalars/int))
+
+#### [`type`](#) ([`String`](../scalars/string))

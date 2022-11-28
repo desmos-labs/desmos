@@ -1,0 +1,30 @@
+---
+id: insert-report-one
+title: insert_report_one
+hide_table_of_contents: false
+---
+
+insert a single row into the table: "report"
+
+```graphql
+insert_report_one(
+  object: report_insert_input!
+  on_conflict: report_on_conflict
+): report
+```
+
+### Arguments
+
+#### [`object`](#) ([`report_insert_input!`](../inputs/report-insert-input))
+
+the row to be inserted
+
+#### [`on_conflict`](#) ([`report_on_conflict`](../inputs/report-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`report`](../objects/report)
+
+columns and relationships of "report"

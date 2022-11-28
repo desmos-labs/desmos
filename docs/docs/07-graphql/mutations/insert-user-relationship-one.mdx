@@ -1,0 +1,30 @@
+---
+id: insert-user-relationship-one
+title: insert_user_relationship_one
+hide_table_of_contents: false
+---
+
+insert a single row into the table: "user_relationship"
+
+```graphql
+insert_user_relationship_one(
+  object: user_relationship_insert_input!
+  on_conflict: user_relationship_on_conflict
+): user_relationship
+```
+
+### Arguments
+
+#### [`object`](#) ([`user_relationship_insert_input!`](../inputs/user-relationship-insert-input))
+
+the row to be inserted
+
+#### [`on_conflict`](#) ([`user_relationship_on_conflict`](../inputs/user-relationship-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`user_relationship`](../objects/user-relationship)
+
+columns and relationships of "user_relationship"

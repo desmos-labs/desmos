@@ -1,0 +1,26 @@
+---
+id: report-reason-insert-input
+title: report_reason_insert_input
+hide_table_of_contents: false
+---
+
+input type for inserting data into table "report_reason"
+
+```graphql
+input report_reason_insert_input {
+  reason: subspace_report_reason_obj_rel_insert_input
+  reason_row_id: bigint
+  report: report_obj_rel_insert_input
+  report_row_id: bigint
+}
+```
+
+### Fields
+
+#### [`reason`](#) ([`subspace_report_reason_obj_rel_insert_input`](../inputs/subspace-report-reason-obj-rel-insert-input))
+
+#### [`reason_row_id`](#) ([`bigint`](../scalars/bigint))
+
+#### [`report`](#) ([`report_obj_rel_insert_input`](../inputs/report-obj-rel-insert-input))
+
+#### [`report_row_id`](#) ([`bigint`](../scalars/bigint))

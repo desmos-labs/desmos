@@ -1,0 +1,38 @@
+---
+id: reaction-insert-input
+title: reaction_insert_input
+hide_table_of_contents: false
+---
+
+input type for inserting data into table "reaction"
+
+```graphql
+input reaction_insert_input {
+  author: profile_obj_rel_insert_input
+  author_address: String
+  height: bigint
+  id: bigint
+  post: post_obj_rel_insert_input
+  post_row_id: bigint
+  row_id: Int
+  value: jsonb
+}
+```
+
+### Fields
+
+#### [`author`](#) ([`profile_obj_rel_insert_input`](../inputs/profile-obj-rel-insert-input))
+
+#### [`author_address`](#) ([`String`](../scalars/string))
+
+#### [`height`](#) ([`bigint`](../scalars/bigint))
+
+#### [`id`](#) ([`bigint`](../scalars/bigint))
+
+#### [`post`](#) ([`post_obj_rel_insert_input`](../inputs/post-obj-rel-insert-input))
+
+#### [`post_row_id`](#) ([`bigint`](../scalars/bigint))
+
+#### [`row_id`](#) ([`Int`](../scalars/int))
+
+#### [`value`](#) ([`jsonb`](../scalars/jsonb))

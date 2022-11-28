@@ -1,0 +1,91 @@
+---
+id: string-comparison-exp
+title: String_comparison_exp
+hide_table_of_contents: false
+---
+
+Boolean expression to compare columns of type "String". All fields are combined with logical 'AND'.
+
+```graphql
+input String_comparison_exp {
+  _eq: String
+  _gt: String
+  _gte: String
+  _ilike: String
+  _in: [String!]
+  _iregex: String
+  _is_null: Boolean
+  _like: String
+  _lt: String
+  _lte: String
+  _neq: String
+  _nilike: String
+  _nin: [String!]
+  _niregex: String
+  _nlike: String
+  _nregex: String
+  _nsimilar: String
+  _regex: String
+  _similar: String
+}
+```
+
+### Fields
+
+#### [`_eq`](#) ([`String`](../scalars/string))
+
+#### [`_gt`](#) ([`String`](../scalars/string))
+
+#### [`_gte`](#) ([`String`](../scalars/string))
+
+#### [`_ilike`](#) ([`String`](../scalars/string))
+
+does the column match the given case-insensitive pattern
+
+#### [`_in`](#) ([`[String!]`](../scalars/string))
+
+#### [`_iregex`](#) ([`String`](../scalars/string))
+
+does the column match the given POSIX regular expression, case insensitive
+
+#### [`_is_null`](#) ([`Boolean`](../scalars/boolean))
+
+#### [`_like`](#) ([`String`](../scalars/string))
+
+does the column match the given pattern
+
+#### [`_lt`](#) ([`String`](../scalars/string))
+
+#### [`_lte`](#) ([`String`](../scalars/string))
+
+#### [`_neq`](#) ([`String`](../scalars/string))
+
+#### [`_nilike`](#) ([`String`](../scalars/string))
+
+does the column NOT match the given case-insensitive pattern
+
+#### [`_nin`](#) ([`[String!]`](../scalars/string))
+
+#### [`_niregex`](#) ([`String`](../scalars/string))
+
+does the column NOT match the given POSIX regular expression, case insensitive
+
+#### [`_nlike`](#) ([`String`](../scalars/string))
+
+does the column NOT match the given pattern
+
+#### [`_nregex`](#) ([`String`](../scalars/string))
+
+does the column NOT match the given POSIX regular expression, case sensitive
+
+#### [`_nsimilar`](#) ([`String`](../scalars/string))
+
+does the column NOT match the given SQL regular expression
+
+#### [`_regex`](#) ([`String`](../scalars/string))
+
+does the column match the given POSIX regular expression, case sensitive
+
+#### [`_similar`](#) ([`String`](../scalars/string))
+
+does the column match the given SQL regular expression

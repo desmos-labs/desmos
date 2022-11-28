@@ -1,0 +1,22 @@
+---
+id: post-hashtag-arr-rel-insert-input
+title: post_hashtag_arr_rel_insert_input
+hide_table_of_contents: false
+---
+
+input type for inserting array relation for remote table "post_hashtag"
+
+```graphql
+input post_hashtag_arr_rel_insert_input {
+  data: [post_hashtag_insert_input!]!
+  on_conflict: post_hashtag_on_conflict
+}
+```
+
+### Fields
+
+#### [`data`](#) ([`[post_hashtag_insert_input!]!`](../inputs/post-hashtag-insert-input))
+
+#### [`on_conflict`](#) ([`post_hashtag_on_conflict`](../inputs/post-hashtag-on-conflict))
+
+on conflict condition

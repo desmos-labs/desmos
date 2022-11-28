@@ -1,0 +1,22 @@
+---
+id: subspace-obj-rel-insert-input
+title: subspace_obj_rel_insert_input
+hide_table_of_contents: false
+---
+
+input type for inserting object relation for remote table "subspace"
+
+```graphql
+input subspace_obj_rel_insert_input {
+  data: subspace_insert_input!
+  on_conflict: subspace_on_conflict
+}
+```
+
+### Fields
+
+#### [`data`](#) ([`subspace_insert_input!`](../inputs/subspace-insert-input))
+
+#### [`on_conflict`](#) ([`subspace_on_conflict`](../inputs/subspace-on-conflict))
+
+on conflict condition

@@ -1,0 +1,23 @@
+---
+id: posts-params-on-conflict
+title: posts_params_on_conflict
+hide_table_of_contents: false
+---
+
+on conflict condition type for table "posts_params"
+
+```graphql
+input posts_params_on_conflict {
+  constraint: posts_params_constraint!
+  update_columns: [posts_params_update_column!]!
+  where: posts_params_bool_exp
+}
+```
+
+### Fields
+
+#### [`constraint`](#) ([`posts_params_constraint!`](../enums/posts-params-constraint))
+
+#### [`update_columns`](#) ([`[posts_params_update_column!]!`](../enums/posts-params-update-column))
+
+#### [`where`](#) ([`posts_params_bool_exp`](../inputs/posts-params-bool-exp))

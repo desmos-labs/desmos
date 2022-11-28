@@ -1,0 +1,56 @@
+---
+id: application-link-bool-exp
+title: application_link_bool_exp
+hide_table_of_contents: false
+---
+
+Boolean expression to filter rows from the table "application_link". All fields are combined with a logical 'AND'.
+
+```graphql
+input application_link_bool_exp {
+  _and: [application_link_bool_exp!]
+  _not: application_link_bool_exp
+  _or: [application_link_bool_exp!]
+  application: String_comparison_exp
+  application_link_oracle_requests: application_link_oracle_request_bool_exp
+  creation_time: timestamp_comparison_exp
+  expiration_time: timestamp_comparison_exp
+  height: bigint_comparison_exp
+  id: Int_comparison_exp
+  profile: profile_bool_exp
+  result: jsonb_comparison_exp
+  state: String_comparison_exp
+  user_address: String_comparison_exp
+  username: String_comparison_exp
+}
+```
+
+### Fields
+
+#### [`_and`](#) ([`[application_link_bool_exp!]`](../inputs/application-link-bool-exp))
+
+#### [`_not`](#) ([`application_link_bool_exp`](../inputs/application-link-bool-exp))
+
+#### [`_or`](#) ([`[application_link_bool_exp!]`](../inputs/application-link-bool-exp))
+
+#### [`application`](#) ([`String_comparison_exp`](../inputs/string-comparison-exp))
+
+#### [`application_link_oracle_requests`](#) ([`application_link_oracle_request_bool_exp`](../inputs/application-link-oracle-request-bool-exp))
+
+#### [`creation_time`](#) ([`timestamp_comparison_exp`](../inputs/timestamp-comparison-exp))
+
+#### [`expiration_time`](#) ([`timestamp_comparison_exp`](../inputs/timestamp-comparison-exp))
+
+#### [`height`](#) ([`bigint_comparison_exp`](../inputs/bigint-comparison-exp))
+
+#### [`id`](#) ([`Int_comparison_exp`](../inputs/int-comparison-exp))
+
+#### [`profile`](#) ([`profile_bool_exp`](../inputs/profile-bool-exp))
+
+#### [`result`](#) ([`jsonb_comparison_exp`](../inputs/jsonb-comparison-exp))
+
+#### [`state`](#) ([`String_comparison_exp`](../inputs/string-comparison-exp))
+
+#### [`user_address`](#) ([`String_comparison_exp`](../inputs/string-comparison-exp))
+
+#### [`username`](#) ([`String_comparison_exp`](../inputs/string-comparison-exp))

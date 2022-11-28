@@ -1,0 +1,24 @@
+---
+id: post-mention-mutation-response
+title: post_mention_mutation_response
+hide_table_of_contents: false
+---
+
+response of any mutation on the table "post_mention"
+
+```graphql
+type post_mention_mutation_response {
+  affected_rows: Int!
+  returning: [post_mention!]!
+}
+```
+
+### Fields
+
+#### [`affected_rows`](#) ([`Int!`](../scalars/int))
+
+number of rows affected by the mutation
+
+#### [`returning`](#) ([`[post_mention!]!`](../objects/post-mention))
+
+data from the rows affected by the mutation

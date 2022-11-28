@@ -1,0 +1,24 @@
+---
+id: subspace-mutation-response
+title: subspace_mutation_response
+hide_table_of_contents: false
+---
+
+response of any mutation on the table "subspace"
+
+```graphql
+type subspace_mutation_response {
+  affected_rows: Int!
+  returning: [subspace!]!
+}
+```
+
+### Fields
+
+#### [`affected_rows`](#) ([`Int!`](../scalars/int))
+
+number of rows affected by the mutation
+
+#### [`returning`](#) ([`[subspace!]!`](../objects/subspace))
+
+data from the rows affected by the mutation

@@ -1,0 +1,24 @@
+---
+id: profiles-params-mutation-response
+title: profiles_params_mutation_response
+hide_table_of_contents: false
+---
+
+response of any mutation on the table "profiles_params"
+
+```graphql
+type profiles_params_mutation_response {
+  affected_rows: Int!
+  returning: [profiles_params!]!
+}
+```
+
+### Fields
+
+#### [`affected_rows`](#) ([`Int!`](../scalars/int))
+
+number of rows affected by the mutation
+
+#### [`returning`](#) ([`[profiles_params!]!`](../objects/profiles-params))
+
+data from the rows affected by the mutation

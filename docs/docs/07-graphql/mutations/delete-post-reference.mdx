@@ -1,0 +1,25 @@
+---
+id: delete-post-reference
+title: delete_post_reference
+hide_table_of_contents: false
+---
+
+delete data from the table: "post_reference"
+
+```graphql
+delete_post_reference(
+  where: post_reference_bool_exp!
+): post_reference_mutation_response
+```
+
+### Arguments
+
+#### [`where`](#) ([`post_reference_bool_exp!`](../inputs/post-reference-bool-exp))
+
+filter the rows which have to be deleted
+
+### Type
+
+#### [`post_reference_mutation_response`](../objects/post-reference-mutation-response)
+
+response of any mutation on the table "post_reference"

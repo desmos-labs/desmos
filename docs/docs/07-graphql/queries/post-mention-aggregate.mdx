@@ -1,0 +1,45 @@
+---
+id: post-mention-aggregate
+title: post_mention_aggregate
+hide_table_of_contents: false
+---
+
+fetch aggregated fields from the table: "post_mention"
+
+```graphql
+post_mention_aggregate(
+  distinct_on: [post_mention_select_column!]
+  limit: Int
+  offset: Int
+  order_by: [post_mention_order_by!]
+  where: post_mention_bool_exp
+): post_mention_aggregate!
+```
+
+### Arguments
+
+#### [`distinct_on`](#) ([`[post_mention_select_column!]`](../enums/post-mention-select-column))
+
+distinct select on columns
+
+#### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+#### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+#### [`order_by`](#) ([`[post_mention_order_by!]`](../inputs/post-mention-order-by))
+
+sort the rows by one or more columns
+
+#### [`where`](#) ([`post_mention_bool_exp`](../inputs/post-mention-bool-exp))
+
+filter the rows returned
+
+### Type
+
+#### [`post_mention_aggregate`](../objects/post-mention-aggregate)
+
+aggregated selection of "post_mention"

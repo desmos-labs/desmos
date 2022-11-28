@@ -1,0 +1,30 @@
+---
+id: insert-reports-params
+title: insert_reports_params
+hide_table_of_contents: false
+---
+
+insert data into the table: "reports_params"
+
+```graphql
+insert_reports_params(
+  objects: [reports_params_insert_input!]!
+  on_conflict: reports_params_on_conflict
+): reports_params_mutation_response
+```
+
+### Arguments
+
+#### [`objects`](#) ([`[reports_params_insert_input!]!`](../inputs/reports-params-insert-input))
+
+the rows to be inserted
+
+#### [`on_conflict`](#) ([`reports_params_on_conflict`](../inputs/reports-params-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`reports_params_mutation_response`](../objects/reports-params-mutation-response)
+
+response of any mutation on the table "reports_params"

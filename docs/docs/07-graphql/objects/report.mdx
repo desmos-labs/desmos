@@ -1,0 +1,109 @@
+---
+id: report
+title: report
+hide_table_of_contents: false
+---
+
+columns and relationships of "report"
+
+```graphql
+type report {
+  creation_date: timestamp!
+  height: bigint!
+  id: bigint!
+  message: String
+  reasons(
+    distinct_on: [report_reason_select_column!]
+    limit: Int
+    offset: Int
+    order_by: [report_reason_order_by!]
+    where: report_reason_bool_exp
+  ): [report_reason!]!
+  reasons_aggregate(
+    distinct_on: [report_reason_select_column!]
+    limit: Int
+    offset: Int
+    order_by: [report_reason_order_by!]
+    where: report_reason_bool_exp
+  ): report_reason_aggregate!
+  reporter_address: String!
+  row_id: Int!
+  subspace: subspace!
+  subspace_id: bigint!
+  target(path: String): jsonb!
+}
+```
+
+### Fields
+
+#### [`creation_date`](#) ([`timestamp!`](../scalars/timestamp))
+
+#### [`height`](#) ([`bigint!`](../scalars/bigint))
+
+#### [`id`](#) ([`bigint!`](../scalars/bigint))
+
+#### [`message`](#) ([`String`](../scalars/string))
+
+#### [`reasons`](#) ([`[report_reason!]!`](../objects/report-reason))
+
+An array relationship
+
+- ##### [`distinct_on`](#) ([`[report_reason_select_column!]`](../enums/report-reason-select-column))
+
+distinct select on columns
+
+- ##### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+- ##### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+- ##### [`order_by`](#) ([`[report_reason_order_by!]`](../inputs/report-reason-order-by))
+
+sort the rows by one or more columns
+
+- ##### [`where`](#) ([`report_reason_bool_exp`](../inputs/report-reason-bool-exp))
+
+filter the rows returned
+
+#### [`reasons_aggregate`](#) ([`report_reason_aggregate!`](../objects/report-reason-aggregate))
+
+An aggregate relationship
+
+- ##### [`distinct_on`](#) ([`[report_reason_select_column!]`](../enums/report-reason-select-column))
+
+distinct select on columns
+
+- ##### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+- ##### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+- ##### [`order_by`](#) ([`[report_reason_order_by!]`](../inputs/report-reason-order-by))
+
+sort the rows by one or more columns
+
+- ##### [`where`](#) ([`report_reason_bool_exp`](../inputs/report-reason-bool-exp))
+
+filter the rows returned
+
+#### [`reporter_address`](#) ([`String!`](../scalars/string))
+
+#### [`row_id`](#) ([`Int!`](../scalars/int))
+
+#### [`subspace`](#) ([`subspace!`](../objects/subspace))
+
+An object relationship
+
+#### [`subspace_id`](#) ([`bigint!`](../scalars/bigint))
+
+#### [`target`](#) ([`jsonb!`](../scalars/jsonb))
+
+- ##### [`path`](#) ([`String`](../scalars/string))
+
+JSON select path

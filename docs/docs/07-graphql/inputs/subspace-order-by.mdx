@@ -1,0 +1,62 @@
+---
+id: subspace-order-by
+title: subspace_order_by
+hide_table_of_contents: false
+---
+
+Ordering options when selecting data from "subspace".
+
+```graphql
+input subspace_order_by {
+  creation_time: order_by
+  creator_address: order_by
+  description: order_by
+  free_text_reactions_params: subspace_free_text_params_order_by
+  height: order_by
+  id: order_by
+  name: order_by
+  owner_address: order_by
+  posts_aggregate: post_aggregate_order_by
+  registered_reactions_aggregate: subspace_registered_reaction_aggregate_order_by
+  registered_reactions_params: subspace_registered_reaction_params_order_by
+  report_reasons_aggregate: subspace_report_reason_aggregate_order_by
+  reports_aggregate: report_aggregate_order_by
+  sections_aggregate: subspace_section_aggregate_order_by
+  treasury_address: order_by
+  user_groups_aggregate: subspace_user_group_aggregate_order_by
+}
+```
+
+### Fields
+
+#### [`creation_time`](#) ([`order_by`](../enums/order-by))
+
+#### [`creator_address`](#) ([`order_by`](../enums/order-by))
+
+#### [`description`](#) ([`order_by`](../enums/order-by))
+
+#### [`free_text_reactions_params`](#) ([`subspace_free_text_params_order_by`](../inputs/subspace-free-text-params-order-by))
+
+#### [`height`](#) ([`order_by`](../enums/order-by))
+
+#### [`id`](#) ([`order_by`](../enums/order-by))
+
+#### [`name`](#) ([`order_by`](../enums/order-by))
+
+#### [`owner_address`](#) ([`order_by`](../enums/order-by))
+
+#### [`posts_aggregate`](#) ([`post_aggregate_order_by`](../inputs/post-aggregate-order-by))
+
+#### [`registered_reactions_aggregate`](#) ([`subspace_registered_reaction_aggregate_order_by`](../inputs/subspace-registered-reaction-aggregate-order-by))
+
+#### [`registered_reactions_params`](#) ([`subspace_registered_reaction_params_order_by`](../inputs/subspace-registered-reaction-params-order-by))
+
+#### [`report_reasons_aggregate`](#) ([`subspace_report_reason_aggregate_order_by`](../inputs/subspace-report-reason-aggregate-order-by))
+
+#### [`reports_aggregate`](#) ([`report_aggregate_order_by`](../inputs/report-aggregate-order-by))
+
+#### [`sections_aggregate`](#) ([`subspace_section_aggregate_order_by`](../inputs/subspace-section-aggregate-order-by))
+
+#### [`treasury_address`](#) ([`order_by`](../enums/order-by))
+
+#### [`user_groups_aggregate`](#) ([`subspace_user_group_aggregate_order_by`](../inputs/subspace-user-group-aggregate-order-by))

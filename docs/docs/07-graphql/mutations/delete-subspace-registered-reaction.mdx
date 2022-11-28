@@ -1,0 +1,25 @@
+---
+id: delete-subspace-registered-reaction
+title: delete_subspace_registered_reaction
+hide_table_of_contents: false
+---
+
+delete data from the table: "subspace_registered_reaction"
+
+```graphql
+delete_subspace_registered_reaction(
+  where: subspace_registered_reaction_bool_exp!
+): subspace_registered_reaction_mutation_response
+```
+
+### Arguments
+
+#### [`where`](#) ([`subspace_registered_reaction_bool_exp!`](../inputs/subspace-registered-reaction-bool-exp))
+
+filter the rows which have to be deleted
+
+### Type
+
+#### [`subspace_registered_reaction_mutation_response`](../objects/subspace-registered-reaction-mutation-response)
+
+response of any mutation on the table "subspace_registered_reaction"

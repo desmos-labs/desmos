@@ -1,0 +1,30 @@
+---
+id: insert-reaction-one
+title: insert_reaction_one
+hide_table_of_contents: false
+---
+
+insert a single row into the table: "reaction"
+
+```graphql
+insert_reaction_one(
+  object: reaction_insert_input!
+  on_conflict: reaction_on_conflict
+): reaction
+```
+
+### Arguments
+
+#### [`object`](#) ([`reaction_insert_input!`](../inputs/reaction-insert-input))
+
+the row to be inserted
+
+#### [`on_conflict`](#) ([`reaction_on_conflict`](../inputs/reaction-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`reaction`](../objects/reaction)
+
+columns and relationships of "reaction"

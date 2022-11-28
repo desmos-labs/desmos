@@ -1,0 +1,38 @@
+---
+id: user-block-insert-input
+title: user_block_insert_input
+hide_table_of_contents: false
+---
+
+input type for inserting data into table "user_block"
+
+```graphql
+input user_block_insert_input {
+  blocked: profile_obj_rel_insert_input
+  blocked_address: String
+  blocker: profile_obj_rel_insert_input
+  blocker_address: String
+  height: bigint
+  reason: String
+  subspace: subspace_obj_rel_insert_input
+  subspace_id: bigint
+}
+```
+
+### Fields
+
+#### [`blocked`](#) ([`profile_obj_rel_insert_input`](../inputs/profile-obj-rel-insert-input))
+
+#### [`blocked_address`](#) ([`String`](../scalars/string))
+
+#### [`blocker`](#) ([`profile_obj_rel_insert_input`](../inputs/profile-obj-rel-insert-input))
+
+#### [`blocker_address`](#) ([`String`](../scalars/string))
+
+#### [`height`](#) ([`bigint`](../scalars/bigint))
+
+#### [`reason`](#) ([`String`](../scalars/string))
+
+#### [`subspace`](#) ([`subspace_obj_rel_insert_input`](../inputs/subspace-obj-rel-insert-input))
+
+#### [`subspace_id`](#) ([`bigint`](../scalars/bigint))

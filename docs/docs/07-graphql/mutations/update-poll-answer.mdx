@@ -1,0 +1,35 @@
+---
+id: update-poll-answer
+title: update_poll_answer
+hide_table_of_contents: false
+---
+
+update data of the table: "poll_answer"
+
+```graphql
+update_poll_answer(
+  _inc: poll_answer_inc_input
+  _set: poll_answer_set_input
+  where: poll_answer_bool_exp!
+): poll_answer_mutation_response
+```
+
+### Arguments
+
+#### [`_inc`](#) ([`poll_answer_inc_input`](../inputs/poll-answer-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+#### [`_set`](#) ([`poll_answer_set_input`](../inputs/poll-answer-set-input))
+
+sets the columns of the filtered rows to the given values
+
+#### [`where`](#) ([`poll_answer_bool_exp!`](../inputs/poll-answer-bool-exp))
+
+filter the rows which have to be updated
+
+### Type
+
+#### [`poll_answer_mutation_response`](../objects/poll-answer-mutation-response)
+
+response of any mutation on the table "poll_answer"

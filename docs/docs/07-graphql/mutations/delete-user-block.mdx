@@ -1,0 +1,25 @@
+---
+id: delete-user-block
+title: delete_user_block
+hide_table_of_contents: false
+---
+
+delete data from the table: "user_block"
+
+```graphql
+delete_user_block(
+  where: user_block_bool_exp!
+): user_block_mutation_response
+```
+
+### Arguments
+
+#### [`where`](#) ([`user_block_bool_exp!`](../inputs/user-block-bool-exp))
+
+filter the rows which have to be deleted
+
+### Type
+
+#### [`user_block_mutation_response`](../objects/user-block-mutation-response)
+
+response of any mutation on the table "user_block"

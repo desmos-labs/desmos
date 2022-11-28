@@ -1,0 +1,35 @@
+---
+id: update-profile
+title: update_profile
+hide_table_of_contents: false
+---
+
+update data of the table: "profile"
+
+```graphql
+update_profile(
+  _inc: profile_inc_input
+  _set: profile_set_input
+  where: profile_bool_exp!
+): profile_mutation_response
+```
+
+### Arguments
+
+#### [`_inc`](#) ([`profile_inc_input`](../inputs/profile-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+#### [`_set`](#) ([`profile_set_input`](../inputs/profile-set-input))
+
+sets the columns of the filtered rows to the given values
+
+#### [`where`](#) ([`profile_bool_exp!`](../inputs/profile-bool-exp))
+
+filter the rows which have to be updated
+
+### Type
+
+#### [`profile_mutation_response`](../objects/profile-mutation-response)
+
+response of any mutation on the table "profile"

@@ -1,0 +1,22 @@
+---
+id: post-tag-arr-rel-insert-input
+title: post_tag_arr_rel_insert_input
+hide_table_of_contents: false
+---
+
+input type for inserting array relation for remote table "post_tag"
+
+```graphql
+input post_tag_arr_rel_insert_input {
+  data: [post_tag_insert_input!]!
+  on_conflict: post_tag_on_conflict
+}
+```
+
+### Fields
+
+#### [`data`](#) ([`[post_tag_insert_input!]!`](../inputs/post-tag-insert-input))
+
+#### [`on_conflict`](#) ([`post_tag_on_conflict`](../inputs/post-tag-on-conflict))
+
+on conflict condition

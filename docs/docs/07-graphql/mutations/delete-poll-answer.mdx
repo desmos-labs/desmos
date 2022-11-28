@@ -1,0 +1,25 @@
+---
+id: delete-poll-answer
+title: delete_poll_answer
+hide_table_of_contents: false
+---
+
+delete data from the table: "poll_answer"
+
+```graphql
+delete_poll_answer(
+  where: poll_answer_bool_exp!
+): poll_answer_mutation_response
+```
+
+### Arguments
+
+#### [`where`](#) ([`poll_answer_bool_exp!`](../inputs/poll-answer-bool-exp))
+
+filter the rows which have to be deleted
+
+### Type
+
+#### [`poll_answer_mutation_response`](../objects/poll-answer-mutation-response)
+
+response of any mutation on the table "poll_answer"

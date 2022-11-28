@@ -1,0 +1,30 @@
+---
+id: insert-application-link-oracle-request
+title: insert_application_link_oracle_request
+hide_table_of_contents: false
+---
+
+insert data into the table: "application_link_oracle_request"
+
+```graphql
+insert_application_link_oracle_request(
+  objects: [application_link_oracle_request_insert_input!]!
+  on_conflict: application_link_oracle_request_on_conflict
+): application_link_oracle_request_mutation_response
+```
+
+### Arguments
+
+#### [`objects`](#) ([`[application_link_oracle_request_insert_input!]!`](../inputs/application-link-oracle-request-insert-input))
+
+the rows to be inserted
+
+#### [`on_conflict`](#) ([`application_link_oracle_request_on_conflict`](../inputs/application-link-oracle-request-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`application_link_oracle_request_mutation_response`](../objects/application-link-oracle-request-mutation-response)
+
+response of any mutation on the table "application_link_oracle_request"

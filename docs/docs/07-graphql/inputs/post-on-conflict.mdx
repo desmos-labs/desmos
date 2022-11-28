@@ -1,0 +1,23 @@
+---
+id: post-on-conflict
+title: post_on_conflict
+hide_table_of_contents: false
+---
+
+on conflict condition type for table "post"
+
+```graphql
+input post_on_conflict {
+  constraint: post_constraint!
+  update_columns: [post_update_column!]!
+  where: post_bool_exp
+}
+```
+
+### Fields
+
+#### [`constraint`](#) ([`post_constraint!`](../enums/post-constraint))
+
+#### [`update_columns`](#) ([`[post_update_column!]!`](../enums/post-update-column))
+
+#### [`where`](#) ([`post_bool_exp`](../inputs/post-bool-exp))

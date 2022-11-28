@@ -1,0 +1,22 @@
+---
+id: post-reference-arr-rel-insert-input
+title: post_reference_arr_rel_insert_input
+hide_table_of_contents: false
+---
+
+input type for inserting array relation for remote table "post_reference"
+
+```graphql
+input post_reference_arr_rel_insert_input {
+  data: [post_reference_insert_input!]!
+  on_conflict: post_reference_on_conflict
+}
+```
+
+### Fields
+
+#### [`data`](#) ([`[post_reference_insert_input!]!`](../inputs/post-reference-insert-input))
+
+#### [`on_conflict`](#) ([`post_reference_on_conflict`](../inputs/post-reference-on-conflict))
+
+on conflict condition

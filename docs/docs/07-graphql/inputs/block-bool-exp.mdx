@@ -1,0 +1,41 @@
+---
+id: block-bool-exp
+title: block_bool_exp
+hide_table_of_contents: false
+---
+
+Boolean expression to filter rows from the table "block". All fields are combined with a logical 'AND'.
+
+```graphql
+input block_bool_exp {
+  _and: [block_bool_exp!]
+  _not: block_bool_exp
+  _or: [block_bool_exp!]
+  hash: String_comparison_exp
+  height: bigint_comparison_exp
+  num_txs: Int_comparison_exp
+  proposer_address: String_comparison_exp
+  timestamp: timestamp_comparison_exp
+  total_gas: bigint_comparison_exp
+}
+```
+
+### Fields
+
+#### [`_and`](#) ([`[block_bool_exp!]`](../inputs/block-bool-exp))
+
+#### [`_not`](#) ([`block_bool_exp`](../inputs/block-bool-exp))
+
+#### [`_or`](#) ([`[block_bool_exp!]`](../inputs/block-bool-exp))
+
+#### [`hash`](#) ([`String_comparison_exp`](../inputs/string-comparison-exp))
+
+#### [`height`](#) ([`bigint_comparison_exp`](../inputs/bigint-comparison-exp))
+
+#### [`num_txs`](#) ([`Int_comparison_exp`](../inputs/int-comparison-exp))
+
+#### [`proposer_address`](#) ([`String_comparison_exp`](../inputs/string-comparison-exp))
+
+#### [`timestamp`](#) ([`timestamp_comparison_exp`](../inputs/timestamp-comparison-exp))
+
+#### [`total_gas`](#) ([`bigint_comparison_exp`](../inputs/bigint-comparison-exp))

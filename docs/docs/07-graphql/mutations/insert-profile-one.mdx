@@ -1,0 +1,30 @@
+---
+id: insert-profile-one
+title: insert_profile_one
+hide_table_of_contents: false
+---
+
+insert a single row into the table: "profile"
+
+```graphql
+insert_profile_one(
+  object: profile_insert_input!
+  on_conflict: profile_on_conflict
+): profile
+```
+
+### Arguments
+
+#### [`object`](#) ([`profile_insert_input!`](../inputs/profile-insert-input))
+
+the row to be inserted
+
+#### [`on_conflict`](#) ([`profile_on_conflict`](../inputs/profile-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`profile`](../objects/profile)
+
+columns and relationships of "profile"

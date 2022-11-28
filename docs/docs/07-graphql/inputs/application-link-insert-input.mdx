@@ -1,0 +1,47 @@
+---
+id: application-link-insert-input
+title: application_link_insert_input
+hide_table_of_contents: false
+---
+
+input type for inserting data into table "application_link"
+
+```graphql
+input application_link_insert_input {
+  application: String
+  application_link_oracle_requests: application_link_oracle_request_arr_rel_insert_input
+  creation_time: timestamp
+  expiration_time: timestamp
+  height: bigint
+  id: Int
+  profile: profile_obj_rel_insert_input
+  result: jsonb
+  state: String
+  user_address: String
+  username: String
+}
+```
+
+### Fields
+
+#### [`application`](#) ([`String`](../scalars/string))
+
+#### [`application_link_oracle_requests`](#) ([`application_link_oracle_request_arr_rel_insert_input`](../inputs/application-link-oracle-request-arr-rel-insert-input))
+
+#### [`creation_time`](#) ([`timestamp`](../scalars/timestamp))
+
+#### [`expiration_time`](#) ([`timestamp`](../scalars/timestamp))
+
+#### [`height`](#) ([`bigint`](../scalars/bigint))
+
+#### [`id`](#) ([`Int`](../scalars/int))
+
+#### [`profile`](#) ([`profile_obj_rel_insert_input`](../inputs/profile-obj-rel-insert-input))
+
+#### [`result`](#) ([`jsonb`](../scalars/jsonb))
+
+#### [`state`](#) ([`String`](../scalars/string))
+
+#### [`user_address`](#) ([`String`](../scalars/string))
+
+#### [`username`](#) ([`String`](../scalars/string))

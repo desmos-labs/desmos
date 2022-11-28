@@ -1,0 +1,23 @@
+---
+id: reports-params-on-conflict
+title: reports_params_on_conflict
+hide_table_of_contents: false
+---
+
+on conflict condition type for table "reports_params"
+
+```graphql
+input reports_params_on_conflict {
+  constraint: reports_params_constraint!
+  update_columns: [reports_params_update_column!]!
+  where: reports_params_bool_exp
+}
+```
+
+### Fields
+
+#### [`constraint`](#) ([`reports_params_constraint!`](../enums/reports-params-constraint))
+
+#### [`update_columns`](#) ([`[reports_params_update_column!]!`](../enums/reports-params-update-column))
+
+#### [`where`](#) ([`reports_params_bool_exp`](../inputs/reports-params-bool-exp))

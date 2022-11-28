@@ -1,0 +1,23 @@
+---
+id: report-reason-on-conflict
+title: report_reason_on_conflict
+hide_table_of_contents: false
+---
+
+on conflict condition type for table "report_reason"
+
+```graphql
+input report_reason_on_conflict {
+  constraint: report_reason_constraint!
+  update_columns: [report_reason_update_column!]!
+  where: report_reason_bool_exp
+}
+```
+
+### Fields
+
+#### [`constraint`](#) ([`report_reason_constraint!`](../enums/report-reason-constraint))
+
+#### [`update_columns`](#) ([`[report_reason_update_column!]!`](../enums/report-reason-update-column))
+
+#### [`where`](#) ([`report_reason_bool_exp`](../inputs/report-reason-bool-exp))

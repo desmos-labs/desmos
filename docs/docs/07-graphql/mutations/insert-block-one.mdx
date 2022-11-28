@@ -1,0 +1,30 @@
+---
+id: insert-block-one
+title: insert_block_one
+hide_table_of_contents: false
+---
+
+insert a single row into the table: "block"
+
+```graphql
+insert_block_one(
+  object: block_insert_input!
+  on_conflict: block_on_conflict
+): block
+```
+
+### Arguments
+
+#### [`object`](#) ([`block_insert_input!`](../inputs/block-insert-input))
+
+the row to be inserted
+
+#### [`on_conflict`](#) ([`block_on_conflict`](../inputs/block-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`block`](../objects/block)
+
+columns and relationships of "block"

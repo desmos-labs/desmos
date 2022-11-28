@@ -1,0 +1,30 @@
+---
+id: insert-subspace-user-permission-one
+title: insert_subspace_user_permission_one
+hide_table_of_contents: false
+---
+
+insert a single row into the table: "subspace_user_permission"
+
+```graphql
+insert_subspace_user_permission_one(
+  object: subspace_user_permission_insert_input!
+  on_conflict: subspace_user_permission_on_conflict
+): subspace_user_permission
+```
+
+### Arguments
+
+#### [`object`](#) ([`subspace_user_permission_insert_input!`](../inputs/subspace-user-permission-insert-input))
+
+the row to be inserted
+
+#### [`on_conflict`](#) ([`subspace_user_permission_on_conflict`](../inputs/subspace-user-permission-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`subspace_user_permission`](../objects/subspace-user-permission)
+
+columns and relationships of "subspace_user_permission"

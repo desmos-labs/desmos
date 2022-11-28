@@ -1,0 +1,25 @@
+---
+id: delete-subspace-user-group
+title: delete_subspace_user_group
+hide_table_of_contents: false
+---
+
+delete data from the table: "subspace_user_group"
+
+```graphql
+delete_subspace_user_group(
+  where: subspace_user_group_bool_exp!
+): subspace_user_group_mutation_response
+```
+
+### Arguments
+
+#### [`where`](#) ([`subspace_user_group_bool_exp!`](../inputs/subspace-user-group-bool-exp))
+
+filter the rows which have to be deleted
+
+### Type
+
+#### [`subspace_user_group_mutation_response`](../objects/subspace-user-group-mutation-response)
+
+response of any mutation on the table "subspace_user_group"

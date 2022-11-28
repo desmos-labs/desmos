@@ -1,0 +1,23 @@
+---
+id: poll-answer-on-conflict
+title: poll_answer_on_conflict
+hide_table_of_contents: false
+---
+
+on conflict condition type for table "poll_answer"
+
+```graphql
+input poll_answer_on_conflict {
+  constraint: poll_answer_constraint!
+  update_columns: [poll_answer_update_column!]!
+  where: poll_answer_bool_exp
+}
+```
+
+### Fields
+
+#### [`constraint`](#) ([`poll_answer_constraint!`](../enums/poll-answer-constraint))
+
+#### [`update_columns`](#) ([`[poll_answer_update_column!]!`](../enums/poll-answer-update-column))
+
+#### [`where`](#) ([`poll_answer_bool_exp`](../inputs/poll-answer-bool-exp))

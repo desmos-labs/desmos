@@ -1,0 +1,35 @@
+---
+id: update-post-mention
+title: update_post_mention
+hide_table_of_contents: false
+---
+
+update data of the table: "post_mention"
+
+```graphql
+update_post_mention(
+  _inc: post_mention_inc_input
+  _set: post_mention_set_input
+  where: post_mention_bool_exp!
+): post_mention_mutation_response
+```
+
+### Arguments
+
+#### [`_inc`](#) ([`post_mention_inc_input`](../inputs/post-mention-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+#### [`_set`](#) ([`post_mention_set_input`](../inputs/post-mention-set-input))
+
+sets the columns of the filtered rows to the given values
+
+#### [`where`](#) ([`post_mention_bool_exp!`](../inputs/post-mention-bool-exp))
+
+filter the rows which have to be updated
+
+### Type
+
+#### [`post_mention_mutation_response`](../objects/post-mention-mutation-response)
+
+response of any mutation on the table "post_mention"

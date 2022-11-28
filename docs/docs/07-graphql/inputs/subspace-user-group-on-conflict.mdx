@@ -1,0 +1,23 @@
+---
+id: subspace-user-group-on-conflict
+title: subspace_user_group_on_conflict
+hide_table_of_contents: false
+---
+
+on conflict condition type for table "subspace_user_group"
+
+```graphql
+input subspace_user_group_on_conflict {
+  constraint: subspace_user_group_constraint!
+  update_columns: [subspace_user_group_update_column!]!
+  where: subspace_user_group_bool_exp
+}
+```
+
+### Fields
+
+#### [`constraint`](#) ([`subspace_user_group_constraint!`](../enums/subspace-user-group-constraint))
+
+#### [`update_columns`](#) ([`[subspace_user_group_update_column!]!`](../enums/subspace-user-group-update-column))
+
+#### [`where`](#) ([`subspace_user_group_bool_exp`](../inputs/subspace-user-group-bool-exp))

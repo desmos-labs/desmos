@@ -1,0 +1,51 @@
+---
+id: post-url-aggregate-fields
+title: post_url_aggregate_fields
+hide_table_of_contents: false
+---
+
+aggregate fields of "post_url"
+
+```graphql
+type post_url_aggregate_fields {
+  avg: post_url_avg_fields
+  count(columns: [post_url_select_column!], distinct: Boolean): Int!
+  max: post_url_max_fields
+  min: post_url_min_fields
+  stddev: post_url_stddev_fields
+  stddev_pop: post_url_stddev_pop_fields
+  stddev_samp: post_url_stddev_samp_fields
+  sum: post_url_sum_fields
+  var_pop: post_url_var_pop_fields
+  var_samp: post_url_var_samp_fields
+  variance: post_url_variance_fields
+}
+```
+
+### Fields
+
+#### [`avg`](#) ([`post_url_avg_fields`](../objects/post-url-avg-fields))
+
+#### [`count`](#) ([`Int!`](../scalars/int))
+
+- ##### [`columns`](#) ([`[post_url_select_column!]`](../enums/post-url-select-column))
+
+- ##### [`distinct`](#) ([`Boolean`](../scalars/boolean))
+
+#### [`max`](#) ([`post_url_max_fields`](../objects/post-url-max-fields))
+
+#### [`min`](#) ([`post_url_min_fields`](../objects/post-url-min-fields))
+
+#### [`stddev`](#) ([`post_url_stddev_fields`](../objects/post-url-stddev-fields))
+
+#### [`stddev_pop`](#) ([`post_url_stddev_pop_fields`](../objects/post-url-stddev-pop-fields))
+
+#### [`stddev_samp`](#) ([`post_url_stddev_samp_fields`](../objects/post-url-stddev-samp-fields))
+
+#### [`sum`](#) ([`post_url_sum_fields`](../objects/post-url-sum-fields))
+
+#### [`var_pop`](#) ([`post_url_var_pop_fields`](../objects/post-url-var-pop-fields))
+
+#### [`var_samp`](#) ([`post_url_var_samp_fields`](../objects/post-url-var-samp-fields))
+
+#### [`variance`](#) ([`post_url_variance_fields`](../objects/post-url-variance-fields))

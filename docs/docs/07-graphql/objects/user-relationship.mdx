@@ -1,0 +1,41 @@
+---
+id: user-relationship
+title: user_relationship
+hide_table_of_contents: false
+---
+
+columns and relationships of "user_relationship"
+
+```graphql
+type user_relationship {
+  counterparty: profile!
+  counterparty_address: String!
+  creator: profile!
+  creator_address: String!
+  height: bigint!
+  subspace: subspace!
+  subspace_id: bigint!
+}
+```
+
+### Fields
+
+#### [`counterparty`](#) ([`profile!`](../objects/profile))
+
+An object relationship
+
+#### [`counterparty_address`](#) ([`String!`](../scalars/string))
+
+#### [`creator`](#) ([`profile!`](../objects/profile))
+
+An object relationship
+
+#### [`creator_address`](#) ([`String!`](../scalars/string))
+
+#### [`height`](#) ([`bigint!`](../scalars/bigint))
+
+#### [`subspace`](#) ([`subspace!`](../objects/subspace))
+
+An object relationship
+
+#### [`subspace_id`](#) ([`bigint!`](../scalars/bigint))

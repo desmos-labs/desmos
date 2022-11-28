@@ -1,0 +1,29 @@
+---
+id: user-block-set-input
+title: user_block_set_input
+hide_table_of_contents: false
+---
+
+input type for updating data in table "user_block"
+
+```graphql
+input user_block_set_input {
+  blocked_address: String
+  blocker_address: String
+  height: bigint
+  reason: String
+  subspace_id: bigint
+}
+```
+
+### Fields
+
+#### [`blocked_address`](#) ([`String`](../scalars/string))
+
+#### [`blocker_address`](#) ([`String`](../scalars/string))
+
+#### [`height`](#) ([`bigint`](../scalars/bigint))
+
+#### [`reason`](#) ([`String`](../scalars/string))
+
+#### [`subspace_id`](#) ([`bigint`](../scalars/bigint))

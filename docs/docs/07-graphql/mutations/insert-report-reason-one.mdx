@@ -1,0 +1,30 @@
+---
+id: insert-report-reason-one
+title: insert_report_reason_one
+hide_table_of_contents: false
+---
+
+insert a single row into the table: "report_reason"
+
+```graphql
+insert_report_reason_one(
+  object: report_reason_insert_input!
+  on_conflict: report_reason_on_conflict
+): report_reason
+```
+
+### Arguments
+
+#### [`object`](#) ([`report_reason_insert_input!`](../inputs/report-reason-insert-input))
+
+the row to be inserted
+
+#### [`on_conflict`](#) ([`report_reason_on_conflict`](../inputs/report-reason-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`report_reason`](../objects/report-reason)
+
+columns and relationships of "report_reason"

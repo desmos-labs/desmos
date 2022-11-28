@@ -1,0 +1,30 @@
+---
+id: insert-post-attachment
+title: insert_post_attachment
+hide_table_of_contents: false
+---
+
+insert data into the table: "post_attachment"
+
+```graphql
+insert_post_attachment(
+  objects: [post_attachment_insert_input!]!
+  on_conflict: post_attachment_on_conflict
+): post_attachment_mutation_response
+```
+
+### Arguments
+
+#### [`objects`](#) ([`[post_attachment_insert_input!]!`](../inputs/post-attachment-insert-input))
+
+the rows to be inserted
+
+#### [`on_conflict`](#) ([`post_attachment_on_conflict`](../inputs/post-attachment-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`post_attachment_mutation_response`](../objects/post-attachment-mutation-response)
+
+response of any mutation on the table "post_attachment"

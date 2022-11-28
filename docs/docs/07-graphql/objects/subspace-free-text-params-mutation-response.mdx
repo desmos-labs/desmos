@@ -1,0 +1,24 @@
+---
+id: subspace-free-text-params-mutation-response
+title: subspace_free_text_params_mutation_response
+hide_table_of_contents: false
+---
+
+response of any mutation on the table "subspace_free_text_params"
+
+```graphql
+type subspace_free_text_params_mutation_response {
+  affected_rows: Int!
+  returning: [subspace_free_text_params!]!
+}
+```
+
+### Fields
+
+#### [`affected_rows`](#) ([`Int!`](../scalars/int))
+
+number of rows affected by the mutation
+
+#### [`returning`](#) ([`[subspace_free_text_params!]!`](../objects/subspace-free-text-params))
+
+data from the rows affected by the mutation

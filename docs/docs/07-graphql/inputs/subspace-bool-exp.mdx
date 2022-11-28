@@ -1,0 +1,71 @@
+---
+id: subspace-bool-exp
+title: subspace_bool_exp
+hide_table_of_contents: false
+---
+
+Boolean expression to filter rows from the table "subspace". All fields are combined with a logical 'AND'.
+
+```graphql
+input subspace_bool_exp {
+  _and: [subspace_bool_exp!]
+  _not: subspace_bool_exp
+  _or: [subspace_bool_exp!]
+  creation_time: timestamp_comparison_exp
+  creator_address: String_comparison_exp
+  description: String_comparison_exp
+  free_text_reactions_params: subspace_free_text_params_bool_exp
+  height: bigint_comparison_exp
+  id: bigint_comparison_exp
+  name: String_comparison_exp
+  owner_address: String_comparison_exp
+  posts: post_bool_exp
+  registered_reactions: subspace_registered_reaction_bool_exp
+  registered_reactions_params: subspace_registered_reaction_params_bool_exp
+  report_reasons: subspace_report_reason_bool_exp
+  reports: report_bool_exp
+  sections: subspace_section_bool_exp
+  treasury_address: String_comparison_exp
+  user_groups: subspace_user_group_bool_exp
+}
+```
+
+### Fields
+
+#### [`_and`](#) ([`[subspace_bool_exp!]`](../inputs/subspace-bool-exp))
+
+#### [`_not`](#) ([`subspace_bool_exp`](../inputs/subspace-bool-exp))
+
+#### [`_or`](#) ([`[subspace_bool_exp!]`](../inputs/subspace-bool-exp))
+
+#### [`creation_time`](#) ([`timestamp_comparison_exp`](../inputs/timestamp-comparison-exp))
+
+#### [`creator_address`](#) ([`String_comparison_exp`](../inputs/string-comparison-exp))
+
+#### [`description`](#) ([`String_comparison_exp`](../inputs/string-comparison-exp))
+
+#### [`free_text_reactions_params`](#) ([`subspace_free_text_params_bool_exp`](../inputs/subspace-free-text-params-bool-exp))
+
+#### [`height`](#) ([`bigint_comparison_exp`](../inputs/bigint-comparison-exp))
+
+#### [`id`](#) ([`bigint_comparison_exp`](../inputs/bigint-comparison-exp))
+
+#### [`name`](#) ([`String_comparison_exp`](../inputs/string-comparison-exp))
+
+#### [`owner_address`](#) ([`String_comparison_exp`](../inputs/string-comparison-exp))
+
+#### [`posts`](#) ([`post_bool_exp`](../inputs/post-bool-exp))
+
+#### [`registered_reactions`](#) ([`subspace_registered_reaction_bool_exp`](../inputs/subspace-registered-reaction-bool-exp))
+
+#### [`registered_reactions_params`](#) ([`subspace_registered_reaction_params_bool_exp`](../inputs/subspace-registered-reaction-params-bool-exp))
+
+#### [`report_reasons`](#) ([`subspace_report_reason_bool_exp`](../inputs/subspace-report-reason-bool-exp))
+
+#### [`reports`](#) ([`report_bool_exp`](../inputs/report-bool-exp))
+
+#### [`sections`](#) ([`subspace_section_bool_exp`](../inputs/subspace-section-bool-exp))
+
+#### [`treasury_address`](#) ([`String_comparison_exp`](../inputs/string-comparison-exp))
+
+#### [`user_groups`](#) ([`subspace_user_group_bool_exp`](../inputs/subspace-user-group-bool-exp))

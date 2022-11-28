@@ -1,0 +1,35 @@
+---
+id: update-post-url
+title: update_post_url
+hide_table_of_contents: false
+---
+
+update data of the table: "post_url"
+
+```graphql
+update_post_url(
+  _inc: post_url_inc_input
+  _set: post_url_set_input
+  where: post_url_bool_exp!
+): post_url_mutation_response
+```
+
+### Arguments
+
+#### [`_inc`](#) ([`post_url_inc_input`](../inputs/post-url-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+#### [`_set`](#) ([`post_url_set_input`](../inputs/post-url-set-input))
+
+sets the columns of the filtered rows to the given values
+
+#### [`where`](#) ([`post_url_bool_exp!`](../inputs/post-url-bool-exp))
+
+filter the rows which have to be updated
+
+### Type
+
+#### [`post_url_mutation_response`](../objects/post-url-mutation-response)
+
+response of any mutation on the table "post_url"

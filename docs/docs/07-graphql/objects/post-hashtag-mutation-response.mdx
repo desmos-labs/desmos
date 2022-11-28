@@ -1,0 +1,24 @@
+---
+id: post-hashtag-mutation-response
+title: post_hashtag_mutation_response
+hide_table_of_contents: false
+---
+
+response of any mutation on the table "post_hashtag"
+
+```graphql
+type post_hashtag_mutation_response {
+  affected_rows: Int!
+  returning: [post_hashtag!]!
+}
+```
+
+### Fields
+
+#### [`affected_rows`](#) ([`Int!`](../scalars/int))
+
+number of rows affected by the mutation
+
+#### [`returning`](#) ([`[post_hashtag!]!`](../objects/post-hashtag))
+
+data from the rows affected by the mutation

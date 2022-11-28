@@ -1,0 +1,68 @@
+---
+id: profile-bool-exp
+title: profile_bool_exp
+hide_table_of_contents: false
+---
+
+Boolean expression to filter rows from the table "profile". All fields are combined with a logical 'AND'.
+
+```graphql
+input profile_bool_exp {
+  _and: [profile_bool_exp!]
+  _not: profile_bool_exp
+  _or: [profile_bool_exp!]
+  address: String_comparison_exp
+  application_links: application_link_bool_exp
+  bio: String_comparison_exp
+  blocked_users: user_block_bool_exp
+  chain_links: chain_link_bool_exp
+  cover_pic: String_comparison_exp
+  creation_time: timestamp_comparison_exp
+  dtag: String_comparison_exp
+  followage: user_relationship_bool_exp
+  following: user_relationship_bool_exp
+  height: bigint_comparison_exp
+  incoming_dtag_transfer_requests: dtag_transfer_requests_bool_exp
+  nickname: String_comparison_exp
+  outgoing_dtag_transfer_requests: dtag_transfer_requests_bool_exp
+  profile_pic: String_comparison_exp
+}
+```
+
+### Fields
+
+#### [`_and`](#) ([`[profile_bool_exp!]`](../inputs/profile-bool-exp))
+
+#### [`_not`](#) ([`profile_bool_exp`](../inputs/profile-bool-exp))
+
+#### [`_or`](#) ([`[profile_bool_exp!]`](../inputs/profile-bool-exp))
+
+#### [`address`](#) ([`String_comparison_exp`](../inputs/string-comparison-exp))
+
+#### [`application_links`](#) ([`application_link_bool_exp`](../inputs/application-link-bool-exp))
+
+#### [`bio`](#) ([`String_comparison_exp`](../inputs/string-comparison-exp))
+
+#### [`blocked_users`](#) ([`user_block_bool_exp`](../inputs/user-block-bool-exp))
+
+#### [`chain_links`](#) ([`chain_link_bool_exp`](../inputs/chain-link-bool-exp))
+
+#### [`cover_pic`](#) ([`String_comparison_exp`](../inputs/string-comparison-exp))
+
+#### [`creation_time`](#) ([`timestamp_comparison_exp`](../inputs/timestamp-comparison-exp))
+
+#### [`dtag`](#) ([`String_comparison_exp`](../inputs/string-comparison-exp))
+
+#### [`followage`](#) ([`user_relationship_bool_exp`](../inputs/user-relationship-bool-exp))
+
+#### [`following`](#) ([`user_relationship_bool_exp`](../inputs/user-relationship-bool-exp))
+
+#### [`height`](#) ([`bigint_comparison_exp`](../inputs/bigint-comparison-exp))
+
+#### [`incoming_dtag_transfer_requests`](#) ([`dtag_transfer_requests_bool_exp`](../inputs/dtag-transfer-requests-bool-exp))
+
+#### [`nickname`](#) ([`String_comparison_exp`](../inputs/string-comparison-exp))
+
+#### [`outgoing_dtag_transfer_requests`](#) ([`dtag_transfer_requests_bool_exp`](../inputs/dtag-transfer-requests-bool-exp))
+
+#### [`profile_pic`](#) ([`String_comparison_exp`](../inputs/string-comparison-exp))

@@ -1,0 +1,60 @@
+---
+id: update-post-attachment
+title: update_post_attachment
+hide_table_of_contents: false
+---
+
+update data of the table: "post_attachment"
+
+```graphql
+update_post_attachment(
+  _append: post_attachment_append_input
+  _delete_at_path: post_attachment_delete_at_path_input
+  _delete_elem: post_attachment_delete_elem_input
+  _delete_key: post_attachment_delete_key_input
+  _inc: post_attachment_inc_input
+  _prepend: post_attachment_prepend_input
+  _set: post_attachment_set_input
+  where: post_attachment_bool_exp!
+): post_attachment_mutation_response
+```
+
+### Arguments
+
+#### [`_append`](#) ([`post_attachment_append_input`](../inputs/post-attachment-append-input))
+
+append existing jsonb value of filtered columns with new jsonb value
+
+#### [`_delete_at_path`](#) ([`post_attachment_delete_at_path_input`](../inputs/post-attachment-delete-at-path-input))
+
+delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+
+#### [`_delete_elem`](#) ([`post_attachment_delete_elem_input`](../inputs/post-attachment-delete-elem-input))
+
+delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+
+#### [`_delete_key`](#) ([`post_attachment_delete_key_input`](../inputs/post-attachment-delete-key-input))
+
+delete key/value pair or string element. key/value pairs are matched based on their key value
+
+#### [`_inc`](#) ([`post_attachment_inc_input`](../inputs/post-attachment-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+#### [`_prepend`](#) ([`post_attachment_prepend_input`](../inputs/post-attachment-prepend-input))
+
+prepend existing jsonb value of filtered columns with new jsonb value
+
+#### [`_set`](#) ([`post_attachment_set_input`](../inputs/post-attachment-set-input))
+
+sets the columns of the filtered rows to the given values
+
+#### [`where`](#) ([`post_attachment_bool_exp!`](../inputs/post-attachment-bool-exp))
+
+filter the rows which have to be updated
+
+### Type
+
+#### [`post_attachment_mutation_response`](../objects/post-attachment-mutation-response)
+
+response of any mutation on the table "post_attachment"

@@ -1,0 +1,23 @@
+---
+id: subspace-user-permission-on-conflict
+title: subspace_user_permission_on_conflict
+hide_table_of_contents: false
+---
+
+on conflict condition type for table "subspace_user_permission"
+
+```graphql
+input subspace_user_permission_on_conflict {
+  constraint: subspace_user_permission_constraint!
+  update_columns: [subspace_user_permission_update_column!]!
+  where: subspace_user_permission_bool_exp
+}
+```
+
+### Fields
+
+#### [`constraint`](#) ([`subspace_user_permission_constraint!`](../enums/subspace-user-permission-constraint))
+
+#### [`update_columns`](#) ([`[subspace_user_permission_update_column!]!`](../enums/subspace-user-permission-update-column))
+
+#### [`where`](#) ([`subspace_user_permission_bool_exp`](../inputs/subspace-user-permission-bool-exp))

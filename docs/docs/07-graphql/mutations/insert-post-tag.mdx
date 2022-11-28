@@ -1,0 +1,30 @@
+---
+id: insert-post-tag
+title: insert_post_tag
+hide_table_of_contents: false
+---
+
+insert data into the table: "post_tag"
+
+```graphql
+insert_post_tag(
+  objects: [post_tag_insert_input!]!
+  on_conflict: post_tag_on_conflict
+): post_tag_mutation_response
+```
+
+### Arguments
+
+#### [`objects`](#) ([`[post_tag_insert_input!]!`](../inputs/post-tag-insert-input))
+
+the rows to be inserted
+
+#### [`on_conflict`](#) ([`post_tag_on_conflict`](../inputs/post-tag-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`post_tag_mutation_response`](../objects/post-tag-mutation-response)
+
+response of any mutation on the table "post_tag"

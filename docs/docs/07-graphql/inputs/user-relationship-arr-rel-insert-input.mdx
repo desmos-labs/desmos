@@ -1,0 +1,22 @@
+---
+id: user-relationship-arr-rel-insert-input
+title: user_relationship_arr_rel_insert_input
+hide_table_of_contents: false
+---
+
+input type for inserting array relation for remote table "user_relationship"
+
+```graphql
+input user_relationship_arr_rel_insert_input {
+  data: [user_relationship_insert_input!]!
+  on_conflict: user_relationship_on_conflict
+}
+```
+
+### Fields
+
+#### [`data`](#) ([`[user_relationship_insert_input!]!`](../inputs/user-relationship-insert-input))
+
+#### [`on_conflict`](#) ([`user_relationship_on_conflict`](../inputs/user-relationship-on-conflict))
+
+on conflict condition

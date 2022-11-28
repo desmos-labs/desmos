@@ -1,0 +1,35 @@
+---
+id: post-mention-insert-input
+title: post_mention_insert_input
+hide_table_of_contents: false
+---
+
+input type for inserting data into table "post_mention"
+
+```graphql
+input post_mention_insert_input {
+  end_index: bigint
+  mention: profile_obj_rel_insert_input
+  mention_address: String
+  post: post_obj_rel_insert_input
+  post_row_id: bigint
+  row_id: Int
+  start_index: bigint
+}
+```
+
+### Fields
+
+#### [`end_index`](#) ([`bigint`](../scalars/bigint))
+
+#### [`mention`](#) ([`profile_obj_rel_insert_input`](../inputs/profile-obj-rel-insert-input))
+
+#### [`mention_address`](#) ([`String`](../scalars/string))
+
+#### [`post`](#) ([`post_obj_rel_insert_input`](../inputs/post-obj-rel-insert-input))
+
+#### [`post_row_id`](#) ([`bigint`](../scalars/bigint))
+
+#### [`row_id`](#) ([`Int`](../scalars/int))
+
+#### [`start_index`](#) ([`bigint`](../scalars/bigint))

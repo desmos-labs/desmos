@@ -1,0 +1,53 @@
+---
+id: subspace-section-order-by
+title: subspace_section_order_by
+hide_table_of_contents: false
+---
+
+Ordering options when selecting data from "subspace_section".
+
+```graphql
+input subspace_section_order_by {
+  children_aggregate: subspace_section_aggregate_order_by
+  description: order_by
+  height: order_by
+  id: order_by
+  name: order_by
+  parent: subspace_section_order_by
+  parent_row_id: order_by
+  posts_aggregate: post_aggregate_order_by
+  row_id: order_by
+  subspace: subspace_order_by
+  subspace_id: order_by
+  user_groups_aggregate: subspace_user_group_aggregate_order_by
+  user_permissions_aggregate: subspace_user_permission_aggregate_order_by
+}
+```
+
+### Fields
+
+#### [`children_aggregate`](#) ([`subspace_section_aggregate_order_by`](../inputs/subspace-section-aggregate-order-by))
+
+#### [`description`](#) ([`order_by`](../enums/order-by))
+
+#### [`height`](#) ([`order_by`](../enums/order-by))
+
+#### [`id`](#) ([`order_by`](../enums/order-by))
+
+#### [`name`](#) ([`order_by`](../enums/order-by))
+
+#### [`parent`](#) ([`subspace_section_order_by`](../inputs/subspace-section-order-by))
+
+#### [`parent_row_id`](#) ([`order_by`](../enums/order-by))
+
+#### [`posts_aggregate`](#) ([`post_aggregate_order_by`](../inputs/post-aggregate-order-by))
+
+#### [`row_id`](#) ([`order_by`](../enums/order-by))
+
+#### [`subspace`](#) ([`subspace_order_by`](../inputs/subspace-order-by))
+
+#### [`subspace_id`](#) ([`order_by`](../enums/order-by))
+
+#### [`user_groups_aggregate`](#) ([`subspace_user_group_aggregate_order_by`](../inputs/subspace-user-group-aggregate-order-by))
+
+#### [`user_permissions_aggregate`](#) ([`subspace_user_permission_aggregate_order_by`](../inputs/subspace-user-permission-aggregate-order-by))

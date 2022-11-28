@@ -1,0 +1,28 @@
+---
+id: post-tag
+title: post_tag
+hide_table_of_contents: false
+---
+
+columns and relationships of "post_tag"
+
+```graphql
+type post_tag {
+  post: post!
+  post_row_id: bigint!
+  row_id: Int!
+  tag: String!
+}
+```
+
+### Fields
+
+#### [`post`](#) ([`post!`](../objects/post))
+
+An object relationship
+
+#### [`post_row_id`](#) ([`bigint!`](../scalars/bigint))
+
+#### [`row_id`](#) ([`Int!`](../scalars/int))
+
+#### [`tag`](#) ([`String!`](../scalars/string))

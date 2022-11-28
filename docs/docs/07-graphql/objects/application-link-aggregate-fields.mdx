@@ -1,0 +1,51 @@
+---
+id: application-link-aggregate-fields
+title: application_link_aggregate_fields
+hide_table_of_contents: false
+---
+
+aggregate fields of "application_link"
+
+```graphql
+type application_link_aggregate_fields {
+  avg: application_link_avg_fields
+  count(columns: [application_link_select_column!], distinct: Boolean): Int!
+  max: application_link_max_fields
+  min: application_link_min_fields
+  stddev: application_link_stddev_fields
+  stddev_pop: application_link_stddev_pop_fields
+  stddev_samp: application_link_stddev_samp_fields
+  sum: application_link_sum_fields
+  var_pop: application_link_var_pop_fields
+  var_samp: application_link_var_samp_fields
+  variance: application_link_variance_fields
+}
+```
+
+### Fields
+
+#### [`avg`](#) ([`application_link_avg_fields`](../objects/application-link-avg-fields))
+
+#### [`count`](#) ([`Int!`](../scalars/int))
+
+- ##### [`columns`](#) ([`[application_link_select_column!]`](../enums/application-link-select-column))
+
+- ##### [`distinct`](#) ([`Boolean`](../scalars/boolean))
+
+#### [`max`](#) ([`application_link_max_fields`](../objects/application-link-max-fields))
+
+#### [`min`](#) ([`application_link_min_fields`](../objects/application-link-min-fields))
+
+#### [`stddev`](#) ([`application_link_stddev_fields`](../objects/application-link-stddev-fields))
+
+#### [`stddev_pop`](#) ([`application_link_stddev_pop_fields`](../objects/application-link-stddev-pop-fields))
+
+#### [`stddev_samp`](#) ([`application_link_stddev_samp_fields`](../objects/application-link-stddev-samp-fields))
+
+#### [`sum`](#) ([`application_link_sum_fields`](../objects/application-link-sum-fields))
+
+#### [`var_pop`](#) ([`application_link_var_pop_fields`](../objects/application-link-var-pop-fields))
+
+#### [`var_samp`](#) ([`application_link_var_samp_fields`](../objects/application-link-var-samp-fields))
+
+#### [`variance`](#) ([`application_link_variance_fields`](../objects/application-link-variance-fields))

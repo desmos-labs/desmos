@@ -1,0 +1,23 @@
+---
+id: user-block-on-conflict
+title: user_block_on_conflict
+hide_table_of_contents: false
+---
+
+on conflict condition type for table "user_block"
+
+```graphql
+input user_block_on_conflict {
+  constraint: user_block_constraint!
+  update_columns: [user_block_update_column!]!
+  where: user_block_bool_exp
+}
+```
+
+### Fields
+
+#### [`constraint`](#) ([`user_block_constraint!`](../enums/user-block-constraint))
+
+#### [`update_columns`](#) ([`[user_block_update_column!]!`](../enums/user-block-update-column))
+
+#### [`where`](#) ([`user_block_bool_exp`](../inputs/user-block-bool-exp))

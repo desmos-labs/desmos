@@ -1,0 +1,22 @@
+---
+id: report-reason-arr-rel-insert-input
+title: report_reason_arr_rel_insert_input
+hide_table_of_contents: false
+---
+
+input type for inserting array relation for remote table "report_reason"
+
+```graphql
+input report_reason_arr_rel_insert_input {
+  data: [report_reason_insert_input!]!
+  on_conflict: report_reason_on_conflict
+}
+```
+
+### Fields
+
+#### [`data`](#) ([`[report_reason_insert_input!]!`](../inputs/report-reason-insert-input))
+
+#### [`on_conflict`](#) ([`report_reason_on_conflict`](../inputs/report-reason-on-conflict))
+
+on conflict condition

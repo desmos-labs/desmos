@@ -1,0 +1,22 @@
+---
+id: user-block-arr-rel-insert-input
+title: user_block_arr_rel_insert_input
+hide_table_of_contents: false
+---
+
+input type for inserting array relation for remote table "user_block"
+
+```graphql
+input user_block_arr_rel_insert_input {
+  data: [user_block_insert_input!]!
+  on_conflict: user_block_on_conflict
+}
+```
+
+### Fields
+
+#### [`data`](#) ([`[user_block_insert_input!]!`](../inputs/user-block-insert-input))
+
+#### [`on_conflict`](#) ([`user_block_on_conflict`](../inputs/user-block-on-conflict))
+
+on conflict condition

@@ -1,0 +1,22 @@
+---
+id: post-url-arr-rel-insert-input
+title: post_url_arr_rel_insert_input
+hide_table_of_contents: false
+---
+
+input type for inserting array relation for remote table "post_url"
+
+```graphql
+input post_url_arr_rel_insert_input {
+  data: [post_url_insert_input!]!
+  on_conflict: post_url_on_conflict
+}
+```
+
+### Fields
+
+#### [`data`](#) ([`[post_url_insert_input!]!`](../inputs/post-url-insert-input))
+
+#### [`on_conflict`](#) ([`post_url_on_conflict`](../inputs/post-url-on-conflict))
+
+on conflict condition

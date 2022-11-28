@@ -1,0 +1,45 @@
+---
+id: post-tag-aggregate
+title: post_tag_aggregate
+hide_table_of_contents: false
+---
+
+fetch aggregated fields from the table: "post_tag"
+
+```graphql
+post_tag_aggregate(
+  distinct_on: [post_tag_select_column!]
+  limit: Int
+  offset: Int
+  order_by: [post_tag_order_by!]
+  where: post_tag_bool_exp
+): post_tag_aggregate!
+```
+
+### Arguments
+
+#### [`distinct_on`](#) ([`[post_tag_select_column!]`](../enums/post-tag-select-column))
+
+distinct select on columns
+
+#### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+#### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+#### [`order_by`](#) ([`[post_tag_order_by!]`](../inputs/post-tag-order-by))
+
+sort the rows by one or more columns
+
+#### [`where`](#) ([`post_tag_bool_exp`](../inputs/post-tag-bool-exp))
+
+filter the rows returned
+
+### Type
+
+#### [`post_tag_aggregate`](../objects/post-tag-aggregate)
+
+aggregated selection of "post_tag"

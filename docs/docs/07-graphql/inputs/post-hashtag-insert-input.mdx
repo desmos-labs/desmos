@@ -1,0 +1,32 @@
+---
+id: post-hashtag-insert-input
+title: post_hashtag_insert_input
+hide_table_of_contents: false
+---
+
+input type for inserting data into table "post_hashtag"
+
+```graphql
+input post_hashtag_insert_input {
+  end_index: bigint
+  post: post_obj_rel_insert_input
+  post_row_id: bigint
+  row_id: Int
+  start_index: bigint
+  tag: String
+}
+```
+
+### Fields
+
+#### [`end_index`](#) ([`bigint`](../scalars/bigint))
+
+#### [`post`](#) ([`post_obj_rel_insert_input`](../inputs/post-obj-rel-insert-input))
+
+#### [`post_row_id`](#) ([`bigint`](../scalars/bigint))
+
+#### [`row_id`](#) ([`Int`](../scalars/int))
+
+#### [`start_index`](#) ([`bigint`](../scalars/bigint))
+
+#### [`tag`](#) ([`String`](../scalars/string))

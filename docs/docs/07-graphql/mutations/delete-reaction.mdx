@@ -1,0 +1,25 @@
+---
+id: delete-reaction
+title: delete_reaction
+hide_table_of_contents: false
+---
+
+delete data from the table: "reaction"
+
+```graphql
+delete_reaction(
+  where: reaction_bool_exp!
+): reaction_mutation_response
+```
+
+### Arguments
+
+#### [`where`](#) ([`reaction_bool_exp!`](../inputs/reaction-bool-exp))
+
+filter the rows which have to be deleted
+
+### Type
+
+#### [`reaction_mutation_response`](../objects/reaction-mutation-response)
+
+response of any mutation on the table "reaction"

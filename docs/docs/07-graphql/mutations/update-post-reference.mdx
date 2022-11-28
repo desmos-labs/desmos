@@ -1,0 +1,35 @@
+---
+id: update-post-reference
+title: update_post_reference
+hide_table_of_contents: false
+---
+
+update data of the table: "post_reference"
+
+```graphql
+update_post_reference(
+  _inc: post_reference_inc_input
+  _set: post_reference_set_input
+  where: post_reference_bool_exp!
+): post_reference_mutation_response
+```
+
+### Arguments
+
+#### [`_inc`](#) ([`post_reference_inc_input`](../inputs/post-reference-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+#### [`_set`](#) ([`post_reference_set_input`](../inputs/post-reference-set-input))
+
+sets the columns of the filtered rows to the given values
+
+#### [`where`](#) ([`post_reference_bool_exp!`](../inputs/post-reference-bool-exp))
+
+filter the rows which have to be updated
+
+### Type
+
+#### [`post_reference_mutation_response`](../objects/post-reference-mutation-response)
+
+response of any mutation on the table "post_reference"

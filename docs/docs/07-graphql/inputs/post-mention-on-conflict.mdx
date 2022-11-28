@@ -1,0 +1,23 @@
+---
+id: post-mention-on-conflict
+title: post_mention_on_conflict
+hide_table_of_contents: false
+---
+
+on conflict condition type for table "post_mention"
+
+```graphql
+input post_mention_on_conflict {
+  constraint: post_mention_constraint!
+  update_columns: [post_mention_update_column!]!
+  where: post_mention_bool_exp
+}
+```
+
+### Fields
+
+#### [`constraint`](#) ([`post_mention_constraint!`](../enums/post-mention-constraint))
+
+#### [`update_columns`](#) ([`[post_mention_update_column!]!`](../enums/post-mention-update-column))
+
+#### [`where`](#) ([`post_mention_bool_exp`](../inputs/post-mention-bool-exp))

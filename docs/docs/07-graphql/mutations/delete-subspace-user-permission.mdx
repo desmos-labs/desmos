@@ -1,0 +1,25 @@
+---
+id: delete-subspace-user-permission
+title: delete_subspace_user_permission
+hide_table_of_contents: false
+---
+
+delete data from the table: "subspace_user_permission"
+
+```graphql
+delete_subspace_user_permission(
+  where: subspace_user_permission_bool_exp!
+): subspace_user_permission_mutation_response
+```
+
+### Arguments
+
+#### [`where`](#) ([`subspace_user_permission_bool_exp!`](../inputs/subspace-user-permission-bool-exp))
+
+filter the rows which have to be deleted
+
+### Type
+
+#### [`subspace_user_permission_mutation_response`](../objects/subspace-user-permission-mutation-response)
+
+response of any mutation on the table "subspace_user_permission"

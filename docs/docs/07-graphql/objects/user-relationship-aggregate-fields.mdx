@@ -1,0 +1,51 @@
+---
+id: user-relationship-aggregate-fields
+title: user_relationship_aggregate_fields
+hide_table_of_contents: false
+---
+
+aggregate fields of "user_relationship"
+
+```graphql
+type user_relationship_aggregate_fields {
+  avg: user_relationship_avg_fields
+  count(columns: [user_relationship_select_column!], distinct: Boolean): Int!
+  max: user_relationship_max_fields
+  min: user_relationship_min_fields
+  stddev: user_relationship_stddev_fields
+  stddev_pop: user_relationship_stddev_pop_fields
+  stddev_samp: user_relationship_stddev_samp_fields
+  sum: user_relationship_sum_fields
+  var_pop: user_relationship_var_pop_fields
+  var_samp: user_relationship_var_samp_fields
+  variance: user_relationship_variance_fields
+}
+```
+
+### Fields
+
+#### [`avg`](#) ([`user_relationship_avg_fields`](../objects/user-relationship-avg-fields))
+
+#### [`count`](#) ([`Int!`](../scalars/int))
+
+- ##### [`columns`](#) ([`[user_relationship_select_column!]`](../enums/user-relationship-select-column))
+
+- ##### [`distinct`](#) ([`Boolean`](../scalars/boolean))
+
+#### [`max`](#) ([`user_relationship_max_fields`](../objects/user-relationship-max-fields))
+
+#### [`min`](#) ([`user_relationship_min_fields`](../objects/user-relationship-min-fields))
+
+#### [`stddev`](#) ([`user_relationship_stddev_fields`](../objects/user-relationship-stddev-fields))
+
+#### [`stddev_pop`](#) ([`user_relationship_stddev_pop_fields`](../objects/user-relationship-stddev-pop-fields))
+
+#### [`stddev_samp`](#) ([`user_relationship_stddev_samp_fields`](../objects/user-relationship-stddev-samp-fields))
+
+#### [`sum`](#) ([`user_relationship_sum_fields`](../objects/user-relationship-sum-fields))
+
+#### [`var_pop`](#) ([`user_relationship_var_pop_fields`](../objects/user-relationship-var-pop-fields))
+
+#### [`var_samp`](#) ([`user_relationship_var_samp_fields`](../objects/user-relationship-var-samp-fields))
+
+#### [`variance`](#) ([`user_relationship_variance_fields`](../objects/user-relationship-variance-fields))

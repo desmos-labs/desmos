@@ -1,0 +1,30 @@
+---
+id: report-reason
+title: report_reason
+hide_table_of_contents: false
+---
+
+columns and relationships of "report_reason"
+
+```graphql
+type report_reason {
+  reason: subspace_report_reason!
+  reason_row_id: bigint!
+  report: report!
+  report_row_id: bigint!
+}
+```
+
+### Fields
+
+#### [`reason`](#) ([`subspace_report_reason!`](../objects/subspace-report-reason))
+
+An object relationship
+
+#### [`reason_row_id`](#) ([`bigint!`](../scalars/bigint))
+
+#### [`report`](#) ([`report!`](../objects/report))
+
+An object relationship
+
+#### [`report_row_id`](#) ([`bigint!`](../scalars/bigint))

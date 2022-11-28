@@ -1,0 +1,47 @@
+---
+id: subspace-user-group-insert-input
+title: subspace_user_group_insert_input
+hide_table_of_contents: false
+---
+
+input type for inserting data into table "subspace_user_group"
+
+```graphql
+input subspace_user_group_insert_input {
+  description: String
+  height: bigint
+  id: bigint
+  members: subspace_user_group_member_arr_rel_insert_input
+  name: String
+  permissions: _text
+  row_id: Int
+  section: subspace_section_obj_rel_insert_input
+  section_row_id: bigint
+  subspace: subspace_obj_rel_insert_input
+  subspace_id: bigint
+}
+```
+
+### Fields
+
+#### [`description`](#) ([`String`](../scalars/string))
+
+#### [`height`](#) ([`bigint`](../scalars/bigint))
+
+#### [`id`](#) ([`bigint`](../scalars/bigint))
+
+#### [`members`](#) ([`subspace_user_group_member_arr_rel_insert_input`](../inputs/subspace-user-group-member-arr-rel-insert-input))
+
+#### [`name`](#) ([`String`](../scalars/string))
+
+#### [`permissions`](#) ([`_text`](../scalars/text))
+
+#### [`row_id`](#) ([`Int`](../scalars/int))
+
+#### [`section`](#) ([`subspace_section_obj_rel_insert_input`](../inputs/subspace-section-obj-rel-insert-input))
+
+#### [`section_row_id`](#) ([`bigint`](../scalars/bigint))
+
+#### [`subspace`](#) ([`subspace_obj_rel_insert_input`](../inputs/subspace-obj-rel-insert-input))
+
+#### [`subspace_id`](#) ([`bigint`](../scalars/bigint))

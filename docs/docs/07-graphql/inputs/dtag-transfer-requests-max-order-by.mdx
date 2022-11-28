@@ -1,0 +1,23 @@
+---
+id: dtag-transfer-requests-max-order-by
+title: dtag_transfer_requests_max_order_by
+hide_table_of_contents: false
+---
+
+order by max() on columns of table "dtag_transfer_requests"
+
+```graphql
+input dtag_transfer_requests_max_order_by {
+  height: order_by
+  receiver_address: order_by
+  sender_address: order_by
+}
+```
+
+### Fields
+
+#### [`height`](#) ([`order_by`](../enums/order-by))
+
+#### [`receiver_address`](#) ([`order_by`](../enums/order-by))
+
+#### [`sender_address`](#) ([`order_by`](../enums/order-by))

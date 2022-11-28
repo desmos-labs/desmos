@@ -1,0 +1,25 @@
+---
+id: delete-report-reason
+title: delete_report_reason
+hide_table_of_contents: false
+---
+
+delete data from the table: "report_reason"
+
+```graphql
+delete_report_reason(
+  where: report_reason_bool_exp!
+): report_reason_mutation_response
+```
+
+### Arguments
+
+#### [`where`](#) ([`report_reason_bool_exp!`](../inputs/report-reason-bool-exp))
+
+filter the rows which have to be deleted
+
+### Type
+
+#### [`report_reason_mutation_response`](../objects/report-reason-mutation-response)
+
+response of any mutation on the table "report_reason"

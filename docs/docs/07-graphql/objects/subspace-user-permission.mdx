@@ -1,0 +1,34 @@
+---
+id: subspace-user-permission
+title: subspace_user_permission
+hide_table_of_contents: false
+---
+
+columns and relationships of "subspace_user_permission"
+
+```graphql
+type subspace_user_permission {
+  height: bigint!
+  permissions: _text!
+  row_id: Int!
+  section: subspace_section!
+  section_row_id: bigint!
+  user_address: String!
+}
+```
+
+### Fields
+
+#### [`height`](#) ([`bigint!`](../scalars/bigint))
+
+#### [`permissions`](#) ([`_text!`](../scalars/text))
+
+#### [`row_id`](#) ([`Int!`](../scalars/int))
+
+#### [`section`](#) ([`subspace_section!`](../objects/subspace-section))
+
+An object relationship
+
+#### [`section_row_id`](#) ([`bigint!`](../scalars/bigint))
+
+#### [`user_address`](#) ([`String!`](../scalars/string))

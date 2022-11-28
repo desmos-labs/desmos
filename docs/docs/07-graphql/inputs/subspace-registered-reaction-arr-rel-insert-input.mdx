@@ -1,0 +1,22 @@
+---
+id: subspace-registered-reaction-arr-rel-insert-input
+title: subspace_registered_reaction_arr_rel_insert_input
+hide_table_of_contents: false
+---
+
+input type for inserting array relation for remote table "subspace_registered_reaction"
+
+```graphql
+input subspace_registered_reaction_arr_rel_insert_input {
+  data: [subspace_registered_reaction_insert_input!]!
+  on_conflict: subspace_registered_reaction_on_conflict
+}
+```
+
+### Fields
+
+#### [`data`](#) ([`[subspace_registered_reaction_insert_input!]!`](../inputs/subspace-registered-reaction-insert-input))
+
+#### [`on_conflict`](#) ([`subspace_registered_reaction_on_conflict`](../inputs/subspace-registered-reaction-on-conflict))
+
+on conflict condition

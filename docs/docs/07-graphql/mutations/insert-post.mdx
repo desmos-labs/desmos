@@ -1,0 +1,30 @@
+---
+id: insert-post
+title: insert_post
+hide_table_of_contents: false
+---
+
+insert data into the table: "post"
+
+```graphql
+insert_post(
+  objects: [post_insert_input!]!
+  on_conflict: post_on_conflict
+): post_mutation_response
+```
+
+### Arguments
+
+#### [`objects`](#) ([`[post_insert_input!]!`](../inputs/post-insert-input))
+
+the rows to be inserted
+
+#### [`on_conflict`](#) ([`post_on_conflict`](../inputs/post-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`post_mutation_response`](../objects/post-mutation-response)
+
+response of any mutation on the table "post"

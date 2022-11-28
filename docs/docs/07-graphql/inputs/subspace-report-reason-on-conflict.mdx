@@ -1,0 +1,23 @@
+---
+id: subspace-report-reason-on-conflict
+title: subspace_report_reason_on_conflict
+hide_table_of_contents: false
+---
+
+on conflict condition type for table "subspace_report_reason"
+
+```graphql
+input subspace_report_reason_on_conflict {
+  constraint: subspace_report_reason_constraint!
+  update_columns: [subspace_report_reason_update_column!]!
+  where: subspace_report_reason_bool_exp
+}
+```
+
+### Fields
+
+#### [`constraint`](#) ([`subspace_report_reason_constraint!`](../enums/subspace-report-reason-constraint))
+
+#### [`update_columns`](#) ([`[subspace_report_reason_update_column!]!`](../enums/subspace-report-reason-update-column))
+
+#### [`where`](#) ([`subspace_report_reason_bool_exp`](../inputs/subspace-report-reason-bool-exp))

@@ -1,0 +1,67 @@
+---
+id: profile-relationship-bool-exp
+title: profile_relationship_bool_exp
+hide_table_of_contents: false
+---
+
+
+Boolean expression to filter rows from the table "profile_relationship". All fields are combined with a logical 'AND'.
+
+```graphql
+input profile_relationship_bool_exp {
+  _and: [profile_relationship_bool_exp!]
+  _not: profile_relationship_bool_exp
+  _or: [profile_relationship_bool_exp!]
+  receiver: profile_bool_exp
+  receiver_address: String_comparison_exp
+  sender: profile_bool_exp
+  sender_address: String_comparison_exp
+  subspace: String_comparison_exp
+}
+```
+
+
+### Fields
+
+#### [`_and`](#) ([`[profile_relationship_bool_exp!]`](../inputs/profile-relationship-bool-exp))
+
+
+
+
+#### [`_not`](#) ([`profile_relationship_bool_exp`](../inputs/profile-relationship-bool-exp))
+
+
+
+
+#### [`_or`](#) ([`[profile_relationship_bool_exp!]`](../inputs/profile-relationship-bool-exp))
+
+
+
+
+#### [`receiver`](#) ([`profile_bool_exp`](../inputs/profile-bool-exp))
+
+
+
+
+#### [`receiver_address`](#) ([`String_comparison_exp`](../inputs/string-comparison-exp))
+
+
+
+
+#### [`sender`](#) ([`profile_bool_exp`](../inputs/profile-bool-exp))
+
+
+
+
+#### [`sender_address`](#) ([`String_comparison_exp`](../inputs/string-comparison-exp))
+
+
+
+
+#### [`subspace`](#) ([`String_comparison_exp`](../inputs/string-comparison-exp))
+
+
+
+
+
+

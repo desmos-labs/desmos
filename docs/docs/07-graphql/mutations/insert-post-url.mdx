@@ -1,0 +1,30 @@
+---
+id: insert-post-url
+title: insert_post_url
+hide_table_of_contents: false
+---
+
+insert data into the table: "post_url"
+
+```graphql
+insert_post_url(
+  objects: [post_url_insert_input!]!
+  on_conflict: post_url_on_conflict
+): post_url_mutation_response
+```
+
+### Arguments
+
+#### [`objects`](#) ([`[post_url_insert_input!]!`](../inputs/post-url-insert-input))
+
+the rows to be inserted
+
+#### [`on_conflict`](#) ([`post_url_on_conflict`](../inputs/post-url-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`post_url_mutation_response`](../objects/post-url-mutation-response)
+
+response of any mutation on the table "post_url"

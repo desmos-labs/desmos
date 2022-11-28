@@ -1,0 +1,35 @@
+---
+id: subspace-registered-reaction-insert-input
+title: subspace_registered_reaction_insert_input
+hide_table_of_contents: false
+---
+
+input type for inserting data into table "subspace_registered_reaction"
+
+```graphql
+input subspace_registered_reaction_insert_input {
+  display_value: String
+  height: bigint
+  id: bigint
+  row_id: Int
+  shorthand_code: String
+  subspace: subspace_obj_rel_insert_input
+  subspace_id: bigint
+}
+```
+
+### Fields
+
+#### [`display_value`](#) ([`String`](../scalars/string))
+
+#### [`height`](#) ([`bigint`](../scalars/bigint))
+
+#### [`id`](#) ([`bigint`](../scalars/bigint))
+
+#### [`row_id`](#) ([`Int`](../scalars/int))
+
+#### [`shorthand_code`](#) ([`String`](../scalars/string))
+
+#### [`subspace`](#) ([`subspace_obj_rel_insert_input`](../inputs/subspace-obj-rel-insert-input))
+
+#### [`subspace_id`](#) ([`bigint`](../scalars/bigint))
