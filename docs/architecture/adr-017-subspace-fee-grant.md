@@ -29,10 +29,9 @@ We will implement a subspace-specified fee grant process based on `x/feegrant` t
 
 Currently, `x/auth` provides a `DeductFeeDecorator` based on `x/feegrant` to execute the action deducting the fees of a transaction from the signer/feepayer. We will build a new subspace-specified `DeductFeeDecorator` to replace the current one.
 
-The new subspace-specified `DeductFeeDecorator` will deal with the fees with the process as follows:
-1. check all the messages in the transaction are the subspace messages and all of them are to the same subspace;
-2. apply `x/subspaces` `DeductFeeDecorator` if the transaction contains subspace messages from the same subspace and the user/group fee grant exists, or apply `x/auth` `DeductFeeDecorator`;
-3. deduct the fees from the fee payer.
+The new subspace-specified `DeductFeeDecorator` will work as follows:
+1. check if all the messages in the transaction are messages related to the same subspace;
+2. if the transaction contains subspace messages from the same subspace and a fee grant exists, run the `x/subspaces` `DeductFeeDecorator`; otherwise run the `x/auth` `DeductFeeDecorator`,
 
 ```mermaid
 graph TD
