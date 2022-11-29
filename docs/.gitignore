@@ -22,6 +22,7 @@ yarn-error.log*
 
 # Modules docs
 docs/02-developers/02-modules/*
+!docs/02-developers/02-modules/_category_.json
 
 # Copied folders
 docs/architecture
