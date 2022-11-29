@@ -8,7 +8,6 @@
 # Generated files
 .docusaurus
 .cache-loader
-*.lock
 
 # Misc
 .DS_Store
@@ -26,3 +25,7 @@ docs/02-developers/02-modules/*
 
 # Copied folders
 docs/architecture
+
+# Old versions
+versioned_docs
+versioned_sidebars
