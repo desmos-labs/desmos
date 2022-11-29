@@ -28,12 +28,12 @@ jobs:
             docs/yarn.lock
 
       - name: Build 🔧
-        run: make build-docs
+        run: make build-docs && move ~/output ./output
 
       - name: Deploy preview to Netlify 🚀
         uses: nwtgck/actions-netlify@v1.2
         with:
-          publish-dir: ~/output
+          publish-dir: ./output
           github-token: ${{ secrets.GITHUB_TOKEN }}
           deploy-message: "Deploy from GitHub Actions"
           enable-commit-comment: false
