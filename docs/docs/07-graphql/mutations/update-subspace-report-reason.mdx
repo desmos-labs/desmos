@@ -1,0 +1,35 @@
+---
+id: update-subspace-report-reason
+title: update_subspace_report_reason
+hide_table_of_contents: false
+---
+
+update data of the table: "subspace_report_reason"
+
+```graphql
+update_subspace_report_reason(
+  _inc: subspace_report_reason_inc_input
+  _set: subspace_report_reason_set_input
+  where: subspace_report_reason_bool_exp!
+): subspace_report_reason_mutation_response
+```
+
+### Arguments
+
+#### [`_inc`](#) ([`subspace_report_reason_inc_input`](../inputs/subspace-report-reason-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+#### [`_set`](#) ([`subspace_report_reason_set_input`](../inputs/subspace-report-reason-set-input))
+
+sets the columns of the filtered rows to the given values
+
+#### [`where`](#) ([`subspace_report_reason_bool_exp!`](../inputs/subspace-report-reason-bool-exp))
+
+filter the rows which have to be updated
+
+### Type
+
+#### [`subspace_report_reason_mutation_response`](../objects/subspace-report-reason-mutation-response)
+
+response of any mutation on the table "subspace_report_reason"

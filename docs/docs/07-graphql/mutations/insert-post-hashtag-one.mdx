@@ -1,0 +1,30 @@
+---
+id: insert-post-hashtag-one
+title: insert_post_hashtag_one
+hide_table_of_contents: false
+---
+
+insert a single row into the table: "post_hashtag"
+
+```graphql
+insert_post_hashtag_one(
+  object: post_hashtag_insert_input!
+  on_conflict: post_hashtag_on_conflict
+): post_hashtag
+```
+
+### Arguments
+
+#### [`object`](#) ([`post_hashtag_insert_input!`](../inputs/post-hashtag-insert-input))
+
+the row to be inserted
+
+#### [`on_conflict`](#) ([`post_hashtag_on_conflict`](../inputs/post-hashtag-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`post_hashtag`](../objects/post-hashtag)
+
+columns and relationships of "post_hashtag"

@@ -1,0 +1,35 @@
+---
+id: subspace-report-reason-insert-input
+title: subspace_report_reason_insert_input
+hide_table_of_contents: false
+---
+
+input type for inserting data into table "subspace_report_reason"
+
+```graphql
+input subspace_report_reason_insert_input {
+  description: String
+  height: bigint
+  id: bigint
+  row_id: Int
+  subspace: subspace_obj_rel_insert_input
+  subspace_id: bigint
+  title: String
+}
+```
+
+### Fields
+
+#### [`description`](#) ([`String`](../scalars/string))
+
+#### [`height`](#) ([`bigint`](../scalars/bigint))
+
+#### [`id`](#) ([`bigint`](../scalars/bigint))
+
+#### [`row_id`](#) ([`Int`](../scalars/int))
+
+#### [`subspace`](#) ([`subspace_obj_rel_insert_input`](../inputs/subspace-obj-rel-insert-input))
+
+#### [`subspace_id`](#) ([`bigint`](../scalars/bigint))
+
+#### [`title`](#) ([`String`](../scalars/string))

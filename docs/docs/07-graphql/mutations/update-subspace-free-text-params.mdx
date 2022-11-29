@@ -1,0 +1,35 @@
+---
+id: update-subspace-free-text-params
+title: update_subspace_free_text_params
+hide_table_of_contents: false
+---
+
+update data of the table: "subspace_free_text_params"
+
+```graphql
+update_subspace_free_text_params(
+  _inc: subspace_free_text_params_inc_input
+  _set: subspace_free_text_params_set_input
+  where: subspace_free_text_params_bool_exp!
+): subspace_free_text_params_mutation_response
+```
+
+### Arguments
+
+#### [`_inc`](#) ([`subspace_free_text_params_inc_input`](../inputs/subspace-free-text-params-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+#### [`_set`](#) ([`subspace_free_text_params_set_input`](../inputs/subspace-free-text-params-set-input))
+
+sets the columns of the filtered rows to the given values
+
+#### [`where`](#) ([`subspace_free_text_params_bool_exp!`](../inputs/subspace-free-text-params-bool-exp))
+
+filter the rows which have to be updated
+
+### Type
+
+#### [`subspace_free_text_params_mutation_response`](../objects/subspace-free-text-params-mutation-response)
+
+response of any mutation on the table "subspace_free_text_params"

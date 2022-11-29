@@ -1,0 +1,23 @@
+---
+id: profile-on-conflict
+title: profile_on_conflict
+hide_table_of_contents: false
+---
+
+on conflict condition type for table "profile"
+
+```graphql
+input profile_on_conflict {
+  constraint: profile_constraint!
+  update_columns: [profile_update_column!]!
+  where: profile_bool_exp
+}
+```
+
+### Fields
+
+#### [`constraint`](#) ([`profile_constraint!`](../enums/profile-constraint))
+
+#### [`update_columns`](#) ([`[profile_update_column!]!`](../enums/profile-update-column))
+
+#### [`where`](#) ([`profile_bool_exp`](../inputs/profile-bool-exp))

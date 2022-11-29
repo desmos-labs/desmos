@@ -1,0 +1,30 @@
+---
+id: insert-subspace-user-group-member
+title: insert_subspace_user_group_member
+hide_table_of_contents: false
+---
+
+insert data into the table: "subspace_user_group_member"
+
+```graphql
+insert_subspace_user_group_member(
+  objects: [subspace_user_group_member_insert_input!]!
+  on_conflict: subspace_user_group_member_on_conflict
+): subspace_user_group_member_mutation_response
+```
+
+### Arguments
+
+#### [`objects`](#) ([`[subspace_user_group_member_insert_input!]!`](../inputs/subspace-user-group-member-insert-input))
+
+the rows to be inserted
+
+#### [`on_conflict`](#) ([`subspace_user_group_member_on_conflict`](../inputs/subspace-user-group-member-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`subspace_user_group_member_mutation_response`](../objects/subspace-user-group-member-mutation-response)
+
+response of any mutation on the table "subspace_user_group_member"

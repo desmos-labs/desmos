@@ -1,0 +1,32 @@
+---
+id: subspace-free-text-params-insert-input
+title: subspace_free_text_params_insert_input
+hide_table_of_contents: false
+---
+
+input type for inserting data into table "subspace_free_text_params"
+
+```graphql
+input subspace_free_text_params_insert_input {
+  enabled: Boolean
+  height: bigint
+  max_length: bigint
+  reg_ex: String
+  subspace: subspace_obj_rel_insert_input
+  subspace_id: bigint
+}
+```
+
+### Fields
+
+#### [`enabled`](#) ([`Boolean`](../scalars/boolean))
+
+#### [`height`](#) ([`bigint`](../scalars/bigint))
+
+#### [`max_length`](#) ([`bigint`](../scalars/bigint))
+
+#### [`reg_ex`](#) ([`String`](../scalars/string))
+
+#### [`subspace`](#) ([`subspace_obj_rel_insert_input`](../inputs/subspace-obj-rel-insert-input))
+
+#### [`subspace_id`](#) ([`bigint`](../scalars/bigint))

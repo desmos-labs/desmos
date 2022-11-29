@@ -1,0 +1,45 @@
+---
+id: dtag-transfer-requests-aggregate
+title: dtag_transfer_requests_aggregate
+hide_table_of_contents: false
+---
+
+fetch aggregated fields from the table: "dtag_transfer_requests"
+
+```graphql
+dtag_transfer_requests_aggregate(
+  distinct_on: [dtag_transfer_requests_select_column!]
+  limit: Int
+  offset: Int
+  order_by: [dtag_transfer_requests_order_by!]
+  where: dtag_transfer_requests_bool_exp
+): dtag_transfer_requests_aggregate!
+```
+
+### Arguments
+
+#### [`distinct_on`](#) ([`[dtag_transfer_requests_select_column!]`](../enums/dtag-transfer-requests-select-column))
+
+distinct select on columns
+
+#### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+#### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+#### [`order_by`](#) ([`[dtag_transfer_requests_order_by!]`](../inputs/dtag-transfer-requests-order-by))
+
+sort the rows by one or more columns
+
+#### [`where`](#) ([`dtag_transfer_requests_bool_exp`](../inputs/dtag-transfer-requests-bool-exp))
+
+filter the rows returned
+
+### Type
+
+#### [`dtag_transfer_requests_aggregate`](../objects/dtag-transfer-requests-aggregate)
+
+aggregated selection of "dtag_transfer_requests"

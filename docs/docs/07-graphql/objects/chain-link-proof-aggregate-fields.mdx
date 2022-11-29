@@ -1,0 +1,51 @@
+---
+id: chain-link-proof-aggregate-fields
+title: chain_link_proof_aggregate_fields
+hide_table_of_contents: false
+---
+
+aggregate fields of "chain_link_proof"
+
+```graphql
+type chain_link_proof_aggregate_fields {
+  avg: chain_link_proof_avg_fields
+  count(columns: [chain_link_proof_select_column!], distinct: Boolean): Int!
+  max: chain_link_proof_max_fields
+  min: chain_link_proof_min_fields
+  stddev: chain_link_proof_stddev_fields
+  stddev_pop: chain_link_proof_stddev_pop_fields
+  stddev_samp: chain_link_proof_stddev_samp_fields
+  sum: chain_link_proof_sum_fields
+  var_pop: chain_link_proof_var_pop_fields
+  var_samp: chain_link_proof_var_samp_fields
+  variance: chain_link_proof_variance_fields
+}
+```
+
+### Fields
+
+#### [`avg`](#) ([`chain_link_proof_avg_fields`](../objects/chain-link-proof-avg-fields))
+
+#### [`count`](#) ([`Int!`](../scalars/int))
+
+- ##### [`columns`](#) ([`[chain_link_proof_select_column!]`](../enums/chain-link-proof-select-column))
+
+- ##### [`distinct`](#) ([`Boolean`](../scalars/boolean))
+
+#### [`max`](#) ([`chain_link_proof_max_fields`](../objects/chain-link-proof-max-fields))
+
+#### [`min`](#) ([`chain_link_proof_min_fields`](../objects/chain-link-proof-min-fields))
+
+#### [`stddev`](#) ([`chain_link_proof_stddev_fields`](../objects/chain-link-proof-stddev-fields))
+
+#### [`stddev_pop`](#) ([`chain_link_proof_stddev_pop_fields`](../objects/chain-link-proof-stddev-pop-fields))
+
+#### [`stddev_samp`](#) ([`chain_link_proof_stddev_samp_fields`](../objects/chain-link-proof-stddev-samp-fields))
+
+#### [`sum`](#) ([`chain_link_proof_sum_fields`](../objects/chain-link-proof-sum-fields))
+
+#### [`var_pop`](#) ([`chain_link_proof_var_pop_fields`](../objects/chain-link-proof-var-pop-fields))
+
+#### [`var_samp`](#) ([`chain_link_proof_var_samp_fields`](../objects/chain-link-proof-var-samp-fields))
+
+#### [`variance`](#) ([`chain_link_proof_variance_fields`](../objects/chain-link-proof-variance-fields))

@@ -1,0 +1,23 @@
+---
+id: post-attachment-on-conflict
+title: post_attachment_on_conflict
+hide_table_of_contents: false
+---
+
+on conflict condition type for table "post_attachment"
+
+```graphql
+input post_attachment_on_conflict {
+  constraint: post_attachment_constraint!
+  update_columns: [post_attachment_update_column!]!
+  where: post_attachment_bool_exp
+}
+```
+
+### Fields
+
+#### [`constraint`](#) ([`post_attachment_constraint!`](../enums/post-attachment-constraint))
+
+#### [`update_columns`](#) ([`[post_attachment_update_column!]!`](../enums/post-attachment-update-column))
+
+#### [`where`](#) ([`post_attachment_bool_exp`](../inputs/post-attachment-bool-exp))

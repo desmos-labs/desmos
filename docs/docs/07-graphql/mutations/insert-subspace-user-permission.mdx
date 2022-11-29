@@ -1,0 +1,30 @@
+---
+id: insert-subspace-user-permission
+title: insert_subspace_user_permission
+hide_table_of_contents: false
+---
+
+insert data into the table: "subspace_user_permission"
+
+```graphql
+insert_subspace_user_permission(
+  objects: [subspace_user_permission_insert_input!]!
+  on_conflict: subspace_user_permission_on_conflict
+): subspace_user_permission_mutation_response
+```
+
+### Arguments
+
+#### [`objects`](#) ([`[subspace_user_permission_insert_input!]!`](../inputs/subspace-user-permission-insert-input))
+
+the rows to be inserted
+
+#### [`on_conflict`](#) ([`subspace_user_permission_on_conflict`](../inputs/subspace-user-permission-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`subspace_user_permission_mutation_response`](../objects/subspace-user-permission-mutation-response)
+
+response of any mutation on the table "subspace_user_permission"

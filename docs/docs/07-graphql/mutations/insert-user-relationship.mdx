@@ -1,0 +1,30 @@
+---
+id: insert-user-relationship
+title: insert_user_relationship
+hide_table_of_contents: false
+---
+
+insert data into the table: "user_relationship"
+
+```graphql
+insert_user_relationship(
+  objects: [user_relationship_insert_input!]!
+  on_conflict: user_relationship_on_conflict
+): user_relationship_mutation_response
+```
+
+### Arguments
+
+#### [`objects`](#) ([`[user_relationship_insert_input!]!`](../inputs/user-relationship-insert-input))
+
+the rows to be inserted
+
+#### [`on_conflict`](#) ([`user_relationship_on_conflict`](../inputs/user-relationship-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`user_relationship_mutation_response`](../objects/user-relationship-mutation-response)
+
+response of any mutation on the table "user_relationship"

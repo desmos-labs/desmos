@@ -1,0 +1,32 @@
+---
+id: subspace-user-permission-insert-input
+title: subspace_user_permission_insert_input
+hide_table_of_contents: false
+---
+
+input type for inserting data into table "subspace_user_permission"
+
+```graphql
+input subspace_user_permission_insert_input {
+  height: bigint
+  permissions: _text
+  row_id: Int
+  section: subspace_section_obj_rel_insert_input
+  section_row_id: bigint
+  user_address: String
+}
+```
+
+### Fields
+
+#### [`height`](#) ([`bigint`](../scalars/bigint))
+
+#### [`permissions`](#) ([`_text`](../scalars/text))
+
+#### [`row_id`](#) ([`Int`](../scalars/int))
+
+#### [`section`](#) ([`subspace_section_obj_rel_insert_input`](../inputs/subspace-section-obj-rel-insert-input))
+
+#### [`section_row_id`](#) ([`bigint`](../scalars/bigint))
+
+#### [`user_address`](#) ([`String`](../scalars/string))

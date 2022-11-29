@@ -1,0 +1,30 @@
+---
+id: insert-application-link
+title: insert_application_link
+hide_table_of_contents: false
+---
+
+insert data into the table: "application_link"
+
+```graphql
+insert_application_link(
+  objects: [application_link_insert_input!]!
+  on_conflict: application_link_on_conflict
+): application_link_mutation_response
+```
+
+### Arguments
+
+#### [`objects`](#) ([`[application_link_insert_input!]!`](../inputs/application-link-insert-input))
+
+the rows to be inserted
+
+#### [`on_conflict`](#) ([`application_link_on_conflict`](../inputs/application-link-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`application_link_mutation_response`](../objects/application-link-mutation-response)
+
+response of any mutation on the table "application_link"

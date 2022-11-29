@@ -1,0 +1,25 @@
+---
+id: delete-profile
+title: delete_profile
+hide_table_of_contents: false
+---
+
+delete data from the table: "profile"
+
+```graphql
+delete_profile(
+  where: profile_bool_exp!
+): profile_mutation_response
+```
+
+### Arguments
+
+#### [`where`](#) ([`profile_bool_exp!`](../inputs/profile-bool-exp))
+
+filter the rows which have to be deleted
+
+### Type
+
+#### [`profile_mutation_response`](../objects/profile-mutation-response)
+
+response of any mutation on the table "profile"

@@ -1,0 +1,23 @@
+---
+id: chain-link-on-conflict
+title: chain_link_on_conflict
+hide_table_of_contents: false
+---
+
+on conflict condition type for table "chain_link"
+
+```graphql
+input chain_link_on_conflict {
+  constraint: chain_link_constraint!
+  update_columns: [chain_link_update_column!]!
+  where: chain_link_bool_exp
+}
+```
+
+### Fields
+
+#### [`constraint`](#) ([`chain_link_constraint!`](../enums/chain-link-constraint))
+
+#### [`update_columns`](#) ([`[chain_link_update_column!]!`](../enums/chain-link-update-column))
+
+#### [`where`](#) ([`chain_link_bool_exp`](../inputs/chain-link-bool-exp))

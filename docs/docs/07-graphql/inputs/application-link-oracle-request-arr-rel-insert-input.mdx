@@ -1,0 +1,22 @@
+---
+id: application-link-oracle-request-arr-rel-insert-input
+title: application_link_oracle_request_arr_rel_insert_input
+hide_table_of_contents: false
+---
+
+input type for inserting array relation for remote table "application_link_oracle_request"
+
+```graphql
+input application_link_oracle_request_arr_rel_insert_input {
+  data: [application_link_oracle_request_insert_input!]!
+  on_conflict: application_link_oracle_request_on_conflict
+}
+```
+
+### Fields
+
+#### [`data`](#) ([`[application_link_oracle_request_insert_input!]!`](../inputs/application-link-oracle-request-insert-input))
+
+#### [`on_conflict`](#) ([`application_link_oracle_request_on_conflict`](../inputs/application-link-oracle-request-on-conflict))
+
+on conflict condition

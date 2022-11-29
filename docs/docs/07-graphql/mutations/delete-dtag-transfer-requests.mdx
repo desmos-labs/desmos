@@ -1,0 +1,25 @@
+---
+id: delete-dtag-transfer-requests
+title: delete_dtag_transfer_requests
+hide_table_of_contents: false
+---
+
+delete data from the table: "dtag_transfer_requests"
+
+```graphql
+delete_dtag_transfer_requests(
+  where: dtag_transfer_requests_bool_exp!
+): dtag_transfer_requests_mutation_response
+```
+
+### Arguments
+
+#### [`where`](#) ([`dtag_transfer_requests_bool_exp!`](../inputs/dtag-transfer-requests-bool-exp))
+
+filter the rows which have to be deleted
+
+### Type
+
+#### [`dtag_transfer_requests_mutation_response`](../objects/dtag-transfer-requests-mutation-response)
+
+response of any mutation on the table "dtag_transfer_requests"

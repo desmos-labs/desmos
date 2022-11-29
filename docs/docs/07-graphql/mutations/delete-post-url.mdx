@@ -1,0 +1,25 @@
+---
+id: delete-post-url
+title: delete_post_url
+hide_table_of_contents: false
+---
+
+delete data from the table: "post_url"
+
+```graphql
+delete_post_url(
+  where: post_url_bool_exp!
+): post_url_mutation_response
+```
+
+### Arguments
+
+#### [`where`](#) ([`post_url_bool_exp!`](../inputs/post-url-bool-exp))
+
+filter the rows which have to be deleted
+
+### Type
+
+#### [`post_url_mutation_response`](../objects/post-url-mutation-response)
+
+response of any mutation on the table "post_url"

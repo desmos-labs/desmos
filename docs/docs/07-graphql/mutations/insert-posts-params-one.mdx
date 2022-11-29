@@ -1,0 +1,30 @@
+---
+id: insert-posts-params-one
+title: insert_posts_params_one
+hide_table_of_contents: false
+---
+
+insert a single row into the table: "posts_params"
+
+```graphql
+insert_posts_params_one(
+  object: posts_params_insert_input!
+  on_conflict: posts_params_on_conflict
+): posts_params
+```
+
+### Arguments
+
+#### [`object`](#) ([`posts_params_insert_input!`](../inputs/posts-params-insert-input))
+
+the row to be inserted
+
+#### [`on_conflict`](#) ([`posts_params_on_conflict`](../inputs/posts-params-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`posts_params`](../objects/posts-params)
+
+columns and relationships of "posts_params"

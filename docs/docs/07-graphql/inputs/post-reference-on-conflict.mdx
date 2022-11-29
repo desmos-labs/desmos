@@ -1,0 +1,23 @@
+---
+id: post-reference-on-conflict
+title: post_reference_on_conflict
+hide_table_of_contents: false
+---
+
+on conflict condition type for table "post_reference"
+
+```graphql
+input post_reference_on_conflict {
+  constraint: post_reference_constraint!
+  update_columns: [post_reference_update_column!]!
+  where: post_reference_bool_exp
+}
+```
+
+### Fields
+
+#### [`constraint`](#) ([`post_reference_constraint!`](../enums/post-reference-constraint))
+
+#### [`update_columns`](#) ([`[post_reference_update_column!]!`](../enums/post-reference-update-column))
+
+#### [`where`](#) ([`post_reference_bool_exp`](../inputs/post-reference-bool-exp))

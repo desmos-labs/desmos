@@ -1,0 +1,35 @@
+---
+id: update-block
+title: update_block
+hide_table_of_contents: false
+---
+
+update data of the table: "block"
+
+```graphql
+update_block(
+  _inc: block_inc_input
+  _set: block_set_input
+  where: block_bool_exp!
+): block_mutation_response
+```
+
+### Arguments
+
+#### [`_inc`](#) ([`block_inc_input`](../inputs/block-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+#### [`_set`](#) ([`block_set_input`](../inputs/block-set-input))
+
+sets the columns of the filtered rows to the given values
+
+#### [`where`](#) ([`block_bool_exp!`](../inputs/block-bool-exp))
+
+filter the rows which have to be updated
+
+### Type
+
+#### [`block_mutation_response`](../objects/block-mutation-response)
+
+response of any mutation on the table "block"

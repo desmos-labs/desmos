@@ -1,0 +1,23 @@
+---
+id: post-url-on-conflict
+title: post_url_on_conflict
+hide_table_of_contents: false
+---
+
+on conflict condition type for table "post_url"
+
+```graphql
+input post_url_on_conflict {
+  constraint: post_url_constraint!
+  update_columns: [post_url_update_column!]!
+  where: post_url_bool_exp
+}
+```
+
+### Fields
+
+#### [`constraint`](#) ([`post_url_constraint!`](../enums/post-url-constraint))
+
+#### [`update_columns`](#) ([`[post_url_update_column!]!`](../enums/post-url-update-column))
+
+#### [`where`](#) ([`post_url_bool_exp`](../inputs/post-url-bool-exp))

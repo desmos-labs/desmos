@@ -1,0 +1,3241 @@
+---
+id: mutation-root
+title: mutation_root
+hide_table_of_contents: false
+---
+
+mutation root
+
+```graphql
+type mutation_root {
+  delete_application_link(
+    where: application_link_bool_exp!
+  ): application_link_mutation_response
+  delete_application_link_by_pk(id: Int!): application_link
+  delete_application_link_oracle_request(
+    where: application_link_oracle_request_bool_exp!
+  ): application_link_oracle_request_mutation_response
+  delete_application_link_oracle_request_by_pk(
+    id: Int!
+  ): application_link_oracle_request
+  delete_block(where: block_bool_exp!): block_mutation_response
+  delete_block_by_pk(height: bigint!): block
+  delete_chain_link(where: chain_link_bool_exp!): chain_link_mutation_response
+  delete_chain_link_by_pk(id: Int!): chain_link
+  delete_chain_link_chain_config(
+    where: chain_link_chain_config_bool_exp!
+  ): chain_link_chain_config_mutation_response
+  delete_chain_link_chain_config_by_pk(id: Int!): chain_link_chain_config
+  delete_chain_link_proof(
+    where: chain_link_proof_bool_exp!
+  ): chain_link_proof_mutation_response
+  delete_dtag_transfer_requests(
+    where: dtag_transfer_requests_bool_exp!
+  ): dtag_transfer_requests_mutation_response
+  delete_poll_answer(
+    where: poll_answer_bool_exp!
+  ): poll_answer_mutation_response
+  delete_poll_answer_by_pk(row_id: Int!): poll_answer
+  delete_post(where: post_bool_exp!): post_mutation_response
+  delete_post_attachment(
+    where: post_attachment_bool_exp!
+  ): post_attachment_mutation_response
+  delete_post_attachment_by_pk(row_id: Int!): post_attachment
+  delete_post_by_pk(row_id: Int!): post
+  delete_post_hashtag(
+    where: post_hashtag_bool_exp!
+  ): post_hashtag_mutation_response
+  delete_post_hashtag_by_pk(row_id: Int!): post_hashtag
+  delete_post_mention(
+    where: post_mention_bool_exp!
+  ): post_mention_mutation_response
+  delete_post_mention_by_pk(row_id: Int!): post_mention
+  delete_post_reference(
+    where: post_reference_bool_exp!
+  ): post_reference_mutation_response
+  delete_post_reference_by_pk(row_id: Int!): post_reference
+  delete_post_tag(where: post_tag_bool_exp!): post_tag_mutation_response
+  delete_post_tag_by_pk(row_id: Int!): post_tag
+  delete_post_url(where: post_url_bool_exp!): post_url_mutation_response
+  delete_post_url_by_pk(row_id: Int!): post_url
+  delete_posts_params(
+    where: posts_params_bool_exp!
+  ): posts_params_mutation_response
+  delete_posts_params_by_pk(one_row_id: Boolean!): posts_params
+  delete_profile(where: profile_bool_exp!): profile_mutation_response
+  delete_profile_by_pk(address: String!): profile
+  delete_profiles_params(
+    where: profiles_params_bool_exp!
+  ): profiles_params_mutation_response
+  delete_profiles_params_by_pk(one_row_id: Boolean!): profiles_params
+  delete_reaction(where: reaction_bool_exp!): reaction_mutation_response
+  delete_reaction_by_pk(row_id: Int!): reaction
+  delete_report(where: report_bool_exp!): report_mutation_response
+  delete_report_by_pk(row_id: Int!): report
+  delete_report_reason(
+    where: report_reason_bool_exp!
+  ): report_reason_mutation_response
+  delete_reports_params(
+    where: reports_params_bool_exp!
+  ): reports_params_mutation_response
+  delete_reports_params_by_pk(one_row_id: Boolean!): reports_params
+  delete_subspace(where: subspace_bool_exp!): subspace_mutation_response
+  delete_subspace_by_pk(id: bigint!): subspace
+  delete_subspace_free_text_params(
+    where: subspace_free_text_params_bool_exp!
+  ): subspace_free_text_params_mutation_response
+  delete_subspace_free_text_params_by_pk(
+    subspace_id: bigint!
+  ): subspace_free_text_params
+  delete_subspace_registered_reaction(
+    where: subspace_registered_reaction_bool_exp!
+  ): subspace_registered_reaction_mutation_response
+  delete_subspace_registered_reaction_by_pk(
+    row_id: Int!
+  ): subspace_registered_reaction
+  delete_subspace_registered_reaction_params(
+    where: subspace_registered_reaction_params_bool_exp!
+  ): subspace_registered_reaction_params_mutation_response
+  delete_subspace_registered_reaction_params_by_pk(
+    subspace_id: bigint!
+  ): subspace_registered_reaction_params
+  delete_subspace_report_reason(
+    where: subspace_report_reason_bool_exp!
+  ): subspace_report_reason_mutation_response
+  delete_subspace_report_reason_by_pk(row_id: Int!): subspace_report_reason
+  delete_subspace_section(
+    where: subspace_section_bool_exp!
+  ): subspace_section_mutation_response
+  delete_subspace_section_by_pk(row_id: Int!): subspace_section
+  delete_subspace_user_group(
+    where: subspace_user_group_bool_exp!
+  ): subspace_user_group_mutation_response
+  delete_subspace_user_group_by_pk(row_id: Int!): subspace_user_group
+  delete_subspace_user_group_member(
+    where: subspace_user_group_member_bool_exp!
+  ): subspace_user_group_member_mutation_response
+  delete_subspace_user_permission(
+    where: subspace_user_permission_bool_exp!
+  ): subspace_user_permission_mutation_response
+  delete_subspace_user_permission_by_pk(row_id: Int!): subspace_user_permission
+  delete_user_block(where: user_block_bool_exp!): user_block_mutation_response
+  delete_user_relationship(
+    where: user_relationship_bool_exp!
+  ): user_relationship_mutation_response
+  insert_application_link(
+    objects: [application_link_insert_input!]!
+    on_conflict: application_link_on_conflict
+  ): application_link_mutation_response
+  insert_application_link_one(
+    object: application_link_insert_input!
+    on_conflict: application_link_on_conflict
+  ): application_link
+  insert_application_link_oracle_request(
+    objects: [application_link_oracle_request_insert_input!]!
+    on_conflict: application_link_oracle_request_on_conflict
+  ): application_link_oracle_request_mutation_response
+  insert_application_link_oracle_request_one(
+    object: application_link_oracle_request_insert_input!
+    on_conflict: application_link_oracle_request_on_conflict
+  ): application_link_oracle_request
+  insert_block(
+    objects: [block_insert_input!]!
+    on_conflict: block_on_conflict
+  ): block_mutation_response
+  insert_block_one(
+    object: block_insert_input!
+    on_conflict: block_on_conflict
+  ): block
+  insert_chain_link(
+    objects: [chain_link_insert_input!]!
+    on_conflict: chain_link_on_conflict
+  ): chain_link_mutation_response
+  insert_chain_link_chain_config(
+    objects: [chain_link_chain_config_insert_input!]!
+    on_conflict: chain_link_chain_config_on_conflict
+  ): chain_link_chain_config_mutation_response
+  insert_chain_link_chain_config_one(
+    object: chain_link_chain_config_insert_input!
+    on_conflict: chain_link_chain_config_on_conflict
+  ): chain_link_chain_config
+  insert_chain_link_one(
+    object: chain_link_insert_input!
+    on_conflict: chain_link_on_conflict
+  ): chain_link
+  insert_chain_link_proof(
+    objects: [chain_link_proof_insert_input!]!
+    on_conflict: chain_link_proof_on_conflict
+  ): chain_link_proof_mutation_response
+  insert_chain_link_proof_one(
+    object: chain_link_proof_insert_input!
+    on_conflict: chain_link_proof_on_conflict
+  ): chain_link_proof
+  insert_dtag_transfer_requests(
+    objects: [dtag_transfer_requests_insert_input!]!
+    on_conflict: dtag_transfer_requests_on_conflict
+  ): dtag_transfer_requests_mutation_response
+  insert_dtag_transfer_requests_one(
+    object: dtag_transfer_requests_insert_input!
+    on_conflict: dtag_transfer_requests_on_conflict
+  ): dtag_transfer_requests
+  insert_poll_answer(
+    objects: [poll_answer_insert_input!]!
+    on_conflict: poll_answer_on_conflict
+  ): poll_answer_mutation_response
+  insert_poll_answer_one(
+    object: poll_answer_insert_input!
+    on_conflict: poll_answer_on_conflict
+  ): poll_answer
+  insert_post(
+    objects: [post_insert_input!]!
+    on_conflict: post_on_conflict
+  ): post_mutation_response
+  insert_post_attachment(
+    objects: [post_attachment_insert_input!]!
+    on_conflict: post_attachment_on_conflict
+  ): post_attachment_mutation_response
+  insert_post_attachment_one(
+    object: post_attachment_insert_input!
+    on_conflict: post_attachment_on_conflict
+  ): post_attachment
+  insert_post_hashtag(
+    objects: [post_hashtag_insert_input!]!
+    on_conflict: post_hashtag_on_conflict
+  ): post_hashtag_mutation_response
+  insert_post_hashtag_one(
+    object: post_hashtag_insert_input!
+    on_conflict: post_hashtag_on_conflict
+  ): post_hashtag
+  insert_post_mention(
+    objects: [post_mention_insert_input!]!
+    on_conflict: post_mention_on_conflict
+  ): post_mention_mutation_response
+  insert_post_mention_one(
+    object: post_mention_insert_input!
+    on_conflict: post_mention_on_conflict
+  ): post_mention
+  insert_post_one(
+    object: post_insert_input!
+    on_conflict: post_on_conflict
+  ): post
+  insert_post_reference(
+    objects: [post_reference_insert_input!]!
+    on_conflict: post_reference_on_conflict
+  ): post_reference_mutation_response
+  insert_post_reference_one(
+    object: post_reference_insert_input!
+    on_conflict: post_reference_on_conflict
+  ): post_reference
+  insert_post_tag(
+    objects: [post_tag_insert_input!]!
+    on_conflict: post_tag_on_conflict
+  ): post_tag_mutation_response
+  insert_post_tag_one(
+    object: post_tag_insert_input!
+    on_conflict: post_tag_on_conflict
+  ): post_tag
+  insert_post_url(
+    objects: [post_url_insert_input!]!
+    on_conflict: post_url_on_conflict
+  ): post_url_mutation_response
+  insert_post_url_one(
+    object: post_url_insert_input!
+    on_conflict: post_url_on_conflict
+  ): post_url
+  insert_posts_params(
+    objects: [posts_params_insert_input!]!
+    on_conflict: posts_params_on_conflict
+  ): posts_params_mutation_response
+  insert_posts_params_one(
+    object: posts_params_insert_input!
+    on_conflict: posts_params_on_conflict
+  ): posts_params
+  insert_profile(
+    objects: [profile_insert_input!]!
+    on_conflict: profile_on_conflict
+  ): profile_mutation_response
+  insert_profile_one(
+    object: profile_insert_input!
+    on_conflict: profile_on_conflict
+  ): profile
+  insert_profiles_params(
+    objects: [profiles_params_insert_input!]!
+    on_conflict: profiles_params_on_conflict
+  ): profiles_params_mutation_response
+  insert_profiles_params_one(
+    object: profiles_params_insert_input!
+    on_conflict: profiles_params_on_conflict
+  ): profiles_params
+  insert_reaction(
+    objects: [reaction_insert_input!]!
+    on_conflict: reaction_on_conflict
+  ): reaction_mutation_response
+  insert_reaction_one(
+    object: reaction_insert_input!
+    on_conflict: reaction_on_conflict
+  ): reaction
+  insert_report(
+    objects: [report_insert_input!]!
+    on_conflict: report_on_conflict
+  ): report_mutation_response
+  insert_report_one(
+    object: report_insert_input!
+    on_conflict: report_on_conflict
+  ): report
+  insert_report_reason(
+    objects: [report_reason_insert_input!]!
+    on_conflict: report_reason_on_conflict
+  ): report_reason_mutation_response
+  insert_report_reason_one(
+    object: report_reason_insert_input!
+    on_conflict: report_reason_on_conflict
+  ): report_reason
+  insert_reports_params(
+    objects: [reports_params_insert_input!]!
+    on_conflict: reports_params_on_conflict
+  ): reports_params_mutation_response
+  insert_reports_params_one(
+    object: reports_params_insert_input!
+    on_conflict: reports_params_on_conflict
+  ): reports_params
+  insert_subspace(
+    objects: [subspace_insert_input!]!
+    on_conflict: subspace_on_conflict
+  ): subspace_mutation_response
+  insert_subspace_free_text_params(
+    objects: [subspace_free_text_params_insert_input!]!
+    on_conflict: subspace_free_text_params_on_conflict
+  ): subspace_free_text_params_mutation_response
+  insert_subspace_free_text_params_one(
+    object: subspace_free_text_params_insert_input!
+    on_conflict: subspace_free_text_params_on_conflict
+  ): subspace_free_text_params
+  insert_subspace_one(
+    object: subspace_insert_input!
+    on_conflict: subspace_on_conflict
+  ): subspace
+  insert_subspace_registered_reaction(
+    objects: [subspace_registered_reaction_insert_input!]!
+    on_conflict: subspace_registered_reaction_on_conflict
+  ): subspace_registered_reaction_mutation_response
+  insert_subspace_registered_reaction_one(
+    object: subspace_registered_reaction_insert_input!
+    on_conflict: subspace_registered_reaction_on_conflict
+  ): subspace_registered_reaction
+  insert_subspace_registered_reaction_params(
+    objects: [subspace_registered_reaction_params_insert_input!]!
+    on_conflict: subspace_registered_reaction_params_on_conflict
+  ): subspace_registered_reaction_params_mutation_response
+  insert_subspace_registered_reaction_params_one(
+    object: subspace_registered_reaction_params_insert_input!
+    on_conflict: subspace_registered_reaction_params_on_conflict
+  ): subspace_registered_reaction_params
+  insert_subspace_report_reason(
+    objects: [subspace_report_reason_insert_input!]!
+    on_conflict: subspace_report_reason_on_conflict
+  ): subspace_report_reason_mutation_response
+  insert_subspace_report_reason_one(
+    object: subspace_report_reason_insert_input!
+    on_conflict: subspace_report_reason_on_conflict
+  ): subspace_report_reason
+  insert_subspace_section(
+    objects: [subspace_section_insert_input!]!
+    on_conflict: subspace_section_on_conflict
+  ): subspace_section_mutation_response
+  insert_subspace_section_one(
+    object: subspace_section_insert_input!
+    on_conflict: subspace_section_on_conflict
+  ): subspace_section
+  insert_subspace_user_group(
+    objects: [subspace_user_group_insert_input!]!
+    on_conflict: subspace_user_group_on_conflict
+  ): subspace_user_group_mutation_response
+  insert_subspace_user_group_member(
+    objects: [subspace_user_group_member_insert_input!]!
+    on_conflict: subspace_user_group_member_on_conflict
+  ): subspace_user_group_member_mutation_response
+  insert_subspace_user_group_member_one(
+    object: subspace_user_group_member_insert_input!
+    on_conflict: subspace_user_group_member_on_conflict
+  ): subspace_user_group_member
+  insert_subspace_user_group_one(
+    object: subspace_user_group_insert_input!
+    on_conflict: subspace_user_group_on_conflict
+  ): subspace_user_group
+  insert_subspace_user_permission(
+    objects: [subspace_user_permission_insert_input!]!
+    on_conflict: subspace_user_permission_on_conflict
+  ): subspace_user_permission_mutation_response
+  insert_subspace_user_permission_one(
+    object: subspace_user_permission_insert_input!
+    on_conflict: subspace_user_permission_on_conflict
+  ): subspace_user_permission
+  insert_user_block(
+    objects: [user_block_insert_input!]!
+    on_conflict: user_block_on_conflict
+  ): user_block_mutation_response
+  insert_user_block_one(
+    object: user_block_insert_input!
+    on_conflict: user_block_on_conflict
+  ): user_block
+  insert_user_relationship(
+    objects: [user_relationship_insert_input!]!
+    on_conflict: user_relationship_on_conflict
+  ): user_relationship_mutation_response
+  insert_user_relationship_one(
+    object: user_relationship_insert_input!
+    on_conflict: user_relationship_on_conflict
+  ): user_relationship
+  update_application_link(
+    _append: application_link_append_input
+    _delete_at_path: application_link_delete_at_path_input
+    _delete_elem: application_link_delete_elem_input
+    _delete_key: application_link_delete_key_input
+    _inc: application_link_inc_input
+    _prepend: application_link_prepend_input
+    _set: application_link_set_input
+    where: application_link_bool_exp!
+  ): application_link_mutation_response
+  update_application_link_by_pk(
+    _append: application_link_append_input
+    _delete_at_path: application_link_delete_at_path_input
+    _delete_elem: application_link_delete_elem_input
+    _delete_key: application_link_delete_key_input
+    _inc: application_link_inc_input
+    _prepend: application_link_prepend_input
+    _set: application_link_set_input
+    pk_columns: application_link_pk_columns_input!
+  ): application_link
+  update_application_link_oracle_request(
+    _append: application_link_oracle_request_append_input
+    _delete_at_path: application_link_oracle_request_delete_at_path_input
+    _delete_elem: application_link_oracle_request_delete_elem_input
+    _delete_key: application_link_oracle_request_delete_key_input
+    _inc: application_link_oracle_request_inc_input
+    _prepend: application_link_oracle_request_prepend_input
+    _set: application_link_oracle_request_set_input
+    where: application_link_oracle_request_bool_exp!
+  ): application_link_oracle_request_mutation_response
+  update_application_link_oracle_request_by_pk(
+    _append: application_link_oracle_request_append_input
+    _delete_at_path: application_link_oracle_request_delete_at_path_input
+    _delete_elem: application_link_oracle_request_delete_elem_input
+    _delete_key: application_link_oracle_request_delete_key_input
+    _inc: application_link_oracle_request_inc_input
+    _prepend: application_link_oracle_request_prepend_input
+    _set: application_link_oracle_request_set_input
+    pk_columns: application_link_oracle_request_pk_columns_input!
+  ): application_link_oracle_request
+  update_block(
+    _inc: block_inc_input
+    _set: block_set_input
+    where: block_bool_exp!
+  ): block_mutation_response
+  update_block_by_pk(
+    _inc: block_inc_input
+    _set: block_set_input
+    pk_columns: block_pk_columns_input!
+  ): block
+  update_chain_link(
+    _inc: chain_link_inc_input
+    _set: chain_link_set_input
+    where: chain_link_bool_exp!
+  ): chain_link_mutation_response
+  update_chain_link_by_pk(
+    _inc: chain_link_inc_input
+    _set: chain_link_set_input
+    pk_columns: chain_link_pk_columns_input!
+  ): chain_link
+  update_chain_link_chain_config(
+    _inc: chain_link_chain_config_inc_input
+    _set: chain_link_chain_config_set_input
+    where: chain_link_chain_config_bool_exp!
+  ): chain_link_chain_config_mutation_response
+  update_chain_link_chain_config_by_pk(
+    _inc: chain_link_chain_config_inc_input
+    _set: chain_link_chain_config_set_input
+    pk_columns: chain_link_chain_config_pk_columns_input!
+  ): chain_link_chain_config
+  update_chain_link_proof(
+    _append: chain_link_proof_append_input
+    _delete_at_path: chain_link_proof_delete_at_path_input
+    _delete_elem: chain_link_proof_delete_elem_input
+    _delete_key: chain_link_proof_delete_key_input
+    _inc: chain_link_proof_inc_input
+    _prepend: chain_link_proof_prepend_input
+    _set: chain_link_proof_set_input
+    where: chain_link_proof_bool_exp!
+  ): chain_link_proof_mutation_response
+  update_dtag_transfer_requests(
+    _inc: dtag_transfer_requests_inc_input
+    _set: dtag_transfer_requests_set_input
+    where: dtag_transfer_requests_bool_exp!
+  ): dtag_transfer_requests_mutation_response
+  update_poll_answer(
+    _inc: poll_answer_inc_input
+    _set: poll_answer_set_input
+    where: poll_answer_bool_exp!
+  ): poll_answer_mutation_response
+  update_poll_answer_by_pk(
+    _inc: poll_answer_inc_input
+    _set: poll_answer_set_input
+    pk_columns: poll_answer_pk_columns_input!
+  ): poll_answer
+  update_post(
+    _inc: post_inc_input
+    _set: post_set_input
+    where: post_bool_exp!
+  ): post_mutation_response
+  update_post_attachment(
+    _append: post_attachment_append_input
+    _delete_at_path: post_attachment_delete_at_path_input
+    _delete_elem: post_attachment_delete_elem_input
+    _delete_key: post_attachment_delete_key_input
+    _inc: post_attachment_inc_input
+    _prepend: post_attachment_prepend_input
+    _set: post_attachment_set_input
+    where: post_attachment_bool_exp!
+  ): post_attachment_mutation_response
+  update_post_attachment_by_pk(
+    _append: post_attachment_append_input
+    _delete_at_path: post_attachment_delete_at_path_input
+    _delete_elem: post_attachment_delete_elem_input
+    _delete_key: post_attachment_delete_key_input
+    _inc: post_attachment_inc_input
+    _prepend: post_attachment_prepend_input
+    _set: post_attachment_set_input
+    pk_columns: post_attachment_pk_columns_input!
+  ): post_attachment
+  update_post_by_pk(
+    _inc: post_inc_input
+    _set: post_set_input
+    pk_columns: post_pk_columns_input!
+  ): post
+  update_post_hashtag(
+    _inc: post_hashtag_inc_input
+    _set: post_hashtag_set_input
+    where: post_hashtag_bool_exp!
+  ): post_hashtag_mutation_response
+  update_post_hashtag_by_pk(
+    _inc: post_hashtag_inc_input
+    _set: post_hashtag_set_input
+    pk_columns: post_hashtag_pk_columns_input!
+  ): post_hashtag
+  update_post_mention(
+    _inc: post_mention_inc_input
+    _set: post_mention_set_input
+    where: post_mention_bool_exp!
+  ): post_mention_mutation_response
+  update_post_mention_by_pk(
+    _inc: post_mention_inc_input
+    _set: post_mention_set_input
+    pk_columns: post_mention_pk_columns_input!
+  ): post_mention
+  update_post_reference(
+    _inc: post_reference_inc_input
+    _set: post_reference_set_input
+    where: post_reference_bool_exp!
+  ): post_reference_mutation_response
+  update_post_reference_by_pk(
+    _inc: post_reference_inc_input
+    _set: post_reference_set_input
+    pk_columns: post_reference_pk_columns_input!
+  ): post_reference
+  update_post_tag(
+    _inc: post_tag_inc_input
+    _set: post_tag_set_input
+    where: post_tag_bool_exp!
+  ): post_tag_mutation_response
+  update_post_tag_by_pk(
+    _inc: post_tag_inc_input
+    _set: post_tag_set_input
+    pk_columns: post_tag_pk_columns_input!
+  ): post_tag
+  update_post_url(
+    _inc: post_url_inc_input
+    _set: post_url_set_input
+    where: post_url_bool_exp!
+  ): post_url_mutation_response
+  update_post_url_by_pk(
+    _inc: post_url_inc_input
+    _set: post_url_set_input
+    pk_columns: post_url_pk_columns_input!
+  ): post_url
+  update_posts_params(
+    _append: posts_params_append_input
+    _delete_at_path: posts_params_delete_at_path_input
+    _delete_elem: posts_params_delete_elem_input
+    _delete_key: posts_params_delete_key_input
+    _inc: posts_params_inc_input
+    _prepend: posts_params_prepend_input
+    _set: posts_params_set_input
+    where: posts_params_bool_exp!
+  ): posts_params_mutation_response
+  update_posts_params_by_pk(
+    _append: posts_params_append_input
+    _delete_at_path: posts_params_delete_at_path_input
+    _delete_elem: posts_params_delete_elem_input
+    _delete_key: posts_params_delete_key_input
+    _inc: posts_params_inc_input
+    _prepend: posts_params_prepend_input
+    _set: posts_params_set_input
+    pk_columns: posts_params_pk_columns_input!
+  ): posts_params
+  update_profile(
+    _inc: profile_inc_input
+    _set: profile_set_input
+    where: profile_bool_exp!
+  ): profile_mutation_response
+  update_profile_by_pk(
+    _inc: profile_inc_input
+    _set: profile_set_input
+    pk_columns: profile_pk_columns_input!
+  ): profile
+  update_profiles_params(
+    _append: profiles_params_append_input
+    _delete_at_path: profiles_params_delete_at_path_input
+    _delete_elem: profiles_params_delete_elem_input
+    _delete_key: profiles_params_delete_key_input
+    _inc: profiles_params_inc_input
+    _prepend: profiles_params_prepend_input
+    _set: profiles_params_set_input
+    where: profiles_params_bool_exp!
+  ): profiles_params_mutation_response
+  update_profiles_params_by_pk(
+    _append: profiles_params_append_input
+    _delete_at_path: profiles_params_delete_at_path_input
+    _delete_elem: profiles_params_delete_elem_input
+    _delete_key: profiles_params_delete_key_input
+    _inc: profiles_params_inc_input
+    _prepend: profiles_params_prepend_input
+    _set: profiles_params_set_input
+    pk_columns: profiles_params_pk_columns_input!
+  ): profiles_params
+  update_reaction(
+    _append: reaction_append_input
+    _delete_at_path: reaction_delete_at_path_input
+    _delete_elem: reaction_delete_elem_input
+    _delete_key: reaction_delete_key_input
+    _inc: reaction_inc_input
+    _prepend: reaction_prepend_input
+    _set: reaction_set_input
+    where: reaction_bool_exp!
+  ): reaction_mutation_response
+  update_reaction_by_pk(
+    _append: reaction_append_input
+    _delete_at_path: reaction_delete_at_path_input
+    _delete_elem: reaction_delete_elem_input
+    _delete_key: reaction_delete_key_input
+    _inc: reaction_inc_input
+    _prepend: reaction_prepend_input
+    _set: reaction_set_input
+    pk_columns: reaction_pk_columns_input!
+  ): reaction
+  update_report(
+    _append: report_append_input
+    _delete_at_path: report_delete_at_path_input
+    _delete_elem: report_delete_elem_input
+    _delete_key: report_delete_key_input
+    _inc: report_inc_input
+    _prepend: report_prepend_input
+    _set: report_set_input
+    where: report_bool_exp!
+  ): report_mutation_response
+  update_report_by_pk(
+    _append: report_append_input
+    _delete_at_path: report_delete_at_path_input
+    _delete_elem: report_delete_elem_input
+    _delete_key: report_delete_key_input
+    _inc: report_inc_input
+    _prepend: report_prepend_input
+    _set: report_set_input
+    pk_columns: report_pk_columns_input!
+  ): report
+  update_report_reason(
+    _inc: report_reason_inc_input
+    _set: report_reason_set_input
+    where: report_reason_bool_exp!
+  ): report_reason_mutation_response
+  update_reports_params(
+    _append: reports_params_append_input
+    _delete_at_path: reports_params_delete_at_path_input
+    _delete_elem: reports_params_delete_elem_input
+    _delete_key: reports_params_delete_key_input
+    _inc: reports_params_inc_input
+    _prepend: reports_params_prepend_input
+    _set: reports_params_set_input
+    where: reports_params_bool_exp!
+  ): reports_params_mutation_response
+  update_reports_params_by_pk(
+    _append: reports_params_append_input
+    _delete_at_path: reports_params_delete_at_path_input
+    _delete_elem: reports_params_delete_elem_input
+    _delete_key: reports_params_delete_key_input
+    _inc: reports_params_inc_input
+    _prepend: reports_params_prepend_input
+    _set: reports_params_set_input
+    pk_columns: reports_params_pk_columns_input!
+  ): reports_params
+  update_subspace(
+    _inc: subspace_inc_input
+    _set: subspace_set_input
+    where: subspace_bool_exp!
+  ): subspace_mutation_response
+  update_subspace_by_pk(
+    _inc: subspace_inc_input
+    _set: subspace_set_input
+    pk_columns: subspace_pk_columns_input!
+  ): subspace
+  update_subspace_free_text_params(
+    _inc: subspace_free_text_params_inc_input
+    _set: subspace_free_text_params_set_input
+    where: subspace_free_text_params_bool_exp!
+  ): subspace_free_text_params_mutation_response
+  update_subspace_free_text_params_by_pk(
+    _inc: subspace_free_text_params_inc_input
+    _set: subspace_free_text_params_set_input
+    pk_columns: subspace_free_text_params_pk_columns_input!
+  ): subspace_free_text_params
+  update_subspace_registered_reaction(
+    _inc: subspace_registered_reaction_inc_input
+    _set: subspace_registered_reaction_set_input
+    where: subspace_registered_reaction_bool_exp!
+  ): subspace_registered_reaction_mutation_response
+  update_subspace_registered_reaction_by_pk(
+    _inc: subspace_registered_reaction_inc_input
+    _set: subspace_registered_reaction_set_input
+    pk_columns: subspace_registered_reaction_pk_columns_input!
+  ): subspace_registered_reaction
+  update_subspace_registered_reaction_params(
+    _inc: subspace_registered_reaction_params_inc_input
+    _set: subspace_registered_reaction_params_set_input
+    where: subspace_registered_reaction_params_bool_exp!
+  ): subspace_registered_reaction_params_mutation_response
+  update_subspace_registered_reaction_params_by_pk(
+    _inc: subspace_registered_reaction_params_inc_input
+    _set: subspace_registered_reaction_params_set_input
+    pk_columns: subspace_registered_reaction_params_pk_columns_input!
+  ): subspace_registered_reaction_params
+  update_subspace_report_reason(
+    _inc: subspace_report_reason_inc_input
+    _set: subspace_report_reason_set_input
+    where: subspace_report_reason_bool_exp!
+  ): subspace_report_reason_mutation_response
+  update_subspace_report_reason_by_pk(
+    _inc: subspace_report_reason_inc_input
+    _set: subspace_report_reason_set_input
+    pk_columns: subspace_report_reason_pk_columns_input!
+  ): subspace_report_reason
+  update_subspace_section(
+    _inc: subspace_section_inc_input
+    _set: subspace_section_set_input
+    where: subspace_section_bool_exp!
+  ): subspace_section_mutation_response
+  update_subspace_section_by_pk(
+    _inc: subspace_section_inc_input
+    _set: subspace_section_set_input
+    pk_columns: subspace_section_pk_columns_input!
+  ): subspace_section
+  update_subspace_user_group(
+    _inc: subspace_user_group_inc_input
+    _set: subspace_user_group_set_input
+    where: subspace_user_group_bool_exp!
+  ): subspace_user_group_mutation_response
+  update_subspace_user_group_by_pk(
+    _inc: subspace_user_group_inc_input
+    _set: subspace_user_group_set_input
+    pk_columns: subspace_user_group_pk_columns_input!
+  ): subspace_user_group
+  update_subspace_user_group_member(
+    _inc: subspace_user_group_member_inc_input
+    _set: subspace_user_group_member_set_input
+    where: subspace_user_group_member_bool_exp!
+  ): subspace_user_group_member_mutation_response
+  update_subspace_user_permission(
+    _inc: subspace_user_permission_inc_input
+    _set: subspace_user_permission_set_input
+    where: subspace_user_permission_bool_exp!
+  ): subspace_user_permission_mutation_response
+  update_subspace_user_permission_by_pk(
+    _inc: subspace_user_permission_inc_input
+    _set: subspace_user_permission_set_input
+    pk_columns: subspace_user_permission_pk_columns_input!
+  ): subspace_user_permission
+  update_user_block(
+    _inc: user_block_inc_input
+    _set: user_block_set_input
+    where: user_block_bool_exp!
+  ): user_block_mutation_response
+  update_user_relationship(
+    _inc: user_relationship_inc_input
+    _set: user_relationship_set_input
+    where: user_relationship_bool_exp!
+  ): user_relationship_mutation_response
+}
+```
+
+### Fields
+
+#### [`delete_application_link`](#) ([`application_link_mutation_response`](../objects/application-link-mutation-response))
+
+delete data from the table: "application_link"
+
+- ##### [`where`](#) ([`application_link_bool_exp!`](../inputs/application-link-bool-exp))
+
+filter the rows which have to be deleted
+
+#### [`delete_application_link_by_pk`](#) ([`application_link`](../objects/application-link))
+
+delete single row from the table: "application_link"
+
+- ##### [`id`](#) ([`Int!`](../scalars/int))
+
+#### [`delete_application_link_oracle_request`](#) ([`application_link_oracle_request_mutation_response`](../objects/application-link-oracle-request-mutation-response))
+
+delete data from the table: "application_link_oracle_request"
+
+- ##### [`where`](#) ([`application_link_oracle_request_bool_exp!`](../inputs/application-link-oracle-request-bool-exp))
+
+filter the rows which have to be deleted
+
+#### [`delete_application_link_oracle_request_by_pk`](#) ([`application_link_oracle_request`](../objects/application-link-oracle-request))
+
+delete single row from the table: "application_link_oracle_request"
+
+- ##### [`id`](#) ([`Int!`](../scalars/int))
+
+#### [`delete_block`](#) ([`block_mutation_response`](../objects/block-mutation-response))
+
+delete data from the table: "block"
+
+- ##### [`where`](#) ([`block_bool_exp!`](../inputs/block-bool-exp))
+
+filter the rows which have to be deleted
+
+#### [`delete_block_by_pk`](#) ([`block`](../objects/block))
+
+delete single row from the table: "block"
+
+- ##### [`height`](#) ([`bigint!`](../scalars/bigint))
+
+#### [`delete_chain_link`](#) ([`chain_link_mutation_response`](../objects/chain-link-mutation-response))
+
+delete data from the table: "chain_link"
+
+- ##### [`where`](#) ([`chain_link_bool_exp!`](../inputs/chain-link-bool-exp))
+
+filter the rows which have to be deleted
+
+#### [`delete_chain_link_by_pk`](#) ([`chain_link`](../objects/chain-link))
+
+delete single row from the table: "chain_link"
+
+- ##### [`id`](#) ([`Int!`](../scalars/int))
+
+#### [`delete_chain_link_chain_config`](#) ([`chain_link_chain_config_mutation_response`](../objects/chain-link-chain-config-mutation-response))
+
+delete data from the table: "chain_link_chain_config"
+
+- ##### [`where`](#) ([`chain_link_chain_config_bool_exp!`](../inputs/chain-link-chain-config-bool-exp))
+
+filter the rows which have to be deleted
+
+#### [`delete_chain_link_chain_config_by_pk`](#) ([`chain_link_chain_config`](../objects/chain-link-chain-config))
+
+delete single row from the table: "chain_link_chain_config"
+
+- ##### [`id`](#) ([`Int!`](../scalars/int))
+
+#### [`delete_chain_link_proof`](#) ([`chain_link_proof_mutation_response`](../objects/chain-link-proof-mutation-response))
+
+delete data from the table: "chain_link_proof"
+
+- ##### [`where`](#) ([`chain_link_proof_bool_exp!`](../inputs/chain-link-proof-bool-exp))
+
+filter the rows which have to be deleted
+
+#### [`delete_dtag_transfer_requests`](#) ([`dtag_transfer_requests_mutation_response`](../objects/dtag-transfer-requests-mutation-response))
+
+delete data from the table: "dtag_transfer_requests"
+
+- ##### [`where`](#) ([`dtag_transfer_requests_bool_exp!`](../inputs/dtag-transfer-requests-bool-exp))
+
+filter the rows which have to be deleted
+
+#### [`delete_poll_answer`](#) ([`poll_answer_mutation_response`](../objects/poll-answer-mutation-response))
+
+delete data from the table: "poll_answer"
+
+- ##### [`where`](#) ([`poll_answer_bool_exp!`](../inputs/poll-answer-bool-exp))
+
+filter the rows which have to be deleted
+
+#### [`delete_poll_answer_by_pk`](#) ([`poll_answer`](../objects/poll-answer))
+
+delete single row from the table: "poll_answer"
+
+- ##### [`row_id`](#) ([`Int!`](../scalars/int))
+
+#### [`delete_post`](#) ([`post_mutation_response`](../objects/post-mutation-response))
+
+delete data from the table: "post"
+
+- ##### [`where`](#) ([`post_bool_exp!`](../inputs/post-bool-exp))
+
+filter the rows which have to be deleted
+
+#### [`delete_post_attachment`](#) ([`post_attachment_mutation_response`](../objects/post-attachment-mutation-response))
+
+delete data from the table: "post_attachment"
+
+- ##### [`where`](#) ([`post_attachment_bool_exp!`](../inputs/post-attachment-bool-exp))
+
+filter the rows which have to be deleted
+
+#### [`delete_post_attachment_by_pk`](#) ([`post_attachment`](../objects/post-attachment))
+
+delete single row from the table: "post_attachment"
+
+- ##### [`row_id`](#) ([`Int!`](../scalars/int))
+
+#### [`delete_post_by_pk`](#) ([`post`](../objects/post))
+
+delete single row from the table: "post"
+
+- ##### [`row_id`](#) ([`Int!`](../scalars/int))
+
+#### [`delete_post_hashtag`](#) ([`post_hashtag_mutation_response`](../objects/post-hashtag-mutation-response))
+
+delete data from the table: "post_hashtag"
+
+- ##### [`where`](#) ([`post_hashtag_bool_exp!`](../inputs/post-hashtag-bool-exp))
+
+filter the rows which have to be deleted
+
+#### [`delete_post_hashtag_by_pk`](#) ([`post_hashtag`](../objects/post-hashtag))
+
+delete single row from the table: "post_hashtag"
+
+- ##### [`row_id`](#) ([`Int!`](../scalars/int))
+
+#### [`delete_post_mention`](#) ([`post_mention_mutation_response`](../objects/post-mention-mutation-response))
+
+delete data from the table: "post_mention"
+
+- ##### [`where`](#) ([`post_mention_bool_exp!`](../inputs/post-mention-bool-exp))
+
+filter the rows which have to be deleted
+
+#### [`delete_post_mention_by_pk`](#) ([`post_mention`](../objects/post-mention))
+
+delete single row from the table: "post_mention"
+
+- ##### [`row_id`](#) ([`Int!`](../scalars/int))
+
+#### [`delete_post_reference`](#) ([`post_reference_mutation_response`](../objects/post-reference-mutation-response))
+
+delete data from the table: "post_reference"
+
+- ##### [`where`](#) ([`post_reference_bool_exp!`](../inputs/post-reference-bool-exp))
+
+filter the rows which have to be deleted
+
+#### [`delete_post_reference_by_pk`](#) ([`post_reference`](../objects/post-reference))
+
+delete single row from the table: "post_reference"
+
+- ##### [`row_id`](#) ([`Int!`](../scalars/int))
+
+#### [`delete_post_tag`](#) ([`post_tag_mutation_response`](../objects/post-tag-mutation-response))
+
+delete data from the table: "post_tag"
+
+- ##### [`where`](#) ([`post_tag_bool_exp!`](../inputs/post-tag-bool-exp))
+
+filter the rows which have to be deleted
+
+#### [`delete_post_tag_by_pk`](#) ([`post_tag`](../objects/post-tag))
+
+delete single row from the table: "post_tag"
+
+- ##### [`row_id`](#) ([`Int!`](../scalars/int))
+
+#### [`delete_post_url`](#) ([`post_url_mutation_response`](../objects/post-url-mutation-response))
+
+delete data from the table: "post_url"
+
+- ##### [`where`](#) ([`post_url_bool_exp!`](../inputs/post-url-bool-exp))
+
+filter the rows which have to be deleted
+
+#### [`delete_post_url_by_pk`](#) ([`post_url`](../objects/post-url))
+
+delete single row from the table: "post_url"
+
+- ##### [`row_id`](#) ([`Int!`](../scalars/int))
+
+#### [`delete_posts_params`](#) ([`posts_params_mutation_response`](../objects/posts-params-mutation-response))
+
+delete data from the table: "posts_params"
+
+- ##### [`where`](#) ([`posts_params_bool_exp!`](../inputs/posts-params-bool-exp))
+
+filter the rows which have to be deleted
+
+#### [`delete_posts_params_by_pk`](#) ([`posts_params`](../objects/posts-params))
+
+delete single row from the table: "posts_params"
+
+- ##### [`one_row_id`](#) ([`Boolean!`](../scalars/boolean))
+
+#### [`delete_profile`](#) ([`profile_mutation_response`](../objects/profile-mutation-response))
+
+delete data from the table: "profile"
+
+- ##### [`where`](#) ([`profile_bool_exp!`](../inputs/profile-bool-exp))
+
+filter the rows which have to be deleted
+
+#### [`delete_profile_by_pk`](#) ([`profile`](../objects/profile))
+
+delete single row from the table: "profile"
+
+- ##### [`address`](#) ([`String!`](../scalars/string))
+
+#### [`delete_profiles_params`](#) ([`profiles_params_mutation_response`](../objects/profiles-params-mutation-response))
+
+delete data from the table: "profiles_params"
+
+- ##### [`where`](#) ([`profiles_params_bool_exp!`](../inputs/profiles-params-bool-exp))
+
+filter the rows which have to be deleted
+
+#### [`delete_profiles_params_by_pk`](#) ([`profiles_params`](../objects/profiles-params))
+
+delete single row from the table: "profiles_params"
+
+- ##### [`one_row_id`](#) ([`Boolean!`](../scalars/boolean))
+
+#### [`delete_reaction`](#) ([`reaction_mutation_response`](../objects/reaction-mutation-response))
+
+delete data from the table: "reaction"
+
+- ##### [`where`](#) ([`reaction_bool_exp!`](../inputs/reaction-bool-exp))
+
+filter the rows which have to be deleted
+
+#### [`delete_reaction_by_pk`](#) ([`reaction`](../objects/reaction))
+
+delete single row from the table: "reaction"
+
+- ##### [`row_id`](#) ([`Int!`](../scalars/int))
+
+#### [`delete_report`](#) ([`report_mutation_response`](../objects/report-mutation-response))
+
+delete data from the table: "report"
+
+- ##### [`where`](#) ([`report_bool_exp!`](../inputs/report-bool-exp))
+
+filter the rows which have to be deleted
+
+#### [`delete_report_by_pk`](#) ([`report`](../objects/report))
+
+delete single row from the table: "report"
+
+- ##### [`row_id`](#) ([`Int!`](../scalars/int))
+
+#### [`delete_report_reason`](#) ([`report_reason_mutation_response`](../objects/report-reason-mutation-response))
+
+delete data from the table: "report_reason"
+
+- ##### [`where`](#) ([`report_reason_bool_exp!`](../inputs/report-reason-bool-exp))
+
+filter the rows which have to be deleted
+
+#### [`delete_reports_params`](#) ([`reports_params_mutation_response`](../objects/reports-params-mutation-response))
+
+delete data from the table: "reports_params"
+
+- ##### [`where`](#) ([`reports_params_bool_exp!`](../inputs/reports-params-bool-exp))
+
+filter the rows which have to be deleted
+
+#### [`delete_reports_params_by_pk`](#) ([`reports_params`](../objects/reports-params))
+
+delete single row from the table: "reports_params"
+
+- ##### [`one_row_id`](#) ([`Boolean!`](../scalars/boolean))
+
+#### [`delete_subspace`](#) ([`subspace_mutation_response`](../objects/subspace-mutation-response))
+
+delete data from the table: "subspace"
+
+- ##### [`where`](#) ([`subspace_bool_exp!`](../inputs/subspace-bool-exp))
+
+filter the rows which have to be deleted
+
+#### [`delete_subspace_by_pk`](#) ([`subspace`](../objects/subspace))
+
+delete single row from the table: "subspace"
+
+- ##### [`id`](#) ([`bigint!`](../scalars/bigint))
+
+#### [`delete_subspace_free_text_params`](#) ([`subspace_free_text_params_mutation_response`](../objects/subspace-free-text-params-mutation-response))
+
+delete data from the table: "subspace_free_text_params"
+
+- ##### [`where`](#) ([`subspace_free_text_params_bool_exp!`](../inputs/subspace-free-text-params-bool-exp))
+
+filter the rows which have to be deleted
+
+#### [`delete_subspace_free_text_params_by_pk`](#) ([`subspace_free_text_params`](../objects/subspace-free-text-params))
+
+delete single row from the table: "subspace_free_text_params"
+
+- ##### [`subspace_id`](#) ([`bigint!`](../scalars/bigint))
+
+#### [`delete_subspace_registered_reaction`](#) ([`subspace_registered_reaction_mutation_response`](../objects/subspace-registered-reaction-mutation-response))
+
+delete data from the table: "subspace_registered_reaction"
+
+- ##### [`where`](#) ([`subspace_registered_reaction_bool_exp!`](../inputs/subspace-registered-reaction-bool-exp))
+
+filter the rows which have to be deleted
+
+#### [`delete_subspace_registered_reaction_by_pk`](#) ([`subspace_registered_reaction`](../objects/subspace-registered-reaction))
+
+delete single row from the table: "subspace_registered_reaction"
+
+- ##### [`row_id`](#) ([`Int!`](../scalars/int))
+
+#### [`delete_subspace_registered_reaction_params`](#) ([`subspace_registered_reaction_params_mutation_response`](../objects/subspace-registered-reaction-params-mutation-response))
+
+delete data from the table: "subspace_registered_reaction_params"
+
+- ##### [`where`](#) ([`subspace_registered_reaction_params_bool_exp!`](../inputs/subspace-registered-reaction-params-bool-exp))
+
+filter the rows which have to be deleted
+
+#### [`delete_subspace_registered_reaction_params_by_pk`](#) ([`subspace_registered_reaction_params`](../objects/subspace-registered-reaction-params))
+
+delete single row from the table: "subspace_registered_reaction_params"
+
+- ##### [`subspace_id`](#) ([`bigint!`](../scalars/bigint))
+
+#### [`delete_subspace_report_reason`](#) ([`subspace_report_reason_mutation_response`](../objects/subspace-report-reason-mutation-response))
+
+delete data from the table: "subspace_report_reason"
+
+- ##### [`where`](#) ([`subspace_report_reason_bool_exp!`](../inputs/subspace-report-reason-bool-exp))
+
+filter the rows which have to be deleted
+
+#### [`delete_subspace_report_reason_by_pk`](#) ([`subspace_report_reason`](../objects/subspace-report-reason))
+
+delete single row from the table: "subspace_report_reason"
+
+- ##### [`row_id`](#) ([`Int!`](../scalars/int))
+
+#### [`delete_subspace_section`](#) ([`subspace_section_mutation_response`](../objects/subspace-section-mutation-response))
+
+delete data from the table: "subspace_section"
+
+- ##### [`where`](#) ([`subspace_section_bool_exp!`](../inputs/subspace-section-bool-exp))
+
+filter the rows which have to be deleted
+
+#### [`delete_subspace_section_by_pk`](#) ([`subspace_section`](../objects/subspace-section))
+
+delete single row from the table: "subspace_section"
+
+- ##### [`row_id`](#) ([`Int!`](../scalars/int))
+
+#### [`delete_subspace_user_group`](#) ([`subspace_user_group_mutation_response`](../objects/subspace-user-group-mutation-response))
+
+delete data from the table: "subspace_user_group"
+
+- ##### [`where`](#) ([`subspace_user_group_bool_exp!`](../inputs/subspace-user-group-bool-exp))
+
+filter the rows which have to be deleted
+
+#### [`delete_subspace_user_group_by_pk`](#) ([`subspace_user_group`](../objects/subspace-user-group))
+
+delete single row from the table: "subspace_user_group"
+
+- ##### [`row_id`](#) ([`Int!`](../scalars/int))
+
+#### [`delete_subspace_user_group_member`](#) ([`subspace_user_group_member_mutation_response`](../objects/subspace-user-group-member-mutation-response))
+
+delete data from the table: "subspace_user_group_member"
+
+- ##### [`where`](#) ([`subspace_user_group_member_bool_exp!`](../inputs/subspace-user-group-member-bool-exp))
+
+filter the rows which have to be deleted
+
+#### [`delete_subspace_user_permission`](#) ([`subspace_user_permission_mutation_response`](../objects/subspace-user-permission-mutation-response))
+
+delete data from the table: "subspace_user_permission"
+
+- ##### [`where`](#) ([`subspace_user_permission_bool_exp!`](../inputs/subspace-user-permission-bool-exp))
+
+filter the rows which have to be deleted
+
+#### [`delete_subspace_user_permission_by_pk`](#) ([`subspace_user_permission`](../objects/subspace-user-permission))
+
+delete single row from the table: "subspace_user_permission"
+
+- ##### [`row_id`](#) ([`Int!`](../scalars/int))
+
+#### [`delete_user_block`](#) ([`user_block_mutation_response`](../objects/user-block-mutation-response))
+
+delete data from the table: "user_block"
+
+- ##### [`where`](#) ([`user_block_bool_exp!`](../inputs/user-block-bool-exp))
+
+filter the rows which have to be deleted
+
+#### [`delete_user_relationship`](#) ([`user_relationship_mutation_response`](../objects/user-relationship-mutation-response))
+
+delete data from the table: "user_relationship"
+
+- ##### [`where`](#) ([`user_relationship_bool_exp!`](../inputs/user-relationship-bool-exp))
+
+filter the rows which have to be deleted
+
+#### [`insert_application_link`](#) ([`application_link_mutation_response`](../objects/application-link-mutation-response))
+
+insert data into the table: "application_link"
+
+- ##### [`objects`](#) ([`[application_link_insert_input!]!`](../inputs/application-link-insert-input))
+
+the rows to be inserted
+
+- ##### [`on_conflict`](#) ([`application_link_on_conflict`](../inputs/application-link-on-conflict))
+
+on conflict condition
+
+#### [`insert_application_link_one`](#) ([`application_link`](../objects/application-link))
+
+insert a single row into the table: "application_link"
+
+- ##### [`object`](#) ([`application_link_insert_input!`](../inputs/application-link-insert-input))
+
+the row to be inserted
+
+- ##### [`on_conflict`](#) ([`application_link_on_conflict`](../inputs/application-link-on-conflict))
+
+on conflict condition
+
+#### [`insert_application_link_oracle_request`](#) ([`application_link_oracle_request_mutation_response`](../objects/application-link-oracle-request-mutation-response))
+
+insert data into the table: "application_link_oracle_request"
+
+- ##### [`objects`](#) ([`[application_link_oracle_request_insert_input!]!`](../inputs/application-link-oracle-request-insert-input))
+
+the rows to be inserted
+
+- ##### [`on_conflict`](#) ([`application_link_oracle_request_on_conflict`](../inputs/application-link-oracle-request-on-conflict))
+
+on conflict condition
+
+#### [`insert_application_link_oracle_request_one`](#) ([`application_link_oracle_request`](../objects/application-link-oracle-request))
+
+insert a single row into the table: "application_link_oracle_request"
+
+- ##### [`object`](#) ([`application_link_oracle_request_insert_input!`](../inputs/application-link-oracle-request-insert-input))
+
+the row to be inserted
+
+- ##### [`on_conflict`](#) ([`application_link_oracle_request_on_conflict`](../inputs/application-link-oracle-request-on-conflict))
+
+on conflict condition
+
+#### [`insert_block`](#) ([`block_mutation_response`](../objects/block-mutation-response))
+
+insert data into the table: "block"
+
+- ##### [`objects`](#) ([`[block_insert_input!]!`](../inputs/block-insert-input))
+
+the rows to be inserted
+
+- ##### [`on_conflict`](#) ([`block_on_conflict`](../inputs/block-on-conflict))
+
+on conflict condition
+
+#### [`insert_block_one`](#) ([`block`](../objects/block))
+
+insert a single row into the table: "block"
+
+- ##### [`object`](#) ([`block_insert_input!`](../inputs/block-insert-input))
+
+the row to be inserted
+
+- ##### [`on_conflict`](#) ([`block_on_conflict`](../inputs/block-on-conflict))
+
+on conflict condition
+
+#### [`insert_chain_link`](#) ([`chain_link_mutation_response`](../objects/chain-link-mutation-response))
+
+insert data into the table: "chain_link"
+
+- ##### [`objects`](#) ([`[chain_link_insert_input!]!`](../inputs/chain-link-insert-input))
+
+the rows to be inserted
+
+- ##### [`on_conflict`](#) ([`chain_link_on_conflict`](../inputs/chain-link-on-conflict))
+
+on conflict condition
+
+#### [`insert_chain_link_chain_config`](#) ([`chain_link_chain_config_mutation_response`](../objects/chain-link-chain-config-mutation-response))
+
+insert data into the table: "chain_link_chain_config"
+
+- ##### [`objects`](#) ([`[chain_link_chain_config_insert_input!]!`](../inputs/chain-link-chain-config-insert-input))
+
+the rows to be inserted
+
+- ##### [`on_conflict`](#) ([`chain_link_chain_config_on_conflict`](../inputs/chain-link-chain-config-on-conflict))
+
+on conflict condition
+
+#### [`insert_chain_link_chain_config_one`](#) ([`chain_link_chain_config`](../objects/chain-link-chain-config))
+
+insert a single row into the table: "chain_link_chain_config"
+
+- ##### [`object`](#) ([`chain_link_chain_config_insert_input!`](../inputs/chain-link-chain-config-insert-input))
+
+the row to be inserted
+
+- ##### [`on_conflict`](#) ([`chain_link_chain_config_on_conflict`](../inputs/chain-link-chain-config-on-conflict))
+
+on conflict condition
+
+#### [`insert_chain_link_one`](#) ([`chain_link`](../objects/chain-link))
+
+insert a single row into the table: "chain_link"
+
+- ##### [`object`](#) ([`chain_link_insert_input!`](../inputs/chain-link-insert-input))
+
+the row to be inserted
+
+- ##### [`on_conflict`](#) ([`chain_link_on_conflict`](../inputs/chain-link-on-conflict))
+
+on conflict condition
+
+#### [`insert_chain_link_proof`](#) ([`chain_link_proof_mutation_response`](../objects/chain-link-proof-mutation-response))
+
+insert data into the table: "chain_link_proof"
+
+- ##### [`objects`](#) ([`[chain_link_proof_insert_input!]!`](../inputs/chain-link-proof-insert-input))
+
+the rows to be inserted
+
+- ##### [`on_conflict`](#) ([`chain_link_proof_on_conflict`](../inputs/chain-link-proof-on-conflict))
+
+on conflict condition
+
+#### [`insert_chain_link_proof_one`](#) ([`chain_link_proof`](../objects/chain-link-proof))
+
+insert a single row into the table: "chain_link_proof"
+
+- ##### [`object`](#) ([`chain_link_proof_insert_input!`](../inputs/chain-link-proof-insert-input))
+
+the row to be inserted
+
+- ##### [`on_conflict`](#) ([`chain_link_proof_on_conflict`](../inputs/chain-link-proof-on-conflict))
+
+on conflict condition
+
+#### [`insert_dtag_transfer_requests`](#) ([`dtag_transfer_requests_mutation_response`](../objects/dtag-transfer-requests-mutation-response))
+
+insert data into the table: "dtag_transfer_requests"
+
+- ##### [`objects`](#) ([`[dtag_transfer_requests_insert_input!]!`](../inputs/dtag-transfer-requests-insert-input))
+
+the rows to be inserted
+
+- ##### [`on_conflict`](#) ([`dtag_transfer_requests_on_conflict`](../inputs/dtag-transfer-requests-on-conflict))
+
+on conflict condition
+
+#### [`insert_dtag_transfer_requests_one`](#) ([`dtag_transfer_requests`](../objects/dtag-transfer-requests))
+
+insert a single row into the table: "dtag_transfer_requests"
+
+- ##### [`object`](#) ([`dtag_transfer_requests_insert_input!`](../inputs/dtag-transfer-requests-insert-input))
+
+the row to be inserted
+
+- ##### [`on_conflict`](#) ([`dtag_transfer_requests_on_conflict`](../inputs/dtag-transfer-requests-on-conflict))
+
+on conflict condition
+
+#### [`insert_poll_answer`](#) ([`poll_answer_mutation_response`](../objects/poll-answer-mutation-response))
+
+insert data into the table: "poll_answer"
+
+- ##### [`objects`](#) ([`[poll_answer_insert_input!]!`](../inputs/poll-answer-insert-input))
+
+the rows to be inserted
+
+- ##### [`on_conflict`](#) ([`poll_answer_on_conflict`](../inputs/poll-answer-on-conflict))
+
+on conflict condition
+
+#### [`insert_poll_answer_one`](#) ([`poll_answer`](../objects/poll-answer))
+
+insert a single row into the table: "poll_answer"
+
+- ##### [`object`](#) ([`poll_answer_insert_input!`](../inputs/poll-answer-insert-input))
+
+the row to be inserted
+
+- ##### [`on_conflict`](#) ([`poll_answer_on_conflict`](../inputs/poll-answer-on-conflict))
+
+on conflict condition
+
+#### [`insert_post`](#) ([`post_mutation_response`](../objects/post-mutation-response))
+
+insert data into the table: "post"
+
+- ##### [`objects`](#) ([`[post_insert_input!]!`](../inputs/post-insert-input))
+
+the rows to be inserted
+
+- ##### [`on_conflict`](#) ([`post_on_conflict`](../inputs/post-on-conflict))
+
+on conflict condition
+
+#### [`insert_post_attachment`](#) ([`post_attachment_mutation_response`](../objects/post-attachment-mutation-response))
+
+insert data into the table: "post_attachment"
+
+- ##### [`objects`](#) ([`[post_attachment_insert_input!]!`](../inputs/post-attachment-insert-input))
+
+the rows to be inserted
+
+- ##### [`on_conflict`](#) ([`post_attachment_on_conflict`](../inputs/post-attachment-on-conflict))
+
+on conflict condition
+
+#### [`insert_post_attachment_one`](#) ([`post_attachment`](../objects/post-attachment))
+
+insert a single row into the table: "post_attachment"
+
+- ##### [`object`](#) ([`post_attachment_insert_input!`](../inputs/post-attachment-insert-input))
+
+the row to be inserted
+
+- ##### [`on_conflict`](#) ([`post_attachment_on_conflict`](../inputs/post-attachment-on-conflict))
+
+on conflict condition
+
+#### [`insert_post_hashtag`](#) ([`post_hashtag_mutation_response`](../objects/post-hashtag-mutation-response))
+
+insert data into the table: "post_hashtag"
+
+- ##### [`objects`](#) ([`[post_hashtag_insert_input!]!`](../inputs/post-hashtag-insert-input))
+
+the rows to be inserted
+
+- ##### [`on_conflict`](#) ([`post_hashtag_on_conflict`](../inputs/post-hashtag-on-conflict))
+
+on conflict condition
+
+#### [`insert_post_hashtag_one`](#) ([`post_hashtag`](../objects/post-hashtag))
+
+insert a single row into the table: "post_hashtag"
+
+- ##### [`object`](#) ([`post_hashtag_insert_input!`](../inputs/post-hashtag-insert-input))
+
+the row to be inserted
+
+- ##### [`on_conflict`](#) ([`post_hashtag_on_conflict`](../inputs/post-hashtag-on-conflict))
+
+on conflict condition
+
+#### [`insert_post_mention`](#) ([`post_mention_mutation_response`](../objects/post-mention-mutation-response))
+
+insert data into the table: "post_mention"
+
+- ##### [`objects`](#) ([`[post_mention_insert_input!]!`](../inputs/post-mention-insert-input))
+
+the rows to be inserted
+
+- ##### [`on_conflict`](#) ([`post_mention_on_conflict`](../inputs/post-mention-on-conflict))
+
+on conflict condition
+
+#### [`insert_post_mention_one`](#) ([`post_mention`](../objects/post-mention))
+
+insert a single row into the table: "post_mention"
+
+- ##### [`object`](#) ([`post_mention_insert_input!`](../inputs/post-mention-insert-input))
+
+the row to be inserted
+
+- ##### [`on_conflict`](#) ([`post_mention_on_conflict`](../inputs/post-mention-on-conflict))
+
+on conflict condition
+
+#### [`insert_post_one`](#) ([`post`](../objects/post))
+
+insert a single row into the table: "post"
+
+- ##### [`object`](#) ([`post_insert_input!`](../inputs/post-insert-input))
+
+the row to be inserted
+
+- ##### [`on_conflict`](#) ([`post_on_conflict`](../inputs/post-on-conflict))
+
+on conflict condition
+
+#### [`insert_post_reference`](#) ([`post_reference_mutation_response`](../objects/post-reference-mutation-response))
+
+insert data into the table: "post_reference"
+
+- ##### [`objects`](#) ([`[post_reference_insert_input!]!`](../inputs/post-reference-insert-input))
+
+the rows to be inserted
+
+- ##### [`on_conflict`](#) ([`post_reference_on_conflict`](../inputs/post-reference-on-conflict))
+
+on conflict condition
+
+#### [`insert_post_reference_one`](#) ([`post_reference`](../objects/post-reference))
+
+insert a single row into the table: "post_reference"
+
+- ##### [`object`](#) ([`post_reference_insert_input!`](../inputs/post-reference-insert-input))
+
+the row to be inserted
+
+- ##### [`on_conflict`](#) ([`post_reference_on_conflict`](../inputs/post-reference-on-conflict))
+
+on conflict condition
+
+#### [`insert_post_tag`](#) ([`post_tag_mutation_response`](../objects/post-tag-mutation-response))
+
+insert data into the table: "post_tag"
+
+- ##### [`objects`](#) ([`[post_tag_insert_input!]!`](../inputs/post-tag-insert-input))
+
+the rows to be inserted
+
+- ##### [`on_conflict`](#) ([`post_tag_on_conflict`](../inputs/post-tag-on-conflict))
+
+on conflict condition
+
+#### [`insert_post_tag_one`](#) ([`post_tag`](../objects/post-tag))
+
+insert a single row into the table: "post_tag"
+
+- ##### [`object`](#) ([`post_tag_insert_input!`](../inputs/post-tag-insert-input))
+
+the row to be inserted
+
+- ##### [`on_conflict`](#) ([`post_tag_on_conflict`](../inputs/post-tag-on-conflict))
+
+on conflict condition
+
+#### [`insert_post_url`](#) ([`post_url_mutation_response`](../objects/post-url-mutation-response))
+
+insert data into the table: "post_url"
+
+- ##### [`objects`](#) ([`[post_url_insert_input!]!`](../inputs/post-url-insert-input))
+
+the rows to be inserted
+
+- ##### [`on_conflict`](#) ([`post_url_on_conflict`](../inputs/post-url-on-conflict))
+
+on conflict condition
+
+#### [`insert_post_url_one`](#) ([`post_url`](../objects/post-url))
+
+insert a single row into the table: "post_url"
+
+- ##### [`object`](#) ([`post_url_insert_input!`](../inputs/post-url-insert-input))
+
+the row to be inserted
+
+- ##### [`on_conflict`](#) ([`post_url_on_conflict`](../inputs/post-url-on-conflict))
+
+on conflict condition
+
+#### [`insert_posts_params`](#) ([`posts_params_mutation_response`](../objects/posts-params-mutation-response))
+
+insert data into the table: "posts_params"
+
+- ##### [`objects`](#) ([`[posts_params_insert_input!]!`](../inputs/posts-params-insert-input))
+
+the rows to be inserted
+
+- ##### [`on_conflict`](#) ([`posts_params_on_conflict`](../inputs/posts-params-on-conflict))
+
+on conflict condition
+
+#### [`insert_posts_params_one`](#) ([`posts_params`](../objects/posts-params))
+
+insert a single row into the table: "posts_params"
+
+- ##### [`object`](#) ([`posts_params_insert_input!`](../inputs/posts-params-insert-input))
+
+the row to be inserted
+
+- ##### [`on_conflict`](#) ([`posts_params_on_conflict`](../inputs/posts-params-on-conflict))
+
+on conflict condition
+
+#### [`insert_profile`](#) ([`profile_mutation_response`](../objects/profile-mutation-response))
+
+insert data into the table: "profile"
+
+- ##### [`objects`](#) ([`[profile_insert_input!]!`](../inputs/profile-insert-input))
+
+the rows to be inserted
+
+- ##### [`on_conflict`](#) ([`profile_on_conflict`](../inputs/profile-on-conflict))
+
+on conflict condition
+
+#### [`insert_profile_one`](#) ([`profile`](../objects/profile))
+
+insert a single row into the table: "profile"
+
+- ##### [`object`](#) ([`profile_insert_input!`](../inputs/profile-insert-input))
+
+the row to be inserted
+
+- ##### [`on_conflict`](#) ([`profile_on_conflict`](../inputs/profile-on-conflict))
+
+on conflict condition
+
+#### [`insert_profiles_params`](#) ([`profiles_params_mutation_response`](../objects/profiles-params-mutation-response))
+
+insert data into the table: "profiles_params"
+
+- ##### [`objects`](#) ([`[profiles_params_insert_input!]!`](../inputs/profiles-params-insert-input))
+
+the rows to be inserted
+
+- ##### [`on_conflict`](#) ([`profiles_params_on_conflict`](../inputs/profiles-params-on-conflict))
+
+on conflict condition
+
+#### [`insert_profiles_params_one`](#) ([`profiles_params`](../objects/profiles-params))
+
+insert a single row into the table: "profiles_params"
+
+- ##### [`object`](#) ([`profiles_params_insert_input!`](../inputs/profiles-params-insert-input))
+
+the row to be inserted
+
+- ##### [`on_conflict`](#) ([`profiles_params_on_conflict`](../inputs/profiles-params-on-conflict))
+
+on conflict condition
+
+#### [`insert_reaction`](#) ([`reaction_mutation_response`](../objects/reaction-mutation-response))
+
+insert data into the table: "reaction"
+
+- ##### [`objects`](#) ([`[reaction_insert_input!]!`](../inputs/reaction-insert-input))
+
+the rows to be inserted
+
+- ##### [`on_conflict`](#) ([`reaction_on_conflict`](../inputs/reaction-on-conflict))
+
+on conflict condition
+
+#### [`insert_reaction_one`](#) ([`reaction`](../objects/reaction))
+
+insert a single row into the table: "reaction"
+
+- ##### [`object`](#) ([`reaction_insert_input!`](../inputs/reaction-insert-input))
+
+the row to be inserted
+
+- ##### [`on_conflict`](#) ([`reaction_on_conflict`](../inputs/reaction-on-conflict))
+
+on conflict condition
+
+#### [`insert_report`](#) ([`report_mutation_response`](../objects/report-mutation-response))
+
+insert data into the table: "report"
+
+- ##### [`objects`](#) ([`[report_insert_input!]!`](../inputs/report-insert-input))
+
+the rows to be inserted
+
+- ##### [`on_conflict`](#) ([`report_on_conflict`](../inputs/report-on-conflict))
+
+on conflict condition
+
+#### [`insert_report_one`](#) ([`report`](../objects/report))
+
+insert a single row into the table: "report"
+
+- ##### [`object`](#) ([`report_insert_input!`](../inputs/report-insert-input))
+
+the row to be inserted
+
+- ##### [`on_conflict`](#) ([`report_on_conflict`](../inputs/report-on-conflict))
+
+on conflict condition
+
+#### [`insert_report_reason`](#) ([`report_reason_mutation_response`](../objects/report-reason-mutation-response))
+
+insert data into the table: "report_reason"
+
+- ##### [`objects`](#) ([`[report_reason_insert_input!]!`](../inputs/report-reason-insert-input))
+
+the rows to be inserted
+
+- ##### [`on_conflict`](#) ([`report_reason_on_conflict`](../inputs/report-reason-on-conflict))
+
+on conflict condition
+
+#### [`insert_report_reason_one`](#) ([`report_reason`](../objects/report-reason))
+
+insert a single row into the table: "report_reason"
+
+- ##### [`object`](#) ([`report_reason_insert_input!`](../inputs/report-reason-insert-input))
+
+the row to be inserted
+
+- ##### [`on_conflict`](#) ([`report_reason_on_conflict`](../inputs/report-reason-on-conflict))
+
+on conflict condition
+
+#### [`insert_reports_params`](#) ([`reports_params_mutation_response`](../objects/reports-params-mutation-response))
+
+insert data into the table: "reports_params"
+
+- ##### [`objects`](#) ([`[reports_params_insert_input!]!`](../inputs/reports-params-insert-input))
+
+the rows to be inserted
+
+- ##### [`on_conflict`](#) ([`reports_params_on_conflict`](../inputs/reports-params-on-conflict))
+
+on conflict condition
+
+#### [`insert_reports_params_one`](#) ([`reports_params`](../objects/reports-params))
+
+insert a single row into the table: "reports_params"
+
+- ##### [`object`](#) ([`reports_params_insert_input!`](../inputs/reports-params-insert-input))
+
+the row to be inserted
+
+- ##### [`on_conflict`](#) ([`reports_params_on_conflict`](../inputs/reports-params-on-conflict))
+
+on conflict condition
+
+#### [`insert_subspace`](#) ([`subspace_mutation_response`](../objects/subspace-mutation-response))
+
+insert data into the table: "subspace"
+
+- ##### [`objects`](#) ([`[subspace_insert_input!]!`](../inputs/subspace-insert-input))
+
+the rows to be inserted
+
+- ##### [`on_conflict`](#) ([`subspace_on_conflict`](../inputs/subspace-on-conflict))
+
+on conflict condition
+
+#### [`insert_subspace_free_text_params`](#) ([`subspace_free_text_params_mutation_response`](../objects/subspace-free-text-params-mutation-response))
+
+insert data into the table: "subspace_free_text_params"
+
+- ##### [`objects`](#) ([`[subspace_free_text_params_insert_input!]!`](../inputs/subspace-free-text-params-insert-input))
+
+the rows to be inserted
+
+- ##### [`on_conflict`](#) ([`subspace_free_text_params_on_conflict`](../inputs/subspace-free-text-params-on-conflict))
+
+on conflict condition
+
+#### [`insert_subspace_free_text_params_one`](#) ([`subspace_free_text_params`](../objects/subspace-free-text-params))
+
+insert a single row into the table: "subspace_free_text_params"
+
+- ##### [`object`](#) ([`subspace_free_text_params_insert_input!`](../inputs/subspace-free-text-params-insert-input))
+
+the row to be inserted
+
+- ##### [`on_conflict`](#) ([`subspace_free_text_params_on_conflict`](../inputs/subspace-free-text-params-on-conflict))
+
+on conflict condition
+
+#### [`insert_subspace_one`](#) ([`subspace`](../objects/subspace))
+
+insert a single row into the table: "subspace"
+
+- ##### [`object`](#) ([`subspace_insert_input!`](../inputs/subspace-insert-input))
+
+the row to be inserted
+
+- ##### [`on_conflict`](#) ([`subspace_on_conflict`](../inputs/subspace-on-conflict))
+
+on conflict condition
+
+#### [`insert_subspace_registered_reaction`](#) ([`subspace_registered_reaction_mutation_response`](../objects/subspace-registered-reaction-mutation-response))
+
+insert data into the table: "subspace_registered_reaction"
+
+- ##### [`objects`](#) ([`[subspace_registered_reaction_insert_input!]!`](../inputs/subspace-registered-reaction-insert-input))
+
+the rows to be inserted
+
+- ##### [`on_conflict`](#) ([`subspace_registered_reaction_on_conflict`](../inputs/subspace-registered-reaction-on-conflict))
+
+on conflict condition
+
+#### [`insert_subspace_registered_reaction_one`](#) ([`subspace_registered_reaction`](../objects/subspace-registered-reaction))
+
+insert a single row into the table: "subspace_registered_reaction"
+
+- ##### [`object`](#) ([`subspace_registered_reaction_insert_input!`](../inputs/subspace-registered-reaction-insert-input))
+
+the row to be inserted
+
+- ##### [`on_conflict`](#) ([`subspace_registered_reaction_on_conflict`](../inputs/subspace-registered-reaction-on-conflict))
+
+on conflict condition
+
+#### [`insert_subspace_registered_reaction_params`](#) ([`subspace_registered_reaction_params_mutation_response`](../objects/subspace-registered-reaction-params-mutation-response))
+
+insert data into the table: "subspace_registered_reaction_params"
+
+- ##### [`objects`](#) ([`[subspace_registered_reaction_params_insert_input!]!`](../inputs/subspace-registered-reaction-params-insert-input))
+
+the rows to be inserted
+
+- ##### [`on_conflict`](#) ([`subspace_registered_reaction_params_on_conflict`](../inputs/subspace-registered-reaction-params-on-conflict))
+
+on conflict condition
+
+#### [`insert_subspace_registered_reaction_params_one`](#) ([`subspace_registered_reaction_params`](../objects/subspace-registered-reaction-params))
+
+insert a single row into the table: "subspace_registered_reaction_params"
+
+- ##### [`object`](#) ([`subspace_registered_reaction_params_insert_input!`](../inputs/subspace-registered-reaction-params-insert-input))
+
+the row to be inserted
+
+- ##### [`on_conflict`](#) ([`subspace_registered_reaction_params_on_conflict`](../inputs/subspace-registered-reaction-params-on-conflict))
+
+on conflict condition
+
+#### [`insert_subspace_report_reason`](#) ([`subspace_report_reason_mutation_response`](../objects/subspace-report-reason-mutation-response))
+
+insert data into the table: "subspace_report_reason"
+
+- ##### [`objects`](#) ([`[subspace_report_reason_insert_input!]!`](../inputs/subspace-report-reason-insert-input))
+
+the rows to be inserted
+
+- ##### [`on_conflict`](#) ([`subspace_report_reason_on_conflict`](../inputs/subspace-report-reason-on-conflict))
+
+on conflict condition
+
+#### [`insert_subspace_report_reason_one`](#) ([`subspace_report_reason`](../objects/subspace-report-reason))
+
+insert a single row into the table: "subspace_report_reason"
+
+- ##### [`object`](#) ([`subspace_report_reason_insert_input!`](../inputs/subspace-report-reason-insert-input))
+
+the row to be inserted
+
+- ##### [`on_conflict`](#) ([`subspace_report_reason_on_conflict`](../inputs/subspace-report-reason-on-conflict))
+
+on conflict condition
+
+#### [`insert_subspace_section`](#) ([`subspace_section_mutation_response`](../objects/subspace-section-mutation-response))
+
+insert data into the table: "subspace_section"
+
+- ##### [`objects`](#) ([`[subspace_section_insert_input!]!`](../inputs/subspace-section-insert-input))
+
+the rows to be inserted
+
+- ##### [`on_conflict`](#) ([`subspace_section_on_conflict`](../inputs/subspace-section-on-conflict))
+
+on conflict condition
+
+#### [`insert_subspace_section_one`](#) ([`subspace_section`](../objects/subspace-section))
+
+insert a single row into the table: "subspace_section"
+
+- ##### [`object`](#) ([`subspace_section_insert_input!`](../inputs/subspace-section-insert-input))
+
+the row to be inserted
+
+- ##### [`on_conflict`](#) ([`subspace_section_on_conflict`](../inputs/subspace-section-on-conflict))
+
+on conflict condition
+
+#### [`insert_subspace_user_group`](#) ([`subspace_user_group_mutation_response`](../objects/subspace-user-group-mutation-response))
+
+insert data into the table: "subspace_user_group"
+
+- ##### [`objects`](#) ([`[subspace_user_group_insert_input!]!`](../inputs/subspace-user-group-insert-input))
+
+the rows to be inserted
+
+- ##### [`on_conflict`](#) ([`subspace_user_group_on_conflict`](../inputs/subspace-user-group-on-conflict))
+
+on conflict condition
+
+#### [`insert_subspace_user_group_member`](#) ([`subspace_user_group_member_mutation_response`](../objects/subspace-user-group-member-mutation-response))
+
+insert data into the table: "subspace_user_group_member"
+
+- ##### [`objects`](#) ([`[subspace_user_group_member_insert_input!]!`](../inputs/subspace-user-group-member-insert-input))
+
+the rows to be inserted
+
+- ##### [`on_conflict`](#) ([`subspace_user_group_member_on_conflict`](../inputs/subspace-user-group-member-on-conflict))
+
+on conflict condition
+
+#### [`insert_subspace_user_group_member_one`](#) ([`subspace_user_group_member`](../objects/subspace-user-group-member))
+
+insert a single row into the table: "subspace_user_group_member"
+
+- ##### [`object`](#) ([`subspace_user_group_member_insert_input!`](../inputs/subspace-user-group-member-insert-input))
+
+the row to be inserted
+
+- ##### [`on_conflict`](#) ([`subspace_user_group_member_on_conflict`](../inputs/subspace-user-group-member-on-conflict))
+
+on conflict condition
+
+#### [`insert_subspace_user_group_one`](#) ([`subspace_user_group`](../objects/subspace-user-group))
+
+insert a single row into the table: "subspace_user_group"
+
+- ##### [`object`](#) ([`subspace_user_group_insert_input!`](../inputs/subspace-user-group-insert-input))
+
+the row to be inserted
+
+- ##### [`on_conflict`](#) ([`subspace_user_group_on_conflict`](../inputs/subspace-user-group-on-conflict))
+
+on conflict condition
+
+#### [`insert_subspace_user_permission`](#) ([`subspace_user_permission_mutation_response`](../objects/subspace-user-permission-mutation-response))
+
+insert data into the table: "subspace_user_permission"
+
+- ##### [`objects`](#) ([`[subspace_user_permission_insert_input!]!`](../inputs/subspace-user-permission-insert-input))
+
+the rows to be inserted
+
+- ##### [`on_conflict`](#) ([`subspace_user_permission_on_conflict`](../inputs/subspace-user-permission-on-conflict))
+
+on conflict condition
+
+#### [`insert_subspace_user_permission_one`](#) ([`subspace_user_permission`](../objects/subspace-user-permission))
+
+insert a single row into the table: "subspace_user_permission"
+
+- ##### [`object`](#) ([`subspace_user_permission_insert_input!`](../inputs/subspace-user-permission-insert-input))
+
+the row to be inserted
+
+- ##### [`on_conflict`](#) ([`subspace_user_permission_on_conflict`](../inputs/subspace-user-permission-on-conflict))
+
+on conflict condition
+
+#### [`insert_user_block`](#) ([`user_block_mutation_response`](../objects/user-block-mutation-response))
+
+insert data into the table: "user_block"
+
+- ##### [`objects`](#) ([`[user_block_insert_input!]!`](../inputs/user-block-insert-input))
+
+the rows to be inserted
+
+- ##### [`on_conflict`](#) ([`user_block_on_conflict`](../inputs/user-block-on-conflict))
+
+on conflict condition
+
+#### [`insert_user_block_one`](#) ([`user_block`](../objects/user-block))
+
+insert a single row into the table: "user_block"
+
+- ##### [`object`](#) ([`user_block_insert_input!`](../inputs/user-block-insert-input))
+
+the row to be inserted
+
+- ##### [`on_conflict`](#) ([`user_block_on_conflict`](../inputs/user-block-on-conflict))
+
+on conflict condition
+
+#### [`insert_user_relationship`](#) ([`user_relationship_mutation_response`](../objects/user-relationship-mutation-response))
+
+insert data into the table: "user_relationship"
+
+- ##### [`objects`](#) ([`[user_relationship_insert_input!]!`](../inputs/user-relationship-insert-input))
+
+the rows to be inserted
+
+- ##### [`on_conflict`](#) ([`user_relationship_on_conflict`](../inputs/user-relationship-on-conflict))
+
+on conflict condition
+
+#### [`insert_user_relationship_one`](#) ([`user_relationship`](../objects/user-relationship))
+
+insert a single row into the table: "user_relationship"
+
+- ##### [`object`](#) ([`user_relationship_insert_input!`](../inputs/user-relationship-insert-input))
+
+the row to be inserted
+
+- ##### [`on_conflict`](#) ([`user_relationship_on_conflict`](../inputs/user-relationship-on-conflict))
+
+on conflict condition
+
+#### [`update_application_link`](#) ([`application_link_mutation_response`](../objects/application-link-mutation-response))
+
+update data of the table: "application_link"
+
+- ##### [`_append`](#) ([`application_link_append_input`](../inputs/application-link-append-input))
+
+append existing jsonb value of filtered columns with new jsonb value
+
+- ##### [`_delete_at_path`](#) ([`application_link_delete_at_path_input`](../inputs/application-link-delete-at-path-input))
+
+delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+
+- ##### [`_delete_elem`](#) ([`application_link_delete_elem_input`](../inputs/application-link-delete-elem-input))
+
+delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+
+- ##### [`_delete_key`](#) ([`application_link_delete_key_input`](../inputs/application-link-delete-key-input))
+
+delete key/value pair or string element. key/value pairs are matched based on their key value
+
+- ##### [`_inc`](#) ([`application_link_inc_input`](../inputs/application-link-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_prepend`](#) ([`application_link_prepend_input`](../inputs/application-link-prepend-input))
+
+prepend existing jsonb value of filtered columns with new jsonb value
+
+- ##### [`_set`](#) ([`application_link_set_input`](../inputs/application-link-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`where`](#) ([`application_link_bool_exp!`](../inputs/application-link-bool-exp))
+
+filter the rows which have to be updated
+
+#### [`update_application_link_by_pk`](#) ([`application_link`](../objects/application-link))
+
+update single row of the table: "application_link"
+
+- ##### [`_append`](#) ([`application_link_append_input`](../inputs/application-link-append-input))
+
+append existing jsonb value of filtered columns with new jsonb value
+
+- ##### [`_delete_at_path`](#) ([`application_link_delete_at_path_input`](../inputs/application-link-delete-at-path-input))
+
+delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+
+- ##### [`_delete_elem`](#) ([`application_link_delete_elem_input`](../inputs/application-link-delete-elem-input))
+
+delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+
+- ##### [`_delete_key`](#) ([`application_link_delete_key_input`](../inputs/application-link-delete-key-input))
+
+delete key/value pair or string element. key/value pairs are matched based on their key value
+
+- ##### [`_inc`](#) ([`application_link_inc_input`](../inputs/application-link-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_prepend`](#) ([`application_link_prepend_input`](../inputs/application-link-prepend-input))
+
+prepend existing jsonb value of filtered columns with new jsonb value
+
+- ##### [`_set`](#) ([`application_link_set_input`](../inputs/application-link-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`pk_columns`](#) ([`application_link_pk_columns_input!`](../inputs/application-link-pk-columns-input))
+
+#### [`update_application_link_oracle_request`](#) ([`application_link_oracle_request_mutation_response`](../objects/application-link-oracle-request-mutation-response))
+
+update data of the table: "application_link_oracle_request"
+
+- ##### [`_append`](#) ([`application_link_oracle_request_append_input`](../inputs/application-link-oracle-request-append-input))
+
+append existing jsonb value of filtered columns with new jsonb value
+
+- ##### [`_delete_at_path`](#) ([`application_link_oracle_request_delete_at_path_input`](../inputs/application-link-oracle-request-delete-at-path-input))
+
+delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+
+- ##### [`_delete_elem`](#) ([`application_link_oracle_request_delete_elem_input`](../inputs/application-link-oracle-request-delete-elem-input))
+
+delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+
+- ##### [`_delete_key`](#) ([`application_link_oracle_request_delete_key_input`](../inputs/application-link-oracle-request-delete-key-input))
+
+delete key/value pair or string element. key/value pairs are matched based on their key value
+
+- ##### [`_inc`](#) ([`application_link_oracle_request_inc_input`](../inputs/application-link-oracle-request-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_prepend`](#) ([`application_link_oracle_request_prepend_input`](../inputs/application-link-oracle-request-prepend-input))
+
+prepend existing jsonb value of filtered columns with new jsonb value
+
+- ##### [`_set`](#) ([`application_link_oracle_request_set_input`](../inputs/application-link-oracle-request-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`where`](#) ([`application_link_oracle_request_bool_exp!`](../inputs/application-link-oracle-request-bool-exp))
+
+filter the rows which have to be updated
+
+#### [`update_application_link_oracle_request_by_pk`](#) ([`application_link_oracle_request`](../objects/application-link-oracle-request))
+
+update single row of the table: "application_link_oracle_request"
+
+- ##### [`_append`](#) ([`application_link_oracle_request_append_input`](../inputs/application-link-oracle-request-append-input))
+
+append existing jsonb value of filtered columns with new jsonb value
+
+- ##### [`_delete_at_path`](#) ([`application_link_oracle_request_delete_at_path_input`](../inputs/application-link-oracle-request-delete-at-path-input))
+
+delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+
+- ##### [`_delete_elem`](#) ([`application_link_oracle_request_delete_elem_input`](../inputs/application-link-oracle-request-delete-elem-input))
+
+delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+
+- ##### [`_delete_key`](#) ([`application_link_oracle_request_delete_key_input`](../inputs/application-link-oracle-request-delete-key-input))
+
+delete key/value pair or string element. key/value pairs are matched based on their key value
+
+- ##### [`_inc`](#) ([`application_link_oracle_request_inc_input`](../inputs/application-link-oracle-request-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_prepend`](#) ([`application_link_oracle_request_prepend_input`](../inputs/application-link-oracle-request-prepend-input))
+
+prepend existing jsonb value of filtered columns with new jsonb value
+
+- ##### [`_set`](#) ([`application_link_oracle_request_set_input`](../inputs/application-link-oracle-request-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`pk_columns`](#) ([`application_link_oracle_request_pk_columns_input!`](../inputs/application-link-oracle-request-pk-columns-input))
+
+#### [`update_block`](#) ([`block_mutation_response`](../objects/block-mutation-response))
+
+update data of the table: "block"
+
+- ##### [`_inc`](#) ([`block_inc_input`](../inputs/block-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_set`](#) ([`block_set_input`](../inputs/block-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`where`](#) ([`block_bool_exp!`](../inputs/block-bool-exp))
+
+filter the rows which have to be updated
+
+#### [`update_block_by_pk`](#) ([`block`](../objects/block))
+
+update single row of the table: "block"
+
+- ##### [`_inc`](#) ([`block_inc_input`](../inputs/block-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_set`](#) ([`block_set_input`](../inputs/block-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`pk_columns`](#) ([`block_pk_columns_input!`](../inputs/block-pk-columns-input))
+
+#### [`update_chain_link`](#) ([`chain_link_mutation_response`](../objects/chain-link-mutation-response))
+
+update data of the table: "chain_link"
+
+- ##### [`_inc`](#) ([`chain_link_inc_input`](../inputs/chain-link-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_set`](#) ([`chain_link_set_input`](../inputs/chain-link-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`where`](#) ([`chain_link_bool_exp!`](../inputs/chain-link-bool-exp))
+
+filter the rows which have to be updated
+
+#### [`update_chain_link_by_pk`](#) ([`chain_link`](../objects/chain-link))
+
+update single row of the table: "chain_link"
+
+- ##### [`_inc`](#) ([`chain_link_inc_input`](../inputs/chain-link-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_set`](#) ([`chain_link_set_input`](../inputs/chain-link-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`pk_columns`](#) ([`chain_link_pk_columns_input!`](../inputs/chain-link-pk-columns-input))
+
+#### [`update_chain_link_chain_config`](#) ([`chain_link_chain_config_mutation_response`](../objects/chain-link-chain-config-mutation-response))
+
+update data of the table: "chain_link_chain_config"
+
+- ##### [`_inc`](#) ([`chain_link_chain_config_inc_input`](../inputs/chain-link-chain-config-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_set`](#) ([`chain_link_chain_config_set_input`](../inputs/chain-link-chain-config-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`where`](#) ([`chain_link_chain_config_bool_exp!`](../inputs/chain-link-chain-config-bool-exp))
+
+filter the rows which have to be updated
+
+#### [`update_chain_link_chain_config_by_pk`](#) ([`chain_link_chain_config`](../objects/chain-link-chain-config))
+
+update single row of the table: "chain_link_chain_config"
+
+- ##### [`_inc`](#) ([`chain_link_chain_config_inc_input`](../inputs/chain-link-chain-config-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_set`](#) ([`chain_link_chain_config_set_input`](../inputs/chain-link-chain-config-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`pk_columns`](#) ([`chain_link_chain_config_pk_columns_input!`](../inputs/chain-link-chain-config-pk-columns-input))
+
+#### [`update_chain_link_proof`](#) ([`chain_link_proof_mutation_response`](../objects/chain-link-proof-mutation-response))
+
+update data of the table: "chain_link_proof"
+
+- ##### [`_append`](#) ([`chain_link_proof_append_input`](../inputs/chain-link-proof-append-input))
+
+append existing jsonb value of filtered columns with new jsonb value
+
+- ##### [`_delete_at_path`](#) ([`chain_link_proof_delete_at_path_input`](../inputs/chain-link-proof-delete-at-path-input))
+
+delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+
+- ##### [`_delete_elem`](#) ([`chain_link_proof_delete_elem_input`](../inputs/chain-link-proof-delete-elem-input))
+
+delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+
+- ##### [`_delete_key`](#) ([`chain_link_proof_delete_key_input`](../inputs/chain-link-proof-delete-key-input))
+
+delete key/value pair or string element. key/value pairs are matched based on their key value
+
+- ##### [`_inc`](#) ([`chain_link_proof_inc_input`](../inputs/chain-link-proof-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_prepend`](#) ([`chain_link_proof_prepend_input`](../inputs/chain-link-proof-prepend-input))
+
+prepend existing jsonb value of filtered columns with new jsonb value
+
+- ##### [`_set`](#) ([`chain_link_proof_set_input`](../inputs/chain-link-proof-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`where`](#) ([`chain_link_proof_bool_exp!`](../inputs/chain-link-proof-bool-exp))
+
+filter the rows which have to be updated
+
+#### [`update_dtag_transfer_requests`](#) ([`dtag_transfer_requests_mutation_response`](../objects/dtag-transfer-requests-mutation-response))
+
+update data of the table: "dtag_transfer_requests"
+
+- ##### [`_inc`](#) ([`dtag_transfer_requests_inc_input`](../inputs/dtag-transfer-requests-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_set`](#) ([`dtag_transfer_requests_set_input`](../inputs/dtag-transfer-requests-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`where`](#) ([`dtag_transfer_requests_bool_exp!`](../inputs/dtag-transfer-requests-bool-exp))
+
+filter the rows which have to be updated
+
+#### [`update_poll_answer`](#) ([`poll_answer_mutation_response`](../objects/poll-answer-mutation-response))
+
+update data of the table: "poll_answer"
+
+- ##### [`_inc`](#) ([`poll_answer_inc_input`](../inputs/poll-answer-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_set`](#) ([`poll_answer_set_input`](../inputs/poll-answer-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`where`](#) ([`poll_answer_bool_exp!`](../inputs/poll-answer-bool-exp))
+
+filter the rows which have to be updated
+
+#### [`update_poll_answer_by_pk`](#) ([`poll_answer`](../objects/poll-answer))
+
+update single row of the table: "poll_answer"
+
+- ##### [`_inc`](#) ([`poll_answer_inc_input`](../inputs/poll-answer-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_set`](#) ([`poll_answer_set_input`](../inputs/poll-answer-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`pk_columns`](#) ([`poll_answer_pk_columns_input!`](../inputs/poll-answer-pk-columns-input))
+
+#### [`update_post`](#) ([`post_mutation_response`](../objects/post-mutation-response))
+
+update data of the table: "post"
+
+- ##### [`_inc`](#) ([`post_inc_input`](../inputs/post-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_set`](#) ([`post_set_input`](../inputs/post-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`where`](#) ([`post_bool_exp!`](../inputs/post-bool-exp))
+
+filter the rows which have to be updated
+
+#### [`update_post_attachment`](#) ([`post_attachment_mutation_response`](../objects/post-attachment-mutation-response))
+
+update data of the table: "post_attachment"
+
+- ##### [`_append`](#) ([`post_attachment_append_input`](../inputs/post-attachment-append-input))
+
+append existing jsonb value of filtered columns with new jsonb value
+
+- ##### [`_delete_at_path`](#) ([`post_attachment_delete_at_path_input`](../inputs/post-attachment-delete-at-path-input))
+
+delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+
+- ##### [`_delete_elem`](#) ([`post_attachment_delete_elem_input`](../inputs/post-attachment-delete-elem-input))
+
+delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+
+- ##### [`_delete_key`](#) ([`post_attachment_delete_key_input`](../inputs/post-attachment-delete-key-input))
+
+delete key/value pair or string element. key/value pairs are matched based on their key value
+
+- ##### [`_inc`](#) ([`post_attachment_inc_input`](../inputs/post-attachment-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_prepend`](#) ([`post_attachment_prepend_input`](../inputs/post-attachment-prepend-input))
+
+prepend existing jsonb value of filtered columns with new jsonb value
+
+- ##### [`_set`](#) ([`post_attachment_set_input`](../inputs/post-attachment-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`where`](#) ([`post_attachment_bool_exp!`](../inputs/post-attachment-bool-exp))
+
+filter the rows which have to be updated
+
+#### [`update_post_attachment_by_pk`](#) ([`post_attachment`](../objects/post-attachment))
+
+update single row of the table: "post_attachment"
+
+- ##### [`_append`](#) ([`post_attachment_append_input`](../inputs/post-attachment-append-input))
+
+append existing jsonb value of filtered columns with new jsonb value
+
+- ##### [`_delete_at_path`](#) ([`post_attachment_delete_at_path_input`](../inputs/post-attachment-delete-at-path-input))
+
+delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+
+- ##### [`_delete_elem`](#) ([`post_attachment_delete_elem_input`](../inputs/post-attachment-delete-elem-input))
+
+delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+
+- ##### [`_delete_key`](#) ([`post_attachment_delete_key_input`](../inputs/post-attachment-delete-key-input))
+
+delete key/value pair or string element. key/value pairs are matched based on their key value
+
+- ##### [`_inc`](#) ([`post_attachment_inc_input`](../inputs/post-attachment-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_prepend`](#) ([`post_attachment_prepend_input`](../inputs/post-attachment-prepend-input))
+
+prepend existing jsonb value of filtered columns with new jsonb value
+
+- ##### [`_set`](#) ([`post_attachment_set_input`](../inputs/post-attachment-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`pk_columns`](#) ([`post_attachment_pk_columns_input!`](../inputs/post-attachment-pk-columns-input))
+
+#### [`update_post_by_pk`](#) ([`post`](../objects/post))
+
+update single row of the table: "post"
+
+- ##### [`_inc`](#) ([`post_inc_input`](../inputs/post-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_set`](#) ([`post_set_input`](../inputs/post-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`pk_columns`](#) ([`post_pk_columns_input!`](../inputs/post-pk-columns-input))
+
+#### [`update_post_hashtag`](#) ([`post_hashtag_mutation_response`](../objects/post-hashtag-mutation-response))
+
+update data of the table: "post_hashtag"
+
+- ##### [`_inc`](#) ([`post_hashtag_inc_input`](../inputs/post-hashtag-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_set`](#) ([`post_hashtag_set_input`](../inputs/post-hashtag-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`where`](#) ([`post_hashtag_bool_exp!`](../inputs/post-hashtag-bool-exp))
+
+filter the rows which have to be updated
+
+#### [`update_post_hashtag_by_pk`](#) ([`post_hashtag`](../objects/post-hashtag))
+
+update single row of the table: "post_hashtag"
+
+- ##### [`_inc`](#) ([`post_hashtag_inc_input`](../inputs/post-hashtag-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_set`](#) ([`post_hashtag_set_input`](../inputs/post-hashtag-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`pk_columns`](#) ([`post_hashtag_pk_columns_input!`](../inputs/post-hashtag-pk-columns-input))
+
+#### [`update_post_mention`](#) ([`post_mention_mutation_response`](../objects/post-mention-mutation-response))
+
+update data of the table: "post_mention"
+
+- ##### [`_inc`](#) ([`post_mention_inc_input`](../inputs/post-mention-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_set`](#) ([`post_mention_set_input`](../inputs/post-mention-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`where`](#) ([`post_mention_bool_exp!`](../inputs/post-mention-bool-exp))
+
+filter the rows which have to be updated
+
+#### [`update_post_mention_by_pk`](#) ([`post_mention`](../objects/post-mention))
+
+update single row of the table: "post_mention"
+
+- ##### [`_inc`](#) ([`post_mention_inc_input`](../inputs/post-mention-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_set`](#) ([`post_mention_set_input`](../inputs/post-mention-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`pk_columns`](#) ([`post_mention_pk_columns_input!`](../inputs/post-mention-pk-columns-input))
+
+#### [`update_post_reference`](#) ([`post_reference_mutation_response`](../objects/post-reference-mutation-response))
+
+update data of the table: "post_reference"
+
+- ##### [`_inc`](#) ([`post_reference_inc_input`](../inputs/post-reference-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_set`](#) ([`post_reference_set_input`](../inputs/post-reference-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`where`](#) ([`post_reference_bool_exp!`](../inputs/post-reference-bool-exp))
+
+filter the rows which have to be updated
+
+#### [`update_post_reference_by_pk`](#) ([`post_reference`](../objects/post-reference))
+
+update single row of the table: "post_reference"
+
+- ##### [`_inc`](#) ([`post_reference_inc_input`](../inputs/post-reference-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_set`](#) ([`post_reference_set_input`](../inputs/post-reference-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`pk_columns`](#) ([`post_reference_pk_columns_input!`](../inputs/post-reference-pk-columns-input))
+
+#### [`update_post_tag`](#) ([`post_tag_mutation_response`](../objects/post-tag-mutation-response))
+
+update data of the table: "post_tag"
+
+- ##### [`_inc`](#) ([`post_tag_inc_input`](../inputs/post-tag-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_set`](#) ([`post_tag_set_input`](../inputs/post-tag-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`where`](#) ([`post_tag_bool_exp!`](../inputs/post-tag-bool-exp))
+
+filter the rows which have to be updated
+
+#### [`update_post_tag_by_pk`](#) ([`post_tag`](../objects/post-tag))
+
+update single row of the table: "post_tag"
+
+- ##### [`_inc`](#) ([`post_tag_inc_input`](../inputs/post-tag-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_set`](#) ([`post_tag_set_input`](../inputs/post-tag-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`pk_columns`](#) ([`post_tag_pk_columns_input!`](../inputs/post-tag-pk-columns-input))
+
+#### [`update_post_url`](#) ([`post_url_mutation_response`](../objects/post-url-mutation-response))
+
+update data of the table: "post_url"
+
+- ##### [`_inc`](#) ([`post_url_inc_input`](../inputs/post-url-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_set`](#) ([`post_url_set_input`](../inputs/post-url-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`where`](#) ([`post_url_bool_exp!`](../inputs/post-url-bool-exp))
+
+filter the rows which have to be updated
+
+#### [`update_post_url_by_pk`](#) ([`post_url`](../objects/post-url))
+
+update single row of the table: "post_url"
+
+- ##### [`_inc`](#) ([`post_url_inc_input`](../inputs/post-url-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_set`](#) ([`post_url_set_input`](../inputs/post-url-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`pk_columns`](#) ([`post_url_pk_columns_input!`](../inputs/post-url-pk-columns-input))
+
+#### [`update_posts_params`](#) ([`posts_params_mutation_response`](../objects/posts-params-mutation-response))
+
+update data of the table: "posts_params"
+
+- ##### [`_append`](#) ([`posts_params_append_input`](../inputs/posts-params-append-input))
+
+append existing jsonb value of filtered columns with new jsonb value
+
+- ##### [`_delete_at_path`](#) ([`posts_params_delete_at_path_input`](../inputs/posts-params-delete-at-path-input))
+
+delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+
+- ##### [`_delete_elem`](#) ([`posts_params_delete_elem_input`](../inputs/posts-params-delete-elem-input))
+
+delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+
+- ##### [`_delete_key`](#) ([`posts_params_delete_key_input`](../inputs/posts-params-delete-key-input))
+
+delete key/value pair or string element. key/value pairs are matched based on their key value
+
+- ##### [`_inc`](#) ([`posts_params_inc_input`](../inputs/posts-params-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_prepend`](#) ([`posts_params_prepend_input`](../inputs/posts-params-prepend-input))
+
+prepend existing jsonb value of filtered columns with new jsonb value
+
+- ##### [`_set`](#) ([`posts_params_set_input`](../inputs/posts-params-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`where`](#) ([`posts_params_bool_exp!`](../inputs/posts-params-bool-exp))
+
+filter the rows which have to be updated
+
+#### [`update_posts_params_by_pk`](#) ([`posts_params`](../objects/posts-params))
+
+update single row of the table: "posts_params"
+
+- ##### [`_append`](#) ([`posts_params_append_input`](../inputs/posts-params-append-input))
+
+append existing jsonb value of filtered columns with new jsonb value
+
+- ##### [`_delete_at_path`](#) ([`posts_params_delete_at_path_input`](../inputs/posts-params-delete-at-path-input))
+
+delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+
+- ##### [`_delete_elem`](#) ([`posts_params_delete_elem_input`](../inputs/posts-params-delete-elem-input))
+
+delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+
+- ##### [`_delete_key`](#) ([`posts_params_delete_key_input`](../inputs/posts-params-delete-key-input))
+
+delete key/value pair or string element. key/value pairs are matched based on their key value
+
+- ##### [`_inc`](#) ([`posts_params_inc_input`](../inputs/posts-params-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_prepend`](#) ([`posts_params_prepend_input`](../inputs/posts-params-prepend-input))
+
+prepend existing jsonb value of filtered columns with new jsonb value
+
+- ##### [`_set`](#) ([`posts_params_set_input`](../inputs/posts-params-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`pk_columns`](#) ([`posts_params_pk_columns_input!`](../inputs/posts-params-pk-columns-input))
+
+#### [`update_profile`](#) ([`profile_mutation_response`](../objects/profile-mutation-response))
+
+update data of the table: "profile"
+
+- ##### [`_inc`](#) ([`profile_inc_input`](../inputs/profile-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_set`](#) ([`profile_set_input`](../inputs/profile-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`where`](#) ([`profile_bool_exp!`](../inputs/profile-bool-exp))
+
+filter the rows which have to be updated
+
+#### [`update_profile_by_pk`](#) ([`profile`](../objects/profile))
+
+update single row of the table: "profile"
+
+- ##### [`_inc`](#) ([`profile_inc_input`](../inputs/profile-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_set`](#) ([`profile_set_input`](../inputs/profile-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`pk_columns`](#) ([`profile_pk_columns_input!`](../inputs/profile-pk-columns-input))
+
+#### [`update_profiles_params`](#) ([`profiles_params_mutation_response`](../objects/profiles-params-mutation-response))
+
+update data of the table: "profiles_params"
+
+- ##### [`_append`](#) ([`profiles_params_append_input`](../inputs/profiles-params-append-input))
+
+append existing jsonb value of filtered columns with new jsonb value
+
+- ##### [`_delete_at_path`](#) ([`profiles_params_delete_at_path_input`](../inputs/profiles-params-delete-at-path-input))
+
+delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+
+- ##### [`_delete_elem`](#) ([`profiles_params_delete_elem_input`](../inputs/profiles-params-delete-elem-input))
+
+delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+
+- ##### [`_delete_key`](#) ([`profiles_params_delete_key_input`](../inputs/profiles-params-delete-key-input))
+
+delete key/value pair or string element. key/value pairs are matched based on their key value
+
+- ##### [`_inc`](#) ([`profiles_params_inc_input`](../inputs/profiles-params-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_prepend`](#) ([`profiles_params_prepend_input`](../inputs/profiles-params-prepend-input))
+
+prepend existing jsonb value of filtered columns with new jsonb value
+
+- ##### [`_set`](#) ([`profiles_params_set_input`](../inputs/profiles-params-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`where`](#) ([`profiles_params_bool_exp!`](../inputs/profiles-params-bool-exp))
+
+filter the rows which have to be updated
+
+#### [`update_profiles_params_by_pk`](#) ([`profiles_params`](../objects/profiles-params))
+
+update single row of the table: "profiles_params"
+
+- ##### [`_append`](#) ([`profiles_params_append_input`](../inputs/profiles-params-append-input))
+
+append existing jsonb value of filtered columns with new jsonb value
+
+- ##### [`_delete_at_path`](#) ([`profiles_params_delete_at_path_input`](../inputs/profiles-params-delete-at-path-input))
+
+delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+
+- ##### [`_delete_elem`](#) ([`profiles_params_delete_elem_input`](../inputs/profiles-params-delete-elem-input))
+
+delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+
+- ##### [`_delete_key`](#) ([`profiles_params_delete_key_input`](../inputs/profiles-params-delete-key-input))
+
+delete key/value pair or string element. key/value pairs are matched based on their key value
+
+- ##### [`_inc`](#) ([`profiles_params_inc_input`](../inputs/profiles-params-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_prepend`](#) ([`profiles_params_prepend_input`](../inputs/profiles-params-prepend-input))
+
+prepend existing jsonb value of filtered columns with new jsonb value
+
+- ##### [`_set`](#) ([`profiles_params_set_input`](../inputs/profiles-params-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`pk_columns`](#) ([`profiles_params_pk_columns_input!`](../inputs/profiles-params-pk-columns-input))
+
+#### [`update_reaction`](#) ([`reaction_mutation_response`](../objects/reaction-mutation-response))
+
+update data of the table: "reaction"
+
+- ##### [`_append`](#) ([`reaction_append_input`](../inputs/reaction-append-input))
+
+append existing jsonb value of filtered columns with new jsonb value
+
+- ##### [`_delete_at_path`](#) ([`reaction_delete_at_path_input`](../inputs/reaction-delete-at-path-input))
+
+delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+
+- ##### [`_delete_elem`](#) ([`reaction_delete_elem_input`](../inputs/reaction-delete-elem-input))
+
+delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+
+- ##### [`_delete_key`](#) ([`reaction_delete_key_input`](../inputs/reaction-delete-key-input))
+
+delete key/value pair or string element. key/value pairs are matched based on their key value
+
+- ##### [`_inc`](#) ([`reaction_inc_input`](../inputs/reaction-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_prepend`](#) ([`reaction_prepend_input`](../inputs/reaction-prepend-input))
+
+prepend existing jsonb value of filtered columns with new jsonb value
+
+- ##### [`_set`](#) ([`reaction_set_input`](../inputs/reaction-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`where`](#) ([`reaction_bool_exp!`](../inputs/reaction-bool-exp))
+
+filter the rows which have to be updated
+
+#### [`update_reaction_by_pk`](#) ([`reaction`](../objects/reaction))
+
+update single row of the table: "reaction"
+
+- ##### [`_append`](#) ([`reaction_append_input`](../inputs/reaction-append-input))
+
+append existing jsonb value of filtered columns with new jsonb value
+
+- ##### [`_delete_at_path`](#) ([`reaction_delete_at_path_input`](../inputs/reaction-delete-at-path-input))
+
+delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+
+- ##### [`_delete_elem`](#) ([`reaction_delete_elem_input`](../inputs/reaction-delete-elem-input))
+
+delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+
+- ##### [`_delete_key`](#) ([`reaction_delete_key_input`](../inputs/reaction-delete-key-input))
+
+delete key/value pair or string element. key/value pairs are matched based on their key value
+
+- ##### [`_inc`](#) ([`reaction_inc_input`](../inputs/reaction-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_prepend`](#) ([`reaction_prepend_input`](../inputs/reaction-prepend-input))
+
+prepend existing jsonb value of filtered columns with new jsonb value
+
+- ##### [`_set`](#) ([`reaction_set_input`](../inputs/reaction-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`pk_columns`](#) ([`reaction_pk_columns_input!`](../inputs/reaction-pk-columns-input))
+
+#### [`update_report`](#) ([`report_mutation_response`](../objects/report-mutation-response))
+
+update data of the table: "report"
+
+- ##### [`_append`](#) ([`report_append_input`](../inputs/report-append-input))
+
+append existing jsonb value of filtered columns with new jsonb value
+
+- ##### [`_delete_at_path`](#) ([`report_delete_at_path_input`](../inputs/report-delete-at-path-input))
+
+delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+
+- ##### [`_delete_elem`](#) ([`report_delete_elem_input`](../inputs/report-delete-elem-input))
+
+delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+
+- ##### [`_delete_key`](#) ([`report_delete_key_input`](../inputs/report-delete-key-input))
+
+delete key/value pair or string element. key/value pairs are matched based on their key value
+
+- ##### [`_inc`](#) ([`report_inc_input`](../inputs/report-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_prepend`](#) ([`report_prepend_input`](../inputs/report-prepend-input))
+
+prepend existing jsonb value of filtered columns with new jsonb value
+
+- ##### [`_set`](#) ([`report_set_input`](../inputs/report-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`where`](#) ([`report_bool_exp!`](../inputs/report-bool-exp))
+
+filter the rows which have to be updated
+
+#### [`update_report_by_pk`](#) ([`report`](../objects/report))
+
+update single row of the table: "report"
+
+- ##### [`_append`](#) ([`report_append_input`](../inputs/report-append-input))
+
+append existing jsonb value of filtered columns with new jsonb value
+
+- ##### [`_delete_at_path`](#) ([`report_delete_at_path_input`](../inputs/report-delete-at-path-input))
+
+delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+
+- ##### [`_delete_elem`](#) ([`report_delete_elem_input`](../inputs/report-delete-elem-input))
+
+delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+
+- ##### [`_delete_key`](#) ([`report_delete_key_input`](../inputs/report-delete-key-input))
+
+delete key/value pair or string element. key/value pairs are matched based on their key value
+
+- ##### [`_inc`](#) ([`report_inc_input`](../inputs/report-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_prepend`](#) ([`report_prepend_input`](../inputs/report-prepend-input))
+
+prepend existing jsonb value of filtered columns with new jsonb value
+
+- ##### [`_set`](#) ([`report_set_input`](../inputs/report-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`pk_columns`](#) ([`report_pk_columns_input!`](../inputs/report-pk-columns-input))
+
+#### [`update_report_reason`](#) ([`report_reason_mutation_response`](../objects/report-reason-mutation-response))
+
+update data of the table: "report_reason"
+
+- ##### [`_inc`](#) ([`report_reason_inc_input`](../inputs/report-reason-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_set`](#) ([`report_reason_set_input`](../inputs/report-reason-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`where`](#) ([`report_reason_bool_exp!`](../inputs/report-reason-bool-exp))
+
+filter the rows which have to be updated
+
+#### [`update_reports_params`](#) ([`reports_params_mutation_response`](../objects/reports-params-mutation-response))
+
+update data of the table: "reports_params"
+
+- ##### [`_append`](#) ([`reports_params_append_input`](../inputs/reports-params-append-input))
+
+append existing jsonb value of filtered columns with new jsonb value
+
+- ##### [`_delete_at_path`](#) ([`reports_params_delete_at_path_input`](../inputs/reports-params-delete-at-path-input))
+
+delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+
+- ##### [`_delete_elem`](#) ([`reports_params_delete_elem_input`](../inputs/reports-params-delete-elem-input))
+
+delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+
+- ##### [`_delete_key`](#) ([`reports_params_delete_key_input`](../inputs/reports-params-delete-key-input))
+
+delete key/value pair or string element. key/value pairs are matched based on their key value
+
+- ##### [`_inc`](#) ([`reports_params_inc_input`](../inputs/reports-params-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_prepend`](#) ([`reports_params_prepend_input`](../inputs/reports-params-prepend-input))
+
+prepend existing jsonb value of filtered columns with new jsonb value
+
+- ##### [`_set`](#) ([`reports_params_set_input`](../inputs/reports-params-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`where`](#) ([`reports_params_bool_exp!`](../inputs/reports-params-bool-exp))
+
+filter the rows which have to be updated
+
+#### [`update_reports_params_by_pk`](#) ([`reports_params`](../objects/reports-params))
+
+update single row of the table: "reports_params"
+
+- ##### [`_append`](#) ([`reports_params_append_input`](../inputs/reports-params-append-input))
+
+append existing jsonb value of filtered columns with new jsonb value
+
+- ##### [`_delete_at_path`](#) ([`reports_params_delete_at_path_input`](../inputs/reports-params-delete-at-path-input))
+
+delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+
+- ##### [`_delete_elem`](#) ([`reports_params_delete_elem_input`](../inputs/reports-params-delete-elem-input))
+
+delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+
+- ##### [`_delete_key`](#) ([`reports_params_delete_key_input`](../inputs/reports-params-delete-key-input))
+
+delete key/value pair or string element. key/value pairs are matched based on their key value
+
+- ##### [`_inc`](#) ([`reports_params_inc_input`](../inputs/reports-params-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_prepend`](#) ([`reports_params_prepend_input`](../inputs/reports-params-prepend-input))
+
+prepend existing jsonb value of filtered columns with new jsonb value
+
+- ##### [`_set`](#) ([`reports_params_set_input`](../inputs/reports-params-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`pk_columns`](#) ([`reports_params_pk_columns_input!`](../inputs/reports-params-pk-columns-input))
+
+#### [`update_subspace`](#) ([`subspace_mutation_response`](../objects/subspace-mutation-response))
+
+update data of the table: "subspace"
+
+- ##### [`_inc`](#) ([`subspace_inc_input`](../inputs/subspace-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_set`](#) ([`subspace_set_input`](../inputs/subspace-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`where`](#) ([`subspace_bool_exp!`](../inputs/subspace-bool-exp))
+
+filter the rows which have to be updated
+
+#### [`update_subspace_by_pk`](#) ([`subspace`](../objects/subspace))
+
+update single row of the table: "subspace"
+
+- ##### [`_inc`](#) ([`subspace_inc_input`](../inputs/subspace-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_set`](#) ([`subspace_set_input`](../inputs/subspace-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`pk_columns`](#) ([`subspace_pk_columns_input!`](../inputs/subspace-pk-columns-input))
+
+#### [`update_subspace_free_text_params`](#) ([`subspace_free_text_params_mutation_response`](../objects/subspace-free-text-params-mutation-response))
+
+update data of the table: "subspace_free_text_params"
+
+- ##### [`_inc`](#) ([`subspace_free_text_params_inc_input`](../inputs/subspace-free-text-params-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_set`](#) ([`subspace_free_text_params_set_input`](../inputs/subspace-free-text-params-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`where`](#) ([`subspace_free_text_params_bool_exp!`](../inputs/subspace-free-text-params-bool-exp))
+
+filter the rows which have to be updated
+
+#### [`update_subspace_free_text_params_by_pk`](#) ([`subspace_free_text_params`](../objects/subspace-free-text-params))
+
+update single row of the table: "subspace_free_text_params"
+
+- ##### [`_inc`](#) ([`subspace_free_text_params_inc_input`](../inputs/subspace-free-text-params-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_set`](#) ([`subspace_free_text_params_set_input`](../inputs/subspace-free-text-params-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`pk_columns`](#) ([`subspace_free_text_params_pk_columns_input!`](../inputs/subspace-free-text-params-pk-columns-input))
+
+#### [`update_subspace_registered_reaction`](#) ([`subspace_registered_reaction_mutation_response`](../objects/subspace-registered-reaction-mutation-response))
+
+update data of the table: "subspace_registered_reaction"
+
+- ##### [`_inc`](#) ([`subspace_registered_reaction_inc_input`](../inputs/subspace-registered-reaction-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_set`](#) ([`subspace_registered_reaction_set_input`](../inputs/subspace-registered-reaction-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`where`](#) ([`subspace_registered_reaction_bool_exp!`](../inputs/subspace-registered-reaction-bool-exp))
+
+filter the rows which have to be updated
+
+#### [`update_subspace_registered_reaction_by_pk`](#) ([`subspace_registered_reaction`](../objects/subspace-registered-reaction))
+
+update single row of the table: "subspace_registered_reaction"
+
+- ##### [`_inc`](#) ([`subspace_registered_reaction_inc_input`](../inputs/subspace-registered-reaction-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_set`](#) ([`subspace_registered_reaction_set_input`](../inputs/subspace-registered-reaction-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`pk_columns`](#) ([`subspace_registered_reaction_pk_columns_input!`](../inputs/subspace-registered-reaction-pk-columns-input))
+
+#### [`update_subspace_registered_reaction_params`](#) ([`subspace_registered_reaction_params_mutation_response`](../objects/subspace-registered-reaction-params-mutation-response))
+
+update data of the table: "subspace_registered_reaction_params"
+
+- ##### [`_inc`](#) ([`subspace_registered_reaction_params_inc_input`](../inputs/subspace-registered-reaction-params-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_set`](#) ([`subspace_registered_reaction_params_set_input`](../inputs/subspace-registered-reaction-params-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`where`](#) ([`subspace_registered_reaction_params_bool_exp!`](../inputs/subspace-registered-reaction-params-bool-exp))
+
+filter the rows which have to be updated
+
+#### [`update_subspace_registered_reaction_params_by_pk`](#) ([`subspace_registered_reaction_params`](../objects/subspace-registered-reaction-params))
+
+update single row of the table: "subspace_registered_reaction_params"
+
+- ##### [`_inc`](#) ([`subspace_registered_reaction_params_inc_input`](../inputs/subspace-registered-reaction-params-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_set`](#) ([`subspace_registered_reaction_params_set_input`](../inputs/subspace-registered-reaction-params-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`pk_columns`](#) ([`subspace_registered_reaction_params_pk_columns_input!`](../inputs/subspace-registered-reaction-params-pk-columns-input))
+
+#### [`update_subspace_report_reason`](#) ([`subspace_report_reason_mutation_response`](../objects/subspace-report-reason-mutation-response))
+
+update data of the table: "subspace_report_reason"
+
+- ##### [`_inc`](#) ([`subspace_report_reason_inc_input`](../inputs/subspace-report-reason-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_set`](#) ([`subspace_report_reason_set_input`](../inputs/subspace-report-reason-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`where`](#) ([`subspace_report_reason_bool_exp!`](../inputs/subspace-report-reason-bool-exp))
+
+filter the rows which have to be updated
+
+#### [`update_subspace_report_reason_by_pk`](#) ([`subspace_report_reason`](../objects/subspace-report-reason))
+
+update single row of the table: "subspace_report_reason"
+
+- ##### [`_inc`](#) ([`subspace_report_reason_inc_input`](../inputs/subspace-report-reason-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_set`](#) ([`subspace_report_reason_set_input`](../inputs/subspace-report-reason-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`pk_columns`](#) ([`subspace_report_reason_pk_columns_input!`](../inputs/subspace-report-reason-pk-columns-input))
+
+#### [`update_subspace_section`](#) ([`subspace_section_mutation_response`](../objects/subspace-section-mutation-response))
+
+update data of the table: "subspace_section"
+
+- ##### [`_inc`](#) ([`subspace_section_inc_input`](../inputs/subspace-section-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_set`](#) ([`subspace_section_set_input`](../inputs/subspace-section-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`where`](#) ([`subspace_section_bool_exp!`](../inputs/subspace-section-bool-exp))
+
+filter the rows which have to be updated
+
+#### [`update_subspace_section_by_pk`](#) ([`subspace_section`](../objects/subspace-section))
+
+update single row of the table: "subspace_section"
+
+- ##### [`_inc`](#) ([`subspace_section_inc_input`](../inputs/subspace-section-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_set`](#) ([`subspace_section_set_input`](../inputs/subspace-section-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`pk_columns`](#) ([`subspace_section_pk_columns_input!`](../inputs/subspace-section-pk-columns-input))
+
+#### [`update_subspace_user_group`](#) ([`subspace_user_group_mutation_response`](../objects/subspace-user-group-mutation-response))
+
+update data of the table: "subspace_user_group"
+
+- ##### [`_inc`](#) ([`subspace_user_group_inc_input`](../inputs/subspace-user-group-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_set`](#) ([`subspace_user_group_set_input`](../inputs/subspace-user-group-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`where`](#) ([`subspace_user_group_bool_exp!`](../inputs/subspace-user-group-bool-exp))
+
+filter the rows which have to be updated
+
+#### [`update_subspace_user_group_by_pk`](#) ([`subspace_user_group`](../objects/subspace-user-group))
+
+update single row of the table: "subspace_user_group"
+
+- ##### [`_inc`](#) ([`subspace_user_group_inc_input`](../inputs/subspace-user-group-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_set`](#) ([`subspace_user_group_set_input`](../inputs/subspace-user-group-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`pk_columns`](#) ([`subspace_user_group_pk_columns_input!`](../inputs/subspace-user-group-pk-columns-input))
+
+#### [`update_subspace_user_group_member`](#) ([`subspace_user_group_member_mutation_response`](../objects/subspace-user-group-member-mutation-response))
+
+update data of the table: "subspace_user_group_member"
+
+- ##### [`_inc`](#) ([`subspace_user_group_member_inc_input`](../inputs/subspace-user-group-member-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_set`](#) ([`subspace_user_group_member_set_input`](../inputs/subspace-user-group-member-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`where`](#) ([`subspace_user_group_member_bool_exp!`](../inputs/subspace-user-group-member-bool-exp))
+
+filter the rows which have to be updated
+
+#### [`update_subspace_user_permission`](#) ([`subspace_user_permission_mutation_response`](../objects/subspace-user-permission-mutation-response))
+
+update data of the table: "subspace_user_permission"
+
+- ##### [`_inc`](#) ([`subspace_user_permission_inc_input`](../inputs/subspace-user-permission-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_set`](#) ([`subspace_user_permission_set_input`](../inputs/subspace-user-permission-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`where`](#) ([`subspace_user_permission_bool_exp!`](../inputs/subspace-user-permission-bool-exp))
+
+filter the rows which have to be updated
+
+#### [`update_subspace_user_permission_by_pk`](#) ([`subspace_user_permission`](../objects/subspace-user-permission))
+
+update single row of the table: "subspace_user_permission"
+
+- ##### [`_inc`](#) ([`subspace_user_permission_inc_input`](../inputs/subspace-user-permission-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_set`](#) ([`subspace_user_permission_set_input`](../inputs/subspace-user-permission-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`pk_columns`](#) ([`subspace_user_permission_pk_columns_input!`](../inputs/subspace-user-permission-pk-columns-input))
+
+#### [`update_user_block`](#) ([`user_block_mutation_response`](../objects/user-block-mutation-response))
+
+update data of the table: "user_block"
+
+- ##### [`_inc`](#) ([`user_block_inc_input`](../inputs/user-block-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_set`](#) ([`user_block_set_input`](../inputs/user-block-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`where`](#) ([`user_block_bool_exp!`](../inputs/user-block-bool-exp))
+
+filter the rows which have to be updated
+
+#### [`update_user_relationship`](#) ([`user_relationship_mutation_response`](../objects/user-relationship-mutation-response))
+
+update data of the table: "user_relationship"
+
+- ##### [`_inc`](#) ([`user_relationship_inc_input`](../inputs/user-relationship-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+- ##### [`_set`](#) ([`user_relationship_set_input`](../inputs/user-relationship-set-input))
+
+sets the columns of the filtered rows to the given values
+
+- ##### [`where`](#) ([`user_relationship_bool_exp!`](../inputs/user-relationship-bool-exp))
+
+filter the rows which have to be updated

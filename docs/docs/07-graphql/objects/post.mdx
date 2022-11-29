@@ -1,0 +1,566 @@
+---
+id: post
+title: post
+hide_table_of_contents: false
+---
+
+columns and relationships of "post"
+
+```graphql
+type post {
+  attachments(
+    distinct_on: [post_attachment_select_column!]
+    limit: Int
+    offset: Int
+    order_by: [post_attachment_order_by!]
+    where: post_attachment_bool_exp
+  ): [post_attachment!]!
+  attachments_aggregate(
+    distinct_on: [post_attachment_select_column!]
+    limit: Int
+    offset: Int
+    order_by: [post_attachment_order_by!]
+    where: post_attachment_bool_exp
+  ): post_attachment_aggregate!
+  author: profile
+  author_address: String!
+  conversation: post
+  conversation_row_id: bigint
+  creation_date: timestamp!
+  external_id: String
+  hashtags(
+    distinct_on: [post_hashtag_select_column!]
+    limit: Int
+    offset: Int
+    order_by: [post_hashtag_order_by!]
+    where: post_hashtag_bool_exp
+  ): [post_hashtag!]!
+  hashtags_aggregate(
+    distinct_on: [post_hashtag_select_column!]
+    limit: Int
+    offset: Int
+    order_by: [post_hashtag_order_by!]
+    where: post_hashtag_bool_exp
+  ): post_hashtag_aggregate!
+  height: bigint!
+  id: bigint!
+  last_edited_date: timestamp
+  mentions(
+    distinct_on: [post_mention_select_column!]
+    limit: Int
+    offset: Int
+    order_by: [post_mention_order_by!]
+    where: post_mention_bool_exp
+  ): [post_mention!]!
+  mentions_aggregate(
+    distinct_on: [post_mention_select_column!]
+    limit: Int
+    offset: Int
+    order_by: [post_mention_order_by!]
+    where: post_mention_bool_exp
+  ): post_mention_aggregate!
+  posts(
+    distinct_on: [post_select_column!]
+    limit: Int
+    offset: Int
+    order_by: [post_order_by!]
+    where: post_bool_exp
+  ): [post!]!
+  posts_aggregate(
+    distinct_on: [post_select_column!]
+    limit: Int
+    offset: Int
+    order_by: [post_order_by!]
+    where: post_bool_exp
+  ): post_aggregate!
+  reactions(
+    distinct_on: [reaction_select_column!]
+    limit: Int
+    offset: Int
+    order_by: [reaction_order_by!]
+    where: reaction_bool_exp
+  ): [reaction!]!
+  reactions_aggregate(
+    distinct_on: [reaction_select_column!]
+    limit: Int
+    offset: Int
+    order_by: [reaction_order_by!]
+    where: reaction_bool_exp
+  ): reaction_aggregate!
+  references(
+    distinct_on: [post_reference_select_column!]
+    limit: Int
+    offset: Int
+    order_by: [post_reference_order_by!]
+    where: post_reference_bool_exp
+  ): [post_reference!]!
+  references_aggregate(
+    distinct_on: [post_reference_select_column!]
+    limit: Int
+    offset: Int
+    order_by: [post_reference_order_by!]
+    where: post_reference_bool_exp
+  ): post_reference_aggregate!
+  reply_settings: String!
+  row_id: Int!
+  section: subspace_section!
+  section_row_id: bigint!
+  subspace: subspace!
+  subspace_id: bigint!
+  tags(
+    distinct_on: [post_tag_select_column!]
+    limit: Int
+    offset: Int
+    order_by: [post_tag_order_by!]
+    where: post_tag_bool_exp
+  ): [post_tag!]!
+  tags_aggregate(
+    distinct_on: [post_tag_select_column!]
+    limit: Int
+    offset: Int
+    order_by: [post_tag_order_by!]
+    where: post_tag_bool_exp
+  ): post_tag_aggregate!
+  text: String
+  urls(
+    distinct_on: [post_url_select_column!]
+    limit: Int
+    offset: Int
+    order_by: [post_url_order_by!]
+    where: post_url_bool_exp
+  ): [post_url!]!
+  urls_aggregate(
+    distinct_on: [post_url_select_column!]
+    limit: Int
+    offset: Int
+    order_by: [post_url_order_by!]
+    where: post_url_bool_exp
+  ): post_url_aggregate!
+}
+```
+
+### Fields
+
+#### [`attachments`](#) ([`[post_attachment!]!`](../objects/post-attachment))
+
+An array relationship
+
+- ##### [`distinct_on`](#) ([`[post_attachment_select_column!]`](../enums/post-attachment-select-column))
+
+distinct select on columns
+
+- ##### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+- ##### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+- ##### [`order_by`](#) ([`[post_attachment_order_by!]`](../inputs/post-attachment-order-by))
+
+sort the rows by one or more columns
+
+- ##### [`where`](#) ([`post_attachment_bool_exp`](../inputs/post-attachment-bool-exp))
+
+filter the rows returned
+
+#### [`attachments_aggregate`](#) ([`post_attachment_aggregate!`](../objects/post-attachment-aggregate))
+
+An aggregate relationship
+
+- ##### [`distinct_on`](#) ([`[post_attachment_select_column!]`](../enums/post-attachment-select-column))
+
+distinct select on columns
+
+- ##### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+- ##### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+- ##### [`order_by`](#) ([`[post_attachment_order_by!]`](../inputs/post-attachment-order-by))
+
+sort the rows by one or more columns
+
+- ##### [`where`](#) ([`post_attachment_bool_exp`](../inputs/post-attachment-bool-exp))
+
+filter the rows returned
+
+#### [`author`](#) ([`profile`](../objects/profile))
+
+An object relationship
+
+#### [`author_address`](#) ([`String!`](../scalars/string))
+
+#### [`conversation`](#) ([`post`](../objects/post))
+
+An object relationship
+
+#### [`conversation_row_id`](#) ([`bigint`](../scalars/bigint))
+
+#### [`creation_date`](#) ([`timestamp!`](../scalars/timestamp))
+
+#### [`external_id`](#) ([`String`](../scalars/string))
+
+#### [`hashtags`](#) ([`[post_hashtag!]!`](../objects/post-hashtag))
+
+An array relationship
+
+- ##### [`distinct_on`](#) ([`[post_hashtag_select_column!]`](../enums/post-hashtag-select-column))
+
+distinct select on columns
+
+- ##### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+- ##### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+- ##### [`order_by`](#) ([`[post_hashtag_order_by!]`](../inputs/post-hashtag-order-by))
+
+sort the rows by one or more columns
+
+- ##### [`where`](#) ([`post_hashtag_bool_exp`](../inputs/post-hashtag-bool-exp))
+
+filter the rows returned
+
+#### [`hashtags_aggregate`](#) ([`post_hashtag_aggregate!`](../objects/post-hashtag-aggregate))
+
+An aggregate relationship
+
+- ##### [`distinct_on`](#) ([`[post_hashtag_select_column!]`](../enums/post-hashtag-select-column))
+
+distinct select on columns
+
+- ##### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+- ##### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+- ##### [`order_by`](#) ([`[post_hashtag_order_by!]`](../inputs/post-hashtag-order-by))
+
+sort the rows by one or more columns
+
+- ##### [`where`](#) ([`post_hashtag_bool_exp`](../inputs/post-hashtag-bool-exp))
+
+filter the rows returned
+
+#### [`height`](#) ([`bigint!`](../scalars/bigint))
+
+#### [`id`](#) ([`bigint!`](../scalars/bigint))
+
+#### [`last_edited_date`](#) ([`timestamp`](../scalars/timestamp))
+
+#### [`mentions`](#) ([`[post_mention!]!`](../objects/post-mention))
+
+An array relationship
+
+- ##### [`distinct_on`](#) ([`[post_mention_select_column!]`](../enums/post-mention-select-column))
+
+distinct select on columns
+
+- ##### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+- ##### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+- ##### [`order_by`](#) ([`[post_mention_order_by!]`](../inputs/post-mention-order-by))
+
+sort the rows by one or more columns
+
+- ##### [`where`](#) ([`post_mention_bool_exp`](../inputs/post-mention-bool-exp))
+
+filter the rows returned
+
+#### [`mentions_aggregate`](#) ([`post_mention_aggregate!`](../objects/post-mention-aggregate))
+
+An aggregate relationship
+
+- ##### [`distinct_on`](#) ([`[post_mention_select_column!]`](../enums/post-mention-select-column))
+
+distinct select on columns
+
+- ##### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+- ##### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+- ##### [`order_by`](#) ([`[post_mention_order_by!]`](../inputs/post-mention-order-by))
+
+sort the rows by one or more columns
+
+- ##### [`where`](#) ([`post_mention_bool_exp`](../inputs/post-mention-bool-exp))
+
+filter the rows returned
+
+#### [`posts`](#) ([`[post!]!`](../objects/post))
+
+An array relationship
+
+- ##### [`distinct_on`](#) ([`[post_select_column!]`](../enums/post-select-column))
+
+distinct select on columns
+
+- ##### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+- ##### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+- ##### [`order_by`](#) ([`[post_order_by!]`](../inputs/post-order-by))
+
+sort the rows by one or more columns
+
+- ##### [`where`](#) ([`post_bool_exp`](../inputs/post-bool-exp))
+
+filter the rows returned
+
+#### [`posts_aggregate`](#) ([`post_aggregate!`](../objects/post-aggregate))
+
+An aggregate relationship
+
+- ##### [`distinct_on`](#) ([`[post_select_column!]`](../enums/post-select-column))
+
+distinct select on columns
+
+- ##### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+- ##### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+- ##### [`order_by`](#) ([`[post_order_by!]`](../inputs/post-order-by))
+
+sort the rows by one or more columns
+
+- ##### [`where`](#) ([`post_bool_exp`](../inputs/post-bool-exp))
+
+filter the rows returned
+
+#### [`reactions`](#) ([`[reaction!]!`](../objects/reaction))
+
+An array relationship
+
+- ##### [`distinct_on`](#) ([`[reaction_select_column!]`](../enums/reaction-select-column))
+
+distinct select on columns
+
+- ##### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+- ##### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+- ##### [`order_by`](#) ([`[reaction_order_by!]`](../inputs/reaction-order-by))
+
+sort the rows by one or more columns
+
+- ##### [`where`](#) ([`reaction_bool_exp`](../inputs/reaction-bool-exp))
+
+filter the rows returned
+
+#### [`reactions_aggregate`](#) ([`reaction_aggregate!`](../objects/reaction-aggregate))
+
+An aggregate relationship
+
+- ##### [`distinct_on`](#) ([`[reaction_select_column!]`](../enums/reaction-select-column))
+
+distinct select on columns
+
+- ##### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+- ##### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+- ##### [`order_by`](#) ([`[reaction_order_by!]`](../inputs/reaction-order-by))
+
+sort the rows by one or more columns
+
+- ##### [`where`](#) ([`reaction_bool_exp`](../inputs/reaction-bool-exp))
+
+filter the rows returned
+
+#### [`references`](#) ([`[post_reference!]!`](../objects/post-reference))
+
+An array relationship
+
+- ##### [`distinct_on`](#) ([`[post_reference_select_column!]`](../enums/post-reference-select-column))
+
+distinct select on columns
+
+- ##### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+- ##### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+- ##### [`order_by`](#) ([`[post_reference_order_by!]`](../inputs/post-reference-order-by))
+
+sort the rows by one or more columns
+
+- ##### [`where`](#) ([`post_reference_bool_exp`](../inputs/post-reference-bool-exp))
+
+filter the rows returned
+
+#### [`references_aggregate`](#) ([`post_reference_aggregate!`](../objects/post-reference-aggregate))
+
+An aggregate relationship
+
+- ##### [`distinct_on`](#) ([`[post_reference_select_column!]`](../enums/post-reference-select-column))
+
+distinct select on columns
+
+- ##### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+- ##### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+- ##### [`order_by`](#) ([`[post_reference_order_by!]`](../inputs/post-reference-order-by))
+
+sort the rows by one or more columns
+
+- ##### [`where`](#) ([`post_reference_bool_exp`](../inputs/post-reference-bool-exp))
+
+filter the rows returned
+
+#### [`reply_settings`](#) ([`String!`](../scalars/string))
+
+#### [`row_id`](#) ([`Int!`](../scalars/int))
+
+#### [`section`](#) ([`subspace_section!`](../objects/subspace-section))
+
+An object relationship
+
+#### [`section_row_id`](#) ([`bigint!`](../scalars/bigint))
+
+#### [`subspace`](#) ([`subspace!`](../objects/subspace))
+
+An object relationship
+
+#### [`subspace_id`](#) ([`bigint!`](../scalars/bigint))
+
+#### [`tags`](#) ([`[post_tag!]!`](../objects/post-tag))
+
+An array relationship
+
+- ##### [`distinct_on`](#) ([`[post_tag_select_column!]`](../enums/post-tag-select-column))
+
+distinct select on columns
+
+- ##### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+- ##### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+- ##### [`order_by`](#) ([`[post_tag_order_by!]`](../inputs/post-tag-order-by))
+
+sort the rows by one or more columns
+
+- ##### [`where`](#) ([`post_tag_bool_exp`](../inputs/post-tag-bool-exp))
+
+filter the rows returned
+
+#### [`tags_aggregate`](#) ([`post_tag_aggregate!`](../objects/post-tag-aggregate))
+
+An aggregate relationship
+
+- ##### [`distinct_on`](#) ([`[post_tag_select_column!]`](../enums/post-tag-select-column))
+
+distinct select on columns
+
+- ##### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+- ##### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+- ##### [`order_by`](#) ([`[post_tag_order_by!]`](../inputs/post-tag-order-by))
+
+sort the rows by one or more columns
+
+- ##### [`where`](#) ([`post_tag_bool_exp`](../inputs/post-tag-bool-exp))
+
+filter the rows returned
+
+#### [`text`](#) ([`String`](../scalars/string))
+
+#### [`urls`](#) ([`[post_url!]!`](../objects/post-url))
+
+An array relationship
+
+- ##### [`distinct_on`](#) ([`[post_url_select_column!]`](../enums/post-url-select-column))
+
+distinct select on columns
+
+- ##### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+- ##### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+- ##### [`order_by`](#) ([`[post_url_order_by!]`](../inputs/post-url-order-by))
+
+sort the rows by one or more columns
+
+- ##### [`where`](#) ([`post_url_bool_exp`](../inputs/post-url-bool-exp))
+
+filter the rows returned
+
+#### [`urls_aggregate`](#) ([`post_url_aggregate!`](../objects/post-url-aggregate))
+
+An aggregate relationship
+
+- ##### [`distinct_on`](#) ([`[post_url_select_column!]`](../enums/post-url-select-column))
+
+distinct select on columns
+
+- ##### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+- ##### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+- ##### [`order_by`](#) ([`[post_url_order_by!]`](../inputs/post-url-order-by))
+
+sort the rows by one or more columns
+
+- ##### [`where`](#) ([`post_url_bool_exp`](../inputs/post-url-bool-exp))
+
+filter the rows returned

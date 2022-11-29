@@ -1,0 +1,24 @@
+---
+id: reports-params-mutation-response
+title: reports_params_mutation_response
+hide_table_of_contents: false
+---
+
+response of any mutation on the table "reports_params"
+
+```graphql
+type reports_params_mutation_response {
+  affected_rows: Int!
+  returning: [reports_params!]!
+}
+```
+
+### Fields
+
+#### [`affected_rows`](#) ([`Int!`](../scalars/int))
+
+number of rows affected by the mutation
+
+#### [`returning`](#) ([`[reports_params!]!`](../objects/reports-params))
+
+data from the rows affected by the mutation

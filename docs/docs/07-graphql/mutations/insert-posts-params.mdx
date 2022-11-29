@@ -1,0 +1,30 @@
+---
+id: insert-posts-params
+title: insert_posts_params
+hide_table_of_contents: false
+---
+
+insert data into the table: "posts_params"
+
+```graphql
+insert_posts_params(
+  objects: [posts_params_insert_input!]!
+  on_conflict: posts_params_on_conflict
+): posts_params_mutation_response
+```
+
+### Arguments
+
+#### [`objects`](#) ([`[posts_params_insert_input!]!`](../inputs/posts-params-insert-input))
+
+the rows to be inserted
+
+#### [`on_conflict`](#) ([`posts_params_on_conflict`](../inputs/posts-params-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`posts_params_mutation_response`](../objects/posts-params-mutation-response)
+
+response of any mutation on the table "posts_params"

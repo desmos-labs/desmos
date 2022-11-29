@@ -1,0 +1,32 @@
+---
+id: poll-answer-insert-input
+title: poll_answer_insert_input
+hide_table_of_contents: false
+---
+
+input type for inserting data into table "poll_answer"
+
+```graphql
+input poll_answer_insert_input {
+  answers_indexes: _int8
+  attachment_row_id: bigint
+  height: bigint
+  post_attachment: post_attachment_obj_rel_insert_input
+  row_id: Int
+  user_address: String
+}
+```
+
+### Fields
+
+#### [`answers_indexes`](#) ([`_int8`](../scalars/int-8))
+
+#### [`attachment_row_id`](#) ([`bigint`](../scalars/bigint))
+
+#### [`height`](#) ([`bigint`](../scalars/bigint))
+
+#### [`post_attachment`](#) ([`post_attachment_obj_rel_insert_input`](../inputs/post-attachment-obj-rel-insert-input))
+
+#### [`row_id`](#) ([`Int`](../scalars/int))
+
+#### [`user_address`](#) ([`String`](../scalars/string))

@@ -1,0 +1,30 @@
+---
+id: insert-subspace-report-reason-one
+title: insert_subspace_report_reason_one
+hide_table_of_contents: false
+---
+
+insert a single row into the table: "subspace_report_reason"
+
+```graphql
+insert_subspace_report_reason_one(
+  object: subspace_report_reason_insert_input!
+  on_conflict: subspace_report_reason_on_conflict
+): subspace_report_reason
+```
+
+### Arguments
+
+#### [`object`](#) ([`subspace_report_reason_insert_input!`](../inputs/subspace-report-reason-insert-input))
+
+the row to be inserted
+
+#### [`on_conflict`](#) ([`subspace_report_reason_on_conflict`](../inputs/subspace-report-reason-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`subspace_report_reason`](../objects/subspace-report-reason)
+
+columns and relationships of "subspace_report_reason"

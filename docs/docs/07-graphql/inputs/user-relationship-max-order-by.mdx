@@ -1,0 +1,26 @@
+---
+id: user-relationship-max-order-by
+title: user_relationship_max_order_by
+hide_table_of_contents: false
+---
+
+order by max() on columns of table "user_relationship"
+
+```graphql
+input user_relationship_max_order_by {
+  counterparty_address: order_by
+  creator_address: order_by
+  height: order_by
+  subspace_id: order_by
+}
+```
+
+### Fields
+
+#### [`counterparty_address`](#) ([`order_by`](../enums/order-by))
+
+#### [`creator_address`](#) ([`order_by`](../enums/order-by))
+
+#### [`height`](#) ([`order_by`](../enums/order-by))
+
+#### [`subspace_id`](#) ([`order_by`](../enums/order-by))

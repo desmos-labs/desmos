@@ -1,0 +1,24 @@
+---
+id: block-mutation-response
+title: block_mutation_response
+hide_table_of_contents: false
+---
+
+response of any mutation on the table "block"
+
+```graphql
+type block_mutation_response {
+  affected_rows: Int!
+  returning: [block!]!
+}
+```
+
+### Fields
+
+#### [`affected_rows`](#) ([`Int!`](../scalars/int))
+
+number of rows affected by the mutation
+
+#### [`returning`](#) ([`[block!]!`](../objects/block))
+
+data from the rows affected by the mutation

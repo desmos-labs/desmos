@@ -1,0 +1,24 @@
+---
+id: dtag-transfer-requests-mutation-response
+title: dtag_transfer_requests_mutation_response
+hide_table_of_contents: false
+---
+
+response of any mutation on the table "dtag_transfer_requests"
+
+```graphql
+type dtag_transfer_requests_mutation_response {
+  affected_rows: Int!
+  returning: [dtag_transfer_requests!]!
+}
+```
+
+### Fields
+
+#### [`affected_rows`](#) ([`Int!`](../scalars/int))
+
+number of rows affected by the mutation
+
+#### [`returning`](#) ([`[dtag_transfer_requests!]!`](../objects/dtag-transfer-requests))
+
+data from the rows affected by the mutation

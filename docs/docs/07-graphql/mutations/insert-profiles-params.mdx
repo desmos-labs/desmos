@@ -1,0 +1,30 @@
+---
+id: insert-profiles-params
+title: insert_profiles_params
+hide_table_of_contents: false
+---
+
+insert data into the table: "profiles_params"
+
+```graphql
+insert_profiles_params(
+  objects: [profiles_params_insert_input!]!
+  on_conflict: profiles_params_on_conflict
+): profiles_params_mutation_response
+```
+
+### Arguments
+
+#### [`objects`](#) ([`[profiles_params_insert_input!]!`](../inputs/profiles-params-insert-input))
+
+the rows to be inserted
+
+#### [`on_conflict`](#) ([`profiles_params_on_conflict`](../inputs/profiles-params-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`profiles_params_mutation_response`](../objects/profiles-params-mutation-response)
+
+response of any mutation on the table "profiles_params"

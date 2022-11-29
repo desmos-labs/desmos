@@ -1,0 +1,86 @@
+---
+id: post-insert-input
+title: post_insert_input
+hide_table_of_contents: false
+---
+
+input type for inserting data into table "post"
+
+```graphql
+input post_insert_input {
+  attachments: post_attachment_arr_rel_insert_input
+  author: profile_obj_rel_insert_input
+  author_address: String
+  conversation: post_obj_rel_insert_input
+  conversation_row_id: bigint
+  creation_date: timestamp
+  external_id: String
+  hashtags: post_hashtag_arr_rel_insert_input
+  height: bigint
+  id: bigint
+  last_edited_date: timestamp
+  mentions: post_mention_arr_rel_insert_input
+  posts: post_arr_rel_insert_input
+  reactions: reaction_arr_rel_insert_input
+  references: post_reference_arr_rel_insert_input
+  reply_settings: String
+  row_id: Int
+  section: subspace_section_obj_rel_insert_input
+  section_row_id: bigint
+  subspace: subspace_obj_rel_insert_input
+  subspace_id: bigint
+  tags: post_tag_arr_rel_insert_input
+  text: String
+  urls: post_url_arr_rel_insert_input
+}
+```
+
+### Fields
+
+#### [`attachments`](#) ([`post_attachment_arr_rel_insert_input`](../inputs/post-attachment-arr-rel-insert-input))
+
+#### [`author`](#) ([`profile_obj_rel_insert_input`](../inputs/profile-obj-rel-insert-input))
+
+#### [`author_address`](#) ([`String`](../scalars/string))
+
+#### [`conversation`](#) ([`post_obj_rel_insert_input`](../inputs/post-obj-rel-insert-input))
+
+#### [`conversation_row_id`](#) ([`bigint`](../scalars/bigint))
+
+#### [`creation_date`](#) ([`timestamp`](../scalars/timestamp))
+
+#### [`external_id`](#) ([`String`](../scalars/string))
+
+#### [`hashtags`](#) ([`post_hashtag_arr_rel_insert_input`](../inputs/post-hashtag-arr-rel-insert-input))
+
+#### [`height`](#) ([`bigint`](../scalars/bigint))
+
+#### [`id`](#) ([`bigint`](../scalars/bigint))
+
+#### [`last_edited_date`](#) ([`timestamp`](../scalars/timestamp))
+
+#### [`mentions`](#) ([`post_mention_arr_rel_insert_input`](../inputs/post-mention-arr-rel-insert-input))
+
+#### [`posts`](#) ([`post_arr_rel_insert_input`](../inputs/post-arr-rel-insert-input))
+
+#### [`reactions`](#) ([`reaction_arr_rel_insert_input`](../inputs/reaction-arr-rel-insert-input))
+
+#### [`references`](#) ([`post_reference_arr_rel_insert_input`](../inputs/post-reference-arr-rel-insert-input))
+
+#### [`reply_settings`](#) ([`String`](../scalars/string))
+
+#### [`row_id`](#) ([`Int`](../scalars/int))
+
+#### [`section`](#) ([`subspace_section_obj_rel_insert_input`](../inputs/subspace-section-obj-rel-insert-input))
+
+#### [`section_row_id`](#) ([`bigint`](../scalars/bigint))
+
+#### [`subspace`](#) ([`subspace_obj_rel_insert_input`](../inputs/subspace-obj-rel-insert-input))
+
+#### [`subspace_id`](#) ([`bigint`](../scalars/bigint))
+
+#### [`tags`](#) ([`post_tag_arr_rel_insert_input`](../inputs/post-tag-arr-rel-insert-input))
+
+#### [`text`](#) ([`String`](../scalars/string))
+
+#### [`urls`](#) ([`post_url_arr_rel_insert_input`](../inputs/post-url-arr-rel-insert-input))

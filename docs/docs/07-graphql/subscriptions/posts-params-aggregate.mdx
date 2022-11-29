@@ -1,0 +1,45 @@
+---
+id: posts-params-aggregate
+title: posts_params_aggregate
+hide_table_of_contents: false
+---
+
+fetch aggregated fields from the table: "posts_params"
+
+```graphql
+posts_params_aggregate(
+  distinct_on: [posts_params_select_column!]
+  limit: Int
+  offset: Int
+  order_by: [posts_params_order_by!]
+  where: posts_params_bool_exp
+): posts_params_aggregate!
+```
+
+### Arguments
+
+#### [`distinct_on`](#) ([`[posts_params_select_column!]`](../enums/posts-params-select-column))
+
+distinct select on columns
+
+#### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+#### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+#### [`order_by`](#) ([`[posts_params_order_by!]`](../inputs/posts-params-order-by))
+
+sort the rows by one or more columns
+
+#### [`where`](#) ([`posts_params_bool_exp`](../inputs/posts-params-bool-exp))
+
+filter the rows returned
+
+### Type
+
+#### [`posts_params_aggregate`](../objects/posts-params-aggregate)
+
+aggregated selection of "posts_params"

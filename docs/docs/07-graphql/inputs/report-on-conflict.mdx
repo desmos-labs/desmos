@@ -1,0 +1,23 @@
+---
+id: report-on-conflict
+title: report_on_conflict
+hide_table_of_contents: false
+---
+
+on conflict condition type for table "report"
+
+```graphql
+input report_on_conflict {
+  constraint: report_constraint!
+  update_columns: [report_update_column!]!
+  where: report_bool_exp
+}
+```
+
+### Fields
+
+#### [`constraint`](#) ([`report_constraint!`](../enums/report-constraint))
+
+#### [`update_columns`](#) ([`[report_update_column!]!`](../enums/report-update-column))
+
+#### [`where`](#) ([`report_bool_exp`](../inputs/report-bool-exp))

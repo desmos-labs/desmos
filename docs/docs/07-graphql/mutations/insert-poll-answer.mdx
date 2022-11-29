@@ -1,0 +1,30 @@
+---
+id: insert-poll-answer
+title: insert_poll_answer
+hide_table_of_contents: false
+---
+
+insert data into the table: "poll_answer"
+
+```graphql
+insert_poll_answer(
+  objects: [poll_answer_insert_input!]!
+  on_conflict: poll_answer_on_conflict
+): poll_answer_mutation_response
+```
+
+### Arguments
+
+#### [`objects`](#) ([`[poll_answer_insert_input!]!`](../inputs/poll-answer-insert-input))
+
+the rows to be inserted
+
+#### [`on_conflict`](#) ([`poll_answer_on_conflict`](../inputs/poll-answer-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`poll_answer_mutation_response`](../objects/poll-answer-mutation-response)
+
+response of any mutation on the table "poll_answer"

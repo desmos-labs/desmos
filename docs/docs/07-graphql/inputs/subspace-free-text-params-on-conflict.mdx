@@ -1,0 +1,23 @@
+---
+id: subspace-free-text-params-on-conflict
+title: subspace_free_text_params_on_conflict
+hide_table_of_contents: false
+---
+
+on conflict condition type for table "subspace_free_text_params"
+
+```graphql
+input subspace_free_text_params_on_conflict {
+  constraint: subspace_free_text_params_constraint!
+  update_columns: [subspace_free_text_params_update_column!]!
+  where: subspace_free_text_params_bool_exp
+}
+```
+
+### Fields
+
+#### [`constraint`](#) ([`subspace_free_text_params_constraint!`](../enums/subspace-free-text-params-constraint))
+
+#### [`update_columns`](#) ([`[subspace_free_text_params_update_column!]!`](../enums/subspace-free-text-params-update-column))
+
+#### [`where`](#) ([`subspace_free_text_params_bool_exp`](../inputs/subspace-free-text-params-bool-exp))

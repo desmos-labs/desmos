@@ -1,0 +1,53 @@
+---
+id: chain-link-bool-exp
+title: chain_link_bool_exp
+hide_table_of_contents: false
+---
+
+Boolean expression to filter rows from the table "chain_link". All fields are combined with a logical 'AND'.
+
+```graphql
+input chain_link_bool_exp {
+  _and: [chain_link_bool_exp!]
+  _not: chain_link_bool_exp
+  _or: [chain_link_bool_exp!]
+  chain_config: chain_link_chain_config_bool_exp
+  chain_config_id: bigint_comparison_exp
+  chain_link_proofs: chain_link_proof_bool_exp
+  creation_time: timestamp_comparison_exp
+  external_address: String_comparison_exp
+  height: bigint_comparison_exp
+  id: Int_comparison_exp
+  profile: profile_bool_exp
+  proof: chain_link_proof_bool_exp
+  user_address: String_comparison_exp
+}
+```
+
+### Fields
+
+#### [`_and`](#) ([`[chain_link_bool_exp!]`](../inputs/chain-link-bool-exp))
+
+#### [`_not`](#) ([`chain_link_bool_exp`](../inputs/chain-link-bool-exp))
+
+#### [`_or`](#) ([`[chain_link_bool_exp!]`](../inputs/chain-link-bool-exp))
+
+#### [`chain_config`](#) ([`chain_link_chain_config_bool_exp`](../inputs/chain-link-chain-config-bool-exp))
+
+#### [`chain_config_id`](#) ([`bigint_comparison_exp`](../inputs/bigint-comparison-exp))
+
+#### [`chain_link_proofs`](#) ([`chain_link_proof_bool_exp`](../inputs/chain-link-proof-bool-exp))
+
+#### [`creation_time`](#) ([`timestamp_comparison_exp`](../inputs/timestamp-comparison-exp))
+
+#### [`external_address`](#) ([`String_comparison_exp`](../inputs/string-comparison-exp))
+
+#### [`height`](#) ([`bigint_comparison_exp`](../inputs/bigint-comparison-exp))
+
+#### [`id`](#) ([`Int_comparison_exp`](../inputs/int-comparison-exp))
+
+#### [`profile`](#) ([`profile_bool_exp`](../inputs/profile-bool-exp))
+
+#### [`proof`](#) ([`chain_link_proof_bool_exp`](../inputs/chain-link-proof-bool-exp))
+
+#### [`user_address`](#) ([`String_comparison_exp`](../inputs/string-comparison-exp))

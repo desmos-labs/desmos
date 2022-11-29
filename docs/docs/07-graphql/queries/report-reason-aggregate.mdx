@@ -1,0 +1,45 @@
+---
+id: report-reason-aggregate
+title: report_reason_aggregate
+hide_table_of_contents: false
+---
+
+fetch aggregated fields from the table: "report_reason"
+
+```graphql
+report_reason_aggregate(
+  distinct_on: [report_reason_select_column!]
+  limit: Int
+  offset: Int
+  order_by: [report_reason_order_by!]
+  where: report_reason_bool_exp
+): report_reason_aggregate!
+```
+
+### Arguments
+
+#### [`distinct_on`](#) ([`[report_reason_select_column!]`](../enums/report-reason-select-column))
+
+distinct select on columns
+
+#### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+#### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+#### [`order_by`](#) ([`[report_reason_order_by!]`](../inputs/report-reason-order-by))
+
+sort the rows by one or more columns
+
+#### [`where`](#) ([`report_reason_bool_exp`](../inputs/report-reason-bool-exp))
+
+filter the rows returned
+
+### Type
+
+#### [`report_reason_aggregate`](../objects/report-reason-aggregate)
+
+aggregated selection of "report_reason"

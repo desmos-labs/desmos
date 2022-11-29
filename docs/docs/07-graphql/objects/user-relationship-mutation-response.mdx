@@ -1,0 +1,24 @@
+---
+id: user-relationship-mutation-response
+title: user_relationship_mutation_response
+hide_table_of_contents: false
+---
+
+response of any mutation on the table "user_relationship"
+
+```graphql
+type user_relationship_mutation_response {
+  affected_rows: Int!
+  returning: [user_relationship!]!
+}
+```
+
+### Fields
+
+#### [`affected_rows`](#) ([`Int!`](../scalars/int))
+
+number of rows affected by the mutation
+
+#### [`returning`](#) ([`[user_relationship!]!`](../objects/user-relationship))
+
+data from the rows affected by the mutation

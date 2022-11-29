@@ -1,0 +1,30 @@
+---
+id: insert-poll-answer-one
+title: insert_poll_answer_one
+hide_table_of_contents: false
+---
+
+insert a single row into the table: "poll_answer"
+
+```graphql
+insert_poll_answer_one(
+  object: poll_answer_insert_input!
+  on_conflict: poll_answer_on_conflict
+): poll_answer
+```
+
+### Arguments
+
+#### [`object`](#) ([`poll_answer_insert_input!`](../inputs/poll-answer-insert-input))
+
+the row to be inserted
+
+#### [`on_conflict`](#) ([`poll_answer_on_conflict`](../inputs/poll-answer-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`poll_answer`](../objects/poll-answer)
+
+columns and relationships of "poll_answer"

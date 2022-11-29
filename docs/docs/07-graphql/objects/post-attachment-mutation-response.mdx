@@ -1,0 +1,24 @@
+---
+id: post-attachment-mutation-response
+title: post_attachment_mutation_response
+hide_table_of_contents: false
+---
+
+response of any mutation on the table "post_attachment"
+
+```graphql
+type post_attachment_mutation_response {
+  affected_rows: Int!
+  returning: [post_attachment!]!
+}
+```
+
+### Fields
+
+#### [`affected_rows`](#) ([`Int!`](../scalars/int))
+
+number of rows affected by the mutation
+
+#### [`returning`](#) ([`[post_attachment!]!`](../objects/post-attachment))
+
+data from the rows affected by the mutation

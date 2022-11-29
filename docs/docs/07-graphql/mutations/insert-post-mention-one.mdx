@@ -1,0 +1,30 @@
+---
+id: insert-post-mention-one
+title: insert_post_mention_one
+hide_table_of_contents: false
+---
+
+insert a single row into the table: "post_mention"
+
+```graphql
+insert_post_mention_one(
+  object: post_mention_insert_input!
+  on_conflict: post_mention_on_conflict
+): post_mention
+```
+
+### Arguments
+
+#### [`object`](#) ([`post_mention_insert_input!`](../inputs/post-mention-insert-input))
+
+the row to be inserted
+
+#### [`on_conflict`](#) ([`post_mention_on_conflict`](../inputs/post-mention-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`post_mention`](../objects/post-mention)
+
+columns and relationships of "post_mention"

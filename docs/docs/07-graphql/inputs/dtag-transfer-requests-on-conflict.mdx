@@ -1,0 +1,23 @@
+---
+id: dtag-transfer-requests-on-conflict
+title: dtag_transfer_requests_on_conflict
+hide_table_of_contents: false
+---
+
+on conflict condition type for table "dtag_transfer_requests"
+
+```graphql
+input dtag_transfer_requests_on_conflict {
+  constraint: dtag_transfer_requests_constraint!
+  update_columns: [dtag_transfer_requests_update_column!]!
+  where: dtag_transfer_requests_bool_exp
+}
+```
+
+### Fields
+
+#### [`constraint`](#) ([`dtag_transfer_requests_constraint!`](../enums/dtag-transfer-requests-constraint))
+
+#### [`update_columns`](#) ([`[dtag_transfer_requests_update_column!]!`](../enums/dtag-transfer-requests-update-column))
+
+#### [`where`](#) ([`dtag_transfer_requests_bool_exp`](../inputs/dtag-transfer-requests-bool-exp))

@@ -1,0 +1,51 @@
+---
+id: profiles-params-aggregate-fields
+title: profiles_params_aggregate_fields
+hide_table_of_contents: false
+---
+
+aggregate fields of "profiles_params"
+
+```graphql
+type profiles_params_aggregate_fields {
+  avg: profiles_params_avg_fields
+  count(columns: [profiles_params_select_column!], distinct: Boolean): Int!
+  max: profiles_params_max_fields
+  min: profiles_params_min_fields
+  stddev: profiles_params_stddev_fields
+  stddev_pop: profiles_params_stddev_pop_fields
+  stddev_samp: profiles_params_stddev_samp_fields
+  sum: profiles_params_sum_fields
+  var_pop: profiles_params_var_pop_fields
+  var_samp: profiles_params_var_samp_fields
+  variance: profiles_params_variance_fields
+}
+```
+
+### Fields
+
+#### [`avg`](#) ([`profiles_params_avg_fields`](../objects/profiles-params-avg-fields))
+
+#### [`count`](#) ([`Int!`](../scalars/int))
+
+- ##### [`columns`](#) ([`[profiles_params_select_column!]`](../enums/profiles-params-select-column))
+
+- ##### [`distinct`](#) ([`Boolean`](../scalars/boolean))
+
+#### [`max`](#) ([`profiles_params_max_fields`](../objects/profiles-params-max-fields))
+
+#### [`min`](#) ([`profiles_params_min_fields`](../objects/profiles-params-min-fields))
+
+#### [`stddev`](#) ([`profiles_params_stddev_fields`](../objects/profiles-params-stddev-fields))
+
+#### [`stddev_pop`](#) ([`profiles_params_stddev_pop_fields`](../objects/profiles-params-stddev-pop-fields))
+
+#### [`stddev_samp`](#) ([`profiles_params_stddev_samp_fields`](../objects/profiles-params-stddev-samp-fields))
+
+#### [`sum`](#) ([`profiles_params_sum_fields`](../objects/profiles-params-sum-fields))
+
+#### [`var_pop`](#) ([`profiles_params_var_pop_fields`](../objects/profiles-params-var-pop-fields))
+
+#### [`var_samp`](#) ([`profiles_params_var_samp_fields`](../objects/profiles-params-var-samp-fields))
+
+#### [`variance`](#) ([`profiles_params_variance_fields`](../objects/profiles-params-variance-fields))

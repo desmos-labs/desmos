@@ -1,0 +1,23 @@
+---
+id: block-on-conflict
+title: block_on_conflict
+hide_table_of_contents: false
+---
+
+on conflict condition type for table "block"
+
+```graphql
+input block_on_conflict {
+  constraint: block_constraint!
+  update_columns: [block_update_column!]!
+  where: block_bool_exp
+}
+```
+
+### Fields
+
+#### [`constraint`](#) ([`block_constraint!`](../enums/block-constraint))
+
+#### [`update_columns`](#) ([`[block_update_column!]!`](../enums/block-update-column))
+
+#### [`where`](#) ([`block_bool_exp`](../inputs/block-bool-exp))

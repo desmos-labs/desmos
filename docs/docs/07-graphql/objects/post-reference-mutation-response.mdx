@@ -1,0 +1,24 @@
+---
+id: post-reference-mutation-response
+title: post_reference_mutation_response
+hide_table_of_contents: false
+---
+
+response of any mutation on the table "post_reference"
+
+```graphql
+type post_reference_mutation_response {
+  affected_rows: Int!
+  returning: [post_reference!]!
+}
+```
+
+### Fields
+
+#### [`affected_rows`](#) ([`Int!`](../scalars/int))
+
+number of rows affected by the mutation
+
+#### [`returning`](#) ([`[post_reference!]!`](../objects/post-reference))
+
+data from the rows affected by the mutation

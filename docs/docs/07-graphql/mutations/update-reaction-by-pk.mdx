@@ -1,0 +1,58 @@
+---
+id: update-reaction-by-pk
+title: update_reaction_by_pk
+hide_table_of_contents: false
+---
+
+update single row of the table: "reaction"
+
+```graphql
+update_reaction_by_pk(
+  _append: reaction_append_input
+  _delete_at_path: reaction_delete_at_path_input
+  _delete_elem: reaction_delete_elem_input
+  _delete_key: reaction_delete_key_input
+  _inc: reaction_inc_input
+  _prepend: reaction_prepend_input
+  _set: reaction_set_input
+  pk_columns: reaction_pk_columns_input!
+): reaction
+```
+
+### Arguments
+
+#### [`_append`](#) ([`reaction_append_input`](../inputs/reaction-append-input))
+
+append existing jsonb value of filtered columns with new jsonb value
+
+#### [`_delete_at_path`](#) ([`reaction_delete_at_path_input`](../inputs/reaction-delete-at-path-input))
+
+delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+
+#### [`_delete_elem`](#) ([`reaction_delete_elem_input`](../inputs/reaction-delete-elem-input))
+
+delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+
+#### [`_delete_key`](#) ([`reaction_delete_key_input`](../inputs/reaction-delete-key-input))
+
+delete key/value pair or string element. key/value pairs are matched based on their key value
+
+#### [`_inc`](#) ([`reaction_inc_input`](../inputs/reaction-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+#### [`_prepend`](#) ([`reaction_prepend_input`](../inputs/reaction-prepend-input))
+
+prepend existing jsonb value of filtered columns with new jsonb value
+
+#### [`_set`](#) ([`reaction_set_input`](../inputs/reaction-set-input))
+
+sets the columns of the filtered rows to the given values
+
+#### [`pk_columns`](#) ([`reaction_pk_columns_input!`](../inputs/reaction-pk-columns-input))
+
+### Type
+
+#### [`reaction`](../objects/reaction)
+
+columns and relationships of "reaction"

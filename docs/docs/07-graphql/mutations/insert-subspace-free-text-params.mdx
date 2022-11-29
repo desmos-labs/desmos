@@ -1,0 +1,30 @@
+---
+id: insert-subspace-free-text-params
+title: insert_subspace_free_text_params
+hide_table_of_contents: false
+---
+
+insert data into the table: "subspace_free_text_params"
+
+```graphql
+insert_subspace_free_text_params(
+  objects: [subspace_free_text_params_insert_input!]!
+  on_conflict: subspace_free_text_params_on_conflict
+): subspace_free_text_params_mutation_response
+```
+
+### Arguments
+
+#### [`objects`](#) ([`[subspace_free_text_params_insert_input!]!`](../inputs/subspace-free-text-params-insert-input))
+
+the rows to be inserted
+
+#### [`on_conflict`](#) ([`subspace_free_text_params_on_conflict`](../inputs/subspace-free-text-params-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`subspace_free_text_params_mutation_response`](../objects/subspace-free-text-params-mutation-response)
+
+response of any mutation on the table "subspace_free_text_params"

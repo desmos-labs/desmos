@@ -1,0 +1,33 @@
+---
+id: update-subspace-registered-reaction-by-pk
+title: update_subspace_registered_reaction_by_pk
+hide_table_of_contents: false
+---
+
+update single row of the table: "subspace_registered_reaction"
+
+```graphql
+update_subspace_registered_reaction_by_pk(
+  _inc: subspace_registered_reaction_inc_input
+  _set: subspace_registered_reaction_set_input
+  pk_columns: subspace_registered_reaction_pk_columns_input!
+): subspace_registered_reaction
+```
+
+### Arguments
+
+#### [`_inc`](#) ([`subspace_registered_reaction_inc_input`](../inputs/subspace-registered-reaction-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+#### [`_set`](#) ([`subspace_registered_reaction_set_input`](../inputs/subspace-registered-reaction-set-input))
+
+sets the columns of the filtered rows to the given values
+
+#### [`pk_columns`](#) ([`subspace_registered_reaction_pk_columns_input!`](../inputs/subspace-registered-reaction-pk-columns-input))
+
+### Type
+
+#### [`subspace_registered_reaction`](../objects/subspace-registered-reaction)
+
+columns and relationships of "subspace_registered_reaction"

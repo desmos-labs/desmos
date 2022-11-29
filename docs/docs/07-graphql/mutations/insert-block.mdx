@@ -1,0 +1,30 @@
+---
+id: insert-block
+title: insert_block
+hide_table_of_contents: false
+---
+
+insert data into the table: "block"
+
+```graphql
+insert_block(
+  objects: [block_insert_input!]!
+  on_conflict: block_on_conflict
+): block_mutation_response
+```
+
+### Arguments
+
+#### [`objects`](#) ([`[block_insert_input!]!`](../inputs/block-insert-input))
+
+the rows to be inserted
+
+#### [`on_conflict`](#) ([`block_on_conflict`](../inputs/block-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`block_mutation_response`](../objects/block-mutation-response)
+
+response of any mutation on the table "block"

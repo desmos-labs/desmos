@@ -1,0 +1,41 @@
+---
+id: post-attachment-bool-exp
+title: post_attachment_bool_exp
+hide_table_of_contents: false
+---
+
+Boolean expression to filter rows from the table "post_attachment". All fields are combined with a logical 'AND'.
+
+```graphql
+input post_attachment_bool_exp {
+  _and: [post_attachment_bool_exp!]
+  _not: post_attachment_bool_exp
+  _or: [post_attachment_bool_exp!]
+  content: jsonb_comparison_exp
+  height: bigint_comparison_exp
+  id: bigint_comparison_exp
+  post: post_bool_exp
+  post_row_id: bigint_comparison_exp
+  row_id: Int_comparison_exp
+}
+```
+
+### Fields
+
+#### [`_and`](#) ([`[post_attachment_bool_exp!]`](../inputs/post-attachment-bool-exp))
+
+#### [`_not`](#) ([`post_attachment_bool_exp`](../inputs/post-attachment-bool-exp))
+
+#### [`_or`](#) ([`[post_attachment_bool_exp!]`](../inputs/post-attachment-bool-exp))
+
+#### [`content`](#) ([`jsonb_comparison_exp`](../inputs/jsonb-comparison-exp))
+
+#### [`height`](#) ([`bigint_comparison_exp`](../inputs/bigint-comparison-exp))
+
+#### [`id`](#) ([`bigint_comparison_exp`](../inputs/bigint-comparison-exp))
+
+#### [`post`](#) ([`post_bool_exp`](../inputs/post-bool-exp))
+
+#### [`post_row_id`](#) ([`bigint_comparison_exp`](../inputs/bigint-comparison-exp))
+
+#### [`row_id`](#) ([`Int_comparison_exp`](../inputs/int-comparison-exp))

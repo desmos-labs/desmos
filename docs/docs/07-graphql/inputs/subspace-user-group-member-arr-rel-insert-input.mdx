@@ -1,0 +1,22 @@
+---
+id: subspace-user-group-member-arr-rel-insert-input
+title: subspace_user_group_member_arr_rel_insert_input
+hide_table_of_contents: false
+---
+
+input type for inserting array relation for remote table "subspace_user_group_member"
+
+```graphql
+input subspace_user_group_member_arr_rel_insert_input {
+  data: [subspace_user_group_member_insert_input!]!
+  on_conflict: subspace_user_group_member_on_conflict
+}
+```
+
+### Fields
+
+#### [`data`](#) ([`[subspace_user_group_member_insert_input!]!`](../inputs/subspace-user-group-member-insert-input))
+
+#### [`on_conflict`](#) ([`subspace_user_group_member_on_conflict`](../inputs/subspace-user-group-member-on-conflict))
+
+on conflict condition

@@ -1,0 +1,54 @@
+---
+id: subspace-report-reason-aggregate-fields
+title: subspace_report_reason_aggregate_fields
+hide_table_of_contents: false
+---
+
+aggregate fields of "subspace_report_reason"
+
+```graphql
+type subspace_report_reason_aggregate_fields {
+  avg: subspace_report_reason_avg_fields
+  count(
+    columns: [subspace_report_reason_select_column!]
+    distinct: Boolean
+  ): Int!
+  max: subspace_report_reason_max_fields
+  min: subspace_report_reason_min_fields
+  stddev: subspace_report_reason_stddev_fields
+  stddev_pop: subspace_report_reason_stddev_pop_fields
+  stddev_samp: subspace_report_reason_stddev_samp_fields
+  sum: subspace_report_reason_sum_fields
+  var_pop: subspace_report_reason_var_pop_fields
+  var_samp: subspace_report_reason_var_samp_fields
+  variance: subspace_report_reason_variance_fields
+}
+```
+
+### Fields
+
+#### [`avg`](#) ([`subspace_report_reason_avg_fields`](../objects/subspace-report-reason-avg-fields))
+
+#### [`count`](#) ([`Int!`](../scalars/int))
+
+- ##### [`columns`](#) ([`[subspace_report_reason_select_column!]`](../enums/subspace-report-reason-select-column))
+
+- ##### [`distinct`](#) ([`Boolean`](../scalars/boolean))
+
+#### [`max`](#) ([`subspace_report_reason_max_fields`](../objects/subspace-report-reason-max-fields))
+
+#### [`min`](#) ([`subspace_report_reason_min_fields`](../objects/subspace-report-reason-min-fields))
+
+#### [`stddev`](#) ([`subspace_report_reason_stddev_fields`](../objects/subspace-report-reason-stddev-fields))
+
+#### [`stddev_pop`](#) ([`subspace_report_reason_stddev_pop_fields`](../objects/subspace-report-reason-stddev-pop-fields))
+
+#### [`stddev_samp`](#) ([`subspace_report_reason_stddev_samp_fields`](../objects/subspace-report-reason-stddev-samp-fields))
+
+#### [`sum`](#) ([`subspace_report_reason_sum_fields`](../objects/subspace-report-reason-sum-fields))
+
+#### [`var_pop`](#) ([`subspace_report_reason_var_pop_fields`](../objects/subspace-report-reason-var-pop-fields))
+
+#### [`var_samp`](#) ([`subspace_report_reason_var_samp_fields`](../objects/subspace-report-reason-var-samp-fields))
+
+#### [`variance`](#) ([`subspace_report_reason_variance_fields`](../objects/subspace-report-reason-variance-fields))

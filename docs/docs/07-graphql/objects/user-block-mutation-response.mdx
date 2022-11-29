@@ -1,0 +1,24 @@
+---
+id: user-block-mutation-response
+title: user_block_mutation_response
+hide_table_of_contents: false
+---
+
+response of any mutation on the table "user_block"
+
+```graphql
+type user_block_mutation_response {
+  affected_rows: Int!
+  returning: [user_block!]!
+}
+```
+
+### Fields
+
+#### [`affected_rows`](#) ([`Int!`](../scalars/int))
+
+number of rows affected by the mutation
+
+#### [`returning`](#) ([`[user_block!]!`](../objects/user-block))
+
+data from the rows affected by the mutation

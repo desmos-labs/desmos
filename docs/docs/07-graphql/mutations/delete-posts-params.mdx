@@ -1,0 +1,25 @@
+---
+id: delete-posts-params
+title: delete_posts_params
+hide_table_of_contents: false
+---
+
+delete data from the table: "posts_params"
+
+```graphql
+delete_posts_params(
+  where: posts_params_bool_exp!
+): posts_params_mutation_response
+```
+
+### Arguments
+
+#### [`where`](#) ([`posts_params_bool_exp!`](../inputs/posts-params-bool-exp))
+
+filter the rows which have to be deleted
+
+### Type
+
+#### [`posts_params_mutation_response`](../objects/posts-params-mutation-response)
+
+response of any mutation on the table "posts_params"

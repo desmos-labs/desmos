@@ -1,0 +1,30 @@
+---
+id: insert-reaction
+title: insert_reaction
+hide_table_of_contents: false
+---
+
+insert data into the table: "reaction"
+
+```graphql
+insert_reaction(
+  objects: [reaction_insert_input!]!
+  on_conflict: reaction_on_conflict
+): reaction_mutation_response
+```
+
+### Arguments
+
+#### [`objects`](#) ([`[reaction_insert_input!]!`](../inputs/reaction-insert-input))
+
+the rows to be inserted
+
+#### [`on_conflict`](#) ([`reaction_on_conflict`](../inputs/reaction-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`reaction_mutation_response`](../objects/reaction-mutation-response)
+
+response of any mutation on the table "reaction"

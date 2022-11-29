@@ -1,0 +1,24 @@
+---
+id: application-link-oracle-request-mutation-response
+title: application_link_oracle_request_mutation_response
+hide_table_of_contents: false
+---
+
+response of any mutation on the table "application_link_oracle_request"
+
+```graphql
+type application_link_oracle_request_mutation_response {
+  affected_rows: Int!
+  returning: [application_link_oracle_request!]!
+}
+```
+
+### Fields
+
+#### [`affected_rows`](#) ([`Int!`](../scalars/int))
+
+number of rows affected by the mutation
+
+#### [`returning`](#) ([`[application_link_oracle_request!]!`](../objects/application-link-oracle-request))
+
+data from the rows affected by the mutation

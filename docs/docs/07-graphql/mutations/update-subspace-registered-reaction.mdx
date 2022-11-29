@@ -1,0 +1,35 @@
+---
+id: update-subspace-registered-reaction
+title: update_subspace_registered_reaction
+hide_table_of_contents: false
+---
+
+update data of the table: "subspace_registered_reaction"
+
+```graphql
+update_subspace_registered_reaction(
+  _inc: subspace_registered_reaction_inc_input
+  _set: subspace_registered_reaction_set_input
+  where: subspace_registered_reaction_bool_exp!
+): subspace_registered_reaction_mutation_response
+```
+
+### Arguments
+
+#### [`_inc`](#) ([`subspace_registered_reaction_inc_input`](../inputs/subspace-registered-reaction-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+#### [`_set`](#) ([`subspace_registered_reaction_set_input`](../inputs/subspace-registered-reaction-set-input))
+
+sets the columns of the filtered rows to the given values
+
+#### [`where`](#) ([`subspace_registered_reaction_bool_exp!`](../inputs/subspace-registered-reaction-bool-exp))
+
+filter the rows which have to be updated
+
+### Type
+
+#### [`subspace_registered_reaction_mutation_response`](../objects/subspace-registered-reaction-mutation-response)
+
+response of any mutation on the table "subspace_registered_reaction"

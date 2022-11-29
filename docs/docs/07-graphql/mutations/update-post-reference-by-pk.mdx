@@ -1,0 +1,33 @@
+---
+id: update-post-reference-by-pk
+title: update_post_reference_by_pk
+hide_table_of_contents: false
+---
+
+update single row of the table: "post_reference"
+
+```graphql
+update_post_reference_by_pk(
+  _inc: post_reference_inc_input
+  _set: post_reference_set_input
+  pk_columns: post_reference_pk_columns_input!
+): post_reference
+```
+
+### Arguments
+
+#### [`_inc`](#) ([`post_reference_inc_input`](../inputs/post-reference-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+#### [`_set`](#) ([`post_reference_set_input`](../inputs/post-reference-set-input))
+
+sets the columns of the filtered rows to the given values
+
+#### [`pk_columns`](#) ([`post_reference_pk_columns_input!`](../inputs/post-reference-pk-columns-input))
+
+### Type
+
+#### [`post_reference`](../objects/post-reference)
+
+columns and relationships of "post_reference"

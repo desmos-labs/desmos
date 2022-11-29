@@ -1,0 +1,29 @@
+---
+id: dtag-transfer-requests-insert-input
+title: dtag_transfer_requests_insert_input
+hide_table_of_contents: false
+---
+
+input type for inserting data into table "dtag_transfer_requests"
+
+```graphql
+input dtag_transfer_requests_insert_input {
+  height: bigint
+  profile: profile_obj_rel_insert_input
+  profileBySenderAddress: profile_obj_rel_insert_input
+  receiver_address: String
+  sender_address: String
+}
+```
+
+### Fields
+
+#### [`height`](#) ([`bigint`](../scalars/bigint))
+
+#### [`profile`](#) ([`profile_obj_rel_insert_input`](../inputs/profile-obj-rel-insert-input))
+
+#### [`profileBySenderAddress`](#) ([`profile_obj_rel_insert_input`](../inputs/profile-obj-rel-insert-input))
+
+#### [`receiver_address`](#) ([`String`](../scalars/string))
+
+#### [`sender_address`](#) ([`String`](../scalars/string))

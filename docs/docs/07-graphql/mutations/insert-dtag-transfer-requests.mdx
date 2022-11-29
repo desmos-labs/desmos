@@ -1,0 +1,30 @@
+---
+id: insert-dtag-transfer-requests
+title: insert_dtag_transfer_requests
+hide_table_of_contents: false
+---
+
+insert data into the table: "dtag_transfer_requests"
+
+```graphql
+insert_dtag_transfer_requests(
+  objects: [dtag_transfer_requests_insert_input!]!
+  on_conflict: dtag_transfer_requests_on_conflict
+): dtag_transfer_requests_mutation_response
+```
+
+### Arguments
+
+#### [`objects`](#) ([`[dtag_transfer_requests_insert_input!]!`](../inputs/dtag-transfer-requests-insert-input))
+
+the rows to be inserted
+
+#### [`on_conflict`](#) ([`dtag_transfer_requests_on_conflict`](../inputs/dtag-transfer-requests-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`dtag_transfer_requests_mutation_response`](../objects/dtag-transfer-requests-mutation-response)
+
+response of any mutation on the table "dtag_transfer_requests"

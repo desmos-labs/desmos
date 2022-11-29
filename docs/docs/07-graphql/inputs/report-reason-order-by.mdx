@@ -1,0 +1,26 @@
+---
+id: report-reason-order-by
+title: report_reason_order_by
+hide_table_of_contents: false
+---
+
+Ordering options when selecting data from "report_reason".
+
+```graphql
+input report_reason_order_by {
+  reason: subspace_report_reason_order_by
+  reason_row_id: order_by
+  report: report_order_by
+  report_row_id: order_by
+}
+```
+
+### Fields
+
+#### [`reason`](#) ([`subspace_report_reason_order_by`](../inputs/subspace-report-reason-order-by))
+
+#### [`reason_row_id`](#) ([`order_by`](../enums/order-by))
+
+#### [`report`](#) ([`report_order_by`](../inputs/report-order-by))
+
+#### [`report_row_id`](#) ([`order_by`](../enums/order-by))

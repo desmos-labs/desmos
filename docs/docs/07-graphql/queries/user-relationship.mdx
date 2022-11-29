@@ -1,0 +1,45 @@
+---
+id: user-relationship
+title: user_relationship
+hide_table_of_contents: false
+---
+
+fetch data from the table: "user_relationship"
+
+```graphql
+user_relationship(
+  distinct_on: [user_relationship_select_column!]
+  limit: Int
+  offset: Int
+  order_by: [user_relationship_order_by!]
+  where: user_relationship_bool_exp
+): [user_relationship!]!
+```
+
+### Arguments
+
+#### [`distinct_on`](#) ([`[user_relationship_select_column!]`](../enums/user-relationship-select-column))
+
+distinct select on columns
+
+#### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+#### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+#### [`order_by`](#) ([`[user_relationship_order_by!]`](../inputs/user-relationship-order-by))
+
+sort the rows by one or more columns
+
+#### [`where`](#) ([`user_relationship_bool_exp`](../inputs/user-relationship-bool-exp))
+
+filter the rows returned
+
+### Type
+
+#### [`user_relationship`](../objects/user-relationship)
+
+columns and relationships of "user_relationship"

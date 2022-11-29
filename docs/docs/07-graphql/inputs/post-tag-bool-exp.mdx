@@ -1,0 +1,35 @@
+---
+id: post-tag-bool-exp
+title: post_tag_bool_exp
+hide_table_of_contents: false
+---
+
+Boolean expression to filter rows from the table "post_tag". All fields are combined with a logical 'AND'.
+
+```graphql
+input post_tag_bool_exp {
+  _and: [post_tag_bool_exp!]
+  _not: post_tag_bool_exp
+  _or: [post_tag_bool_exp!]
+  post: post_bool_exp
+  post_row_id: bigint_comparison_exp
+  row_id: Int_comparison_exp
+  tag: String_comparison_exp
+}
+```
+
+### Fields
+
+#### [`_and`](#) ([`[post_tag_bool_exp!]`](../inputs/post-tag-bool-exp))
+
+#### [`_not`](#) ([`post_tag_bool_exp`](../inputs/post-tag-bool-exp))
+
+#### [`_or`](#) ([`[post_tag_bool_exp!]`](../inputs/post-tag-bool-exp))
+
+#### [`post`](#) ([`post_bool_exp`](../inputs/post-bool-exp))
+
+#### [`post_row_id`](#) ([`bigint_comparison_exp`](../inputs/bigint-comparison-exp))
+
+#### [`row_id`](#) ([`Int_comparison_exp`](../inputs/int-comparison-exp))
+
+#### [`tag`](#) ([`String_comparison_exp`](../inputs/string-comparison-exp))

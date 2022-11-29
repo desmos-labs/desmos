@@ -1,0 +1,33 @@
+---
+id: update-block-by-pk
+title: update_block_by_pk
+hide_table_of_contents: false
+---
+
+update single row of the table: "block"
+
+```graphql
+update_block_by_pk(
+  _inc: block_inc_input
+  _set: block_set_input
+  pk_columns: block_pk_columns_input!
+): block
+```
+
+### Arguments
+
+#### [`_inc`](#) ([`block_inc_input`](../inputs/block-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+#### [`_set`](#) ([`block_set_input`](../inputs/block-set-input))
+
+sets the columns of the filtered rows to the given values
+
+#### [`pk_columns`](#) ([`block_pk_columns_input!`](../inputs/block-pk-columns-input))
+
+### Type
+
+#### [`block`](../objects/block)
+
+columns and relationships of "block"

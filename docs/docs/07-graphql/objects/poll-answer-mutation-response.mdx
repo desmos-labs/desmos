@@ -1,0 +1,24 @@
+---
+id: poll-answer-mutation-response
+title: poll_answer_mutation_response
+hide_table_of_contents: false
+---
+
+response of any mutation on the table "poll_answer"
+
+```graphql
+type poll_answer_mutation_response {
+  affected_rows: Int!
+  returning: [poll_answer!]!
+}
+```
+
+### Fields
+
+#### [`affected_rows`](#) ([`Int!`](../scalars/int))
+
+number of rows affected by the mutation
+
+#### [`returning`](#) ([`[poll_answer!]!`](../objects/poll-answer))
+
+data from the rows affected by the mutation

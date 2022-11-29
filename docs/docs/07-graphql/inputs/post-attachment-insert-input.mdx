@@ -1,0 +1,32 @@
+---
+id: post-attachment-insert-input
+title: post_attachment_insert_input
+hide_table_of_contents: false
+---
+
+input type for inserting data into table "post_attachment"
+
+```graphql
+input post_attachment_insert_input {
+  content: jsonb
+  height: bigint
+  id: bigint
+  post: post_obj_rel_insert_input
+  post_row_id: bigint
+  row_id: Int
+}
+```
+
+### Fields
+
+#### [`content`](#) ([`jsonb`](../scalars/jsonb))
+
+#### [`height`](#) ([`bigint`](../scalars/bigint))
+
+#### [`id`](#) ([`bigint`](../scalars/bigint))
+
+#### [`post`](#) ([`post_obj_rel_insert_input`](../inputs/post-obj-rel-insert-input))
+
+#### [`post_row_id`](#) ([`bigint`](../scalars/bigint))
+
+#### [`row_id`](#) ([`Int`](../scalars/int))

@@ -1,0 +1,23 @@
+---
+id: reaction-on-conflict
+title: reaction_on_conflict
+hide_table_of_contents: false
+---
+
+on conflict condition type for table "reaction"
+
+```graphql
+input reaction_on_conflict {
+  constraint: reaction_constraint!
+  update_columns: [reaction_update_column!]!
+  where: reaction_bool_exp
+}
+```
+
+### Fields
+
+#### [`constraint`](#) ([`reaction_constraint!`](../enums/reaction-constraint))
+
+#### [`update_columns`](#) ([`[reaction_update_column!]!`](../enums/reaction-update-column))
+
+#### [`where`](#) ([`reaction_bool_exp`](../inputs/reaction-bool-exp))
