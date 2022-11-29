@@ -127,6 +127,9 @@ module.exports = {
           editUrl: 'https://github.com/desmos-labs/desmos/tree/master/docs',
           showLastUpdateTime: true,
           lastVersion: "current",
+          exclude: [
+            './architecture/adr-template.md'
+          ],
           versions: {
             current: {
               label: "master"
