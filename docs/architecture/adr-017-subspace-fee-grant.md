@@ -15,11 +15,11 @@ This ADR introduces a new subspace-based fee grant method, which allows subspace
 
 ## Context
 
-Currently, one of the major problems of current Web3 services is complicated to use, it requires users to have tokens paying transaction fees so that they can use the service. For instance, in order to create a post on Desmos-based social network, users have to understand:
-- what `transaction` is and why they need some DSM to broadcast it;
-- get some DSM either via an on-ramp or by swapping existing funds.
+One of the major problems of current Web3-based applications that make them complicated to use by common people is the fact that they require users to have some tokens in order to pay transaction fees to perform various operations. For instance, in order to create a post on any Desmos-based social network, users have to:
+1. understand what a _transaction_ is and why they need some DSM to broadcast it, abd
+2. get some DSM either via an on-ramp service or by swapping existing funds.
 
-The `x/feegrant` gives the possibility to pay fees for the users, meaning that users can use the service without understanding how Web3 works behind. However, the `x/feegrant` allowance is not subspace-specified so subspace fees providers might unexpectedly pay the fees of the transactions to any other subspaces.
+The `x/feegrant` module of the Cosmos SDK allows anyone to pay fees on behalf of other users, meaning that the latter can ideally perform any kind of transaction without even knowing the concept of fees. However, the `x/feegrant` allowance is not subspace-specified: this means that subspace admins/owners might unexpected pay the fees for transactions that are related to other subspaces.
 
 ## Decision
 
