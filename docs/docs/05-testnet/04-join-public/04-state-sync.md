@@ -22,39 +22,20 @@ under the `statesync` section:
 3. Get a trusted chain height, and the associated block hash. To do this, you will have to:
     - Get the current chain height by running:
        ```bash
-       curl -s http://seed-4.morpheus.desmos.network:26657/commit | jq "{height: .result.signed_header.header.height}"
+       curl -s curl -s <rpc-address>/commit | jq "{height: .result.signed_header.header.height}"
        ```
     - Once you have the current chain height, get a height that is a little lower (200 blocks) than the current one.  
       To do this you can execute:
        ```bash
-       curl -s http://seed-4.morpheus.desmos.network:26657/commit?height=<your-height> | jq "{height: .result.signed_header.header.height, hash: .result.signed_header.commit.block_id.hash}"
+       curl -s curl -s <rpc-address>/commit?height=<your-height> | jq "{height: .result.signed_header.header.height, hash: .result.signed_header.commit.block_id.hash}"
  
        # Example
-       # curl -s http://seed-4.morpheus.desmos.network:26657/commit?height=100000 | jq "{height: .result.signed_header.header.height, hash: .result.signed_header.commit.block_id.hash}"
+       # curl -s curl -s <rpc-address>/commit?height=100000 | jq "{height: .result.signed_header.header.height, hash: .result.signed_header.commit.block_id.hash}"
        ```
       
-   1. Now that you have a trusted height and block hash, use those values as the `trust_height` and `trust_hash` values. Also,
-      make sure they're the right values for the Desmos version you're starting to synchronize:
-
-      | **State sync height range** |     **Desmos version**      |
-      |:-----------------------------|:---------------------------|
-      | `0 - 1235764`               |          `v0.17.0`          |
-      | `1235765 - 1415529`         |          `v0.17.4`          |
-      | `1415530 - 2121235`         |          `v0.17.6`          |
-      | `2121236 - 2226899`         |          `v1.0.4`           |
-      | `2226900 - 2589024`         |          `v2.0.0`           |
-      | `2589025 - 2643234`         |          `v2.1.0`           |
-      | `2643235 - 2756259`         |          `v2.2.0`           |
-      | `2756260 - 3130831`         |          `v2.3.0`           |
-      | `2756260 - 3130831`         |          `v2.3.0`           |
-      | `3130831 - 5842610`         |          `v2.3.1`           |
-      | `5842610 - 6233130`         |          `v3.2.0`           |
-      | `6233130 - 6339185`         |          `v4.0.1`           |
-      | `6339185 - 6658230`         |          `v4.1.0`           |
-      | `6658230 - 6716980`         |          `v4.2.0`           |
-      | `6716980 - 6749550`         |          `v4.3.0`           |
-      | `6749550 - 7349495`         |          `v4.3.0`           |
-      | `> 7349495`                |          `v4.4.2`           |
+4. Now that you have a trusted height and block hash, use those values as the `trust_height` and `trust_hash` values. 
+   Also, make sure they're the right values for the Desmos version you're starting to synchronize.
+   You can check them looking inside the associated testnet folder [here](https://github.com/desmos-labs/morpheus).
 
 Here is an example of what the `statesync` section of your `~/.desmos/config/config.toml` file should look like in the end (the `trust_height` and `trust_hash` should contain your values instead):
 
