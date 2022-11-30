@@ -48,7 +48,7 @@ trust_hash = "E8ED7A890A64986246EEB02D7D8C4A6D497E3B60C0CAFDDE30F2EE385204C314"
 trust_period = "336h0m0s"
 ```
 
-4. Add peers to `~/.desmos/config/config.toml` file:
+5. Add peers to `~/.desmos/config/config.toml` file:
 
  ```toml
 persistent_peers = "67dcef828fc2be3c3bcc19c9542d2b228bd7cff9@seed-4.morpheus.desmos.network:26656,fcf8207fb84a7238089bd0cd8db994e0af9016b6@seed-5.morpheus.desmos.network:26656"
