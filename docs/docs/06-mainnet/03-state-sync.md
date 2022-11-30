@@ -31,14 +31,9 @@ under the `statesync` section:
         # Example
         # curl -s https://rpc-desmos.itastakers.com/commit?height=100000 | jq "{height: .result.signed_header.header.height, hash: .result.signed_header.commit.block_id.hash}"
         ```
-4. Now that you have a trusted height and block hash, use those values as the `trust_height` and `trust_hash` values. Also,
-   make sure they're the right values for the Desmos version you're starting to synchronize:
-
-      | **State sync height range** | **Desmos version** |
-      | :-------------------------: | :----------------: |
-      |           `0 - 1149679`     |      `v1.0.1`      |
-      |     `1149680 - 1347304`     |      `v2.3.0`      |
-      |     `> 1347305`             |      `v2.3.1`      |
+4. Now that you have a trusted height and block hash, use those values as the `trust_height` and `trust_hash` values. 
+   Also, make sure they're the right values for the Desmos version you're starting to synchronize. 
+   You can check them [here](https://github.com/desmos-labs/mainnet#state-sync).
 
 Here is an example of what the `statesync` section of your `~/.desmos/config/config.toml` file should look like in the end (the `trust_height` and `trust_hash` should contain your values instead):
 
