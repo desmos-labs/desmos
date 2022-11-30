@@ -50,7 +50,7 @@ echo "building docusaurus main docs"
 (git clean -fdx && git reset --hard && git checkout $COMMIT)
 mv ~/versioned_docs ~/versioned_sidebars .
 ./pre.sh
-yarn install --frozen-lockfile && yarn build
+yarn install --frozen-lockfile && NODE_OPTIONS=--max-old-space-size=8192 yarn build
 
 mv build ~/output
 echo "setup domain"

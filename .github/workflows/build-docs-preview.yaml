@@ -28,7 +28,7 @@ jobs:
             docs/yarn.lock
 
       - name: Build 🔧
-        run: make build-docs && move ~/output ./output
+        run: make build-docs && mv ~/output ./output
 
       - name: Deploy preview to Netlify 🚀
         uses: nwtgck/actions-netlify@v1.2
