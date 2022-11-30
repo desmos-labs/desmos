@@ -31,14 +31,21 @@ jobs:
         run: make build-docs && mv ~/output ./output
 
       - name: Deploy preview to Netlify 🚀
+        id: deploy-preview
         uses: nwtgck/actions-netlify@v1.2
         with:
           publish-dir: ./output
-          github-token: ${{ secrets.GITHUB_TOKEN }}
           deploy-message: "Deploy from GitHub Actions"
           enable-commit-comment: false
-          enable-pull-request-comment: true
-          overwrites-pull-request-comment: true
+          enable-pull-request-comment: false
+          overwrites-pull-request-comment: false
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+
+      - name: Write preview url
+        uses: thollander/actions-comment-pull-request@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          message: '👀 Docs preview available here: ${{ steps.deploy-preview.outputs.deploy-url }}'
+          comment_includes: '👀 Docs preview available here: '
