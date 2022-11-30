@@ -15,9 +15,9 @@ under the `statesync` section:
 
 1. Enable state sync by setting `enable=true`;
 
-2. Set the RPC addresses from where to get the snapshots using the `rpc_servers` field to
-   `seed-4.morpheus.desmos.network:26657,seed-5.morpheus.desmos.network:26657`.   
-   These are two of our fullnodes that are set up to create periodic snapshots every 600 blocks;
+2. Set the RPC addresses from where to get the snapshots using the `rpc_servers` field.
+    You can find the state sync nodes at the [testnet repo](https://github.com/desmos-labs/morpheus) inside
+    the folder with the name of the testnet that you want to join.
    
 3. Get a trusted chain height, and the associated block hash. To do this, you will have to:
     - Get the current chain height by running:
