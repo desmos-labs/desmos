@@ -9,9 +9,8 @@
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
     "clear": "docusaurus clear",
-    "preserve": "pre.sh",
+    "preserve": "./pre.sh",
     "serve": "docusaurus serve",
-    "postserve": "./post.sh",
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids"
   },
@@ -23,6 +22,7 @@
     "@edno/docusaurus2-graphql-doc-generator": "^1.10.3",
     "@mdx-js/react": "^1.6.21",
     "@svgr/webpack": "^5.5.0",
+    "@swc/core": "^1.3.21",
     "@you54f/theme-github-codeblock": "^0.1.1",
     "clsx": "^1.1.1",
     "docusaurus-graphql-plugin": "^0.8.0",
@@ -31,6 +31,7 @@
     "prism-react-renderer": "^1.2.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "swc-loader": "^0.2.3",
     "theme-github-codetabs": "^0.2.3"
   },
   "browserslist": {
