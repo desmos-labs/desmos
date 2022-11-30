@@ -1,5 +1,6 @@
 module.exports = {
   title: 'Desmos documentation',
+  staticDirectories: ['static'],
   tagline: 'Desmos network official documentation for developers and validators',
   url: 'https://test-docs.desmos.network',
   baseUrl: '/',
@@ -9,6 +10,23 @@ module.exports = {
   favicon: 'assets/favicon.ico',
   organizationName: 'desmos-labs', // Usually your GitHub org/user name.
   projectName: 'desmos', // Usually your repo name.
+  webpack: {
+    jsLoader: (isServer) => ({
+      loader: require.resolve('swc-loader'),
+      options: {
+        jsc: {
+          parser: {
+            syntax: 'typescript',
+            tsx: true,
+          },
+          target: 'es2017',
+        },
+        module: {
+          type: isServer ? 'commonjs' : 'es6',
+        },
+      },
+    }),
+  },
   themeConfig: {
     colorMode: {
       defaultMode: 'dark',
@@ -126,6 +144,9 @@ module.exports = {
           editUrl: 'https://github.com/desmos-labs/desmos/tree/master/docs',
           showLastUpdateTime: true,
           lastVersion: "current",
+          exclude: [
+            './architecture/adr-template.md'
+          ],
           versions: {
             current: {
               label: "master"

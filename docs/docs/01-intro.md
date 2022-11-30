@@ -6,7 +6,7 @@ sidebar_position: 1
 ---
 # Introduction
 
-![cover](../static/assets/cover.png)
+![cover](/assets/cover.png)
 
 Desmos is a Proof of Stake blockchain protocol that allows developers to build social networking or social-enable apps.   
 

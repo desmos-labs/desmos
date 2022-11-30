@@ -236,7 +236,7 @@ had before.
 
 ## Problem #7: My validator run out of space
 
-![run-out-of-space](../../static/assets/no_space_left.png)
+![run-out-of-space](/assets/no_space_left.png)
 
 This situation occurs if you haven’t allocated enough disk space to your node when you’ve created it.
 The space you need is directly related to the pruning strategy your using, you can read more about it [here](https://docs.desmos.network/fullnode/overview#understanding-pruning).
@@ -273,7 +273,7 @@ However, our team is currently testing it inside our morpheus-apollo-2 testnet a
 
 ## Problem #8: Wrong Block Header AppHash
 
-![run-out-of-space](../../static/assets/wrong_block_header.png)
+![run-out-of-space](/assets/wrong_block_header.png)
 
 If you run into this problem while you're syncing your node, probably you are using a wrong Desmos binary version.
 If so, please ask inside our discord server what's the correct version/versions to use in order to sync the node correctly.
