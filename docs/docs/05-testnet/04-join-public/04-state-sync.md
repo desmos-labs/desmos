@@ -42,14 +42,14 @@ Here is an example of what the `statesync` section of your `~/.desmos/config/con
 ```toml
 enable = true
 
-rpc_servers = "seed-4.morpheus.desmos.network:26657,seed-5.morpheus.desmos.network:26657"
-trust_height = 16962
-trust_hash = "E8ED7A890A64986246EEB02D7D8C4A6D497E3B60C0CAFDDE30F2EE385204C314"
+rpc_servers = "<rpc-address-1>:26657,<rpc-address-1>:26657"
+trust_height = <block-height>
+trust_hash = "<block-hash>"
 trust_period = "336h0m0s"
 ```
 
 5. Add peers to `~/.desmos/config/config.toml` file:
 
  ```toml
-persistent_peers = "67dcef828fc2be3c3bcc19c9542d2b228bd7cff9@seed-4.morpheus.desmos.network:26656,fcf8207fb84a7238089bd0cd8db994e0af9016b6@seed-5.morpheus.desmos.network:26656"
+persistent_peers = "<peer-node-id-1>@<peer-address-1>:26656,<peer-node-id-2>@<peer-node-address-2>:26656",...."
  ```
