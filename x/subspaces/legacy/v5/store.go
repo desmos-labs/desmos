@@ -13,11 +13,11 @@ import (
 // - create account for all the users inside groups if they don't have it;
 // - create account for all the users having permissions inside a subspace if they don't have it.
 func MigrateStore(ctx sdk.Context, key sdk.StoreKey, accountKeeper authkeeper.AccountKeeper) error {
-	migrateUserAccountInUserGroups(ctx, key, accountKeeper)
-	return migrateUserAccountInPermissions(ctx, key, accountKeeper)
+	migrateUserAccountsInUserGroups(ctx, key, accountKeeper)
+	return migrateUserAccountsInPermissions(ctx, key, accountKeeper)
 }
 
-func migrateUserAccountInUserGroups(ctx sdk.Context, key sdk.StoreKey, accountKeeper authkeeper.AccountKeeper) error {
+func migrateUserAccountsInUserGroups(ctx sdk.Context, key sdk.StoreKey, accountKeeper authkeeper.AccountKeeper) error {
 	groupsStore := prefix.NewStore(ctx.KVStore(key), types.GroupsMembersPrefix)
 	iterator := groupsStore.Iterator(nil, nil)
 	defer iterator.Close()
@@ -37,7 +37,7 @@ func migrateUserAccountInUserGroups(ctx sdk.Context, key sdk.StoreKey, accountKe
 	return nil
 }
 
-func migrateUserAccountInPermissions(ctx sdk.Context, key sdk.StoreKey, accountKeeper authkeeper.AccountKeeper) error {
+func migrateUserAccountsInPermissions(ctx sdk.Context, key sdk.StoreKey, accountKeeper authkeeper.AccountKeeper) error {
 	permissionsStore := prefix.NewStore(ctx.KVStore(key), types.UserPermissionsStorePrefix)
 	iterator := permissionsStore.Iterator(nil, nil)
 	defer iterator.Close()
