@@ -56,9 +56,9 @@ func TestEndBlocker(t *testing.T) {
 	ctx := sdk.NewContext(ms, tmproto.Header{ChainID: "test-chain"}, false, log.NewNopLogger())
 	cdc, legacyAmino := app.MakeCodecs()
 	pk := paramskeeper.NewKeeper(cdc, legacyAmino, keys[paramstypes.StoreKey], tKeys[paramstypes.TStoreKey])
-	sk := subspaceskeeper.NewKeeper(cdc, keys[subspacestypes.StoreKey])
-	rk := relationshipskeeper.NewKeeper(cdc, keys[relationshipstypes.StoreKey], sk)
 	authKeeper := authkeeper.NewAccountKeeper(cdc, keys[authtypes.StoreKey], pk.Subspace(authtypes.ModuleName), authtypes.ProtoBaseAccount, app.GetMaccPerms())
+	sk := subspaceskeeper.NewKeeper(cdc, keys[subspacestypes.StoreKey], authKeeper)
+	rk := relationshipskeeper.NewKeeper(cdc, keys[relationshipstypes.StoreKey], sk)
 	profilesKeeper := profileskeeper.NewKeeper(cdc, legacyAmino, keys[profilestypes.StoreKey], pk.Subspace(profilestypes.DefaultParamsSpace), authKeeper, rk, nil, nil, nil)
 	keeper := postskeeper.NewKeeper(cdc, keys[poststypes.StoreKey], pk.Subspace(types.DefaultParamsSpace), profilesKeeper, sk, rk)
 

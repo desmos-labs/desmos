@@ -102,6 +102,6 @@ func (suite *KeeperTestSuite) SetupTest() {
 		nil,
 		nil,
 	)
-	suite.sk = subspaceskeeper.NewKeeper(suite.cdc, keys[subspacestypes.StoreKey])
+	suite.sk = subspaceskeeper.NewKeeper(suite.cdc, keys[subspacestypes.StoreKey], authKeeper)
 	suite.k = keeper.NewKeeper(suite.cdc, suite.storeKey, suite.sk)
 }

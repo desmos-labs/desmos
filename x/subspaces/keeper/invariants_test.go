@@ -627,7 +627,7 @@ func (suite *KeeperTestsuite) TestValidUserPermissionsInvariant() {
 					"Test section",
 				))
 
-				suite.k.SetUserPermissions(ctx, 1, 1, "", types.NewPermissions())
+				suite.k.SetUserPermissions(ctx, 1, 1, "cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn", types.NewPermissions("invalid"))
 			},
 			expBroken: true,
 		},

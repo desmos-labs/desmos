@@ -1,6 +1,7 @@
 package keeper
 
 import (
+	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
@@ -106,6 +107,17 @@ func (k Keeper) DeleteUserGroup(ctx sdk.Context, subspaceID uint64, groupID uint
 
 // AddUserToGroup adds the given user to the group having the provided id inside the specified subspace.
 func (k Keeper) AddUserToGroup(ctx sdk.Context, subspaceID uint64, groupID uint32, user string) {
+	// Create account if user does not exist.
+	userAcc, err := sdk.AccAddressFromBech32(user)
+	if err != nil {
+		panic(err)
+	}
+	accExists := k.ak.HasAccount(ctx, userAcc)
+	if !accExists {
+		defer telemetry.IncrCounter(1, "new", "account")
+		k.ak.SetAccount(ctx, k.ak.NewAccountWithAddress(ctx, userAcc))
+	}
+
 	store := ctx.KVStore(k.storeKey)
 	store.Set(types.GroupMemberStoreKey(subspaceID, groupID, user), []byte{0x01})
 

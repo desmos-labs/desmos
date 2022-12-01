@@ -446,6 +446,8 @@ func (suite *KeeperTestsuite) TestKeeper_AddUserToGroup() {
 			check: func(ctx sdk.Context) {
 				isMember := suite.k.IsMemberOfGroup(ctx, 1, 1, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
 				suite.Require().True(isMember)
+				acc, _ := sdk.AccAddressFromBech32("cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
+				suite.Require().True(suite.ak.HasAccount(ctx, acc))
 			},
 		},
 	}

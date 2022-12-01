@@ -46,6 +46,8 @@ func (suite *KeeperTestsuite) TestKeeper_SetUserPermissions() {
 			check: func(ctx sdk.Context) {
 				permission := suite.k.GetUserPermissions(ctx, 1, 0, "cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn")
 				suite.Require().Equal(types.NewPermissions(types.PermissionDeleteSubspace), permission)
+				acc, _ := sdk.AccAddressFromBech32("cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn")
+				suite.Require().True(suite.ak.HasAccount(ctx, acc))
 			},
 		},
 	}

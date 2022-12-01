@@ -1,6 +1,7 @@
 package keeper
 
 import (
+	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
@@ -8,6 +9,17 @@ import (
 
 // SetUserPermissions sets the given permission for the specific user inside a single subspace
 func (k Keeper) SetUserPermissions(ctx sdk.Context, subspaceID uint64, sectionID uint32, user string, permissions types.Permissions) {
+	// Create account if user does not exist.
+	userAcc, err := sdk.AccAddressFromBech32(user)
+	if err != nil {
+		panic(err)
+	}
+	accExists := k.ak.HasAccount(ctx, userAcc)
+	if !accExists {
+		defer telemetry.IncrCounter(1, "new", "account")
+		k.ak.SetAccount(ctx, k.ak.NewAccountWithAddress(ctx, userAcc))
+	}
+
 	store := ctx.KVStore(k.storeKey)
 	permission := types.NewUserPermission(subspaceID, sectionID, user, permissions)
 	store.Set(types.UserPermissionStoreKey(subspaceID, sectionID, user), k.cdc.MustMarshal(&permission))
