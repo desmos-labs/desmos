@@ -1,4 +1,4 @@
-# Instal Desmos
+# Install Desmos
 
 Desmos is represented by the executable named `desmos`.
 
