@@ -174,7 +174,7 @@ message MsgRevokeUserAllowanceResponse {}
 
 ### `Query` Service
 
-In order to allow clients to easily query for allowances we will implement a new queries:
+In order to allow clients to easily query for allowances we will implement the following new queries:
 
 ```protobuf
 service Query {
