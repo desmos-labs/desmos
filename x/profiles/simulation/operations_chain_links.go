@@ -41,7 +41,7 @@ func SimulateMsgLinkChainAccount(
 
 		// Build the message
 		msg := types.NewMsgLinkChainAccount(
-			link.GetAddressData(),
+			link.Address,
 			link.Proof,
 			link.ChainConfig,
 			signer.Address.String(),
@@ -74,7 +74,7 @@ func randomLinkChainAccountFields(
 	link = chainAccount.GetBech32ChainLink(signer.Address.String(), time.Now())
 
 	// Skip if link already exists
-	_, found := k.GetChainLink(ctx, signer.Address.String(), link.ChainConfig.Name, link.GetAddressData().GetValue())
+	_, found := k.GetChainLink(ctx, signer.Address.String(), link.ChainConfig.Name, link.Address.Value)
 	if found {
 		skip = true
 		return
@@ -101,7 +101,7 @@ func SimulateMsgUnlinkChainAccount(
 		}
 
 		// Build the message
-		msg := types.NewMsgUnlinkChainAccount(link.User, link.ChainConfig.Name, link.GetAddressData().GetValue())
+		msg := types.NewMsgUnlinkChainAccount(link.User, link.ChainConfig.Name, link.Address.Value)
 
 		// Send the message
 		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
@@ -160,7 +160,7 @@ func SimulateMsgSetDefaultExternalAddress(
 		}
 
 		// Build the message
-		msg := types.NewMsgSetDefaultExternalAddress(link.ChainConfig.Name, link.GetAddressData().GetValue(), link.User)
+		msg := types.NewMsgSetDefaultExternalAddress(link.ChainConfig.Name, link.Address.Value, link.User)
 
 		// Send the message
 		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})

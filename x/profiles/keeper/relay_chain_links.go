@@ -29,7 +29,7 @@ func (k Keeper) OnRecvLinkChainAccountPacket(
 		return packetAck, err
 	}
 
-	srcAddrData, err := types.UnpackAddressData(k.cdc, data.SourceAddress)
+	err = data.SourceAddress.UnpackInterfaces(k.cdc)
 	if err != nil {
 		return packetAck, err
 	}
@@ -62,26 +62,26 @@ func (k Keeper) OnRecvLinkChainAccountPacket(
 
 	// Verify the source proof by making sure the user has signed the destination
 	// address using the source address private key
-	err = data.SourceProof.Verify(k.cdc, k.legacyAmino, data.DestinationAddress, srcAddrData)
+	err = data.SourceProof.Verify(k.cdc, k.legacyAmino, data.DestinationAddress, data.SourceAddress)
 	if err != nil {
 		return packetAck, err
 	}
 
 	// Verify the destination proof by making sure the user has signed the source
 	// address using the destination address private key
-	destAddrData := types.NewBech32Address(data.DestinationAddress, sdk.GetConfig().GetBech32AccountAddrPrefix())
-	err = data.DestinationProof.Verify(k.cdc, k.legacyAmino, srcAddrData.GetValue(), destAddrData)
+	destAddrData := types.NewAddress(data.DestinationAddress, types.GenerationAlgorithm_GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding(sdk.GetConfig().GetBech32AccountAddrPrefix()))
+	err = data.DestinationProof.Verify(k.cdc, k.legacyAmino, data.SourceAddress.Value, destAddrData)
 	if err != nil {
 		return packetAck, err
 	}
 
 	// Store the link
-	chainLink := types.NewChainLink(data.DestinationAddress, srcAddrData, data.SourceProof, data.SourceChainConfig, ctx.BlockTime())
+	chainLink := types.NewChainLink(data.DestinationAddress, data.SourceAddress, data.SourceProof, data.SourceChainConfig, ctx.BlockTime())
 	err = k.SaveChainLink(ctx, chainLink)
 	if err != nil {
 		return packetAck, err
 	}
 
-	packetAck.SourceAddress = srcAddrData.GetValue()
+	packetAck.SourceAddress = data.SourceAddress.Value
 	return packetAck, nil
 }

@@ -182,7 +182,7 @@ func containsChainLink(slice []types.ChainLink, link types.ChainLink) bool {
 func getDefaultExternalAddressEntries(links []types.ChainLink) []types.DefaultExternalAddressEntry {
 	entries := make([]types.DefaultExternalAddressEntry, 0, len(links))
 	for _, link := range links {
-		entry := types.NewDefaultExternalAddressEntry(link.User, link.ChainConfig.Name, link.GetAddressData().GetValue())
+		entry := types.NewDefaultExternalAddressEntry(link.User, link.ChainConfig.Name, link.Address.Value)
 		if !containsDefaultExternalAddressEntry(entries, entry) {
 			entries = append(entries, entry)
 		}

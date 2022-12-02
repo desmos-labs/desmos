@@ -126,10 +126,9 @@ func ValidChainLinks(k Keeper) sdk.Invariant {
 func formatOutputChainLinks(links []types.ChainLink) (output string) {
 	output = "The following list contains invalid chain links:\n"
 	for _, link := range links {
-		address := link.Address.GetCachedValue().(types.AddressData)
 		output += fmt.Sprintf(
 			"[User]: %s, [Chain]: %s, [Address]: %s\n",
-			link.User, link.ChainConfig.Name, address.GetValue(),
+			link.User, link.ChainConfig.Name, link.Address.Value,
 		)
 	}
 	return output

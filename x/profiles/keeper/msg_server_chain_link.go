@@ -15,13 +15,8 @@ import (
 func (k msgServer) LinkChainAccount(goCtx context.Context, msg *types.MsgLinkChainAccount) (*types.MsgLinkChainAccountResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	srcAddrData, err := types.UnpackAddressData(k.cdc, msg.ChainAddress)
-	if err != nil {
-		return nil, err
-	}
-
-	link := types.NewChainLink(msg.Signer, srcAddrData, msg.Proof, msg.ChainConfig, ctx.BlockTime())
-	err = k.SaveChainLink(ctx, link)
+	link := types.NewChainLink(msg.Signer, msg.ChainAddress, msg.Proof, msg.ChainConfig, ctx.BlockTime())
+	err := k.SaveChainLink(ctx, link)
 	if err != nil {
 		return nil, err
 	}
@@ -35,7 +30,7 @@ func (k msgServer) LinkChainAccount(goCtx context.Context, msg *types.MsgLinkCha
 		),
 		sdk.NewEvent(
 			types.EventTypeLinkChainAccount,
-			sdk.NewAttribute(types.AttributeKeyChainLinkExternalAddress, srcAddrData.GetValue()),
+			sdk.NewAttribute(types.AttributeKeyChainLinkExternalAddress, msg.ChainAddress.Value),
 			sdk.NewAttribute(types.AttributeKeyChainLinkChainName, msg.ChainConfig.Name),
 			sdk.NewAttribute(types.AttributeKeyChainLinkOwner, msg.Signer),
 			sdk.NewAttribute(types.AttributeKeyChainLinkCreationTime, link.CreationTime.Format(time.RFC3339Nano)),

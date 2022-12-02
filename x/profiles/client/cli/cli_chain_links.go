@@ -61,9 +61,8 @@ Where data.json contains:
 				return err
 			}
 
-			addr := data.Address.GetCachedValue().(types.AddressData)
 			msg := types.NewMsgLinkChainAccount(
-				addr,
+				data.Address,
 				data.Proof,
 				data.ChainConfig,
 				clientCtx.GetFromAddress().String(),

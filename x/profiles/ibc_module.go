@@ -231,16 +231,11 @@ func handleLinkChainAccountPacketData(
 		acknowledgement = channeltypes.NewResultAcknowledgement(packetAckBytes)
 	}
 
-	address, err := types.UnpackAddressData(am.cdc, packetData.SourceAddress)
-	if err != nil {
-		return true, channeltypes.Acknowledgement{}, err
-	}
-
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
 			types.EventTypeLinkChainAccountPacket,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
-			sdk.NewAttribute(types.AttributeKeyChainLinkExternalAddress, address.GetValue()),
+			sdk.NewAttribute(types.AttributeKeyChainLinkExternalAddress, packetData.SourceAddress.Value),
 			sdk.NewAttribute(types.AttributeKeyChainLinkChainName, packetData.SourceChainConfig.Name),
 			sdk.NewAttribute(types.AttributeKeyChainLinkOwner, packetData.DestinationAddress),
 			sdk.NewAttribute(types.AttributeKeyAckSuccess, fmt.Sprintf("%t", true)),

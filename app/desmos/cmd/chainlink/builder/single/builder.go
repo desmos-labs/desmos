@@ -55,7 +55,7 @@ func (b *AccountChainLinkJSONBuilder) BuildChainLinkJSON(chain types.Chain) (uti
 	}
 
 	return utils.NewChainLinkJSON(
-		profilestypes.NewBech32Address(addr, chain.Prefix),
+		profilestypes.NewAddress(addr, profilestypes.GenerationAlgorithm_GENERATION_ALGORITHM_COSMOS, profilestypes.NewBech32Encoding(chain.Prefix)),
 		profilestypes.NewProof(
 			pubkey,
 			profilestypes.NewSingleSignature(profilestypes.SIGNATURE_VALUE_TYPE_RAW, sig),
