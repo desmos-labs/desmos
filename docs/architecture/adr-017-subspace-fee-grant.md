@@ -184,7 +184,7 @@ service Query {
     }
     // GroupAllowances returns all the grants for groups.
     rpc GroupAllowances(QueryGroupAllowancesRequest) returns(QueryGroupAllowancesResponse) {
-        option (google.api.http).get = "/desmos/subspaces/v3/subspaces/{subspace_id}/granter/{granter}/groups/allowances";
+        option (google.api.http).get = "/desmos/subspaces/v3/subspaces/{subspace_id}/allowances/groups";
     }
 }
 
