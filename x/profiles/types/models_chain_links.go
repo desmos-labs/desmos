@@ -516,27 +516,13 @@ func (a *Address) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 	return unpacker.UnpackAny(a.EncodingAlgorithm, &encoding)
 }
 
-// GetEncodedValue returns the string value of the address, encoded as it should be
-func (a *Address) GetEncodedValue() (string, error) {
-	value, err := hex.DecodeString(a.Value)
-	if err != nil {
-		return "", err
-	}
-	return a.EncodingAlgorithm.GetCachedValue().(AddressEncoding).Encode(value)
-}
-
 func (a *Address) VerifyPubKey(pubKey cryptotypes.PubKey) (bool, error) {
-	addressBz, err := hex.DecodeString(a.Value)
-	if err != nil {
-		return false, err
-	}
-
 	generatedBz, err := generateAddressBytes(pubKey, a.GenerationAlgorithm)
 	if err != nil {
 		return false, err
 	}
-
-	return bytes.Equal(addressBz, generatedBz), nil
+	encoded, err := a.EncodingAlgorithm.GetCachedValue().(AddressEncoding).Encode(generatedBz)
+	return a.Value == encoded, err
 }
 
 // generateAddressBytes generates the address bytes starting from the given public key
