@@ -31,7 +31,7 @@ Currently, `x/auth` provides a `DeductFeeDecorator` based on `x/feegrant` to exe
 
 The new subspace-specified `DeductFeeDecorator` will work as follows:
 1. check if all the messages in the transaction are messages related to the same subspace;
-2. if the transaction contains subspace messages from the same subspace and a fee grant exists, run the `x/subspaces` `DeductFeeDecorator`; otherwise run the `x/auth` `DeductFeeDecorator`,
+2. if the messages in the transaction are all realted to the same subspace and a fee grant exists for that subspace, run the `x/subspaces` `DeductFeeDecorator`; otherwise run the `x/auth` `DeductFeeDecorator`,
 
 ### Types
 
