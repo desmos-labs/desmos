@@ -65,7 +65,7 @@ message GroupGrant {
 
 #### Group grant
 
-In order to simplify granters to manage the group allowance, the granted group allowance will be stored in the keys having the structure like:
+In order to simplify the management of group allowances, each granted group allowance will be stored usign the following key:
 ```
 SubspaceGroupAllowancePrefix | SubspaceID | GranterAddress | GroupID | -> Protobuf(GroupGrant)
 ```
