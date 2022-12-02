@@ -258,4 +258,4 @@ The proposed solution introduces a new set of store keys, it is completely backw
 - Not known
 
 ## References
-https://docs.cosmos.network/v0.46/modules/feegrant/01_concepts.html
+- [Cosmos SDK fee grant concepts](https://docs.cosmos.network/v0.46/modules/feegrant/01_concepts.html)
