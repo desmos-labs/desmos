@@ -193,7 +193,7 @@ message QueryUserAllowancesRequest {
     // the id of the subspace where the granter grants the allowance to the grantee.
     uint64 subspace_id = 1;
 
-    // the address of the user granting an allowance of their funds.
+    // (optional) the address of the user granting an allowance of their funds.
     string granter = 2;
 
     // (Optional) the address of the user being granted an allowance of another user's funds.
