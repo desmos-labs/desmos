@@ -19,7 +19,7 @@ One of the major problems of current Web3-based applications that make them comp
 1. understand what a _transaction_ is and why they need some DSM to broadcast it;
 2. get some DSM either via an on-ramp service or by swapping existing funds.
 
-The `x/feegrant` module of the Cosmos SDK allows anyone to pay fees on behalf of other users, meaning that the latter can ideally perform any kind of transaction without even knowing the concept of fees. However, the `x/feegrant` allowance is not subspace-specified: this means that subspace admins/owners might unexpected pay the fees for transactions that are related to other subspaces.
+The `x/feegrant` module of the Cosmos SDK allows anyone to pay fees on behalf of other users, meaning that the latter can ideally perform any kind of transaction without even knowing the concept of fees. However, the `x/feegrant` allowance is not subspace-specific: this means that subspace admins/owners might unexpectingly pay the fees for transactions that are related to other subspaces.
 
 ## Decision
 
