@@ -6,7 +6,7 @@ package types
 import (
 	fmt "fmt"
 	_ "github.com/cosmos/cosmos-sdk/codec/types"
-	_ "github.com/desmos-labs/desmos/v4/x/profiles/types"
+	_ "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v9"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
 	_ "github.com/regen-network/cosmos-proto"

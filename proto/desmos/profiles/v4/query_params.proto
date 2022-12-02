@@ -1,10 +1,10 @@
 syntax = "proto3";
-package desmos.profiles.v3;
+package desmos.profiles.v4;
 
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "google/protobuf/any.proto";
-import "desmos/profiles/v3/models_params.proto";
+import "desmos/profiles/v4/models_params.proto";
 import "cosmos_proto/cosmos.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 
@@ -15,5 +15,5 @@ message QueryParamsRequest {}
 
 // QueryParamsResponse is the response type for the Query/Params RPC method.
 message QueryParamsResponse {
-  desmos.profiles.v3.Params params = 1 [ (gogoproto.nullable) = false ];
+  desmos.profiles.v4.Params params = 1 [ (gogoproto.nullable) = false ];
 }

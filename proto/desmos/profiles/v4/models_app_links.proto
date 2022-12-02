@@ -1,5 +1,5 @@
 syntax = "proto3";
-package desmos.profiles.v3;
+package desmos.profiles.v4;
 
 option go_package = "github.com/desmos-labs/desmos/v4/x/profiles/types";
 

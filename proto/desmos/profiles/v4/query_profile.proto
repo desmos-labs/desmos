@@ -1,5 +1,5 @@
 syntax = "proto3";
-package desmos.profiles.v3;
+package desmos.profiles.v4;
 
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";

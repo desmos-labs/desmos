@@ -54,7 +54,7 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 		&HexAddress{},
 	)
 	registry.RegisterInterface(
-		"desmos.profiles.v3.Signature",
+		"desmos.profiles.v4.Signature",
 		(*Signature)(nil),
 		&SingleSignature{},
 		&CosmosMultiSignature{},

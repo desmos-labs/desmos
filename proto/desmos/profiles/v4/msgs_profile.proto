@@ -1,11 +1,11 @@
 syntax = "proto3";
-package desmos.profiles.v3;
+package desmos.profiles.v4;
 
 import "gogoproto/gogo.proto";
 import "google/protobuf/any.proto";
 import "cosmos_proto/cosmos.proto";
-import "desmos/profiles/v3/models_profile.proto";
-import "desmos/profiles/v3/models_dtag_requests.proto";
+import "desmos/profiles/v4/models_profile.proto";
+import "desmos/profiles/v4/models_dtag_requests.proto";
 
 option go_package = "github.com/desmos-labs/desmos/v4/x/profiles/types";
 
