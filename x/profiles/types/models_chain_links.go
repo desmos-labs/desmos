@@ -495,12 +495,12 @@ func unpackSignatures(unpacker codectypes.AnyUnpacker, sigs []*codectypes.Any) (
 
 // --------------------------------------------------------------------------------------------------------------------
 
-func NewAddress(value string, generationAlgorithm GenerationAlgorithm, encodingAlgorithm AddressEncoding) *Address {
+func NewAddress(value string, generationAlgorithm GenerationAlgorithm, encodingAlgorithm AddressEncoding) Address {
 	encodingAlgorithmAny, err := codectypes.NewAnyWithValue(encodingAlgorithm)
 	if err != nil {
 		panic("failed to pack encoding algorithm to any type")
 	}
-	return &Address{
+	return Address{
 		Value:               value,
 		GenerationAlgorithm: generationAlgorithm,
 		EncodingAlgorithm:   encodingAlgorithmAny,
