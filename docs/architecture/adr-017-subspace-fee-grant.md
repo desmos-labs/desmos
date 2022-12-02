@@ -250,7 +250,7 @@ The proposed solution introduces a new set of store keys, it is completely backw
 ### Negative
 
 - Storing extra subspace grant info takes up more storage space;
-- Having more check in the deducting fees phase slow down the transaction operation;
+- Having more checks during the fee deducton phase slows down the transaction processing operation;
 - Removing expired allowances at the block begin phase increases the block production time.  
 
 ### Neutral
