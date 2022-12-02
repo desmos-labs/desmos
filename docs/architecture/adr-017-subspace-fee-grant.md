@@ -241,7 +241,7 @@ message QueryGroupAllowancesResponse {
 
 ### Backwards Compatibility
 
-The proposed solution introduces a new set of store keys, it is completely backward compatible.
+The proposed solution introduces a new set of store keys, thus it is completely backward compatible.
 
 ### Positive
 
