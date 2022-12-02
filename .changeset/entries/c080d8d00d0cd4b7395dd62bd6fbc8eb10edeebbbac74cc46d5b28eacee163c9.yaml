@@ -1,0 +1,6 @@
+type: deps
+module: none
+pull_request: 1043
+description: Updated `ibc-go` to `v3.4.0`
+backward_compatible: true
+date: 2022-12-02T15:52:47.583712425Z
