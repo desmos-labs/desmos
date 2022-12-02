@@ -1,7 +1,6 @@
 package types
 
 import (
-	"fmt"
 	"strings"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -11,17 +10,13 @@ import (
 
 //nolint:interfacer
 func NewMsgLinkChainAccount(
-	chainAddress AddressData,
+	chainAddress Address,
 	proof Proof,
 	chainConfig ChainConfig,
 	signer string,
 ) *MsgLinkChainAccount {
-	addressAny, err := codectypes.NewAnyWithValue(chainAddress)
-	if err != nil {
-		panic("failed to pack public key to any type")
-	}
 	return &MsgLinkChainAccount{
-		ChainAddress: addressAny,
+		ChainAddress: chainAddress,
 		Proof:        proof,
 		ChainConfig:  chainConfig,
 		Signer:       signer,
@@ -38,8 +33,8 @@ func (msg MsgLinkChainAccount) Type() string {
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgLinkChainAccount) ValidateBasic() error {
-	if msg.ChainAddress == nil {
-		return fmt.Errorf("source address cannot be nil")
+	if err := msg.ChainAddress.Validate(); err != nil {
+		return err
 	}
 	if err := msg.Proof.Validate(); err != nil {
 		return err
@@ -61,8 +56,7 @@ func (msg MsgLinkChainAccount) GetSignBytes() []byte {
 
 // UnpackInterfaces implements codectypes.UnpackInterfacesMessage
 func (msg *MsgLinkChainAccount) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
-	var address AddressData
-	if err := unpacker.UnpackAny(msg.ChainAddress, &address); err != nil {
+	if err := msg.ChainAddress.UnpackInterfaces(unpacker); err != nil {
 		return err
 	}
 

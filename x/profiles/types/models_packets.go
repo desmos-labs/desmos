@@ -5,24 +5,19 @@ package types
 import (
 	"fmt"
 
-	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // NewLinkChainAccountPacketData returns a new LinkChainAccountPacketData instance
 func NewLinkChainAccountPacketData(
-	sourceAddress AddressData,
+	sourceAddress Address,
 	sourceProof Proof,
 	sourceChainConfig ChainConfig,
 	destinationAddress string,
 	destinationProof Proof,
 ) LinkChainAccountPacketData {
-	addressAny, err := codectypes.NewAnyWithValue(sourceAddress)
-	if err != nil {
-		panic("failed to pack public key to any type")
-	}
 	return LinkChainAccountPacketData{
-		SourceAddress:      addressAny,
+		SourceAddress:      sourceAddress,
 		SourceProof:        sourceProof,
 		SourceChainConfig:  sourceChainConfig,
 		DestinationAddress: destinationAddress,
@@ -32,11 +27,12 @@ func NewLinkChainAccountPacketData(
 
 // Validate validates the LinkChainAccountPacketData
 func (p LinkChainAccountPacketData) Validate() error {
-	if p.SourceAddress == nil {
-		return fmt.Errorf("source address cannot be nil")
+	err := p.SourceAddress.Validate()
+	if err != nil {
+		return fmt.Errorf("invalid source address: %s", err)
 	}
 
-	err := p.SourceProof.Validate()
+	err = p.SourceProof.Validate()
 	if err != nil {
 		return fmt.Errorf("invalid source proof: %s", err)
 	}

@@ -14,14 +14,9 @@ import (
 
 // NewChainLinkJSON allows to build a new ChainLinkJSON instance
 //nolint:interfacer
-func NewChainLinkJSON(data types.AddressData, proof types.Proof, chainConfig types.ChainConfig) ChainLinkJSON {
-	any, err := codectypes.NewAnyWithValue(data)
-	if err != nil {
-		panic(err)
-	}
-
+func NewChainLinkJSON(address types.Address, proof types.Proof, chainConfig types.ChainConfig) ChainLinkJSON {
 	return ChainLinkJSON{
-		Address:     any,
+		Address:     address,
 		Proof:       proof,
 		ChainConfig: chainConfig,
 	}
@@ -29,15 +24,12 @@ func NewChainLinkJSON(data types.AddressData, proof types.Proof, chainConfig typ
 
 // UnpackInterfaces implements codectypes.UnpackInterfacesMessage
 func (link *ChainLinkJSON) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
-	if link.Address != nil {
-		var address types.AddressData
-		err := unpacker.UnpackAny(link.Address, &address)
-		if err != nil {
-			return err
-		}
+	err := link.Address.UnpackInterfaces(unpacker)
+	if err != nil {
+		return err
 	}
 
-	err := link.Proof.UnpackInterfaces(unpacker)
+	err = link.Proof.UnpackInterfaces(unpacker)
 	if err != nil {
 		return err
 	}

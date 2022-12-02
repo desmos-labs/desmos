@@ -13,6 +13,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/tx"
 
+	v9types "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v9/types"
 	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
@@ -40,9 +41,9 @@ func migrateChainLinks(store sdk.KVStore, cdc codec.BinaryCodec, amino *codec.Le
 	chainLinksStore := prefix.NewStore(store, types.ChainLinksPrefix)
 	iterator := chainLinksStore.Iterator(nil, nil)
 
-	var chainLinks []types.ChainLink
+	var chainLinks []v9types.ChainLink
 	for ; iterator.Valid(); iterator.Next() {
-		var chainLink types.ChainLink
+		var chainLink v9types.ChainLink
 		err := cdc.Unmarshal(iterator.Value(), &chainLink)
 		if err != nil {
 			return err
@@ -54,7 +55,7 @@ func migrateChainLinks(store sdk.KVStore, cdc codec.BinaryCodec, amino *codec.Le
 		// Avoid implicit memory aliasing
 		chainLink := chainLink
 
-		var signature types.Signature
+		var signature v9types.Signature
 		err := cdc.UnpackAny(chainLink.Proof.Signature, &signature)
 		if err != nil {
 			return err
@@ -88,14 +89,14 @@ func migrateChainLinks(store sdk.KVStore, cdc codec.BinaryCodec, amino *codec.Le
 	return nil
 }
 
-func fixSignatureValue(signature types.Signature, plainText []byte, cdc codec.BinaryCodec, amino *codec.LegacyAmino) (types.Signature, error) {
-	if sig, ok := signature.(*types.SingleSignature); ok {
-		return types.NewSingleSignature(getSignatureTypeFromPlainText(plainText, cdc, amino), sig.Signature), nil
-	} else if sig, ok := signature.(*types.CosmosMultiSignature); ok {
+func fixSignatureValue(signature v9types.Signature, plainText []byte, cdc codec.BinaryCodec, amino *codec.LegacyAmino) (v9types.Signature, error) {
+	if sig, ok := signature.(*v9types.SingleSignature); ok {
+		return v9types.NewSingleSignature(getSignatureTypeFromPlainText(plainText, cdc, amino), sig.Signature), nil
+	} else if sig, ok := signature.(*v9types.CosmosMultiSignature); ok {
 		// Convert the signatures
-		signatures := make([]types.Signature, len(sig.Signatures))
+		signatures := make([]v9types.Signature, len(sig.Signatures))
 		for i, sigAny := range sig.Signatures {
-			var sig types.Signature
+			var sig v9types.Signature
 			err := cdc.UnpackAny(sigAny, &sig)
 			if err != nil {
 				return nil, err
@@ -109,18 +110,18 @@ func fixSignatureValue(signature types.Signature, plainText []byte, cdc codec.Bi
 		}
 
 		// Return the multi sig with the fixed signatures
-		return types.NewCosmosMultiSignature(sig.BitArray, signatures), nil
+		return v9types.NewCosmosMultiSignature(sig.BitArray, signatures), nil
 	}
 
 	return nil, fmt.Errorf("invalid signature type: %T", signature)
 }
 
-func getSignatureTypeFromPlainText(plainText []byte, cdc codec.BinaryCodec, amino *codec.LegacyAmino) types.SignatureValueType {
+func getSignatureTypeFromPlainText(plainText []byte, cdc codec.BinaryCodec, amino *codec.LegacyAmino) v9types.SignatureValueType {
 	// Check Amino value
 	var legacySignDoc legacytx.StdSignDoc
 	err := amino.UnmarshalJSON(plainText, &legacySignDoc)
 	if err == nil {
-		return types.SIGNATURE_VALUE_TYPE_COSMOS_AMINO
+		return v9types.SIGNATURE_VALUE_TYPE_COSMOS_AMINO
 	}
 
 	// Check direct value
@@ -129,8 +130,8 @@ func getSignatureTypeFromPlainText(plainText []byte, cdc codec.BinaryCodec, amin
 
 	// Check to make sure the value was a SignDoc. If that's not the case, the two arrays will not match
 	if err == nil && bytes.Equal(plainText, cdc.MustMarshal(&directSignDoc)) {
-		return types.SIGNATURE_VALUE_TYPE_COSMOS_DIRECT
+		return v9types.SIGNATURE_VALUE_TYPE_COSMOS_DIRECT
 	}
 
-	return types.SIGNATURE_VALUE_TYPE_RAW
+	return v9types.SIGNATURE_VALUE_TYPE_RAW
 }

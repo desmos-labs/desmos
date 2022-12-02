@@ -1,5 +1,7 @@
 package types
 
+// DONTCOVER
+
 import (
 	"bytes"
 	"encoding/hex"
@@ -7,16 +9,17 @@ import (
 	"strings"
 	"time"
 
-	"github.com/btcsuite/btcd/btcec"
 	"github.com/cosmos/cosmos-sdk/x/auth/legacy/legacytx"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/mr-tron/base58"
 
-	"github.com/cosmos/btcutil/bech32"
+	"github.com/cosmos/cosmos-sdk/types/bech32"
 	"github.com/cosmos/cosmos-sdk/types/tx"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
+	"github.com/tendermint/tendermint/crypto/tmhash"
 
+	"github.com/btcsuite/btcd/btcec"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/gogo/protobuf/proto"
+	"github.com/mr-tron/base58"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -103,7 +106,7 @@ func (p Proof) Validate() error {
 
 // Verify verifies the signature using the given plain text and public key.
 // It returns and error if something is invalid.
-func (p Proof) Verify(cdc codec.BinaryCodec, amino *codec.LegacyAmino, owner string, address Address) error {
+func (p Proof) Verify(cdc codec.BinaryCodec, amino *codec.LegacyAmino, owner string, address AddressData) error {
 	// Decode the value
 	value, err := hex.DecodeString(p.PlainText)
 	if err != nil {
@@ -495,155 +498,176 @@ func unpackSignatures(unpacker codectypes.AnyUnpacker, sigs []*codectypes.Any) (
 
 // --------------------------------------------------------------------------------------------------------------------
 
-func NewAddress(value string, generationAlgorithm GenerationAlgorithm, encodingAlgorithm AddressEncoding) *Address {
-	encodingAlgorithmAny, err := codectypes.NewAnyWithValue(encodingAlgorithm)
-	if err != nil {
-		panic("failed to pack encoding algorithm to any type")
-	}
-	return &Address{
-		Value:               value,
-		GenerationAlgorithm: generationAlgorithm,
-		EncodingAlgorithm:   encodingAlgorithmAny,
-	}
-}
-
-func (a Address) Validate() error {
-	return nil
-}
-
-func (a *Address) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
-	var encoding AddressEncoding
-	return unpacker.UnpackAny(a.EncodingAlgorithm, &encoding)
-}
-
-// GetEncodedValue returns the string value of the address, encoded as it should be
-func (a *Address) GetEncodedValue() (string, error) {
-	value, err := hex.DecodeString(a.Value)
-	if err != nil {
-		return "", err
-	}
-	return a.EncodingAlgorithm.GetCachedValue().(AddressEncoding).Encode(value)
-}
-
-func (a *Address) VerifyPubKey(pubKey cryptotypes.PubKey) (bool, error) {
-	addressBz, err := hex.DecodeString(a.Value)
-	if err != nil {
-		return false, err
-	}
-
-	generatedBz, err := generateAddressBytes(pubKey, a.GenerationAlgorithm)
-	if err != nil {
-		return false, err
-	}
-
-	return bytes.Equal(addressBz, generatedBz), nil
-}
-
-// generateAddressBytes generates the address bytes starting from the given public key
-// and using the provided generation algorithm
-func generateAddressBytes(key cryptotypes.PubKey, generationAlgorithm GenerationAlgorithm) ([]byte, error) {
-	switch generationAlgorithm {
-	case GenerationAlgorithm_GENERATION_ALGORITHM_COSMOS:
-		return key.Address().Bytes(), nil
-
-	case GenerationAlgorithm_GENERATION_ALGORITHM_DO_NOTHING:
-		return key.Bytes(), nil
-
-	case GenerationAlgorithm_GENERATION_ALGORITHM_EVM:
-		pubKey, err := btcec.ParsePubKey(key.Bytes(), btcec.S256())
-		if err != nil {
-			return nil, err
-		}
-		uncompressedPubKey := pubKey.SerializeUncompressed()
-		return crypto.Keccak256(uncompressedPubKey[1:])[12:], nil
-
-	default:
-		return nil, fmt.Errorf("unsupported generation algorithm")
-	}
-}
-
-// --------------------------------------------------------------------------------------------------------------------
-
-type AddressEncoding interface {
+// AddressData is an interface representing a generic external chain address
+type AddressData interface {
 	proto.Message
 
+	// Validate checks the validity of the AddressData
 	Validate() error
 
-	Encode(value []byte) (string, error)
+	// GetValue returns the address value
+	GetValue() string
+
+	// VerifyPubKey verifies that the given public key is associated with this address data
+	VerifyPubKey(key cryptotypes.PubKey) (bool, error)
 }
 
 // --------------------------------------------------------------------------------------------------------------------
 
-var _ AddressEncoding = &Bech32Encoding{}
+var _ AddressData = &Bech32Address{}
 
-// NeBech32Encoding returns a new Bech32Encoding instance
-func NewBech32Encoding(prefix string) *Bech32Encoding {
-	return &Bech32Encoding{Prefix: prefix}
+// NewBech32Address returns a new Bech32Address instance
+func NewBech32Address(value, prefix string) *Bech32Address {
+	return &Bech32Address{Value: value, Prefix: prefix}
 }
 
-// Validate implements AddressEncoding
-func (b Bech32Encoding) Validate() error {
+// Validate implements AddressData
+func (b Bech32Address) Validate() error {
+	if strings.TrimSpace(b.Value) == "" {
+		return fmt.Errorf("value cannot be empty or blank")
+	}
+
 	if strings.TrimSpace(b.Prefix) == "" {
 		return fmt.Errorf("prefix cannot be empty or blank")
 	}
+
+	_, err := sdk.GetFromBech32(b.Value, b.Prefix)
+	if err != nil {
+		return fmt.Errorf("invalid Bech32 value or wrong prefix")
+	}
+
 	return nil
 }
 
-// Encode implements AddressEncoding
-func (b *Bech32Encoding) Encode(value []byte) (string, error) {
-	return bech32.Encode(b.Prefix, value)
+// GetValue implements AddressData
+func (b Bech32Address) GetValue() string {
+	return b.Value
+}
+
+// VerifyPubKey implements AddressData
+func (b Bech32Address) VerifyPubKey(key cryptotypes.PubKey) (bool, error) {
+	_, bz, err := bech32.DecodeAndConvert(b.Value)
+	if err != nil {
+		return false, err
+	}
+	return bytes.Equal(bz, key.Address().Bytes()), nil
 }
 
 // --------------------------------------------------------------------------------------------------------------------
 
-var _ AddressEncoding = &Base58Encoding{}
+var _ AddressData = &Base58Address{}
 
-// NewBase58Encoding returns a new Base58Encoding instance
-func NewBase58Encoding(prefix string) *Base58Encoding {
-	return &Base58Encoding{Prefix: prefix}
+// NewBase58Address returns a new Base58Address instance
+func NewBase58Address(value string) *Base58Address {
+	return &Base58Address{Value: value}
 }
 
-// Validate implements AddressEncoding
-func (b Base58Encoding) Validate() error {
+// Validate implements AddressData
+func (b Base58Address) Validate() error {
+	if strings.TrimSpace(b.Value) == "" {
+		return fmt.Errorf("address cannot be empty or blank")
+	}
+
+	if _, err := base58.Decode(b.Value); err != nil {
+		return fmt.Errorf("invalid Base58 address")
+	}
+
 	return nil
 }
 
-// Encode implements AddressEncoding
-func (b *Base58Encoding) Encode(value []byte) (string, error) {
-	return base58.Encode(append([]byte(b.Prefix), value...)), nil
+// GetValue implements AddressData
+func (b Base58Address) GetValue() string {
+	return b.Value
+}
+
+// VerifyPubKey implements AddressData
+func (b Base58Address) VerifyPubKey(key cryptotypes.PubKey) (bool, error) {
+	bz, err := base58.Decode(b.Value)
+	return bytes.Equal(tmhash.SumTruncated(bz), key.Address().Bytes()), err
 }
 
 // --------------------------------------------------------------------------------------------------------------------
 
-var _ AddressEncoding = &HexEncoding{}
+var _ AddressData = &HexAddress{}
 
-// NewHexEncoding returns a new HexEncoding instance
-func NewHexEncoding(prefix string) *HexEncoding {
-	return &HexEncoding{Prefix: prefix}
+// NewHexAddress returns a new HexAddress instance
+func NewHexAddress(value, prefix string) *HexAddress {
+	return &HexAddress{Value: value, Prefix: prefix}
 }
 
-// Validate implements AddressEncoding
-func (h HexEncoding) Validate() error {
+// Validate implements AddressData
+func (h HexAddress) Validate() error {
+	if strings.TrimSpace(h.Value) == "" {
+		return fmt.Errorf("value cannot be empty or blank")
+	}
+
+	if len(h.Value) <= len(h.Prefix) {
+		return fmt.Errorf("address cannot be smaller than prefix")
+	}
+
+	prefix, addrWithoutPrefix := h.Value[:len(h.Prefix)], h.Value[len(h.Prefix):]
+	if prefix != h.Prefix {
+		return fmt.Errorf("prefix does not match")
+	}
+
+	if _, err := hex.DecodeString(addrWithoutPrefix); err != nil {
+		return fmt.Errorf("invalid hex address")
+	}
 	return nil
 }
 
-// GetValue implements AddressEncoding
-func (h HexEncoding) Encode(value []byte) (string, error) {
-	return h.Prefix + hex.EncodeToString(value), nil
+// GetValue implements AddressData
+func (h HexAddress) GetValue() string {
+	return h.Value
+}
+
+// VerifyPubKey implements AddressData
+func (h HexAddress) VerifyPubKey(key cryptotypes.PubKey) (bool, error) {
+	addr := h.Value[len(h.Prefix):]
+	bz, err := hex.DecodeString(addr)
+	if err != nil {
+		return false, err
+	}
+	pubKey, err := btcec.ParsePubKey(key.Bytes(), btcec.S256())
+	if err != nil {
+		return false, err
+	}
+	uncompressedPubKey := pubKey.SerializeUncompressed()
+	return bytes.Equal(crypto.Keccak256(uncompressedPubKey[1:])[12:], bz), err
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// UnpackAddressData deserializes the given any type value as an address data using the provided unpacker
+func UnpackAddressData(unpacker codectypes.AnyUnpacker, addressAny *codectypes.Any) (AddressData, error) {
+	var address AddressData
+	if err := unpacker.UnpackAny(addressAny, &address); err != nil {
+		return nil, err
+	}
+	return address, nil
 }
 
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewChainLink returns a new ChainLink instance
 //nolint:interfacer
-func NewChainLink(user string, address Address, proof Proof, chainConfig ChainConfig, creationTime time.Time) ChainLink {
+func NewChainLink(user string, address AddressData, proof Proof, chainConfig ChainConfig, creationTime time.Time) ChainLink {
+	addressAny, err := codectypes.NewAnyWithValue(address)
+	if err != nil {
+		panic("failed to pack address data to any type")
+	}
 	return ChainLink{
 		User:         user,
-		Address:      address,
+		Address:      addressAny,
 		Proof:        proof,
 		ChainConfig:  chainConfig,
 		CreationTime: creationTime,
 	}
+}
+
+// GetAddressData returns the AddressData associated with this chain link
+func (link ChainLink) GetAddressData() AddressData {
+	return link.Address.GetCachedValue().(AddressData)
 }
 
 // Validate checks the validity of the ChainLink
@@ -652,12 +676,11 @@ func (link ChainLink) Validate() error {
 		return fmt.Errorf("invalid creator address: %s", link.User)
 	}
 
-	err := link.Address.Validate()
-	if err != nil {
-		return err
+	if link.Address == nil {
+		return fmt.Errorf("address cannot be nil")
 	}
 
-	err = link.Proof.Validate()
+	err := link.Proof.Validate()
 	if err != nil {
 		return err
 	}
@@ -676,12 +699,15 @@ func (link ChainLink) Validate() error {
 
 // UnpackInterfaces implements codectypes.UnpackInterfacesMessage
 func (link *ChainLink) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
-	err := link.Address.UnpackInterfaces(unpacker)
-	if err != nil {
-		return err
+	if link.Address != nil {
+		var address AddressData
+		err := unpacker.UnpackAny(link.Address, &address)
+		if err != nil {
+			return err
+		}
 	}
 
-	err = link.Proof.UnpackInterfaces(unpacker)
+	err := link.Proof.UnpackInterfaces(unpacker)
 	if err != nil {
 		return err
 	}

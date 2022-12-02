@@ -15,6 +15,7 @@ import (
 
 	v4types "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v4/types"
 	v5types "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v5/types"
+	v9types "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v9/types"
 	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
@@ -167,7 +168,7 @@ func migrateChainLinks(ctx sdk.Context, k Keeper, storeKey sdk.StoreKey, amino *
 		}
 
 		// Convert the address data
-		var addressData types.AddressData
+		var addressData v9types.AddressData
 		switch address := address.(type) {
 		case *v4types.Bech32Address:
 			addressData = v5types.NewBech32Address(address.Value, address.Prefix)

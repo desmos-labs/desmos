@@ -30,10 +30,10 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgLinkApplication{}, "desmos/MsgLinkApplication", nil)
 	cdc.RegisterConcrete(&MsgUnlinkApplication{}, "desmos/MsgUnlinkApplication", nil)
 
-	cdc.RegisterInterface((*AddressData)(nil), nil)
-	cdc.RegisterConcrete(&Bech32Address{}, "desmos/Bech32Address", nil)
-	cdc.RegisterConcrete(&Base58Address{}, "desmos/Base58Address", nil)
-	cdc.RegisterConcrete(&HexAddress{}, "desmos/HexAddress", nil)
+	cdc.RegisterInterface((*AddressEncoding)(nil), nil)
+	cdc.RegisterConcrete(&Bech32Encoding{}, "desmos/Bech32Encoding", nil)
+	cdc.RegisterConcrete(&Base58Encoding{}, "desmos/Base58Encoding", nil)
+	cdc.RegisterConcrete(&HexEncoding{}, "desmos/HexEncoding", nil)
 
 	cdc.RegisterInterface((*Signature)(nil), nil)
 	cdc.RegisterConcrete(&SingleSignature{}, "desmos/SingleSignature", nil)
@@ -47,11 +47,11 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 	registry.RegisterImplementations((*exported.VestingAccount)(nil), &Profile{})
 	registry.RegisterImplementations((*authtypes.GenesisAccount)(nil), &Profile{})
 	registry.RegisterInterface(
-		"desmos.profiles.v3.AddressData",
-		(*AddressData)(nil),
-		&Bech32Address{},
-		&Base58Address{},
-		&HexAddress{},
+		"desmos.profiles.v4.AddressEncoding",
+		(*AddressEncoding)(nil),
+		&Bech32Encoding{},
+		&Base58Encoding{},
+		&HexEncoding{},
 	)
 	registry.RegisterInterface(
 		"desmos.profiles.v4.Signature",

@@ -18,6 +18,7 @@ message ChainLinkJSON {
   // Address contains the data of the external chain address to be connected
   // with the Desmos profile
   desmos.profiles.v4.Address address = 1 [
+    (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"address\""
   ];
 

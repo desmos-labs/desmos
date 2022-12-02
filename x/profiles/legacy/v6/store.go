@@ -7,6 +7,7 @@ import (
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 
 	v5types "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v5/types"
+	v9types "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v9/types"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 
@@ -193,11 +194,11 @@ func migrateChainLinks(store sdk.KVStore, cdc codec.BinaryCodec) error {
 
 	for _, v5Link := range applicationLinks {
 		// Migrate the link
-		v7Link := types.NewChainLink(
+		v7Link := v9types.NewChainLink(
 			v5Link.User,
 			convertChainLinkAddressData(v5Link.GetAddressData()),
 			convertChainLinkProof(v5Link.Proof, cdc),
-			types.NewChainConfig(v5Link.ChainConfig.Name),
+			v9types.NewChainConfig(v5Link.ChainConfig.Name),
 			v5Link.CreationTime,
 		)
 
@@ -209,34 +210,34 @@ func migrateChainLinks(store sdk.KVStore, cdc codec.BinaryCodec) error {
 	return nil
 }
 
-func convertChainLinkAddressData(v5Signature v5types.AddressData) types.AddressData {
+func convertChainLinkAddressData(v5Signature v5types.AddressData) v9types.AddressData {
 	switch address := v5Signature.(type) {
 	case *v5types.Bech32Address:
-		return types.NewBech32Address(address.Value, address.Prefix)
+		return v9types.NewBech32Address(address.Value, address.Prefix)
 	case *v5types.Base58Address:
-		return types.NewBase58Address(address.Value)
+		return v9types.NewBase58Address(address.Value)
 	case *v5types.HexAddress:
-		return types.NewHexAddress(address.Value, address.Prefix)
+		return v9types.NewHexAddress(address.Value, address.Prefix)
 	default:
 		panic(fmt.Errorf("invalid signature type: %T", v5Signature))
 	}
 }
 
-func convertChainLinkProof(v5Proof v5types.Proof, cdc codec.BinaryCodec) types.Proof {
+func convertChainLinkProof(v5Proof v5types.Proof, cdc codec.BinaryCodec) v9types.Proof {
 	var pubKey cryptotypes.PubKey
 	err := cdc.UnpackAny(v5Proof.PubKey, &pubKey)
 	if err != nil {
 		panic(err)
 	}
 
-	var v6Signature types.Signature
+	var v6Signature v9types.Signature
 	v6SignatureAny := convertChainLinkSignatureData(v5Proof.Signature, cdc)
 	err = cdc.UnpackAny(v6SignatureAny, &v6Signature)
 	if err != nil {
 		panic(err)
 	}
 
-	return types.NewProof(pubKey, v6Signature, v5Proof.PlainText)
+	return v9types.NewProof(pubKey, v6Signature, v5Proof.PlainText)
 }
 
 func convertChainLinkSignatureData(data *codectypes.Any, cdc codec.BinaryCodec) *codectypes.Any {
@@ -304,14 +305,14 @@ func setDefaultExternalAddresses(store sdk.KVStore, cdc codec.BinaryCodec) error
 	defer chainLinksIterator.Close()
 
 	for ; chainLinksIterator.Valid(); chainLinksIterator.Next() {
-		var link types.ChainLink
+		var link v9types.ChainLink
 		err := cdc.Unmarshal(chainLinksIterator.Value(), &link)
 		if err != nil {
 			return err
 		}
 
 		// Validate the source address
-		srcAddrData, err := types.UnpackAddressData(cdc, link.Address)
+		srcAddrData, err := v9types.UnpackAddressData(cdc, link.Address)
 		if err != nil {
 			return err
 		}
