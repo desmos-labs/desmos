@@ -69,7 +69,17 @@ In order to simplify granters to manage the group allowance, the granted group a
 SubspaceGroupAllowancePrefix | SubspaceID | GranterAddress | GroupID | -> Protobuf(GroupGrant)
 ```
 
-This structure allows granters to easily manage the group allowance inside a subspace by iterating over all allowances for the granters, which will be the most used query. In the other hand, grantees must know who the granter is when using the application, they can find their grant with O(N) time complexity, N is the number of granted groups by the granter.
+This structure allows granters to easily manage the group allowance inside a subspace by iterating over all allowances for the granters, which will be the most used query. On the other hand, it allows to perform the following queries: 
+1. finding a specific grant given the granter address.   
+   This can be done in O(N), where N is the number of granted groups by the granter.
+2. finding all the grans given to a user based on the groups they are part of.
+   This can be done in O(N * M), where N is the number of granters, and M is the number of grants each granter has given.
+
+Considering that: 
+- only users with permissions will be able to create grants in each subspace
+- there will be a small number of grants each granter will create
+
+then the time complexity of searching if a user has been granted a fee grant should not become too large.
 
 #### User grant
 
