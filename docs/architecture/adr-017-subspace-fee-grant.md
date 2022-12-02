@@ -27,11 +27,12 @@ We will implement a subspace-specific fee grant process, based on  the `x/feegra
 
 ### DeductFeeDecorator
 
-Currently, `x/auth` provides a `DeductFeeDecorator` based on `x/feegrant` to execute the action deducting the fees of a transaction from the signer/feepayer. We will build a new subspace-specified `DeductFeeDecorator` to replace the current one.
+Currently, the `x/auth` module provides a `DeductFeeDecorator` that deducts the fees of a transaction from the signer/feepayer. We will build a new subspace-specific `DeductFeeDecorator` based on the existing one that acts as follows:
 
-The new subspace-specified `DeductFeeDecorator` will work as follows:
 1. check if all the messages in the transaction are messages related to the same subspace;
-2. if the messages in the transaction are all realted to the same subspace and a fee grant exists for that subspace, run the `x/subspaces` `DeductFeeDecorator`; otherwise run the `x/auth` `DeductFeeDecorator`,
+2. perform the following operation:
+   1. if all the messages are all realted to the same subspace and a fee grant exists for the fee payer inside the subspace, run the `x/subspaces` `DeductFeeDecorator`
+   2. otherwise, run the `x/auth` `DeductFeeDecorator`
 
 ### Types
 
