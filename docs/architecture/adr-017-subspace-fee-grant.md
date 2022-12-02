@@ -73,7 +73,7 @@ This structure allows granters to easily manage the group allowance inside a sub
 
 #### User grant
 
-Each subspace fee granted allowance will be stored in the keys having the structure as follows:
+Each subspace fee granted allowance will be stored using keys with the following structure:
 ```
 SubspaceUserAllowancePrefix | SubspaceID | GranterAddress | GranteeAddress |-> Protobuf(Grant)
 ```
