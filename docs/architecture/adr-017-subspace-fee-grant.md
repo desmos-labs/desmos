@@ -23,7 +23,7 @@ The `x/feegrant` module of the Cosmos SDK allows anyone to pay fees on behalf of
 
 ## Decision
 
-We will implement a subspace-specified fee grant process based on `x/feegrant` that allows subspace fees providers to pay fees for the users inside the specified subspace. This system will allow subspace owners/admins to issue a fee grant towards either a users group or a single user, so that they can later leverage this grant to execute subspace-related transactions without having to worry about paying fees.
+We will implement a subspace-specific fee grant process, based on  the `x/feegrant` module, that allows subspace fees providers to pay fees for the users inside the specified subspace. This system will allow subspace owners/admins to issue a fee grant towards either a users group or a single user, so that they can later leverage this grant to execute subspace-related transactions without having to worry about paying fees.
 
 ### DeductFeeDecorator
 
