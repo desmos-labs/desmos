@@ -180,7 +180,7 @@ In order to allow clients to easily query for allowances we will implement the f
 service Query {
     // UserAllowances returns all the grants for users.
     rpc UserAllowances(QueryUserAllowancesRequest) returns (QueryAllowancesResponse) {
-        option (google.api.http).get = "/desmos/subspaces/v3/subspaces/{subspace_id}/granter/{granter}/users/allowances";
+        option (google.api.http).get = "/desmos/subspaces/v3/subspaces/{subspace_id}/allowances/users";
     }
     // GroupAllowances returns all the grants for groups.
     rpc GroupAllowances(QueryGroupAllowancesRequest) returns(QueryGroupAllowancesResponse) {
