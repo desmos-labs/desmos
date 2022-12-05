@@ -31,7 +31,7 @@ Currently, the `x/auth` module provides a `DeductFeeDecorator` that deducts the 
 
 1. check if all the messages in the transaction are messages related to the same subspace;
 2. perform the following operation:
-   1. if all the messages are all realted to the same subspace and a fee grant exists for the fee payer inside the subspace, run the `x/subspaces` `DeductFeeDecorator`
+   1. if all the messages are all related to the same subspace and a fee grant exists for the fee payer inside the subspace, run the `x/subspaces` `DeductFeeDecorator`
    2. otherwise, run the `x/auth` `DeductFeeDecorator`
 
 ### Types
@@ -65,7 +65,7 @@ message GroupGrant {
 
 #### Group grant
 
-In order to simplify the management of group allowances, each granted group allowance will be stored usign the following key:
+In order to simplify the management of group allowances, each granted group allowance will be stored using the following key:
 ```
 SubspaceGroupAllowancePrefix | SubspaceID | GranterAddress | GroupID | -> Protobuf(GroupGrant)
 ```
@@ -73,8 +73,8 @@ SubspaceGroupAllowancePrefix | SubspaceID | GranterAddress | GroupID | -> Protob
 This structure allows granters to easily manage the group allowance inside a subspace by iterating over all allowances for the granters, which will be the most used query. On the other hand, it allows to perform the following queries: 
 1. finding a specific grant given the granter address.   
    This can be done in O(N), where N is the number of granted groups by the granter.
-2. finding all the grans given to a user based on the groups they are part of.
-   This can be done in O(N * M), where N is the number of granters, and M is the number of grants each granter has given.
+2. finding all the grants given to a user based on the groups they are part of.
+   This can be done in O(N * log(M)), where N is the number of all the grants inside the subspace, and M is the number of members in the user group.
 
 Considering that: 
 - only users with permissions will be able to create grants in each subspace
@@ -89,8 +89,23 @@ Each subspace fee granted allowance will be stored using keys with the following
 SubspaceUserAllowancePrefix | SubspaceID | GranterAddress | GranteeAddress |-> Protobuf(Grant)
 ```
 
-This structure allows granters to easily manage their grants inside a subspace by iterating over all grants for the granters, which will be the most used query. In the other hand, grantees must know who the granter is when using the application, they can directly find their grant with O(1) time complexity.
+This structure allows granters to easily manage their grants inside a subspace by iterating over all grants for the granters, which will be the most used query. On the other hand, it allows the following queries:
+1. retrieving a specific grant.  
+   This will require grantees to know who the granter address, and can be done in O(1).
+2. retrieving all the grants that a user has been granted. 
+   This can be done by iterating over all the granters' grants in O(N), where N is the number of all the grants inside the given subspace.
 
+### Expired Allowance
+
+The subspace owners may want to set the allowance to expire after a certain amount of time. In order to reduce database size, we decide to remove all expired allowances in the `BeginBlock` phase.
+
+#### Store
+
+In order to make it easier to remove expired allowances, we will implement queues that are sorted by expiration time. Then, during the BeginBlock phase, Desmos can iterate over all expired keys before the block time and remove them. The structure will be like:
+
+```
+ExpiringAllowanceQueuePrefix | Expired Time | Subspace ID | Granter Address | (User Address or Group ID) -> 0x01
+```
 
 ### `Msg` Service
 
@@ -261,7 +276,7 @@ The proposed solution introduces a new set of store keys, thus it is completely 
 ### Negative
 
 - Storing extra subspace grant info takes up more storage space;
-- Having more checks during the fee deducton phase slows down the transaction processing operation;
+- Having more checks during the fee deduction phase slows down the transaction processing operation;
 - Removing expired allowances at the block begin phase increases the block production time.  
 
 ### Neutral
