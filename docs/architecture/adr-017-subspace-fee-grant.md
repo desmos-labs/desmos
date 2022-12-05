@@ -97,7 +97,7 @@ This structure allows granters to easily manage their grants inside a subspace b
 
 ### Expired Allowance
 
-The subspace owners may want to set the allowance to expire after a certain amount of time. In order to reduce database size, we decide to remove all expired allowances in the `BeginBlock` phase.
+The subspace owners may want to set the allowance to expire after a certain amount of time. In order to reduce the database size, we will use a custom `BeginBlocker` to remove all expired allowances.
 
 #### Store
 
