@@ -1,6 +1,6 @@
 type: deps
 module: none
-pull_request: 1033
-description: Updated `github.com/cosmos/cosmos-sdk` to `v0.45.10`
+pull_request: 1041
+description: Updated `cosmos-sdk` to `v0.45.11`
 backward_compatible: true
 date: 2022-10-25T16:58:20.103816489Z

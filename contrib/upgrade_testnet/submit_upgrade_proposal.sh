@@ -13,7 +13,7 @@ SLEEP=30
 
 echo "===> Checking chain status"
 while [ ${CNT} -lt $ITER ]; do
-  echo "====> Test n. $CNT"
+  echo "====> Attempt $CNT"
   curr_block=$(curl -s $NODE/status | jq -r '.result.sync_info.latest_block_height')
 
   if [ ! -z ${curr_block} ] ; then

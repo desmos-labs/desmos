@@ -1,0 +1,6 @@
+type: feat
+module: none
+pull_request: 1006
+description: Added `v4` upgrade handler
+backward_compatible: true
+date: 2022-12-02T15:54:14.177149849Z
