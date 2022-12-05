@@ -2,6 +2,18 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
+## Version 4.7.0
+### Features
+#### Bank
+- ([\#1037](https://github.com/desmos-labs/desmos/pull/1037)) Added missing on-chain denom metadata
+
+#### Other
+- ([\#1006](https://github.com/desmos-labs/desmos/pull/1006)) Added `v4` upgrade handler
+
+### Dependencies
+- ([\#1041](https://github.com/desmos-labs/desmos/pull/1041)) Updated `cosmos-sdk` to `v0.45.11`
+- ([\#1043](https://github.com/desmos-labs/desmos/pull/1043)) Updated `ibc-go` to `v3.4.0`
+
 ## Version 4.6.3
 ### Bug Fixes
 #### Other
