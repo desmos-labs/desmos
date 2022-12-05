@@ -7,11 +7,18 @@ slug: seeds
 
 # Seed nodes
 :::caution Testnet only   
-The following seed nodes are to be used when configuring a full node for the **testnet**. If you are looking for mainnet seed nodes, please refer to [this](../../06-mainnet/02-seeds.md) instead.
+The following seed nodes are to be used when configuring a full node for 
+the **testnet**. 
+If you are looking for mainnet seed nodes, please refer to 
+[this](../../06-mainnet/02-seeds.md) instead.
 :::
 
+To find the corresponding seeds nodes of each testnet visit the 
+[testnet repo](https://github.com/desmos-labs/morpheus). The seed nodes
+are inside the folder having the name of the testnet of interest. 
 
-Add these seeds here to the `~/.desmos/config/config.toml` file
+Add the seed nodes to the `~/.desmos/config/config.toml` file each one 
+separated by a comma like following:
 ```toml
-seeds = "be3db0fe5ee7f764902dbcc75126a2e082cbf00c@seed-1.morpheus.desmos.network:26656,4659ab47eef540e99c3ee4009ecbe3fbf4e3eaff@seed-2.morpheus.desmos.network:26656,1d9cc23eedb2d812d30d99ed12d5c5f21ff40c23@seed-3.morpheus.desmos.network:26656"
+seeds = "seed1,seed2,..."
 ```

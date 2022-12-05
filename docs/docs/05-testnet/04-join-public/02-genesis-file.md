@@ -6,9 +6,6 @@ slug: genesis-file
 ---
 
 # Genesis file
-:::caution Testnet only   
-To configure a full node for the **testnet** you need to use the following seed nodes. If you are looking for mainnet seed nodes, please refer to [this](../../06-mainnet/01-genesis-file.md) instead.
-:::
 
 To connect to the `morpheus` testnet, you will need the corresponding genesis file of each testnet. Visit the [testnet repo](https://github.com/desmos-labs/morpheus) and download the correct genesis file by running the following command.
 
