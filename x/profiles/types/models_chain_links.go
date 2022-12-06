@@ -511,7 +511,7 @@ func (a Address) Validate() error {
 	if strings.TrimSpace(a.Value) == "" {
 		return fmt.Errorf("value cannot be empty or blank")
 	}
-	if a.GenerationAlgorithm == GENERATION_ALGORITHM_UNKNOWN {
+	if a.GenerationAlgorithm == GENERATION_ALGORITHM_UNSPECIFIED {
 		return fmt.Errorf("unknown address generation algorithm")
 	}
 	if a.EncodingAlgorithm == nil {

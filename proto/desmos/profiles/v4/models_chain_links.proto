@@ -83,40 +83,44 @@ message Address {
   option (gogoproto.goproto_getters) = false;
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
-  
+
   // Encoded value of the address
   string value = 1;
-  
-  // Algorithm that has been used in order to generate the address starting from the public key bytes
+
+  // Algorithm that has been used in order to generate the address starting from
+  // the public key bytes
   GenerationAlgorithm generation_algorithm = 2;
-  
-  // Algorithm that needs to be used to properly encode the address 
-  google.protobuf.Any encoding_algorithm = 3 [ (cosmos_proto.accepts_interface) = "AddressEncoding" ];
+
+  // Algorithm that needs to be used to properly encode the address
+  google.protobuf.Any encoding_algorithm = 3
+      [ (cosmos_proto.accepts_interface) = "AddressEncoding" ];
 }
 
 // GenerationAlgorithm represents various address generation algorithms
 enum GenerationAlgorithm {
   option (gogoproto.goproto_enum_prefix) = false;
-  
-  // GENERATION_ALGORITHM_UNKNOWN represents an unknown algorithm and will be discarded 
-  GENERATION_ALGORITHM_UNKNOWN = 0;
-  
+
+  // GENERATION_ALGORITHM_UNSPECIFIED represents an unknown algorithm and will
+  // be discarded
+  GENERATION_ALGORITHM_UNSPECIFIED = 0;
+
   // GENERATION_ALGORITHM_COSMOS represents the Cosmos generation algorithm
   GENERATION_ALGORITHM_COSMOS = 1;
-  
-  // GENERATION_ALGORITHM_EVM represents the EVM generation algorithm  
+
+  // GENERATION_ALGORITHM_EVM represents the EVM generation algorithm
   GENERATION_ALGORITHM_EVM = 2;
-  
-  // GENERATION_ALGORITHM_DO_NOTHING should be used when the public key bytes do not need to be modified  
+
+  // GENERATION_ALGORITHM_DO_NOTHING should be used when the public key bytes do
+  // not need to be modified
   GENERATION_ALGORITHM_DO_NOTHING = 3;
 }
 
 // Bech32Encoding represents the encoding algorithm based on the Bech32 format
 message Bech32Encoding {
   option (cosmos_proto.implements_interface) = "AddressEncoding";
-  
+
   // Prefix to be used
-  string prefix = 1; 
+  string prefix = 1;
 }
 
 // Base58Encoding represents the encoding algorithm based on the Base58 format
@@ -130,10 +134,10 @@ message Base58Encoding {
 // HexEncoding represents the encoding algorithm based on the Hex format
 message HexEncoding {
   option (cosmos_proto.implements_interface) = "AddressEncoding";
-  
+
   // (optional) Prefix to be used
   string prefix = 1;
-  
+
   // (optional) Whether the address should be upper case or not (default: false)
   bool uppercase = 2;
 }

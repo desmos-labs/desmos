@@ -819,19 +819,19 @@ func TestAddress_Validate(t *testing.T) {
 	}{
 		{
 			name:      "value is empty or blank returns error",
-			address:   types.NewAddress("", types.GENERATION_ALGORITHM_UNKNOWN, types.NewBech32Encoding("cosmos")),
+			address:   types.NewAddress("", types.GENERATION_ALGORITHM_UNSPECIFIED, types.NewBech32Encoding("cosmos")),
 			shouldErr: true,
 		},
 		{
 			name:      "unknown address generation algorithm returns error",
-			address:   types.NewAddress("cosmos1tdgrkvx2qgjk0uqsmdhm6dcz6wvwh9f8t37x0k", types.GENERATION_ALGORITHM_UNKNOWN, types.NewBech32Encoding("cosmos")),
+			address:   types.NewAddress("cosmos1tdgrkvx2qgjk0uqsmdhm6dcz6wvwh9f8t37x0k", types.GENERATION_ALGORITHM_UNSPECIFIED, types.NewBech32Encoding("cosmos")),
 			shouldErr: true,
 		},
 		{
 			name: "invalid address encoding algorithm",
 			address: types.Address{
 				Value:               "cosmos1tdgrkvx2qgjk0uqsmdhm6dcz6wvwh9f8t37x0k",
-				GenerationAlgorithm: types.GENERATION_ALGORITHM_UNKNOWN,
+				GenerationAlgorithm: types.GENERATION_ALGORITHM_UNSPECIFIED,
 				EncodingAlgorithm:   nil,
 			},
 			shouldErr: true,
@@ -890,7 +890,7 @@ func TestAddress_VerifyPubKey(t *testing.T) {
 	}{
 		{
 			name:      "unsupported generation algorithm returns error",
-			address:   types.NewAddress("cosmos1v55ul49w5n4sld9kvjhhzuml8nm4mlqufftfcj", types.GENERATION_ALGORITHM_UNKNOWN, types.NewHexEncoding("0x")),
+			address:   types.NewAddress("cosmos1v55ul49w5n4sld9kvjhhzuml8nm4mlqufftfcj", types.GENERATION_ALGORITHM_UNSPECIFIED, types.NewHexEncoding("0x")),
 			shouldErr: true,
 		},
 		{
