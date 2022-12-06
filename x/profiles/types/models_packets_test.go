@@ -37,7 +37,7 @@ func TestLinkChainAccountPacketData_Validate(t *testing.T) {
 		{
 			name: "invalid source proof returns error",
 			packet: types.NewLinkChainAccountPacketData(
-				types.NewBech32Address("cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70", "cosmos"),
+				types.NewAddress("cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70", types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 				types.NewProof(secp256k1.GenPrivKey().PubKey(), &types.SingleSignature{}, "wrong"),
 				types.NewChainConfig("cosmos"),
 				"cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70",
@@ -52,7 +52,7 @@ func TestLinkChainAccountPacketData_Validate(t *testing.T) {
 		{
 			name: "invalid chain config returns error",
 			packet: types.NewLinkChainAccountPacketData(
-				types.NewBech32Address("cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70", "cosmos"),
+				types.NewAddress("cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70", types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 				types.NewProof(
 					secp256k1.GenPrivKey().PubKey(),
 					profilestesting.SingleSignatureFromHex("032086ede8d4bce29fe364a94744ca71dbeaf370221ba20f9716a165c54b079561"),
@@ -71,7 +71,7 @@ func TestLinkChainAccountPacketData_Validate(t *testing.T) {
 		{
 			name: "invalid destination address returns error",
 			packet: types.NewLinkChainAccountPacketData(
-				types.NewBech32Address("cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70", "cosmos"),
+				types.NewAddress("cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70", types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 				types.NewProof(
 					secp256k1.GenPrivKey().PubKey(),
 					profilestesting.SingleSignatureFromHex("032086ede8d4bce29fe364a94744ca71dbeaf370221ba20f9716a165c54b079561"),
@@ -90,7 +90,7 @@ func TestLinkChainAccountPacketData_Validate(t *testing.T) {
 		{
 			name: "invalid destination proof returns error",
 			packet: types.NewLinkChainAccountPacketData(
-				types.NewBech32Address("cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70", "cosmos"),
+				types.NewAddress("cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70", types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 				types.NewProof(
 					secp256k1.GenPrivKey().PubKey(),
 					profilestesting.SingleSignatureFromHex("032086ede8d4bce29fe364a94744ca71dbeaf370221ba20f9716a165c54b079561"),
@@ -105,7 +105,7 @@ func TestLinkChainAccountPacketData_Validate(t *testing.T) {
 		{
 			name: "valid packet returns no error",
 			packet: types.NewLinkChainAccountPacketData(
-				types.NewBech32Address("cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70", "cosmos"),
+				types.NewAddress("cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70", types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 				types.NewProof(
 					secp256k1.GenPrivKey().PubKey(),
 					profilestesting.SingleSignatureFromHex("032086ede8d4bce29fe364a94744ca71dbeaf370221ba20f9716a165c54b079561"),
@@ -139,7 +139,7 @@ func TestLinkChainAccountPacketData_Validate(t *testing.T) {
 
 func TestLinkChainAccountPacketData_GetBytes(t *testing.T) {
 	packetData := types.NewLinkChainAccountPacketData(
-		types.NewBech32Address("cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70", "cosmos"),
+		types.NewAddress("cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70", types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 		types.NewProof(secp256k1.GenPrivKey().PubKey(), profilestesting.SingleSignatureFromHex("032086ede8d4bce29fe364a94744ca71dbeaf370221ba20f9716a165c54b079561"), "plain_text"),
 		types.NewChainConfig("cosmos"),
 		"cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70",

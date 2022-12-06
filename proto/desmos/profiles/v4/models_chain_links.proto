@@ -96,6 +96,8 @@ message Address {
 
 // GenerationAlgorithm represents various address generation algorithms
 enum GenerationAlgorithm {
+  option (gogoproto.goproto_enum_prefix) = false;
+  
   // GENERATION_ALGORITHM_UNKNOWN represents an unknown algorithm and will be discarded 
   GENERATION_ALGORITHM_UNKNOWN = 0;
   

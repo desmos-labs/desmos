@@ -3,6 +3,7 @@ package types_test
 import (
 	"encoding/hex"
 
+	"github.com/btcsuite/btcd/btcec"
 	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
 
 	"github.com/mr-tron/base58"
@@ -256,28 +257,28 @@ func TestProof_Verify(t *testing.T) {
 		name        string
 		proof       types.Proof
 		owner       string
-		addressData types.AddressData
+		addressData types.Address
 		shouldErr   bool
 	}{
 		{
 			name:        "invalid value returns error",
 			proof:       types.Proof{PubKey: pubKeyAny, Signature: sigAny, PlainText: "value"},
 			owner:       "cosmos1u55ywhk6thmhnxs7yn8vh8v7eznckcqjevnadx",
-			addressData: types.NewBase58Address(base58.Encode(pubKey.Bytes())),
+			addressData: types.NewAddress(base58.Encode(pubKey.Bytes()), types.GENERATION_ALGORITHM_DO_NOTHING, types.NewBase58Encoding("")),
 			shouldErr:   true,
 		},
 		{
 			name:        "incorrect signature type returns error",
 			proof:       types.Proof{PubKey: pubKeyAny, Signature: invalidAny, PlainText: "76616C7565"},
 			owner:       "cosmos1u55ywhk6thmhnxs7yn8vh8v7eznckcqjevnadx",
-			addressData: types.NewBase58Address(base58.Encode(pubKey.Bytes())),
+			addressData: types.NewAddress(base58.Encode(pubKey.Bytes()), types.GENERATION_ALGORITHM_DO_NOTHING, types.NewBase58Encoding("")),
 			shouldErr:   true,
 		},
 		{
 			name:        "invalid signature returns error",
 			proof:       types.Proof{PubKey: invalidAny, Signature: sigAny, PlainText: "76616C7565"},
 			owner:       "cosmos1u55ywhk6thmhnxs7yn8vh8v7eznckcqjevnadx",
-			addressData: types.NewBase58Address(base58.Encode(pubKey.Bytes())),
+			addressData: types.NewAddress(base58.Encode(pubKey.Bytes()), types.GENERATION_ALGORITHM_DO_NOTHING, types.NewBase58Encoding("")),
 			shouldErr:   true,
 		},
 		{
@@ -288,7 +289,7 @@ func TestProof_Verify(t *testing.T) {
 				PlainText: "636F736D6F73317535357977686B3674686D686E787337796E387668387637657A6E636B63716A65766E616478",
 			},
 			owner:       "cosmos1u55ywhk6thmhnxs7yn8vh8v7eznckcqjevnadx",
-			addressData: types.NewBase58Address(base58.Encode(pubKey.Bytes())),
+			addressData: types.NewAddress(base58.Encode(pubKey.Bytes()), types.GENERATION_ALGORITHM_DO_NOTHING, types.NewBase58Encoding("")),
 			shouldErr:   true,
 		},
 		{
@@ -299,7 +300,7 @@ func TestProof_Verify(t *testing.T) {
 				PlainText: "636F736D6F73317535357977686B3674686D686E787337796E387668387637657A6E636B63716A65766E616478",
 			},
 			owner:       "cosmos1u55ywhk6thmhnxs7yn8vh8v7eznckcqjevnadx",
-			addressData: types.NewBase58Address(base58.Encode(anotherPubKey.Bytes())),
+			addressData: types.NewAddress(base58.Encode(anotherPubKey.Bytes()), types.GENERATION_ALGORITHM_DO_NOTHING, types.NewBase58Encoding("")),
 			shouldErr:   true,
 		},
 		{
@@ -310,7 +311,7 @@ func TestProof_Verify(t *testing.T) {
 				PlainText: "636F736D6F73317535357977686B3674686D686E787337796E387668387637657A6E636B63716A65766E616478",
 			},
 			owner:       "cosmos1u55ywhk6thmhnxs7yn8vh8v7eznckcqjevnadx",
-			addressData: types.NewBase58Address(base58.Encode(pubKey.Bytes())),
+			addressData: types.NewAddress(base58.Encode(pubKey.Bytes()), types.GENERATION_ALGORITHM_DO_NOTHING, types.NewBase58Encoding("")),
 			shouldErr:   false,
 		},
 	}
@@ -341,7 +342,7 @@ func TestValidateDirectTxValue(t *testing.T) {
 	}{
 		{
 			name:         "invalid message returns error",
-			value:        cdc.MustMarshal(&types.Bech32Address{Prefix: "cosmos"}),
+			value:        cdc.MustMarshal(&types.Bech32Encoding{Prefix: "cosmos"}),
 			expectedMemo: "memo",
 			shouldErr:    true,
 		},
@@ -382,7 +383,7 @@ func TestValidateAminoTxValue(t *testing.T) {
 	}{
 		{
 			name:         "invalid message returns error",
-			value:        legacyAmino.MustMarshalJSON(&types.Bech32Address{}),
+			value:        legacyAmino.MustMarshalJSON(&types.Bech32Encoding{}),
 			expectedMemo: "memo",
 			shouldErr:    true,
 		},
@@ -495,7 +496,7 @@ func TestSingleSignature_Validate(t *testing.T) {
 		{
 			name:      "invalid direct value returns error",
 			signature: types.NewSingleSignature(types.SIGNATURE_VALUE_TYPE_COSMOS_DIRECT, nil),
-			plainText: cdc.MustMarshal(&types.Bech32Address{Prefix: "cosmos"}),
+			plainText: cdc.MustMarshal(&types.Bech32Encoding{Prefix: "cosmos"}),
 			owner:     "cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae",
 			shouldErr: true,
 		},
@@ -687,7 +688,7 @@ func TestCosmosMultiSignature_Validate(t *testing.T) {
 			signature: types.NewCosmosMultiSignature(nil, []types.Signature{
 				types.NewSingleSignature(types.SIGNATURE_VALUE_TYPE_COSMOS_DIRECT, nil),
 			}),
-			plainText: cdc.MustMarshal(&types.Bech32Address{Prefix: "cosmos"}),
+			plainText: cdc.MustMarshal(&types.Bech32Encoding{Prefix: "cosmos"}),
 			owner:     "cosmos1s3p4hlhfnlsynauak7ggqv2y4hafwc0y6u0hae",
 			shouldErr: true,
 		},
@@ -810,35 +811,155 @@ func TestCosmosMultiSignature_Verify(t *testing.T) {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-func TestBech32Address_Validate(t *testing.T) {
+func TestAddress_Validate(t *testing.T) {
 	testCases := []struct {
 		name      string
-		address   *types.Bech32Address
+		address   types.Address
 		shouldErr bool
 	}{
 		{
-			name:      "empty address returns error",
-			address:   types.NewBech32Address("", ""),
+			name:      "value is empty or blank returns error",
+			address:   types.NewAddress("", types.GENERATION_ALGORITHM_UNKNOWN, types.NewBech32Encoding("cosmos")),
 			shouldErr: true,
 		},
+		{
+			name:      "unknown address generation algorithm returns error",
+			address:   types.NewAddress("cosmos1tdgrkvx2qgjk0uqsmdhm6dcz6wvwh9f8t37x0k", types.GENERATION_ALGORITHM_UNKNOWN, types.NewBech32Encoding("cosmos")),
+			shouldErr: true,
+		},
+		{
+			name: "invalid address encoding algorithm",
+			address: types.Address{
+				Value:               "cosmos1tdgrkvx2qgjk0uqsmdhm6dcz6wvwh9f8t37x0k",
+				GenerationAlgorithm: types.GENERATION_ALGORITHM_UNKNOWN,
+				EncodingAlgorithm:   nil,
+			},
+			shouldErr: true,
+		},
+		{
+			name:      "valid address returns no error",
+			address:   types.NewAddress("cosmos1tdgrkvx2qgjk0uqsmdhm6dcz6wvwh9f8t37x0k", types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
+			shouldErr: false,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.address.Validate()
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+func createPubKey(address types.Address) cryptotypes.PubKey {
+	switch address.GenerationAlgorithm {
+	case types.GENERATION_ALGORITHM_COSMOS:
+		privKeyBz, _ := hex.DecodeString("2789f187051509286472a3653369af1816290a6c18e3ce60bdbb00a389bd8ead")
+		privKey := secp256k1.PrivKey{Key: privKeyBz}
+		return privKey.PubKey()
+
+	case types.GENERATION_ALGORITHM_DO_NOTHING:
+		privKeyBz, _ := hex.DecodeString("03b95d5254bfc06478ad11099eb8be9275811d20acaaabec50ec630ecbcbee48edec605a99f655b42254924102960faf7f421477399bd9c1a96d31375d38508d")
+		privKey := ed25519.PrivKey{Key: privKeyBz}
+		return privKey.PubKey()
+
+	case types.GENERATION_ALGORITHM_EVM:
+		privKeyBz, _ := hex.DecodeString("0141330e069988886c8d120b0b948673430d28302056df949e4ad17d1451cb9e")
+		privKey := secp256k1.PrivKey{Key: privKeyBz}
+		key := privKey.PubKey()
+		pubKey, _ := btcec.ParsePubKey(key.Bytes(), btcec.S256())
+		uncompressedPubKey := pubKey.SerializeUncompressed()
+		return &secp256k1.PubKey{Key: uncompressedPubKey}
+
+	default:
+		return nil
+	}
+}
+
+func TestAddress_VerifyPubKey(t *testing.T) {
+	testCases := []struct {
+		name      string
+		address   types.Address
+		valid     bool
+		shouldErr bool
+	}{
+		{
+			name:      "unsupported generation algorithm returns error",
+			address:   types.NewAddress("cosmos1v55ul49w5n4sld9kvjhhzuml8nm4mlqufftfcj", types.GENERATION_ALGORITHM_UNKNOWN, types.NewHexEncoding("0x")),
+			shouldErr: true,
+		},
+		{
+			name:      "cosmos generation algorithm with value generated from wrong encoding returns false",
+			address:   types.NewAddress("cosmos1v55ul49w5n4sld9kvjhhzuml8nm4mlqufftfcj", types.GENERATION_ALGORITHM_COSMOS, types.NewHexEncoding("0x")),
+			valid:     false,
+			shouldErr: false,
+		},
+		{
+			name:      "do nothing generation algorithm with value generated from wrong encoding returns false",
+			address:   types.NewAddress("H1kgFtg8xX6yNXBKGwHkUA2M43iMCgoQUA28thDLVnp4", types.GENERATION_ALGORITHM_DO_NOTHING, types.NewHexEncoding("0x")),
+			valid:     false,
+			shouldErr: false,
+		},
+		{
+			name:      "evm generation algorithm with value generated from wrong encoding returns false",
+			address:   types.NewAddress("0x47b8c472e2F389611F2f5a41325eD97912d455A7", types.GENERATION_ALGORITHM_EVM, types.NewBech32Encoding("cosmos")),
+			valid:     false,
+			shouldErr: false,
+		},
+		{
+			name:      "cosmos generation algorithm with value generated from correct encoding returns true",
+			address:   types.NewAddress("cosmos1v55ul49w5n4sld9kvjhhzuml8nm4mlqufftfcj", types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
+			valid:     true,
+			shouldErr: false,
+		},
+		{
+			name:      "do nothing generation algorithm with value generated from correct encoding returns true",
+			address:   types.NewAddress("H1kgFtg8xX6yNXBKGwHkUA2M43iMCgoQUA28thDLVnp4", types.GENERATION_ALGORITHM_DO_NOTHING, types.NewBase58Encoding("")),
+			valid:     true,
+			shouldErr: false,
+		},
+		{
+			name:      "evm generation algorithm with value generated from correct encoding returns true",
+			address:   types.NewAddress("0x47b8c472e2F389611F2f5a41325eD97912d455A7", types.GENERATION_ALGORITHM_EVM, types.NewHexEncoding("0x")),
+			valid:     true,
+			shouldErr: false,
+		},
+	}
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			valid, err := tc.address.VerifyPubKey(createPubKey(tc.address))
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+				require.Equal(t, tc.valid, valid)
+			}
+		})
+	}
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+func TestBech32Encoding_Validate(t *testing.T) {
+	testCases := []struct {
+		name      string
+		address   *types.Bech32Encoding
+		shouldErr bool
+	}{
 		{
 			name:      "empty prefix returns error",
-			address:   types.NewBech32Address("cosmos1tdgrkvx2qgjk0uqsmdhm6dcz6wvwh9f8t37x0k", ""),
+			address:   types.NewBech32Encoding(""),
 			shouldErr: true,
 		},
 		{
-			name:      "wrong prefix returns error",
-			address:   types.NewBech32Address("desmos1tdgrkvx2qgjk0uqsmdhm6dcz6wvwh9f8t37x0k", "cosmos"),
-			shouldErr: true,
-		},
-		{
-			name:      "invalid address returns error",
-			address:   types.NewBech32Address("desmos1tdgrkvx2qgjk0uqsmdhm6dcz6wvwh9f8t37x0", "desmos"),
-			shouldErr: true,
-		},
-		{
-			name:      "valid address returns no error",
-			address:   types.NewBech32Address("cosmos1tdgrkvx2qgjk0uqsmdhm6dcz6wvwh9f8t37x0k", "cosmos"),
+			name:      "valid encoding returns no error",
+			address:   types.NewBech32Encoding("cosmos"),
 			shouldErr: false,
 		},
 	}
@@ -857,32 +978,39 @@ func TestBech32Address_Validate(t *testing.T) {
 	}
 }
 
-func TestBech32Address_GetValue(t *testing.T) {
-	data := types.NewBech32Address("cosmos1tdgrkvx2qgjk0uqsmdhm6dcz6wvwh9f8t37x0k", "cosmos")
-	require.Equal(t, "cosmos1tdgrkvx2qgjk0uqsmdhm6dcz6wvwh9f8t37x0k", data.GetValue())
+func TestBech32Address_Encode(t *testing.T) {
+	encoding := types.NewBech32Encoding("cosmos")
+	acc, _ := sdk.AccAddressFromBech32("cosmos1tdgrkvx2qgjk0uqsmdhm6dcz6wvwh9f8t37x0k")
+	result, _ := encoding.Encode(acc.Bytes())
+	require.Equal(t, "cosmos1tdgrkvx2qgjk0uqsmdhm6dcz6wvwh9f8t37x0k", result)
 }
 
 // --------------------------------------------------------------------------------------------------------------------
 
-func TestBase58Address_Validate(t *testing.T) {
+func TestBase58Encoding_Validate(t *testing.T) {
 	testCases := []struct {
 		name      string
-		address   *types.Base58Address
+		address   *types.Base58Encoding
 		shouldErr bool
 	}{
 		{
-			name:      "empty address returns error",
-			address:   types.NewBase58Address(""),
+			name:      "blank prefix returns error",
+			address:   types.NewBase58Encoding("  "),
 			shouldErr: true,
 		},
 		{
-			name:      "invalid address returns error",
-			address:   types.NewBase58Address("0OiIjJ"),
+			name:      "invalid prefix returns error",
+			address:   types.NewBase58Encoding(";"),
 			shouldErr: true,
 		},
 		{
-			name:      "valid address returns no error",
-			address:   types.NewBase58Address("5AfetAwZzftP8i5JBNatzWeccfXd4KvKq6TRfAvacFaN"),
+			name:      "empty prefix returns no error",
+			address:   types.NewBase58Encoding(""),
+			shouldErr: false,
+		},
+		{
+			name:      "empty prefix returns no error",
+			address:   types.NewBase58Encoding(""),
 			shouldErr: false,
 		},
 	}
@@ -901,47 +1029,34 @@ func TestBase58Address_Validate(t *testing.T) {
 	}
 }
 
-func TestBase58Address_GetValue(t *testing.T) {
-	data := types.NewBase58Address("5AfetAwZzftP8i5JBNatzWeccfXd4KvKq6TRfAvacFaN")
-	require.Equal(t, "5AfetAwZzftP8i5JBNatzWeccfXd4KvKq6TRfAvacFaN", data.GetValue())
+func TestBase58Encoding_Encode(t *testing.T) {
+	encoding := types.NewBase58Encoding("")
+	addrBz, _ := hex.DecodeString("3de8ae23dbb0fe6d7d2fbac174899405218aa01bf5f3abddb1a5393b71e0736f")
+	result, _ := encoding.Encode(addrBz)
+	require.Equal(t, "5AfetAwZzftP8i5JBNatzWeccfXd4KvKq6TRfAvacFaN", result)
 }
 
 // --------------------------------------------------------------------------------------------------------------------
 
-func TestHexAddress_Validate(t *testing.T) {
+func TestHexEncoding_Validate(t *testing.T) {
 	testCases := []struct {
 		name      string
-		address   *types.HexAddress
+		address   *types.HexEncoding
 		shouldErr bool
 	}{
 		{
-			name:      "empty and blank address returns error",
-			address:   types.NewHexAddress("  ", ""),
+			name:      "blank prefix returns error",
+			address:   types.NewHexEncoding("  "),
 			shouldErr: true,
 		},
 		{
-			name:      "address value shorter than prefix returns error",
-			address:   types.NewHexAddress("0", "0x"),
-			shouldErr: true,
+			name:      "empty prefix returns no error",
+			address:   types.NewHexEncoding(""),
+			shouldErr: false,
 		},
 		{
-			name:      "not matching prefix returns error",
-			address:   types.NewHexAddress("0184", "0x"),
-			shouldErr: true,
-		},
-		{
-			name:      "invalid address returns error",
-			address:   types.NewHexAddress("0x0OiIjJ", "0x"),
-			shouldErr: true,
-		},
-		{
-			name:      "spaced address returns error",
-			address:   types.NewHexAddress("0x 941991947B6eC9F5537bcaC30C1295E8154Df4cC", "0x"),
-			shouldErr: true,
-		},
-		{
-			name:      "valid address returns no error",
-			address:   types.NewHexAddress("0x941991947B6eC9F5537bcaC30C1295E8154Df4cC", "0x"),
+			name:      "valid prefix returns no error",
+			address:   types.NewHexEncoding("0x"),
 			shouldErr: false,
 		},
 	}
@@ -960,50 +1075,11 @@ func TestHexAddress_Validate(t *testing.T) {
 	}
 }
 
-func TestHexAddress_GetValue(t *testing.T) {
-	data := types.NewHexAddress("0x941991947B6eC9F5537bcaC30C1295E8154Df4cC", "0x")
-	require.Equal(t, "0x941991947B6eC9F5537bcaC30C1295E8154Df4cC", data.GetValue())
-}
-
-// --------------------------------------------------------------------------------------------------------------------
-
-func TestUnpackAddressData(t *testing.T) {
-	testCases := []struct {
-		name      string
-		address   *codectypes.Any
-		shouldErr bool
-	}{
-		{
-			name:      "invalid address returns error",
-			address:   profilestesting.NewAny(secp256k1.GenPrivKey()),
-			shouldErr: true,
-		},
-		{
-			name:      "valid Bech32 data returns no error",
-			address:   profilestesting.NewAny(types.NewBech32Address("cosmos1tdgrkvx2qgjk0uqsmdhm6dcz6wvwh9f8t37x0k", "cosmos")),
-			shouldErr: false,
-		},
-		{
-			name:      "valid Base58 data returns no error",
-			address:   profilestesting.NewAny(types.NewBase58Address("5AfetAwZzftP8i5JBNatzWeccfXd4KvKq6TRfAvacFaN")),
-			shouldErr: false,
-		},
-	}
-
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(t *testing.T) {
-			cdc, _ := app.MakeCodecs()
-			_, err := types.UnpackAddressData(cdc, tc.address)
-
-			if tc.shouldErr {
-				require.Error(t, err)
-			} else {
-				require.NoError(t, err)
-			}
-
-		})
-	}
+func TestHexAddress_Encode(t *testing.T) {
+	encoding := types.NewHexEncoding("0x")
+	addrBz, _ := hex.DecodeString("941991947b6ec9f5537bcac30c1295e8154df4cc")
+	result, _ := encoding.Encode(addrBz)
+	require.Equal(t, "0x941991947b6ec9f5537bcac30c1295e8154df4cc", result)
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -1028,7 +1104,7 @@ func TestChainLink_Validate(t *testing.T) {
 			name: "invalid user returns error",
 			chainLink: types.NewChainLink(
 				"",
-				types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
+				types.NewAddress("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 				types.NewProof(secp256k1.GenPrivKey().PubKey(), profilestesting.SingleSignatureFromHex("74657874"), "74657874"),
 				types.NewChainConfig("cosmos"),
 				time.Now(),
@@ -1039,7 +1115,7 @@ func TestChainLink_Validate(t *testing.T) {
 			name: "invalid proof returns error",
 			chainLink: types.NewChainLink(
 				"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
-				types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
+				types.NewAddress("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 				types.NewProof(secp256k1.GenPrivKey().PubKey(), &types.SingleSignature{}, "="),
 				types.NewChainConfig("cosmos"),
 				time.Now(),
@@ -1050,7 +1126,7 @@ func TestChainLink_Validate(t *testing.T) {
 			name: "invalid chain config returns error",
 			chainLink: types.NewChainLink(
 				"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
-				types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
+				types.NewAddress("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 				types.NewProof(secp256k1.GenPrivKey().PubKey(), profilestesting.SingleSignatureFromHex("74657874"), "74657874"),
 				types.NewChainConfig(""),
 				time.Now(),
@@ -1061,7 +1137,7 @@ func TestChainLink_Validate(t *testing.T) {
 			name: "invalid time returns error",
 			chainLink: types.NewChainLink(
 				"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
-				types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
+				types.NewAddress("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 				types.NewProof(secp256k1.GenPrivKey().PubKey(), profilestesting.SingleSignatureFromHex("74657874"), "74657874"),
 				types.NewChainConfig("cosmos"),
 				time.Time{},
@@ -1072,7 +1148,7 @@ func TestChainLink_Validate(t *testing.T) {
 			name: "valid chain link returns no error",
 			chainLink: types.NewChainLink(
 				"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
-				types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
+				types.NewAddress("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 				types.NewProof(secp256k1.GenPrivKey().PubKey(), profilestesting.SingleSignatureFromHex("74657874"), "74657874"),
 				types.NewChainConfig("cosmos"),
 				time.Now(),
@@ -1085,7 +1161,6 @@ func TestChainLink_Validate(t *testing.T) {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			err := tc.chainLink.Validate()
-
 			if tc.shouldErr {
 				require.Error(t, err)
 			} else {
@@ -1104,7 +1179,7 @@ func TestChainLinkMarshaling(t *testing.T) {
 
 	chainLink := types.NewChainLink(
 		"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
-		types.NewBech32Address(addr, "cosmos"),
+		types.NewAddress(addr, types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 		types.NewProof(pubKey, profilestesting.SingleSignatureFromHex("74657874"), "plain-text"),
 		types.NewChainConfig("cosmos"),
 		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),

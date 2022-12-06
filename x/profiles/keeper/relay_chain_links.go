@@ -69,7 +69,7 @@ func (k Keeper) OnRecvLinkChainAccountPacket(
 
 	// Verify the destination proof by making sure the user has signed the source
 	// address using the destination address private key
-	destAddrData := types.NewAddress(data.DestinationAddress, types.GenerationAlgorithm_GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding(sdk.GetConfig().GetBech32AccountAddrPrefix()))
+	destAddrData := types.NewAddress(data.DestinationAddress, types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding(sdk.GetConfig().GetBech32AccountAddrPrefix()))
 	err = data.DestinationProof.Verify(k.cdc, k.legacyAmino, data.SourceAddress.Value, destAddrData)
 	if err != nil {
 		return packetAck, err

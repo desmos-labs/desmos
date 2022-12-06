@@ -12,7 +12,7 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/mr-tron/base58"
 
-	"github.com/cosmos/btcutil/bech32"
+	"github.com/cosmos/cosmos-sdk/types/bech32"
 	"github.com/cosmos/cosmos-sdk/types/tx"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 
@@ -508,6 +508,15 @@ func NewAddress(value string, generationAlgorithm GenerationAlgorithm, encodingA
 }
 
 func (a Address) Validate() error {
+	if strings.TrimSpace(a.Value) == "" {
+		return fmt.Errorf("value cannot be empty or blank")
+	}
+	if a.GenerationAlgorithm == GENERATION_ALGORITHM_UNKNOWN {
+		return fmt.Errorf("unknown address generation algorithm")
+	}
+	if a.EncodingAlgorithm == nil {
+		return fmt.Errorf("address encoding algorithm field can not be nil")
+	}
 	return nil
 }
 
@@ -522,20 +531,20 @@ func (a *Address) VerifyPubKey(pubKey cryptotypes.PubKey) (bool, error) {
 		return false, err
 	}
 	encoded, err := a.EncodingAlgorithm.GetCachedValue().(AddressEncoding).Encode(generatedBz)
-	return a.Value == encoded, err
+	return strings.ToLower(a.Value) == strings.ToLower(encoded), err
 }
 
 // generateAddressBytes generates the address bytes starting from the given public key
 // and using the provided generation algorithm
 func generateAddressBytes(key cryptotypes.PubKey, generationAlgorithm GenerationAlgorithm) ([]byte, error) {
 	switch generationAlgorithm {
-	case GenerationAlgorithm_GENERATION_ALGORITHM_COSMOS:
+	case GENERATION_ALGORITHM_COSMOS:
 		return key.Address().Bytes(), nil
 
-	case GenerationAlgorithm_GENERATION_ALGORITHM_DO_NOTHING:
+	case GENERATION_ALGORITHM_DO_NOTHING:
 		return key.Bytes(), nil
 
-	case GenerationAlgorithm_GENERATION_ALGORITHM_EVM:
+	case GENERATION_ALGORITHM_EVM:
 		pubKey, err := btcec.ParsePubKey(key.Bytes(), btcec.S256())
 		if err != nil {
 			return nil, err
@@ -577,7 +586,7 @@ func (b Bech32Encoding) Validate() error {
 
 // Encode implements AddressEncoding
 func (b *Bech32Encoding) Encode(value []byte) (string, error) {
-	return bech32.Encode(b.Prefix, value)
+	return bech32.ConvertAndEncode(b.Prefix, value)
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -591,12 +600,23 @@ func NewBase58Encoding(prefix string) *Base58Encoding {
 
 // Validate implements AddressEncoding
 func (b Base58Encoding) Validate() error {
+	if len(b.Prefix) != 0 && strings.TrimSpace(b.Prefix) == "" {
+		return fmt.Errorf("prefix cannot be blank")
+	}
+	_, err := hex.DecodeString(b.Prefix)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
 // Encode implements AddressEncoding
 func (b *Base58Encoding) Encode(value []byte) (string, error) {
-	return base58.Encode(append([]byte(b.Prefix), value...)), nil
+	prefixBz, err := hex.DecodeString(b.Prefix)
+	if err != nil {
+		return "", err
+	}
+	return base58.Encode(append(prefixBz, value...)), nil
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -610,6 +630,9 @@ func NewHexEncoding(prefix string) *HexEncoding {
 
 // Validate implements AddressEncoding
 func (h HexEncoding) Validate() error {
+	if len(h.Prefix) != 0 && strings.TrimSpace(h.Prefix) == "" {
+		return fmt.Errorf("prefix cannot be blank")
+	}
 	return nil
 }
 

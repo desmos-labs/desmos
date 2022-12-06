@@ -49,7 +49,7 @@ func (a ChainLinkAccount) Sign(value string) []byte {
 
 func (a ChainLinkAccount) Bech32Address() types.Address {
 	addr, _ := sdk.Bech32ifyAddressBytes(a.bech32Prefix, a.pubKey.Address())
-	return types.NewAddress(hex.EncodeToString([]byte(addr)), types.GenerationAlgorithm_GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding(a.bech32Prefix))
+	return types.NewAddress(hex.EncodeToString([]byte(addr)), types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding(a.bech32Prefix))
 }
 
 func (a ChainLinkAccount) Bech32SignatureData(signedValue string) types.Signature {
