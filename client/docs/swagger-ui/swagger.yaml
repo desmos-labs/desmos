@@ -4,7 +4,7 @@ info:
   description: A REST interface for state queries
   version: 3.0.0
 paths:
-  /desmos/profiles/v3/app-links:
+  /desmos/profiles/v4/app-links:
     get:
       summary: >-
         ApplicationLinks queries the applications links associated to the given
@@ -444,7 +444,7 @@ paths:
           format: boolean
       tags:
         - Query
-  '/desmos/profiles/v3/app-links/clients/{client_id}':
+  '/desmos/profiles/v4/app-links/clients/{client_id}':
     get:
       summary: |-
         ApplicationLinkByClientID queries a single application link for a given
@@ -774,7 +774,7 @@ paths:
           type: string
       tags:
         - Query
-  /desmos/profiles/v3/app-links/owners:
+  /desmos/profiles/v4/app-links/owners:
     get:
       summary: |-
         ApplicationLinkOwners queries for the owners of applications links,
@@ -1102,7 +1102,7 @@ paths:
           format: boolean
       tags:
         - Query
-  /desmos/profiles/v3/chain-links:
+  /desmos/profiles/v4/chain-links:
     get:
       summary: |-
         ChainLinks queries the chain links associated to the given user, if
@@ -1123,187 +1123,220 @@ paths:
                       type: string
                       title: User defines the destination profile address to link
                     address:
-                      type: object
-                      properties:
-                        type_url:
-                          type: string
-                          description: >-
-                            A URL/resource name that uniquely identifies the
-                            type of the serialized
-
-                            protocol buffer message. This string must contain at
-                            least
-
-                            one "/" character. The last segment of the URL's
-                            path must represent
-
-                            the fully qualified name of the type (as in
-
-                            `path/google.protobuf.Duration`). The name should be
-                            in a canonical form
-
-                            (e.g., leading "." is not accepted).
-
-
-                            In practice, teams usually precompile into the
-                            binary all types that they
-
-                            expect it to use in the context of Any. However, for
-                            URLs which use the
-
-                            scheme `http`, `https`, or no scheme, one can
-                            optionally set up a type
-
-                            server that maps type URLs to message definitions as
-                            follows:
-
-
-                            * If no scheme is provided, `https` is assumed.
-
-                            * An HTTP GET on the URL must yield a
-                            [google.protobuf.Type][]
-                              value in binary format, or produce an error.
-                            * Applications are allowed to cache lookup results
-                            based on the
-                              URL, or have them precompiled into a binary to avoid any
-                              lookup. Therefore, binary compatibility needs to be preserved
-                              on changes to types. (Use versioned type names to manage
-                              breaking changes.)
-
-                            Note: this functionality is not currently available
-                            in the official
-
-                            protobuf release, and it is not used for type URLs
-                            beginning with
-
-                            type.googleapis.com.
-
-
-                            Schemes other than `http`, `https` (or the empty
-                            scheme) might be
-
-                            used with implementation specific semantics.
-                        value:
-                          type: string
-                          format: byte
-                          description: >-
-                            Must be a valid serialized protocol buffer of the
-                            above specified type.
-                      description: >-
-                        `Any` contains an arbitrary serialized protocol buffer
-                        message along with a
-
-                        URL that describes the type of the serialized message.
-
-
-                        Protobuf library provides support to pack/unpack Any
-                        values in the form
-
-                        of utility functions or additional generated methods of
-                        the Any type.
-
-
-                        Example 1: Pack and unpack a message in C++.
-
-                            Foo foo = ...;
-                            Any any;
-                            any.PackFrom(foo);
-                            ...
-                            if (any.UnpackTo(&foo)) {
-                              ...
-                            }
-
-                        Example 2: Pack and unpack a message in Java.
-
-                            Foo foo = ...;
-                            Any any = Any.pack(foo);
-                            ...
-                            if (any.is(Foo.class)) {
-                              foo = any.unpack(Foo.class);
-                            }
-
-                         Example 3: Pack and unpack a message in Python.
-
-                            foo = Foo(...)
-                            any = Any()
-                            any.Pack(foo)
-                            ...
-                            if any.Is(Foo.DESCRIPTOR):
-                              any.Unpack(foo)
-                              ...
-
-                         Example 4: Pack and unpack a message in Go
-
-                             foo := &pb.Foo{...}
-                             any, err := ptypes.MarshalAny(foo)
-                             ...
-                             foo := &pb.Foo{}
-                             if err := ptypes.UnmarshalAny(any, foo); err != nil {
-                               ...
-                             }
-
-                        The pack methods provided by protobuf library will by
-                        default use
-
-                        'type.googleapis.com/full.type.name' as the type URL and
-                        the unpack
-
-                        methods only use the fully qualified type name after the
-                        last '/'
-
-                        in the type URL, for example "foo.bar.com/x/y.z" will
-                        yield type
-
-                        name "y.z".
-
-
-
-                        JSON
-
-                        ====
-
-                        The JSON representation of an `Any` value uses the
-                        regular
-
-                        representation of the deserialized, embedded message,
-                        with an
-
-                        additional field `@type` which contains the type URL.
-                        Example:
-
-                            package google.profile;
-                            message Person {
-                              string first_name = 1;
-                              string last_name = 2;
-                            }
-
-                            {
-                              "@type": "type.googleapis.com/google.profile.Person",
-                              "firstName": <string>,
-                              "lastName": <string>
-                            }
-
-                        If the embedded message type is well-known and has a
-                        custom JSON
-
-                        representation, that representation will be embedded
-                        adding a field
-
-                        `value` which holds the custom JSON in addition to the
-                        `@type`
-
-                        field. Example (for message
-                        [google.protobuf.Duration][]):
-
-                            {
-                              "@type": "type.googleapis.com/google.protobuf.Duration",
-                              "value": "1.212s"
-                            }
                       title: >-
                         Address contains the data of the external chain address
                         to be connected
 
                         with the Desmos profile
+                      type: object
+                      properties:
+                        value:
+                          type: string
+                          title: Encoded value of the address
+                        generation_algorithm:
+                          title: >-
+                            Algorithm that has been used in order to generate
+                            the address starting from
+
+                            the public key bytes
+                          type: string
+                          enum:
+                            - GENERATION_ALGORITHM_UNSPECIFIED
+                            - GENERATION_ALGORITHM_COSMOS
+                            - GENERATION_ALGORITHM_EVM
+                            - GENERATION_ALGORITHM_DO_NOTHING
+                          default: GENERATION_ALGORITHM_UNSPECIFIED
+                          description: >-
+                            - GENERATION_ALGORITHM_UNSPECIFIED:
+                            GENERATION_ALGORITHM_UNSPECIFIED represents an
+                            unknown algorithm and will
+
+                            be discarded
+                             - GENERATION_ALGORITHM_COSMOS: GENERATION_ALGORITHM_COSMOS represents the Cosmos generation algorithm
+                             - GENERATION_ALGORITHM_EVM: GENERATION_ALGORITHM_EVM represents the EVM generation algorithm
+                             - GENERATION_ALGORITHM_DO_NOTHING: GENERATION_ALGORITHM_DO_NOTHING should be used when the public key bytes do
+                            not need to be modified
+                        encoding_algorithm:
+                          type: object
+                          properties:
+                            type_url:
+                              type: string
+                              description: >-
+                                A URL/resource name that uniquely identifies the
+                                type of the serialized
+
+                                protocol buffer message. This string must
+                                contain at least
+
+                                one "/" character. The last segment of the URL's
+                                path must represent
+
+                                the fully qualified name of the type (as in
+
+                                `path/google.protobuf.Duration`). The name
+                                should be in a canonical form
+
+                                (e.g., leading "." is not accepted).
+
+
+                                In practice, teams usually precompile into the
+                                binary all types that they
+
+                                expect it to use in the context of Any. However,
+                                for URLs which use the
+
+                                scheme `http`, `https`, or no scheme, one can
+                                optionally set up a type
+
+                                server that maps type URLs to message
+                                definitions as follows:
+
+
+                                * If no scheme is provided, `https` is assumed.
+
+                                * An HTTP GET on the URL must yield a
+                                [google.protobuf.Type][]
+                                  value in binary format, or produce an error.
+                                * Applications are allowed to cache lookup
+                                results based on the
+                                  URL, or have them precompiled into a binary to avoid any
+                                  lookup. Therefore, binary compatibility needs to be preserved
+                                  on changes to types. (Use versioned type names to manage
+                                  breaking changes.)
+
+                                Note: this functionality is not currently
+                                available in the official
+
+                                protobuf release, and it is not used for type
+                                URLs beginning with
+
+                                type.googleapis.com.
+
+
+                                Schemes other than `http`, `https` (or the empty
+                                scheme) might be
+
+                                used with implementation specific semantics.
+                            value:
+                              type: string
+                              format: byte
+                              description: >-
+                                Must be a valid serialized protocol buffer of
+                                the above specified type.
+                          description: >-
+                            `Any` contains an arbitrary serialized protocol
+                            buffer message along with a
+
+                            URL that describes the type of the serialized
+                            message.
+
+
+                            Protobuf library provides support to pack/unpack Any
+                            values in the form
+
+                            of utility functions or additional generated methods
+                            of the Any type.
+
+
+                            Example 1: Pack and unpack a message in C++.
+
+                                Foo foo = ...;
+                                Any any;
+                                any.PackFrom(foo);
+                                ...
+                                if (any.UnpackTo(&foo)) {
+                                  ...
+                                }
+
+                            Example 2: Pack and unpack a message in Java.
+
+                                Foo foo = ...;
+                                Any any = Any.pack(foo);
+                                ...
+                                if (any.is(Foo.class)) {
+                                  foo = any.unpack(Foo.class);
+                                }
+
+                             Example 3: Pack and unpack a message in Python.
+
+                                foo = Foo(...)
+                                any = Any()
+                                any.Pack(foo)
+                                ...
+                                if any.Is(Foo.DESCRIPTOR):
+                                  any.Unpack(foo)
+                                  ...
+
+                             Example 4: Pack and unpack a message in Go
+
+                                 foo := &pb.Foo{...}
+                                 any, err := ptypes.MarshalAny(foo)
+                                 ...
+                                 foo := &pb.Foo{}
+                                 if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                                   ...
+                                 }
+
+                            The pack methods provided by protobuf library will
+                            by default use
+
+                            'type.googleapis.com/full.type.name' as the type URL
+                            and the unpack
+
+                            methods only use the fully qualified type name after
+                            the last '/'
+
+                            in the type URL, for example "foo.bar.com/x/y.z"
+                            will yield type
+
+                            name "y.z".
+
+
+
+                            JSON
+
+                            ====
+
+                            The JSON representation of an `Any` value uses the
+                            regular
+
+                            representation of the deserialized, embedded
+                            message, with an
+
+                            additional field `@type` which contains the type
+                            URL. Example:
+
+                                package google.profile;
+                                message Person {
+                                  string first_name = 1;
+                                  string last_name = 2;
+                                }
+
+                                {
+                                  "@type": "type.googleapis.com/google.profile.Person",
+                                  "firstName": <string>,
+                                  "lastName": <string>
+                                }
+
+                            If the embedded message type is well-known and has a
+                            custom JSON
+
+                            representation, that representation will be embedded
+                            adding a field
+
+                            `value` which holds the custom JSON in addition to
+                            the `@type`
+
+                            field. Example (for message
+                            [google.protobuf.Duration][]):
+
+                                {
+                                  "@type": "type.googleapis.com/google.protobuf.Duration",
+                                  "value": "1.212s"
+                                }
+                          title: >-
+                            Algorithm that needs to be used to properly encode
+                            the address
                     proof:
                       title: >-
                         Proof contains the ownership proof of the external chain
@@ -2011,7 +2044,7 @@ paths:
           format: boolean
       tags:
         - Query
-  /desmos/profiles/v3/chain-links/owners:
+  /desmos/profiles/v4/chain-links/owners:
     get:
       summary: >-
         ChainLinkOwners queries for the owners of chain links, optionally
@@ -2341,7 +2374,7 @@ paths:
           format: boolean
       tags:
         - Query
-  /desmos/profiles/v3/default-external-addresses:
+  /desmos/profiles/v4/default-external-addresses:
     get:
       summary: |-
         DefaultExternalAddresses queries the default addresses associated to the
@@ -2362,187 +2395,220 @@ paths:
                       type: string
                       title: User defines the destination profile address to link
                     address:
-                      type: object
-                      properties:
-                        type_url:
-                          type: string
-                          description: >-
-                            A URL/resource name that uniquely identifies the
-                            type of the serialized
-
-                            protocol buffer message. This string must contain at
-                            least
-
-                            one "/" character. The last segment of the URL's
-                            path must represent
-
-                            the fully qualified name of the type (as in
-
-                            `path/google.protobuf.Duration`). The name should be
-                            in a canonical form
-
-                            (e.g., leading "." is not accepted).
-
-
-                            In practice, teams usually precompile into the
-                            binary all types that they
-
-                            expect it to use in the context of Any. However, for
-                            URLs which use the
-
-                            scheme `http`, `https`, or no scheme, one can
-                            optionally set up a type
-
-                            server that maps type URLs to message definitions as
-                            follows:
-
-
-                            * If no scheme is provided, `https` is assumed.
-
-                            * An HTTP GET on the URL must yield a
-                            [google.protobuf.Type][]
-                              value in binary format, or produce an error.
-                            * Applications are allowed to cache lookup results
-                            based on the
-                              URL, or have them precompiled into a binary to avoid any
-                              lookup. Therefore, binary compatibility needs to be preserved
-                              on changes to types. (Use versioned type names to manage
-                              breaking changes.)
-
-                            Note: this functionality is not currently available
-                            in the official
-
-                            protobuf release, and it is not used for type URLs
-                            beginning with
-
-                            type.googleapis.com.
-
-
-                            Schemes other than `http`, `https` (or the empty
-                            scheme) might be
-
-                            used with implementation specific semantics.
-                        value:
-                          type: string
-                          format: byte
-                          description: >-
-                            Must be a valid serialized protocol buffer of the
-                            above specified type.
-                      description: >-
-                        `Any` contains an arbitrary serialized protocol buffer
-                        message along with a
-
-                        URL that describes the type of the serialized message.
-
-
-                        Protobuf library provides support to pack/unpack Any
-                        values in the form
-
-                        of utility functions or additional generated methods of
-                        the Any type.
-
-
-                        Example 1: Pack and unpack a message in C++.
-
-                            Foo foo = ...;
-                            Any any;
-                            any.PackFrom(foo);
-                            ...
-                            if (any.UnpackTo(&foo)) {
-                              ...
-                            }
-
-                        Example 2: Pack and unpack a message in Java.
-
-                            Foo foo = ...;
-                            Any any = Any.pack(foo);
-                            ...
-                            if (any.is(Foo.class)) {
-                              foo = any.unpack(Foo.class);
-                            }
-
-                         Example 3: Pack and unpack a message in Python.
-
-                            foo = Foo(...)
-                            any = Any()
-                            any.Pack(foo)
-                            ...
-                            if any.Is(Foo.DESCRIPTOR):
-                              any.Unpack(foo)
-                              ...
-
-                         Example 4: Pack and unpack a message in Go
-
-                             foo := &pb.Foo{...}
-                             any, err := ptypes.MarshalAny(foo)
-                             ...
-                             foo := &pb.Foo{}
-                             if err := ptypes.UnmarshalAny(any, foo); err != nil {
-                               ...
-                             }
-
-                        The pack methods provided by protobuf library will by
-                        default use
-
-                        'type.googleapis.com/full.type.name' as the type URL and
-                        the unpack
-
-                        methods only use the fully qualified type name after the
-                        last '/'
-
-                        in the type URL, for example "foo.bar.com/x/y.z" will
-                        yield type
-
-                        name "y.z".
-
-
-
-                        JSON
-
-                        ====
-
-                        The JSON representation of an `Any` value uses the
-                        regular
-
-                        representation of the deserialized, embedded message,
-                        with an
-
-                        additional field `@type` which contains the type URL.
-                        Example:
-
-                            package google.profile;
-                            message Person {
-                              string first_name = 1;
-                              string last_name = 2;
-                            }
-
-                            {
-                              "@type": "type.googleapis.com/google.profile.Person",
-                              "firstName": <string>,
-                              "lastName": <string>
-                            }
-
-                        If the embedded message type is well-known and has a
-                        custom JSON
-
-                        representation, that representation will be embedded
-                        adding a field
-
-                        `value` which holds the custom JSON in addition to the
-                        `@type`
-
-                        field. Example (for message
-                        [google.protobuf.Duration][]):
-
-                            {
-                              "@type": "type.googleapis.com/google.protobuf.Duration",
-                              "value": "1.212s"
-                            }
                       title: >-
                         Address contains the data of the external chain address
                         to be connected
 
                         with the Desmos profile
+                      type: object
+                      properties:
+                        value:
+                          type: string
+                          title: Encoded value of the address
+                        generation_algorithm:
+                          title: >-
+                            Algorithm that has been used in order to generate
+                            the address starting from
+
+                            the public key bytes
+                          type: string
+                          enum:
+                            - GENERATION_ALGORITHM_UNSPECIFIED
+                            - GENERATION_ALGORITHM_COSMOS
+                            - GENERATION_ALGORITHM_EVM
+                            - GENERATION_ALGORITHM_DO_NOTHING
+                          default: GENERATION_ALGORITHM_UNSPECIFIED
+                          description: >-
+                            - GENERATION_ALGORITHM_UNSPECIFIED:
+                            GENERATION_ALGORITHM_UNSPECIFIED represents an
+                            unknown algorithm and will
+
+                            be discarded
+                             - GENERATION_ALGORITHM_COSMOS: GENERATION_ALGORITHM_COSMOS represents the Cosmos generation algorithm
+                             - GENERATION_ALGORITHM_EVM: GENERATION_ALGORITHM_EVM represents the EVM generation algorithm
+                             - GENERATION_ALGORITHM_DO_NOTHING: GENERATION_ALGORITHM_DO_NOTHING should be used when the public key bytes do
+                            not need to be modified
+                        encoding_algorithm:
+                          type: object
+                          properties:
+                            type_url:
+                              type: string
+                              description: >-
+                                A URL/resource name that uniquely identifies the
+                                type of the serialized
+
+                                protocol buffer message. This string must
+                                contain at least
+
+                                one "/" character. The last segment of the URL's
+                                path must represent
+
+                                the fully qualified name of the type (as in
+
+                                `path/google.protobuf.Duration`). The name
+                                should be in a canonical form
+
+                                (e.g., leading "." is not accepted).
+
+
+                                In practice, teams usually precompile into the
+                                binary all types that they
+
+                                expect it to use in the context of Any. However,
+                                for URLs which use the
+
+                                scheme `http`, `https`, or no scheme, one can
+                                optionally set up a type
+
+                                server that maps type URLs to message
+                                definitions as follows:
+
+
+                                * If no scheme is provided, `https` is assumed.
+
+                                * An HTTP GET on the URL must yield a
+                                [google.protobuf.Type][]
+                                  value in binary format, or produce an error.
+                                * Applications are allowed to cache lookup
+                                results based on the
+                                  URL, or have them precompiled into a binary to avoid any
+                                  lookup. Therefore, binary compatibility needs to be preserved
+                                  on changes to types. (Use versioned type names to manage
+                                  breaking changes.)
+
+                                Note: this functionality is not currently
+                                available in the official
+
+                                protobuf release, and it is not used for type
+                                URLs beginning with
+
+                                type.googleapis.com.
+
+
+                                Schemes other than `http`, `https` (or the empty
+                                scheme) might be
+
+                                used with implementation specific semantics.
+                            value:
+                              type: string
+                              format: byte
+                              description: >-
+                                Must be a valid serialized protocol buffer of
+                                the above specified type.
+                          description: >-
+                            `Any` contains an arbitrary serialized protocol
+                            buffer message along with a
+
+                            URL that describes the type of the serialized
+                            message.
+
+
+                            Protobuf library provides support to pack/unpack Any
+                            values in the form
+
+                            of utility functions or additional generated methods
+                            of the Any type.
+
+
+                            Example 1: Pack and unpack a message in C++.
+
+                                Foo foo = ...;
+                                Any any;
+                                any.PackFrom(foo);
+                                ...
+                                if (any.UnpackTo(&foo)) {
+                                  ...
+                                }
+
+                            Example 2: Pack and unpack a message in Java.
+
+                                Foo foo = ...;
+                                Any any = Any.pack(foo);
+                                ...
+                                if (any.is(Foo.class)) {
+                                  foo = any.unpack(Foo.class);
+                                }
+
+                             Example 3: Pack and unpack a message in Python.
+
+                                foo = Foo(...)
+                                any = Any()
+                                any.Pack(foo)
+                                ...
+                                if any.Is(Foo.DESCRIPTOR):
+                                  any.Unpack(foo)
+                                  ...
+
+                             Example 4: Pack and unpack a message in Go
+
+                                 foo := &pb.Foo{...}
+                                 any, err := ptypes.MarshalAny(foo)
+                                 ...
+                                 foo := &pb.Foo{}
+                                 if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                                   ...
+                                 }
+
+                            The pack methods provided by protobuf library will
+                            by default use
+
+                            'type.googleapis.com/full.type.name' as the type URL
+                            and the unpack
+
+                            methods only use the fully qualified type name after
+                            the last '/'
+
+                            in the type URL, for example "foo.bar.com/x/y.z"
+                            will yield type
+
+                            name "y.z".
+
+
+
+                            JSON
+
+                            ====
+
+                            The JSON representation of an `Any` value uses the
+                            regular
+
+                            representation of the deserialized, embedded
+                            message, with an
+
+                            additional field `@type` which contains the type
+                            URL. Example:
+
+                                package google.profile;
+                                message Person {
+                                  string first_name = 1;
+                                  string last_name = 2;
+                                }
+
+                                {
+                                  "@type": "type.googleapis.com/google.profile.Person",
+                                  "firstName": <string>,
+                                  "lastName": <string>
+                                }
+
+                            If the embedded message type is well-known and has a
+                            custom JSON
+
+                            representation, that representation will be embedded
+                            adding a field
+
+                            `value` which holds the custom JSON in addition to
+                            the `@type`
+
+                            field. Example (for message
+                            [google.protobuf.Duration][]):
+
+                                {
+                                  "@type": "type.googleapis.com/google.protobuf.Duration",
+                                  "value": "1.212s"
+                                }
+                          title: >-
+                            Algorithm that needs to be used to properly encode
+                            the address
                     proof:
                       title: >-
                         Proof contains the ownership proof of the external chain
@@ -3237,7 +3303,7 @@ paths:
           format: boolean
       tags:
         - Query
-  /desmos/profiles/v3/dtag-transfer-requests:
+  /desmos/profiles/v4/dtag-transfer-requests:
     get:
       summary: >-
         IncomingDTagTransferRequests queries all the DTag transfers requests
@@ -3575,7 +3641,7 @@ paths:
           format: boolean
       tags:
         - Query
-  /desmos/profiles/v3/params:
+  /desmos/profiles/v4/params:
     get:
       summary: Params queries the profiles module params
       operationId: ProfilesParams
@@ -3895,7 +3961,7 @@ paths:
                         }
       tags:
         - Query
-  '/desmos/profiles/v3/profiles/{user}':
+  '/desmos/profiles/v4/profiles/{user}':
     get:
       summary: >-
         Profile queries the profile of a specific user given their DTag or
@@ -12464,150 +12530,35 @@ definitions:
 
       NOTE: The amount field is an Int which implements the custom method
       signatures required by gogoproto.
-  desmos.profiles.v3.AppLinksParams:
+  desmos.profiles.v4.Address:
     type: object
     properties:
-      validity_duration:
+      value:
         type: string
-        title: Default validity duration before an application link expires
-    title: AppLinksParams define the parameters related to the app links
-  desmos.profiles.v3.ApplicationLink:
-    type: object
-    properties:
-      user:
-        type: string
-        title: User to which the link is associated
-      data:
-        title: Data contains the details of this specific link
-        type: object
-        properties:
-          application:
-            type: string
-            title: 'The application name (eg. Twitter, GitHub, etc)'
-          username:
-            type: string
-            title: 'Username on the application (eg. Twitter tag, GitHub profile, etc)'
-      state:
-        title: State of the link
+        title: Encoded value of the address
+      generation_algorithm:
+        title: >-
+          Algorithm that has been used in order to generate the address starting
+          from
+
+          the public key bytes
         type: string
         enum:
-          - APPLICATION_LINK_STATE_INITIALIZED_UNSPECIFIED
-          - APPLICATION_LINK_STATE_VERIFICATION_STARTED
-          - APPLICATION_LINK_STATE_VERIFICATION_ERROR
-          - APPLICATION_LINK_STATE_VERIFICATION_SUCCESS
-          - APPLICATION_LINK_STATE_TIMED_OUT
-        default: APPLICATION_LINK_STATE_INITIALIZED_UNSPECIFIED
+          - GENERATION_ALGORITHM_UNSPECIFIED
+          - GENERATION_ALGORITHM_COSMOS
+          - GENERATION_ALGORITHM_EVM
+          - GENERATION_ALGORITHM_DO_NOTHING
+        default: GENERATION_ALGORITHM_UNSPECIFIED
         description: >-
-          - APPLICATION_LINK_STATE_INITIALIZED_UNSPECIFIED: A link has just been
-          initialized
-           - APPLICATION_LINK_STATE_VERIFICATION_STARTED: A link has just started being verified
-           - APPLICATION_LINK_STATE_VERIFICATION_ERROR: A link has errored during the verification process
-           - APPLICATION_LINK_STATE_VERIFICATION_SUCCESS: A link has being verified successfully
-           - APPLICATION_LINK_STATE_TIMED_OUT: A link has timed out while waiting for the verification
-      oracle_request:
-        title: OracleRequest represents the request that has been made to the oracle
-        type: object
-        properties:
-          id:
-            type: string
-            format: uint64
-            title: ID is the ID of the request
-          oracle_script_id:
-            type: string
-            format: uint64
-            title: OracleScriptID is ID of an oracle script
-          call_data:
-            title: CallData contains the data used to perform the oracle request
-            type: object
-            properties:
-              application:
-                type: string
-                title: The application for which the ownership should be verified
-              call_data:
-                type: string
-                title: >-
-                  The hex encoded call data that should be used to verify the
-                  application
+          - GENERATION_ALGORITHM_UNSPECIFIED: GENERATION_ALGORITHM_UNSPECIFIED
+          represents an unknown algorithm and will
 
-                  account ownership
-          client_id:
-            type: string
-            title: >-
-              ClientID represents the ID of the client that has called the
-              oracle script
-      result:
-        title: |-
-          Data coming from the result of the verification.
-          Only available when the state is STATE_SUCCESS
-        type: object
-        properties:
-          success:
-            title: Success represents a successful verification
-            type: object
-            properties:
-              value:
-                type: string
-                title: Hex-encoded value that has be signed by the profile
-              signature:
-                type: string
-                title: >-
-                  Hex-encoded signature that has been produced by signing the
-                  value
-          failed:
-            title: Failed represents a failed verification
-            type: object
-            properties:
-              error:
-                type: string
-                title: Error that is associated with the failure
-      creation_time:
-        type: string
-        format: date-time
-        title: CreationTime represents the time in which the link was created
-      expiration_time:
-        type: string
-        format: date-time
-        title: ExpirationTime represents the time in which the link will expire
-    title: ApplicationLink contains the data of a link to a centralized application
-  desmos.profiles.v3.ApplicationLinkState:
-    type: string
-    enum:
-      - APPLICATION_LINK_STATE_INITIALIZED_UNSPECIFIED
-      - APPLICATION_LINK_STATE_VERIFICATION_STARTED
-      - APPLICATION_LINK_STATE_VERIFICATION_ERROR
-      - APPLICATION_LINK_STATE_VERIFICATION_SUCCESS
-      - APPLICATION_LINK_STATE_TIMED_OUT
-    default: APPLICATION_LINK_STATE_INITIALIZED_UNSPECIFIED
-    description: >-
-      - APPLICATION_LINK_STATE_INITIALIZED_UNSPECIFIED: A link has just been
-      initialized
-       - APPLICATION_LINK_STATE_VERIFICATION_STARTED: A link has just started being verified
-       - APPLICATION_LINK_STATE_VERIFICATION_ERROR: A link has errored during the verification process
-       - APPLICATION_LINK_STATE_VERIFICATION_SUCCESS: A link has being verified successfully
-       - APPLICATION_LINK_STATE_TIMED_OUT: A link has timed out while waiting for the verification
-    title: |-
-      ApplicationLinkState defines if an application link is in the following
-      states: STARTED, ERRORED, SUCCESSFUL, TIMED_OUT
-  desmos.profiles.v3.BioParams:
-    type: object
-    properties:
-      max_length:
-        type: string
-        format: byte
-    title: BioParams defines the parameters related to profile biography
-  desmos.profiles.v3.ChainConfig:
-    type: object
-    properties:
-      name:
-        type: string
-    description: ChainConfig contains the data of the chain with which the link is made.
-  desmos.profiles.v3.ChainLink:
-    type: object
-    properties:
-      user:
-        type: string
-        title: User defines the destination profile address to link
-      address:
+          be discarded
+           - GENERATION_ALGORITHM_COSMOS: GENERATION_ALGORITHM_COSMOS represents the Cosmos generation algorithm
+           - GENERATION_ALGORITHM_EVM: GENERATION_ALGORITHM_EVM represents the EVM generation algorithm
+           - GENERATION_ALGORITHM_DO_NOTHING: GENERATION_ALGORITHM_DO_NOTHING should be used when the public key bytes do
+          not need to be modified
+      encoding_algorithm:
         type: object
         properties:
           type_url:
@@ -12766,11 +12717,351 @@ definitions:
                 "@type": "type.googleapis.com/google.protobuf.Duration",
                 "value": "1.212s"
               }
+        title: Algorithm that needs to be used to properly encode the address
+    title: Address contains the data of an external address
+  desmos.profiles.v4.AppLinksParams:
+    type: object
+    properties:
+      validity_duration:
+        type: string
+        title: Default validity duration before an application link expires
+    title: AppLinksParams define the parameters related to the app links
+  desmos.profiles.v4.ApplicationLink:
+    type: object
+    properties:
+      user:
+        type: string
+        title: User to which the link is associated
+      data:
+        title: Data contains the details of this specific link
+        type: object
+        properties:
+          application:
+            type: string
+            title: 'The application name (eg. Twitter, GitHub, etc)'
+          username:
+            type: string
+            title: 'Username on the application (eg. Twitter tag, GitHub profile, etc)'
+      state:
+        title: State of the link
+        type: string
+        enum:
+          - APPLICATION_LINK_STATE_INITIALIZED_UNSPECIFIED
+          - APPLICATION_LINK_STATE_VERIFICATION_STARTED
+          - APPLICATION_LINK_STATE_VERIFICATION_ERROR
+          - APPLICATION_LINK_STATE_VERIFICATION_SUCCESS
+          - APPLICATION_LINK_STATE_TIMED_OUT
+        default: APPLICATION_LINK_STATE_INITIALIZED_UNSPECIFIED
+        description: >-
+          - APPLICATION_LINK_STATE_INITIALIZED_UNSPECIFIED: A link has just been
+          initialized
+           - APPLICATION_LINK_STATE_VERIFICATION_STARTED: A link has just started being verified
+           - APPLICATION_LINK_STATE_VERIFICATION_ERROR: A link has errored during the verification process
+           - APPLICATION_LINK_STATE_VERIFICATION_SUCCESS: A link has being verified successfully
+           - APPLICATION_LINK_STATE_TIMED_OUT: A link has timed out while waiting for the verification
+      oracle_request:
+        title: OracleRequest represents the request that has been made to the oracle
+        type: object
+        properties:
+          id:
+            type: string
+            format: uint64
+            title: ID is the ID of the request
+          oracle_script_id:
+            type: string
+            format: uint64
+            title: OracleScriptID is ID of an oracle script
+          call_data:
+            title: CallData contains the data used to perform the oracle request
+            type: object
+            properties:
+              application:
+                type: string
+                title: The application for which the ownership should be verified
+              call_data:
+                type: string
+                title: >-
+                  The hex encoded call data that should be used to verify the
+                  application
+
+                  account ownership
+          client_id:
+            type: string
+            title: >-
+              ClientID represents the ID of the client that has called the
+              oracle script
+      result:
+        title: |-
+          Data coming from the result of the verification.
+          Only available when the state is STATE_SUCCESS
+        type: object
+        properties:
+          success:
+            title: Success represents a successful verification
+            type: object
+            properties:
+              value:
+                type: string
+                title: Hex-encoded value that has be signed by the profile
+              signature:
+                type: string
+                title: >-
+                  Hex-encoded signature that has been produced by signing the
+                  value
+          failed:
+            title: Failed represents a failed verification
+            type: object
+            properties:
+              error:
+                type: string
+                title: Error that is associated with the failure
+      creation_time:
+        type: string
+        format: date-time
+        title: CreationTime represents the time in which the link was created
+      expiration_time:
+        type: string
+        format: date-time
+        title: ExpirationTime represents the time in which the link will expire
+    title: ApplicationLink contains the data of a link to a centralized application
+  desmos.profiles.v4.ApplicationLinkState:
+    type: string
+    enum:
+      - APPLICATION_LINK_STATE_INITIALIZED_UNSPECIFIED
+      - APPLICATION_LINK_STATE_VERIFICATION_STARTED
+      - APPLICATION_LINK_STATE_VERIFICATION_ERROR
+      - APPLICATION_LINK_STATE_VERIFICATION_SUCCESS
+      - APPLICATION_LINK_STATE_TIMED_OUT
+    default: APPLICATION_LINK_STATE_INITIALIZED_UNSPECIFIED
+    description: >-
+      - APPLICATION_LINK_STATE_INITIALIZED_UNSPECIFIED: A link has just been
+      initialized
+       - APPLICATION_LINK_STATE_VERIFICATION_STARTED: A link has just started being verified
+       - APPLICATION_LINK_STATE_VERIFICATION_ERROR: A link has errored during the verification process
+       - APPLICATION_LINK_STATE_VERIFICATION_SUCCESS: A link has being verified successfully
+       - APPLICATION_LINK_STATE_TIMED_OUT: A link has timed out while waiting for the verification
+    title: |-
+      ApplicationLinkState defines if an application link is in the following
+      states: STARTED, ERRORED, SUCCESSFUL, TIMED_OUT
+  desmos.profiles.v4.BioParams:
+    type: object
+    properties:
+      max_length:
+        type: string
+        format: byte
+    title: BioParams defines the parameters related to profile biography
+  desmos.profiles.v4.ChainConfig:
+    type: object
+    properties:
+      name:
+        type: string
+    description: ChainConfig contains the data of the chain with which the link is made.
+  desmos.profiles.v4.ChainLink:
+    type: object
+    properties:
+      user:
+        type: string
+        title: User defines the destination profile address to link
+      address:
         title: >-
           Address contains the data of the external chain address to be
           connected
 
           with the Desmos profile
+        type: object
+        properties:
+          value:
+            type: string
+            title: Encoded value of the address
+          generation_algorithm:
+            title: >-
+              Algorithm that has been used in order to generate the address
+              starting from
+
+              the public key bytes
+            type: string
+            enum:
+              - GENERATION_ALGORITHM_UNSPECIFIED
+              - GENERATION_ALGORITHM_COSMOS
+              - GENERATION_ALGORITHM_EVM
+              - GENERATION_ALGORITHM_DO_NOTHING
+            default: GENERATION_ALGORITHM_UNSPECIFIED
+            description: >-
+              - GENERATION_ALGORITHM_UNSPECIFIED:
+              GENERATION_ALGORITHM_UNSPECIFIED represents an unknown algorithm
+              and will
+
+              be discarded
+               - GENERATION_ALGORITHM_COSMOS: GENERATION_ALGORITHM_COSMOS represents the Cosmos generation algorithm
+               - GENERATION_ALGORITHM_EVM: GENERATION_ALGORITHM_EVM represents the EVM generation algorithm
+               - GENERATION_ALGORITHM_DO_NOTHING: GENERATION_ALGORITHM_DO_NOTHING should be used when the public key bytes do
+              not need to be modified
+          encoding_algorithm:
+            type: object
+            properties:
+              type_url:
+                type: string
+                description: >-
+                  A URL/resource name that uniquely identifies the type of the
+                  serialized
+
+                  protocol buffer message. This string must contain at least
+
+                  one "/" character. The last segment of the URL's path must
+                  represent
+
+                  the fully qualified name of the type (as in
+
+                  `path/google.protobuf.Duration`). The name should be in a
+                  canonical form
+
+                  (e.g., leading "." is not accepted).
+
+
+                  In practice, teams usually precompile into the binary all
+                  types that they
+
+                  expect it to use in the context of Any. However, for URLs
+                  which use the
+
+                  scheme `http`, `https`, or no scheme, one can optionally set
+                  up a type
+
+                  server that maps type URLs to message definitions as follows:
+
+
+                  * If no scheme is provided, `https` is assumed.
+
+                  * An HTTP GET on the URL must yield a [google.protobuf.Type][]
+                    value in binary format, or produce an error.
+                  * Applications are allowed to cache lookup results based on
+                  the
+                    URL, or have them precompiled into a binary to avoid any
+                    lookup. Therefore, binary compatibility needs to be preserved
+                    on changes to types. (Use versioned type names to manage
+                    breaking changes.)
+
+                  Note: this functionality is not currently available in the
+                  official
+
+                  protobuf release, and it is not used for type URLs beginning
+                  with
+
+                  type.googleapis.com.
+
+
+                  Schemes other than `http`, `https` (or the empty scheme) might
+                  be
+
+                  used with implementation specific semantics.
+              value:
+                type: string
+                format: byte
+                description: >-
+                  Must be a valid serialized protocol buffer of the above
+                  specified type.
+            description: >-
+              `Any` contains an arbitrary serialized protocol buffer message
+              along with a
+
+              URL that describes the type of the serialized message.
+
+
+              Protobuf library provides support to pack/unpack Any values in the
+              form
+
+              of utility functions or additional generated methods of the Any
+              type.
+
+
+              Example 1: Pack and unpack a message in C++.
+
+                  Foo foo = ...;
+                  Any any;
+                  any.PackFrom(foo);
+                  ...
+                  if (any.UnpackTo(&foo)) {
+                    ...
+                  }
+
+              Example 2: Pack and unpack a message in Java.
+
+                  Foo foo = ...;
+                  Any any = Any.pack(foo);
+                  ...
+                  if (any.is(Foo.class)) {
+                    foo = any.unpack(Foo.class);
+                  }
+
+               Example 3: Pack and unpack a message in Python.
+
+                  foo = Foo(...)
+                  any = Any()
+                  any.Pack(foo)
+                  ...
+                  if any.Is(Foo.DESCRIPTOR):
+                    any.Unpack(foo)
+                    ...
+
+               Example 4: Pack and unpack a message in Go
+
+                   foo := &pb.Foo{...}
+                   any, err := ptypes.MarshalAny(foo)
+                   ...
+                   foo := &pb.Foo{}
+                   if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                     ...
+                   }
+
+              The pack methods provided by protobuf library will by default use
+
+              'type.googleapis.com/full.type.name' as the type URL and the
+              unpack
+
+              methods only use the fully qualified type name after the last '/'
+
+              in the type URL, for example "foo.bar.com/x/y.z" will yield type
+
+              name "y.z".
+
+
+
+              JSON
+
+              ====
+
+              The JSON representation of an `Any` value uses the regular
+
+              representation of the deserialized, embedded message, with an
+
+              additional field `@type` which contains the type URL. Example:
+
+                  package google.profile;
+                  message Person {
+                    string first_name = 1;
+                    string last_name = 2;
+                  }
+
+                  {
+                    "@type": "type.googleapis.com/google.profile.Person",
+                    "firstName": <string>,
+                    "lastName": <string>
+                  }
+
+              If the embedded message type is well-known and has a custom JSON
+
+              representation, that representation will be embedded adding a
+              field
+
+              `value` which holds the custom JSON in addition to the `@type`
+
+              field. Example (for message [google.protobuf.Duration][]):
+
+                  {
+                    "@type": "type.googleapis.com/google.protobuf.Duration",
+                    "value": "1.212s"
+                  }
+            title: Algorithm that needs to be used to properly encode the address
       proof:
         title: Proof contains the ownership proof of the external chain address
         type: object
@@ -13136,7 +13427,7 @@ definitions:
     title: |-
       ChainLink contains the data representing either an inter- or cross- chain
       link
-  desmos.profiles.v3.DTagParams:
+  desmos.profiles.v4.DTagParams:
     type: object
     properties:
       reg_ex:
@@ -13148,7 +13439,7 @@ definitions:
         type: string
         format: byte
     title: DTagParams defines the parameters related to profile DTags
-  desmos.profiles.v3.DTagTransferRequest:
+  desmos.profiles.v4.DTagTransferRequest:
     type: object
     properties:
       dtag_to_trade:
@@ -13169,7 +13460,7 @@ definitions:
 
           give to the sender their DTag
     title: DTagTransferRequest represent a DTag transfer request between two users
-  desmos.profiles.v3.Data:
+  desmos.profiles.v4.Data:
     type: object
     properties:
       application:
@@ -13181,7 +13472,25 @@ definitions:
     title: |-
       Data contains the data associated to a specific user of a
       generic centralized application
-  desmos.profiles.v3.NicknameParams:
+  desmos.profiles.v4.GenerationAlgorithm:
+    type: string
+    enum:
+      - GENERATION_ALGORITHM_UNSPECIFIED
+      - GENERATION_ALGORITHM_COSMOS
+      - GENERATION_ALGORITHM_EVM
+      - GENERATION_ALGORITHM_DO_NOTHING
+    default: GENERATION_ALGORITHM_UNSPECIFIED
+    description: >-
+      - GENERATION_ALGORITHM_UNSPECIFIED: GENERATION_ALGORITHM_UNSPECIFIED
+      represents an unknown algorithm and will
+
+      be discarded
+       - GENERATION_ALGORITHM_COSMOS: GENERATION_ALGORITHM_COSMOS represents the Cosmos generation algorithm
+       - GENERATION_ALGORITHM_EVM: GENERATION_ALGORITHM_EVM represents the EVM generation algorithm
+       - GENERATION_ALGORITHM_DO_NOTHING: GENERATION_ALGORITHM_DO_NOTHING should be used when the public key bytes do
+      not need to be modified
+    title: GenerationAlgorithm represents various address generation algorithms
+  desmos.profiles.v4.NicknameParams:
     type: object
     properties:
       min_length:
@@ -13191,7 +13500,7 @@ definitions:
         type: string
         format: byte
     title: NicknameParams defines the parameters related to the profiles nicknames
-  desmos.profiles.v3.OracleParams:
+  desmos.profiles.v4.OracleParams:
     type: object
     properties:
       script_id:
@@ -13255,7 +13564,7 @@ definitions:
       OracleParams defines the parameters related to the oracle
       that will be used to verify the ownership of a centralized
       application account by a Desmos profile
-  desmos.profiles.v3.OracleRequest:
+  desmos.profiles.v4.OracleRequest:
     type: object
     properties:
       id:
@@ -13288,7 +13597,7 @@ definitions:
     title: |-
       OracleRequest represents a generic oracle request used to
       verify the ownership of a centralized application account
-  desmos.profiles.v3.OracleRequest.CallData:
+  desmos.profiles.v4.OracleRequest.CallData:
     type: object
     properties:
       application:
@@ -13304,7 +13613,7 @@ definitions:
     title: |-
       CallData contains the data sent to a single oracle request in order to
       verify the ownership of a centralized application by a Desmos profile
-  desmos.profiles.v3.Params:
+  desmos.profiles.v4.Params:
     type: object
     properties:
       nickname:
@@ -13413,7 +13722,7 @@ definitions:
             title: Default validity duration before an application link expires
         title: AppLinksParams define the parameters related to the app links
     title: Params contains the parameters for the profiles module
-  desmos.profiles.v3.Proof:
+  desmos.profiles.v4.Proof:
     type: object
     properties:
       pub_key:
@@ -13750,7 +14059,7 @@ definitions:
     title: |-
       Proof contains all the data used to verify a signature when linking an
       account to a profile
-  desmos.profiles.v3.QueryApplicationLinkByClientIDResponse:
+  desmos.profiles.v4.QueryApplicationLinkByClientIDResponse:
     type: object
     properties:
       link:
@@ -13860,7 +14169,7 @@ definitions:
     title: |-
       QueryApplicationLinkByClientIDResponse contains the data returned by the
       request allowing to get an application link using a client id
-  desmos.profiles.v3.QueryApplicationLinkOwnersResponse:
+  desmos.profiles.v4.QueryApplicationLinkOwnersResponse:
     type: object
     properties:
       owners:
@@ -13911,7 +14220,7 @@ definitions:
       request
 
       allowing to get application link owners.
-  desmos.profiles.v3.QueryApplicationLinkOwnersResponse.ApplicationLinkOwnerDetails:
+  desmos.profiles.v4.QueryApplicationLinkOwnersResponse.ApplicationLinkOwnerDetails:
     type: object
     properties:
       user:
@@ -13923,7 +14232,7 @@ definitions:
     title: |-
       ApplicationLinkOwnerDetails contains the details of a single application
       link owner
-  desmos.profiles.v3.QueryApplicationLinksResponse:
+  desmos.profiles.v4.QueryApplicationLinksResponse:
     type: object
     properties:
       links:
@@ -14065,7 +14374,7 @@ definitions:
     title: |-
       QueryApplicationLinksResponse represents the response to the query used
       to get the application links for a specific user
-  desmos.profiles.v3.QueryChainLinkOwnersResponse:
+  desmos.profiles.v4.QueryChainLinkOwnersResponse:
     type: object
     properties:
       owners:
@@ -14112,7 +14421,7 @@ definitions:
     description: |-
       QueryChainLinkOwnersResponse contains the data returned by the request
       allowing to get chain link owners.
-  desmos.profiles.v3.QueryChainLinkOwnersResponse.ChainLinkOwnerDetails:
+  desmos.profiles.v4.QueryChainLinkOwnersResponse.ChainLinkOwnerDetails:
     type: object
     properties:
       user:
@@ -14122,7 +14431,7 @@ definitions:
       target:
         type: string
     title: ChainLinkOwnerDetails contains the details of a single chain link owner
-  desmos.profiles.v3.QueryChainLinksResponse:
+  desmos.profiles.v4.QueryChainLinksResponse:
     type: object
     properties:
       links:
@@ -14134,179 +14443,217 @@ definitions:
               type: string
               title: User defines the destination profile address to link
             address:
-              type: object
-              properties:
-                type_url:
-                  type: string
-                  description: >-
-                    A URL/resource name that uniquely identifies the type of the
-                    serialized
-
-                    protocol buffer message. This string must contain at least
-
-                    one "/" character. The last segment of the URL's path must
-                    represent
-
-                    the fully qualified name of the type (as in
-
-                    `path/google.protobuf.Duration`). The name should be in a
-                    canonical form
-
-                    (e.g., leading "." is not accepted).
-
-
-                    In practice, teams usually precompile into the binary all
-                    types that they
-
-                    expect it to use in the context of Any. However, for URLs
-                    which use the
-
-                    scheme `http`, `https`, or no scheme, one can optionally set
-                    up a type
-
-                    server that maps type URLs to message definitions as
-                    follows:
-
-
-                    * If no scheme is provided, `https` is assumed.
-
-                    * An HTTP GET on the URL must yield a
-                    [google.protobuf.Type][]
-                      value in binary format, or produce an error.
-                    * Applications are allowed to cache lookup results based on
-                    the
-                      URL, or have them precompiled into a binary to avoid any
-                      lookup. Therefore, binary compatibility needs to be preserved
-                      on changes to types. (Use versioned type names to manage
-                      breaking changes.)
-
-                    Note: this functionality is not currently available in the
-                    official
-
-                    protobuf release, and it is not used for type URLs beginning
-                    with
-
-                    type.googleapis.com.
-
-
-                    Schemes other than `http`, `https` (or the empty scheme)
-                    might be
-
-                    used with implementation specific semantics.
-                value:
-                  type: string
-                  format: byte
-                  description: >-
-                    Must be a valid serialized protocol buffer of the above
-                    specified type.
-              description: >-
-                `Any` contains an arbitrary serialized protocol buffer message
-                along with a
-
-                URL that describes the type of the serialized message.
-
-
-                Protobuf library provides support to pack/unpack Any values in
-                the form
-
-                of utility functions or additional generated methods of the Any
-                type.
-
-
-                Example 1: Pack and unpack a message in C++.
-
-                    Foo foo = ...;
-                    Any any;
-                    any.PackFrom(foo);
-                    ...
-                    if (any.UnpackTo(&foo)) {
-                      ...
-                    }
-
-                Example 2: Pack and unpack a message in Java.
-
-                    Foo foo = ...;
-                    Any any = Any.pack(foo);
-                    ...
-                    if (any.is(Foo.class)) {
-                      foo = any.unpack(Foo.class);
-                    }
-
-                 Example 3: Pack and unpack a message in Python.
-
-                    foo = Foo(...)
-                    any = Any()
-                    any.Pack(foo)
-                    ...
-                    if any.Is(Foo.DESCRIPTOR):
-                      any.Unpack(foo)
-                      ...
-
-                 Example 4: Pack and unpack a message in Go
-
-                     foo := &pb.Foo{...}
-                     any, err := ptypes.MarshalAny(foo)
-                     ...
-                     foo := &pb.Foo{}
-                     if err := ptypes.UnmarshalAny(any, foo); err != nil {
-                       ...
-                     }
-
-                The pack methods provided by protobuf library will by default
-                use
-
-                'type.googleapis.com/full.type.name' as the type URL and the
-                unpack
-
-                methods only use the fully qualified type name after the last
-                '/'
-
-                in the type URL, for example "foo.bar.com/x/y.z" will yield type
-
-                name "y.z".
-
-
-
-                JSON
-
-                ====
-
-                The JSON representation of an `Any` value uses the regular
-
-                representation of the deserialized, embedded message, with an
-
-                additional field `@type` which contains the type URL. Example:
-
-                    package google.profile;
-                    message Person {
-                      string first_name = 1;
-                      string last_name = 2;
-                    }
-
-                    {
-                      "@type": "type.googleapis.com/google.profile.Person",
-                      "firstName": <string>,
-                      "lastName": <string>
-                    }
-
-                If the embedded message type is well-known and has a custom JSON
-
-                representation, that representation will be embedded adding a
-                field
-
-                `value` which holds the custom JSON in addition to the `@type`
-
-                field. Example (for message [google.protobuf.Duration][]):
-
-                    {
-                      "@type": "type.googleapis.com/google.protobuf.Duration",
-                      "value": "1.212s"
-                    }
               title: >-
                 Address contains the data of the external chain address to be
                 connected
 
                 with the Desmos profile
+              type: object
+              properties:
+                value:
+                  type: string
+                  title: Encoded value of the address
+                generation_algorithm:
+                  title: >-
+                    Algorithm that has been used in order to generate the
+                    address starting from
+
+                    the public key bytes
+                  type: string
+                  enum:
+                    - GENERATION_ALGORITHM_UNSPECIFIED
+                    - GENERATION_ALGORITHM_COSMOS
+                    - GENERATION_ALGORITHM_EVM
+                    - GENERATION_ALGORITHM_DO_NOTHING
+                  default: GENERATION_ALGORITHM_UNSPECIFIED
+                  description: >-
+                    - GENERATION_ALGORITHM_UNSPECIFIED:
+                    GENERATION_ALGORITHM_UNSPECIFIED represents an unknown
+                    algorithm and will
+
+                    be discarded
+                     - GENERATION_ALGORITHM_COSMOS: GENERATION_ALGORITHM_COSMOS represents the Cosmos generation algorithm
+                     - GENERATION_ALGORITHM_EVM: GENERATION_ALGORITHM_EVM represents the EVM generation algorithm
+                     - GENERATION_ALGORITHM_DO_NOTHING: GENERATION_ALGORITHM_DO_NOTHING should be used when the public key bytes do
+                    not need to be modified
+                encoding_algorithm:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                      description: >-
+                        A URL/resource name that uniquely identifies the type of
+                        the serialized
+
+                        protocol buffer message. This string must contain at
+                        least
+
+                        one "/" character. The last segment of the URL's path
+                        must represent
+
+                        the fully qualified name of the type (as in
+
+                        `path/google.protobuf.Duration`). The name should be in
+                        a canonical form
+
+                        (e.g., leading "." is not accepted).
+
+
+                        In practice, teams usually precompile into the binary
+                        all types that they
+
+                        expect it to use in the context of Any. However, for
+                        URLs which use the
+
+                        scheme `http`, `https`, or no scheme, one can optionally
+                        set up a type
+
+                        server that maps type URLs to message definitions as
+                        follows:
+
+
+                        * If no scheme is provided, `https` is assumed.
+
+                        * An HTTP GET on the URL must yield a
+                        [google.protobuf.Type][]
+                          value in binary format, or produce an error.
+                        * Applications are allowed to cache lookup results based
+                        on the
+                          URL, or have them precompiled into a binary to avoid any
+                          lookup. Therefore, binary compatibility needs to be preserved
+                          on changes to types. (Use versioned type names to manage
+                          breaking changes.)
+
+                        Note: this functionality is not currently available in
+                        the official
+
+                        protobuf release, and it is not used for type URLs
+                        beginning with
+
+                        type.googleapis.com.
+
+
+                        Schemes other than `http`, `https` (or the empty scheme)
+                        might be
+
+                        used with implementation specific semantics.
+                    value:
+                      type: string
+                      format: byte
+                      description: >-
+                        Must be a valid serialized protocol buffer of the above
+                        specified type.
+                  description: >-
+                    `Any` contains an arbitrary serialized protocol buffer
+                    message along with a
+
+                    URL that describes the type of the serialized message.
+
+
+                    Protobuf library provides support to pack/unpack Any values
+                    in the form
+
+                    of utility functions or additional generated methods of the
+                    Any type.
+
+
+                    Example 1: Pack and unpack a message in C++.
+
+                        Foo foo = ...;
+                        Any any;
+                        any.PackFrom(foo);
+                        ...
+                        if (any.UnpackTo(&foo)) {
+                          ...
+                        }
+
+                    Example 2: Pack and unpack a message in Java.
+
+                        Foo foo = ...;
+                        Any any = Any.pack(foo);
+                        ...
+                        if (any.is(Foo.class)) {
+                          foo = any.unpack(Foo.class);
+                        }
+
+                     Example 3: Pack and unpack a message in Python.
+
+                        foo = Foo(...)
+                        any = Any()
+                        any.Pack(foo)
+                        ...
+                        if any.Is(Foo.DESCRIPTOR):
+                          any.Unpack(foo)
+                          ...
+
+                     Example 4: Pack and unpack a message in Go
+
+                         foo := &pb.Foo{...}
+                         any, err := ptypes.MarshalAny(foo)
+                         ...
+                         foo := &pb.Foo{}
+                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                           ...
+                         }
+
+                    The pack methods provided by protobuf library will by
+                    default use
+
+                    'type.googleapis.com/full.type.name' as the type URL and the
+                    unpack
+
+                    methods only use the fully qualified type name after the
+                    last '/'
+
+                    in the type URL, for example "foo.bar.com/x/y.z" will yield
+                    type
+
+                    name "y.z".
+
+
+
+                    JSON
+
+                    ====
+
+                    The JSON representation of an `Any` value uses the regular
+
+                    representation of the deserialized, embedded message, with
+                    an
+
+                    additional field `@type` which contains the type URL.
+                    Example:
+
+                        package google.profile;
+                        message Person {
+                          string first_name = 1;
+                          string last_name = 2;
+                        }
+
+                        {
+                          "@type": "type.googleapis.com/google.profile.Person",
+                          "firstName": <string>,
+                          "lastName": <string>
+                        }
+
+                    If the embedded message type is well-known and has a custom
+                    JSON
+
+                    representation, that representation will be embedded adding
+                    a field
+
+                    `value` which holds the custom JSON in addition to the
+                    `@type`
+
+                    field. Example (for message [google.protobuf.Duration][]):
+
+                        {
+                          "@type": "type.googleapis.com/google.protobuf.Duration",
+                          "value": "1.212s"
+                        }
+                  title: >-
+                    Algorithm that needs to be used to properly encode the
+                    address
             proof:
               title: Proof contains the ownership proof of the external chain address
               type: object
@@ -14725,7 +15072,7 @@ definitions:
     description: |-
       QueryChainLinksResponse is the response type for the
       Query/ChainLinks RPC method.
-  desmos.profiles.v3.QueryDefaultExternalAddressesResponse:
+  desmos.profiles.v4.QueryDefaultExternalAddressesResponse:
     type: object
     properties:
       links:
@@ -14737,179 +15084,217 @@ definitions:
               type: string
               title: User defines the destination profile address to link
             address:
-              type: object
-              properties:
-                type_url:
-                  type: string
-                  description: >-
-                    A URL/resource name that uniquely identifies the type of the
-                    serialized
-
-                    protocol buffer message. This string must contain at least
-
-                    one "/" character. The last segment of the URL's path must
-                    represent
-
-                    the fully qualified name of the type (as in
-
-                    `path/google.protobuf.Duration`). The name should be in a
-                    canonical form
-
-                    (e.g., leading "." is not accepted).
-
-
-                    In practice, teams usually precompile into the binary all
-                    types that they
-
-                    expect it to use in the context of Any. However, for URLs
-                    which use the
-
-                    scheme `http`, `https`, or no scheme, one can optionally set
-                    up a type
-
-                    server that maps type URLs to message definitions as
-                    follows:
-
-
-                    * If no scheme is provided, `https` is assumed.
-
-                    * An HTTP GET on the URL must yield a
-                    [google.protobuf.Type][]
-                      value in binary format, or produce an error.
-                    * Applications are allowed to cache lookup results based on
-                    the
-                      URL, or have them precompiled into a binary to avoid any
-                      lookup. Therefore, binary compatibility needs to be preserved
-                      on changes to types. (Use versioned type names to manage
-                      breaking changes.)
-
-                    Note: this functionality is not currently available in the
-                    official
-
-                    protobuf release, and it is not used for type URLs beginning
-                    with
-
-                    type.googleapis.com.
-
-
-                    Schemes other than `http`, `https` (or the empty scheme)
-                    might be
-
-                    used with implementation specific semantics.
-                value:
-                  type: string
-                  format: byte
-                  description: >-
-                    Must be a valid serialized protocol buffer of the above
-                    specified type.
-              description: >-
-                `Any` contains an arbitrary serialized protocol buffer message
-                along with a
-
-                URL that describes the type of the serialized message.
-
-
-                Protobuf library provides support to pack/unpack Any values in
-                the form
-
-                of utility functions or additional generated methods of the Any
-                type.
-
-
-                Example 1: Pack and unpack a message in C++.
-
-                    Foo foo = ...;
-                    Any any;
-                    any.PackFrom(foo);
-                    ...
-                    if (any.UnpackTo(&foo)) {
-                      ...
-                    }
-
-                Example 2: Pack and unpack a message in Java.
-
-                    Foo foo = ...;
-                    Any any = Any.pack(foo);
-                    ...
-                    if (any.is(Foo.class)) {
-                      foo = any.unpack(Foo.class);
-                    }
-
-                 Example 3: Pack and unpack a message in Python.
-
-                    foo = Foo(...)
-                    any = Any()
-                    any.Pack(foo)
-                    ...
-                    if any.Is(Foo.DESCRIPTOR):
-                      any.Unpack(foo)
-                      ...
-
-                 Example 4: Pack and unpack a message in Go
-
-                     foo := &pb.Foo{...}
-                     any, err := ptypes.MarshalAny(foo)
-                     ...
-                     foo := &pb.Foo{}
-                     if err := ptypes.UnmarshalAny(any, foo); err != nil {
-                       ...
-                     }
-
-                The pack methods provided by protobuf library will by default
-                use
-
-                'type.googleapis.com/full.type.name' as the type URL and the
-                unpack
-
-                methods only use the fully qualified type name after the last
-                '/'
-
-                in the type URL, for example "foo.bar.com/x/y.z" will yield type
-
-                name "y.z".
-
-
-
-                JSON
-
-                ====
-
-                The JSON representation of an `Any` value uses the regular
-
-                representation of the deserialized, embedded message, with an
-
-                additional field `@type` which contains the type URL. Example:
-
-                    package google.profile;
-                    message Person {
-                      string first_name = 1;
-                      string last_name = 2;
-                    }
-
-                    {
-                      "@type": "type.googleapis.com/google.profile.Person",
-                      "firstName": <string>,
-                      "lastName": <string>
-                    }
-
-                If the embedded message type is well-known and has a custom JSON
-
-                representation, that representation will be embedded adding a
-                field
-
-                `value` which holds the custom JSON in addition to the `@type`
-
-                field. Example (for message [google.protobuf.Duration][]):
-
-                    {
-                      "@type": "type.googleapis.com/google.protobuf.Duration",
-                      "value": "1.212s"
-                    }
               title: >-
                 Address contains the data of the external chain address to be
                 connected
 
                 with the Desmos profile
+              type: object
+              properties:
+                value:
+                  type: string
+                  title: Encoded value of the address
+                generation_algorithm:
+                  title: >-
+                    Algorithm that has been used in order to generate the
+                    address starting from
+
+                    the public key bytes
+                  type: string
+                  enum:
+                    - GENERATION_ALGORITHM_UNSPECIFIED
+                    - GENERATION_ALGORITHM_COSMOS
+                    - GENERATION_ALGORITHM_EVM
+                    - GENERATION_ALGORITHM_DO_NOTHING
+                  default: GENERATION_ALGORITHM_UNSPECIFIED
+                  description: >-
+                    - GENERATION_ALGORITHM_UNSPECIFIED:
+                    GENERATION_ALGORITHM_UNSPECIFIED represents an unknown
+                    algorithm and will
+
+                    be discarded
+                     - GENERATION_ALGORITHM_COSMOS: GENERATION_ALGORITHM_COSMOS represents the Cosmos generation algorithm
+                     - GENERATION_ALGORITHM_EVM: GENERATION_ALGORITHM_EVM represents the EVM generation algorithm
+                     - GENERATION_ALGORITHM_DO_NOTHING: GENERATION_ALGORITHM_DO_NOTHING should be used when the public key bytes do
+                    not need to be modified
+                encoding_algorithm:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                      description: >-
+                        A URL/resource name that uniquely identifies the type of
+                        the serialized
+
+                        protocol buffer message. This string must contain at
+                        least
+
+                        one "/" character. The last segment of the URL's path
+                        must represent
+
+                        the fully qualified name of the type (as in
+
+                        `path/google.protobuf.Duration`). The name should be in
+                        a canonical form
+
+                        (e.g., leading "." is not accepted).
+
+
+                        In practice, teams usually precompile into the binary
+                        all types that they
+
+                        expect it to use in the context of Any. However, for
+                        URLs which use the
+
+                        scheme `http`, `https`, or no scheme, one can optionally
+                        set up a type
+
+                        server that maps type URLs to message definitions as
+                        follows:
+
+
+                        * If no scheme is provided, `https` is assumed.
+
+                        * An HTTP GET on the URL must yield a
+                        [google.protobuf.Type][]
+                          value in binary format, or produce an error.
+                        * Applications are allowed to cache lookup results based
+                        on the
+                          URL, or have them precompiled into a binary to avoid any
+                          lookup. Therefore, binary compatibility needs to be preserved
+                          on changes to types. (Use versioned type names to manage
+                          breaking changes.)
+
+                        Note: this functionality is not currently available in
+                        the official
+
+                        protobuf release, and it is not used for type URLs
+                        beginning with
+
+                        type.googleapis.com.
+
+
+                        Schemes other than `http`, `https` (or the empty scheme)
+                        might be
+
+                        used with implementation specific semantics.
+                    value:
+                      type: string
+                      format: byte
+                      description: >-
+                        Must be a valid serialized protocol buffer of the above
+                        specified type.
+                  description: >-
+                    `Any` contains an arbitrary serialized protocol buffer
+                    message along with a
+
+                    URL that describes the type of the serialized message.
+
+
+                    Protobuf library provides support to pack/unpack Any values
+                    in the form
+
+                    of utility functions or additional generated methods of the
+                    Any type.
+
+
+                    Example 1: Pack and unpack a message in C++.
+
+                        Foo foo = ...;
+                        Any any;
+                        any.PackFrom(foo);
+                        ...
+                        if (any.UnpackTo(&foo)) {
+                          ...
+                        }
+
+                    Example 2: Pack and unpack a message in Java.
+
+                        Foo foo = ...;
+                        Any any = Any.pack(foo);
+                        ...
+                        if (any.is(Foo.class)) {
+                          foo = any.unpack(Foo.class);
+                        }
+
+                     Example 3: Pack and unpack a message in Python.
+
+                        foo = Foo(...)
+                        any = Any()
+                        any.Pack(foo)
+                        ...
+                        if any.Is(Foo.DESCRIPTOR):
+                          any.Unpack(foo)
+                          ...
+
+                     Example 4: Pack and unpack a message in Go
+
+                         foo := &pb.Foo{...}
+                         any, err := ptypes.MarshalAny(foo)
+                         ...
+                         foo := &pb.Foo{}
+                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                           ...
+                         }
+
+                    The pack methods provided by protobuf library will by
+                    default use
+
+                    'type.googleapis.com/full.type.name' as the type URL and the
+                    unpack
+
+                    methods only use the fully qualified type name after the
+                    last '/'
+
+                    in the type URL, for example "foo.bar.com/x/y.z" will yield
+                    type
+
+                    name "y.z".
+
+
+
+                    JSON
+
+                    ====
+
+                    The JSON representation of an `Any` value uses the regular
+
+                    representation of the deserialized, embedded message, with
+                    an
+
+                    additional field `@type` which contains the type URL.
+                    Example:
+
+                        package google.profile;
+                        message Person {
+                          string first_name = 1;
+                          string last_name = 2;
+                        }
+
+                        {
+                          "@type": "type.googleapis.com/google.profile.Person",
+                          "firstName": <string>,
+                          "lastName": <string>
+                        }
+
+                    If the embedded message type is well-known and has a custom
+                    JSON
+
+                    representation, that representation will be embedded adding
+                    a field
+
+                    `value` which holds the custom JSON in addition to the
+                    `@type`
+
+                    field. Example (for message [google.protobuf.Duration][]):
+
+                        {
+                          "@type": "type.googleapis.com/google.protobuf.Duration",
+                          "value": "1.212s"
+                        }
+                  title: >-
+                    Algorithm that needs to be used to properly encode the
+                    address
             proof:
               title: Proof contains the ownership proof of the external chain address
               type: object
@@ -15332,7 +15717,7 @@ definitions:
     title: |-
       QueryDefaultExternalAddressesResponse is the response type for
       Query/DefaultExternalAddresses RPC method
-  desmos.profiles.v3.QueryIncomingDTagTransferRequestsResponse:
+  desmos.profiles.v4.QueryIncomingDTagTransferRequestsResponse:
     type: object
     properties:
       requests:
@@ -15396,7 +15781,7 @@ definitions:
     description: |-
       QueryIncomingDTagTransferRequestsResponse is the response type for the
       Query/IncomingDTagTransferRequests RPC method.
-  desmos.profiles.v3.QueryParamsResponse:
+  desmos.profiles.v4.QueryParamsResponse:
     type: object
     properties:
       params:
@@ -15509,7 +15894,7 @@ definitions:
             title: AppLinksParams define the parameters related to the app links
         title: Params contains the parameters for the profiles module
     description: QueryParamsResponse is the response type for the Query/Params RPC method.
-  desmos.profiles.v3.QueryProfileResponse:
+  desmos.profiles.v4.QueryProfileResponse:
     type: object
     properties:
       profile:
@@ -15674,7 +16059,7 @@ definitions:
     description: >-
       QueryProfileResponse is the response type for the Query/Profile RPC
       method.
-  desmos.profiles.v3.Result:
+  desmos.profiles.v4.Result:
     type: object
     properties:
       success:
@@ -15695,7 +16080,7 @@ definitions:
             type: string
             title: Error that is associated with the failure
     title: Result represents a verification result
-  desmos.profiles.v3.Result.Failed:
+  desmos.profiles.v4.Result.Failed:
     type: object
     properties:
       error:
@@ -15704,7 +16089,7 @@ definitions:
     title: |-
       Failed is the result of an application link that has not been verified
       successfully
-  desmos.profiles.v3.Result.Success:
+  desmos.profiles.v4.Result.Success:
     type: object
     properties:
       value:
