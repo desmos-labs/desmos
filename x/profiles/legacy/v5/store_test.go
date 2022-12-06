@@ -13,7 +13,7 @@ import (
 
 	"github.com/desmos-labs/desmos/v4/testutil/storetesting"
 
-	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
+	profilestesting "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v5/profiletesting"
 	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"

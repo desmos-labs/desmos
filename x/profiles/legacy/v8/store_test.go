@@ -21,7 +21,8 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/desmos-labs/desmos/v4/app"
-	"github.com/desmos-labs/desmos/v4/x/profiles/types"
+	v9types "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v9/types"
+	types "github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 func buildContext(
@@ -70,18 +71,18 @@ func TestMigrateStore(t *testing.T) {
 				signature, err := hex.DecodeString("1234")
 				require.NoError(t, err)
 
-				chainLink := types.NewChainLink(
+				chainLink := v9types.NewChainLink(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					types.NewBech32Address("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs", "cosmos"),
-					types.NewProof(
+					v9types.NewBech32Address("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs", "cosmos"),
+					v9types.NewProof(
 						pubKey,
-						&types.SingleSignature{
-							ValueType: types.SIGNATURE_VALUE_TYPE_RAW,
+						&v9types.SingleSignature{
+							ValueType: v9types.SIGNATURE_VALUE_TYPE_RAW,
 							Signature: signature,
 						},
 						"7b226163636f756e745f6e756d626572223a2230222c22636861696e5f6964223a226a756e6f2d31222c22666565223a7b22616d6f756e74223a5b7b22616d6f756e74223a2230222c2264656e6f6d223a226a756e6f227d5d2c22676173223a2231227d2c226d656d6f223a226465736d6f7331366336307938743876726132377a6a673261726c6364353864636b3963776e37703666777464222c226d736773223a5b5d2c2273657175656e6365223a2230227d",
 					),
-					types.NewChainConfig("cosmos"),
+					v9types.NewChainConfig("cosmos"),
 					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 				)
 				kvStore.Set(
@@ -120,18 +121,18 @@ func TestMigrateStore(t *testing.T) {
 				signature, err := hex.DecodeString("1234")
 				require.NoError(t, err)
 
-				chainLink := types.NewChainLink(
+				chainLink := v9types.NewChainLink(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					types.NewBech32Address("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs", "cosmos"),
-					types.NewProof(
+					v9types.NewBech32Address("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs", "cosmos"),
+					v9types.NewProof(
 						pubKey,
-						&types.SingleSignature{
-							ValueType: types.SIGNATURE_VALUE_TYPE_RAW,
+						&v9types.SingleSignature{
+							ValueType: v9types.SIGNATURE_VALUE_TYPE_RAW,
 							Signature: signature,
 						},
 						"0aba010a88010a1c2f636f736d6f732e62616e6b2e763162657461312e4d736753656e6412680a2c74657272613166387736767a6835376c357a6532347871386378677432663873753672733064793578716863122c74657272613166387736767a6835376c357a65323478713863786774326638737536727330647935787168631a0a0a05756c756e61120130122d6465736d6f7331677570676e73666776733038776174777466646c34613572393538396375733368756a30617312600a4e0a460a1f2f636f736d6f732e63727970746f2e736563703235366b312e5075624b657912230a2102ac68a389793aef8b4121268090a0822afc62f0de082c54c370feb97952ff6ec212040a020801120e0a0a0a05756c756e6112013010011a09626f6d6261792d313220ab8d0c",
 					),
-					types.NewChainConfig("cosmos"),
+					v9types.NewChainConfig("cosmos"),
 					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 				)
 				kvStore.Set(
@@ -170,18 +171,18 @@ func TestMigrateStore(t *testing.T) {
 				signature, err := hex.DecodeString("1234")
 				require.NoError(t, err)
 
-				chainLink := types.NewChainLink(
+				chainLink := v9types.NewChainLink(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					types.NewBech32Address("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs", "cosmos"),
-					types.NewProof(
+					v9types.NewBech32Address("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs", "cosmos"),
+					v9types.NewProof(
 						pubKey,
-						&types.SingleSignature{
-							ValueType: types.SIGNATURE_VALUE_TYPE_COSMOS_DIRECT,
+						&v9types.SingleSignature{
+							ValueType: v9types.SIGNATURE_VALUE_TYPE_COSMOS_DIRECT,
 							Signature: signature,
 						},
 						"0aba010a88010a1c2f636f736d6f732e62616e6b2e7631626574",
 					),
-					types.NewChainConfig("cosmos"),
+					v9types.NewChainConfig("cosmos"),
 					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 				)
 				kvStore.Set(
@@ -236,15 +237,15 @@ func TestMigrateStore(t *testing.T) {
 					}
 				  ]
 				}`
-				var signatureData types.Signature
+				var signatureData v9types.Signature
 				err := cdc.UnmarshalInterfaceJSON([]byte(signatureJSON), &signatureData)
 				require.NoError(t, err)
 
-				chainLink := types.NewChainLink(
+				chainLink := v9types.NewChainLink(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					types.NewBech32Address("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs", "cosmos"),
-					types.NewProof(pubKey, signatureData, "7b226163636f756e745f6e756d626572223a2230222c22636861696e5f6964223a226a756e6f2d31222c22666565223a7b22616d6f756e74223a5b7b22616d6f756e74223a2230222c2264656e6f6d223a226a756e6f227d5d2c22676173223a2231227d2c226d656d6f223a226465736d6f7331366336307938743876726132377a6a673261726c6364353864636b3963776e37703666777464222c226d736773223a5b5d2c2273657175656e6365223a2230227d"),
-					types.NewChainConfig("cosmos"),
+					v9types.NewBech32Address("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs", "cosmos"),
+					v9types.NewProof(pubKey, signatureData, "7b226163636f756e745f6e756d626572223a2230222c22636861696e5f6964223a226a756e6f2d31222c22666565223a7b22616d6f756e74223a5b7b22616d6f756e74223a2230222c2264656e6f6d223a226a756e6f227d5d2c22676173223a2231227d2c226d656d6f223a226465736d6f7331366336307938743876726132377a6a673261726c6364353864636b3963776e37703666777464222c226d736773223a5b5d2c2273657175656e6365223a2230227d"),
+					v9types.NewChainConfig("cosmos"),
 					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 				)
 				kvStore.Set(

@@ -28,6 +28,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/desmos-labs/desmos/v4/app"
+	v9types "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v9/types"
 	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
@@ -52,6 +53,15 @@ func buildContext(
 	}
 
 	return sdk.NewContext(cms, tmproto.Header{}, false, log.NewNopLogger())
+}
+
+// singleSignatureFromHex convert the hex-encoded string of the single signature to CosmosSignatureData
+func singleSignatureFromHex(hexEncodedSignature string) v9types.Signature {
+	sig, err := hex.DecodeString(hexEncodedSignature)
+	if err != nil {
+		panic(err)
+	}
+	return v9types.NewSingleSignature(v9types.SIGNATURE_VALUE_TYPE_RAW, sig)
 }
 
 func TestMigrateStore(t *testing.T) {
@@ -219,11 +229,11 @@ func TestMigrateStore(t *testing.T) {
 					"cosmos",
 					"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
 				)), &stored)
-				require.Equal(t, types.NewChainLink(
+				require.Equal(t, v9types.NewChainLink(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					types.NewBech32Address("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs", "cosmos"),
-					types.NewProof(pubKey, profilestesting.SingleSignatureFromHex("1234"), "plain_text"),
-					types.NewChainConfig("cosmos"),
+					v9types.NewBech32Address("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs", "cosmos"),
+					v9types.NewProof(pubKey, singleSignatureFromHex("1234"), "plain_text"),
+					v9types.NewChainConfig("cosmos"),
 					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 				), stored)
 			},
@@ -295,7 +305,7 @@ func TestMigrateStore(t *testing.T) {
 					}
 				  ]
 				}`
-				var signature types.Signature
+				var signature v9types.Signature
 				err := cdc.UnmarshalInterfaceJSON([]byte(signatureJSON), &signature)
 				require.NoError(t, err)
 
@@ -305,11 +315,11 @@ func TestMigrateStore(t *testing.T) {
 					"cosmos",
 					"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
 				)), &stored)
-				require.Equal(t, types.NewChainLink(
+				require.Equal(t, v9types.NewChainLink(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					types.NewBech32Address("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs", "cosmos"),
-					types.NewProof(pubKey, signature, "plain_text"),
-					types.NewChainConfig("cosmos"),
+					v9types.NewBech32Address("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs", "cosmos"),
+					v9types.NewProof(pubKey, signature, "plain_text"),
+					v9types.NewChainConfig("cosmos"),
 					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 				), stored)
 			},
