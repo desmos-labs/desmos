@@ -831,7 +831,7 @@ func TestAddress_Validate(t *testing.T) {
 			name: "invalid address encoding algorithm",
 			address: types.Address{
 				Value:               "cosmos1tdgrkvx2qgjk0uqsmdhm6dcz6wvwh9f8t37x0k",
-				GenerationAlgorithm: types.GENERATION_ALGORITHM_UNSPECIFIED,
+				GenerationAlgorithm: types.GENERATION_ALGORITHM_COSMOS,
 				EncodingAlgorithm:   nil,
 			},
 			shouldErr: true,
