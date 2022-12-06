@@ -30,7 +30,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 			name: "invalid packet returns error",
 			malleate: func(srcAddr, srcSigHex, destAddr, destSigHex string) {
 				packetData = types.LinkChainAccountPacketData{
-					SourceAddress: nil,
+					SourceAddress: types.NewAddress("", types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 					SourceProof: types.NewProof(
 						suite.chainA.Account.GetPubKey(),
 						profilestesting.SingleSignatureFromHex(srcSigHex),
@@ -53,7 +53,11 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 				invalidAny, err := codectypes.NewAnyWithValue(secp256k1.GenPrivKey())
 				suite.Require().NoError(err)
 				packetData = types.LinkChainAccountPacketData{
-					SourceAddress: invalidAny,
+					SourceAddress: types.Address{
+						Value:               srcAddr,
+						GenerationAlgorithm: types.GENERATION_ALGORITHM_COSMOS,
+						EncodingAlgorithm:   invalidAny,
+					},
 					SourceProof: types.NewProof(
 						suite.chainA.Account.GetPubKey(),
 						profilestesting.SingleSignatureFromHex(srcSigHex),
@@ -74,7 +78,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 			name: "invalid destination address returns error",
 			malleate: func(srcAddr, srcSigHex, destAddr, destSigHex string) {
 				packetData = types.NewLinkChainAccountPacketData(
-					types.NewBech32Address(srcAddr, "cosmos"),
+					types.NewAddress(srcAddr, types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 					types.NewProof(
 						suite.chainA.Account.GetPubKey(),
 						profilestesting.SingleSignatureFromHex(srcSigHex),
@@ -95,7 +99,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 			name: "destination address without profile returns error",
 			malleate: func(srcAddr, srcSigHex, destAddr, destSigHex string) {
 				packetData = types.NewLinkChainAccountPacketData(
-					types.NewBech32Address(srcAddr, "cosmos"),
+					types.NewAddress(srcAddr, types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 					types.NewProof(
 						suite.chainA.Account.GetPubKey(),
 						profilestesting.SingleSignatureFromHex(srcSigHex),
@@ -116,7 +120,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 			name: "returns error if the profile public key does not match provided public key",
 			malleate: func(srcAddr, srcSigHex, destAddr, destSigHex string) {
 				packetData = types.NewLinkChainAccountPacketData(
-					types.NewBech32Address(srcAddr, "cosmos"),
+					types.NewAddress(srcAddr, types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 					types.NewProof(
 						suite.chainA.Account.GetPubKey(),
 						profilestesting.SingleSignatureFromHex(srcSigHex),
@@ -157,7 +161,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 			name: "returns error when source proof verification fails",
 			malleate: func(srcAddr, srcSigHex, destAddr, destSigHex string) {
 				packetData = types.NewLinkChainAccountPacketData(
-					types.NewBech32Address(srcAddr, "cosmos"),
+					types.NewAddress(srcAddr, types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 					types.NewProof(
 						suite.chainA.Account.GetPubKey(),
 						profilestesting.SingleSignatureFromHex(srcSigHex),
@@ -200,7 +204,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 			name: "returns error when destination proof verification fails",
 			malleate: func(srcAddr, srcSigHex, destAddr, destSigHex string) {
 				packetData = types.NewLinkChainAccountPacketData(
-					types.NewBech32Address(srcAddr, "cosmos"),
+					types.NewAddress(srcAddr, types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 					types.NewProof(
 						suite.chainA.Account.GetPubKey(),
 						profilestesting.SingleSignatureFromHex(srcSigHex),
@@ -243,7 +247,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 			name: "returns error when failed to store chain link",
 			malleate: func(srcAddr, srcSigHex, destAddr, destSigHex string) {
 				packetData = types.NewLinkChainAccountPacketData(
-					types.NewBech32Address(srcAddr, "cosmos"),
+					types.NewAddress(srcAddr, types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 					types.NewProof(
 						suite.chainA.Account.GetPubKey(),
 						profilestesting.SingleSignatureFromHex(srcSigHex),
@@ -285,7 +289,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 				key := types.ChainLinksStoreKey(baseAcc.GetAddress().String(), "cosmos", srcAddr)
 				link := types.NewChainLink(
 					addr.String(),
-					types.NewBech32Address(srcAddr, "cosmos"),
+					types.NewAddress(srcAddr, types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 					types.NewProof(suite.chainA.Account.GetPubKey(), profilestesting.SingleSignatureFromHex("1234"), hex.EncodeToString([]byte(srcAddr))),
 					types.NewChainConfig("cosmos"),
 					time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
@@ -298,7 +302,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 			name: "valid link is created successfully",
 			malleate: func(srcAddr, srcSigHex, destAddr, destSigHex string) {
 				packetData = types.NewLinkChainAccountPacketData(
-					types.NewBech32Address(srcAddr, "cosmos"),
+					types.NewAddress(srcAddr, types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 					types.NewProof(
 						suite.chainA.Account.GetPubKey(),
 						profilestesting.SingleSignatureFromHex(srcSigHex),

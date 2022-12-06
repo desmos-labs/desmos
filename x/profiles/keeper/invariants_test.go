@@ -82,7 +82,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 
 				link := types.NewChainLink(
 					"user",
-					types.NewBech32Address("value", "prefix"),
+					types.NewAddress("value", types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("prefix")),
 					types.NewProof(key, profilestesting.SingleSignatureFromHex("1234"), "value"),
 					types.NewChainConfig("chain_name"),
 					time.Now(),

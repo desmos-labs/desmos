@@ -26,24 +26,10 @@ func (suite *KeeperTestSuite) TestKeeper_SaveChainLink() {
 		check     func(ctx sdk.Context)
 	}{
 		{
-			name: "invalid chain address packed value returns error",
-			link: types.ChainLink{
-				Address: profilestesting.NewAny(ext.privKey),
-				Proof: types.NewProof(
-					ext.GetPubKey(),
-					profilestesting.SingleSignatureFromHex(hex.EncodeToString(ext.Sign([]byte("")))),
-					hex.EncodeToString([]byte("")),
-				),
-				ChainConfig:  types.NewChainConfig("cosmos"),
-				CreationTime: time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
-			},
-			shouldErr: true,
-		},
-		{
 			name: "invalid chain address returns error",
 			link: types.NewChainLink(
 				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
-				types.NewBech32Address("", "cosmos"),
+				types.NewAddress("", types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 				types.NewProof(
 					ext.GetPubKey(),
 					profilestesting.SingleSignatureFromHex(hex.EncodeToString(ext.Sign([]byte("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")))),
@@ -58,7 +44,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveChainLink() {
 			name: "invalid proof returns error",
 			link: types.NewChainLink(
 				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
-				types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
+				types.NewAddress(ext.GetAddress().String(), types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 				types.NewProof(
 					ext.GetPubKey(),
 					profilestesting.SingleSignatureFromHex(hex.EncodeToString(ext.Sign([]byte("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")))),
@@ -78,7 +64,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveChainLink() {
 
 				link := types.NewChainLink(
 					address,
-					types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
+					types.NewAddress(ext.GetAddress().String(), types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 					types.NewProof(
 						ext.GetPubKey(),
 						profilestesting.SingleSignatureFromHex(hex.EncodeToString(ext.Sign([]byte("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")))),
@@ -91,7 +77,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveChainLink() {
 			},
 			link: types.NewChainLink(
 				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
-				types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
+				types.NewAddress(ext.GetAddress().String(), types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 				types.NewProof(
 					ext.GetPubKey(),
 					profilestesting.SingleSignatureFromHex(hex.EncodeToString(ext.Sign([]byte("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")))),
@@ -106,7 +92,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveChainLink() {
 				suite.Require().Len(links, 1)
 				suite.Require().Contains(links, types.NewChainLink(
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
-					types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
+					types.NewAddress(ext.GetAddress().String(), types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 					types.NewProof(
 						ext.GetPubKey(),
 						profilestesting.SingleSignatureFromHex(hex.EncodeToString(ext.Sign([]byte("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")))),
@@ -121,7 +107,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveChainLink() {
 			name: "invalid user returns error",
 			link: types.NewChainLink(
 				"",
-				types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
+				types.NewAddress(ext.GetAddress().String(), types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 				types.NewProof(
 					ext.GetPubKey(),
 					profilestesting.SingleSignatureFromHex(hex.EncodeToString(ext.Sign([]byte("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")))),
@@ -136,7 +122,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveChainLink() {
 			name: "user with no profile returns error",
 			link: types.NewChainLink(
 				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
-				types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
+				types.NewAddress(ext.GetAddress().String(), types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 				types.NewProof(
 					ext.GetPubKey(),
 					profilestesting.SingleSignatureFromHex(hex.EncodeToString(ext.Sign([]byte("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")))),
@@ -156,7 +142,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveChainLink() {
 			},
 			link: types.NewChainLink(
 				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
-				types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
+				types.NewAddress(ext.GetAddress().String(), types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 				types.NewProof(
 					ext.GetPubKey(),
 					profilestesting.SingleSignatureFromHex(hex.EncodeToString(ext.Sign([]byte("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")))),
@@ -171,7 +157,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveChainLink() {
 				suite.Require().Len(links, 1)
 				suite.Require().Contains(links, types.NewChainLink(
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
-					types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
+					types.NewAddress(ext.GetAddress().String(), types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 					types.NewProof(
 						ext.GetPubKey(),
 						profilestesting.SingleSignatureFromHex(hex.EncodeToString(ext.Sign([]byte("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")))),
@@ -209,7 +195,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveChainLink() {
 			},
 			link: types.NewChainLink(
 				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
-				types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
+				types.NewAddress(ext.GetAddress().String(), types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 				types.NewProof(
 					ext.GetPubKey(),
 					profilestesting.SingleSignatureFromHex(hex.EncodeToString(ext.Sign([]byte("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")))),
@@ -224,7 +210,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveChainLink() {
 				suite.Require().Len(links, 1)
 				suite.Require().Contains(links, types.NewChainLink(
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
-					types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
+					types.NewAddress(ext.GetAddress().String(), types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 					types.NewProof(
 						ext.GetPubKey(),
 						profilestesting.SingleSignatureFromHex(hex.EncodeToString(ext.Sign([]byte("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")))),
@@ -293,7 +279,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetChainLink() {
 				key := types.ChainLinksStoreKey("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", "cosmos", "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 				link := types.NewChainLink(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
+					types.NewAddress("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 					types.NewProof(secp256k1.GenPrivKey().PubKey(), profilestesting.SingleSignatureFromHex("1234"), "706c61696e5f74657874"),
 					types.NewChainConfig("cosmos"),
 					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
@@ -355,7 +341,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 				suite.Require().True(suite.k.HasChainLink(ctx,
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 					"cosmos",
-					account.Bech32Address().GetValue(),
+					account.Bech32Address().Value,
 				))
 			},
 		},
@@ -371,7 +357,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 			},
 			link: types.NewChainLink(
 				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
-				types.NewBech32Address(account.Bech32Address().GetValue(), "cosmos"),
+				types.NewAddress(account.Bech32Address().Value, types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 				account.Bech32Proof("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x"),
 				types.NewChainConfig("likecoin"),
 				time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
@@ -380,7 +366,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 				suite.Require().True(suite.k.HasChainLink(ctx,
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 					"cosmos",
-					account.Bech32Address().GetValue(),
+					account.Bech32Address().Value,
 				))
 			},
 		},
@@ -396,7 +382,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 			},
 			link: types.NewChainLink(
 				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
-				types.NewBech32Address("cosmos1xvvggrlgjkhu4rva9j500rc52za2smxhluvftc", "cosmos"),
+				types.NewAddress("cosmos1xvvggrlgjkhu4rva9j500rc52za2smxhluvftc", types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 				account.Bech32Proof("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x"),
 				types.NewChainConfig("cosmos"),
 				time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
@@ -405,7 +391,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 				suite.Require().True(suite.k.HasChainLink(ctx,
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 					"cosmos",
-					account.Bech32Address().GetValue(),
+					account.Bech32Address().Value,
 				))
 			},
 		},
@@ -427,14 +413,14 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 				suite.Require().False(suite.k.HasChainLink(ctx,
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 					"cosmos",
-					account.Bech32Address().GetValue(),
+					account.Bech32Address().Value,
 				))
 
 				// Check the additional keys
 				store := ctx.KVStore(suite.storeKey)
 				suite.Require().False(store.Has(types.ChainLinkOwnerKey(
 					"cosmos",
-					account.Bech32Address().GetValue(),
+					account.Bech32Address().Value,
 					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 				)))
 
@@ -464,14 +450,14 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 				suite.Require().False(suite.k.HasChainLink(ctx,
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 					"cosmos",
-					account.Bech32Address().GetValue(),
+					account.Bech32Address().Value,
 				))
 
 				// Check the additional keys
 				store := ctx.KVStore(suite.storeKey)
 				suite.Require().False(store.Has(types.ChainLinkOwnerKey(
 					"cosmos",
-					account.Bech32Address().GetValue(),
+					account.Bech32Address().Value,
 					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 				)))
 
@@ -506,14 +492,14 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 				suite.Require().False(suite.k.HasChainLink(ctx,
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 					"cosmos",
-					account.Bech32Address().GetValue(),
+					account.Bech32Address().Value,
 				))
 
 				// Check the additional keys
 				store := ctx.KVStore(suite.storeKey)
 				suite.Require().False(store.Has(types.ChainLinkOwnerKey(
 					"cosmos",
-					account.Bech32Address().GetValue(),
+					account.Bech32Address().Value,
 					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 				)))
 
@@ -575,25 +561,25 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteAllUserChainLinks() {
 				user := "cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x"
 				link := types.NewChainLink(
 					user,
-					types.NewBech32Address("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773", "cosmos"),
+					types.NewAddress("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773", types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 					types.NewProof(key, profilestesting.SingleSignatureFromHex("1234"), "706c61696e74657874"),
 					types.NewChainConfig("cosmos"),
 					time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 				store.Set(
-					types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, link.GetAddressData().GetValue()),
+					types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, link.Address.Value),
 					suite.cdc.MustMarshal(&link),
 				)
 
 				link = types.NewChainLink(
 					user,
-					types.NewBech32Address("cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn", "cosmos"),
+					types.NewAddress("cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn", types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 					types.NewProof(key, profilestesting.SingleSignatureFromHex("1234"), "706c61696e74657874"),
 					types.NewChainConfig("cosmos"),
 					time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 				store.Set(
-					types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, link.GetAddressData().GetValue()),
+					types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, link.Address.Value),
 					suite.cdc.MustMarshal(&link),
 				)
 			},

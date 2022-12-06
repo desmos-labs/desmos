@@ -50,22 +50,11 @@ func (suite *KeeperTestSuite) TestMsgServer_LinkChainAccount() {
 		{
 			name: "invalid chain link returns error",
 			msg: types.NewMsgLinkChainAccount(
-				types.NewBech32Address(srcAddr, "cosmos"),
+				types.NewAddress(srcAddr, types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 				types.NewProof(srcPubKey, profilestesting.SingleSignatureFromHex(srcSigHex), hex.EncodeToString([]byte(srcAddr))),
 				types.NewChainConfig("cosmos"),
 				destAddr,
 			),
-			shouldErr: true,
-			expEvents: sdk.EmptyEvents(),
-		},
-		{
-			name: "invalid chain address packed value returns error",
-			msg: &types.MsgLinkChainAccount{
-				ChainAddress: profilestesting.NewAny(srcPriv),
-				Proof:        types.NewProof(srcPubKey, profilestesting.SingleSignatureFromHex(srcSigHex), hex.EncodeToString([]byte(srcAddr))),
-				ChainConfig:  types.NewChainConfig("cosmos"),
-				Signer:       destAddr,
-			},
 			shouldErr: true,
 			expEvents: sdk.EmptyEvents(),
 		},
@@ -100,7 +89,7 @@ func (suite *KeeperTestSuite) TestMsgServer_LinkChainAccount() {
 				suite.Require().NoError(suite.k.SaveProfile(suite.ctx, profile))
 			},
 			msg: types.NewMsgLinkChainAccount(
-				types.NewBech32Address(srcAddr, "cosmos"),
+				types.NewAddress(srcAddr, types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 				types.NewProof(srcPubKey, profilestesting.SingleSignatureFromHex(srcSigHex), hex.EncodeToString([]byte(destAddr))),
 				types.NewChainConfig("cosmos"),
 				destAddr,
@@ -183,7 +172,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UnlinkChainAccount() {
 				store := ctx.KVStore(suite.storeKey)
 				link := types.NewChainLink(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
+					types.NewAddress("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 					types.NewProof(
 						profilestesting.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
 						profilestesting.SingleSignatureFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
@@ -193,7 +182,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UnlinkChainAccount() {
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 				store.Set(
-					types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, link.GetAddressData().GetValue()),
+					types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, link.Address.Value),
 					suite.cdc.MustMarshal(&link),
 				)
 			},
@@ -279,7 +268,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SetDefaultExternalAddress() {
 				store := ctx.KVStore(suite.storeKey)
 				link := types.NewChainLink(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
+					types.NewAddress("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 					types.NewProof(
 						profilestesting.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
 						profilestesting.SingleSignatureFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
@@ -289,14 +278,14 @@ func (suite *KeeperTestSuite) TestMsgServer_SetDefaultExternalAddress() {
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 				store.Set(
-					types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, link.GetAddressData().GetValue()),
+					types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, link.Address.Value),
 					suite.cdc.MustMarshal(&link),
 				)
 
 				// Set the default external address
 				store.Set(
 					types.DefaultExternalAddressKey(link.ChainConfig.Name, link.User),
-					[]byte(link.GetAddressData().GetValue()),
+					[]byte(link.Address.Value),
 				)
 			},
 			msg: types.NewMsgSetDefaultExternalAddress(
