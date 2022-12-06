@@ -138,8 +138,8 @@ message HexEncoding {
   // (optional) Prefix to be used
   string prefix = 1;
 
-  // (optional) Whether the address should be upper case or not (default: false)
-  bool uppercase = 2;
+  // (optional) Whether the address should be eip-55 format or not (default: false)
+  bool is_eip55 = 2 [ (gogoproto.customname) = "IsEIP55" ];
 }
 
 // --------------------------------------------------------------------------------------------------------------------

@@ -885,60 +885,52 @@ func TestAddress_VerifyPubKey(t *testing.T) {
 	testCases := []struct {
 		name      string
 		address   types.Address
-		valid     bool
 		shouldErr bool
 	}{
 		{
 			name:      "unsupported generation algorithm returns error",
-			address:   types.NewAddress("cosmos1v55ul49w5n4sld9kvjhhzuml8nm4mlqufftfcj", types.GENERATION_ALGORITHM_UNSPECIFIED, types.NewHexEncoding("0x")),
+			address:   types.NewAddress("cosmos1v55ul49w5n4sld9kvjhhzuml8nm4mlqufftfcj", types.GENERATION_ALGORITHM_UNSPECIFIED, types.NewHexEncoding("0x", true)),
 			shouldErr: true,
 		},
 		{
-			name:      "cosmos generation algorithm with value generated from wrong encoding returns false",
-			address:   types.NewAddress("cosmos1v55ul49w5n4sld9kvjhhzuml8nm4mlqufftfcj", types.GENERATION_ALGORITHM_COSMOS, types.NewHexEncoding("0x")),
-			valid:     false,
-			shouldErr: false,
+			name:      "cosmos generation algorithm with value generated from wrong encoding returns error",
+			address:   types.NewAddress("cosmos1v55ul49w5n4sld9kvjhhzuml8nm4mlqufftfcj", types.GENERATION_ALGORITHM_COSMOS, types.NewHexEncoding("0x", true)),
+			shouldErr: true,
 		},
 		{
-			name:      "do nothing generation algorithm with value generated from wrong encoding returns false",
-			address:   types.NewAddress("H1kgFtg8xX6yNXBKGwHkUA2M43iMCgoQUA28thDLVnp4", types.GENERATION_ALGORITHM_DO_NOTHING, types.NewHexEncoding("0x")),
-			valid:     false,
-			shouldErr: false,
+			name:      "do nothing generation algorithm with value generated from wrong encoding returns error",
+			address:   types.NewAddress("H1kgFtg8xX6yNXBKGwHkUA2M43iMCgoQUA28thDLVnp4", types.GENERATION_ALGORITHM_DO_NOTHING, types.NewHexEncoding("0x", true)),
+			shouldErr: true,
 		},
 		{
-			name:      "evm generation algorithm with value generated from wrong encoding returns false",
+			name:      "evm generation algorithm with value generated from wrong encoding returns error",
 			address:   types.NewAddress("0x47b8c472e2F389611F2f5a41325eD97912d455A7", types.GENERATION_ALGORITHM_EVM, types.NewBech32Encoding("cosmos")),
-			valid:     false,
-			shouldErr: false,
+			shouldErr: true,
 		},
 		{
-			name:      "cosmos generation algorithm with value generated from correct encoding returns true",
+			name:      "cosmos generation algorithm with value generated from correct encoding returns no error",
 			address:   types.NewAddress("cosmos1v55ul49w5n4sld9kvjhhzuml8nm4mlqufftfcj", types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
-			valid:     true,
 			shouldErr: false,
 		},
 		{
-			name:      "do nothing generation algorithm with value generated from correct encoding returns true",
+			name:      "do nothing generation algorithm with value generated from correct encoding returns no error",
 			address:   types.NewAddress("H1kgFtg8xX6yNXBKGwHkUA2M43iMCgoQUA28thDLVnp4", types.GENERATION_ALGORITHM_DO_NOTHING, types.NewBase58Encoding("")),
-			valid:     true,
 			shouldErr: false,
 		},
 		{
-			name:      "evm generation algorithm with value generated from correct encoding returns true",
-			address:   types.NewAddress("0x47b8c472e2F389611F2f5a41325eD97912d455A7", types.GENERATION_ALGORITHM_EVM, types.NewHexEncoding("0x")),
-			valid:     true,
+			name:      "evm generation algorithm with value generated from correct encoding returns no error",
+			address:   types.NewAddress("0x47b8c472e2F389611F2f5a41325eD97912d455A7", types.GENERATION_ALGORITHM_EVM, types.NewHexEncoding("0x", true)),
 			shouldErr: false,
 		},
 	}
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			valid, err := tc.address.VerifyPubKey(createPubKey(tc.address))
+			err := tc.address.VerifyPubKey(createPubKey(tc.address))
 			if tc.shouldErr {
 				require.Error(t, err)
 			} else {
 				require.NoError(t, err)
-				require.Equal(t, tc.valid, valid)
 			}
 		})
 	}
@@ -1046,17 +1038,17 @@ func TestHexEncoding_Validate(t *testing.T) {
 	}{
 		{
 			name:      "blank prefix returns error",
-			address:   types.NewHexEncoding("  "),
+			address:   types.NewHexEncoding("  ", true),
 			shouldErr: true,
 		},
 		{
 			name:      "empty prefix returns no error",
-			address:   types.NewHexEncoding(""),
+			address:   types.NewHexEncoding("", true),
 			shouldErr: false,
 		},
 		{
 			name:      "valid prefix returns no error",
-			address:   types.NewHexEncoding("0x"),
+			address:   types.NewHexEncoding("0x", true),
 			shouldErr: false,
 		},
 	}
@@ -1076,10 +1068,32 @@ func TestHexEncoding_Validate(t *testing.T) {
 }
 
 func TestHexAddress_Encode(t *testing.T) {
-	encoding := types.NewHexEncoding("0x")
-	addrBz, _ := hex.DecodeString("941991947b6ec9f5537bcac30c1295e8154df4cc")
-	result, _ := encoding.Encode(addrBz)
-	require.Equal(t, "0x941991947b6ec9f5537bcac30c1295e8154df4cc", result)
+	testCases := []struct {
+		name     string
+		addrStr  string
+		encoding *types.HexEncoding
+		expected string
+	}{
+		{
+			name:     "non EIP-55 checksum address encode properly",
+			addrStr:  "941991947b6ec9f5537bcac30c1295e8154df4cc",
+			encoding: types.NewHexEncoding("0x", false),
+			expected: "0x941991947b6ec9f5537bcac30c1295e8154df4cc",
+		},
+		{
+			name:     "EIP-55 checksum address encode properly",
+			addrStr:  "47b8c472e2F389611F2f5a41325eD97912d455A7",
+			encoding: types.NewHexEncoding("0x", true),
+			expected: "0x47b8c472e2F389611F2f5a41325eD97912d455A7",
+		},
+	}
+	for _, tc := range testCases {
+		addrBz, err := hex.DecodeString(tc.addrStr)
+		require.NoError(t, err)
+		result, err := tc.encoding.Encode(addrBz)
+		require.NoError(t, err)
+		require.Equal(t, tc.expected, result)
+	}
 }
 
 // --------------------------------------------------------------------------------------------------------------------

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/hex"
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
@@ -11,6 +12,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/legacy/legacytx"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/mr-tron/base58"
+	"golang.org/x/crypto/sha3"
 
 	"github.com/cosmos/cosmos-sdk/types/bech32"
 	"github.com/cosmos/cosmos-sdk/types/tx"
@@ -129,12 +131,9 @@ func (p Proof) Verify(cdc codec.BinaryCodec, amino *codec.LegacyAmino, owner str
 	}
 
 	// Verify the public key
-	valid, err := address.VerifyPubKey(pubKey)
+	err = address.VerifyPubKey(pubKey)
 	if err != nil {
 		return err
-	}
-	if !valid {
-		return fmt.Errorf("invalid address and public key combination provided")
 	}
 
 	return nil
@@ -525,13 +524,16 @@ func (a *Address) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 	return unpacker.UnpackAny(a.EncodingAlgorithm, &encoding)
 }
 
-func (a *Address) VerifyPubKey(pubKey cryptotypes.PubKey) (bool, error) {
+func (a *Address) VerifyPubKey(pubKey cryptotypes.PubKey) error {
 	generatedBz, err := generateAddressBytes(pubKey, a.GenerationAlgorithm)
 	if err != nil {
-		return false, err
+		return err
 	}
 	encoded, err := a.EncodingAlgorithm.GetCachedValue().(AddressEncoding).Encode(generatedBz)
-	return strings.ToLower(a.Value) == strings.ToLower(encoded), err
+	if a.Value != encoded {
+		return fmt.Errorf("address bytes do not match generated ones: expected %s but got %s", a.Value, encoded)
+	}
+	return nil
 }
 
 // generateAddressBytes generates the address bytes starting from the given public key
@@ -624,8 +626,8 @@ func (b *Base58Encoding) Encode(value []byte) (string, error) {
 var _ AddressEncoding = &HexEncoding{}
 
 // NewHexEncoding returns a new HexEncoding instance
-func NewHexEncoding(prefix string) *HexEncoding {
-	return &HexEncoding{Prefix: prefix}
+func NewHexEncoding(prefix string, isEIP55 bool) *HexEncoding {
+	return &HexEncoding{Prefix: prefix, IsEIP55: isEIP55}
 }
 
 // Validate implements AddressEncoding
@@ -638,7 +640,40 @@ func (h HexEncoding) Validate() error {
 
 // GetValue implements AddressEncoding
 func (h HexEncoding) Encode(value []byte) (string, error) {
-	return h.Prefix + hex.EncodeToString(value), nil
+	hexAddr := hex.EncodeToString(value)
+	if h.IsEIP55 {
+		checksumAddr, err := toChecksumAddr(hexAddr)
+		return h.Prefix + checksumAddr, err
+	}
+	return h.Prefix + hexAddr, nil
+}
+
+// toChecksumAddr generates the mixed case checksum address defined in EIP-55
+func toChecksumAddr(addrStr string) (string, error) {
+	addrBz, err := hex.DecodeString(addrStr)
+	if err != nil {
+		return "", err
+	}
+	sha := sha3.NewLegacyKeccak256()
+	sha.Write([]byte(strings.ToLower(addrStr)))
+	hash := sha.Sum(nil)
+
+	var result string
+	for i, b := range addrBz {
+		result += checksumByte(b>>4, hash[i]>>4)
+		result += checksumByte(b&0xF, hash[i]&0xF)
+	}
+	return result, nil
+}
+
+// checksumByte makes the byte of the address to be uppercase if hash is greater than 0x8
+func checksumByte(addr byte, hash byte) string {
+	result := strconv.FormatUint(uint64(addr), 16)
+	if hash >= 8 {
+		return strings.ToUpper(result)
+	} else {
+		return result
+	}
 }
 
 // --------------------------------------------------------------------------------------------------------------------
