@@ -70,11 +70,11 @@ func migrateProfiles(ctx sdk.Context, ak authkeeper.AccountKeeper) error {
 
 	for _, profile := range profiles {
 		// Convert the profile
-		v7Profile, err := types.NewProfile(
+		v7Profile, err := v9types.NewProfile(
 			profile.DTag,
 			profile.Nickname,
 			profile.Bio,
-			types.NewPictures(profile.Pictures.Profile, profile.Pictures.Cover),
+			v9types.NewPictures(profile.Pictures.Profile, profile.Pictures.Cover),
 			profile.CreationDate,
 			profile.GetAccount(),
 		)
@@ -250,32 +250,32 @@ func convertChainLinkSignatureData(data *codectypes.Any, cdc codec.BinaryCodec) 
 	var signatureAny *codectypes.Any
 	switch signature := v5Signature.(type) {
 	case *v5types.SingleSignatureData:
-		var signingMode types.SignatureValueType
+		var signingMode v9types.SignatureValueType
 		switch signature.Mode {
 		case signing.SignMode_SIGN_MODE_DIRECT:
-			signingMode = types.SIGNATURE_VALUE_TYPE_COSMOS_DIRECT
+			signingMode = v9types.SIGNATURE_VALUE_TYPE_COSMOS_DIRECT
 		case signing.SignMode_SIGN_MODE_LEGACY_AMINO_JSON:
-			signingMode = types.SIGNATURE_VALUE_TYPE_COSMOS_AMINO
+			signingMode = v9types.SIGNATURE_VALUE_TYPE_COSMOS_AMINO
 		case signing.SignMode_SIGN_MODE_TEXTUAL:
-			signingMode = types.SIGNATURE_VALUE_TYPE_RAW
+			signingMode = v9types.SIGNATURE_VALUE_TYPE_RAW
 		default:
 			panic(fmt.Sprintf("unsupported signing mode: %s", signature.Mode))
 		}
 
-		v6Signature := types.NewSingleSignature(signingMode, signature.Signature)
+		v6Signature := v9types.NewSingleSignature(signingMode, signature.Signature)
 		signatureAny, err = codectypes.NewAnyWithValue(v6Signature)
 		if err != nil {
 			panic(err)
 		}
 
 	case *v5types.MultiSignatureData:
-		signatures := make([]types.Signature, len(signature.Signatures))
+		signatures := make([]v9types.Signature, len(signature.Signatures))
 		for i, sig := range signature.Signatures {
 			// Recursively convert the signature any
 			sigAny := convertChainLinkSignatureData(sig, cdc)
 
 			// Unpack the signature
-			var cosmosSig types.Signature
+			var cosmosSig v9types.Signature
 			err = cdc.UnpackAny(sigAny, &cosmosSig)
 			if err != nil {
 				panic(err)
@@ -285,7 +285,7 @@ func convertChainLinkSignatureData(data *codectypes.Any, cdc codec.BinaryCodec) 
 		}
 
 		// Build the signature
-		v6Signature := types.NewCosmosMultiSignature(signature.BitArray, signatures)
+		v6Signature := v9types.NewCosmosMultiSignature(signature.BitArray, signatures)
 
 		// Convert it as an Any
 		signatureAny, err = codectypes.NewAnyWithValue(v6Signature)

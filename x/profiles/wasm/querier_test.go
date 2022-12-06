@@ -89,7 +89,7 @@ func (suite *TestSuite) TestProfilesWasmQuerier_QueryCustom() {
 				store := ctx.KVStore(suite.storeKey)
 				link := types.NewChainLink(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
+					types.NewAddress("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 					types.NewProof(
 						profilestesting.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
 						profilestesting.SingleSignatureFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
@@ -99,7 +99,7 @@ func (suite *TestSuite) TestProfilesWasmQuerier_QueryCustom() {
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 				store.Set(
-					types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, link.GetAddressData().GetValue()),
+					types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, link.Address.Value),
 					suite.cdc.MustMarshal(&link),
 				)
 			},
@@ -109,7 +109,7 @@ func (suite *TestSuite) TestProfilesWasmQuerier_QueryCustom() {
 					Links: []types.ChainLink{
 						types.NewChainLink(
 							"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-							types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
+							types.NewAddress("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 							types.NewProof(
 								profilestesting.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
 								profilestesting.SingleSignatureFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
@@ -125,7 +125,7 @@ func (suite *TestSuite) TestProfilesWasmQuerier_QueryCustom() {
 		{
 			name: "chain link owners request is parsed correctly",
 			request: buildChainLinkOwnersQueryRequest(suite.cdc, types.NewQueryChainLinkOwnersRequest(
-				"cosmos", chainAccount.Bech32Address().GetValue(), nil)),
+				"cosmos", chainAccount.Bech32Address().Value, nil)),
 			store: func(ctx sdk.Context) {
 				suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"))
 				suite.Require().NoError(suite.k.SaveChainLink(ctx, chainAccount.GetBech32ChainLink("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", time.Now())))
@@ -136,7 +136,7 @@ func (suite *TestSuite) TestProfilesWasmQuerier_QueryCustom() {
 					Owners: []types.QueryChainLinkOwnersResponse_ChainLinkOwnerDetails{{
 						User:      "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						ChainName: "cosmos",
-						Target:    chainAccount.Bech32Address().GetValue(),
+						Target:    chainAccount.Bech32Address().Value,
 					}},
 					Pagination: &query.PageResponse{NextKey: nil, Total: 1}},
 			),
@@ -149,7 +149,7 @@ func (suite *TestSuite) TestProfilesWasmQuerier_QueryCustom() {
 				store := ctx.KVStore(suite.storeKey)
 				link := types.NewChainLink(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
+					types.NewAddress("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 					types.NewProof(
 						profilestesting.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
 						profilestesting.SingleSignatureFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
@@ -159,7 +159,7 @@ func (suite *TestSuite) TestProfilesWasmQuerier_QueryCustom() {
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 				store.Set(
-					types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, link.GetAddressData().GetValue()),
+					types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, link.Address.Value),
 					suite.cdc.MustMarshal(&link),
 				)
 				store.Set(
@@ -173,7 +173,7 @@ func (suite *TestSuite) TestProfilesWasmQuerier_QueryCustom() {
 					Links: []types.ChainLink{
 						types.NewChainLink(
 							"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-							types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
+							types.NewAddress("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 							types.NewProof(
 								profilestesting.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
 								profilestesting.SingleSignatureFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),

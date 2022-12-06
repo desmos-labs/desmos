@@ -33,7 +33,7 @@ func TestParseLinkAccountJSON(t *testing.T) {
 	require.NoError(t, err)
 
 	jsonData := utils.NewChainLinkJSON(
-		types.NewBech32Address(addStr, "cosmos"),
+		types.NewAddress(addStr, types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 		types.NewProof(pubKey, profilestesting.SingleSignatureFromHex(hex.EncodeToString(sigBz)), plainText),
 		types.NewChainConfig("cosmos"),
 	)

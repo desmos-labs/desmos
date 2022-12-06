@@ -112,7 +112,7 @@ func (s *IntegrationTestSuite) TestCmdQueryChainLinkOwners() {
 	target := s.testChainLinkAccount.GetBech32ChainLink(
 		"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
 		time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
-	).GetAddressData().GetValue()
+	).Address.Value
 
 	useCases := []struct {
 		name           string

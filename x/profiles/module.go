@@ -8,6 +8,7 @@ import (
 
 	v4 "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v4/types"
 	v5 "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v5/types"
+	v9 "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v9/types"
 
 	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
 
@@ -94,6 +95,7 @@ func (AppModuleBasic) GetQueryCmd() *cobra.Command {
 func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) {
 	v4.RegisterInterfaces(registry)
 	v5.RegisterInterfaces(registry)
+	v9.RegisterInterfaces(registry)
 	types.RegisterInterfaces(registry)
 }
 

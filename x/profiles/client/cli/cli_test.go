@@ -150,7 +150,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 		types.NewDefaultExternalAddressEntry(
 			"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
 			s.testChainLinkAccount.ChainName(),
-			s.testChainLinkAccount.Bech32Address().GetValue(),
+			s.testChainLinkAccount.Bech32Address().Value,
 		),
 	}
 
@@ -207,7 +207,7 @@ func (s *IntegrationTestSuite) writeChainLinkJSONFile(filePath string) {
 	s.Require().NoError(err)
 
 	jsonData := utils.NewChainLinkJSON(
-		types.NewBech32Address(addStr, "cosmos"),
+		types.NewAddress(addStr, types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 		types.NewProof(srcKey.PubKey(), profilestesting.SingleSignatureFromHex(hex.EncodeToString(sigBz)), hex.EncodeToString([]byte(plainText))),
 		types.NewChainConfig("cosmos"),
 	)

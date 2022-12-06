@@ -64,7 +64,7 @@ func (suite *CreateJSONChainLinkTestSuite) TestSingleSignatureAccount() {
 	suite.Require().NoError(err)
 
 	expected := profilescliutils.NewChainLinkJSON(
-		profilestypes.NewBech32Address("cosmos13j7p6faa9jr8ty6lvqv0prldprr6m5xenmafnt", "cosmos"),
+		profilestypes.NewAddress("cosmos13j7p6faa9jr8ty6lvqv0prldprr6m5xenmafnt", profilestypes.GENERATION_ALGORITHM_COSMOS, profilestypes.NewBech32Encoding("cosmos")),
 		profilestypes.NewProof(
 			key.GetPubKey(),
 			profilestesting.SingleSignatureFromHex(hex.EncodeToString(sig)),
@@ -79,7 +79,7 @@ func (suite *CreateJSONChainLinkTestSuite) TestSingleSignatureAccount() {
 			suite.Codec,
 			suite.LegacyAmino,
 			suite.Owner,
-			profilestypes.NewBech32Address("cosmos13j7p6faa9jr8ty6lvqv0prldprr6m5xenmafnt", "cosmos"),
+			profilestypes.NewAddress("cosmos13j7p6faa9jr8ty6lvqv0prldprr6m5xenmafnt", profilestypes.GENERATION_ALGORITHM_COSMOS, profilestypes.NewBech32Encoding("cosmos")),
 		),
 	)
 }
@@ -178,7 +178,7 @@ func (suite *CreateJSONChainLinkTestSuite) TestMultiSignatureAccount() {
 	suite.Require().NoError(err)
 
 	expected := profilescliutils.NewChainLinkJSON(
-		profilestypes.NewBech32Address("cosmos1exdjkfxud8yzqtvua3hdd93xu0gmek5l47r8ra", "cosmos"),
+		profilestypes.NewAddress("cosmos1exdjkfxud8yzqtvua3hdd93xu0gmek5l47r8ra", profilestypes.GENERATION_ALGORITHM_COSMOS, profilestypes.NewBech32Encoding("cosmos")),
 		profilestypes.NewProof(
 			suite.GetPubKeyFromTxFile(txFile),
 			profilestesting.MultiCosmosSignatureFromHex(
@@ -195,7 +195,7 @@ func (suite *CreateJSONChainLinkTestSuite) TestMultiSignatureAccount() {
 			suite.Codec,
 			suite.LegacyAmino,
 			suite.Owner,
-			profilestypes.NewBech32Address("cosmos1exdjkfxud8yzqtvua3hdd93xu0gmek5l47r8ra", "cosmos"),
+			profilestypes.NewAddress("cosmos1exdjkfxud8yzqtvua3hdd93xu0gmek5l47r8ra", profilestypes.GENERATION_ALGORITHM_COSMOS, profilestypes.NewBech32Encoding("cosmos")),
 		),
 	)
 }

@@ -114,11 +114,11 @@ func TestMigrateStore(t *testing.T) {
 			},
 			check: func(ctx sdk.Context) {
 				// Check the profile to make sure it contains the same data
-				v7Profile, err := types.NewProfile(
+				v7Profile, err := v9types.NewProfile(
 					"john_doe",
 					"John Doe",
 					"My name if John Doe",
-					types.NewPictures("", ""),
+					v9types.NewPictures("", ""),
 					time.Date(2020, 1, 1, 0, 0, 0, 00, time.UTC),
 					profilestesting.AccountFromAddr("cosmos1nejmx335u222dj6lg7qjqrufchkpazu8e0semf"),
 				)
@@ -128,7 +128,7 @@ func TestMigrateStore(t *testing.T) {
 				require.NoError(t, err)
 
 				account := authKeeper.GetAccount(ctx, sdkAddr)
-				profile, ok := account.(*types.Profile)
+				profile, ok := account.(*v9types.Profile)
 				require.True(t, ok)
 				require.Equal(t, v7Profile, profile)
 			},
@@ -223,7 +223,7 @@ func TestMigrateStore(t *testing.T) {
 			check: func(ctx sdk.Context) {
 				kvStore := ctx.KVStore(keys[types.StoreKey])
 
-				var stored types.ChainLink
+				var stored v9types.ChainLink
 				cdc.MustUnmarshal(kvStore.Get(types.ChainLinksStoreKey(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos",
@@ -309,7 +309,7 @@ func TestMigrateStore(t *testing.T) {
 				err := cdc.UnmarshalInterfaceJSON([]byte(signatureJSON), &signature)
 				require.NoError(t, err)
 
-				var stored types.ChainLink
+				var stored v9types.ChainLink
 				cdc.MustUnmarshal(kvStore.Get(types.ChainLinksStoreKey(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos",

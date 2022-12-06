@@ -31,7 +31,7 @@ func TestDecodeStore(t *testing.T) {
 	)
 	chainLink := types.NewChainLink(
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-		types.NewBech32Address("cosmos", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+		types.NewAddress("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
 		types.Proof{},
 		types.NewChainConfig("cosmos"),
 		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),

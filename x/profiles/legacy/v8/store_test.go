@@ -99,7 +99,7 @@ func TestMigrateStore(t *testing.T) {
 				kvStore := ctx.KVStore(keys[types.StoreKey])
 
 				// Make sure the signature type has been updated correctly
-				var stored types.ChainLink
+				var stored v9types.ChainLink
 				cdc.MustUnmarshal(kvStore.Get(types.ChainLinksStoreKey(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos",
@@ -110,7 +110,7 @@ func TestMigrateStore(t *testing.T) {
 
 				valueType, err := signature.GetValueType()
 				require.NoError(t, err)
-				require.Equal(t, types.SIGNATURE_VALUE_TYPE_COSMOS_AMINO, valueType)
+				require.Equal(t, v9types.SIGNATURE_VALUE_TYPE_COSMOS_AMINO, valueType)
 			},
 		},
 		{
@@ -149,7 +149,7 @@ func TestMigrateStore(t *testing.T) {
 				kvStore := ctx.KVStore(keys[types.StoreKey])
 
 				// Make sure the signature type has been updated correctly
-				var stored types.ChainLink
+				var stored v9types.ChainLink
 				cdc.MustUnmarshal(kvStore.Get(types.ChainLinksStoreKey(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos",
@@ -160,7 +160,7 @@ func TestMigrateStore(t *testing.T) {
 
 				valueType, err := signature.GetValueType()
 				require.NoError(t, err)
-				require.Equal(t, types.SIGNATURE_VALUE_TYPE_COSMOS_DIRECT, valueType)
+				require.Equal(t, v9types.SIGNATURE_VALUE_TYPE_COSMOS_DIRECT, valueType)
 			},
 		},
 		{
@@ -199,7 +199,7 @@ func TestMigrateStore(t *testing.T) {
 				kvStore := ctx.KVStore(keys[types.StoreKey])
 
 				// Make sure the signature type has been updated correctly
-				var stored types.ChainLink
+				var stored v9types.ChainLink
 				cdc.MustUnmarshal(kvStore.Get(types.ChainLinksStoreKey(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos",
@@ -210,7 +210,7 @@ func TestMigrateStore(t *testing.T) {
 
 				valueType, err := signature.GetValueType()
 				require.NoError(t, err)
-				require.Equal(t, types.SIGNATURE_VALUE_TYPE_RAW, valueType)
+				require.Equal(t, v9types.SIGNATURE_VALUE_TYPE_RAW, valueType)
 			},
 		},
 		{
@@ -261,7 +261,7 @@ func TestMigrateStore(t *testing.T) {
 			check: func(ctx sdk.Context) {
 				kvStore := ctx.KVStore(keys[types.StoreKey])
 
-				var stored types.ChainLink
+				var stored v9types.ChainLink
 				cdc.MustUnmarshal(kvStore.Get(types.ChainLinksStoreKey(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos",
@@ -272,7 +272,7 @@ func TestMigrateStore(t *testing.T) {
 
 				valueType, err := signature.GetValueType()
 				require.NoError(t, err)
-				require.Equal(t, types.SIGNATURE_VALUE_TYPE_COSMOS_AMINO, valueType)
+				require.Equal(t, v9types.SIGNATURE_VALUE_TYPE_COSMOS_AMINO, valueType)
 			},
 		},
 	}
