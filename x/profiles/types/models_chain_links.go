@@ -4,15 +4,14 @@ import (
 	"bytes"
 	"encoding/hex"
 	"fmt"
-	"strconv"
 	"strings"
 	"time"
 
 	"github.com/btcsuite/btcd/btcec"
 	"github.com/cosmos/cosmos-sdk/x/auth/legacy/legacytx"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/mr-tron/base58"
-	"golang.org/x/crypto/sha3"
 
 	"github.com/cosmos/cosmos-sdk/types/bech32"
 	"github.com/cosmos/cosmos-sdk/types/tx"
@@ -642,38 +641,9 @@ func (h HexEncoding) Validate() error {
 func (h HexEncoding) Encode(value []byte) (string, error) {
 	hexAddr := hex.EncodeToString(value)
 	if h.IsEIP55 {
-		checksumAddr, err := toChecksumAddr(hexAddr)
-		return h.Prefix + checksumAddr, err
+		return h.Prefix + common.HexToAddress(hexAddr).Hex()[2:], nil
 	}
 	return h.Prefix + hexAddr, nil
-}
-
-// toChecksumAddr generates the mixed case checksum address defined in EIP-55
-func toChecksumAddr(addrStr string) (string, error) {
-	addrBz, err := hex.DecodeString(addrStr)
-	if err != nil {
-		return "", err
-	}
-	sha := sha3.NewLegacyKeccak256()
-	sha.Write([]byte(strings.ToLower(addrStr)))
-	hash := sha.Sum(nil)
-
-	var result string
-	for i, b := range addrBz {
-		result += checksumByte(b>>4, hash[i]>>4)
-		result += checksumByte(b&0xF, hash[i]&0xF)
-	}
-	return result, nil
-}
-
-// checksumByte makes the byte of the address to be uppercase if hash is greater than 0x8
-func checksumByte(addr byte, hash byte) string {
-	result := strconv.FormatUint(uint64(addr), 16)
-	if hash >= 8 {
-		return strings.ToUpper(result)
-	} else {
-		return result
-	}
 }
 
 // --------------------------------------------------------------------------------------------------------------------
