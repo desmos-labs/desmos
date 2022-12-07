@@ -101,7 +101,7 @@ The subspace owners may want to set the allowance to expire after a certain amou
 
 #### Store
 
-In order to make it easier to remove expired allowances, we will implement queues that are sorted by expiration time. Then, during the BeginBlock phase, Desmos can iterate over all expired keys before the block time and remove them. The structure will be like:
+In order to make it easier to remove expired allowances, we will implement queues sorted by expiration time. Then, during the `BeginBlock` phase, we iterate over all expired keys before the block time and remove them. The structure of the queues keys will be the following:
 
 ```
 ExpiringAllowanceQueuePrefix | Expired Time | Subspace ID | Granter Address | (User Address or Group ID) -> 0x01
