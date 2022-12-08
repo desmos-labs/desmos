@@ -532,6 +532,9 @@ func (a *Address) VerifyPubKey(pubKey cryptotypes.PubKey) error {
 		return err
 	}
 	encoded, err := a.EncodingAlgorithm.GetCachedValue().(AddressEncoding).Encode(generatedBz)
+	if err != nil {
+		return err
+	}
 	if a.Value != encoded {
 		return fmt.Errorf("address bytes do not match generated ones: expected %s but got %s", a.Value, encoded)
 	}
