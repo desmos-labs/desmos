@@ -173,7 +173,23 @@ func TestMigrateStore(t *testing.T) {
 					"cosmos",
 					"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
 				)), &stored)
-				require.Equal(t, types.NewAddress("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs", types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")), stored.Address)
+
+				signature, err := hex.DecodeString("1234")
+				require.NoError(t, err)
+				require.Equal(t, types.NewChainLink(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					types.NewAddress("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs", types.GENERATION_ALGORITHM_COSMOS, types.NewBech32Encoding("cosmos")),
+					types.NewProof(
+						pubKey,
+						&types.SingleSignature{
+							ValueType: types.SIGNATURE_VALUE_TYPE_RAW,
+							Signature: signature,
+						},
+						"0aba010a88010a1c2f636f736d6f732e62616e6b2e7631626574",
+					),
+					types.NewChainConfig("cosmos"),
+					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+				), stored)
 			},
 		},
 		{
@@ -216,8 +232,24 @@ func TestMigrateStore(t *testing.T) {
 					"solana",
 					"5AfetAwZzftP8i5JBNatzWeccfXd4KvKq6TRfAvacFaN",
 				)), &stored)
-				expected := types.NewAddress("5AfetAwZzftP8i5JBNatzWeccfXd4KvKq6TRfAvacFaN", types.GENERATION_ALGORITHM_DO_NOTHING, types.NewBase58Encoding(""))
-				require.True(t, expected.Equal(stored.Address))
+
+				signature, err := hex.DecodeString("1234")
+				require.NoError(t, err)
+				expected := types.NewChainLink(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					types.NewAddress("5AfetAwZzftP8i5JBNatzWeccfXd4KvKq6TRfAvacFaN", types.GENERATION_ALGORITHM_DO_NOTHING, types.NewBase58Encoding("")),
+					types.NewProof(
+						pubKey,
+						&types.SingleSignature{
+							ValueType: types.SIGNATURE_VALUE_TYPE_RAW,
+							Signature: signature,
+						},
+						"0aba010a88010a1c2f636f736d6f732e62616e6b2e7631626574",
+					),
+					types.NewChainConfig("solana"),
+					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+				)
+				require.True(t, expected.Equal(stored))
 			},
 		},
 		{
@@ -260,7 +292,23 @@ func TestMigrateStore(t *testing.T) {
 					"ethereum",
 					"0x941991947b6ec9f5537bcac30c1295e8154df4cc",
 				)), &stored)
-				require.Equal(t, types.NewAddress("0x941991947b6ec9f5537bcac30c1295e8154df4cc", types.GENERATION_ALGORITHM_EVM, types.NewHexEncoding("0x", false)), stored.Address)
+
+				signature, err := hex.DecodeString("1234")
+				require.NoError(t, err)
+				require.Equal(t, types.NewChainLink(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					types.NewAddress("0x941991947b6ec9f5537bcac30c1295e8154df4cc", types.GENERATION_ALGORITHM_EVM, types.NewHexEncoding("0x", false)),
+					types.NewProof(
+						pubKey,
+						&types.SingleSignature{
+							ValueType: types.SIGNATURE_VALUE_TYPE_RAW,
+							Signature: signature,
+						},
+						"0aba010a88010a1c2f636f736d6f732e62616e6b2e7631626574",
+					),
+					types.NewChainConfig("ethereum"),
+					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+				), stored)
 			},
 		},
 	}
