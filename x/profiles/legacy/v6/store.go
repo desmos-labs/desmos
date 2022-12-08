@@ -104,6 +104,7 @@ func migrateApplicationLinks(store sdk.KVStore, cdc codec.BinaryCodec) error {
 		}
 		applicationLinks = append(applicationLinks, applicationLink)
 	}
+	iterator.Close()
 
 	for _, v5Link := range applicationLinks {
 		// Migrate the link
@@ -179,20 +180,21 @@ func convertApplicationLinkResult(v5Result *v5types.Result) *types.Result {
 // migrateChainLinks migrates the chain links from v5 to v7 by changing the various Protobuf interface types.
 // The migration from v5 to v6 is skipped because the two types are identical (from v5 to v6 no changes were made).
 func migrateChainLinks(store sdk.KVStore, cdc codec.BinaryCodec) error {
-	appLinksStore := prefix.NewStore(store, types.ChainLinksPrefix)
-	iterator := appLinksStore.Iterator(nil, nil)
+	chainLinksStore := prefix.NewStore(store, types.ChainLinksPrefix)
+	iterator := chainLinksStore.Iterator(nil, nil)
 
-	var applicationLinks []v5types.ChainLink
+	var chainLinks []v5types.ChainLink
 	for ; iterator.Valid(); iterator.Next() {
-		var applicationLink v5types.ChainLink
-		err := cdc.Unmarshal(iterator.Value(), &applicationLink)
+		var chainLink v5types.ChainLink
+		err := cdc.Unmarshal(iterator.Value(), &chainLink)
 		if err != nil {
 			return err
 		}
-		applicationLinks = append(applicationLinks, applicationLink)
+		chainLinks = append(chainLinks, chainLink)
 	}
+	iterator.Close()
 
-	for _, v5Link := range applicationLinks {
+	for _, v5Link := range chainLinks {
 		// Migrate the link
 		v7Link := v9types.NewChainLink(
 			v5Link.User,
@@ -203,15 +205,15 @@ func migrateChainLinks(store sdk.KVStore, cdc codec.BinaryCodec) error {
 		)
 
 		// Store the chain link
-		userApplicationLinkKey := types.ChainLinksStoreKey(v7Link.User, v7Link.ChainConfig.Name, v7Link.GetAddressData().GetValue())
-		store.Set(userApplicationLinkKey, cdc.MustMarshal(&v7Link))
+		userChainLinkKey := types.ChainLinksStoreKey(v7Link.User, v7Link.ChainConfig.Name, v7Link.GetAddressData().GetValue())
+		store.Set(userChainLinkKey, cdc.MustMarshal(&v7Link))
 	}
 
 	return nil
 }
 
-func convertChainLinkAddressData(v5Signature v5types.AddressData) v9types.AddressData {
-	switch address := v5Signature.(type) {
+func convertChainLinkAddressData(v5AddressData v5types.AddressData) v9types.AddressData {
+	switch address := v5AddressData.(type) {
 	case *v5types.Bech32Address:
 		return v9types.NewBech32Address(address.Value, address.Prefix)
 	case *v5types.Base58Address:
@@ -219,7 +221,7 @@ func convertChainLinkAddressData(v5Signature v5types.AddressData) v9types.Addres
 	case *v5types.HexAddress:
 		return v9types.NewHexAddress(address.Value, address.Prefix)
 	default:
-		panic(fmt.Errorf("invalid signature type: %T", v5Signature))
+		panic(fmt.Errorf("invalid address data type: %T", v5AddressData))
 	}
 }
 

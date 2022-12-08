@@ -1001,8 +1001,8 @@ func TestBase58Encoding_Validate(t *testing.T) {
 			shouldErr: false,
 		},
 		{
-			name:      "empty prefix returns no error",
-			address:   types.NewBase58Encoding(""),
+			name:      "proper prefix returns no error",
+			address:   types.NewBase58Encoding("31"),
 			shouldErr: false,
 		},
 	}
@@ -1022,10 +1022,32 @@ func TestBase58Encoding_Validate(t *testing.T) {
 }
 
 func TestBase58Encoding_Encode(t *testing.T) {
-	encoding := types.NewBase58Encoding("")
-	addrBz, _ := hex.DecodeString("3de8ae23dbb0fe6d7d2fbac174899405218aa01bf5f3abddb1a5393b71e0736f")
-	result, _ := encoding.Encode(addrBz)
-	require.Equal(t, "5AfetAwZzftP8i5JBNatzWeccfXd4KvKq6TRfAvacFaN", result)
+	testCases := []struct {
+		name     string
+		addrHex  string
+		encoding *types.Base58Encoding
+		expected string
+	}{
+		{
+			name:     "empty prefix address encode properly",
+			addrHex:  "3de8ae23dbb0fe6d7d2fbac174899405218aa01bf5f3abddb1a5393b71e0736f",
+			encoding: types.NewBase58Encoding(""),
+			expected: "5AfetAwZzftP8i5JBNatzWeccfXd4KvKq6TRfAvacFaN",
+		},
+		{
+			name:     "proper prefix address encode properly",
+			addrHex:  "edec605a99f655b42254924102960faf7f421477399bd9c1a96d31375d38508d8dc1",
+			encoding: types.NewBase58Encoding("00"),
+			expected: "16NxZtpQjwL7fGrPTtLDbaj4vbayePjHcM2SrWfatZzZYizU",
+		},
+	}
+	for _, tc := range testCases {
+		addrBz, err := hex.DecodeString(tc.addrHex)
+		require.NoError(t, err)
+		result, err := tc.encoding.Encode(addrBz)
+		require.NoError(t, err)
+		require.Equal(t, tc.expected, result)
+	}
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -1070,25 +1092,25 @@ func TestHexEncoding_Validate(t *testing.T) {
 func TestHexAddress_Encode(t *testing.T) {
 	testCases := []struct {
 		name     string
-		addrStr  string
+		addrHex  string
 		encoding *types.HexEncoding
 		expected string
 	}{
 		{
 			name:     "non EIP-55 checksum address encode properly",
-			addrStr:  "941991947b6ec9f5537bcac30c1295e8154df4cc",
+			addrHex:  "941991947b6ec9f5537bcac30c1295e8154df4cc",
 			encoding: types.NewHexEncoding("0x", false),
 			expected: "0x941991947b6ec9f5537bcac30c1295e8154df4cc",
 		},
 		{
 			name:     "EIP-55 checksum address encode properly",
-			addrStr:  "47b8c472e2F389611F2f5a41325eD97912d455A7",
+			addrHex:  "47b8c472e2F389611F2f5a41325eD97912d455A7",
 			encoding: types.NewHexEncoding("0x", true),
 			expected: "0x47b8c472e2F389611F2f5a41325eD97912d455A7",
 		},
 	}
 	for _, tc := range testCases {
-		addrBz, err := hex.DecodeString(tc.addrStr)
+		addrBz, err := hex.DecodeString(tc.addrHex)
 		require.NoError(t, err)
 		result, err := tc.encoding.Encode(addrBz)
 		require.NoError(t, err)

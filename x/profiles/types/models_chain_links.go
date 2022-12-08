@@ -505,6 +505,7 @@ func NewAddress(value string, generationAlgorithm GenerationAlgorithm, encodingA
 	}
 }
 
+// Validate checks the validity of the Address
 func (a Address) Validate() error {
 	if strings.TrimSpace(a.Value) == "" {
 		return fmt.Errorf("value cannot be empty or blank")
@@ -518,11 +519,13 @@ func (a Address) Validate() error {
 	return nil
 }
 
+// UnpackInterfaces implements codectypes.UnpackInterfacesMessage
 func (a *Address) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 	var encoding AddressEncoding
 	return unpacker.UnpackAny(a.EncodingAlgorithm, &encoding)
 }
 
+// VerifyPubKey verifies if the address is generated in the proper algorithms from the public key
 func (a *Address) VerifyPubKey(pubKey cryptotypes.PubKey) error {
 	generatedBz, err := generateAddressBytes(pubKey, a.GenerationAlgorithm)
 	if err != nil {
@@ -563,8 +566,10 @@ func generateAddressBytes(key cryptotypes.PubKey, generationAlgorithm Generation
 type AddressEncoding interface {
 	proto.Message
 
+	// Validate checks the validity of the AddressEncoding
 	Validate() error
 
+	// Encode encodes the address bytes into a proper address string by the encoding algorithm
 	Encode(value []byte) (string, error)
 }
 

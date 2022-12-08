@@ -1,4 +1,4 @@
-package v6
+package v8
 
 import (
 	"bytes"
@@ -50,6 +50,7 @@ func migrateChainLinks(store sdk.KVStore, cdc codec.BinaryCodec, amino *codec.Le
 		}
 		chainLinks = append(chainLinks, chainLink)
 	}
+	iterator.Close()
 
 	for _, chainLink := range chainLinks {
 		// Avoid implicit memory aliasing

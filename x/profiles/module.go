@@ -33,7 +33,7 @@ import (
 )
 
 const (
-	consensusVersion = 9
+	consensusVersion = 10
 )
 
 // type check to ensure the interface is properly implemented
