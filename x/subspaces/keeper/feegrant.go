@@ -22,6 +22,16 @@ func (k Keeper) GrantUserAllowance(ctx sdk.Context, subspaceID uint64, granter, 
 	return nil
 }
 
+func (k Keeper) RevokeUserGrant(ctx sdk.Context, subspaceID uint64, granter string, grantee string) error {
+	store := ctx.KVStore(k.storeKey)
+	key := types.UserAllowanceKey(subspaceID, granter, grantee)
+	if !store.Has(key) {
+		return types.ErrNoAllowance
+	}
+	store.Delete(key)
+	return nil
+}
+
 func (k Keeper) GetUserAllowance(ctx sdk.Context, subspaceID uint64, granter, grantee string) (feegrant.FeeAllowanceI, bool, error) {
 	store := ctx.KVStore(k.storeKey)
 	key := types.UserAllowanceKey(subspaceID, granter, grantee)
@@ -52,6 +62,16 @@ func (k Keeper) GrantGroupAllowance(ctx sdk.Context, subspaceID uint64, granter 
 	return nil
 }
 
+func (k Keeper) RevokeGroupGrant(ctx sdk.Context, subspaceID uint64, granter string, groupID uint32) error {
+	store := ctx.KVStore(k.storeKey)
+	key := types.GroupAllowanceKey(subspaceID, granter, groupID)
+	if !store.Has(key) {
+		return types.ErrNoAllowance
+	}
+	store.Delete(key)
+	return nil
+}
+
 func (k Keeper) GetGroupAllowance(ctx sdk.Context, subspaceID uint64, granter string, groupID uint32) (feegrant.FeeAllowanceI, bool, error) {
 	store := ctx.KVStore(k.storeKey)
 	key := types.GroupAllowanceKey(subspaceID, granter, groupID)
@@ -67,17 +87,56 @@ func (k Keeper) GetGroupAllowance(ctx sdk.Context, subspaceID uint64, granter st
 	return allowance, true, err
 }
 
-func (k Keeper) UseGrantedFees(ctx sdk.Context, subspaceID uint64, granter, grantee sdk.AccAddress, fee sdk.Coins, msgs []sdk.Msg) error {
-	grant, found, err := k.GetUserAllowance(ctx, subspaceID, granter.String(), grantee.String())
+func (k Keeper) UseGrantedFees(ctx sdk.Context, subspaceID uint64, granter, grantee sdk.AccAddress, fee sdk.Coins, msgs []sdk.Msg) (success bool) {
+	used := k.UseUserGrantedFees(ctx, subspaceID, granter, grantee, fee, msgs)
+	if used {
+		return false
+	}
+	used = k.UseGroupGrantedFees(ctx, subspaceID, granter, grantee, fee, msgs)
+	if used {
+		return false
+	}
+	return true
+}
+
+func (k Keeper) UseUserGrantedFees(ctx sdk.Context, subspaceID uint64, granter, grantee sdk.AccAddress, fee sdk.Coins, msgs []sdk.Msg) (used bool) {
+	allowance, found, err := k.GetUserAllowance(ctx, subspaceID, granter.String(), grantee.String())
+	if err != nil || !found {
+		return false
+	}
+	_, err = allowance.Accept(ctx, fee, msgs)
 	if err != nil {
-		return err
+		return false
 	}
-	if !found {
-		return types.ErrNoAllowance
-	}
-	_, err = grant.Accept(ctx, fee, msgs)
+	err = k.GrantUserAllowance(ctx, subspaceID, granter.String(), grantee.String(), allowance)
 	if err != nil {
-		return err
+		return false
 	}
-	return k.GrantUserAllowance(ctx, subspaceID, granter.String(), grantee.String(), grant)
+	return true
+}
+
+func (k Keeper) UseGroupGrantedFees(ctx sdk.Context, subspaceID uint64, granter, grantee sdk.AccAddress, fee sdk.Coins, msgs []sdk.Msg) (used bool) {
+	k.IterateSubspaceGranterGroupGrants(ctx, subspaceID, granter.String(), func(entry types.GroupGrant) (stop bool) {
+		if !k.IsMemberOfGroup(ctx, entry.SubspaceID, entry.GroupID, grantee.String()) {
+			return false
+		}
+
+		allowance, err := entry.GetUnpackedAllowance()
+		if err != nil {
+			return false
+		}
+
+		_, err = allowance.Accept(ctx, fee, msgs)
+		if err != nil {
+			return false
+		}
+
+		err = k.GrantGroupAllowance(ctx, subspaceID, granter.String(), entry.GroupID, allowance)
+		if err != nil {
+			return false
+		}
+		used = true
+		return true
+	})
+	return used
 }

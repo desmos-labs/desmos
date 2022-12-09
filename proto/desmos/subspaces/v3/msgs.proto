@@ -61,9 +61,25 @@ service Msg {
   rpc SetUserPermissions(MsgSetUserPermissions)
       returns (MsgSetUserPermissionsResponse);
 
-  rpc GrantUserAllowance(MsgGrantUserAllowance) returns (MsgGrantUserAllowanceResponse);
+  // GrantUserAllowance allows the granter to grant a fee allowance to the
+  // grantee.
+  rpc GrantUserAllowance(MsgGrantUserAllowance)
+      returns (MsgGrantUserAllowanceResponse);
 
-  rpc GrantGroupAllowance(MsgGrantGroupAllowance) returns (MsgGrantGroupAllowanceResponse);
+  // RevokeUserAllowance allows a granter to revoke any existing allowance that
+  // has to been granted to the grantee.
+  rpc RevokeUserAllowance(MsgRevokeUserAllowance)
+      returns (MsgRevokeUserAllowanceResponse);
+
+  // GrantGroupAllowance allows the granter to grant a fee allowance to the
+  // group.
+  rpc GrantGroupAllowance(MsgGrantGroupAllowance)
+      returns (MsgGrantGroupAllowanceResponse);
+
+  // RevokeGroupAllowance allows a granter to revoke any existing allowance that
+  // has to been granted to the group.
+  rpc RevokeGroupAllowance(MsgRevokeGroupAllowance)
+      returns (MsgRevokeGroupAllowanceResponse);
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -488,38 +504,103 @@ message MsgSetUserPermissionsResponse {}
 
 // --------------------------------------------------------------------------------------------------------------------
 
+// MsgGrantUserAllowance adds permissions for the grantee to spend up allowance
+// of fees from the granter inside the given subspace.
 message MsgGrantUserAllowance {
+  // the id of the subspace where the granter grants the allowance to the
+  // grantee.
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
-  string granter = 2  [
-    (gogoproto.moretags) = "yaml:\"granter\""
+
+  // the address of the user granting an allowance of their funds.
+  string granter = 2 [ (gogoproto.moretags) = "yaml:\"granter\"" ];
+
+  // the address of the user being granted an allowance of another user's funds.
+  string grantee = 3 [ (gogoproto.moretags) = "yaml:\"grantee\"" ];
+
+  // allowance can be any of fee allowances which implements FeeAllowanceI.
+  google.protobuf.Any allowance = 4 [
+    (cosmos_proto.accepts_interface) = "FeeAllowanceI",
+    (gogoproto.moretags) = "yaml:\"allowance\""
   ];
-  string grantee = 3  [
-    (gogoproto.moretags) = "yaml:\"grantee\""
-  ];
-  google.protobuf.Any allowance = 4 [(cosmos_proto.accepts_interface) = "FeeAllowanceI"];
 }
 
+// MsgGrantUserAllowanceResponse defines the Msg/GrantAllowanceResponse response
+// type.
 message MsgGrantUserAllowanceResponse {}
 
-message MsgGrantGroupAllowance {
+// MsgRevokeUserAllowance removes any existing allowance from granter to the
+// grantee inside the subspace.
+message MsgRevokeUserAllowance {
+  // the id of the subspace where the granter grants the allowance to the
+  // grantee.
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
-  string granter = 2 [
-    (gogoproto.moretags) = "yaml:\"granter\""
+
+  // the address of the user granting an allowance of their funds.
+  string granter = 2 [ (gogoproto.moretags) = "yaml:\"granter\"" ];
+
+  // the address of the user being granted an allowance of another user's funds.
+  string grantee = 3 [ (gogoproto.moretags) = "yaml:\"grantee\"" ];
+}
+
+// MsgRevokeUserAllowanceResponse defines the Msg/RevokeAllowanceResponse
+// response type.
+message MsgRevokeUserAllowanceResponse {}
+
+// MsgGrantGroupAllowance adds permissions for the group to spend up allowance
+// of fees from the granter inside the given subspace.
+message MsgGrantGroupAllowance {
+  // the id of the subspace where the granter grants the allowance to the
+  // grantee.
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
-  uint32 group_id = 3 [
+
+  // the id of the group being granted an allowance of another user's funds.
+  uint32 group_id = 2 [
     (gogoproto.customname) = "GroupID",
     (gogoproto.moretags) = "yaml:\"group_id\""
   ];
+
+  // the address of the user granting an allowance of their funds.
+  string granter = 3 [ (gogoproto.moretags) = "yaml:\"granter\"" ];
+
+  // allowance can be any of fee allowances which implements FeeAllowanceI.
   google.protobuf.Any allowance = 4 [
-    (gogoproto.moretags) = "yaml:\"allowance\"",
-    (cosmos_proto.accepts_interface) = "FeeAllowanceI"
+    (cosmos_proto.accepts_interface) = "FeeAllowanceI",
+    (gogoproto.moretags) = "yaml:\"allowance\""
   ];
 }
 
+// MsgGrantGroupAllowanceResponse defines the Msg/GrantAllowanceResponse
+// response type.
 message MsgGrantGroupAllowanceResponse {}
+
+// MsgRevokeGroupAllowance removes any existing allowance from granter to the
+// group inside the subspace.
+message MsgRevokeGroupAllowance {
+  // the id of the subspace where the granter grants the allowance to the group.
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+
+  // the id of the group being granted an allowance of another user's funds.
+  uint32 group_id = 2 [
+    (gogoproto.customname) = "GroupID",
+    (gogoproto.moretags) = "yaml:\"group_id\""
+  ];
+
+  // the address of the user granting an allowance of their funds.
+  string granter = 3 [ (gogoproto.moretags) = "yaml:\"granter\"" ];
+}
+
+// MsgRevokeGroupAllowanceResponse defines the Msg/RevokeAllowanceResponse
+// response type.
+message MsgRevokeGroupAllowanceResponse {}

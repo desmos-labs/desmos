@@ -1,12 +1,9 @@
 package ante
 
 import (
-	"fmt"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	"github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
@@ -22,8 +19,16 @@ func NewDeductFeeDecorator(ak AccountKeeper, bk BankKeeper, fk FeegrantKeeper, s
 }
 
 func (dfd DeductFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, next sdk.AnteHandler) (newCtx sdk.Context, err error) {
+	feeTx, ok := tx.(sdk.FeeTx)
+	if !ok {
+		return ctx, sdkerrors.Wrap(sdkerrors.ErrTxDecode, "Tx must be a FeeTx")
+	}
+
 	if id, ok := isValidSubspaceMsgs(tx.GetMsgs()); ok {
-		return dfd.anteHandle(ctx, tx, simulate, next, id)
+		newCtx, success, err := dfd.anteHandle(ctx, feeTx, simulate, next, id)
+		if success {
+			return newCtx, err
+		}
 	}
 	return dfd.authDeductAnte.AnteHandle(ctx, tx, simulate, next)
 }
@@ -44,27 +49,19 @@ func isValidSubspaceMsgs(msgs []sdk.Msg) (uint64, bool) {
 	return subspaceId, true
 }
 
-func (dfd DeductFeeDecorator) anteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, next sdk.AnteHandler, subspaceID uint64) (newCtx sdk.Context, err error) {
-	feeTx, ok := tx.(sdk.FeeTx)
-	if !ok {
-		return ctx, sdkerrors.Wrap(sdkerrors.ErrTxDecode, "Tx must be a FeeTx")
-	}
-	if addr := dfd.ak.GetModuleAddress(authtypes.FeeCollectorName); addr == nil {
-		return ctx, fmt.Errorf("fee collector module account (%s) has not been set", authtypes.FeeCollectorName)
-	}
-
-	fee := feeTx.GetFee()
-	feePayer := feeTx.FeePayer()
-	feeGranter := feeTx.FeeGranter()
+func (dfd DeductFeeDecorator) anteHandle(ctx sdk.Context, tx sdk.FeeTx, simulate bool, next sdk.AnteHandler, subspaceID uint64) (newCtx sdk.Context, used bool, err error) {
+	fee := tx.GetFee()
+	feePayer := tx.FeePayer()
+	feeGranter := tx.FeeGranter()
 	deductFeesFrom := feePayer
 
 	// if feegranter set deduct fee from feegranter account.
 	// this works with only when feegrant enabled.
 	if feeGranter != nil {
 		if !feeGranter.Equals(feePayer) {
-			err := dfd.sk.UseGrantedFees(ctx, subspaceID, feeGranter, feePayer, fee, tx.GetMsgs())
-			if err != nil {
-				return ctx, sdkerrors.Wrapf(err, "%s not allowed to pay fees from %s", feeGranter, feePayer)
+			used = dfd.sk.UseGrantedFees(ctx, subspaceID, feeGranter, feePayer, fee, tx.GetMsgs())
+			if !used {
+				return ctx, false, sdkerrors.Wrapf(err, "%s not allowed to pay fees from %s", feeGranter, feePayer)
 			}
 		}
 
@@ -73,14 +70,14 @@ func (dfd DeductFeeDecorator) anteHandle(ctx sdk.Context, tx sdk.Tx, simulate bo
 
 	deductFeesFromAcc := dfd.ak.GetAccount(ctx, deductFeesFrom)
 	if deductFeesFromAcc == nil {
-		return ctx, sdkerrors.Wrapf(sdkerrors.ErrUnknownAddress, "fee payer address: %s does not exist", deductFeesFrom)
+		return ctx, used, sdkerrors.Wrapf(sdkerrors.ErrUnknownAddress, "fee payer address: %s does not exist", deductFeesFrom)
 	}
 
 	// deduct the fees
-	if !feeTx.GetFee().IsZero() {
-		err = ante.DeductFees(dfd.bk, ctx, deductFeesFromAcc, feeTx.GetFee())
+	if !tx.GetFee().IsZero() {
+		err = ante.DeductFees(dfd.bk, ctx, deductFeesFromAcc, tx.GetFee())
 		if err != nil {
-			return ctx, err
+			return ctx, used, err
 		}
 	}
 
@@ -92,5 +89,6 @@ func (dfd DeductFeeDecorator) anteHandle(ctx sdk.Context, tx sdk.Tx, simulate bo
 		),
 	}
 	ctx.EventManager().EmitEvents(events)
-	return next(ctx, tx, simulate)
+	newCtx, err = next(ctx, tx, simulate)
+	return newCtx, used, err
 }

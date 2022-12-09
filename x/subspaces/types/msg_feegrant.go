@@ -10,7 +10,9 @@ import (
 
 var (
 	_ sdk.Msg = &MsgGrantUserAllowance{}
+	_ sdk.Msg = &MsgRevokeUserAllowance{}
 	_ sdk.Msg = &MsgGrantGroupAllowance{}
+	_ sdk.Msg = &MsgRevokeGroupAllowance{}
 )
 
 func NewMsgGrantUserAllowance(subspaceID uint64, granter string, grantee string, allowance feegranttypes.FeeAllowanceI) *MsgGrantUserAllowance {
@@ -70,6 +72,40 @@ func (msg MsgGrantUserAllowance) UnpackInterfaces(unpacker types.AnyUnpacker) er
 
 // --------------------------------------------------------------------------------------------------------------------
 
+func NewMsgRevokeUserAllowance(subspaceID uint64, granter string, grantee string) *MsgRevokeUserAllowance {
+	return &MsgRevokeUserAllowance{
+		SubspaceID: subspaceID,
+		Granter:    granter,
+		Grantee:    grantee,
+	}
+}
+
+func (msg MsgRevokeUserAllowance) ValidateBasic() error {
+	return nil
+}
+
+func (msg MsgRevokeUserAllowance) GetSigners() []sdk.AccAddress {
+	granter, err := sdk.AccAddressFromBech32(msg.Granter)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{granter}
+}
+
+func (msg MsgRevokeUserAllowance) Type() string {
+	return sdk.MsgTypeURL(&msg)
+}
+
+func (msg MsgRevokeUserAllowance) Route() string {
+	return sdk.MsgTypeURL(&msg)
+}
+
+func (msg MsgRevokeUserAllowance) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
 func NewMsgGrantGroupAllowance(subspaceID uint64, granter string, groupID uint32, allowance feegranttypes.FeeAllowanceI) *MsgGrantGroupAllowance {
 	msg, ok := allowance.(proto.Message)
 	if !ok {
@@ -123,4 +159,38 @@ func (msg MsgGrantGroupAllowance) GetFeeAllowanceI() (feegranttypes.FeeAllowance
 func (msg MsgGrantGroupAllowance) UnpackInterfaces(unpacker types.AnyUnpacker) error {
 	var allowance feegranttypes.FeeAllowanceI
 	return unpacker.UnpackAny(msg.Allowance, &allowance)
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+func NewMsgRevokeGroupAllowance(subspaceID uint64, granter string, groupID uint32) *MsgRevokeGroupAllowance {
+	return &MsgRevokeGroupAllowance{
+		SubspaceID: subspaceID,
+		Granter:    granter,
+		GroupID:    groupID,
+	}
+}
+
+func (msg MsgRevokeGroupAllowance) ValidateBasic() error {
+	return nil
+}
+
+func (msg MsgRevokeGroupAllowance) GetSigners() []sdk.AccAddress {
+	granter, err := sdk.AccAddressFromBech32(msg.Granter)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{granter}
+}
+
+func (msg MsgRevokeGroupAllowance) Type() string {
+	return sdk.MsgTypeURL(&msg)
+}
+
+func (msg MsgRevokeGroupAllowance) Route() string {
+	return sdk.MsgTypeURL(&msg)
+}
+
+func (msg MsgRevokeGroupAllowance) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
 }

@@ -114,41 +114,45 @@ message UserPermission {
   repeated string permissions = 4 [ (gogoproto.castrepeated) = "Permissions" ];
 }
 
+// UserGrant represents a grant to a user
 message UserGrant {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
-  uint64 subspace_id = 1 [ 
+  // the id of the subspace where group granted an allowance
+  uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
-  string granter = 2 [
-    (gogoproto.moretags) = "yaml:\"granter\""
-  ];
-  string grantee = 3 [
-    (gogoproto.moretags) = "yaml:\"grantee\""
-  ];
+  // granter is the address of the user granting an allowance of their funds
+  string granter = 2 [ (gogoproto.moretags) = "yaml:\"granter\"" ];
+  // grantee is the address being granted an allowance of another user's funds
+  string grantee = 3 [ (gogoproto.moretags) = "yaml:\"grantee\"" ];
+  // allowance can be any of basic, periodic, allowed fee allowance
   google.protobuf.Any allowance = 4 [
     (cosmos_proto.accepts_interface) = "FeeAllowanceI",
     (gogoproto.moretags) = "yaml:\"allowance\""
   ];
 }
 
+// GroupGrant represents a grant to a group
 message GroupGrant {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
-  uint64 subspace_id = 1 [ 
+  // the id of the subspace where group granted an allowance
+  uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
-  string granter = 2 [
-    (gogoproto.moretags) = "yaml:\"granter\""
-  ];
+  // granter is the address of the user granting an allowance of their funds
+  string granter = 2 [ (gogoproto.moretags) = "yaml:\"granter\"" ];
+  // the id of the group being granted an allowance of another user's funds
   uint32 group_id = 3 [
     (gogoproto.customname) = "GroupID",
     (gogoproto.moretags) = "yaml:\"group_id\""
   ];
+  // allowance can be any of basic, periodic, allowed fee allowance
   google.protobuf.Any allowance = 4 [
     (cosmos_proto.accepts_interface) = "FeeAllowanceI",
     (gogoproto.moretags) = "yaml:\"allowance\""

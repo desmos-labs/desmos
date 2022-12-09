@@ -372,11 +372,16 @@ func (m *UserPermission) GetPermissions() Permissions {
 	return nil
 }
 
+// UserGrant represents a grant to a user
 type UserGrant struct {
-	SubspaceID uint64     `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
-	Granter    string     `protobuf:"bytes,2,opt,name=granter,proto3" json:"granter,omitempty" yaml:"granter"`
-	Grantee    string     `protobuf:"bytes,3,opt,name=grantee,proto3" json:"grantee,omitempty" yaml:"grantee"`
-	Allowance  *types.Any `protobuf:"bytes,4,opt,name=allowance,proto3" json:"allowance,omitempty" yaml:"allowance"`
+	// the id of the subspace where group granted an allowance
+	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
+	// granter is the address of the user granting an allowance of their funds
+	Granter string `protobuf:"bytes,2,opt,name=granter,proto3" json:"granter,omitempty" yaml:"granter"`
+	// grantee is the address being granted an allowance of another user's funds
+	Grantee string `protobuf:"bytes,3,opt,name=grantee,proto3" json:"grantee,omitempty" yaml:"grantee"`
+	// allowance can be any of basic, periodic, allowed fee allowance
+	Allowance *types.Any `protobuf:"bytes,4,opt,name=allowance,proto3" json:"allowance,omitempty" yaml:"allowance"`
 }
 
 func (m *UserGrant) Reset()         { *m = UserGrant{} }
@@ -440,11 +445,16 @@ func (m *UserGrant) GetAllowance() *types.Any {
 	return nil
 }
 
+// GroupGrant represents a grant to a group
 type GroupGrant struct {
-	SubspaceID uint64     `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
-	Granter    string     `protobuf:"bytes,2,opt,name=granter,proto3" json:"granter,omitempty" yaml:"granter"`
-	GroupID    uint32     `protobuf:"varint,3,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty" yaml:"group_id"`
-	Allowance  *types.Any `protobuf:"bytes,4,opt,name=allowance,proto3" json:"allowance,omitempty" yaml:"allowance"`
+	// the id of the subspace where group granted an allowance
+	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
+	// granter is the address of the user granting an allowance of their funds
+	Granter string `protobuf:"bytes,2,opt,name=granter,proto3" json:"granter,omitempty" yaml:"granter"`
+	// the id of the group being granted an allowance of another user's funds
+	GroupID uint32 `protobuf:"varint,3,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty" yaml:"group_id"`
+	// allowance can be any of basic, periodic, allowed fee allowance
+	Allowance *types.Any `protobuf:"bytes,4,opt,name=allowance,proto3" json:"allowance,omitempty" yaml:"allowance"`
 }
 
 func (m *GroupGrant) Reset()         { *m = GroupGrant{} }

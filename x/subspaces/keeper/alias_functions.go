@@ -326,3 +326,22 @@ func (k Keeper) GetSectionUserPermissions(ctx sdk.Context, subspaceID uint64, se
 	})
 	return entries
 }
+
+// --------------------------------------------------------------------------------------------------------------------
+
+func (k Keeper) IterateSubspaceGranterGroupGrants(ctx sdk.Context, subspaceID uint64, granter string, fn func(entry types.GroupGrant) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+	prefix := types.GranterGroupAllowancePrefix(subspaceID, granter)
+	iterator := sdk.KVStorePrefixIterator(store, prefix)
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		var grant types.GroupGrant
+		k.cdc.MustUnmarshal(iterator.Value(), &grant)
+
+		stop := fn(grant)
+		if stop {
+			break
+		}
+	}
+}

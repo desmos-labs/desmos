@@ -29,5 +29,5 @@ type FeegrantKeeper interface {
 }
 
 type SubspacesKeeper interface {
-	UseGrantedFees(ctx sdk.Context, subspaceID uint64, granter, grantee sdk.AccAddress, fee sdk.Coins, msgs []sdk.Msg) error
+	UseGrantedFees(ctx sdk.Context, subspaceID uint64, granter, grantee sdk.AccAddress, fee sdk.Coins, msgs []sdk.Msg) bool
 }
