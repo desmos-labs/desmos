@@ -32,7 +32,7 @@ jobs:
 
       - name: Deploy preview to Netlify 🚀
         id: deploy-preview
-        uses: nwtgck/actions-netlify@v1.2
+        uses: nwtgck/actions-netlify@v2.0
         with:
           publish-dir: ./output
           deploy-message: "Deploy from GitHub Actions"
