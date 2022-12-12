@@ -25,9 +25,12 @@ func (dfd DeductFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bo
 	}
 
 	if id, ok := isValidSubspaceMsgs(tx.GetMsgs()); ok {
-		newCtx, success, err := dfd.anteHandle(ctx, feeTx, simulate, next, id)
-		if success {
+		newCtx, success, err := dfd.anteHandle(ctx, feeTx, simulate, id)
+		if success && err != nil {
 			return newCtx, err
+		}
+		if success && err == nil {
+			return next(newCtx, tx, simulate)
 		}
 	}
 	return dfd.authDeductAnte.AnteHandle(ctx, tx, simulate, next)
@@ -49,7 +52,7 @@ func isValidSubspaceMsgs(msgs []sdk.Msg) (uint64, bool) {
 	return subspaceId, true
 }
 
-func (dfd DeductFeeDecorator) anteHandle(ctx sdk.Context, tx sdk.FeeTx, simulate bool, next sdk.AnteHandler, subspaceID uint64) (newCtx sdk.Context, used bool, err error) {
+func (dfd DeductFeeDecorator) anteHandle(ctx sdk.Context, tx sdk.FeeTx, simulate bool, subspaceID uint64) (newCtx sdk.Context, used bool, err error) {
 	fee := tx.GetFee()
 	feePayer := tx.FeePayer()
 	feeGranter := tx.FeeGranter()
@@ -64,7 +67,6 @@ func (dfd DeductFeeDecorator) anteHandle(ctx sdk.Context, tx sdk.FeeTx, simulate
 				return ctx, false, sdkerrors.Wrapf(err, "%s not allowed to pay fees from %s", feeGranter, feePayer)
 			}
 		}
-
 		deductFeesFrom = feeGranter
 	}
 
@@ -89,6 +91,5 @@ func (dfd DeductFeeDecorator) anteHandle(ctx sdk.Context, tx sdk.FeeTx, simulate
 		),
 	}
 	ctx.EventManager().EmitEvents(events)
-	newCtx, err = next(ctx, tx, simulate)
-	return newCtx, used, err
+	return ctx, used, err
 }

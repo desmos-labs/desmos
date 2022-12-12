@@ -17,6 +17,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/version"
 	authzcli "github.com/cosmos/cosmos-sdk/x/authz/client/cli"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
@@ -57,97 +58,32 @@ func NewTxCmd() *cobra.Command {
 		NewGroupsTxCmd(),
 		GetCmdSetUserPermissions(),
 		GetCmdGrantAuthorization(),
-		GetCmdFeeGrant(),
+		GetCmdUserFeeGrant(),
+		GetCmdGroupFeeGrant(),
 	)
 
 	return subspacesTxCmd
 }
 
-func GetCmdFeeGrant() *cobra.Command {
+func GetCmdUserFeeGrant() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "fee-grant [subspace-id] [grantee]",
-		Short: "Grant Fee allowance to an address",
+		Use:   "user-fee-grant [subspace-id] [grantee]",
+		Short: "Grant a fee allowance to an address",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
-			sl, err := cmd.Flags().GetString(FlagSpendLimit)
+			allowance, err := getAllowanceFromFlags(cmd.Flags())
 			if err != nil {
 				return err
-			}
-			// if `FlagSpendLimit` isn't set, limit will be nil
-			limit, err := sdk.ParseCoinsNormalized(sl)
-			if err != nil {
-				return err
-			}
-			exp, err := cmd.Flags().GetString(FlagExpiration)
-			if err != nil {
-				return err
-			}
-			basic := feegrant.BasicAllowance{
-				SpendLimit: limit,
-			}
-			var expiresAtTime time.Time
-			if exp != "" {
-				expiresAtTime, err = time.Parse(time.RFC3339, exp)
-				if err != nil {
-					return err
-				}
-				basic.Expiration = &expiresAtTime
-			}
-			var grant feegrant.FeeAllowanceI
-			grant = &basic
-			periodClock, err := cmd.Flags().GetInt64(FlagPeriod)
-			if err != nil {
-				return err
-			}
-			periodLimitVal, err := cmd.Flags().GetString(FlagPeriodLimit)
-			if err != nil {
-				return err
-			}
-			// Check any of period or periodLimit flags set, If set consider it as periodic fee allowance.
-			if periodClock > 0 || periodLimitVal != "" {
-				periodLimit, err := sdk.ParseCoinsNormalized(periodLimitVal)
-				if err != nil {
-					return err
-				}
-				if periodClock <= 0 {
-					return fmt.Errorf("period clock was not set")
-				}
-				if periodLimit == nil {
-					return fmt.Errorf("period limit was not set")
-				}
-				periodReset := getPeriodReset(periodClock)
-				if exp != "" && periodReset.Sub(expiresAtTime) > 0 {
-					return fmt.Errorf("period (%d) cannot reset after expiration (%v)", periodClock, exp)
-				}
-				periodic := feegrant.PeriodicAllowance{
-					Basic:            basic,
-					Period:           getPeriod(periodClock),
-					PeriodReset:      getPeriodReset(periodClock),
-					PeriodSpendLimit: periodLimit,
-					PeriodCanSpend:   periodLimit,
-				}
-
-				grant = &periodic
-			}
-			allowedMsgs, err := cmd.Flags().GetStringSlice(FlagAllowedMsgs)
-			if err != nil {
-				return err
-			}
-			if len(allowedMsgs) > 0 {
-				grant, err = feegrant.NewAllowedMsgAllowance(grant, allowedMsgs)
-				if err != nil {
-					return err
-				}
 			}
 			subspaceID, err := types.ParseSubspaceID(args[0])
 			if err != nil {
 				return err
 			}
-			msg := types.NewMsgGrantUserAllowance(subspaceID, clientCtx.FromAddress.String(), args[1], grant)
+			msg := types.NewMsgGrantUserAllowance(subspaceID, clientCtx.FromAddress.String(), args[1], allowance)
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}
@@ -161,6 +97,120 @@ func GetCmdFeeGrant() *cobra.Command {
 	cmd.Flags().Int64(FlagPeriod, 0, "period specifies the time duration in which period_spend_limit coins can be spent before that allowance is reset")
 	cmd.Flags().String(FlagPeriodLimit, "", "period limit specifies the maximum number of coins that can be spent in the period")
 	return cmd
+}
+
+func GetCmdGroupFeeGrant() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "group-fee-grant [subspace-id] [group-id]",
+		Short: "Grant a fee allowance to an address",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			allowance, err := getAllowanceFromFlags(cmd.Flags())
+			if err != nil {
+				return err
+			}
+
+			subspaceID, err := types.ParseSubspaceID(args[0])
+			if err != nil {
+				return err
+			}
+			groupID, err := types.ParseGroupID(args[1])
+			if err != nil {
+				return err
+			}
+			msg := types.NewMsgGrantGroupAllowance(subspaceID, clientCtx.FromAddress.String(), groupID, allowance)
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+	flags.AddTxFlagsToCmd(cmd)
+	cmd.Flags().StringSlice(FlagAllowedMsgs, []string{}, "Set of allowed messages for fee allowance")
+	cmd.Flags().String(FlagExpiration, "", "The RFC 3339 timestamp after which the grant expires for the user")
+	cmd.Flags().String(FlagSpendLimit, "", "Spend limit specifies the max limit can be used, if not mentioned there is no limit")
+	cmd.Flags().Int64(FlagPeriod, 0, "period specifies the time duration in which period_spend_limit coins can be spent before that allowance is reset")
+	cmd.Flags().String(FlagPeriodLimit, "", "period limit specifies the maximum number of coins that can be spent in the period")
+	return cmd
+}
+
+func getAllowanceFromFlags(flags *pflag.FlagSet) (feegrant.FeeAllowanceI, error) {
+	spendLimit, err := flags.GetString(FlagSpendLimit)
+	if err != nil {
+		return nil, err
+	}
+	// if `FlagSpendLimit` isn't set, limit will be nil
+	limit, err := sdk.ParseCoinsNormalized(spendLimit)
+	if err != nil {
+		return nil, err
+	}
+	expired, err := flags.GetString(FlagExpiration)
+	if err != nil {
+		return nil, err
+	}
+	periodClock, err := flags.GetInt64(FlagPeriod)
+	if err != nil {
+		return nil, err
+	}
+	periodLimit, err := flags.GetString(FlagPeriodLimit)
+	if err != nil {
+		return nil, err
+	}
+	allowedMsgs, err := flags.GetStringSlice(FlagAllowedMsgs)
+	if err != nil {
+		return nil, err
+	}
+
+	var allowance feegrant.FeeAllowanceI
+	basic := feegrant.BasicAllowance{
+		SpendLimit: limit,
+	}
+	var expiresAtTime time.Time
+	if expired != "" {
+		expiresAtTime, err = time.Parse(time.RFC3339, expired)
+		if err != nil {
+			return nil, err
+		}
+		basic.Expiration = &expiresAtTime
+	}
+	allowance = &basic
+	// Check any of period or periodLimit flags set, If set consider it as periodic fee allowance.
+	if periodClock > 0 || periodLimit != "" {
+		periodLimit, err := sdk.ParseCoinsNormalized(periodLimit)
+		if err != nil {
+			return nil, err
+		}
+		if periodClock <= 0 {
+			return nil, fmt.Errorf("period clock was not set")
+		}
+		if periodLimit == nil {
+			return nil, fmt.Errorf("period limit was not set")
+		}
+		periodReset := getPeriodReset(periodClock)
+		if periodReset.Sub(expiresAtTime) > 0 {
+			return nil, fmt.Errorf("period (%d) cannot reset after expiration (%v)", periodClock, expired)
+		}
+		periodAllowance := &feegrant.PeriodicAllowance{
+			Basic:            basic,
+			Period:           getPeriod(periodClock),
+			PeriodReset:      periodReset,
+			PeriodSpendLimit: periodLimit,
+			PeriodCanSpend:   periodLimit,
+		}
+		allowance = periodAllowance
+	}
+	if len(allowedMsgs) > 0 {
+		filteredAllowance, err := feegrant.NewAllowedMsgAllowance(allowance, allowedMsgs)
+		if err != nil {
+			return nil, err
+		}
+		allowance = filteredAllowance
+	}
+	return allowance, nil
 }
 
 func getPeriodReset(duration int64) time.Time {

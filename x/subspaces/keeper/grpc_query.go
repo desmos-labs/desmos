@@ -218,3 +218,79 @@ func (k Keeper) UserPermissions(ctx context.Context, request *types.QueryUserPer
 		Details:     details,
 	}, nil
 }
+
+func (k Keeper) UserGrants(ctx context.Context, request *types.QueryUserGrantsRequest) (*types.QueryUserGrantsResponse, error) {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	store := sdkCtx.KVStore(k.storeKey)
+
+	// Get grants prefix store
+	grantsPrefix := types.UserGrantPrefix
+	switch {
+	case request.SubspaceId != 0:
+		grantsPrefix = types.SubspaceUserGrantPrefix(request.SubspaceId)
+	case request.SubspaceId != 0 && request.Granter != "":
+		grantsPrefix = types.GranterUserGrantPrefix(request.SubspaceId, request.Granter)
+	case request.SubspaceId != 0 && request.Granter != "" && request.Grantee != "":
+		grantsPrefix = types.UserGrantKey(request.SubspaceId, request.Granter, request.Grantee)
+	}
+
+	grantsStore := prefix.NewStore(store, grantsPrefix)
+	var grants []types.UserGrant
+	pageRes, err := query.FilteredPaginate(grantsStore, request.Pagination, func(key []byte, value []byte, acc bool) (bool, error) {
+		var grant types.UserGrant
+		if err := k.cdc.Unmarshal(value, &grant); err != nil {
+			return false, status.Error(codes.Internal, err.Error())
+		}
+		if (request.SubspaceId != 0 && grant.Grantee == request.Grantee) || request.Grantee == "" {
+			grants = append(grants, grant)
+			return true, nil
+		}
+		return false, nil
+	})
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &types.QueryUserGrantsResponse{
+		Grants:     grants,
+		Pagination: pageRes,
+	}, nil
+}
+
+func (k Keeper) GroupGrants(ctx context.Context, request *types.QueryGroupGrantsRequest) (*types.QueryGroupGrantsResponse, error) {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	store := sdkCtx.KVStore(k.storeKey)
+
+	// Get grants prefix store
+	grantsPrefix := types.UserGrantPrefix
+	switch {
+	case request.SubspaceId != 0:
+		grantsPrefix = types.SubspaceUserGrantPrefix(request.SubspaceId)
+	case request.SubspaceId != 0 && request.Granter != "":
+		grantsPrefix = types.GranterUserGrantPrefix(request.SubspaceId, request.Granter)
+	case request.SubspaceId != 0 && request.Granter != "" && request.GroupId != 0:
+		grantsPrefix = types.GroupGrantKey(request.SubspaceId, request.Granter, request.GroupId)
+	}
+
+	grantsStore := prefix.NewStore(store, grantsPrefix)
+	var grants []types.GroupGrant
+	pageRes, err := query.FilteredPaginate(grantsStore, request.Pagination, func(key []byte, value []byte, acc bool) (bool, error) {
+		var grant types.GroupGrant
+		if err := k.cdc.Unmarshal(value, &grant); err != nil {
+			return false, status.Error(codes.Internal, err.Error())
+		}
+		if (request.SubspaceId != 0 && grant.GroupID == request.GroupId) || request.GroupId == 0 {
+			grants = append(grants, grant)
+			return true, nil
+		}
+		return false, nil
+	})
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &types.QueryGroupGrantsResponse{
+		Grants:     grants,
+		Pagination: pageRes,
+	}, nil
+}

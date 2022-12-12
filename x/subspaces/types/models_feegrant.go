@@ -1,6 +1,8 @@
 package types
 
 import (
+	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	feegranttypes "github.com/cosmos/cosmos-sdk/x/feegrant"
@@ -51,7 +53,7 @@ func (a UserGrant) ValidateBasic() error {
 func (a UserGrant) GetUnpackedAllowance() (feegranttypes.FeeAllowanceI, error) {
 	allowance, ok := a.Allowance.GetCachedValue().(feegranttypes.FeeAllowanceI)
 	if !ok {
-		return nil, sdkerrors.Wrap(ErrNoAllowance, "failed to get allowance")
+		return nil, fmt.Errorf("failed to unpack allowance")
 	}
 
 	return allowance, nil
@@ -100,7 +102,7 @@ func (a GroupGrant) ValidateBasic() error {
 func (a GroupGrant) GetUnpackedAllowance() (feegranttypes.FeeAllowanceI, error) {
 	allowance, ok := a.Allowance.GetCachedValue().(feegranttypes.FeeAllowanceI)
 	if !ok {
-		return nil, sdkerrors.Wrap(ErrNoAllowance, "failed to get allowance")
+		return nil, fmt.Errorf("failed to unpack allowance")
 	}
 
 	return allowance, nil

@@ -62,6 +62,17 @@ service Query {
     option (google.api.http).get =
         "/desmos/subspaces/v3/subspaces/{subspace_id}/permissions/{user}";
   }
+
+  // UserGrants returns all the grants for users.
+  rpc UserGrants(QueryUserGrantsRequest) returns (QueryUserGrantsResponse) {
+    option (google.api.http).get =
+        "/desmos/subspaces/v3/subspaces/{subspace_id}/allowances/users";
+  }
+  // GroupGrants returns all the grants for groups.
+  rpc GroupGrants(QueryGroupGrantsRequest) returns (QueryGroupGrantsResponse) {
+    option (google.api.http).get =
+        "/desmos/subspaces/v3/subspaces/{subspace_id}/allowances/groups";
+  }
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -260,4 +271,76 @@ message PermissionDetail {
     // Permissions set to the group
     repeated string permission = 2;
   }
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// QueryUserGrantsRequest is the request type for the Query/UserGrants RPC
+// method
+message QueryUserGrantsRequest {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  // the id of the subspace where the granter grants the allowance to the
+  // grantee
+  uint64 subspace_id = 1 [ (gogoproto.moretags) = "yaml:\"subspace_id\"" ];
+
+  // (optional) the address of the user granting an allowance of their funds
+  string granter = 2 [ (gogoproto.moretags) = "yaml:\"granter\"" ];
+
+  // (Optional) the address of the user being granted an allowance of another
+  // user's funds
+  string grantee = 3 [ (gogoproto.moretags) = "yaml:\"grantee\"" ];
+
+  // pagination defines an pagination for the request
+  cosmos.base.query.v1beta1.PageRequest pagination = 4;
+}
+
+// QueryUserGrantsResponse is the response type for the Query/UserGrants RPC
+// method
+message QueryUserGrantsResponse {
+  // grants are allowance's granted for grantee by granter
+  repeated UserGrant grants = 1 [
+    (gogoproto.moretags) = "yaml:\"grants\"",
+    (gogoproto.nullable) = false
+  ];
+
+  // pagination defines an pagination for the response
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// QueryGroupGrantsRequest is the request type for the Query/GroupGrants RPC
+// method
+message QueryGroupGrantsRequest {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  // the id of the subspace where the granter grants the allowance to the
+  // grantee
+  uint64 subspace_id = 1 [ (gogoproto.moretags) = "yaml:\"subspace_id\"" ];
+
+  // (optional) the address of the user granting an allowance of their funds
+  string granter = 2 [ (gogoproto.moretags) = "yaml:\"granter\"" ];
+
+  // (Optional) the id of the group being granted an allowance of another user's
+  // funds
+  uint32 group_id = 3 [ (gogoproto.moretags) = "yaml:\"group_id\"" ];
+
+  // pagination defines an pagination for the request
+  cosmos.base.query.v1beta1.PageRequest pagination = 4;
+}
+
+// QueryGroupGrantsResponse is the response type for the Query/GroupGrants RPC
+// method
+message QueryGroupGrantsResponse {
+  // grants are allowance's granted for grantee by granter
+  repeated GroupGrant grants = 1 [
+    (gogoproto.moretags) = "yaml:\"grants\"",
+    (gogoproto.nullable) = false
+  ];
+
+  // pagination defines an pagination for the response
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
