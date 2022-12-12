@@ -1,3 +1,39 @@
+function findMenuEntryById(id, generatedMenu) {
+  for (let item of generatedMenu) {
+    if (item.type === "category") {
+      // It's a category, search in the category sub items.
+      const entry = findMenuEntryById(id, item.items);
+      if (entry !== undefined) {
+        // Entry found return it.
+        return entry
+      }
+    } else if (item.type === "doc" && item.id === id) {
+      // Entry found
+      return item;
+    }
+  }
+
+  // No entry found with the provided id, return undefined
+  return undefined;
+}
+
+function convertPageWithHrefToExternLinks(docs, generatedMenu) {
+  // Find the md pages that have the href field in the metadata.
+  const toPatch = docs.filter(doc => doc.frontMatter.href !== undefined);
+  for (let doc of toPatch) {
+    const entry = findMenuEntryById(doc.id, generatedMenu);
+    if (entry !== undefined) {
+      // Convert the menu entry in an external reference
+      entry.type = "link";
+      entry.href = doc.frontMatter.href;
+      // Remove the id field, is not allowed in the entries with type link.
+      delete entry["id"];
+    }
+  }
+
+  return generatedMenu;
+}
+
 module.exports = {
   title: 'Desmos documentation',
   staticDirectories: ['static'],
@@ -141,6 +177,10 @@ module.exports = {
           routeBasePath: '/',
           sidebarPath: require.resolve('./sidebars.js'),
           sidebarCollapsible: true,
+          async sidebarItemsGenerator({defaultSidebarItemsGenerator, ...args}) {
+            const defaultItems = await defaultSidebarItemsGenerator(args);
+            return convertPageWithHrefToExternLinks(args.docs, defaultItems);
+          },
           editUrl: 'https://github.com/desmos-labs/desmos/tree/master/docs',
           showLastUpdateTime: true,
           lastVersion: "current",

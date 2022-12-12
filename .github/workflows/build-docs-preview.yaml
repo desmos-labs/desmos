@@ -32,7 +32,7 @@ jobs:
 
       - name: Deploy preview to Netlify 🚀
         id: deploy-preview
-        uses: nwtgck/actions-netlify@v1.2
+        uses: nwtgck/actions-netlify@v2.0
         with:
           publish-dir: ./output
           deploy-message: "Deploy from GitHub Actions"
@@ -44,7 +44,7 @@ jobs:
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
 
       - name: Write preview url
-        uses: thollander/actions-comment-pull-request@v1
+        uses: thollander/actions-comment-pull-request@v2
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           message: '👀 Docs preview available here: ${{ steps.deploy-preview.outputs.deploy-url }}'

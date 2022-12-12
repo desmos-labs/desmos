@@ -23,7 +23,7 @@ jobs:
           go-version: 1.18
 
       - name: Compute diff 📜
-        uses: technote-space/get-diff-action@v6.1.1
+        uses: technote-space/get-diff-action@v6.1.2
         with:
           SUFFIX_FILTER: |
             .go
