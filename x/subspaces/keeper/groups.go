@@ -112,8 +112,7 @@ func (k Keeper) AddUserToGroup(ctx sdk.Context, subspaceID uint64, groupID uint3
 	if err != nil {
 		panic(err)
 	}
-	accExists := k.ak.HasAccount(ctx, userAcc)
-	if !accExists {
+	if !k.ak.HasAccount(ctx, userAcc) {
 		defer telemetry.IncrCounter(1, "new", "account")
 		k.ak.SetAccount(ctx, k.ak.NewAccountWithAddress(ctx, userAcc))
 	}

@@ -28,6 +28,7 @@ type KeeperTestsuite struct {
 	legacyAminoCdc *codec.LegacyAmino
 	ctx            sdk.Context
 	k              keeper.Keeper
+	ak             authkeeper.AccountKeeper
 	paramsKeeper   paramskeeper.Keeper
 	storeKey       sdk.StoreKey
 }
@@ -39,7 +40,7 @@ func TestKeeperTestSuite(t *testing.T) {
 func (suite *KeeperTestsuite) SetupTest() {
 	// Define store keys
 	keys := sdk.NewMemoryStoreKeys(types.StoreKey, paramstypes.StoreKey)
-
+	tKeys := sdk.NewTransientStoreKeys(paramstypes.StoreKey)
 	suite.storeKey = keys[types.StoreKey]
 
 	// Create an in-memory db

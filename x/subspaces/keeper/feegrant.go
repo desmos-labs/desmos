@@ -2,12 +2,21 @@ package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/cosmos/cosmos-sdk/x/feegrant"
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
 // GrantUserAllowance creates a new grant
 func (k Keeper) GrantUserAllowance(ctx sdk.Context, subspaceID uint64, granter, grantee string, feeAllowance feegrant.FeeAllowanceI) error {
+	granteeAddr, err := sdk.AccAddressFromBech32(grantee)
+	if err != nil {
+		return err
+	}
+	if !k.ak.HasAccount(ctx, granteeAddr) {
+		k.ak.SetAccount(ctx, authtypes.NewBaseAccountWithAddress(granteeAddr))
+	}
+
 	store := ctx.KVStore(k.storeKey)
 	key := types.UserAllowanceKey(subspaceID, granter, grantee)
 	grant, err := types.NewUserGrant(subspaceID, granter, grantee, feeAllowance)

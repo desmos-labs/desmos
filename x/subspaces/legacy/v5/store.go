@@ -11,10 +11,8 @@ import (
 // The migration includes the following:
 //
 // - create account for all the users inside groups if they don't have it;
-// - create account for all the users having permissions inside a subspace if they don't have it.
 func MigrateStore(ctx sdk.Context, key sdk.StoreKey, accountKeeper authkeeper.AccountKeeper) error {
-	migrateUserAccountsInUserGroups(ctx, key, accountKeeper)
-	return migrateUserAccountsInPermissions(ctx, key, accountKeeper)
+	return migrateUserAccountsInUserGroups(ctx, key, accountKeeper)
 }
 
 func migrateUserAccountsInUserGroups(ctx sdk.Context, key sdk.StoreKey, accountKeeper authkeeper.AccountKeeper) error {
@@ -24,26 +22,6 @@ func migrateUserAccountsInUserGroups(ctx sdk.Context, key sdk.StoreKey, accountK
 
 	for ; iterator.Valid(); iterator.Next() {
 		_, _, user := types.SplitGroupMemberStoreKey(append(types.GroupsMembersPrefix, iterator.Key()...))
-		userAcc, err := sdk.AccAddressFromBech32(user)
-		if err != nil {
-			return err
-		}
-
-		accExists := accountKeeper.HasAccount(ctx, userAcc)
-		if !accExists {
-			accountKeeper.SetAccount(ctx, accountKeeper.NewAccountWithAddress(ctx, userAcc))
-		}
-	}
-	return nil
-}
-
-func migrateUserAccountsInPermissions(ctx sdk.Context, key sdk.StoreKey, accountKeeper authkeeper.AccountKeeper) error {
-	permissionsStore := prefix.NewStore(ctx.KVStore(key), types.UserPermissionsStorePrefix)
-	iterator := permissionsStore.Iterator(nil, nil)
-	defer iterator.Close()
-
-	for ; iterator.Valid(); iterator.Next() {
-		_, _, user := types.SplitUserAddressPermissionKey(append(types.UserPermissionsStorePrefix, iterator.Key()...))
 		userAcc, err := sdk.AccAddressFromBech32(user)
 		if err != nil {
 			return err

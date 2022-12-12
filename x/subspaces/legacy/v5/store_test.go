@@ -57,18 +57,6 @@ func TestMigrateStore(t *testing.T) {
 				require.True(t, authKeeper.HasAccount(ctx, userAcc))
 			},
 		},
-		{
-			name: "accounts of all the users having subspace permissions are created properly",
-			store: func(ctx sdk.Context) {
-				store := ctx.KVStore(keys[types.StoreKey])
-				permission := types.NewUserPermission(1, 1, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm", types.NewPermissions("edit subspace"))
-				store.Set(types.UserPermissionStoreKey(1, 1, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm"), cdc.MustMarshal(&permission))
-			},
-			check: func(ctx sdk.Context) {
-				userAcc, _ := sdk.AccAddressFromBech32("cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
-				require.True(t, authKeeper.HasAccount(ctx, userAcc))
-			},
-		},
 	}
 
 	for _, tc := range testCases {
