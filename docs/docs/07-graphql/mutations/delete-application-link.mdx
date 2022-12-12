@@ -1,0 +1,25 @@
+---
+id: delete-application-link
+title: delete_application_link
+hide_table_of_contents: false
+---
+
+delete data from the table: "application_link"
+
+```graphql
+delete_application_link(
+  where: application_link_bool_exp!
+): application_link_mutation_response
+```
+
+### Arguments
+
+#### [`where`](#) ([`application_link_bool_exp!`](../inputs/application-link-bool-exp))
+
+filter the rows which have to be deleted
+
+### Type
+
+#### [`application_link_mutation_response`](../objects/application-link-mutation-response)
+
+response of any mutation on the table "application_link"

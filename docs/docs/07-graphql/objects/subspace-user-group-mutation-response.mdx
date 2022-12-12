@@ -1,0 +1,24 @@
+---
+id: subspace-user-group-mutation-response
+title: subspace_user_group_mutation_response
+hide_table_of_contents: false
+---
+
+response of any mutation on the table "subspace_user_group"
+
+```graphql
+type subspace_user_group_mutation_response {
+  affected_rows: Int!
+  returning: [subspace_user_group!]!
+}
+```
+
+### Fields
+
+#### [`affected_rows`](#) ([`Int!`](../scalars/int))
+
+number of rows affected by the mutation
+
+#### [`returning`](#) ([`[subspace_user_group!]!`](../objects/subspace-user-group))
+
+data from the rows affected by the mutation

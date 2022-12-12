@@ -1,0 +1,30 @@
+---
+id: insert-post-hashtag
+title: insert_post_hashtag
+hide_table_of_contents: false
+---
+
+insert data into the table: "post_hashtag"
+
+```graphql
+insert_post_hashtag(
+  objects: [post_hashtag_insert_input!]!
+  on_conflict: post_hashtag_on_conflict
+): post_hashtag_mutation_response
+```
+
+### Arguments
+
+#### [`objects`](#) ([`[post_hashtag_insert_input!]!`](../inputs/post-hashtag-insert-input))
+
+the rows to be inserted
+
+#### [`on_conflict`](#) ([`post_hashtag_on_conflict`](../inputs/post-hashtag-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`post_hashtag_mutation_response`](../objects/post-hashtag-mutation-response)
+
+response of any mutation on the table "post_hashtag"

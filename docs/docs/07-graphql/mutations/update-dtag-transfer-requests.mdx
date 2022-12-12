@@ -1,0 +1,35 @@
+---
+id: update-dtag-transfer-requests
+title: update_dtag_transfer_requests
+hide_table_of_contents: false
+---
+
+update data of the table: "dtag_transfer_requests"
+
+```graphql
+update_dtag_transfer_requests(
+  _inc: dtag_transfer_requests_inc_input
+  _set: dtag_transfer_requests_set_input
+  where: dtag_transfer_requests_bool_exp!
+): dtag_transfer_requests_mutation_response
+```
+
+### Arguments
+
+#### [`_inc`](#) ([`dtag_transfer_requests_inc_input`](../inputs/dtag-transfer-requests-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+#### [`_set`](#) ([`dtag_transfer_requests_set_input`](../inputs/dtag-transfer-requests-set-input))
+
+sets the columns of the filtered rows to the given values
+
+#### [`where`](#) ([`dtag_transfer_requests_bool_exp!`](../inputs/dtag-transfer-requests-bool-exp))
+
+filter the rows which have to be updated
+
+### Type
+
+#### [`dtag_transfer_requests_mutation_response`](../objects/dtag-transfer-requests-mutation-response)
+
+response of any mutation on the table "dtag_transfer_requests"

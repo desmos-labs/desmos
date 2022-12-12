@@ -1,0 +1,35 @@
+---
+id: update-subspace-user-permission
+title: update_subspace_user_permission
+hide_table_of_contents: false
+---
+
+update data of the table: "subspace_user_permission"
+
+```graphql
+update_subspace_user_permission(
+  _inc: subspace_user_permission_inc_input
+  _set: subspace_user_permission_set_input
+  where: subspace_user_permission_bool_exp!
+): subspace_user_permission_mutation_response
+```
+
+### Arguments
+
+#### [`_inc`](#) ([`subspace_user_permission_inc_input`](../inputs/subspace-user-permission-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+#### [`_set`](#) ([`subspace_user_permission_set_input`](../inputs/subspace-user-permission-set-input))
+
+sets the columns of the filtered rows to the given values
+
+#### [`where`](#) ([`subspace_user_permission_bool_exp!`](../inputs/subspace-user-permission-bool-exp))
+
+filter the rows which have to be updated
+
+### Type
+
+#### [`subspace_user_permission_mutation_response`](../objects/subspace-user-permission-mutation-response)
+
+response of any mutation on the table "subspace_user_permission"

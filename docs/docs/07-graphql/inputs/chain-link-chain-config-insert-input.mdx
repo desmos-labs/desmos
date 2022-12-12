@@ -1,0 +1,23 @@
+---
+id: chain-link-chain-config-insert-input
+title: chain_link_chain_config_insert_input
+hide_table_of_contents: false
+---
+
+input type for inserting data into table "chain_link_chain_config"
+
+```graphql
+input chain_link_chain_config_insert_input {
+  chain_links: chain_link_arr_rel_insert_input
+  id: Int
+  name: String
+}
+```
+
+### Fields
+
+#### [`chain_links`](#) ([`chain_link_arr_rel_insert_input`](../inputs/chain-link-arr-rel-insert-input))
+
+#### [`id`](#) ([`Int`](../scalars/int))
+
+#### [`name`](#) ([`String`](../scalars/string))

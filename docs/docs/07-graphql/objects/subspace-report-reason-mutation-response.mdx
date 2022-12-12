@@ -1,0 +1,24 @@
+---
+id: subspace-report-reason-mutation-response
+title: subspace_report_reason_mutation_response
+hide_table_of_contents: false
+---
+
+response of any mutation on the table "subspace_report_reason"
+
+```graphql
+type subspace_report_reason_mutation_response {
+  affected_rows: Int!
+  returning: [subspace_report_reason!]!
+}
+```
+
+### Fields
+
+#### [`affected_rows`](#) ([`Int!`](../scalars/int))
+
+number of rows affected by the mutation
+
+#### [`returning`](#) ([`[subspace_report_reason!]!`](../objects/subspace-report-reason))
+
+data from the rows affected by the mutation

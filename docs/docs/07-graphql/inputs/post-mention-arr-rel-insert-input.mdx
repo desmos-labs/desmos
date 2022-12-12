@@ -1,0 +1,22 @@
+---
+id: post-mention-arr-rel-insert-input
+title: post_mention_arr_rel_insert_input
+hide_table_of_contents: false
+---
+
+input type for inserting array relation for remote table "post_mention"
+
+```graphql
+input post_mention_arr_rel_insert_input {
+  data: [post_mention_insert_input!]!
+  on_conflict: post_mention_on_conflict
+}
+```
+
+### Fields
+
+#### [`data`](#) ([`[post_mention_insert_input!]!`](../inputs/post-mention-insert-input))
+
+#### [`on_conflict`](#) ([`post_mention_on_conflict`](../inputs/post-mention-on-conflict))
+
+on conflict condition

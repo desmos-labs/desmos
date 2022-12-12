@@ -1,0 +1,45 @@
+---
+id: profiles-params-aggregate
+title: profiles_params_aggregate
+hide_table_of_contents: false
+---
+
+fetch aggregated fields from the table: "profiles_params"
+
+```graphql
+profiles_params_aggregate(
+  distinct_on: [profiles_params_select_column!]
+  limit: Int
+  offset: Int
+  order_by: [profiles_params_order_by!]
+  where: profiles_params_bool_exp
+): profiles_params_aggregate!
+```
+
+### Arguments
+
+#### [`distinct_on`](#) ([`[profiles_params_select_column!]`](../enums/profiles-params-select-column))
+
+distinct select on columns
+
+#### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+#### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+#### [`order_by`](#) ([`[profiles_params_order_by!]`](../inputs/profiles-params-order-by))
+
+sort the rows by one or more columns
+
+#### [`where`](#) ([`profiles_params_bool_exp`](../inputs/profiles-params-bool-exp))
+
+filter the rows returned
+
+### Type
+
+#### [`profiles_params_aggregate`](../objects/profiles-params-aggregate)
+
+aggregated selection of "profiles_params"

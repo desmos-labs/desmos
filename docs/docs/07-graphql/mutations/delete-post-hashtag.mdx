@@ -1,0 +1,25 @@
+---
+id: delete-post-hashtag
+title: delete_post_hashtag
+hide_table_of_contents: false
+---
+
+delete data from the table: "post_hashtag"
+
+```graphql
+delete_post_hashtag(
+  where: post_hashtag_bool_exp!
+): post_hashtag_mutation_response
+```
+
+### Arguments
+
+#### [`where`](#) ([`post_hashtag_bool_exp!`](../inputs/post-hashtag-bool-exp))
+
+filter the rows which have to be deleted
+
+### Type
+
+#### [`post_hashtag_mutation_response`](../objects/post-hashtag-mutation-response)
+
+response of any mutation on the table "post_hashtag"

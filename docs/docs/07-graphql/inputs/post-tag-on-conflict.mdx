@@ -1,0 +1,23 @@
+---
+id: post-tag-on-conflict
+title: post_tag_on_conflict
+hide_table_of_contents: false
+---
+
+on conflict condition type for table "post_tag"
+
+```graphql
+input post_tag_on_conflict {
+  constraint: post_tag_constraint!
+  update_columns: [post_tag_update_column!]!
+  where: post_tag_bool_exp
+}
+```
+
+### Fields
+
+#### [`constraint`](#) ([`post_tag_constraint!`](../enums/post-tag-constraint))
+
+#### [`update_columns`](#) ([`[post_tag_update_column!]!`](../enums/post-tag-update-column))
+
+#### [`where`](#) ([`post_tag_bool_exp`](../inputs/post-tag-bool-exp))

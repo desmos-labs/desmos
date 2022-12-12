@@ -1,0 +1,59 @@
+---
+id: profile-insert-input
+title: profile_insert_input
+hide_table_of_contents: false
+---
+
+input type for inserting data into table "profile"
+
+```graphql
+input profile_insert_input {
+  address: String
+  application_links: application_link_arr_rel_insert_input
+  bio: String
+  blocked_users: user_block_arr_rel_insert_input
+  chain_links: chain_link_arr_rel_insert_input
+  cover_pic: String
+  creation_time: timestamp
+  dtag: String
+  followage: user_relationship_arr_rel_insert_input
+  following: user_relationship_arr_rel_insert_input
+  height: bigint
+  incoming_dtag_transfer_requests: dtag_transfer_requests_arr_rel_insert_input
+  nickname: String
+  outgoing_dtag_transfer_requests: dtag_transfer_requests_arr_rel_insert_input
+  profile_pic: String
+}
+```
+
+### Fields
+
+#### [`address`](#) ([`String`](../scalars/string))
+
+#### [`application_links`](#) ([`application_link_arr_rel_insert_input`](../inputs/application-link-arr-rel-insert-input))
+
+#### [`bio`](#) ([`String`](../scalars/string))
+
+#### [`blocked_users`](#) ([`user_block_arr_rel_insert_input`](../inputs/user-block-arr-rel-insert-input))
+
+#### [`chain_links`](#) ([`chain_link_arr_rel_insert_input`](../inputs/chain-link-arr-rel-insert-input))
+
+#### [`cover_pic`](#) ([`String`](../scalars/string))
+
+#### [`creation_time`](#) ([`timestamp`](../scalars/timestamp))
+
+#### [`dtag`](#) ([`String`](../scalars/string))
+
+#### [`followage`](#) ([`user_relationship_arr_rel_insert_input`](../inputs/user-relationship-arr-rel-insert-input))
+
+#### [`following`](#) ([`user_relationship_arr_rel_insert_input`](../inputs/user-relationship-arr-rel-insert-input))
+
+#### [`height`](#) ([`bigint`](../scalars/bigint))
+
+#### [`incoming_dtag_transfer_requests`](#) ([`dtag_transfer_requests_arr_rel_insert_input`](../inputs/dtag-transfer-requests-arr-rel-insert-input))
+
+#### [`nickname`](#) ([`String`](../scalars/string))
+
+#### [`outgoing_dtag_transfer_requests`](#) ([`dtag_transfer_requests_arr_rel_insert_input`](../inputs/dtag-transfer-requests-arr-rel-insert-input))
+
+#### [`profile_pic`](#) ([`String`](../scalars/string))

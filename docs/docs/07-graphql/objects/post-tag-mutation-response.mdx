@@ -1,0 +1,24 @@
+---
+id: post-tag-mutation-response
+title: post_tag_mutation_response
+hide_table_of_contents: false
+---
+
+response of any mutation on the table "post_tag"
+
+```graphql
+type post_tag_mutation_response {
+  affected_rows: Int!
+  returning: [post_tag!]!
+}
+```
+
+### Fields
+
+#### [`affected_rows`](#) ([`Int!`](../scalars/int))
+
+number of rows affected by the mutation
+
+#### [`returning`](#) ([`[post_tag!]!`](../objects/post-tag))
+
+data from the rows affected by the mutation

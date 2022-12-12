@@ -1,0 +1,35 @@
+---
+id: update-chain-link
+title: update_chain_link
+hide_table_of_contents: false
+---
+
+update data of the table: "chain_link"
+
+```graphql
+update_chain_link(
+  _inc: chain_link_inc_input
+  _set: chain_link_set_input
+  where: chain_link_bool_exp!
+): chain_link_mutation_response
+```
+
+### Arguments
+
+#### [`_inc`](#) ([`chain_link_inc_input`](../inputs/chain-link-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+#### [`_set`](#) ([`chain_link_set_input`](../inputs/chain-link-set-input))
+
+sets the columns of the filtered rows to the given values
+
+#### [`where`](#) ([`chain_link_bool_exp!`](../inputs/chain-link-bool-exp))
+
+filter the rows which have to be updated
+
+### Type
+
+#### [`chain_link_mutation_response`](../objects/chain-link-mutation-response)
+
+response of any mutation on the table "chain_link"

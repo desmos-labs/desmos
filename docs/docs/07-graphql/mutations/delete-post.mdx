@@ -1,0 +1,25 @@
+---
+id: delete-post
+title: delete_post
+hide_table_of_contents: false
+---
+
+delete data from the table: "post"
+
+```graphql
+delete_post(
+  where: post_bool_exp!
+): post_mutation_response
+```
+
+### Arguments
+
+#### [`where`](#) ([`post_bool_exp!`](../inputs/post-bool-exp))
+
+filter the rows which have to be deleted
+
+### Type
+
+#### [`post_mutation_response`](../objects/post-mutation-response)
+
+response of any mutation on the table "post"

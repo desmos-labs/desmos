@@ -1,0 +1,22 @@
+---
+id: profile-obj-rel-insert-input
+title: profile_obj_rel_insert_input
+hide_table_of_contents: false
+---
+
+input type for inserting object relation for remote table "profile"
+
+```graphql
+input profile_obj_rel_insert_input {
+  data: profile_insert_input!
+  on_conflict: profile_on_conflict
+}
+```
+
+### Fields
+
+#### [`data`](#) ([`profile_insert_input!`](../inputs/profile-insert-input))
+
+#### [`on_conflict`](#) ([`profile_on_conflict`](../inputs/profile-on-conflict))
+
+on conflict condition

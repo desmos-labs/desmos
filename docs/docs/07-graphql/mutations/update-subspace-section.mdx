@@ -1,0 +1,35 @@
+---
+id: update-subspace-section
+title: update_subspace_section
+hide_table_of_contents: false
+---
+
+update data of the table: "subspace_section"
+
+```graphql
+update_subspace_section(
+  _inc: subspace_section_inc_input
+  _set: subspace_section_set_input
+  where: subspace_section_bool_exp!
+): subspace_section_mutation_response
+```
+
+### Arguments
+
+#### [`_inc`](#) ([`subspace_section_inc_input`](../inputs/subspace-section-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+#### [`_set`](#) ([`subspace_section_set_input`](../inputs/subspace-section-set-input))
+
+sets the columns of the filtered rows to the given values
+
+#### [`where`](#) ([`subspace_section_bool_exp!`](../inputs/subspace-section-bool-exp))
+
+filter the rows which have to be updated
+
+### Type
+
+#### [`subspace_section_mutation_response`](../objects/subspace-section-mutation-response)
+
+response of any mutation on the table "subspace_section"

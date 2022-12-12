@@ -1,0 +1,25 @@
+---
+id: delete-post-mention
+title: delete_post_mention
+hide_table_of_contents: false
+---
+
+delete data from the table: "post_mention"
+
+```graphql
+delete_post_mention(
+  where: post_mention_bool_exp!
+): post_mention_mutation_response
+```
+
+### Arguments
+
+#### [`where`](#) ([`post_mention_bool_exp!`](../inputs/post-mention-bool-exp))
+
+filter the rows which have to be deleted
+
+### Type
+
+#### [`post_mention_mutation_response`](../objects/post-mention-mutation-response)
+
+response of any mutation on the table "post_mention"

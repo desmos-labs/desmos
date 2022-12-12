@@ -1,0 +1,22 @@
+---
+id: dtag-transfer-requests-arr-rel-insert-input
+title: dtag_transfer_requests_arr_rel_insert_input
+hide_table_of_contents: false
+---
+
+input type for inserting array relation for remote table "dtag_transfer_requests"
+
+```graphql
+input dtag_transfer_requests_arr_rel_insert_input {
+  data: [dtag_transfer_requests_insert_input!]!
+  on_conflict: dtag_transfer_requests_on_conflict
+}
+```
+
+### Fields
+
+#### [`data`](#) ([`[dtag_transfer_requests_insert_input!]!`](../inputs/dtag-transfer-requests-insert-input))
+
+#### [`on_conflict`](#) ([`dtag_transfer_requests_on_conflict`](../inputs/dtag-transfer-requests-on-conflict))
+
+on conflict condition

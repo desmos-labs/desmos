@@ -1,0 +1,30 @@
+---
+id: insert-report
+title: insert_report
+hide_table_of_contents: false
+---
+
+insert data into the table: "report"
+
+```graphql
+insert_report(
+  objects: [report_insert_input!]!
+  on_conflict: report_on_conflict
+): report_mutation_response
+```
+
+### Arguments
+
+#### [`objects`](#) ([`[report_insert_input!]!`](../inputs/report-insert-input))
+
+the rows to be inserted
+
+#### [`on_conflict`](#) ([`report_on_conflict`](../inputs/report-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`report_mutation_response`](../objects/report-mutation-response)
+
+response of any mutation on the table "report"

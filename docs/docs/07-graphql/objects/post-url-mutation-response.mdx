@@ -1,0 +1,24 @@
+---
+id: post-url-mutation-response
+title: post_url_mutation_response
+hide_table_of_contents: false
+---
+
+response of any mutation on the table "post_url"
+
+```graphql
+type post_url_mutation_response {
+  affected_rows: Int!
+  returning: [post_url!]!
+}
+```
+
+### Fields
+
+#### [`affected_rows`](#) ([`Int!`](../scalars/int))
+
+number of rows affected by the mutation
+
+#### [`returning`](#) ([`[post_url!]!`](../objects/post-url))
+
+data from the rows affected by the mutation

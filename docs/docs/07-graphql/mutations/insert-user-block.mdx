@@ -1,0 +1,30 @@
+---
+id: insert-user-block
+title: insert_user_block
+hide_table_of_contents: false
+---
+
+insert data into the table: "user_block"
+
+```graphql
+insert_user_block(
+  objects: [user_block_insert_input!]!
+  on_conflict: user_block_on_conflict
+): user_block_mutation_response
+```
+
+### Arguments
+
+#### [`objects`](#) ([`[user_block_insert_input!]!`](../inputs/user-block-insert-input))
+
+the rows to be inserted
+
+#### [`on_conflict`](#) ([`user_block_on_conflict`](../inputs/user-block-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`user_block_mutation_response`](../objects/user-block-mutation-response)
+
+response of any mutation on the table "user_block"

@@ -1,0 +1,33 @@
+---
+id: update-subspace-user-permission-by-pk
+title: update_subspace_user_permission_by_pk
+hide_table_of_contents: false
+---
+
+update single row of the table: "subspace_user_permission"
+
+```graphql
+update_subspace_user_permission_by_pk(
+  _inc: subspace_user_permission_inc_input
+  _set: subspace_user_permission_set_input
+  pk_columns: subspace_user_permission_pk_columns_input!
+): subspace_user_permission
+```
+
+### Arguments
+
+#### [`_inc`](#) ([`subspace_user_permission_inc_input`](../inputs/subspace-user-permission-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+#### [`_set`](#) ([`subspace_user_permission_set_input`](../inputs/subspace-user-permission-set-input))
+
+sets the columns of the filtered rows to the given values
+
+#### [`pk_columns`](#) ([`subspace_user_permission_pk_columns_input!`](../inputs/subspace-user-permission-pk-columns-input))
+
+### Type
+
+#### [`subspace_user_permission`](../objects/subspace-user-permission)
+
+columns and relationships of "subspace_user_permission"

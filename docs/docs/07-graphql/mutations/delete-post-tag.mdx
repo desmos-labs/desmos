@@ -1,0 +1,25 @@
+---
+id: delete-post-tag
+title: delete_post_tag
+hide_table_of_contents: false
+---
+
+delete data from the table: "post_tag"
+
+```graphql
+delete_post_tag(
+  where: post_tag_bool_exp!
+): post_tag_mutation_response
+```
+
+### Arguments
+
+#### [`where`](#) ([`post_tag_bool_exp!`](../inputs/post-tag-bool-exp))
+
+filter the rows which have to be deleted
+
+### Type
+
+#### [`post_tag_mutation_response`](../objects/post-tag-mutation-response)
+
+response of any mutation on the table "post_tag"

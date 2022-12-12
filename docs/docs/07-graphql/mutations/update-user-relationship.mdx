@@ -1,0 +1,35 @@
+---
+id: update-user-relationship
+title: update_user_relationship
+hide_table_of_contents: false
+---
+
+update data of the table: "user_relationship"
+
+```graphql
+update_user_relationship(
+  _inc: user_relationship_inc_input
+  _set: user_relationship_set_input
+  where: user_relationship_bool_exp!
+): user_relationship_mutation_response
+```
+
+### Arguments
+
+#### [`_inc`](#) ([`user_relationship_inc_input`](../inputs/user-relationship-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+#### [`_set`](#) ([`user_relationship_set_input`](../inputs/user-relationship-set-input))
+
+sets the columns of the filtered rows to the given values
+
+#### [`where`](#) ([`user_relationship_bool_exp!`](../inputs/user-relationship-bool-exp))
+
+filter the rows which have to be updated
+
+### Type
+
+#### [`user_relationship_mutation_response`](../objects/user-relationship-mutation-response)
+
+response of any mutation on the table "user_relationship"

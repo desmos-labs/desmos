@@ -1,0 +1,24 @@
+---
+id: posts-params-mutation-response
+title: posts_params_mutation_response
+hide_table_of_contents: false
+---
+
+response of any mutation on the table "posts_params"
+
+```graphql
+type posts_params_mutation_response {
+  affected_rows: Int!
+  returning: [posts_params!]!
+}
+```
+
+### Fields
+
+#### [`affected_rows`](#) ([`Int!`](../scalars/int))
+
+number of rows affected by the mutation
+
+#### [`returning`](#) ([`[posts_params!]!`](../objects/posts-params))
+
+data from the rows affected by the mutation

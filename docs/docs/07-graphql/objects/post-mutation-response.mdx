@@ -1,0 +1,24 @@
+---
+id: post-mutation-response
+title: post_mutation_response
+hide_table_of_contents: false
+---
+
+response of any mutation on the table "post"
+
+```graphql
+type post_mutation_response {
+  affected_rows: Int!
+  returning: [post!]!
+}
+```
+
+### Fields
+
+#### [`affected_rows`](#) ([`Int!`](../scalars/int))
+
+number of rows affected by the mutation
+
+#### [`returning`](#) ([`[post!]!`](../objects/post))
+
+data from the rows affected by the mutation

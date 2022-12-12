@@ -1,0 +1,24 @@
+---
+id: chain-link-mutation-response
+title: chain_link_mutation_response
+hide_table_of_contents: false
+---
+
+response of any mutation on the table "chain_link"
+
+```graphql
+type chain_link_mutation_response {
+  affected_rows: Int!
+  returning: [chain_link!]!
+}
+```
+
+### Fields
+
+#### [`affected_rows`](#) ([`Int!`](../scalars/int))
+
+number of rows affected by the mutation
+
+#### [`returning`](#) ([`[chain_link!]!`](../objects/chain-link))
+
+data from the rows affected by the mutation

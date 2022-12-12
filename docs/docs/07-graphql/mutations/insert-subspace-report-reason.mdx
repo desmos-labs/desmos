@@ -1,0 +1,30 @@
+---
+id: insert-subspace-report-reason
+title: insert_subspace_report_reason
+hide_table_of_contents: false
+---
+
+insert data into the table: "subspace_report_reason"
+
+```graphql
+insert_subspace_report_reason(
+  objects: [subspace_report_reason_insert_input!]!
+  on_conflict: subspace_report_reason_on_conflict
+): subspace_report_reason_mutation_response
+```
+
+### Arguments
+
+#### [`objects`](#) ([`[subspace_report_reason_insert_input!]!`](../inputs/subspace-report-reason-insert-input))
+
+the rows to be inserted
+
+#### [`on_conflict`](#) ([`subspace_report_reason_on_conflict`](../inputs/subspace-report-reason-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`subspace_report_reason_mutation_response`](../objects/subspace-report-reason-mutation-response)
+
+response of any mutation on the table "subspace_report_reason"

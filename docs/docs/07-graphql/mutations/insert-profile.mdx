@@ -1,0 +1,30 @@
+---
+id: insert-profile
+title: insert_profile
+hide_table_of_contents: false
+---
+
+insert data into the table: "profile"
+
+```graphql
+insert_profile(
+  objects: [profile_insert_input!]!
+  on_conflict: profile_on_conflict
+): profile_mutation_response
+```
+
+### Arguments
+
+#### [`objects`](#) ([`[profile_insert_input!]!`](../inputs/profile-insert-input))
+
+the rows to be inserted
+
+#### [`on_conflict`](#) ([`profile_on_conflict`](../inputs/profile-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`profile_mutation_response`](../objects/profile-mutation-response)
+
+response of any mutation on the table "profile"

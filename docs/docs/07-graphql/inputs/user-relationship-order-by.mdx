@@ -1,0 +1,35 @@
+---
+id: user-relationship-order-by
+title: user_relationship_order_by
+hide_table_of_contents: false
+---
+
+Ordering options when selecting data from "user_relationship".
+
+```graphql
+input user_relationship_order_by {
+  counterparty: profile_order_by
+  counterparty_address: order_by
+  creator: profile_order_by
+  creator_address: order_by
+  height: order_by
+  subspace: subspace_order_by
+  subspace_id: order_by
+}
+```
+
+### Fields
+
+#### [`counterparty`](#) ([`profile_order_by`](../inputs/profile-order-by))
+
+#### [`counterparty_address`](#) ([`order_by`](../enums/order-by))
+
+#### [`creator`](#) ([`profile_order_by`](../inputs/profile-order-by))
+
+#### [`creator_address`](#) ([`order_by`](../enums/order-by))
+
+#### [`height`](#) ([`order_by`](../enums/order-by))
+
+#### [`subspace`](#) ([`subspace_order_by`](../inputs/subspace-order-by))
+
+#### [`subspace_id`](#) ([`order_by`](../enums/order-by))

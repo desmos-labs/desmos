@@ -1,0 +1,33 @@
+---
+id: update-subspace-free-text-params-by-pk
+title: update_subspace_free_text_params_by_pk
+hide_table_of_contents: false
+---
+
+update single row of the table: "subspace_free_text_params"
+
+```graphql
+update_subspace_free_text_params_by_pk(
+  _inc: subspace_free_text_params_inc_input
+  _set: subspace_free_text_params_set_input
+  pk_columns: subspace_free_text_params_pk_columns_input!
+): subspace_free_text_params
+```
+
+### Arguments
+
+#### [`_inc`](#) ([`subspace_free_text_params_inc_input`](../inputs/subspace-free-text-params-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+#### [`_set`](#) ([`subspace_free_text_params_set_input`](../inputs/subspace-free-text-params-set-input))
+
+sets the columns of the filtered rows to the given values
+
+#### [`pk_columns`](#) ([`subspace_free_text_params_pk_columns_input!`](../inputs/subspace-free-text-params-pk-columns-input))
+
+### Type
+
+#### [`subspace_free_text_params`](../objects/subspace-free-text-params)
+
+columns and relationships of "subspace_free_text_params"

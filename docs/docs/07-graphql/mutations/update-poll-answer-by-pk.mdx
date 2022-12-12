@@ -1,0 +1,33 @@
+---
+id: update-poll-answer-by-pk
+title: update_poll_answer_by_pk
+hide_table_of_contents: false
+---
+
+update single row of the table: "poll_answer"
+
+```graphql
+update_poll_answer_by_pk(
+  _inc: poll_answer_inc_input
+  _set: poll_answer_set_input
+  pk_columns: poll_answer_pk_columns_input!
+): poll_answer
+```
+
+### Arguments
+
+#### [`_inc`](#) ([`poll_answer_inc_input`](../inputs/poll-answer-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+#### [`_set`](#) ([`poll_answer_set_input`](../inputs/poll-answer-set-input))
+
+sets the columns of the filtered rows to the given values
+
+#### [`pk_columns`](#) ([`poll_answer_pk_columns_input!`](../inputs/poll-answer-pk-columns-input))
+
+### Type
+
+#### [`poll_answer`](../objects/poll-answer)
+
+columns and relationships of "poll_answer"

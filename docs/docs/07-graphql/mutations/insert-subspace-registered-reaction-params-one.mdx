@@ -1,0 +1,30 @@
+---
+id: insert-subspace-registered-reaction-params-one
+title: insert_subspace_registered_reaction_params_one
+hide_table_of_contents: false
+---
+
+insert a single row into the table: "subspace_registered_reaction_params"
+
+```graphql
+insert_subspace_registered_reaction_params_one(
+  object: subspace_registered_reaction_params_insert_input!
+  on_conflict: subspace_registered_reaction_params_on_conflict
+): subspace_registered_reaction_params
+```
+
+### Arguments
+
+#### [`object`](#) ([`subspace_registered_reaction_params_insert_input!`](../inputs/subspace-registered-reaction-params-insert-input))
+
+the row to be inserted
+
+#### [`on_conflict`](#) ([`subspace_registered_reaction_params_on_conflict`](../inputs/subspace-registered-reaction-params-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`subspace_registered_reaction_params`](../objects/subspace-registered-reaction-params)
+
+columns and relationships of "subspace_registered_reaction_params"

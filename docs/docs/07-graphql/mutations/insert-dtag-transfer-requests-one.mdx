@@ -1,0 +1,30 @@
+---
+id: insert-dtag-transfer-requests-one
+title: insert_dtag_transfer_requests_one
+hide_table_of_contents: false
+---
+
+insert a single row into the table: "dtag_transfer_requests"
+
+```graphql
+insert_dtag_transfer_requests_one(
+  object: dtag_transfer_requests_insert_input!
+  on_conflict: dtag_transfer_requests_on_conflict
+): dtag_transfer_requests
+```
+
+### Arguments
+
+#### [`object`](#) ([`dtag_transfer_requests_insert_input!`](../inputs/dtag-transfer-requests-insert-input))
+
+the row to be inserted
+
+#### [`on_conflict`](#) ([`dtag_transfer_requests_on_conflict`](../inputs/dtag-transfer-requests-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`dtag_transfer_requests`](../objects/dtag-transfer-requests)
+
+columns and relationships of "dtag_transfer_requests"

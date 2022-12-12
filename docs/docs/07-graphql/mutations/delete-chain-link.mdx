@@ -1,0 +1,25 @@
+---
+id: delete-chain-link
+title: delete_chain_link
+hide_table_of_contents: false
+---
+
+delete data from the table: "chain_link"
+
+```graphql
+delete_chain_link(
+  where: chain_link_bool_exp!
+): chain_link_mutation_response
+```
+
+### Arguments
+
+#### [`where`](#) ([`chain_link_bool_exp!`](../inputs/chain-link-bool-exp))
+
+filter the rows which have to be deleted
+
+### Type
+
+#### [`chain_link_mutation_response`](../objects/chain-link-mutation-response)
+
+response of any mutation on the table "chain_link"

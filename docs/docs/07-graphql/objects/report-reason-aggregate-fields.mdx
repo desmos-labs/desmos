@@ -1,0 +1,51 @@
+---
+id: report-reason-aggregate-fields
+title: report_reason_aggregate_fields
+hide_table_of_contents: false
+---
+
+aggregate fields of "report_reason"
+
+```graphql
+type report_reason_aggregate_fields {
+  avg: report_reason_avg_fields
+  count(columns: [report_reason_select_column!], distinct: Boolean): Int!
+  max: report_reason_max_fields
+  min: report_reason_min_fields
+  stddev: report_reason_stddev_fields
+  stddev_pop: report_reason_stddev_pop_fields
+  stddev_samp: report_reason_stddev_samp_fields
+  sum: report_reason_sum_fields
+  var_pop: report_reason_var_pop_fields
+  var_samp: report_reason_var_samp_fields
+  variance: report_reason_variance_fields
+}
+```
+
+### Fields
+
+#### [`avg`](#) ([`report_reason_avg_fields`](../objects/report-reason-avg-fields))
+
+#### [`count`](#) ([`Int!`](../scalars/int))
+
+- ##### [`columns`](#) ([`[report_reason_select_column!]`](../enums/report-reason-select-column))
+
+- ##### [`distinct`](#) ([`Boolean`](../scalars/boolean))
+
+#### [`max`](#) ([`report_reason_max_fields`](../objects/report-reason-max-fields))
+
+#### [`min`](#) ([`report_reason_min_fields`](../objects/report-reason-min-fields))
+
+#### [`stddev`](#) ([`report_reason_stddev_fields`](../objects/report-reason-stddev-fields))
+
+#### [`stddev_pop`](#) ([`report_reason_stddev_pop_fields`](../objects/report-reason-stddev-pop-fields))
+
+#### [`stddev_samp`](#) ([`report_reason_stddev_samp_fields`](../objects/report-reason-stddev-samp-fields))
+
+#### [`sum`](#) ([`report_reason_sum_fields`](../objects/report-reason-sum-fields))
+
+#### [`var_pop`](#) ([`report_reason_var_pop_fields`](../objects/report-reason-var-pop-fields))
+
+#### [`var_samp`](#) ([`report_reason_var_samp_fields`](../objects/report-reason-var-samp-fields))
+
+#### [`variance`](#) ([`report_reason_variance_fields`](../objects/report-reason-variance-fields))

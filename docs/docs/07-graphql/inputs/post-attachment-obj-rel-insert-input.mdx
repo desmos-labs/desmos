@@ -1,0 +1,22 @@
+---
+id: post-attachment-obj-rel-insert-input
+title: post_attachment_obj_rel_insert_input
+hide_table_of_contents: false
+---
+
+input type for inserting object relation for remote table "post_attachment"
+
+```graphql
+input post_attachment_obj_rel_insert_input {
+  data: post_attachment_insert_input!
+  on_conflict: post_attachment_on_conflict
+}
+```
+
+### Fields
+
+#### [`data`](#) ([`post_attachment_insert_input!`](../inputs/post-attachment-insert-input))
+
+#### [`on_conflict`](#) ([`post_attachment_on_conflict`](../inputs/post-attachment-on-conflict))
+
+on conflict condition

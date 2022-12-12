@@ -1,0 +1,38 @@
+---
+id: application-link-oracle-request-insert-input
+title: application_link_oracle_request_insert_input
+hide_table_of_contents: false
+---
+
+input type for inserting data into table "application_link_oracle_request"
+
+```graphql
+input application_link_oracle_request_insert_input {
+  application_link: application_link_obj_rel_insert_input
+  application_link_id: bigint
+  call_data: jsonb
+  client_id: String
+  height: bigint
+  id: Int
+  request_id: String
+  script_id: String
+}
+```
+
+### Fields
+
+#### [`application_link`](#) ([`application_link_obj_rel_insert_input`](../inputs/application-link-obj-rel-insert-input))
+
+#### [`application_link_id`](#) ([`bigint`](../scalars/bigint))
+
+#### [`call_data`](#) ([`jsonb`](../scalars/jsonb))
+
+#### [`client_id`](#) ([`String`](../scalars/string))
+
+#### [`height`](#) ([`bigint`](../scalars/bigint))
+
+#### [`id`](#) ([`Int`](../scalars/int))
+
+#### [`request_id`](#) ([`String`](../scalars/string))
+
+#### [`script_id`](#) ([`String`](../scalars/string))

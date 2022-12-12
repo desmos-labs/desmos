@@ -1,0 +1,54 @@
+---
+id: application-link-oracle-request-aggregate-fields
+title: application_link_oracle_request_aggregate_fields
+hide_table_of_contents: false
+---
+
+aggregate fields of "application_link_oracle_request"
+
+```graphql
+type application_link_oracle_request_aggregate_fields {
+  avg: application_link_oracle_request_avg_fields
+  count(
+    columns: [application_link_oracle_request_select_column!]
+    distinct: Boolean
+  ): Int!
+  max: application_link_oracle_request_max_fields
+  min: application_link_oracle_request_min_fields
+  stddev: application_link_oracle_request_stddev_fields
+  stddev_pop: application_link_oracle_request_stddev_pop_fields
+  stddev_samp: application_link_oracle_request_stddev_samp_fields
+  sum: application_link_oracle_request_sum_fields
+  var_pop: application_link_oracle_request_var_pop_fields
+  var_samp: application_link_oracle_request_var_samp_fields
+  variance: application_link_oracle_request_variance_fields
+}
+```
+
+### Fields
+
+#### [`avg`](#) ([`application_link_oracle_request_avg_fields`](../objects/application-link-oracle-request-avg-fields))
+
+#### [`count`](#) ([`Int!`](../scalars/int))
+
+- ##### [`columns`](#) ([`[application_link_oracle_request_select_column!]`](../enums/application-link-oracle-request-select-column))
+
+- ##### [`distinct`](#) ([`Boolean`](../scalars/boolean))
+
+#### [`max`](#) ([`application_link_oracle_request_max_fields`](../objects/application-link-oracle-request-max-fields))
+
+#### [`min`](#) ([`application_link_oracle_request_min_fields`](../objects/application-link-oracle-request-min-fields))
+
+#### [`stddev`](#) ([`application_link_oracle_request_stddev_fields`](../objects/application-link-oracle-request-stddev-fields))
+
+#### [`stddev_pop`](#) ([`application_link_oracle_request_stddev_pop_fields`](../objects/application-link-oracle-request-stddev-pop-fields))
+
+#### [`stddev_samp`](#) ([`application_link_oracle_request_stddev_samp_fields`](../objects/application-link-oracle-request-stddev-samp-fields))
+
+#### [`sum`](#) ([`application_link_oracle_request_sum_fields`](../objects/application-link-oracle-request-sum-fields))
+
+#### [`var_pop`](#) ([`application_link_oracle_request_var_pop_fields`](../objects/application-link-oracle-request-var-pop-fields))
+
+#### [`var_samp`](#) ([`application_link_oracle_request_var_samp_fields`](../objects/application-link-oracle-request-var-samp-fields))
+
+#### [`variance`](#) ([`application_link_oracle_request_variance_fields`](../objects/application-link-oracle-request-variance-fields))

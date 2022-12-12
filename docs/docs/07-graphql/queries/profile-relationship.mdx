@@ -1,0 +1,56 @@
+---
+id: profile-relationship
+title: profile_relationship
+hide_table_of_contents: false
+---
+
+
+fetch data from the table: "profile_relationship"
+
+```graphql
+profile_relationship(
+  distinct_on: [profile_relationship_select_column!]
+  limit: Int
+  offset: Int
+  order_by: [profile_relationship_order_by!]
+  where: profile_relationship_bool_exp
+): [profile_relationship!]!
+```
+
+
+### Arguments
+
+#### [`distinct_on`](#) ([`[profile_relationship_select_column!]`](../enums/profile-relationship-select-column))
+
+distinct select on columns
+
+
+#### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+
+#### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+
+#### [`order_by`](#) ([`[profile_relationship_order_by!]`](../inputs/profile-relationship-order-by))
+
+sort the rows by one or more columns
+
+
+#### [`where`](#) ([`profile_relationship_bool_exp`](../inputs/profile-relationship-bool-exp))
+
+filter the rows returned
+
+
+### Type
+
+#### [`profile_relationship`](../objects/profile-relationship)
+
+columns and relationships of "profile_relationship"
+
+
+
+

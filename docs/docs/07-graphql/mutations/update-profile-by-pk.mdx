@@ -1,0 +1,33 @@
+---
+id: update-profile-by-pk
+title: update_profile_by_pk
+hide_table_of_contents: false
+---
+
+update single row of the table: "profile"
+
+```graphql
+update_profile_by_pk(
+  _inc: profile_inc_input
+  _set: profile_set_input
+  pk_columns: profile_pk_columns_input!
+): profile
+```
+
+### Arguments
+
+#### [`_inc`](#) ([`profile_inc_input`](../inputs/profile-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+#### [`_set`](#) ([`profile_set_input`](../inputs/profile-set-input))
+
+sets the columns of the filtered rows to the given values
+
+#### [`pk_columns`](#) ([`profile_pk_columns_input!`](../inputs/profile-pk-columns-input))
+
+### Type
+
+#### [`profile`](../objects/profile)
+
+columns and relationships of "profile"

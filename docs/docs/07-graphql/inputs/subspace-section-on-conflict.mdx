@@ -1,0 +1,23 @@
+---
+id: subspace-section-on-conflict
+title: subspace_section_on_conflict
+hide_table_of_contents: false
+---
+
+on conflict condition type for table "subspace_section"
+
+```graphql
+input subspace_section_on_conflict {
+  constraint: subspace_section_constraint!
+  update_columns: [subspace_section_update_column!]!
+  where: subspace_section_bool_exp
+}
+```
+
+### Fields
+
+#### [`constraint`](#) ([`subspace_section_constraint!`](../enums/subspace-section-constraint))
+
+#### [`update_columns`](#) ([`[subspace_section_update_column!]!`](../enums/subspace-section-update-column))
+
+#### [`where`](#) ([`subspace_section_bool_exp`](../inputs/subspace-section-bool-exp))

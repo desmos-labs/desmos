@@ -1,0 +1,30 @@
+---
+id: insert-chain-link-proof-one
+title: insert_chain_link_proof_one
+hide_table_of_contents: false
+---
+
+insert a single row into the table: "chain_link_proof"
+
+```graphql
+insert_chain_link_proof_one(
+  object: chain_link_proof_insert_input!
+  on_conflict: chain_link_proof_on_conflict
+): chain_link_proof
+```
+
+### Arguments
+
+#### [`object`](#) ([`chain_link_proof_insert_input!`](../inputs/chain-link-proof-insert-input))
+
+the row to be inserted
+
+#### [`on_conflict`](#) ([`chain_link_proof_on_conflict`](../inputs/chain-link-proof-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`chain_link_proof`](../objects/chain-link-proof)
+
+columns and relationships of "chain_link_proof"

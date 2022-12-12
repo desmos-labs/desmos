@@ -1,0 +1,60 @@
+---
+id: update-reports-params
+title: update_reports_params
+hide_table_of_contents: false
+---
+
+update data of the table: "reports_params"
+
+```graphql
+update_reports_params(
+  _append: reports_params_append_input
+  _delete_at_path: reports_params_delete_at_path_input
+  _delete_elem: reports_params_delete_elem_input
+  _delete_key: reports_params_delete_key_input
+  _inc: reports_params_inc_input
+  _prepend: reports_params_prepend_input
+  _set: reports_params_set_input
+  where: reports_params_bool_exp!
+): reports_params_mutation_response
+```
+
+### Arguments
+
+#### [`_append`](#) ([`reports_params_append_input`](../inputs/reports-params-append-input))
+
+append existing jsonb value of filtered columns with new jsonb value
+
+#### [`_delete_at_path`](#) ([`reports_params_delete_at_path_input`](../inputs/reports-params-delete-at-path-input))
+
+delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+
+#### [`_delete_elem`](#) ([`reports_params_delete_elem_input`](../inputs/reports-params-delete-elem-input))
+
+delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+
+#### [`_delete_key`](#) ([`reports_params_delete_key_input`](../inputs/reports-params-delete-key-input))
+
+delete key/value pair or string element. key/value pairs are matched based on their key value
+
+#### [`_inc`](#) ([`reports_params_inc_input`](../inputs/reports-params-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+#### [`_prepend`](#) ([`reports_params_prepend_input`](../inputs/reports-params-prepend-input))
+
+prepend existing jsonb value of filtered columns with new jsonb value
+
+#### [`_set`](#) ([`reports_params_set_input`](../inputs/reports-params-set-input))
+
+sets the columns of the filtered rows to the given values
+
+#### [`where`](#) ([`reports_params_bool_exp!`](../inputs/reports-params-bool-exp))
+
+filter the rows which have to be updated
+
+### Type
+
+#### [`reports_params_mutation_response`](../objects/reports-params-mutation-response)
+
+response of any mutation on the table "reports_params"

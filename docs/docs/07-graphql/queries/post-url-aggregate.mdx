@@ -1,0 +1,45 @@
+---
+id: post-url-aggregate
+title: post_url_aggregate
+hide_table_of_contents: false
+---
+
+fetch aggregated fields from the table: "post_url"
+
+```graphql
+post_url_aggregate(
+  distinct_on: [post_url_select_column!]
+  limit: Int
+  offset: Int
+  order_by: [post_url_order_by!]
+  where: post_url_bool_exp
+): post_url_aggregate!
+```
+
+### Arguments
+
+#### [`distinct_on`](#) ([`[post_url_select_column!]`](../enums/post-url-select-column))
+
+distinct select on columns
+
+#### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+#### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+#### [`order_by`](#) ([`[post_url_order_by!]`](../inputs/post-url-order-by))
+
+sort the rows by one or more columns
+
+#### [`where`](#) ([`post_url_bool_exp`](../inputs/post-url-bool-exp))
+
+filter the rows returned
+
+### Type
+
+#### [`post_url_aggregate`](../objects/post-url-aggregate)
+
+aggregated selection of "post_url"

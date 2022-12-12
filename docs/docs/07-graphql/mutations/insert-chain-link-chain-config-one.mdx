@@ -1,0 +1,30 @@
+---
+id: insert-chain-link-chain-config-one
+title: insert_chain_link_chain_config_one
+hide_table_of_contents: false
+---
+
+insert a single row into the table: "chain_link_chain_config"
+
+```graphql
+insert_chain_link_chain_config_one(
+  object: chain_link_chain_config_insert_input!
+  on_conflict: chain_link_chain_config_on_conflict
+): chain_link_chain_config
+```
+
+### Arguments
+
+#### [`object`](#) ([`chain_link_chain_config_insert_input!`](../inputs/chain-link-chain-config-insert-input))
+
+the row to be inserted
+
+#### [`on_conflict`](#) ([`chain_link_chain_config_on_conflict`](../inputs/chain-link-chain-config-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`chain_link_chain_config`](../objects/chain-link-chain-config)
+
+columns and relationships of "chain_link_chain_config"

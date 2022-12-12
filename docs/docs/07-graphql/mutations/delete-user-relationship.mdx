@@ -1,0 +1,25 @@
+---
+id: delete-user-relationship
+title: delete_user_relationship
+hide_table_of_contents: false
+---
+
+delete data from the table: "user_relationship"
+
+```graphql
+delete_user_relationship(
+  where: user_relationship_bool_exp!
+): user_relationship_mutation_response
+```
+
+### Arguments
+
+#### [`where`](#) ([`user_relationship_bool_exp!`](../inputs/user-relationship-bool-exp))
+
+filter the rows which have to be deleted
+
+### Type
+
+#### [`user_relationship_mutation_response`](../objects/user-relationship-mutation-response)
+
+response of any mutation on the table "user_relationship"

@@ -1,0 +1,22 @@
+---
+id: chain-link-proof-arr-rel-insert-input
+title: chain_link_proof_arr_rel_insert_input
+hide_table_of_contents: false
+---
+
+input type for inserting array relation for remote table "chain_link_proof"
+
+```graphql
+input chain_link_proof_arr_rel_insert_input {
+  data: [chain_link_proof_insert_input!]!
+  on_conflict: chain_link_proof_on_conflict
+}
+```
+
+### Fields
+
+#### [`data`](#) ([`[chain_link_proof_insert_input!]!`](../inputs/chain-link-proof-insert-input))
+
+#### [`on_conflict`](#) ([`chain_link_proof_on_conflict`](../inputs/chain-link-proof-on-conflict))
+
+on conflict condition

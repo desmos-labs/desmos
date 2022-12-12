@@ -1,0 +1,35 @@
+---
+id: report-reason-bool-exp
+title: report_reason_bool_exp
+hide_table_of_contents: false
+---
+
+Boolean expression to filter rows from the table "report_reason". All fields are combined with a logical 'AND'.
+
+```graphql
+input report_reason_bool_exp {
+  _and: [report_reason_bool_exp!]
+  _not: report_reason_bool_exp
+  _or: [report_reason_bool_exp!]
+  reason: subspace_report_reason_bool_exp
+  reason_row_id: bigint_comparison_exp
+  report: report_bool_exp
+  report_row_id: bigint_comparison_exp
+}
+```
+
+### Fields
+
+#### [`_and`](#) ([`[report_reason_bool_exp!]`](../inputs/report-reason-bool-exp))
+
+#### [`_not`](#) ([`report_reason_bool_exp`](../inputs/report-reason-bool-exp))
+
+#### [`_or`](#) ([`[report_reason_bool_exp!]`](../inputs/report-reason-bool-exp))
+
+#### [`reason`](#) ([`subspace_report_reason_bool_exp`](../inputs/subspace-report-reason-bool-exp))
+
+#### [`reason_row_id`](#) ([`bigint_comparison_exp`](../inputs/bigint-comparison-exp))
+
+#### [`report`](#) ([`report_bool_exp`](../inputs/report-bool-exp))
+
+#### [`report_row_id`](#) ([`bigint_comparison_exp`](../inputs/bigint-comparison-exp))

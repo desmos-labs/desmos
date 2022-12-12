@@ -1,0 +1,41 @@
+---
+id: application-link-set-input
+title: application_link_set_input
+hide_table_of_contents: false
+---
+
+input type for updating data in table "application_link"
+
+```graphql
+input application_link_set_input {
+  application: String
+  creation_time: timestamp
+  expiration_time: timestamp
+  height: bigint
+  id: Int
+  result: jsonb
+  state: String
+  user_address: String
+  username: String
+}
+```
+
+### Fields
+
+#### [`application`](#) ([`String`](../scalars/string))
+
+#### [`creation_time`](#) ([`timestamp`](../scalars/timestamp))
+
+#### [`expiration_time`](#) ([`timestamp`](../scalars/timestamp))
+
+#### [`height`](#) ([`bigint`](../scalars/bigint))
+
+#### [`id`](#) ([`Int`](../scalars/int))
+
+#### [`result`](#) ([`jsonb`](../scalars/jsonb))
+
+#### [`state`](#) ([`String`](../scalars/string))
+
+#### [`user_address`](#) ([`String`](../scalars/string))
+
+#### [`username`](#) ([`String`](../scalars/string))

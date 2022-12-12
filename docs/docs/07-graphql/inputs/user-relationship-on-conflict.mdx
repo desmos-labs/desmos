@@ -1,0 +1,23 @@
+---
+id: user-relationship-on-conflict
+title: user_relationship_on_conflict
+hide_table_of_contents: false
+---
+
+on conflict condition type for table "user_relationship"
+
+```graphql
+input user_relationship_on_conflict {
+  constraint: user_relationship_constraint!
+  update_columns: [user_relationship_update_column!]!
+  where: user_relationship_bool_exp
+}
+```
+
+### Fields
+
+#### [`constraint`](#) ([`user_relationship_constraint!`](../enums/user-relationship-constraint))
+
+#### [`update_columns`](#) ([`[user_relationship_update_column!]!`](../enums/user-relationship-update-column))
+
+#### [`where`](#) ([`user_relationship_bool_exp`](../inputs/user-relationship-bool-exp))

@@ -1,0 +1,25 @@
+---
+id: delete-subspace-free-text-params
+title: delete_subspace_free_text_params
+hide_table_of_contents: false
+---
+
+delete data from the table: "subspace_free_text_params"
+
+```graphql
+delete_subspace_free_text_params(
+  where: subspace_free_text_params_bool_exp!
+): subspace_free_text_params_mutation_response
+```
+
+### Arguments
+
+#### [`where`](#) ([`subspace_free_text_params_bool_exp!`](../inputs/subspace-free-text-params-bool-exp))
+
+filter the rows which have to be deleted
+
+### Type
+
+#### [`subspace_free_text_params_mutation_response`](../objects/subspace-free-text-params-mutation-response)
+
+response of any mutation on the table "subspace_free_text_params"

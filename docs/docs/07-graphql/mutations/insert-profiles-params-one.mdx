@@ -1,0 +1,30 @@
+---
+id: insert-profiles-params-one
+title: insert_profiles_params_one
+hide_table_of_contents: false
+---
+
+insert a single row into the table: "profiles_params"
+
+```graphql
+insert_profiles_params_one(
+  object: profiles_params_insert_input!
+  on_conflict: profiles_params_on_conflict
+): profiles_params
+```
+
+### Arguments
+
+#### [`object`](#) ([`profiles_params_insert_input!`](../inputs/profiles-params-insert-input))
+
+the row to be inserted
+
+#### [`on_conflict`](#) ([`profiles_params_on_conflict`](../inputs/profiles-params-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`profiles_params`](../objects/profiles-params)
+
+columns and relationships of "profiles_params"

@@ -1,0 +1,24 @@
+---
+id: report-mutation-response
+title: report_mutation_response
+hide_table_of_contents: false
+---
+
+response of any mutation on the table "report"
+
+```graphql
+type report_mutation_response {
+  affected_rows: Int!
+  returning: [report!]!
+}
+```
+
+### Fields
+
+#### [`affected_rows`](#) ([`Int!`](../scalars/int))
+
+number of rows affected by the mutation
+
+#### [`returning`](#) ([`[report!]!`](../objects/report))
+
+data from the rows affected by the mutation

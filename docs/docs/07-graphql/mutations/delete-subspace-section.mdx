@@ -1,0 +1,25 @@
+---
+id: delete-subspace-section
+title: delete_subspace_section
+hide_table_of_contents: false
+---
+
+delete data from the table: "subspace_section"
+
+```graphql
+delete_subspace_section(
+  where: subspace_section_bool_exp!
+): subspace_section_mutation_response
+```
+
+### Arguments
+
+#### [`where`](#) ([`subspace_section_bool_exp!`](../inputs/subspace-section-bool-exp))
+
+filter the rows which have to be deleted
+
+### Type
+
+#### [`subspace_section_mutation_response`](../objects/subspace-section-mutation-response)
+
+response of any mutation on the table "subspace_section"

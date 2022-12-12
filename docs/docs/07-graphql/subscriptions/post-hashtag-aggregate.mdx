@@ -1,0 +1,45 @@
+---
+id: post-hashtag-aggregate
+title: post_hashtag_aggregate
+hide_table_of_contents: false
+---
+
+fetch aggregated fields from the table: "post_hashtag"
+
+```graphql
+post_hashtag_aggregate(
+  distinct_on: [post_hashtag_select_column!]
+  limit: Int
+  offset: Int
+  order_by: [post_hashtag_order_by!]
+  where: post_hashtag_bool_exp
+): post_hashtag_aggregate!
+```
+
+### Arguments
+
+#### [`distinct_on`](#) ([`[post_hashtag_select_column!]`](../enums/post-hashtag-select-column))
+
+distinct select on columns
+
+#### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+#### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+#### [`order_by`](#) ([`[post_hashtag_order_by!]`](../inputs/post-hashtag-order-by))
+
+sort the rows by one or more columns
+
+#### [`where`](#) ([`post_hashtag_bool_exp`](../inputs/post-hashtag-bool-exp))
+
+filter the rows returned
+
+### Type
+
+#### [`post_hashtag_aggregate`](../objects/post-hashtag-aggregate)
+
+aggregated selection of "post_hashtag"

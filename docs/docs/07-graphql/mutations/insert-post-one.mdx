@@ -1,0 +1,30 @@
+---
+id: insert-post-one
+title: insert_post_one
+hide_table_of_contents: false
+---
+
+insert a single row into the table: "post"
+
+```graphql
+insert_post_one(
+  object: post_insert_input!
+  on_conflict: post_on_conflict
+): post
+```
+
+### Arguments
+
+#### [`object`](#) ([`post_insert_input!`](../inputs/post-insert-input))
+
+the row to be inserted
+
+#### [`on_conflict`](#) ([`post_on_conflict`](../inputs/post-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`post`](../objects/post)
+
+columns and relationships of "post"

@@ -1,0 +1,32 @@
+---
+id: chain-link-proof-set-input
+title: chain_link_proof_set_input
+hide_table_of_contents: false
+---
+
+input type for updating data in table "chain_link_proof"
+
+```graphql
+input chain_link_proof_set_input {
+  chain_link_id: bigint
+  height: bigint
+  id: Int
+  plain_text: String
+  public_key: jsonb
+  signature: String
+}
+```
+
+### Fields
+
+#### [`chain_link_id`](#) ([`bigint`](../scalars/bigint))
+
+#### [`height`](#) ([`bigint`](../scalars/bigint))
+
+#### [`id`](#) ([`Int`](../scalars/int))
+
+#### [`plain_text`](#) ([`String`](../scalars/string))
+
+#### [`public_key`](#) ([`jsonb`](../scalars/jsonb))
+
+#### [`signature`](#) ([`String`](../scalars/string))

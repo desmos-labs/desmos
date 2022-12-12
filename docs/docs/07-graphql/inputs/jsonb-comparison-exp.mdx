@@ -1,0 +1,66 @@
+---
+id: jsonb-comparison-exp
+title: jsonb_comparison_exp
+hide_table_of_contents: false
+---
+
+Boolean expression to compare columns of type "jsonb". All fields are combined with logical 'AND'.
+
+```graphql
+input jsonb_comparison_exp {
+  _contained_in: jsonb
+  _contains: jsonb
+  _eq: jsonb
+  _gt: jsonb
+  _gte: jsonb
+  _has_key: String
+  _has_keys_all: [String!]
+  _has_keys_any: [String!]
+  _in: [jsonb!]
+  _is_null: Boolean
+  _lt: jsonb
+  _lte: jsonb
+  _neq: jsonb
+  _nin: [jsonb!]
+}
+```
+
+### Fields
+
+#### [`_contained_in`](#) ([`jsonb`](../scalars/jsonb))
+
+is the column contained in the given json value
+
+#### [`_contains`](#) ([`jsonb`](../scalars/jsonb))
+
+does the column contain the given json value at the top level
+
+#### [`_eq`](#) ([`jsonb`](../scalars/jsonb))
+
+#### [`_gt`](#) ([`jsonb`](../scalars/jsonb))
+
+#### [`_gte`](#) ([`jsonb`](../scalars/jsonb))
+
+#### [`_has_key`](#) ([`String`](../scalars/string))
+
+does the string exist as a top-level key in the column
+
+#### [`_has_keys_all`](#) ([`[String!]`](../scalars/string))
+
+do all of these strings exist as top-level keys in the column
+
+#### [`_has_keys_any`](#) ([`[String!]`](../scalars/string))
+
+do any of these strings exist as top-level keys in the column
+
+#### [`_in`](#) ([`[jsonb!]`](../scalars/jsonb))
+
+#### [`_is_null`](#) ([`Boolean`](../scalars/boolean))
+
+#### [`_lt`](#) ([`jsonb`](../scalars/jsonb))
+
+#### [`_lte`](#) ([`jsonb`](../scalars/jsonb))
+
+#### [`_neq`](#) ([`jsonb`](../scalars/jsonb))
+
+#### [`_nin`](#) ([`[jsonb!]`](../scalars/jsonb))

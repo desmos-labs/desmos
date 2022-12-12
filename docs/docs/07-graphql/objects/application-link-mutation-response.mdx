@@ -1,0 +1,24 @@
+---
+id: application-link-mutation-response
+title: application_link_mutation_response
+hide_table_of_contents: false
+---
+
+response of any mutation on the table "application_link"
+
+```graphql
+type application_link_mutation_response {
+  affected_rows: Int!
+  returning: [application_link!]!
+}
+```
+
+### Fields
+
+#### [`affected_rows`](#) ([`Int!`](../scalars/int))
+
+number of rows affected by the mutation
+
+#### [`returning`](#) ([`[application_link!]!`](../objects/application-link))
+
+data from the rows affected by the mutation

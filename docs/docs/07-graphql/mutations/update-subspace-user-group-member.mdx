@@ -1,0 +1,35 @@
+---
+id: update-subspace-user-group-member
+title: update_subspace_user_group_member
+hide_table_of_contents: false
+---
+
+update data of the table: "subspace_user_group_member"
+
+```graphql
+update_subspace_user_group_member(
+  _inc: subspace_user_group_member_inc_input
+  _set: subspace_user_group_member_set_input
+  where: subspace_user_group_member_bool_exp!
+): subspace_user_group_member_mutation_response
+```
+
+### Arguments
+
+#### [`_inc`](#) ([`subspace_user_group_member_inc_input`](../inputs/subspace-user-group-member-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+#### [`_set`](#) ([`subspace_user_group_member_set_input`](../inputs/subspace-user-group-member-set-input))
+
+sets the columns of the filtered rows to the given values
+
+#### [`where`](#) ([`subspace_user_group_member_bool_exp!`](../inputs/subspace-user-group-member-bool-exp))
+
+filter the rows which have to be updated
+
+### Type
+
+#### [`subspace_user_group_member_mutation_response`](../objects/subspace-user-group-member-mutation-response)
+
+response of any mutation on the table "subspace_user_group_member"

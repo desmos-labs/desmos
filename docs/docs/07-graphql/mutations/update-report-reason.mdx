@@ -1,0 +1,35 @@
+---
+id: update-report-reason
+title: update_report_reason
+hide_table_of_contents: false
+---
+
+update data of the table: "report_reason"
+
+```graphql
+update_report_reason(
+  _inc: report_reason_inc_input
+  _set: report_reason_set_input
+  where: report_reason_bool_exp!
+): report_reason_mutation_response
+```
+
+### Arguments
+
+#### [`_inc`](#) ([`report_reason_inc_input`](../inputs/report-reason-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+#### [`_set`](#) ([`report_reason_set_input`](../inputs/report-reason-set-input))
+
+sets the columns of the filtered rows to the given values
+
+#### [`where`](#) ([`report_reason_bool_exp!`](../inputs/report-reason-bool-exp))
+
+filter the rows which have to be updated
+
+### Type
+
+#### [`report_reason_mutation_response`](../objects/report-reason-mutation-response)
+
+response of any mutation on the table "report_reason"

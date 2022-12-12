@@ -1,0 +1,22 @@
+---
+id: report-obj-rel-insert-input
+title: report_obj_rel_insert_input
+hide_table_of_contents: false
+---
+
+input type for inserting object relation for remote table "report"
+
+```graphql
+input report_obj_rel_insert_input {
+  data: report_insert_input!
+  on_conflict: report_on_conflict
+}
+```
+
+### Fields
+
+#### [`data`](#) ([`report_insert_input!`](../inputs/report-insert-input))
+
+#### [`on_conflict`](#) ([`report_on_conflict`](../inputs/report-on-conflict))
+
+on conflict condition

@@ -1,0 +1,24 @@
+---
+id: subspace-registered-reaction-params-mutation-response
+title: subspace_registered_reaction_params_mutation_response
+hide_table_of_contents: false
+---
+
+response of any mutation on the table "subspace_registered_reaction_params"
+
+```graphql
+type subspace_registered_reaction_params_mutation_response {
+  affected_rows: Int!
+  returning: [subspace_registered_reaction_params!]!
+}
+```
+
+### Fields
+
+#### [`affected_rows`](#) ([`Int!`](../scalars/int))
+
+number of rows affected by the mutation
+
+#### [`returning`](#) ([`[subspace_registered_reaction_params!]!`](../objects/subspace-registered-reaction-params))
+
+data from the rows affected by the mutation

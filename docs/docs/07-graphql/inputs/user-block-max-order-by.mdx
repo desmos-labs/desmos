@@ -1,0 +1,29 @@
+---
+id: user-block-max-order-by
+title: user_block_max_order_by
+hide_table_of_contents: false
+---
+
+order by max() on columns of table "user_block"
+
+```graphql
+input user_block_max_order_by {
+  blocked_address: order_by
+  blocker_address: order_by
+  height: order_by
+  reason: order_by
+  subspace_id: order_by
+}
+```
+
+### Fields
+
+#### [`blocked_address`](#) ([`order_by`](../enums/order-by))
+
+#### [`blocker_address`](#) ([`order_by`](../enums/order-by))
+
+#### [`height`](#) ([`order_by`](../enums/order-by))
+
+#### [`reason`](#) ([`order_by`](../enums/order-by))
+
+#### [`subspace_id`](#) ([`order_by`](../enums/order-by))

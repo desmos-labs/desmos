@@ -1,0 +1,22 @@
+---
+id: subspace-report-reason-arr-rel-insert-input
+title: subspace_report_reason_arr_rel_insert_input
+hide_table_of_contents: false
+---
+
+input type for inserting array relation for remote table "subspace_report_reason"
+
+```graphql
+input subspace_report_reason_arr_rel_insert_input {
+  data: [subspace_report_reason_insert_input!]!
+  on_conflict: subspace_report_reason_on_conflict
+}
+```
+
+### Fields
+
+#### [`data`](#) ([`[subspace_report_reason_insert_input!]!`](../inputs/subspace-report-reason-insert-input))
+
+#### [`on_conflict`](#) ([`subspace_report_reason_on_conflict`](../inputs/subspace-report-reason-on-conflict))
+
+on conflict condition

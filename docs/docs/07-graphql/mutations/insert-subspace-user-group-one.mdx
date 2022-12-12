@@ -1,0 +1,30 @@
+---
+id: insert-subspace-user-group-one
+title: insert_subspace_user_group_one
+hide_table_of_contents: false
+---
+
+insert a single row into the table: "subspace_user_group"
+
+```graphql
+insert_subspace_user_group_one(
+  object: subspace_user_group_insert_input!
+  on_conflict: subspace_user_group_on_conflict
+): subspace_user_group
+```
+
+### Arguments
+
+#### [`object`](#) ([`subspace_user_group_insert_input!`](../inputs/subspace-user-group-insert-input))
+
+the row to be inserted
+
+#### [`on_conflict`](#) ([`subspace_user_group_on_conflict`](../inputs/subspace-user-group-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`subspace_user_group`](../objects/subspace-user-group)
+
+columns and relationships of "subspace_user_group"

@@ -1,0 +1,35 @@
+---
+id: update-post
+title: update_post
+hide_table_of_contents: false
+---
+
+update data of the table: "post"
+
+```graphql
+update_post(
+  _inc: post_inc_input
+  _set: post_set_input
+  where: post_bool_exp!
+): post_mutation_response
+```
+
+### Arguments
+
+#### [`_inc`](#) ([`post_inc_input`](../inputs/post-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+#### [`_set`](#) ([`post_set_input`](../inputs/post-set-input))
+
+sets the columns of the filtered rows to the given values
+
+#### [`where`](#) ([`post_bool_exp!`](../inputs/post-bool-exp))
+
+filter the rows which have to be updated
+
+### Type
+
+#### [`post_mutation_response`](../objects/post-mutation-response)
+
+response of any mutation on the table "post"

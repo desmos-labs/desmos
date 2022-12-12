@@ -1,0 +1,30 @@
+---
+id: insert-user-block-one
+title: insert_user_block_one
+hide_table_of_contents: false
+---
+
+insert a single row into the table: "user_block"
+
+```graphql
+insert_user_block_one(
+  object: user_block_insert_input!
+  on_conflict: user_block_on_conflict
+): user_block
+```
+
+### Arguments
+
+#### [`object`](#) ([`user_block_insert_input!`](../inputs/user-block-insert-input))
+
+the row to be inserted
+
+#### [`on_conflict`](#) ([`user_block_on_conflict`](../inputs/user-block-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`user_block`](../objects/user-block)
+
+columns and relationships of "user_block"

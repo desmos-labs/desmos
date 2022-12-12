@@ -1,0 +1,25 @@
+---
+id: delete-post-attachment
+title: delete_post_attachment
+hide_table_of_contents: false
+---
+
+delete data from the table: "post_attachment"
+
+```graphql
+delete_post_attachment(
+  where: post_attachment_bool_exp!
+): post_attachment_mutation_response
+```
+
+### Arguments
+
+#### [`where`](#) ([`post_attachment_bool_exp!`](../inputs/post-attachment-bool-exp))
+
+filter the rows which have to be deleted
+
+### Type
+
+#### [`post_attachment_mutation_response`](../objects/post-attachment-mutation-response)
+
+response of any mutation on the table "post_attachment"

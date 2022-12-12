@@ -1,0 +1,68 @@
+/* stylelint-disable docusaurus/copyright-header */
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+/* You can override the default Infima variables here. */
+:root {
+  --ifm-color-primary: #ed6c53;
+  --ifm-color-primary-dark: #ea5336;
+  --ifm-color-primary-darker: #e84728;
+  --ifm-color-primary-darkest: #cb3315;
+  --ifm-color-primary-light: #f08570;
+  --ifm-color-primary-lighter: #f2917e;
+  --ifm-color-primary-lightest: #f6b6aa;
+  --ifm-code-font-size: 90%;
+  --ifm-font-family-base: 'Helvetica';
+  --ifm-font-size-base: 105%;
+  --ifm-navbar-padding-horizontal: 0.5em;
+}
+
+.docusaurus-highlight-code-line {
+  background-color: rgba(0, 0, 0, 0.1);
+  display: block;
+  margin: 0 calc(-1 * var(--ifm-pre-padding));
+  padding: 0 var(--ifm-pre-padding);
+}
+
+html[data-theme='dark'] .docusaurus-highlight-code-line {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+/* navbar adjustments */
+.navbar__logo {
+  height: 2.3em;
+  width: auto;
+}
+
+/* footer adjustments */
+:root .footer__col {
+  text-align: center;
+  padding-bottom: 1em;
+}
+
+/* table of contents adjustments */
+.table-of-contents__link {
+  font-size: 120%;
+}
+
+/* tabs of 03-running-a-full-node 01-overview */
+
+:root .tabs-container {
+  border-radius: 5px;
+  border-top: 1px solid var(--ifm-color-primary);
+  border-bottom: 1px solid var(--ifm-color-primary);
+  border-left: 1px solid var(--ifm-color-primary);
+  border-right: 1px solid var(--ifm-color-primary);
+}
+
+:root .tabs li {
+  border-bottom-width: 1px;
+}
+
+div[role='tabpanel'] {
+  padding: 10px;
+}
+

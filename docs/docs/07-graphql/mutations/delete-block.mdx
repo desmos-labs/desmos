@@ -1,0 +1,25 @@
+---
+id: delete-block
+title: delete_block
+hide_table_of_contents: false
+---
+
+delete data from the table: "block"
+
+```graphql
+delete_block(
+  where: block_bool_exp!
+): block_mutation_response
+```
+
+### Arguments
+
+#### [`where`](#) ([`block_bool_exp!`](../inputs/block-bool-exp))
+
+filter the rows which have to be deleted
+
+### Type
+
+#### [`block_mutation_response`](../objects/block-mutation-response)
+
+response of any mutation on the table "block"

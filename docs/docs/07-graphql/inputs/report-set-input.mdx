@@ -1,0 +1,38 @@
+---
+id: report-set-input
+title: report_set_input
+hide_table_of_contents: false
+---
+
+input type for updating data in table "report"
+
+```graphql
+input report_set_input {
+  creation_date: timestamp
+  height: bigint
+  id: bigint
+  message: String
+  reporter_address: String
+  row_id: Int
+  subspace_id: bigint
+  target: jsonb
+}
+```
+
+### Fields
+
+#### [`creation_date`](#) ([`timestamp`](../scalars/timestamp))
+
+#### [`height`](#) ([`bigint`](../scalars/bigint))
+
+#### [`id`](#) ([`bigint`](../scalars/bigint))
+
+#### [`message`](#) ([`String`](../scalars/string))
+
+#### [`reporter_address`](#) ([`String`](../scalars/string))
+
+#### [`row_id`](#) ([`Int`](../scalars/int))
+
+#### [`subspace_id`](#) ([`bigint`](../scalars/bigint))
+
+#### [`target`](#) ([`jsonb`](../scalars/jsonb))

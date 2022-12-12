@@ -1,0 +1,22 @@
+---
+id: reaction-arr-rel-insert-input
+title: reaction_arr_rel_insert_input
+hide_table_of_contents: false
+---
+
+input type for inserting array relation for remote table "reaction"
+
+```graphql
+input reaction_arr_rel_insert_input {
+  data: [reaction_insert_input!]!
+  on_conflict: reaction_on_conflict
+}
+```
+
+### Fields
+
+#### [`data`](#) ([`[reaction_insert_input!]!`](../inputs/reaction-insert-input))
+
+#### [`on_conflict`](#) ([`reaction_on_conflict`](../inputs/reaction-on-conflict))
+
+on conflict condition

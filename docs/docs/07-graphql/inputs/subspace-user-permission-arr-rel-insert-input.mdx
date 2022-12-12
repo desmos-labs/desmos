@@ -1,0 +1,22 @@
+---
+id: subspace-user-permission-arr-rel-insert-input
+title: subspace_user_permission_arr_rel_insert_input
+hide_table_of_contents: false
+---
+
+input type for inserting array relation for remote table "subspace_user_permission"
+
+```graphql
+input subspace_user_permission_arr_rel_insert_input {
+  data: [subspace_user_permission_insert_input!]!
+  on_conflict: subspace_user_permission_on_conflict
+}
+```
+
+### Fields
+
+#### [`data`](#) ([`[subspace_user_permission_insert_input!]!`](../inputs/subspace-user-permission-insert-input))
+
+#### [`on_conflict`](#) ([`subspace_user_permission_on_conflict`](../inputs/subspace-user-permission-on-conflict))
+
+on conflict condition

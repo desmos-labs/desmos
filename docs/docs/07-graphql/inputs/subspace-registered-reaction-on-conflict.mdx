@@ -1,0 +1,23 @@
+---
+id: subspace-registered-reaction-on-conflict
+title: subspace_registered_reaction_on_conflict
+hide_table_of_contents: false
+---
+
+on conflict condition type for table "subspace_registered_reaction"
+
+```graphql
+input subspace_registered_reaction_on_conflict {
+  constraint: subspace_registered_reaction_constraint!
+  update_columns: [subspace_registered_reaction_update_column!]!
+  where: subspace_registered_reaction_bool_exp
+}
+```
+
+### Fields
+
+#### [`constraint`](#) ([`subspace_registered_reaction_constraint!`](../enums/subspace-registered-reaction-constraint))
+
+#### [`update_columns`](#) ([`[subspace_registered_reaction_update_column!]!`](../enums/subspace-registered-reaction-update-column))
+
+#### [`where`](#) ([`subspace_registered_reaction_bool_exp`](../inputs/subspace-registered-reaction-bool-exp))

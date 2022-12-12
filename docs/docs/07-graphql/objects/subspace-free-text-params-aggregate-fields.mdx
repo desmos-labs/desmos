@@ -1,0 +1,54 @@
+---
+id: subspace-free-text-params-aggregate-fields
+title: subspace_free_text_params_aggregate_fields
+hide_table_of_contents: false
+---
+
+aggregate fields of "subspace_free_text_params"
+
+```graphql
+type subspace_free_text_params_aggregate_fields {
+  avg: subspace_free_text_params_avg_fields
+  count(
+    columns: [subspace_free_text_params_select_column!]
+    distinct: Boolean
+  ): Int!
+  max: subspace_free_text_params_max_fields
+  min: subspace_free_text_params_min_fields
+  stddev: subspace_free_text_params_stddev_fields
+  stddev_pop: subspace_free_text_params_stddev_pop_fields
+  stddev_samp: subspace_free_text_params_stddev_samp_fields
+  sum: subspace_free_text_params_sum_fields
+  var_pop: subspace_free_text_params_var_pop_fields
+  var_samp: subspace_free_text_params_var_samp_fields
+  variance: subspace_free_text_params_variance_fields
+}
+```
+
+### Fields
+
+#### [`avg`](#) ([`subspace_free_text_params_avg_fields`](../objects/subspace-free-text-params-avg-fields))
+
+#### [`count`](#) ([`Int!`](../scalars/int))
+
+- ##### [`columns`](#) ([`[subspace_free_text_params_select_column!]`](../enums/subspace-free-text-params-select-column))
+
+- ##### [`distinct`](#) ([`Boolean`](../scalars/boolean))
+
+#### [`max`](#) ([`subspace_free_text_params_max_fields`](../objects/subspace-free-text-params-max-fields))
+
+#### [`min`](#) ([`subspace_free_text_params_min_fields`](../objects/subspace-free-text-params-min-fields))
+
+#### [`stddev`](#) ([`subspace_free_text_params_stddev_fields`](../objects/subspace-free-text-params-stddev-fields))
+
+#### [`stddev_pop`](#) ([`subspace_free_text_params_stddev_pop_fields`](../objects/subspace-free-text-params-stddev-pop-fields))
+
+#### [`stddev_samp`](#) ([`subspace_free_text_params_stddev_samp_fields`](../objects/subspace-free-text-params-stddev-samp-fields))
+
+#### [`sum`](#) ([`subspace_free_text_params_sum_fields`](../objects/subspace-free-text-params-sum-fields))
+
+#### [`var_pop`](#) ([`subspace_free_text_params_var_pop_fields`](../objects/subspace-free-text-params-var-pop-fields))
+
+#### [`var_samp`](#) ([`subspace_free_text_params_var_samp_fields`](../objects/subspace-free-text-params-var-samp-fields))
+
+#### [`variance`](#) ([`subspace_free_text_params_variance_fields`](../objects/subspace-free-text-params-variance-fields))

@@ -1,0 +1,54 @@
+---
+id: dtag-transfer-requests-aggregate-fields
+title: dtag_transfer_requests_aggregate_fields
+hide_table_of_contents: false
+---
+
+aggregate fields of "dtag_transfer_requests"
+
+```graphql
+type dtag_transfer_requests_aggregate_fields {
+  avg: dtag_transfer_requests_avg_fields
+  count(
+    columns: [dtag_transfer_requests_select_column!]
+    distinct: Boolean
+  ): Int!
+  max: dtag_transfer_requests_max_fields
+  min: dtag_transfer_requests_min_fields
+  stddev: dtag_transfer_requests_stddev_fields
+  stddev_pop: dtag_transfer_requests_stddev_pop_fields
+  stddev_samp: dtag_transfer_requests_stddev_samp_fields
+  sum: dtag_transfer_requests_sum_fields
+  var_pop: dtag_transfer_requests_var_pop_fields
+  var_samp: dtag_transfer_requests_var_samp_fields
+  variance: dtag_transfer_requests_variance_fields
+}
+```
+
+### Fields
+
+#### [`avg`](#) ([`dtag_transfer_requests_avg_fields`](../objects/dtag-transfer-requests-avg-fields))
+
+#### [`count`](#) ([`Int!`](../scalars/int))
+
+- ##### [`columns`](#) ([`[dtag_transfer_requests_select_column!]`](../enums/dtag-transfer-requests-select-column))
+
+- ##### [`distinct`](#) ([`Boolean`](../scalars/boolean))
+
+#### [`max`](#) ([`dtag_transfer_requests_max_fields`](../objects/dtag-transfer-requests-max-fields))
+
+#### [`min`](#) ([`dtag_transfer_requests_min_fields`](../objects/dtag-transfer-requests-min-fields))
+
+#### [`stddev`](#) ([`dtag_transfer_requests_stddev_fields`](../objects/dtag-transfer-requests-stddev-fields))
+
+#### [`stddev_pop`](#) ([`dtag_transfer_requests_stddev_pop_fields`](../objects/dtag-transfer-requests-stddev-pop-fields))
+
+#### [`stddev_samp`](#) ([`dtag_transfer_requests_stddev_samp_fields`](../objects/dtag-transfer-requests-stddev-samp-fields))
+
+#### [`sum`](#) ([`dtag_transfer_requests_sum_fields`](../objects/dtag-transfer-requests-sum-fields))
+
+#### [`var_pop`](#) ([`dtag_transfer_requests_var_pop_fields`](../objects/dtag-transfer-requests-var-pop-fields))
+
+#### [`var_samp`](#) ([`dtag_transfer_requests_var_samp_fields`](../objects/dtag-transfer-requests-var-samp-fields))
+
+#### [`variance`](#) ([`dtag_transfer_requests_variance_fields`](../objects/dtag-transfer-requests-variance-fields))

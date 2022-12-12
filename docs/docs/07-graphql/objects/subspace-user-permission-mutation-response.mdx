@@ -1,0 +1,24 @@
+---
+id: subspace-user-permission-mutation-response
+title: subspace_user_permission_mutation_response
+hide_table_of_contents: false
+---
+
+response of any mutation on the table "subspace_user_permission"
+
+```graphql
+type subspace_user_permission_mutation_response {
+  affected_rows: Int!
+  returning: [subspace_user_permission!]!
+}
+```
+
+### Fields
+
+#### [`affected_rows`](#) ([`Int!`](../scalars/int))
+
+number of rows affected by the mutation
+
+#### [`returning`](#) ([`[subspace_user_permission!]!`](../objects/subspace-user-permission))
+
+data from the rows affected by the mutation

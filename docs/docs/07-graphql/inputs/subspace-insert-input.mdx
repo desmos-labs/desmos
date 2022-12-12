@@ -1,0 +1,62 @@
+---
+id: subspace-insert-input
+title: subspace_insert_input
+hide_table_of_contents: false
+---
+
+input type for inserting data into table "subspace"
+
+```graphql
+input subspace_insert_input {
+  creation_time: timestamp
+  creator_address: String
+  description: String
+  free_text_reactions_params: subspace_free_text_params_obj_rel_insert_input
+  height: bigint
+  id: bigint
+  name: String
+  owner_address: String
+  posts: post_arr_rel_insert_input
+  registered_reactions: subspace_registered_reaction_arr_rel_insert_input
+  registered_reactions_params: subspace_registered_reaction_params_obj_rel_insert_input
+  report_reasons: subspace_report_reason_arr_rel_insert_input
+  reports: report_arr_rel_insert_input
+  sections: subspace_section_arr_rel_insert_input
+  treasury_address: String
+  user_groups: subspace_user_group_arr_rel_insert_input
+}
+```
+
+### Fields
+
+#### [`creation_time`](#) ([`timestamp`](../scalars/timestamp))
+
+#### [`creator_address`](#) ([`String`](../scalars/string))
+
+#### [`description`](#) ([`String`](../scalars/string))
+
+#### [`free_text_reactions_params`](#) ([`subspace_free_text_params_obj_rel_insert_input`](../inputs/subspace-free-text-params-obj-rel-insert-input))
+
+#### [`height`](#) ([`bigint`](../scalars/bigint))
+
+#### [`id`](#) ([`bigint`](../scalars/bigint))
+
+#### [`name`](#) ([`String`](../scalars/string))
+
+#### [`owner_address`](#) ([`String`](../scalars/string))
+
+#### [`posts`](#) ([`post_arr_rel_insert_input`](../inputs/post-arr-rel-insert-input))
+
+#### [`registered_reactions`](#) ([`subspace_registered_reaction_arr_rel_insert_input`](../inputs/subspace-registered-reaction-arr-rel-insert-input))
+
+#### [`registered_reactions_params`](#) ([`subspace_registered_reaction_params_obj_rel_insert_input`](../inputs/subspace-registered-reaction-params-obj-rel-insert-input))
+
+#### [`report_reasons`](#) ([`subspace_report_reason_arr_rel_insert_input`](../inputs/subspace-report-reason-arr-rel-insert-input))
+
+#### [`reports`](#) ([`report_arr_rel_insert_input`](../inputs/report-arr-rel-insert-input))
+
+#### [`sections`](#) ([`subspace_section_arr_rel_insert_input`](../inputs/subspace-section-arr-rel-insert-input))
+
+#### [`treasury_address`](#) ([`String`](../scalars/string))
+
+#### [`user_groups`](#) ([`subspace_user_group_arr_rel_insert_input`](../inputs/subspace-user-group-arr-rel-insert-input))

@@ -1,0 +1,45 @@
+---
+id: application-link-aggregate
+title: application_link_aggregate
+hide_table_of_contents: false
+---
+
+fetch aggregated fields from the table: "application_link"
+
+```graphql
+application_link_aggregate(
+  distinct_on: [application_link_select_column!]
+  limit: Int
+  offset: Int
+  order_by: [application_link_order_by!]
+  where: application_link_bool_exp
+): application_link_aggregate!
+```
+
+### Arguments
+
+#### [`distinct_on`](#) ([`[application_link_select_column!]`](../enums/application-link-select-column))
+
+distinct select on columns
+
+#### [`limit`](#) ([`Int`](../scalars/int))
+
+limit the number of rows returned
+
+#### [`offset`](#) ([`Int`](../scalars/int))
+
+skip the first n rows. Use only with order_by
+
+#### [`order_by`](#) ([`[application_link_order_by!]`](../inputs/application-link-order-by))
+
+sort the rows by one or more columns
+
+#### [`where`](#) ([`application_link_bool_exp`](../inputs/application-link-bool-exp))
+
+filter the rows returned
+
+### Type
+
+#### [`application_link_aggregate`](../objects/application-link-aggregate)
+
+aggregated selection of "application_link"

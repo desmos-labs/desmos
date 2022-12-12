@@ -9,6 +9,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/suite"
 	"github.com/tendermint/tendermint/libs/log"
@@ -25,6 +28,7 @@ type KeeperTestsuite struct {
 	legacyAminoCdc *codec.LegacyAmino
 	ctx            sdk.Context
 	k              keeper.Keeper
+	paramsKeeper   paramskeeper.Keeper
 	storeKey       sdk.StoreKey
 }
 
@@ -34,8 +38,8 @@ func TestKeeperTestSuite(t *testing.T) {
 
 func (suite *KeeperTestsuite) SetupTest() {
 	// Define store keys
-	keys := sdk.NewMemoryStoreKeys(types.StoreKey)
-	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
+	keys := sdk.NewMemoryStoreKeys(types.StoreKey, paramstypes.StoreKey)
+
 	suite.storeKey = keys[types.StoreKey]
 
 	// Create an in-memory db
@@ -56,5 +60,15 @@ func (suite *KeeperTestsuite) SetupTest() {
 	suite.cdc, suite.legacyAminoCdc = app.MakeCodecs()
 
 	// Define keeper
-	suite.k = keeper.NewKeeper(suite.cdc, suite.storeKey)
+	suite.paramsKeeper = paramskeeper.NewKeeper(
+		suite.cdc, suite.legacyAminoCdc, keys[paramstypes.StoreKey], tKeys[paramstypes.TStoreKey],
+	)
+	suite.ak = authkeeper.NewAccountKeeper(
+		suite.cdc,
+		keys[authtypes.StoreKey],
+		suite.paramsKeeper.Subspace(authtypes.ModuleName),
+		authtypes.ProtoBaseAccount,
+		app.GetMaccPerms(),
+	)
+	suite.k = keeper.NewKeeper(suite.cdc, suite.storeKey, suite.ak)
 }

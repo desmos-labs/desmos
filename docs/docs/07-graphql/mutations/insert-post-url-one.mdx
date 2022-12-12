@@ -1,0 +1,30 @@
+---
+id: insert-post-url-one
+title: insert_post_url_one
+hide_table_of_contents: false
+---
+
+insert a single row into the table: "post_url"
+
+```graphql
+insert_post_url_one(
+  object: post_url_insert_input!
+  on_conflict: post_url_on_conflict
+): post_url
+```
+
+### Arguments
+
+#### [`object`](#) ([`post_url_insert_input!`](../inputs/post-url-insert-input))
+
+the row to be inserted
+
+#### [`on_conflict`](#) ([`post_url_on_conflict`](../inputs/post-url-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`post_url`](../objects/post-url)
+
+columns and relationships of "post_url"

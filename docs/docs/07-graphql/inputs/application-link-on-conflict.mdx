@@ -1,0 +1,23 @@
+---
+id: application-link-on-conflict
+title: application_link_on_conflict
+hide_table_of_contents: false
+---
+
+on conflict condition type for table "application_link"
+
+```graphql
+input application_link_on_conflict {
+  constraint: application_link_constraint!
+  update_columns: [application_link_update_column!]!
+  where: application_link_bool_exp
+}
+```
+
+### Fields
+
+#### [`constraint`](#) ([`application_link_constraint!`](../enums/application-link-constraint))
+
+#### [`update_columns`](#) ([`[application_link_update_column!]!`](../enums/application-link-update-column))
+
+#### [`where`](#) ([`application_link_bool_exp`](../inputs/application-link-bool-exp))

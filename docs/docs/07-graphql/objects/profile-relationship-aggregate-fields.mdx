@@ -1,0 +1,48 @@
+---
+id: profile-relationship-aggregate-fields
+title: profile_relationship_aggregate_fields
+hide_table_of_contents: false
+---
+
+
+aggregate fields of "profile_relationship"
+
+```graphql
+type profile_relationship_aggregate_fields {
+  count(
+  columns: [profile_relationship_select_column!]
+  distinct: Boolean
+): Int!
+  max: profile_relationship_max_fields
+  min: profile_relationship_min_fields
+}
+```
+
+
+### Fields
+
+#### [`count`](#) ([`Int!`](../scalars/int))
+
+
+- ##### [`columns`](#) ([`[profile_relationship_select_column!]`](../enums/profile-relationship-select-column))
+
+
+
+
+- ##### [`distinct`](#) ([`Boolean`](../scalars/boolean))
+
+
+
+
+#### [`max`](#) ([`profile_relationship_max_fields`](../objects/profile-relationship-max-fields))
+
+
+
+
+#### [`min`](#) ([`profile_relationship_min_fields`](../objects/profile-relationship-min-fields))
+
+
+
+
+
+

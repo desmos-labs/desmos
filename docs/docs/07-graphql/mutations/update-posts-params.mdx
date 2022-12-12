@@ -1,0 +1,60 @@
+---
+id: update-posts-params
+title: update_posts_params
+hide_table_of_contents: false
+---
+
+update data of the table: "posts_params"
+
+```graphql
+update_posts_params(
+  _append: posts_params_append_input
+  _delete_at_path: posts_params_delete_at_path_input
+  _delete_elem: posts_params_delete_elem_input
+  _delete_key: posts_params_delete_key_input
+  _inc: posts_params_inc_input
+  _prepend: posts_params_prepend_input
+  _set: posts_params_set_input
+  where: posts_params_bool_exp!
+): posts_params_mutation_response
+```
+
+### Arguments
+
+#### [`_append`](#) ([`posts_params_append_input`](../inputs/posts-params-append-input))
+
+append existing jsonb value of filtered columns with new jsonb value
+
+#### [`_delete_at_path`](#) ([`posts_params_delete_at_path_input`](../inputs/posts-params-delete-at-path-input))
+
+delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+
+#### [`_delete_elem`](#) ([`posts_params_delete_elem_input`](../inputs/posts-params-delete-elem-input))
+
+delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+
+#### [`_delete_key`](#) ([`posts_params_delete_key_input`](../inputs/posts-params-delete-key-input))
+
+delete key/value pair or string element. key/value pairs are matched based on their key value
+
+#### [`_inc`](#) ([`posts_params_inc_input`](../inputs/posts-params-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+#### [`_prepend`](#) ([`posts_params_prepend_input`](../inputs/posts-params-prepend-input))
+
+prepend existing jsonb value of filtered columns with new jsonb value
+
+#### [`_set`](#) ([`posts_params_set_input`](../inputs/posts-params-set-input))
+
+sets the columns of the filtered rows to the given values
+
+#### [`where`](#) ([`posts_params_bool_exp!`](../inputs/posts-params-bool-exp))
+
+filter the rows which have to be updated
+
+### Type
+
+#### [`posts_params_mutation_response`](../objects/posts-params-mutation-response)
+
+response of any mutation on the table "posts_params"

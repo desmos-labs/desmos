@@ -1,0 +1,35 @@
+---
+id: chain-link-proof-insert-input
+title: chain_link_proof_insert_input
+hide_table_of_contents: false
+---
+
+input type for inserting data into table "chain_link_proof"
+
+```graphql
+input chain_link_proof_insert_input {
+  chain_link: chain_link_obj_rel_insert_input
+  chain_link_id: bigint
+  height: bigint
+  id: Int
+  plain_text: String
+  public_key: jsonb
+  signature: String
+}
+```
+
+### Fields
+
+#### [`chain_link`](#) ([`chain_link_obj_rel_insert_input`](../inputs/chain-link-obj-rel-insert-input))
+
+#### [`chain_link_id`](#) ([`bigint`](../scalars/bigint))
+
+#### [`height`](#) ([`bigint`](../scalars/bigint))
+
+#### [`id`](#) ([`Int`](../scalars/int))
+
+#### [`plain_text`](#) ([`String`](../scalars/string))
+
+#### [`public_key`](#) ([`jsonb`](../scalars/jsonb))
+
+#### [`signature`](#) ([`String`](../scalars/string))

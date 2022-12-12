@@ -1,0 +1,44 @@
+---
+id: user-relationship-bool-exp
+title: user_relationship_bool_exp
+hide_table_of_contents: false
+---
+
+Boolean expression to filter rows from the table "user_relationship". All fields are combined with a logical 'AND'.
+
+```graphql
+input user_relationship_bool_exp {
+  _and: [user_relationship_bool_exp!]
+  _not: user_relationship_bool_exp
+  _or: [user_relationship_bool_exp!]
+  counterparty: profile_bool_exp
+  counterparty_address: String_comparison_exp
+  creator: profile_bool_exp
+  creator_address: String_comparison_exp
+  height: bigint_comparison_exp
+  subspace: subspace_bool_exp
+  subspace_id: bigint_comparison_exp
+}
+```
+
+### Fields
+
+#### [`_and`](#) ([`[user_relationship_bool_exp!]`](../inputs/user-relationship-bool-exp))
+
+#### [`_not`](#) ([`user_relationship_bool_exp`](../inputs/user-relationship-bool-exp))
+
+#### [`_or`](#) ([`[user_relationship_bool_exp!]`](../inputs/user-relationship-bool-exp))
+
+#### [`counterparty`](#) ([`profile_bool_exp`](../inputs/profile-bool-exp))
+
+#### [`counterparty_address`](#) ([`String_comparison_exp`](../inputs/string-comparison-exp))
+
+#### [`creator`](#) ([`profile_bool_exp`](../inputs/profile-bool-exp))
+
+#### [`creator_address`](#) ([`String_comparison_exp`](../inputs/string-comparison-exp))
+
+#### [`height`](#) ([`bigint_comparison_exp`](../inputs/bigint-comparison-exp))
+
+#### [`subspace`](#) ([`subspace_bool_exp`](../inputs/subspace-bool-exp))
+
+#### [`subspace_id`](#) ([`bigint_comparison_exp`](../inputs/bigint-comparison-exp))

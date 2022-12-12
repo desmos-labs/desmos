@@ -1,0 +1,30 @@
+---
+id: insert-reports-params-one
+title: insert_reports_params_one
+hide_table_of_contents: false
+---
+
+insert a single row into the table: "reports_params"
+
+```graphql
+insert_reports_params_one(
+  object: reports_params_insert_input!
+  on_conflict: reports_params_on_conflict
+): reports_params
+```
+
+### Arguments
+
+#### [`object`](#) ([`reports_params_insert_input!`](../inputs/reports-params-insert-input))
+
+the row to be inserted
+
+#### [`on_conflict`](#) ([`reports_params_on_conflict`](../inputs/reports-params-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`reports_params`](../objects/reports-params)
+
+columns and relationships of "reports_params"

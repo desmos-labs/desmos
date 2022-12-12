@@ -1,0 +1,24 @@
+---
+id: cached
+title: cached
+hide_table_of_contents: false
+---
+
+whether this query should be cached (Hasura Cloud only)
+
+```graphql
+directive @cached(
+  ttl: Int! = 60
+  refresh: Boolean! = false
+)
+```
+
+### Arguments
+
+#### [`ttl`](#) ([`Int!`](../scalars/int))
+
+measured in seconds
+
+#### [`refresh`](#) ([`Boolean!`](../scalars/boolean))
+
+refresh the cache entry

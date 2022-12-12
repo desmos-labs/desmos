@@ -1,0 +1,25 @@
+---
+id: delete-profiles-params
+title: delete_profiles_params
+hide_table_of_contents: false
+---
+
+delete data from the table: "profiles_params"
+
+```graphql
+delete_profiles_params(
+  where: profiles_params_bool_exp!
+): profiles_params_mutation_response
+```
+
+### Arguments
+
+#### [`where`](#) ([`profiles_params_bool_exp!`](../inputs/profiles-params-bool-exp))
+
+filter the rows which have to be deleted
+
+### Type
+
+#### [`profiles_params_mutation_response`](../objects/profiles-params-mutation-response)
+
+response of any mutation on the table "profiles_params"

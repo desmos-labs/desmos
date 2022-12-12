@@ -4,6 +4,8 @@ import (
 	"testing"
 	"time"
 
+	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -23,7 +25,7 @@ func TestMigrateStore(t *testing.T) {
 	cdc, amino := app.MakeCodecs()
 
 	// Build all the necessary keys
-	keys := sdk.NewKVStoreKeys(paramstypes.StoreKey, subspacestypes.StoreKey, types.StoreKey)
+	keys := sdk.NewKVStoreKeys(paramstypes.StoreKey, subspacestypes.StoreKey, types.StoreKey, authtypes.StoreKey)
 	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
@@ -31,7 +33,8 @@ func TestMigrateStore(t *testing.T) {
 	paramsSubspace := pk.Subspace(types.ModuleName)
 	paramsSubspace = paramsSubspace.WithKeyTable(types.ParamKeyTable())
 
-	sk := subspaceskeeper.NewKeeper(cdc, keys[subspacestypes.StoreKey])
+	authKeeper := authkeeper.NewAccountKeeper(cdc, keys[authtypes.StoreKey], pk.Subspace(authtypes.ModuleName), authtypes.ProtoBaseAccount, app.GetMaccPerms())
+	sk := subspaceskeeper.NewKeeper(cdc, keys[subspacestypes.StoreKey], authKeeper)
 
 	testCases := []struct {
 		name      string

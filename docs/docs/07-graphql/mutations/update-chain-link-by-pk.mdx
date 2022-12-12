@@ -1,0 +1,33 @@
+---
+id: update-chain-link-by-pk
+title: update_chain_link_by_pk
+hide_table_of_contents: false
+---
+
+update single row of the table: "chain_link"
+
+```graphql
+update_chain_link_by_pk(
+  _inc: chain_link_inc_input
+  _set: chain_link_set_input
+  pk_columns: chain_link_pk_columns_input!
+): chain_link
+```
+
+### Arguments
+
+#### [`_inc`](#) ([`chain_link_inc_input`](../inputs/chain-link-inc-input))
+
+increments the numeric columns with given value of the filtered values
+
+#### [`_set`](#) ([`chain_link_set_input`](../inputs/chain-link-set-input))
+
+sets the columns of the filtered rows to the given values
+
+#### [`pk_columns`](#) ([`chain_link_pk_columns_input!`](../inputs/chain-link-pk-columns-input))
+
+### Type
+
+#### [`chain_link`](../objects/chain-link)
+
+columns and relationships of "chain_link"

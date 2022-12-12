@@ -1,0 +1,30 @@
+---
+id: insert-subspace-section-one
+title: insert_subspace_section_one
+hide_table_of_contents: false
+---
+
+insert a single row into the table: "subspace_section"
+
+```graphql
+insert_subspace_section_one(
+  object: subspace_section_insert_input!
+  on_conflict: subspace_section_on_conflict
+): subspace_section
+```
+
+### Arguments
+
+#### [`object`](#) ([`subspace_section_insert_input!`](../inputs/subspace-section-insert-input))
+
+the row to be inserted
+
+#### [`on_conflict`](#) ([`subspace_section_on_conflict`](../inputs/subspace-section-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`subspace_section`](../objects/subspace-section)
+
+columns and relationships of "subspace_section"

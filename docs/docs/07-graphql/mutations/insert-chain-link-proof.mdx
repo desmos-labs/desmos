@@ -1,0 +1,30 @@
+---
+id: insert-chain-link-proof
+title: insert_chain_link_proof
+hide_table_of_contents: false
+---
+
+insert data into the table: "chain_link_proof"
+
+```graphql
+insert_chain_link_proof(
+  objects: [chain_link_proof_insert_input!]!
+  on_conflict: chain_link_proof_on_conflict
+): chain_link_proof_mutation_response
+```
+
+### Arguments
+
+#### [`objects`](#) ([`[chain_link_proof_insert_input!]!`](../inputs/chain-link-proof-insert-input))
+
+the rows to be inserted
+
+#### [`on_conflict`](#) ([`chain_link_proof_on_conflict`](../inputs/chain-link-proof-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`chain_link_proof_mutation_response`](../objects/chain-link-proof-mutation-response)
+
+response of any mutation on the table "chain_link_proof"

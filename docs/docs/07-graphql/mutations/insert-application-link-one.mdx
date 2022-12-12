@@ -1,0 +1,30 @@
+---
+id: insert-application-link-one
+title: insert_application_link_one
+hide_table_of_contents: false
+---
+
+insert a single row into the table: "application_link"
+
+```graphql
+insert_application_link_one(
+  object: application_link_insert_input!
+  on_conflict: application_link_on_conflict
+): application_link
+```
+
+### Arguments
+
+#### [`object`](#) ([`application_link_insert_input!`](../inputs/application-link-insert-input))
+
+the row to be inserted
+
+#### [`on_conflict`](#) ([`application_link_on_conflict`](../inputs/application-link-on-conflict))
+
+on conflict condition
+
+### Type
+
+#### [`application_link`](../objects/application-link)
+
+columns and relationships of "application_link"
