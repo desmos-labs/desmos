@@ -2,9 +2,9 @@ package types
 
 import (
 	"fmt"
-	"strings"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	feegranttypes "github.com/cosmos/cosmos-sdk/x/feegrant"
 	proto "github.com/gogo/protobuf/proto"
@@ -32,21 +32,23 @@ func NewUserGrant(subspaceID uint64, granter, grantee string, feeAllowance feegr
 	}, nil
 }
 
-func (a UserGrant) ValidateBasic() error {
-	if a.SubspaceID == 0 {
-		return fmt.Errorf("invalid subspace id: %d", a.SubspaceID)
+func (u UserGrant) ValidateBasic() error {
+	if u.SubspaceID == 0 {
+		return fmt.Errorf("invalid subspace id: %d", u.SubspaceID)
 	}
-	if strings.TrimSpace(a.Granter) == "" {
+	_, err := sdk.AccAddressFromBech32(u.Granter)
+	if err != nil {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "missing granter address")
 	}
-	if strings.TrimSpace(a.Grantee) == "" {
+	_, err = sdk.AccAddressFromBech32(u.Grantee)
+	if err != nil {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "missing grantee address")
 	}
-	if a.Grantee == a.Granter {
+	if u.Grantee == u.Granter {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "cannot self-grant fee authorization")
 	}
 
-	f, err := a.GetUnpackedAllowance()
+	f, err := u.GetUnpackedAllowance()
 	if err != nil {
 		return err
 	}
@@ -54,8 +56,8 @@ func (a UserGrant) ValidateBasic() error {
 }
 
 // GetUnpackedAllowance unpacks allowance
-func (a UserGrant) GetUnpackedAllowance() (feegranttypes.FeeAllowanceI, error) {
-	allowance, ok := a.Allowance.GetCachedValue().(feegranttypes.FeeAllowanceI)
+func (u UserGrant) GetUnpackedAllowance() (feegranttypes.FeeAllowanceI, error) {
+	allowance, ok := u.Allowance.GetCachedValue().(feegranttypes.FeeAllowanceI)
 	if !ok {
 		return nil, fmt.Errorf("failed to unpack allowance")
 	}
@@ -64,9 +66,9 @@ func (a UserGrant) GetUnpackedAllowance() (feegranttypes.FeeAllowanceI, error) {
 }
 
 // UnpackInterfaces implements UnpackInterfacesMessage.UnpackInterfaces
-func (a UserGrant) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
+func (u UserGrant) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 	var allowance feegranttypes.FeeAllowanceI
-	return unpacker.UnpackAny(a.Allowance, &allowance)
+	return unpacker.UnpackAny(u.Allowance, &allowance)
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -90,18 +92,19 @@ func NewGroupGrant(subspaceID uint64, granter string, groupID uint32, feeAllowan
 	}, nil
 }
 
-func (a GroupGrant) ValidateBasic() error {
-	if a.SubspaceID == 0 {
-		return fmt.Errorf("invalid subspace id: %d", a.SubspaceID)
+func (g GroupGrant) ValidateBasic() error {
+	if g.SubspaceID == 0 {
+		return fmt.Errorf("invalid subspace id: %d", g.SubspaceID)
 	}
-	if a.GroupID == 0 {
-		return fmt.Errorf("invalid group id: %d", a.GroupID)
+	if g.GroupID == 0 {
+		return fmt.Errorf("invalid group id: %d", g.GroupID)
 	}
-	if strings.TrimSpace(a.Granter) == "" {
+	_, err := sdk.AccAddressFromBech32(g.Granter)
+	if err != nil {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "missing granter address")
 	}
 
-	f, err := a.GetUnpackedAllowance()
+	f, err := g.GetUnpackedAllowance()
 	if err != nil {
 		return err
 	}
@@ -109,8 +112,8 @@ func (a GroupGrant) ValidateBasic() error {
 }
 
 // GetUnpackedAllowance unpacks allowance
-func (a GroupGrant) GetUnpackedAllowance() (feegranttypes.FeeAllowanceI, error) {
-	allowance, ok := a.Allowance.GetCachedValue().(feegranttypes.FeeAllowanceI)
+func (g GroupGrant) GetUnpackedAllowance() (feegranttypes.FeeAllowanceI, error) {
+	allowance, ok := g.Allowance.GetCachedValue().(feegranttypes.FeeAllowanceI)
 	if !ok {
 		return nil, fmt.Errorf("failed to unpack allowance")
 	}

@@ -10,7 +10,7 @@ import (
 )
 
 func TestUserGrant_Validate(t *testing.T) {
-	validGrant, err := types.NewUserGrant(1, "granter", "grantee", &feegrant.BasicAllowance{})
+	validGrant, err := types.NewUserGrant(1, "cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0", "cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez", &feegrant.BasicAllowance{})
 	require.NoError(t, err)
 	testCases := []struct {
 		name      string
@@ -21,38 +21,28 @@ func TestUserGrant_Validate(t *testing.T) {
 			name: "invalid subspace id returns error",
 			grant: types.UserGrant{
 				SubspaceID: 0,
-				Granter:    "granter",
-				Grantee:    "grantee",
+				Granter:    "cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
+				Grantee:    "cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez",
 				Allowance:  &codectypes.Any{},
 			},
 			shouldErr: true,
 		},
 		{
-			name: "invalid granter returns error - empty",
+			name: "invalid granter returns error",
 			grant: types.UserGrant{
 				SubspaceID: 1,
 				Granter:    "",
-				Grantee:    "grantee",
+				Grantee:    "cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez",
 				Allowance:  &codectypes.Any{},
 			},
 			shouldErr: true,
 		},
 		{
-			name: "invalid grantee returns error - empty",
+			name: "invalid grantee returns error",
 			grant: types.UserGrant{
 				SubspaceID: 1,
-				Granter:    "granter",
+				Granter:    "cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
 				Grantee:    "",
-				Allowance:  &codectypes.Any{},
-			},
-			shouldErr: true,
-		},
-		{
-			name: "invalid grantee returns error - blank",
-			grant: types.UserGrant{
-				SubspaceID: 1,
-				Granter:    "granter",
-				Grantee:    "   ",
 				Allowance:  &codectypes.Any{},
 			},
 			shouldErr: true,
@@ -61,8 +51,8 @@ func TestUserGrant_Validate(t *testing.T) {
 			name: "granter self-grant returns error",
 			grant: types.UserGrant{
 				SubspaceID: 1,
-				Granter:    "granter",
-				Grantee:    "granter",
+				Granter:    "cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
+				Grantee:    "cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
 				Allowance:  &codectypes.Any{},
 			},
 			shouldErr: true,
@@ -71,8 +61,8 @@ func TestUserGrant_Validate(t *testing.T) {
 			name: "invalid allowance returns error",
 			grant: types.UserGrant{
 				SubspaceID: 1,
-				Granter:    "granter",
-				Grantee:    "grantee",
+				Granter:    "cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
+				Grantee:    "cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez",
 				Allowance:  &codectypes.Any{},
 			},
 			shouldErr: true,
@@ -100,7 +90,7 @@ func TestUserGrant_Validate(t *testing.T) {
 // --------------------------------------------------------------------------------------------------------------------
 
 func TestGroupGrant_Validate(t *testing.T) {
-	validGrant, err := types.NewGroupGrant(1, "granter", 1, &feegrant.BasicAllowance{})
+	validGrant, err := types.NewGroupGrant(1, "cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0", 1, &feegrant.BasicAllowance{})
 	require.NoError(t, err)
 	testCases := []struct {
 		name      string
@@ -111,14 +101,14 @@ func TestGroupGrant_Validate(t *testing.T) {
 			name: "invalid subspace id returns error",
 			grant: types.GroupGrant{
 				SubspaceID: 0,
-				Granter:    "granter",
+				Granter:    "cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
 				GroupID:    1,
 				Allowance:  &codectypes.Any{},
 			},
 			shouldErr: true,
 		},
 		{
-			name: "invalid granter returns error - empty",
+			name: "invalid granter returns error",
 			grant: types.GroupGrant{
 				SubspaceID: 1,
 				Granter:    "",
@@ -128,20 +118,10 @@ func TestGroupGrant_Validate(t *testing.T) {
 			shouldErr: true,
 		},
 		{
-			name: "invalid grantee returns error - empty",
+			name: "invalid group id returns error",
 			grant: types.GroupGrant{
 				SubspaceID: 1,
-				Granter:    "  ",
-				GroupID:    1,
-				Allowance:  &codectypes.Any{},
-			},
-			shouldErr: true,
-		},
-		{
-			name: "invalid group id returns error - blank",
-			grant: types.GroupGrant{
-				SubspaceID: 1,
-				Granter:    "granter",
+				Granter:    "cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
 				GroupID:    0,
 				Allowance:  &codectypes.Any{},
 			},
@@ -151,7 +131,7 @@ func TestGroupGrant_Validate(t *testing.T) {
 			name: "invalid allowance returns error",
 			grant: types.GroupGrant{
 				SubspaceID: 1,
-				Granter:    "granter",
+				Granter:    "cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
 				GroupID:    1,
 				Allowance:  &codectypes.Any{},
 			},
