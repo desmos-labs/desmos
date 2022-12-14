@@ -1,7 +1,7 @@
 package types
 
 import (
-	"github.com/cosmos/cosmos-sdk/codec/types"
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	feegranttypes "github.com/cosmos/cosmos-sdk/x/feegrant"
@@ -20,7 +20,7 @@ func NewMsgGrantUserAllowance(subspaceID uint64, granter string, grantee string,
 	if !ok {
 		panic("cannot proto marshal allowance")
 	}
-	any, err := types.NewAnyWithValue(msg)
+	any, err := codectypes.NewAnyWithValue(msg)
 	if err != nil {
 		panic("failed to pack allowance to any type")
 	}
@@ -65,7 +65,7 @@ func (msg MsgGrantUserAllowance) GetFeeAllowanceI() (feegranttypes.FeeAllowanceI
 	return allowance, nil
 }
 
-func (msg MsgGrantUserAllowance) UnpackInterfaces(unpacker types.AnyUnpacker) error {
+func (msg MsgGrantUserAllowance) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 	var allowance feegranttypes.FeeAllowanceI
 	return unpacker.UnpackAny(msg.Allowance, &allowance)
 }
@@ -111,7 +111,7 @@ func NewMsgGrantGroupAllowance(subspaceID uint64, granter string, groupID uint32
 	if !ok {
 		panic("cannot proto marshal allowance")
 	}
-	any, err := types.NewAnyWithValue(msg)
+	any, err := codectypes.NewAnyWithValue(msg)
 	if err != nil {
 		panic("failed to pack allowance to any type")
 	}
@@ -156,7 +156,7 @@ func (msg MsgGrantGroupAllowance) GetFeeAllowanceI() (feegranttypes.FeeAllowance
 	return allowance, nil
 }
 
-func (msg MsgGrantGroupAllowance) UnpackInterfaces(unpacker types.AnyUnpacker) error {
+func (msg MsgGrantGroupAllowance) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 	var allowance feegranttypes.FeeAllowanceI
 	return unpacker.UnpackAny(msg.Allowance, &allowance)
 }

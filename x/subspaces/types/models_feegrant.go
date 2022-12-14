@@ -2,15 +2,16 @@ package types
 
 import (
 	"fmt"
+	"strings"
 
-	"github.com/cosmos/cosmos-sdk/codec/types"
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	feegranttypes "github.com/cosmos/cosmos-sdk/x/feegrant"
 	proto "github.com/gogo/protobuf/proto"
 )
 
-var _ types.UnpackInterfacesMessage = &UserGrant{}
-var _ types.UnpackInterfacesMessage = &GroupGrant{}
+var _ codectypes.UnpackInterfacesMessage = &UserGrant{}
+var _ codectypes.UnpackInterfacesMessage = &GroupGrant{}
 
 func NewUserGrant(subspaceID uint64, granter, grantee string, feeAllowance feegranttypes.FeeAllowanceI) (UserGrant, error) {
 	msg, ok := feeAllowance.(proto.Message)
@@ -18,7 +19,7 @@ func NewUserGrant(subspaceID uint64, granter, grantee string, feeAllowance feegr
 		return UserGrant{}, sdkerrors.Wrapf(sdkerrors.ErrPackAny, "cannot proto marshal %T", feeAllowance)
 	}
 
-	any, err := types.NewAnyWithValue(msg)
+	any, err := codectypes.NewAnyWithValue(msg)
 	if err != nil {
 		return UserGrant{}, err
 	}
@@ -32,10 +33,13 @@ func NewUserGrant(subspaceID uint64, granter, grantee string, feeAllowance feegr
 }
 
 func (a UserGrant) ValidateBasic() error {
-	if a.Granter == "" {
+	if a.SubspaceID == 0 {
+		return fmt.Errorf("invalid subspace id: %d", a.SubspaceID)
+	}
+	if strings.TrimSpace(a.Granter) == "" {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "missing granter address")
 	}
-	if a.Grantee == "" {
+	if strings.TrimSpace(a.Grantee) == "" {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "missing grantee address")
 	}
 	if a.Grantee == a.Granter {
@@ -60,7 +64,7 @@ func (a UserGrant) GetUnpackedAllowance() (feegranttypes.FeeAllowanceI, error) {
 }
 
 // UnpackInterfaces implements UnpackInterfacesMessage.UnpackInterfaces
-func (a UserGrant) UnpackInterfaces(unpacker types.AnyUnpacker) error {
+func (a UserGrant) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 	var allowance feegranttypes.FeeAllowanceI
 	return unpacker.UnpackAny(a.Allowance, &allowance)
 }
@@ -73,7 +77,7 @@ func NewGroupGrant(subspaceID uint64, granter string, groupID uint32, feeAllowan
 		return GroupGrant{}, sdkerrors.Wrapf(sdkerrors.ErrPackAny, "cannot proto marshal %T", feeAllowance)
 	}
 
-	any, err := types.NewAnyWithValue(msg)
+	any, err := codectypes.NewAnyWithValue(msg)
 	if err != nil {
 		return GroupGrant{}, err
 	}
@@ -87,7 +91,13 @@ func NewGroupGrant(subspaceID uint64, granter string, groupID uint32, feeAllowan
 }
 
 func (a GroupGrant) ValidateBasic() error {
-	if a.Granter == "" {
+	if a.SubspaceID == 0 {
+		return fmt.Errorf("invalid subspace id: %d", a.SubspaceID)
+	}
+	if a.GroupID == 0 {
+		return fmt.Errorf("invalid group id: %d", a.GroupID)
+	}
+	if strings.TrimSpace(a.Granter) == "" {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "missing granter address")
 	}
 
@@ -109,7 +119,7 @@ func (a GroupGrant) GetUnpackedAllowance() (feegranttypes.FeeAllowanceI, error) 
 }
 
 // UnpackInterfaces implements UnpackInterfacesMessage.UnpackInterfaces
-func (a GroupGrant) UnpackInterfaces(unpacker types.AnyUnpacker) error {
+func (a GroupGrant) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 	var allowance feegranttypes.FeeAllowanceI
 	return unpacker.UnpackAny(a.Allowance, &allowance)
 }
