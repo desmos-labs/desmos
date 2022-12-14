@@ -19,7 +19,7 @@ func (k msgServer) GrantUserAllowance(goCtx context.Context, msg *types.MsgGrant
 		return nil, err
 	}
 
-	allowance, err := msg.GetFeeAllowanceI()
+	allowance, err := msg.GetUnpackedAllowance()
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +45,7 @@ func (k msgServer) GrantGroupAllowance(goCtx context.Context, msg *types.MsgGran
 	if _, found, _ := k.GetGroupAllowance(ctx, msg.SubspaceID, msg.Granter, msg.GroupID); found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "fee allowance already exists")
 	}
-	allowance, err := msg.GetFeeAllowanceI()
+	allowance, err := msg.GetUnpackedAllowance()
 	if err != nil {
 		return nil, err
 	}
