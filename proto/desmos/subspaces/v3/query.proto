@@ -63,13 +63,13 @@ service Query {
         "/desmos/subspaces/v3/subspaces/{subspace_id}/permissions/{user}";
   }
 
-  // UserGrants returns all the grants for users.
-  rpc UserGrants(QueryUserGrantsRequest) returns (QueryUserGrantsResponse) {
+  // UserAllowances returns all the grants for users.
+  rpc UserAllowances(QueryUserAllowancesRequest) returns (QueryUserAllowancesResponse) {
     option (google.api.http).get =
         "/desmos/subspaces/v3/subspaces/{subspace_id}/allowances/users";
   }
-  // GroupGrants returns all the grants for groups.
-  rpc GroupGrants(QueryGroupGrantsRequest) returns (QueryGroupGrantsResponse) {
+  // GroupAllowances returns all the grants for groups.
+  rpc GroupAllowances(QueryGroupAllowancesRequest) returns (QueryGroupAllowancesResponse) {
     option (google.api.http).get =
         "/desmos/subspaces/v3/subspaces/{subspace_id}/allowances/groups";
   }
@@ -275,9 +275,9 @@ message PermissionDetail {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// QueryUserGrantsRequest is the request type for the Query/UserGrants RPC
+// QueryUserAllowancesRequest is the request type for the Query/UserAllowances RPC
 // method
-message QueryUserGrantsRequest {
+message QueryUserAllowancesRequest {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
@@ -296,9 +296,9 @@ message QueryUserGrantsRequest {
   cosmos.base.query.v1beta1.PageRequest pagination = 4;
 }
 
-// QueryUserGrantsResponse is the response type for the Query/UserGrants RPC
+// QueryUserAllowancesResponse is the response type for the Query/UserAllowances RPC
 // method
-message QueryUserGrantsResponse {
+message QueryUserAllowancesResponse {
   // grants are allowance's granted for grantee by granter
   repeated UserGrant grants = 1 [
     (gogoproto.moretags) = "yaml:\"grants\"",
@@ -311,9 +311,9 @@ message QueryUserGrantsResponse {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// QueryGroupGrantsRequest is the request type for the Query/GroupGrants RPC
+// QueryGroupAllowancesRequest is the request type for the Query/GroupAllowances RPC
 // method
-message QueryGroupGrantsRequest {
+message QueryGroupAllowancesRequest {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
@@ -332,9 +332,9 @@ message QueryGroupGrantsRequest {
   cosmos.base.query.v1beta1.PageRequest pagination = 4;
 }
 
-// QueryGroupGrantsResponse is the response type for the Query/GroupGrants RPC
+// QueryGroupAllowancesResponse is the response type for the Query/GroupAllowances RPC
 // method
-message QueryGroupGrantsResponse {
+message QueryGroupAllowancesResponse {
   // grants are allowance's granted for grantee by granter
   repeated GroupGrant grants = 1 [
     (gogoproto.moretags) = "yaml:\"grants\"",

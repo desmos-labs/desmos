@@ -98,3 +98,21 @@ func NewPermissionDetailGroup(subspaceID uint64, sectionID uint32, groupID uint3
 		},
 	}
 }
+
+func NewUserAllowancesRequest(subspaceID uint64, granter string, grantee string, pagination *query.PageRequest) *QueryUserAllowancesRequest {
+	return &QueryUserAllowancesRequest{
+		SubspaceId: subspaceID,
+		Granter:    granter,
+		Grantee:    grantee,
+		Pagination: pagination,
+	}
+}
+
+func NewGroupAllowancesRequest(subspaceID uint64, granter string, groupID uint32, pagination *query.PageRequest) *QueryGroupAllowancesRequest {
+	return &QueryGroupAllowancesRequest{
+		SubspaceId: subspaceID,
+		Granter:    granter,
+		GroupId:    groupID,
+		Pagination: pagination,
+	}
+}

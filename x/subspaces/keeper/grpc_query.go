@@ -219,19 +219,22 @@ func (k Keeper) UserPermissions(ctx context.Context, request *types.QueryUserPer
 	}, nil
 }
 
-func (k Keeper) UserGrants(ctx context.Context, request *types.QueryUserGrantsRequest) (*types.QueryUserGrantsResponse, error) {
+func (k Keeper) UserAllowances(ctx context.Context, request *types.QueryUserAllowancesRequest) (*types.QueryUserAllowancesResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	store := sdkCtx.KVStore(k.storeKey)
 
+	// Check if the subspace exists
+	if !k.HasSubspace(sdkCtx, request.SubspaceId) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", request.SubspaceId)
+	}
+
 	// Get grants prefix store
-	grantsPrefix := types.UserGrantPrefix
+	grantsPrefix := types.UserAllowancePrefix
 	switch {
-	case request.SubspaceId != 0:
-		grantsPrefix = types.SubspaceUserGrantPrefix(request.SubspaceId)
-	case request.SubspaceId != 0 && request.Granter != "":
-		grantsPrefix = types.GranterUserGrantPrefix(request.SubspaceId, request.Granter)
-	case request.SubspaceId != 0 && request.Granter != "" && request.Grantee != "":
-		grantsPrefix = types.UserGrantKey(request.SubspaceId, request.Granter, request.Grantee)
+	case request.Granter != "" && request.Grantee == "":
+		grantsPrefix = types.GranterUserAllowancePrefix(request.SubspaceId, request.Granter)
+	case request.Granter != "" && request.Grantee != "":
+		grantsPrefix = types.UserAllowanceKey(request.SubspaceId, request.Granter, request.Grantee)
 	}
 
 	grantsStore := prefix.NewStore(store, grantsPrefix)
@@ -241,7 +244,7 @@ func (k Keeper) UserGrants(ctx context.Context, request *types.QueryUserGrantsRe
 		if err := k.cdc.Unmarshal(value, &grant); err != nil {
 			return false, status.Error(codes.Internal, err.Error())
 		}
-		if (request.SubspaceId != 0 && grant.Grantee == request.Grantee) || request.Grantee == "" {
+		if grant.Grantee == request.Grantee || request.Grantee == "" {
 			grants = append(grants, grant)
 			return true, nil
 		}
@@ -251,25 +254,28 @@ func (k Keeper) UserGrants(ctx context.Context, request *types.QueryUserGrantsRe
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &types.QueryUserGrantsResponse{
+	return &types.QueryUserAllowancesResponse{
 		Grants:     grants,
 		Pagination: pageRes,
 	}, nil
 }
 
-func (k Keeper) GroupGrants(ctx context.Context, request *types.QueryGroupGrantsRequest) (*types.QueryGroupGrantsResponse, error) {
+func (k Keeper) GroupAllowances(ctx context.Context, request *types.QueryGroupAllowancesRequest) (*types.QueryGroupAllowancesResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	store := sdkCtx.KVStore(k.storeKey)
 
+	// Check if the subspace exists
+	if !k.HasSubspace(sdkCtx, request.SubspaceId) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", request.SubspaceId)
+	}
+
 	// Get grants prefix store
-	grantsPrefix := types.UserGrantPrefix
+	grantsPrefix := types.GroupAllowancePrefix
 	switch {
-	case request.SubspaceId != 0:
-		grantsPrefix = types.SubspaceUserGrantPrefix(request.SubspaceId)
-	case request.SubspaceId != 0 && request.Granter != "":
-		grantsPrefix = types.GranterUserGrantPrefix(request.SubspaceId, request.Granter)
-	case request.SubspaceId != 0 && request.Granter != "" && request.GroupId != 0:
-		grantsPrefix = types.GroupGrantKey(request.SubspaceId, request.Granter, request.GroupId)
+	case request.Granter != "" && request.GroupId == 0:
+		grantsPrefix = types.GranterUserAllowancePrefix(request.SubspaceId, request.Granter)
+	case request.Granter != "" && request.GroupId != 0:
+		grantsPrefix = types.GroupAllowanceKey(request.SubspaceId, request.Granter, request.GroupId)
 	}
 
 	grantsStore := prefix.NewStore(store, grantsPrefix)
@@ -279,7 +285,7 @@ func (k Keeper) GroupGrants(ctx context.Context, request *types.QueryGroupGrants
 		if err := k.cdc.Unmarshal(value, &grant); err != nil {
 			return false, status.Error(codes.Internal, err.Error())
 		}
-		if (request.SubspaceId != 0 && grant.GroupID == request.GroupId) || request.GroupId == 0 {
+		if grant.GroupID == request.GroupId || request.GroupId == 0 {
 			grants = append(grants, grant)
 			return true, nil
 		}
@@ -289,7 +295,7 @@ func (k Keeper) GroupGrants(ctx context.Context, request *types.QueryGroupGrants
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &types.QueryGroupGrantsResponse{
+	return &types.QueryGroupAllowancesResponse{
 		Grants:     grants,
 		Pagination: pageRes,
 	}, nil

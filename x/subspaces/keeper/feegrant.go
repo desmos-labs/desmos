@@ -18,7 +18,7 @@ func (k Keeper) GrantUserAllowance(ctx sdk.Context, subspaceID uint64, granter, 
 	}
 
 	store := ctx.KVStore(k.storeKey)
-	key := types.UserGrantKey(subspaceID, granter, grantee)
+	key := types.UserAllowanceKey(subspaceID, granter, grantee)
 	grant, err := types.NewUserGrant(subspaceID, granter, grantee, allowance)
 	if err != nil {
 		return err
@@ -29,7 +29,7 @@ func (k Keeper) GrantUserAllowance(ctx sdk.Context, subspaceID uint64, granter, 
 
 func (k Keeper) RevokeUserGrant(ctx sdk.Context, subspaceID uint64, granter string, grantee string) error {
 	store := ctx.KVStore(k.storeKey)
-	key := types.UserGrantKey(subspaceID, granter, grantee)
+	key := types.UserAllowanceKey(subspaceID, granter, grantee)
 	if !store.Has(key) {
 		return types.ErrNoAllowance
 	}
@@ -39,7 +39,7 @@ func (k Keeper) RevokeUserGrant(ctx sdk.Context, subspaceID uint64, granter stri
 
 func (k Keeper) GetUserAllowance(ctx sdk.Context, subspaceID uint64, granter, grantee string) (feegrant.FeeAllowanceI, bool, error) {
 	store := ctx.KVStore(k.storeKey)
-	key := types.UserGrantKey(subspaceID, granter, grantee)
+	key := types.UserAllowanceKey(subspaceID, granter, grantee)
 	if !store.Has(key) {
 		return nil, false, nil
 	}
@@ -54,7 +54,7 @@ func (k Keeper) GetUserAllowance(ctx sdk.Context, subspaceID uint64, granter, gr
 
 func (k Keeper) GrantGroupAllowance(ctx sdk.Context, subspaceID uint64, granter string, groupID uint32, feeAllowance feegrant.FeeAllowanceI) error {
 	store := ctx.KVStore(k.storeKey)
-	key := types.GroupGrantKey(subspaceID, granter, groupID)
+	key := types.GroupAllowanceKey(subspaceID, granter, groupID)
 	grant, err := types.NewGroupGrant(subspaceID, granter, groupID, feeAllowance)
 	if err != nil {
 		return err
@@ -69,7 +69,7 @@ func (k Keeper) GrantGroupAllowance(ctx sdk.Context, subspaceID uint64, granter 
 
 func (k Keeper) RevokeGroupGrant(ctx sdk.Context, subspaceID uint64, granter string, groupID uint32) error {
 	store := ctx.KVStore(k.storeKey)
-	key := types.GroupGrantKey(subspaceID, granter, groupID)
+	key := types.GroupAllowanceKey(subspaceID, granter, groupID)
 	if !store.Has(key) {
 		return types.ErrNoAllowance
 	}
@@ -79,7 +79,7 @@ func (k Keeper) RevokeGroupGrant(ctx sdk.Context, subspaceID uint64, granter str
 
 func (k Keeper) GetGroupAllowance(ctx sdk.Context, subspaceID uint64, granter string, groupID uint32) (feegrant.FeeAllowanceI, bool, error) {
 	store := ctx.KVStore(k.storeKey)
-	key := types.GroupGrantKey(subspaceID, granter, groupID)
+	key := types.GroupAllowanceKey(subspaceID, granter, groupID)
 	if !store.Has(key) {
 		return nil, false, nil
 	}
