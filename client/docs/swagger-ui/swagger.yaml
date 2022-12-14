@@ -5536,8 +5536,8 @@ paths:
         - Query
   '/desmos/subspaces/v3/subspaces/{subspace_id}/allowances/groups':
     get:
-      summary: GroupGrants returns all the grants for groups.
-      operationId: GroupGrants
+      summary: GroupAllowances returns all the grants for groups.
+      operationId: GroupAllowances
       responses:
         '200':
           description: A successful response.
@@ -5775,8 +5775,8 @@ paths:
                    }
                 title: pagination defines an pagination for the response
             title: >-
-              QueryGroupGrantsResponse is the response type for the
-              Query/GroupGrants RPC
+              QueryGroupAllowancesResponse is the response type for the
+              Query/GroupAllowances RPC
 
               method
         default:
@@ -6056,8 +6056,8 @@ paths:
         - Query
   '/desmos/subspaces/v3/subspaces/{subspace_id}/allowances/users':
     get:
-      summary: UserGrants returns all the grants for users.
-      operationId: UserGrants
+      summary: UserAllowances returns all the grants for users.
+      operationId: UserAllowances
       responses:
         '200':
           description: A successful response.
@@ -6294,8 +6294,8 @@ paths:
                    }
                 title: pagination defines an pagination for the response
             title: >-
-              QueryUserGrantsResponse is the response type for the
-              Query/UserGrants RPC
+              QueryUserAllowancesResponse is the response type for the
+              Query/UserAllowances RPC
 
               method
         default:
@@ -18818,7 +18818,7 @@ definitions:
           type: string
         title: Permissions set to the user
     title: User is a permission that has been set to a specific user
-  desmos.subspaces.v3.QueryGroupGrantsResponse:
+  desmos.subspaces.v3.QueryGroupAllowancesResponse:
     type: object
     properties:
       grants:
@@ -19040,8 +19040,8 @@ definitions:
            }
         title: pagination defines an pagination for the response
     title: >-
-      QueryGroupGrantsResponse is the response type for the Query/GroupGrants
-      RPC
+      QueryGroupAllowancesResponse is the response type for the
+      Query/GroupAllowances RPC
 
       method
   desmos.subspaces.v3.QuerySectionResponse:
@@ -19222,7 +19222,7 @@ definitions:
     title: |-
       QuerySubspacesResponse is the response type for the Query/Subspaces RPC
       method
-  desmos.subspaces.v3.QueryUserGrantsResponse:
+  desmos.subspaces.v3.QueryUserAllowancesResponse:
     type: object
     properties:
       grants:
@@ -19442,8 +19442,10 @@ definitions:
                    PageResponse page = 2;
            }
         title: pagination defines an pagination for the response
-    title: |-
-      QueryUserGrantsResponse is the response type for the Query/UserGrants RPC
+    title: >-
+      QueryUserAllowancesResponse is the response type for the
+      Query/UserAllowances RPC
+
       method
   desmos.subspaces.v3.QueryUserGroupMembersResponse:
     type: object
