@@ -33,11 +33,8 @@ func (k msgServer) GrantUserAllowance(goCtx context.Context, msg *types.MsgGrant
 	if err != nil {
 		return nil, err
 	}
+	k.Keeper.SaveUserGrant(ctx, grant)
 
-	err = k.Keeper.SaveUserGrant(ctx, grant)
-	if err != nil {
-		return nil, err
-	}
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
@@ -58,10 +55,12 @@ func (k msgServer) GrantUserAllowance(goCtx context.Context, msg *types.MsgGrant
 // RevokeUserAllowance defines a rpc method for MsgRevokeUserAllowance
 func (k msgServer) RevokeUserAllowance(goCtx context.Context, msg *types.MsgRevokeUserAllowance) (*types.MsgRevokeUserAllowanceResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	err := k.RemoveUserAllowance(ctx, msg.SubspaceID, msg.Granter, msg.Grantee)
-	if err != nil {
-		return nil, err
+
+	if !k.HasUserGrant(ctx, msg.SubspaceID, msg.Granter, msg.Grantee) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "fee allowance does not exist")
 	}
+	k.DeleteUserGrant(ctx, msg.SubspaceID, msg.Granter, msg.Grantee)
+
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
@@ -82,6 +81,7 @@ func (k msgServer) RevokeUserAllowance(goCtx context.Context, msg *types.MsgRevo
 // GrantGroupAllowance defines a rpc method for MsgGrantGroupAllowance
 func (k msgServer) GrantGroupAllowance(goCtx context.Context, msg *types.MsgGrantGroupAllowance) (*types.MsgGrantGroupAllowanceResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
+
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
@@ -101,10 +101,8 @@ func (k msgServer) GrantGroupAllowance(goCtx context.Context, msg *types.MsgGran
 	if err != nil {
 		return nil, err
 	}
-	err = k.Keeper.SaveGroupGrant(ctx, grant)
-	if err != nil {
-		return nil, err
-	}
+	k.Keeper.SaveGroupGrant(ctx, grant)
+
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
@@ -125,10 +123,13 @@ func (k msgServer) GrantGroupAllowance(goCtx context.Context, msg *types.MsgGran
 // RevokeGroupAllowance defines a rpc method for MsgRevokeGroupAllowance
 func (k msgServer) RevokeGroupAllowance(goCtx context.Context, msg *types.MsgRevokeGroupAllowance) (*types.MsgRevokeGroupAllowanceResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	err := k.RemoveGroupGrant(ctx, msg.SubspaceID, msg.Granter, msg.GroupID)
-	if err != nil {
-		return nil, err
+
+	if !k.HasGroupGrant(ctx, msg.SubspaceID, msg.Granter, msg.GroupID) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "fee allowance does not exist")
 	}
+
+	k.DeleteGroupGrant(ctx, msg.SubspaceID, msg.Granter, msg.GroupID)
+
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			sdk.EventTypeMessage,

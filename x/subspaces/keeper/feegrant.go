@@ -6,11 +6,11 @@ import (
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
-// SaveUserGrant saves a new user grant
-func (k Keeper) SaveUserGrant(ctx sdk.Context, grant types.UserGrant) error {
+// SaveUserGrant saves the given user grant
+func (k Keeper) SaveUserGrant(ctx sdk.Context, grant types.UserGrant) {
 	granteeAddr, err := sdk.AccAddressFromBech32(grant.Grantee)
 	if err != nil {
-		return err
+		panic(err)
 	}
 	if !k.ak.HasAccount(ctx, granteeAddr) {
 		k.ak.SetAccount(ctx, authtypes.NewBaseAccountWithAddress(granteeAddr))
@@ -19,18 +19,17 @@ func (k Keeper) SaveUserGrant(ctx sdk.Context, grant types.UserGrant) error {
 	store := ctx.KVStore(k.storeKey)
 	key := types.UserAllowanceKey(grant.SubspaceID, grant.Granter, grant.Grantee)
 	store.Set(key, k.cdc.MustMarshal(&grant))
-	return nil
 }
 
-// RemoveUserAllowance remove a user grant
-func (k Keeper) RemoveUserAllowance(ctx sdk.Context, subspaceID uint64, granter string, grantee string) error {
+func (k Keeper) HasUserGrant(ctx sdk.Context, subspaceID uint64, granter string, grantee string) bool {
+	return ctx.KVStore(k.storeKey).Has(types.UserAllowanceKey(subspaceID, granter, grantee))
+}
+
+// DeleteUserGrant delete a user grant
+func (k Keeper) DeleteUserGrant(ctx sdk.Context, subspaceID uint64, granter string, grantee string) {
 	store := ctx.KVStore(k.storeKey)
 	key := types.UserAllowanceKey(subspaceID, granter, grantee)
-	if !store.Has(key) {
-		return types.ErrNoAllowance
-	}
 	store.Delete(key)
-	return nil
 }
 
 func (k Keeper) GetUserGrant(ctx sdk.Context, subspaceID uint64, granter, grantee string) (types.UserGrant, bool, error) {
@@ -47,23 +46,25 @@ func (k Keeper) GetUserGrant(ctx sdk.Context, subspaceID uint64, granter, grante
 	return grant, true, nil
 }
 
-func (k Keeper) SaveGroupGrant(ctx sdk.Context, grant types.GroupGrant) error {
+// SaveGroupGrant saves the given group grant
+func (k Keeper) SaveGroupGrant(ctx sdk.Context, grant types.GroupGrant) {
 	store := ctx.KVStore(k.storeKey)
 	key := types.GroupAllowanceKey(grant.SubspaceID, grant.Granter, grant.GroupID)
 	store.Set(key, k.cdc.MustMarshal(&grant))
-	return nil
 }
 
-func (k Keeper) RemoveGroupGrant(ctx sdk.Context, subspaceID uint64, granter string, groupID uint32) error {
+func (k Keeper) HasGroupGrant(ctx sdk.Context, subspaceID uint64, granter string, groupID uint32) bool {
+	return ctx.KVStore(k.storeKey).Has(types.GroupAllowanceKey(subspaceID, granter, groupID))
+}
+
+// DeleteGroupGrant removes a group grant
+func (k Keeper) DeleteGroupGrant(ctx sdk.Context, subspaceID uint64, granter string, groupID uint32) {
 	store := ctx.KVStore(k.storeKey)
 	key := types.GroupAllowanceKey(subspaceID, granter, groupID)
-	if !store.Has(key) {
-		return types.ErrNoAllowance
-	}
 	store.Delete(key)
-	return nil
 }
 
+// GetGroupGrant gets a group grant from store
 func (k Keeper) GetGroupGrant(ctx sdk.Context, subspaceID uint64, granter string, groupID uint32) (types.GroupGrant, bool, error) {
 	store := ctx.KVStore(k.storeKey)
 	key := types.GroupAllowanceKey(subspaceID, granter, groupID)
@@ -99,7 +100,7 @@ func (k Keeper) UseUserGrantedFees(ctx sdk.Context, subspaceID uint64, granter, 
 	}
 	remove, err := allowance.Accept(ctx, fee, msgs)
 	if remove {
-		k.RemoveUserAllowance(ctx, subspaceID, granter.String(), grantee.String())
+		k.DeleteUserGrant(ctx, subspaceID, granter.String(), grantee.String())
 	}
 	if err != nil {
 		return false
@@ -110,10 +111,7 @@ func (k Keeper) UseUserGrantedFees(ctx sdk.Context, subspaceID uint64, granter, 
 		if err != nil {
 			return false
 		}
-		err = k.SaveUserGrant(ctx, grant)
-		if err != nil {
-			return false
-		}
+		k.SaveUserGrant(ctx, grant)
 	}
 	return true
 }
@@ -130,7 +128,7 @@ func (k Keeper) UseGroupGrantedFees(ctx sdk.Context, subspaceID uint64, granter,
 		}
 		remove, err := allowance.Accept(ctx, fee, msgs)
 		if remove {
-			k.RemoveGroupGrant(ctx, subspaceID, grant.Granter, grant.GroupID)
+			k.DeleteGroupGrant(ctx, subspaceID, grant.Granter, grant.GroupID)
 		}
 		if err != nil {
 			return false
@@ -141,10 +139,7 @@ func (k Keeper) UseGroupGrantedFees(ctx sdk.Context, subspaceID uint64, granter,
 			if err != nil {
 				return false
 			}
-			err = k.SaveGroupGrant(ctx, grant)
-			if err != nil {
-				return false
-			}
+			k.SaveGroupGrant(ctx, grant)
 		}
 
 		used = true

@@ -96,7 +96,7 @@ func (msg MsgGrantUserAllowance) GetSignBytes() []byte {
 func (msg MsgGrantUserAllowance) GetUnpackedAllowance() (feegranttypes.FeeAllowanceI, error) {
 	allowance, ok := msg.Allowance.GetCachedValue().(feegranttypes.FeeAllowanceI)
 	if !ok {
-		return nil, sdkerrors.Wrap(ErrNoAllowance, "failed to get allowance")
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid allowance type %T", allowance)
 	}
 	return allowance, nil
 }
@@ -226,7 +226,7 @@ func (msg MsgGrantGroupAllowance) GetSignBytes() []byte {
 func (msg MsgGrantGroupAllowance) GetUnpackedAllowance() (feegranttypes.FeeAllowanceI, error) {
 	allowance, ok := msg.Allowance.GetCachedValue().(feegranttypes.FeeAllowanceI)
 	if !ok {
-		return nil, sdkerrors.Wrap(ErrNoAllowance, "failed to get allowance")
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid allowance type %T", allowance)
 	}
 
 	return allowance, nil
