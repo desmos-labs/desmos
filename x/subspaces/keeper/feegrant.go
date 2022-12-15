@@ -3,13 +3,12 @@ package keeper
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	"github.com/cosmos/cosmos-sdk/x/feegrant"
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
 // SaveUserGrant saves a new user grant
-func (k Keeper) SaveUserGrant(ctx sdk.Context, subspaceID uint64, granter, grantee string, allowance feegrant.FeeAllowanceI) error {
-	granteeAddr, err := sdk.AccAddressFromBech32(grantee)
+func (k Keeper) SaveUserGrant(ctx sdk.Context, grant types.UserGrant) error {
+	granteeAddr, err := sdk.AccAddressFromBech32(grant.Grantee)
 	if err != nil {
 		return err
 	}
@@ -18,11 +17,7 @@ func (k Keeper) SaveUserGrant(ctx sdk.Context, subspaceID uint64, granter, grant
 	}
 
 	store := ctx.KVStore(k.storeKey)
-	key := types.UserAllowanceKey(subspaceID, granter, grantee)
-	grant, err := types.NewUserGrant(subspaceID, granter, grantee, allowance)
-	if err != nil {
-		return err
-	}
+	key := types.UserAllowanceKey(grant.SubspaceID, grant.Granter, grant.Grantee)
 	store.Set(key, k.cdc.MustMarshal(&grant))
 	return nil
 }
@@ -52,18 +47,10 @@ func (k Keeper) GetUserGrant(ctx sdk.Context, subspaceID uint64, granter, grante
 	return grant, true, nil
 }
 
-func (k Keeper) SaveGroupGrant(ctx sdk.Context, subspaceID uint64, granter string, groupID uint32, feeAllowance feegrant.FeeAllowanceI) error {
+func (k Keeper) SaveGroupGrant(ctx sdk.Context, grant types.GroupGrant) error {
 	store := ctx.KVStore(k.storeKey)
-	key := types.GroupAllowanceKey(subspaceID, granter, groupID)
-	grant, err := types.NewGroupGrant(subspaceID, granter, groupID, feeAllowance)
-	if err != nil {
-		return err
-	}
-	bz, err := k.cdc.Marshal(&grant)
-	if err != nil {
-		return err
-	}
-	store.Set(key, bz)
+	key := types.GroupAllowanceKey(grant.SubspaceID, grant.Granter, grant.GroupID)
+	store.Set(key, k.cdc.MustMarshal(&grant))
 	return nil
 }
 
@@ -105,6 +92,7 @@ func (k Keeper) UseUserGrantedFees(ctx sdk.Context, subspaceID uint64, granter, 
 	if err != nil || !found {
 		return false
 	}
+	// update the allowance
 	allowance, err := grant.GetUnpackedAllowance()
 	if err != nil {
 		return false
@@ -116,34 +104,49 @@ func (k Keeper) UseUserGrantedFees(ctx sdk.Context, subspaceID uint64, granter, 
 	if err != nil {
 		return false
 	}
-	err = k.SaveUserGrant(ctx, subspaceID, granter.String(), grantee.String(), allowance)
-	if err != nil {
-		return false
+	// update grant if allowance accept properly and still valid after execution
+	if !remove {
+		grant, err = types.NewUserGrant(subspaceID, granter.String(), grantee.String(), allowance)
+		if err != nil {
+			return false
+		}
+		err = k.SaveUserGrant(ctx, grant)
+		if err != nil {
+			return false
+		}
 	}
 	return true
 }
 
 func (k Keeper) UseGroupGrantedFees(ctx sdk.Context, subspaceID uint64, granter, grantee sdk.AccAddress, fee sdk.Coins, msgs []sdk.Msg) (used bool) {
-	k.IterateSubspaceGranterGroupGrants(ctx, subspaceID, granter.String(), func(entry types.GroupGrant) (stop bool) {
-		if !k.IsMemberOfGroup(ctx, entry.SubspaceID, entry.GroupID, grantee.String()) {
+	k.IterateSubspaceGranterGroupGrants(ctx, subspaceID, granter.String(), func(grant types.GroupGrant) (stop bool) {
+		if !k.IsMemberOfGroup(ctx, grant.SubspaceID, grant.GroupID, grantee.String()) {
 			return false
 		}
-
-		allowance, err := entry.GetUnpackedAllowance()
+		// update the allowance
+		allowance, err := grant.GetUnpackedAllowance()
 		if err != nil {
 			return false
 		}
 		remove, err := allowance.Accept(ctx, fee, msgs)
 		if remove {
-			k.RemoveGroupGrant(ctx, subspaceID, entry.Granter, entry.GroupID)
+			k.RemoveGroupGrant(ctx, subspaceID, grant.Granter, grant.GroupID)
 		}
 		if err != nil {
 			return false
 		}
-		err = k.SaveGroupGrant(ctx, subspaceID, granter.String(), entry.GroupID, allowance)
-		if err != nil {
-			return false
+		// update grant if allowance accept properly and still valid after execution
+		if !remove {
+			grant, err = types.NewGroupGrant(subspaceID, granter.String(), grant.GroupID, allowance)
+			if err != nil {
+				return false
+			}
+			err = k.SaveGroupGrant(ctx, grant)
+			if err != nil {
+				return false
+			}
 		}
+
 		used = true
 		return true
 	})

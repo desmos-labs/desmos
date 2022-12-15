@@ -29,7 +29,12 @@ func (k msgServer) GrantUserAllowance(goCtx context.Context, msg *types.MsgGrant
 	if err != nil {
 		return nil, err
 	}
-	err = k.Keeper.SaveUserGrant(ctx, msg.SubspaceID, msg.Granter, msg.Grantee, allowance)
+	grant, err := types.NewUserGrant(msg.SubspaceID, msg.Granter, msg.Grantee, allowance)
+	if err != nil {
+		return nil, err
+	}
+
+	err = k.Keeper.SaveUserGrant(ctx, grant)
 	if err != nil {
 		return nil, err
 	}
@@ -83,16 +88,20 @@ func (k msgServer) GrantGroupAllowance(goCtx context.Context, msg *types.MsgGran
 	if !k.HasUserGroup(ctx, msg.SubspaceID, msg.GroupID) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "group with id %d not found", msg.GroupID)
 	}
-
 	// Checking for duplicate entry
 	if _, found, _ := k.GetGroupGrant(ctx, msg.SubspaceID, msg.Granter, msg.GroupID); found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "fee allowance already exists")
 	}
+
 	allowance, err := msg.GetUnpackedAllowance()
 	if err != nil {
 		return nil, err
 	}
-	err = k.Keeper.SaveGroupGrant(ctx, msg.SubspaceID, msg.Granter, msg.GroupID, allowance)
+	grant, err := types.NewGroupGrant(msg.SubspaceID, msg.Granter, msg.GroupID, allowance)
+	if err != nil {
+		return nil, err
+	}
+	err = k.Keeper.SaveGroupGrant(ctx, grant)
 	if err != nil {
 		return nil, err
 	}

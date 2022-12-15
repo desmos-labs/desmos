@@ -98,7 +98,6 @@ func (msg MsgGrantUserAllowance) GetUnpackedAllowance() (feegranttypes.FeeAllowa
 	if !ok {
 		return nil, sdkerrors.Wrap(ErrNoAllowance, "failed to get allowance")
 	}
-
 	return allowance, nil
 }
 
