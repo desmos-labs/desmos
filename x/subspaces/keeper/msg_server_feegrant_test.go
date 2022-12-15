@@ -104,9 +104,8 @@ func (suite *KeeperTestsuite) TestMsgServer_GrantUserAllowance() {
 				),
 			},
 			check: func(ctx sdk.Context) {
-				grant, found, err := suite.k.GetUserGrant(ctx, 1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
+				grant, err := suite.k.GetUserGrant(ctx, 1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
 				suite.Require().NoError(err)
-				suite.Require().True(found)
 
 				expected, err := types.NewUserGrant(1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5", &feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))})
 				suite.Require().NoError(err)
@@ -183,9 +182,7 @@ func (suite *KeeperTestsuite) TestMsgServer_RevokeUserAllowance() {
 				),
 			},
 			check: func(ctx sdk.Context) {
-				_, found, err := suite.k.GetUserGrant(ctx, 1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
-				suite.Require().NoError(err)
-				suite.Require().False(found)
+				suite.Require().False(suite.k.HasUserGrant(ctx, 1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"))
 			},
 		},
 	}
@@ -334,9 +331,8 @@ func (suite *KeeperTestsuite) TestMsgServer_GranGroupAllowance() {
 				),
 			},
 			check: func(ctx sdk.Context) {
-				grant, found, err := suite.k.GetGroupGrant(ctx, 1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", 1)
+				grant, err := suite.k.GetGroupGrant(ctx, 1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", 1)
 				suite.Require().NoError(err)
-				suite.Require().True(found)
 
 				expected, err := types.NewGroupGrant(1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", 1, &feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))})
 				suite.Require().NoError(err)
@@ -413,9 +409,7 @@ func (suite *KeeperTestsuite) TestMsgServer_RevokeGroupAllowance() {
 				),
 			},
 			check: func(ctx sdk.Context) {
-				_, found, err := suite.k.GetGroupGrant(ctx, 1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", 1)
-				suite.Require().NoError(err)
-				suite.Require().False(found)
+				suite.Require().False(suite.k.HasGroupGrant(ctx, 1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", 1))
 			},
 		},
 	}
