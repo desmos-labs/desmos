@@ -12,6 +12,10 @@ import (
 // GrantUserAllowance defines a rpc method for MsgGrantUserAllowance
 func (k msgServer) GrantUserAllowance(goCtx context.Context, msg *types.MsgGrantUserAllowance) (*types.MsgGrantUserAllowanceResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
+	// Check if the subspace exists
+	if !k.HasSubspace(ctx, msg.SubspaceID) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+	}
 	// Checking for duplicate entry
 	_, found, err := k.GetUserGrant(ctx, msg.SubspaceID, msg.Granter, msg.Grantee)
 	if found {
@@ -25,7 +29,7 @@ func (k msgServer) GrantUserAllowance(goCtx context.Context, msg *types.MsgGrant
 	if err != nil {
 		return nil, err
 	}
-	err = k.Keeper.SaveUserFeeGrant(ctx, msg.SubspaceID, msg.Granter, msg.Grantee, allowance)
+	err = k.Keeper.SaveUserGrant(ctx, msg.SubspaceID, msg.Granter, msg.Grantee, allowance)
 	if err != nil {
 		return nil, err
 	}
@@ -73,6 +77,13 @@ func (k msgServer) RevokeUserAllowance(goCtx context.Context, msg *types.MsgRevo
 // GrantGroupAllowance defines a rpc method for MsgGrantGroupAllowance
 func (k msgServer) GrantGroupAllowance(goCtx context.Context, msg *types.MsgGrantGroupAllowance) (*types.MsgGrantGroupAllowanceResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
+	if !k.HasSubspace(ctx, msg.SubspaceID) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+	}
+	if !k.HasUserGroup(ctx, msg.SubspaceID, msg.GroupID) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "group with id %d not found", msg.GroupID)
+	}
+
 	// Checking for duplicate entry
 	if _, found, _ := k.GetGroupGrant(ctx, msg.SubspaceID, msg.Granter, msg.GroupID); found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "fee allowance already exists")
@@ -81,7 +92,7 @@ func (k msgServer) GrantGroupAllowance(goCtx context.Context, msg *types.MsgGran
 	if err != nil {
 		return nil, err
 	}
-	err = k.Keeper.SaveGroupAllowance(ctx, msg.SubspaceID, msg.Granter, msg.GroupID, allowance)
+	err = k.Keeper.SaveGroupGrant(ctx, msg.SubspaceID, msg.Granter, msg.GroupID, allowance)
 	if err != nil {
 		return nil, err
 	}
@@ -105,7 +116,7 @@ func (k msgServer) GrantGroupAllowance(goCtx context.Context, msg *types.MsgGran
 // RevokeGroupAllowance defines a rpc method for MsgRevokeGroupAllowance
 func (k msgServer) RevokeGroupAllowance(goCtx context.Context, msg *types.MsgRevokeGroupAllowance) (*types.MsgRevokeGroupAllowanceResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	err := k.RemoveGroupAllowance(ctx, msg.SubspaceID, msg.Granter, msg.GroupID)
+	err := k.RemoveGroupGrant(ctx, msg.SubspaceID, msg.Granter, msg.GroupID)
 	if err != nil {
 		return nil, err
 	}

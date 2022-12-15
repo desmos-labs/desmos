@@ -7,8 +7,8 @@ import (
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
-// SaveUserFeeGrant saves a new user grant
-func (k Keeper) SaveUserFeeGrant(ctx sdk.Context, subspaceID uint64, granter, grantee string, allowance feegrant.FeeAllowanceI) error {
+// SaveUserGrant saves a new user grant
+func (k Keeper) SaveUserGrant(ctx sdk.Context, subspaceID uint64, granter, grantee string, allowance feegrant.FeeAllowanceI) error {
 	granteeAddr, err := sdk.AccAddressFromBech32(grantee)
 	if err != nil {
 		return err
@@ -52,7 +52,7 @@ func (k Keeper) GetUserGrant(ctx sdk.Context, subspaceID uint64, granter, grante
 	return grant, true, nil
 }
 
-func (k Keeper) SaveGroupAllowance(ctx sdk.Context, subspaceID uint64, granter string, groupID uint32, feeAllowance feegrant.FeeAllowanceI) error {
+func (k Keeper) SaveGroupGrant(ctx sdk.Context, subspaceID uint64, granter string, groupID uint32, feeAllowance feegrant.FeeAllowanceI) error {
 	store := ctx.KVStore(k.storeKey)
 	key := types.GroupAllowanceKey(subspaceID, granter, groupID)
 	grant, err := types.NewGroupGrant(subspaceID, granter, groupID, feeAllowance)
@@ -67,7 +67,7 @@ func (k Keeper) SaveGroupAllowance(ctx sdk.Context, subspaceID uint64, granter s
 	return nil
 }
 
-func (k Keeper) RemoveGroupAllowance(ctx sdk.Context, subspaceID uint64, granter string, groupID uint32) error {
+func (k Keeper) RemoveGroupGrant(ctx sdk.Context, subspaceID uint64, granter string, groupID uint32) error {
 	store := ctx.KVStore(k.storeKey)
 	key := types.GroupAllowanceKey(subspaceID, granter, groupID)
 	if !store.Has(key) {
@@ -116,7 +116,7 @@ func (k Keeper) UseUserGrantedFees(ctx sdk.Context, subspaceID uint64, granter, 
 	if err != nil {
 		return false
 	}
-	err = k.SaveUserFeeGrant(ctx, subspaceID, granter.String(), grantee.String(), allowance)
+	err = k.SaveUserGrant(ctx, subspaceID, granter.String(), grantee.String(), allowance)
 	if err != nil {
 		return false
 	}
@@ -135,12 +135,12 @@ func (k Keeper) UseGroupGrantedFees(ctx sdk.Context, subspaceID uint64, granter,
 		}
 		remove, err := allowance.Accept(ctx, fee, msgs)
 		if remove {
-			k.RemoveGroupAllowance(ctx, subspaceID, entry.Granter, entry.GroupID)
+			k.RemoveGroupGrant(ctx, subspaceID, entry.Granter, entry.GroupID)
 		}
 		if err != nil {
 			return false
 		}
-		err = k.SaveGroupAllowance(ctx, subspaceID, granter.String(), entry.GroupID, allowance)
+		err = k.SaveGroupGrant(ctx, subspaceID, granter.String(), entry.GroupID, allowance)
 		if err != nil {
 			return false
 		}

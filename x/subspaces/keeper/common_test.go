@@ -39,8 +39,8 @@ func TestKeeperTestSuite(t *testing.T) {
 
 func (suite *KeeperTestsuite) SetupTest() {
 	// Define store keys
-	keys := sdk.NewMemoryStoreKeys(types.StoreKey, paramstypes.StoreKey)
-	tKeys := sdk.NewTransientStoreKeys(paramstypes.StoreKey)
+	keys := sdk.NewMemoryStoreKeys(types.StoreKey, authtypes.StoreKey, paramstypes.StoreKey)
+	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	suite.storeKey = keys[types.StoreKey]
 
 	// Create an in-memory db
