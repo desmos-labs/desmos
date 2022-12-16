@@ -7,6 +7,7 @@ import (
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/x/feegrant"
 )
 
 func (suite *KeeperTestsuite) TestValidSubspacesInvariant() {
@@ -672,6 +673,174 @@ func (suite *KeeperTestsuite) TestValidUserPermissionsInvariant() {
 			}
 
 			_, broken := keeper.ValidUserPermissionsInvariant(suite.k)(ctx)
+			suite.Require().Equal(tc.expBroken, broken)
+		})
+	}
+}
+
+func (suite *KeeperTestsuite) TestValidUserGrantsInvariant() {
+	testCases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		expBroken bool
+	}{
+		{
+			name: "non existing subspace breaks invariant",
+			store: func(ctx sdk.Context) {
+				grant, err := types.NewUserGrant(1, "cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4", "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", &feegrant.BasicAllowance{})
+				suite.Require().NoError(err)
+				suite.k.SaveUserGrant(ctx, grant)
+			},
+			expBroken: true,
+		},
+		{
+			name: "invalid data breaks invariant",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace with another name and owner",
+					"This is a test subspace with a changed description",
+					"cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+				grant, err := types.NewUserGrant(1, "cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4", "cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4", &feegrant.BasicAllowance{})
+				suite.Require().NoError(err)
+				suite.k.SaveUserGrant(ctx, grant)
+			},
+			expBroken: true,
+		},
+		{
+			name: "valid data does not break invariant",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace with another name and owner",
+					"This is a test subspace with a changed description",
+					"cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+				grant, err := types.NewUserGrant(1, "cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4", "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", &feegrant.BasicAllowance{})
+				suite.Require().NoError(err)
+				suite.k.SaveUserGrant(ctx, grant)
+			},
+			expBroken: false,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			_, broken := keeper.ValidUserGrantsInvariant(suite.k)(ctx)
+			suite.Require().Equal(tc.expBroken, broken)
+		})
+	}
+}
+
+func (suite *KeeperTestsuite) TestValidGroupGrantsInvariant() {
+	testCases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		expBroken bool
+	}{
+		{
+			name: "non existing subspace breaks invariant",
+			store: func(ctx sdk.Context) {
+				grant, err := types.NewGroupGrant(1, "cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4", 1, &feegrant.BasicAllowance{})
+				suite.Require().NoError(err)
+				suite.k.SaveGroupGrant(ctx, grant)
+			},
+			expBroken: true,
+		},
+		{
+			name: "non existing group breaks invariant",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace with another name and owner",
+					"This is a test subspace with a changed description",
+					"cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+				grant, err := types.NewGroupGrant(1, "cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4", 1, &feegrant.BasicAllowance{})
+				suite.Require().NoError(err)
+				suite.k.SaveGroupGrant(ctx, grant)
+			},
+			expBroken: true,
+		},
+		{
+			name: "invalid data breaks invariant",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace with another name and owner",
+					"This is a test subspace with a changed description",
+					"cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
+					1,
+					0,
+					1,
+					"Test group",
+					"This is a test group",
+					types.NewPermissions(types.PermissionEditSubspace),
+				))
+				grant, err := types.NewGroupGrant(0, "cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4", 1, &feegrant.BasicAllowance{})
+				suite.Require().NoError(err)
+				suite.k.SaveGroupGrant(ctx, grant)
+			},
+			expBroken: true,
+		},
+		{
+			name: "valid data does not break invariant",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace with another name and owner",
+					"This is a test subspace with a changed description",
+					"cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
+					1,
+					0,
+					1,
+					"Test group",
+					"This is a test group",
+					types.NewPermissions(types.PermissionEditSubspace),
+				))
+				grant, err := types.NewGroupGrant(1, "cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4", 1, &feegrant.BasicAllowance{})
+				suite.Require().NoError(err)
+				suite.k.SaveGroupGrant(ctx, grant)
+			},
+			expBroken: false,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			_, broken := keeper.ValidGroupGrantsInvariant(suite.k)(ctx)
 			suite.Require().Equal(tc.expBroken, broken)
 		})
 	}

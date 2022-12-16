@@ -282,3 +282,90 @@ func formatOutputUserPermissions(entries []types.UserPermission) (output string)
 	}
 	return output
 }
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// ValidUserGrantsInvariant checks that all the user grants are valid
+func ValidUserGrantsInvariant(k Keeper) sdk.Invariant {
+	return func(ctx sdk.Context) (string, bool) {
+		var invalidEntries []types.UserGrant
+		k.IterateUserGrants(ctx, func(entry types.UserGrant) (stop bool) {
+			invalid := false
+
+			// Check subspace existence
+			if !k.HasSubspace(ctx, entry.SubspaceID) {
+				invalid = true
+			}
+
+			// Validate the entry
+			err := entry.Validate()
+			if err != nil {
+				invalid = true
+			}
+
+			if invalid {
+				invalidEntries = append(invalidEntries, entry)
+			}
+
+			return false
+		})
+
+		return sdk.FormatInvariant(types.ModuleName, "invalid user grants",
+			fmt.Sprintf("the following user grants are invalid:\n%s", formatOutputUserGrants(invalidEntries)),
+		), invalidEntries != nil
+	}
+}
+
+// formatOutputUserGrants concatenates the given user grants into a string
+func formatOutputUserGrants(entries []types.UserGrant) (output string) {
+	for _, entry := range entries {
+		output += fmt.Sprintf("SubspaceID: %d, Granter: %s, Grantee: %s\n", entry.SubspaceID, entry.Granter, entry.Grantee)
+	}
+	return output
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// ValidGroupGrantsInvariant checks that all the user grants are valid
+func ValidGroupGrantsInvariant(k Keeper) sdk.Invariant {
+	return func(ctx sdk.Context) (string, bool) {
+		var invalidEntries []types.GroupGrant
+		k.IterateGroupGrants(ctx, func(entry types.GroupGrant) (stop bool) {
+			invalid := false
+
+			// Check subspace existence
+			if !k.HasSubspace(ctx, entry.SubspaceID) {
+				invalid = true
+			}
+
+			// Check group existence
+			if !k.HasUserGroup(ctx, entry.SubspaceID, entry.GroupID) {
+				invalid = true
+			}
+
+			// Validate the entry
+			err := entry.Validate()
+			if err != nil {
+				invalid = true
+			}
+
+			if invalid {
+				invalidEntries = append(invalidEntries, entry)
+			}
+
+			return false
+		})
+
+		return sdk.FormatInvariant(types.ModuleName, "invalid group grants",
+			fmt.Sprintf("the following group grants are invalid:\n%s", formatOutputGroupGrants(invalidEntries)),
+		), invalidEntries != nil
+	}
+}
+
+// formatOutputGroupGrants concatenates the given group grants into a string
+func formatOutputGroupGrants(entries []types.GroupGrant) (output string) {
+	for _, entry := range entries {
+		output += fmt.Sprintf("SubspaceID: %d, Granter: %s, GroupID: %d\n", entry.SubspaceID, entry.Granter, entry.GroupID)
+	}
+	return output
+}
