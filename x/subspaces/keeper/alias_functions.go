@@ -329,6 +329,63 @@ func (k Keeper) GetSectionUserPermissions(ctx sdk.Context, subspaceID uint64, se
 
 // --------------------------------------------------------------------------------------------------------------------
 
+// IterateUserGrants iterates through the user grants and performs the given function
+func (k Keeper) IterateUserGrants(ctx sdk.Context, fn func(grant types.UserGrant) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.UserAllowancePrefix)
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		var grant types.UserGrant
+		k.cdc.MustUnmarshal(iterator.Value(), &grant)
+		stop := fn(grant)
+		if stop {
+			break
+		}
+	}
+}
+
+// GetAllUserGrants returns a list of all the user grants that have been store inside the given context
+func (k Keeper) GetAllUserGrants(ctx sdk.Context) []types.UserGrant {
+	var grants []types.UserGrant
+	k.IterateUserGrants(ctx, func(grant types.UserGrant) (stop bool) {
+		grants = append(grants, grant)
+		return false
+	})
+
+	return grants
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// IterateGroupGrants iterates through the group grants and performs the given function
+func (k Keeper) IterateGroupGrants(ctx sdk.Context, fn func(grant types.GroupGrant) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.GroupAllowancePrefix)
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		var grant types.GroupGrant
+		k.cdc.MustUnmarshal(iterator.Value(), &grant)
+		stop := fn(grant)
+		if stop {
+			break
+		}
+	}
+}
+
+// GetAllGroupGrants returns a list of all the group grants that have been store inside the given context
+func (k Keeper) GetAllGroupGrants(ctx sdk.Context) []types.GroupGrant {
+	var grants []types.GroupGrant
+	k.IterateGroupGrants(ctx, func(grant types.GroupGrant) (stop bool) {
+		grants = append(grants, grant)
+		return false
+	})
+
+	return grants
+}
+
+// IterateSubspaceGranterGroupGrants iterates over all the group grants for the given granter and performs the provided function
 func (k Keeper) IterateSubspaceGranterGroupGrants(ctx sdk.Context, subspaceID uint64, granter string, fn func(entry types.GroupGrant) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 	prefix := types.GranterGroupAllowancePrefix(subspaceID, granter)

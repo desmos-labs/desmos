@@ -282,6 +282,8 @@ func (entry UserGroupMemberEntry) Validate() error {
 
 // --------------------------------------------------------------------------------------------------------------------
 
+// containsDuplicatedUserGrants tells whether the given grant slice contains two or more
+// grants with the same granter grantee set for the same subspace
 func containsDuplicatedUserGrants(grants []UserGrant, grant UserGrant) bool {
 	var count = 0
 	for _, g := range grants {
@@ -292,6 +294,8 @@ func containsDuplicatedUserGrants(grants []UserGrant, grant UserGrant) bool {
 	return count > 1
 }
 
+// containsDuplicatedGroupGrants tells whether the given grant slice contains two or more
+// grants with the same granter group id set for the same subspace
 func containsDuplicatedGroupGrants(grants []GroupGrant, grant GroupGrant) bool {
 	var count = 0
 	for _, g := range grants {

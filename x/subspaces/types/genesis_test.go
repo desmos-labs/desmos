@@ -14,6 +14,7 @@ import (
 func TestValidateGenesis(t *testing.T) {
 	allowanceAny, err := codectypes.NewAnyWithValue(&feegrant.BasicAllowance{})
 	require.NoError(t, err)
+
 	testCases := []struct {
 		name      string
 		genesis   *types.GenesisState

@@ -13,6 +13,7 @@ import (
 var _ codectypes.UnpackInterfacesMessage = &UserGrant{}
 var _ codectypes.UnpackInterfacesMessage = &GroupGrant{}
 
+// NewUserGrant is a constructor for the UserGrant type
 func NewUserGrant(subspaceID uint64, granter, grantee string, feeAllowance feegranttypes.FeeAllowanceI) (UserGrant, error) {
 	msg, ok := feeAllowance.(proto.Message)
 	if !ok {
@@ -32,6 +33,7 @@ func NewUserGrant(subspaceID uint64, granter, grantee string, feeAllowance feegr
 	}, nil
 }
 
+// Validate implements fmt.Validator
 func (u UserGrant) Validate() error {
 	if u.SubspaceID == 0 {
 		return fmt.Errorf("invalid subspace id: %d", u.SubspaceID)
@@ -73,6 +75,7 @@ func (u UserGrant) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 
 // --------------------------------------------------------------------------------------------------------------------
 
+// NewGroupGrant is a constructor for the GroupGrant type
 func NewGroupGrant(subspaceID uint64, granter string, groupID uint32, feeAllowance feegranttypes.FeeAllowanceI) (GroupGrant, error) {
 	msg, ok := feeAllowance.(proto.Message)
 	if !ok {
@@ -92,6 +95,7 @@ func NewGroupGrant(subspaceID uint64, granter string, groupID uint32, feeAllowan
 	}, nil
 }
 
+// Validate implements fmt.Validator
 func (g GroupGrant) Validate() error {
 	if g.SubspaceID == 0 {
 		return fmt.Errorf("invalid subspace id: %d", g.SubspaceID)

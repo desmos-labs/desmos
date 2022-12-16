@@ -777,7 +777,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserPermissions() {
 }
 
 func (suite *KeeperTestsuite) TestQueryServer_UserAllowances() {
-	allowance, err := codectypes.NewAnyWithValue(&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))})
+	allowanceAny, err := codectypes.NewAnyWithValue(&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))})
 	suite.Require().NoError(err)
 
 	testCases := []struct {
@@ -802,25 +802,25 @@ func (suite *KeeperTestsuite) TestQueryServer_UserAllowances() {
 					SubspaceID: 1,
 					Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					Allowance:  allowance,
+					Allowance:  allowanceAny,
 				})
 				suite.k.SaveUserGrant(ctx, types.UserGrant{
 					SubspaceID: 1,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					Allowance:  allowance,
+					Allowance:  allowanceAny,
 				})
 				suite.k.SaveUserGrant(ctx, types.UserGrant{
 					SubspaceID: 1,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					Grantee:    "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					Allowance:  allowance,
+					Allowance:  allowanceAny,
 				})
 				suite.k.SaveUserGrant(ctx, types.UserGrant{
 					SubspaceID: 2,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					Allowance:  allowance,
+					Allowance:  allowanceAny,
 				})
 			},
 			req:       types.NewQueryUserAllowancesRequest(0, "", "", nil),
@@ -829,22 +829,22 @@ func (suite *KeeperTestsuite) TestQueryServer_UserAllowances() {
 				SubspaceID: 1,
 				Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-				Allowance:  allowance,
+				Allowance:  allowanceAny,
 			}, {
 				SubspaceID: 1,
 				Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 				Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-				Allowance:  allowance,
+				Allowance:  allowanceAny,
 			}, {
 				SubspaceID: 1,
 				Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 				Grantee:    "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-				Allowance:  allowance,
+				Allowance:  allowanceAny,
 			}, {
 				SubspaceID: 2,
 				Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 				Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-				Allowance:  allowance,
+				Allowance:  allowanceAny,
 			}},
 		},
 		{
@@ -855,25 +855,25 @@ func (suite *KeeperTestsuite) TestQueryServer_UserAllowances() {
 					SubspaceID: 1,
 					Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					Allowance:  allowance,
+					Allowance:  allowanceAny,
 				})
 				suite.k.SaveUserGrant(ctx, types.UserGrant{
 					SubspaceID: 1,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					Allowance:  allowance,
+					Allowance:  allowanceAny,
 				})
 				suite.k.SaveUserGrant(ctx, types.UserGrant{
 					SubspaceID: 1,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					Grantee:    "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					Allowance:  allowance,
+					Allowance:  allowanceAny,
 				})
 				suite.k.SaveUserGrant(ctx, types.UserGrant{
 					SubspaceID: 2,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					Allowance:  allowance,
+					Allowance:  allowanceAny,
 				})
 			},
 			req:       types.NewQueryUserAllowancesRequest(1, "", "", nil),
@@ -882,17 +882,17 @@ func (suite *KeeperTestsuite) TestQueryServer_UserAllowances() {
 				SubspaceID: 1,
 				Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-				Allowance:  allowance,
+				Allowance:  allowanceAny,
 			}, {
 				SubspaceID: 1,
 				Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 				Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-				Allowance:  allowance,
+				Allowance:  allowanceAny,
 			}, {
 				SubspaceID: 1,
 				Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 				Grantee:    "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-				Allowance:  allowance,
+				Allowance:  allowanceAny,
 			}},
 		},
 		{
@@ -903,19 +903,19 @@ func (suite *KeeperTestsuite) TestQueryServer_UserAllowances() {
 					SubspaceID: 1,
 					Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					Allowance:  allowance,
+					Allowance:  allowanceAny,
 				})
 				suite.k.SaveUserGrant(ctx, types.UserGrant{
 					SubspaceID: 1,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					Allowance:  allowance,
+					Allowance:  allowanceAny,
 				})
 				suite.k.SaveUserGrant(ctx, types.UserGrant{
 					SubspaceID: 1,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					Grantee:    "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					Allowance:  allowance,
+					Allowance:  allowanceAny,
 				})
 			},
 			req:       types.NewQueryUserAllowancesRequest(1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", "", nil),
@@ -924,12 +924,12 @@ func (suite *KeeperTestsuite) TestQueryServer_UserAllowances() {
 				SubspaceID: 1,
 				Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 				Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-				Allowance:  allowance,
+				Allowance:  allowanceAny,
 			}, {
 				SubspaceID: 1,
 				Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 				Grantee:    "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-				Allowance:  allowance,
+				Allowance:  allowanceAny,
 			}},
 		},
 		{
@@ -940,19 +940,19 @@ func (suite *KeeperTestsuite) TestQueryServer_UserAllowances() {
 					SubspaceID: 1,
 					Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					Allowance:  allowance,
+					Allowance:  allowanceAny,
 				})
 				suite.k.SaveUserGrant(ctx, types.UserGrant{
 					SubspaceID: 1,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					Allowance:  allowance,
+					Allowance:  allowanceAny,
 				})
 				suite.k.SaveUserGrant(ctx, types.UserGrant{
 					SubspaceID: 1,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					Grantee:    "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					Allowance:  allowance,
+					Allowance:  allowanceAny,
 				})
 			},
 			req:       types.NewQueryUserAllowancesRequest(1, "", "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5", nil),
@@ -961,12 +961,12 @@ func (suite *KeeperTestsuite) TestQueryServer_UserAllowances() {
 				SubspaceID: 1,
 				Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-				Allowance:  allowance,
+				Allowance:  allowanceAny,
 			}, {
 				SubspaceID: 1,
 				Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 				Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-				Allowance:  allowance,
+				Allowance:  allowanceAny,
 			}},
 		},
 	}
@@ -990,7 +990,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserAllowances() {
 }
 
 func (suite *KeeperTestsuite) TestQueryServer_GroupAllowances() {
-	allowance, err := codectypes.NewAnyWithValue(&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))})
+	allowanceAny, err := codectypes.NewAnyWithValue(&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))})
 	suite.Require().NoError(err)
 
 	testCases := []struct {
@@ -1027,25 +1027,25 @@ func (suite *KeeperTestsuite) TestQueryServer_GroupAllowances() {
 					SubspaceID: 1,
 					Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					GroupID:    1,
-					Allowance:  allowance,
+					Allowance:  allowanceAny,
 				})
 				suite.k.SaveGroupGrant(ctx, types.GroupGrant{
 					SubspaceID: 1,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					GroupID:    1,
-					Allowance:  allowance,
+					Allowance:  allowanceAny,
 				})
 				suite.k.SaveGroupGrant(ctx, types.GroupGrant{
 					SubspaceID: 1,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					GroupID:    2,
-					Allowance:  allowance,
+					Allowance:  allowanceAny,
 				})
 				suite.k.SaveGroupGrant(ctx, types.GroupGrant{
 					SubspaceID: 2,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					GroupID:    1,
-					Allowance:  allowance,
+					Allowance:  allowanceAny,
 				})
 			},
 			req:       types.NewQueryGroupAllowancesRequest(0, "", 0, nil),
@@ -1054,22 +1054,22 @@ func (suite *KeeperTestsuite) TestQueryServer_GroupAllowances() {
 				SubspaceID: 1,
 				Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				GroupID:    1,
-				Allowance:  allowance,
+				Allowance:  allowanceAny,
 			}, {
 				SubspaceID: 1,
 				Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 				GroupID:    1,
-				Allowance:  allowance,
+				Allowance:  allowanceAny,
 			}, {
 				SubspaceID: 1,
 				Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 				GroupID:    2,
-				Allowance:  allowance,
+				Allowance:  allowanceAny,
 			}, {
 				SubspaceID: 2,
 				Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 				GroupID:    1,
-				Allowance:  allowance,
+				Allowance:  allowanceAny,
 			}},
 		},
 		{
@@ -1086,25 +1086,25 @@ func (suite *KeeperTestsuite) TestQueryServer_GroupAllowances() {
 					SubspaceID: 1,
 					Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					GroupID:    1,
-					Allowance:  allowance,
+					Allowance:  allowanceAny,
 				})
 				suite.k.SaveGroupGrant(ctx, types.GroupGrant{
 					SubspaceID: 1,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					GroupID:    1,
-					Allowance:  allowance,
+					Allowance:  allowanceAny,
 				})
 				suite.k.SaveGroupGrant(ctx, types.GroupGrant{
 					SubspaceID: 1,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					GroupID:    2,
-					Allowance:  allowance,
+					Allowance:  allowanceAny,
 				})
 				suite.k.SaveGroupGrant(ctx, types.GroupGrant{
 					SubspaceID: 2,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					GroupID:    1,
-					Allowance:  allowance,
+					Allowance:  allowanceAny,
 				})
 			},
 			req:       types.NewQueryGroupAllowancesRequest(1, "", 0, nil),
@@ -1113,17 +1113,17 @@ func (suite *KeeperTestsuite) TestQueryServer_GroupAllowances() {
 				SubspaceID: 1,
 				Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				GroupID:    1,
-				Allowance:  allowance,
+				Allowance:  allowanceAny,
 			}, {
 				SubspaceID: 1,
 				Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 				GroupID:    1,
-				Allowance:  allowance,
+				Allowance:  allowanceAny,
 			}, {
 				SubspaceID: 1,
 				Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 				GroupID:    2,
-				Allowance:  allowance,
+				Allowance:  allowanceAny,
 			}},
 		},
 		{
@@ -1138,19 +1138,19 @@ func (suite *KeeperTestsuite) TestQueryServer_GroupAllowances() {
 					SubspaceID: 1,
 					Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					GroupID:    1,
-					Allowance:  allowance,
+					Allowance:  allowanceAny,
 				})
 				suite.k.SaveGroupGrant(ctx, types.GroupGrant{
 					SubspaceID: 1,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					GroupID:    1,
-					Allowance:  allowance,
+					Allowance:  allowanceAny,
 				})
 				suite.k.SaveGroupGrant(ctx, types.GroupGrant{
 					SubspaceID: 1,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					GroupID:    2,
-					Allowance:  allowance,
+					Allowance:  allowanceAny,
 				})
 			},
 			req:       types.NewQueryGroupAllowancesRequest(1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", 0, nil),
@@ -1159,12 +1159,12 @@ func (suite *KeeperTestsuite) TestQueryServer_GroupAllowances() {
 				SubspaceID: 1,
 				Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 				GroupID:    1,
-				Allowance:  allowance,
+				Allowance:  allowanceAny,
 			}, {
 				SubspaceID: 1,
 				Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 				GroupID:    2,
-				Allowance:  allowance,
+				Allowance:  allowanceAny,
 			}},
 		},
 		{
@@ -1179,19 +1179,19 @@ func (suite *KeeperTestsuite) TestQueryServer_GroupAllowances() {
 					SubspaceID: 1,
 					Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					GroupID:    1,
-					Allowance:  allowance,
+					Allowance:  allowanceAny,
 				})
 				suite.k.SaveGroupGrant(ctx, types.GroupGrant{
 					SubspaceID: 1,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					GroupID:    1,
-					Allowance:  allowance,
+					Allowance:  allowanceAny,
 				})
 				suite.k.SaveGroupGrant(ctx, types.GroupGrant{
 					SubspaceID: 1,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					GroupID:    2,
-					Allowance:  allowance,
+					Allowance:  allowanceAny,
 				})
 			},
 			req:       types.NewQueryGroupAllowancesRequest(1, "", 1, nil),
@@ -1200,12 +1200,12 @@ func (suite *KeeperTestsuite) TestQueryServer_GroupAllowances() {
 				SubspaceID: 1,
 				Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				GroupID:    1,
-				Allowance:  allowance,
+				Allowance:  allowanceAny,
 			}, {
 				SubspaceID: 1,
 				Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 				GroupID:    1,
-				Allowance:  allowance,
+				Allowance:  allowanceAny,
 			}},
 		},
 	}
