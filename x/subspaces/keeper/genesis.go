@@ -21,6 +21,7 @@ func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 		k.GetAllPermissions(ctx),
 		k.GetAllUserGroups(ctx),
 		k.getAllUserGroupsMembers(ctx),
+		nil, nil,
 	)
 }
 

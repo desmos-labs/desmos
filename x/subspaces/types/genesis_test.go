@@ -17,7 +17,7 @@ func TestValidateGenesis(t *testing.T) {
 	}{
 		{
 			name:      "invalid initial subspace id returns error",
-			genesis:   types.NewGenesisState(0, nil, nil, nil, nil, nil, nil),
+			genesis:   types.NewGenesisState(0, nil, nil, nil, nil, nil, nil, nil, nil),
 			shouldErr: true,
 		},
 		{
@@ -25,14 +25,14 @@ func TestValidateGenesis(t *testing.T) {
 			genesis: types.NewGenesisState(1, []types.SubspaceData{
 				types.NewSubspaceData(1, 1, 1),
 				types.NewSubspaceData(1, 1, 1),
-			}, nil, nil, nil, nil, nil),
+			}, nil, nil, nil, nil, nil, nil, nil),
 			shouldErr: true,
 		},
 		{
 			name: "invalid subspace data returns error",
 			genesis: types.NewGenesisState(1, []types.SubspaceData{
 				types.NewSubspaceData(1, 1, 0),
-			}, nil, nil, nil, nil, nil),
+			}, nil, nil, nil, nil, nil, nil, nil),
 			shouldErr: true,
 		},
 		{
@@ -56,7 +56,7 @@ func TestValidateGenesis(t *testing.T) {
 					"cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				),
-			}, nil, nil, nil, nil),
+			}, nil, nil, nil, nil, nil, nil),
 			shouldErr: true,
 		},
 		{
@@ -71,7 +71,7 @@ func TestValidateGenesis(t *testing.T) {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				),
-			}, nil, nil, nil, nil),
+			}, nil, nil, nil, nil, nil, nil),
 			shouldErr: true,
 		},
 		{
@@ -79,14 +79,14 @@ func TestValidateGenesis(t *testing.T) {
 			genesis: types.NewGenesisState(1, nil, nil, []types.Section{
 				types.NewSection(1, 1, 0, "Test section", "Test section"),
 				types.NewSection(1, 1, 0, "Test section", "Test section"),
-			}, nil, nil, nil),
+			}, nil, nil, nil, nil, nil),
 			shouldErr: true,
 		},
 		{
 			name: "invalid section returns error",
 			genesis: types.NewGenesisState(1, nil, nil, []types.Section{
 				types.NewSection(0, 1, 0, "Test section", "Test section"),
-			}, nil, nil, nil),
+			}, nil, nil, nil, nil, nil),
 			shouldErr: true,
 		},
 		{
@@ -94,14 +94,14 @@ func TestValidateGenesis(t *testing.T) {
 			genesis: types.NewGenesisState(1, nil, nil, nil, []types.UserPermission{
 				types.NewUserPermission(1, 1, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", types.NewPermissions(types.PermissionEditSubspace)),
 				types.NewUserPermission(1, 1, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", types.NewPermissions(types.PermissionSetPermissions)),
-			}, nil, nil),
+			}, nil, nil, nil, nil),
 			shouldErr: true,
 		},
 		{
 			name: "invalid user permission returns error",
 			genesis: types.NewGenesisState(1, nil, nil, nil, []types.UserPermission{
 				types.NewUserPermission(0, 0, "", types.NewPermissions(types.PermissionEditSubspace)),
-			}, nil, nil),
+			}, nil, nil, nil, nil),
 			shouldErr: true,
 		},
 		{
@@ -123,7 +123,7 @@ func TestValidateGenesis(t *testing.T) {
 					"This is a test group",
 					types.NewPermissions(types.PermissionEditSubspace),
 				),
-			}, nil),
+			}, nil, nil, nil),
 			shouldErr: true,
 		},
 		{
@@ -137,7 +137,7 @@ func TestValidateGenesis(t *testing.T) {
 					"This is a test group",
 					types.NewPermissions(types.PermissionEditSubspace),
 				),
-			}, nil),
+			}, nil, nil, nil),
 			shouldErr: true,
 		},
 		{
@@ -145,15 +145,14 @@ func TestValidateGenesis(t *testing.T) {
 			genesis: types.NewGenesisState(1, nil, nil, nil, nil, nil, []types.UserGroupMemberEntry{
 				types.NewUserGroupMemberEntry(1, 1, ""),
 				types.NewUserGroupMemberEntry(1, 1, ""),
-			}),
+			}, nil, nil),
 			shouldErr: true,
 		},
 		{
 			name: "invalid group members entry returns error",
 			genesis: types.NewGenesisState(1, nil, nil, nil, nil, nil, []types.UserGroupMemberEntry{
 				types.NewUserGroupMemberEntry(1, 0, ""),
-			},
-			),
+			}, nil, nil),
 			shouldErr: true,
 		},
 		{
@@ -218,8 +217,7 @@ func TestValidateGenesis(t *testing.T) {
 					types.NewUserGroupMemberEntry(1, 1, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd"),
 					types.NewUserGroupMemberEntry(2, 1, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd"),
 					types.NewUserGroupMemberEntry(2, 1, "cosmos19gz9jn5pl6ke6qg5s4gt9ga9my7w8a0x3ar0qy"),
-				},
-			),
+				}, nil, nil),
 			shouldErr: false,
 		},
 	}

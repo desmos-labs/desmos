@@ -24,7 +24,7 @@ func RandomizeGenState(simState *module.SimulationState) {
 	initialSubspaceID, subspacesData := getSubspacesDataEntries(subspaces, sections, groups)
 
 	// Create the genesis and sanitize it
-	subspacesGenesis := types.NewGenesisState(initialSubspaceID, subspacesData, subspaces, sections, acl, groups, members)
+	subspacesGenesis := types.NewGenesisState(initialSubspaceID, subspacesData, subspaces, sections, acl, groups, members, nil, nil)
 	subspacesGenesis = sanitizeGenesis(subspacesGenesis)
 
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(subspacesGenesis)
@@ -184,7 +184,7 @@ func sanitizeGenesis(genesis *types.GenesisState) *types.GenesisState {
 		genesis.Sections,
 		sanitizeUserPermissions(genesis.UserPermissions),
 		sanitizeUserGroups(genesis.UserGroups),
-		genesis.UserGroupsMembers,
+		genesis.UserGroupsMembers, nil, nil,
 	)
 }
 

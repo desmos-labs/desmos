@@ -19,7 +19,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 			store: func(ctx sdk.Context) {
 				suite.k.SetSubspaceID(ctx, 1)
 			},
-			expGenesis: types.NewGenesisState(1, nil, nil, nil, nil, nil, nil),
+			expGenesis: types.NewGenesisState(1, nil, nil, nil, nil, nil, nil, nil, nil),
 		},
 		{
 			name: "subspaces and their data are exported correctly",
@@ -85,6 +85,8 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 					types.DefaultUserGroup(2),
 				},
 				nil,
+				nil,
+				nil,
 			),
 		},
 		{
@@ -123,7 +125,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 					"Another test section",
 					"This is another test section",
 				),
-			}, nil, nil, nil),
+			}, nil, nil, nil, nil, nil),
 		},
 		{
 			name: "user permissions are exported correctly",
@@ -176,6 +178,8 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 				[]types.UserGroup{
 					types.DefaultUserGroup(2),
 				},
+				nil,
+				nil,
 				nil,
 			),
 		},
@@ -282,6 +286,8 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 					types.NewUserGroupMemberEntry(2, 1, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm"),
 					types.NewUserGroupMemberEntry(2, 1, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
 				},
+				nil,
+				nil,
 			),
 		},
 	}

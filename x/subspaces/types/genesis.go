@@ -15,6 +15,8 @@ func NewGenesisState(
 	userPermissions []UserPermission,
 	userGroups []UserGroup,
 	userGroupMembers []UserGroupMemberEntry,
+	userGrants []UserGrant,
+	groupGrants []GroupGrant,
 ) *GenesisState {
 	return &GenesisState{
 		InitialSubspaceID: initialSubspaceID,
@@ -31,6 +33,8 @@ func NewGenesisState(
 func DefaultGenesisState() *GenesisState {
 	return NewGenesisState(
 		1,
+		nil,
+		nil,
 		nil,
 		nil,
 		nil,
