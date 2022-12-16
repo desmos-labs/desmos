@@ -219,12 +219,13 @@ func (k Keeper) UserPermissions(ctx context.Context, request *types.QueryUserPer
 	}, nil
 }
 
+// UserAllowances implements the Query/UserAllowances gRPC method
 func (k Keeper) UserAllowances(ctx context.Context, request *types.QueryUserAllowancesRequest) (*types.QueryUserAllowancesResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	store := sdkCtx.KVStore(k.storeKey)
 
 	// Check if the subspace exists
-	if !k.HasSubspace(sdkCtx, request.SubspaceId) {
+	if request.SubspaceId != 0 && !k.HasSubspace(sdkCtx, request.SubspaceId) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", request.SubspaceId)
 	}
 
@@ -235,6 +236,8 @@ func (k Keeper) UserAllowances(ctx context.Context, request *types.QueryUserAllo
 		grantsPrefix = types.GranterUserAllowancePrefix(request.SubspaceId, request.Granter)
 	case request.Granter != "" && request.Grantee != "":
 		grantsPrefix = types.UserAllowanceKey(request.SubspaceId, request.Granter, request.Grantee)
+	case request.SubspaceId != 0:
+		grantsPrefix = types.SubspaceUserAllowancePrefix(request.SubspaceId)
 	}
 
 	grantsStore := prefix.NewStore(store, grantsPrefix)
@@ -260,22 +263,28 @@ func (k Keeper) UserAllowances(ctx context.Context, request *types.QueryUserAllo
 	}, nil
 }
 
+// GroupAllowances implements the Query/GroupAllowances gRPC method
 func (k Keeper) GroupAllowances(ctx context.Context, request *types.QueryGroupAllowancesRequest) (*types.QueryGroupAllowancesResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	store := sdkCtx.KVStore(k.storeKey)
 
-	// Check if the subspace exists
-	if !k.HasSubspace(sdkCtx, request.SubspaceId) {
+	if request.SubspaceId != 0 && !k.HasSubspace(sdkCtx, request.SubspaceId) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", request.SubspaceId)
+	}
+
+	if request.SubspaceId != 0 && !k.HasUserGroup(sdkCtx, request.SubspaceId, request.GroupId) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "group with id %d not found", request.GroupId)
 	}
 
 	// Get grants prefix store
 	grantsPrefix := types.GroupAllowancePrefix
 	switch {
 	case request.Granter != "" && request.GroupId == 0:
-		grantsPrefix = types.GranterUserAllowancePrefix(request.SubspaceId, request.Granter)
+		grantsPrefix = types.GranterGroupAllowancePrefix(request.SubspaceId, request.Granter)
 	case request.Granter != "" && request.GroupId != 0:
 		grantsPrefix = types.GroupAllowanceKey(request.SubspaceId, request.Granter, request.GroupId)
+	case request.SubspaceId != 0:
+		grantsPrefix = types.SubspaceGroupAllowancePrefix(request.SubspaceId)
 	}
 
 	grantsStore := prefix.NewStore(store, grantsPrefix)

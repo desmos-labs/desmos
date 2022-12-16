@@ -442,7 +442,7 @@ func GetCmdQueryUserAllowances() *cobra.Command {
 
 			res, err := queryClient.UserAllowances(
 				context.Background(),
-				types.NewUserAllowancesRequest(subspaceID, grantee, granter, pageReq),
+				types.NewQueryUserAllowancesRequest(subspaceID, grantee, granter, pageReq),
 			)
 			if err != nil {
 				return err
@@ -495,7 +495,7 @@ func GetCmdQueryGroupAllowances() *cobra.Command {
 
 			res, err := queryClient.GroupAllowances(
 				context.Background(),
-				types.NewGroupAllowancesRequest(subspaceID, granter, groupID, pageReq),
+				types.NewQueryGroupAllowancesRequest(subspaceID, granter, groupID, pageReq),
 			)
 			if err != nil {
 				return err

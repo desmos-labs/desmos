@@ -99,7 +99,8 @@ func NewPermissionDetailGroup(subspaceID uint64, sectionID uint32, groupID uint3
 	}
 }
 
-func NewUserAllowancesRequest(subspaceID uint64, granter string, grantee string, pagination *query.PageRequest) *QueryUserAllowancesRequest {
+// NewQueryUserAllowancesRequest returns a new QueryUserAllowancesRequest instance
+func NewQueryUserAllowancesRequest(subspaceID uint64, granter string, grantee string, pagination *query.PageRequest) *QueryUserAllowancesRequest {
 	return &QueryUserAllowancesRequest{
 		SubspaceId: subspaceID,
 		Granter:    granter,
@@ -108,7 +109,8 @@ func NewUserAllowancesRequest(subspaceID uint64, granter string, grantee string,
 	}
 }
 
-func NewGroupAllowancesRequest(subspaceID uint64, granter string, groupID uint32, pagination *query.PageRequest) *QueryGroupAllowancesRequest {
+// NewQueryGroupAllowancesRequest returns a new QueryGroupAllowancesRequest instance
+func NewQueryGroupAllowancesRequest(subspaceID uint64, granter string, groupID uint32, pagination *query.PageRequest) *QueryGroupAllowancesRequest {
 	return &QueryGroupAllowancesRequest{
 		SubspaceId: subspaceID,
 		Granter:    granter,
