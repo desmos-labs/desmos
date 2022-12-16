@@ -20,6 +20,10 @@ func RegisterInvariants(ir sdk.InvariantRegistry, keeper Keeper) {
 		ValidUserGroupMembersInvariant(keeper))
 	ir.RegisterRoute(types.ModuleName, "valid-user-permissions",
 		ValidUserPermissionsInvariant(keeper))
+	ir.RegisterRoute(types.ModuleName, "valid-user-grants",
+		ValidUserGrantsInvariant(keeper))
+	ir.RegisterRoute(types.ModuleName, "valid-group-grants",
+		ValidGroupGrantsInvariant(keeper))
 }
 
 // --------------------------------------------------------------------------------------------------------------------
