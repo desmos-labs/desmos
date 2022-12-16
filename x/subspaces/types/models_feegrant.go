@@ -32,7 +32,7 @@ func NewUserGrant(subspaceID uint64, granter, grantee string, feeAllowance feegr
 	}, nil
 }
 
-func (u UserGrant) ValidateBasic() error {
+func (u UserGrant) Validate() error {
 	if u.SubspaceID == 0 {
 		return fmt.Errorf("invalid subspace id: %d", u.SubspaceID)
 	}
@@ -92,7 +92,7 @@ func NewGroupGrant(subspaceID uint64, granter string, groupID uint32, feeAllowan
 	}, nil
 }
 
-func (g GroupGrant) ValidateBasic() error {
+func (g GroupGrant) Validate() error {
 	if g.SubspaceID == 0 {
 		return fmt.Errorf("invalid subspace id: %d", g.SubspaceID)
 	}

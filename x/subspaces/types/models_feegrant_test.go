@@ -77,7 +77,7 @@ func TestUserGrant_Validate(t *testing.T) {
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			err := tc.grant.ValidateBasic()
+			err := tc.grant.Validate()
 			if tc.shouldErr {
 				require.Error(t, err)
 			} else {
@@ -147,7 +147,7 @@ func TestGroupGrant_Validate(t *testing.T) {
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			err := tc.grant.ValidateBasic()
+			err := tc.grant.Validate()
 			if tc.shouldErr {
 				require.Error(t, err)
 			} else {

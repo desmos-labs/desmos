@@ -4,12 +4,16 @@ import (
 	"testing"
 	"time"
 
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	"github.com/cosmos/cosmos-sdk/x/feegrant"
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 
 	"github.com/stretchr/testify/require"
 )
 
 func TestValidateGenesis(t *testing.T) {
+	allowanceAny, err := codectypes.NewAnyWithValue(&feegrant.BasicAllowance{})
+	require.NoError(t, err)
 	testCases := []struct {
 		name      string
 		genesis   *types.GenesisState
@@ -149,6 +153,36 @@ func TestValidateGenesis(t *testing.T) {
 			shouldErr: true,
 		},
 		{
+			name: "duplicated user grants returns error",
+			genesis: types.NewGenesisState(1, nil, nil, nil, nil, nil, nil, []types.UserGrant{{
+				SubspaceID: 1,
+				Granter:    "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd",
+				Grantee:    "cosmos19gz9jn5pl6ke6qg5s4gt9ga9my7w8a0x3ar0qy",
+				Allowance:  allowanceAny,
+			}, {
+				SubspaceID: 1,
+				Granter:    "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd",
+				Grantee:    "cosmos19gz9jn5pl6ke6qg5s4gt9ga9my7w8a0x3ar0qy",
+				Allowance:  allowanceAny,
+			}}, nil),
+			shouldErr: true,
+		},
+		{
+			name: "duplicated group grants returns error",
+			genesis: types.NewGenesisState(1, nil, nil, nil, nil, nil, nil, nil, []types.GroupGrant{{
+				SubspaceID: 1,
+				Granter:    "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd",
+				GroupID:    1,
+				Allowance:  allowanceAny,
+			}, {
+				SubspaceID: 1,
+				Granter:    "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd",
+				GroupID:    1,
+				Allowance:  allowanceAny,
+			}}),
+			shouldErr: true,
+		},
+		{
 			name: "invalid group members entry returns error",
 			genesis: types.NewGenesisState(1, nil, nil, nil, nil, nil, []types.UserGroupMemberEntry{
 				types.NewUserGroupMemberEntry(1, 0, ""),
@@ -217,7 +251,48 @@ func TestValidateGenesis(t *testing.T) {
 					types.NewUserGroupMemberEntry(1, 1, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd"),
 					types.NewUserGroupMemberEntry(2, 1, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd"),
 					types.NewUserGroupMemberEntry(2, 1, "cosmos19gz9jn5pl6ke6qg5s4gt9ga9my7w8a0x3ar0qy"),
-				}, nil, nil),
+				},
+				[]types.UserGrant{
+					{
+						SubspaceID: 1,
+						Granter:    "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd",
+						Grantee:    "cosmos19gz9jn5pl6ke6qg5s4gt9ga9my7w8a0x3ar0qy",
+						Allowance:  allowanceAny,
+					},
+					{
+						SubspaceID: 1,
+						Granter:    "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+						Grantee:    "cosmos19gz9jn5pl6ke6qg5s4gt9ga9my7w8a0x3ar0qy",
+						Allowance:  allowanceAny,
+					},
+					{
+						SubspaceID: 2,
+						Granter:    "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+						Grantee:    "cosmos19gz9jn5pl6ke6qg5s4gt9ga9my7w8a0x3ar0qy",
+						Allowance:  allowanceAny,
+					},
+				},
+				[]types.GroupGrant{
+					{
+						SubspaceID: 1,
+						Granter:    "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd",
+						GroupID:    1,
+						Allowance:  allowanceAny,
+					},
+					{
+						SubspaceID: 1,
+						Granter:    "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+						GroupID:    1,
+						Allowance:  allowanceAny,
+					},
+					{
+						SubspaceID: 2,
+						Granter:    "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+						GroupID:    1,
+						Allowance:  allowanceAny,
+					},
+				},
+			),
 			shouldErr: false,
 		},
 	}

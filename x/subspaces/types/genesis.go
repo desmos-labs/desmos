@@ -26,6 +26,8 @@ func NewGenesisState(
 		UserPermissions:   userPermissions,
 		UserGroups:        userGroups,
 		UserGroupsMembers: userGroupMembers,
+		UserGrants:        userGrants,
+		GroupGrants:       groupGrants,
 	}
 }
 
@@ -117,6 +119,30 @@ func ValidateGenesis(data *GenesisState) error {
 		}
 
 		err := entry.Validate()
+		if err != nil {
+			return err
+		}
+	}
+
+	// Validate the user grants
+	for _, grant := range data.UserGrants {
+		if containsDuplicatedUserGrants(data.UserGrants, grant) {
+			return fmt.Errorf("duplicated user grant: subspace id %d, granter %s, grantee %s", grant.SubspaceID, grant.Granter, grant.Grantee)
+		}
+
+		err := grant.Validate()
+		if err != nil {
+			return err
+		}
+	}
+
+	// Validate the group grants
+	for _, grant := range data.GroupGrants {
+		if containsDuplicatedGroupGrants(data.GroupGrants, grant) {
+			return fmt.Errorf("duplicated group grant: subspace id %d, granter %s, group id %d", grant.SubspaceID, grant.Granter, grant.GroupID)
+		}
+
+		err := grant.Validate()
 		if err != nil {
 			return err
 		}
@@ -252,4 +278,26 @@ func (entry UserGroupMemberEntry) Validate() error {
 	}
 
 	return nil
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+func containsDuplicatedUserGrants(grants []UserGrant, grant UserGrant) bool {
+	var count = 0
+	for _, g := range grants {
+		if g.SubspaceID == grant.SubspaceID && g.Granter == grant.Granter && g.Grantee == grant.Grantee {
+			count++
+		}
+	}
+	return count > 1
+}
+
+func containsDuplicatedGroupGrants(grants []GroupGrant, grant GroupGrant) bool {
+	var count = 0
+	for _, g := range grants {
+		if g.SubspaceID == grant.SubspaceID && g.Granter == grant.Granter && g.GroupID == grant.GroupID {
+			count++
+		}
+	}
+	return count > 1
 }
