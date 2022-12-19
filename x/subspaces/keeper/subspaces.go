@@ -94,6 +94,18 @@ func (k Keeper) DeleteSubspace(ctx sdk.Context, subspaceID uint64) {
 		return false
 	})
 
+	// Delete all the user grants
+	k.IterateSubspaceUserGrants(ctx, subspaceID, func(grant types.UserGrant) (stop bool) {
+		k.DeleteUserGrant(ctx, grant.SubspaceID, grant.Granter, grant.Grantee)
+		return false
+	})
+
+	// Delete all the group grants
+	k.IterateSubspaceGroupGrants(ctx, subspaceID, func(grant types.GroupGrant) (stop bool) {
+		k.DeleteGroupGrant(ctx, grant.SubspaceID, grant.Granter, grant.GroupID)
+		return false
+	})
+
 	// Delete all user groups
 	k.IterateSubspaceUserGroups(ctx, subspaceID, func(group types.UserGroup) (stop bool) {
 		k.DeleteUserGroup(ctx, group.SubspaceID, group.ID)

@@ -4,6 +4,7 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/x/feegrant"
 
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
@@ -297,7 +298,7 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteSubspace() {
 			},
 		},
 		{
-			name: "existing subspace is deleted and all groups and permissions are removed",
+			name: "existing subspace is deleted properly",
 			store: func(ctx sdk.Context) {
 				suite.k.SaveSubspace(ctx, types.NewSubspace(
 					1,
@@ -324,6 +325,24 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteSubspace() {
 					"cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e",
 					types.NewPermissions(types.PermissionEditSubspace),
 				)
+
+				userGrant, err := types.NewUserGrant(
+					1,
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e",
+					&feegrant.BasicAllowance{},
+				)
+				suite.Require().NoError(err)
+				suite.k.SaveUserGrant(ctx, userGrant)
+
+				groupGrant, err := types.NewGroupGrant(
+					1,
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					1,
+					&feegrant.BasicAllowance{},
+				)
+				suite.Require().NoError(err)
+				suite.k.SaveGroupGrant(ctx, groupGrant)
 			},
 			subspaceID: 1,
 			check: func(ctx sdk.Context) {
@@ -346,6 +365,12 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteSubspace() {
 				// Make sure the permissions are deleted
 				permissions := suite.k.GetSubspaceUserPermissions(ctx, 1)
 				suite.Require().Empty(permissions)
+
+				// Make sure the user grants are deleted
+				suite.Require().Empty(suite.k.GetSubspaceUserGrants(ctx, 1))
+
+				// Make sure the group grants are deleted
+				suite.Require().Empty(suite.k.GetSubspaceGroupGrants(ctx, 1))
 			},
 		},
 	}

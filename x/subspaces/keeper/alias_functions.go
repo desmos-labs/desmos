@@ -345,6 +345,22 @@ func (k Keeper) IterateUserGrants(ctx sdk.Context, fn func(grant types.UserGrant
 	}
 }
 
+// IterateSubspaceUserGrants iterates over all the user grants inside the subspace with the given id
+func (k Keeper) IterateSubspaceUserGrants(ctx sdk.Context, subspaceID uint64, fn func(grant types.UserGrant) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.SubspaceUserAllowancePrefix(subspaceID))
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		var grant types.UserGrant
+		k.cdc.MustUnmarshal(iterator.Value(), &grant)
+		stop := fn(grant)
+		if stop {
+			break
+		}
+	}
+}
+
 // GetAllUserGrants returns a list of all the user grants that have been store inside the given context
 func (k Keeper) GetAllUserGrants(ctx sdk.Context) []types.UserGrant {
 	var grants []types.UserGrant
@@ -353,6 +369,16 @@ func (k Keeper) GetAllUserGrants(ctx sdk.Context) []types.UserGrant {
 		return false
 	})
 
+	return grants
+}
+
+// GetSubspaceUserGrants returns all the user grants inside the given subspace
+func (k Keeper) GetSubspaceUserGrants(ctx sdk.Context, subspaceID uint64) []types.UserGrant {
+	var grants []types.UserGrant
+	k.IterateSubspaceUserGrants(ctx, subspaceID, func(grant types.UserGrant) (stop bool) {
+		grants = append(grants, grant)
+		return false
+	})
 	return grants
 }
 
@@ -374,15 +400,31 @@ func (k Keeper) IterateGroupGrants(ctx sdk.Context, fn func(grant types.GroupGra
 	}
 }
 
-// GetAllGroupGrants returns a list of all the group grants that have been store inside the given context
-func (k Keeper) GetAllGroupGrants(ctx sdk.Context) []types.GroupGrant {
-	var grants []types.GroupGrant
-	k.IterateGroupGrants(ctx, func(grant types.GroupGrant) (stop bool) {
-		grants = append(grants, grant)
-		return false
-	})
+// IterateSubspaceGroupGrants iterates over all the group grants inside the subspace with the given id
+func (k Keeper) IterateSubspaceGroupGrants(ctx sdk.Context, subspaceID uint64, fn func(grant types.GroupGrant) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+	prefix := types.SubspaceGroupAllowancePrefix(subspaceID)
+	iterator := sdk.KVStorePrefixIterator(store, prefix)
+	defer iterator.Close()
 
-	return grants
+	for ; iterator.Valid(); iterator.Next() {
+		var grant types.GroupGrant
+		k.cdc.MustUnmarshal(iterator.Value(), &grant)
+		stop := fn(grant)
+		if stop {
+			break
+		}
+	}
+}
+
+// IterateGroupGrantsInGroup iterates over all the group grants inside the group with the given id
+func (k Keeper) IterateGroupGrantsInGroup(ctx sdk.Context, subspaceID uint64, groupID uint32, fn func(grant types.GroupGrant) (stop bool)) {
+	k.IterateSubspaceGroupGrants(ctx, subspaceID, func(grant types.GroupGrant) (stop bool) {
+		if grant.GroupID == groupID {
+			stop = fn(grant)
+		}
+		return stop
+	})
 }
 
 // IterateSubspaceGranterGroupGrants iterates over all the group grants for the given granter and performs the provided function
@@ -401,4 +443,35 @@ func (k Keeper) IterateSubspaceGranterGroupGrants(ctx sdk.Context, subspaceID ui
 			break
 		}
 	}
+}
+
+// GetAllGroupGrants returns a list of all the group grants that have been store inside the given context
+func (k Keeper) GetAllGroupGrants(ctx sdk.Context) []types.GroupGrant {
+	var grants []types.GroupGrant
+	k.IterateGroupGrants(ctx, func(grant types.GroupGrant) (stop bool) {
+		grants = append(grants, grant)
+		return false
+	})
+
+	return grants
+}
+
+// GetSubspaceGroupGrants returns all the group grants inside the given subspace
+func (k Keeper) GetSubspaceGroupGrants(ctx sdk.Context, subspaceID uint64) []types.GroupGrant {
+	var grants []types.GroupGrant
+	k.IterateSubspaceGroupGrants(ctx, subspaceID, func(grant types.GroupGrant) (stop bool) {
+		grants = append(grants, grant)
+		return false
+	})
+	return grants
+}
+
+// GetGroupGrantsInGroup returns all the group grants inside the given group
+func (k Keeper) GetGroupGrantsInGroup(ctx sdk.Context, subspaceID uint64, groupID uint32) []types.GroupGrant {
+	var grants []types.GroupGrant
+	k.IterateGroupGrantsInGroup(ctx, subspaceID, groupID, func(grant types.GroupGrant) (stop bool) {
+		grants = append(grants, grant)
+		return false
+	})
+	return grants
 }

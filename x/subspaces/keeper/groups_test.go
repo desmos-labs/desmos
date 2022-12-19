@@ -2,6 +2,7 @@ package keeper_test
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/x/feegrant"
 
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
@@ -375,7 +376,7 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteUserGroup() {
 			},
 		},
 		{
-			name: "existing group is deleted properly and members are cleared",
+			name: "existing group is deleted properly and everything is cleared",
 			store: func(ctx sdk.Context) {
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
@@ -388,6 +389,15 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteUserGroup() {
 
 				suite.k.AddUserToGroup(ctx, 1, 1, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
 				suite.k.AddUserToGroup(ctx, 1, 1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53")
+
+				grant, err := types.NewGroupGrant(
+					1,
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					1,
+					&feegrant.BasicAllowance{},
+				)
+				suite.Require().NoError(err)
+				suite.k.SaveGroupGrant(ctx, grant)
 			},
 			subspaceID: 1,
 			groupID:    1,
@@ -397,6 +407,8 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteUserGroup() {
 
 				members := suite.k.GetUserGroupMembers(ctx, 1, 1)
 				suite.Require().Empty(members)
+
+				suite.Require().Empty(suite.k.GetGroupGrantsInGroup(ctx, 1, 1))
 			},
 		},
 	}
