@@ -36,6 +36,11 @@ const (
 	OpWeightMsgRemoveUserFromUserGroup = "op_weight_msg_remove_user_from_user_group"
 	OpWeightMsgSetUserPermissions      = "op_weight_msg_set_user_permissions"
 
+	OpWeightMsgGrantUserAllowance   = "op_weight_msg_grant_user_allowance"
+	OpWeightMsgRevokeUserAllowance  = "op_weight_msg_revoke_group_allowance"
+	OpWeightMsgGrantGroupAllowance  = "op_weight_msg_grant_user_allowance"
+	OpWeightMsgRevokeGroupAllowance = "op_weight_msg_revoke_group_allowance"
+
 	DefaultGasValue = 200_000
 )
 
@@ -149,6 +154,34 @@ func WeightedOperations(
 		},
 	)
 
+	var weightMsgGrantUserAllowance int
+	appParams.GetOrGenerate(cdc, OpWeightMsgGrantUserAllowance, &weightMsgGrantUserAllowance, nil,
+		func(_ *rand.Rand) {
+			weightMsgGrantUserAllowance = params.DefaultWeightMsgGrantUserAllowance
+		},
+	)
+
+	var weightMsgRevokeUserAllowance int
+	appParams.GetOrGenerate(cdc, OpWeightMsgRevokeUserAllowance, &weightMsgRevokeUserAllowance, nil,
+		func(_ *rand.Rand) {
+			weightMsgRevokeUserAllowance = params.DefaultWeightMsgRevokeUserAllowance
+		},
+	)
+
+	var weightMsgGrantGroupAllowance int
+	appParams.GetOrGenerate(cdc, OpWeightMsgGrantGroupAllowance, &weightMsgGrantGroupAllowance, nil,
+		func(_ *rand.Rand) {
+			weightMsgGrantGroupAllowance = params.DefaultWeightMsgGrantGroupAllowance
+		},
+	)
+
+	var weightMsgRevokeGroupAllowance int
+	appParams.GetOrGenerate(cdc, OpWeightMsgRevokeGroupAllowance, &weightMsgRevokeGroupAllowance, nil,
+		func(_ *rand.Rand) {
+			weightMsgRevokeGroupAllowance = params.DefaultWeightMsgRevokeGroupAllowance
+		},
+	)
+
 	return sim.WeightedOperations{
 		sim.NewWeightedOperation(
 			weightMsgCreateSubspace,
@@ -209,6 +242,22 @@ func WeightedOperations(
 		sim.NewWeightedOperation(
 			weightMsgSetUserPermissions,
 			SimulateMsgSetUserPermissions(k, ak, bk, fk),
+		),
+		sim.NewWeightedOperation(
+			weightMsgGrantUserAllowance,
+			SimulateMsgGrantUserAllowance(k, ak, bk, fk),
+		),
+		sim.NewWeightedOperation(
+			weightMsgRevokeUserAllowance,
+			SimulateMsgRevokeUserAllowance(k, ak, bk, fk),
+		),
+		sim.NewWeightedOperation(
+			weightMsgGrantGroupAllowance,
+			SimulateMsgGrantGroupAllowance(k, ak, bk, fk),
+		),
+		sim.NewWeightedOperation(
+			weightMsgRevokeGroupAllowance,
+			SimulateMsgRevokeGroupAllowance(k, ak, bk, fk),
 		),
 	}
 }
