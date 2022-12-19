@@ -119,6 +119,7 @@ func randomRevokeUserAllowanceFields(
 		return
 	}
 	grant := RandomUserGrant(r, grants)
+	subspaceID = grant.SubspaceID
 	granter = grant.Granter
 	grantee = grant.Grantee
 
@@ -209,7 +210,7 @@ func SimulateMsgRevokeGroupAllowance(
 		accs []simtypes.Account, chainID string,
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 		// Get the data
-		subspaceID, granter, groupID, signer, skip := randomRevokeGroupAllowanceFields(r, ctx, accs, k, ak)
+		subspaceID, granter, groupID, signer, skip := randomRevokeGroupAllowanceFields(r, ctx, accs, k)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRevokeGroupAllowance"), nil, nil
 		}
@@ -228,7 +229,7 @@ func SimulateMsgRevokeGroupAllowance(
 
 // randomRevokeGroupAllowanceFields returns the data used to build a random MsgRevokeGroupAllowance
 func randomRevokeGroupAllowanceFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, ak authkeeper.AccountKeeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
 ) (subspaceID uint64, granter string, groupID uint32, signer simtypes.Account, skip bool) {
 	// Get a grant
 	grants := k.GetAllGroupGrants(ctx)

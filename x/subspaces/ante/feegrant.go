@@ -25,7 +25,7 @@ func (dfd DeductFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bo
 	}
 
 	if id, ok := isValidSubspaceMsgs(tx.GetMsgs()); ok {
-		newCtx, success, err := dfd.anteHandle(ctx, feeTx, simulate, id)
+		newCtx, success, err := dfd.anteHandle(ctx, feeTx, id)
 		if success && err != nil {
 			return newCtx, err
 		}
@@ -52,7 +52,7 @@ func isValidSubspaceMsgs(msgs []sdk.Msg) (uint64, bool) {
 	return subspaceId, true
 }
 
-func (dfd DeductFeeDecorator) anteHandle(ctx sdk.Context, tx sdk.FeeTx, simulate bool, subspaceID uint64) (newCtx sdk.Context, used bool, err error) {
+func (dfd DeductFeeDecorator) anteHandle(ctx sdk.Context, tx sdk.FeeTx, subspaceID uint64) (newCtx sdk.Context, used bool, err error) {
 	fee := tx.GetFee()
 	feePayer := tx.FeePayer()
 	feeGranter := tx.FeeGranter()
