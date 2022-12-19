@@ -40,7 +40,7 @@ func SimulateMsgGrantUserAllowance(
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgGrantUserAllowance"), nil, err
 		}
-		return simtypes.NewOperationMsg(nil, true, "MsgGrantUserAllowance", nil), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "MsgGrantUserAllowance", nil), nil, nil
 	}
 }
 
@@ -103,7 +103,7 @@ func SimulateMsgRevokeUserAllowance(
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRevokeUserAllowance"), nil, err
 		}
-		return simtypes.NewOperationMsg(nil, true, "MsgRevokeUserAllowance", nil), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "MsgRevokeUserAllowance", nil), nil, nil
 	}
 }
 
@@ -159,7 +159,7 @@ func SimulateMsgGrantGroupAllowance(
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgGrantGroupAllowance"), nil, err
 		}
-		return simtypes.NewOperationMsg(nil, true, "MsgGrantGroupAllowance", nil), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "MsgGrantGroupAllowance", nil), nil, nil
 	}
 }
 
@@ -223,7 +223,7 @@ func SimulateMsgRevokeGroupAllowance(
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRevokeGroupAllowance"), nil, err
 		}
-		return simtypes.NewOperationMsg(nil, true, "MsgRevokeGroupAllowance", nil), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "MsgRevokeGroupAllowance", nil), nil, nil
 	}
 }
 
