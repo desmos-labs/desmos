@@ -40,11 +40,11 @@ func (u UserGrant) Validate() error {
 	}
 	_, err := sdk.AccAddressFromBech32(u.Granter)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "missing granter address")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid granter address")
 	}
 	_, err = sdk.AccAddressFromBech32(u.Grantee)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "missing grantee address")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid grantee address")
 	}
 	if u.Grantee == u.Granter {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "cannot self-grant fee authorization")
@@ -105,7 +105,7 @@ func (g GroupGrant) Validate() error {
 	}
 	_, err := sdk.AccAddressFromBech32(g.Granter)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "missing granter address")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid granter address")
 	}
 
 	f, err := g.GetUnpackedAllowance()

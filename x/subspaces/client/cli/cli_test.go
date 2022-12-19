@@ -9,6 +9,9 @@ import (
 	"time"
 
 	authzcli "github.com/cosmos/cosmos-sdk/x/authz/client/cli"
+	"github.com/cosmos/cosmos-sdk/x/feegrant"
+
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 
 	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
 
@@ -45,6 +48,9 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	cfg := testutil.DefaultConfig()
 	genesisState := cfg.GenesisState
 	cfg.NumValidators = 2
+
+	allowanceAny, err := codectypes.NewAnyWithValue(&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))})
+	s.Require().NoError(err)
 
 	// Initialize the module genesis data
 	genesis := types.NewGenesisState(
@@ -112,6 +118,34 @@ func (s *IntegrationTestSuite) SetupSuite() {
 			types.NewUserGroupMemberEntry(1, 1, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm"),
 			types.NewUserGroupMemberEntry(2, 1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"),
 			types.NewUserGroupMemberEntry(2, 1, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
+		},
+		[]types.UserGrant{
+			{
+				SubspaceID: 1,
+				Granter:    "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+				Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+				Allowance:  allowanceAny,
+			},
+			{
+				SubspaceID: 1,
+				Granter:    "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+				Grantee:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				Allowance:  allowanceAny,
+			},
+		},
+		[]types.GroupGrant{
+			{
+				SubspaceID: 1,
+				Granter:    "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+				GroupID:    1,
+				Allowance:  allowanceAny,
+			},
+			{
+				SubspaceID: 2,
+				Granter:    "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+				GroupID:    1,
+				Allowance:  allowanceAny,
+			},
 		},
 	)
 

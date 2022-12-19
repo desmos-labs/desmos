@@ -51,11 +51,11 @@ func (msg MsgGrantUserAllowance) ValidateBasic() error {
 	}
 	_, err := sdk.AccAddressFromBech32(msg.Granter)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "missing granter address")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid granter address")
 	}
 	_, err = sdk.AccAddressFromBech32(msg.Grantee)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "missing grantee address")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid grantee address")
 	}
 	if msg.Grantee == msg.Granter {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "cannot self-grant fee authorization")
@@ -125,11 +125,11 @@ func (msg MsgRevokeUserAllowance) ValidateBasic() error {
 	}
 	_, err := sdk.AccAddressFromBech32(msg.Granter)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "missing granter address")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid granter address")
 	}
 	_, err = sdk.AccAddressFromBech32(msg.Grantee)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "missing grantee address")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid grantee address")
 	}
 	return nil
 }
@@ -188,7 +188,7 @@ func (msg MsgGrantGroupAllowance) ValidateBasic() error {
 	}
 	_, err := sdk.AccAddressFromBech32(msg.Granter)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "missing granter address")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid granter address")
 	}
 
 	f, err := msg.GetUnpackedAllowance()
@@ -259,7 +259,7 @@ func (msg MsgRevokeGroupAllowance) ValidateBasic() error {
 	}
 	_, err := sdk.AccAddressFromBech32(msg.Granter)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "missing granter address")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid granter address")
 	}
 	return nil
 }
