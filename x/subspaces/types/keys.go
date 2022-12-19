@@ -214,26 +214,32 @@ func SplitUserAddressPermissionKey(key []byte) (subspaceID uint64, sectionID uin
 
 // --------------------------------------------------------------------------------------------------------------------
 
-func SubspaceUserAllowancePrefix(subspaceId uint64) []byte {
-	return append(UserAllowancePrefix, GetSubspaceIDBytes(subspaceId)...)
+// SubspaceUserAllowancePrefix returns the prefix used to store the user allowance for the given subspace
+func SubspaceUserAllowancePrefix(subspaceID uint64) []byte {
+	return append(UserAllowancePrefix, GetSubspaceIDBytes(subspaceID)...)
 }
 
-func GranterUserAllowancePrefix(subspaceId uint64, granter string) []byte {
-	return append(SubspaceUserAllowancePrefix(subspaceId), GetAddressBytes(granter)...)
+// GranterUserAllowancePrefix returns the prefix used to store the user allowance granted by the given granter for the given subspace
+func GranterUserAllowancePrefix(subspaceID uint64, granter string) []byte {
+	return append(SubspaceUserAllowancePrefix(subspaceID), GetAddressBytes(granter)...)
 }
 
-func UserAllowanceKey(subspaceId uint64, granter string, grantee string) []byte {
-	return append(GranterUserAllowancePrefix(subspaceId, granter), GetAddressBytes(grantee)...)
+// UserAllowanceKey returns the key used to store the user allowance
+func UserAllowanceKey(subspaceID uint64, granter string, grantee string) []byte {
+	return append(GranterUserAllowancePrefix(subspaceID, granter), GetAddressBytes(grantee)...)
 }
 
-func SubspaceGroupAllowancePrefix(subspaceId uint64) []byte {
-	return append(GroupAllowancePrefix, GetSubspaceIDBytes(subspaceId)...)
+// SubspaceGroupAllowancePrefix returns the prefix used to store the group allowance for the given subspace
+func SubspaceGroupAllowancePrefix(subspaceID uint64) []byte {
+	return append(GroupAllowancePrefix, GetSubspaceIDBytes(subspaceID)...)
 }
 
-func GranterGroupAllowancePrefix(subspaceId uint64, granter string) []byte {
-	return append(SubspaceGroupAllowancePrefix(subspaceId), GetAddressBytes(granter)...)
+// GranterUserAllowancePrefix returns the prefix used to store the group allowance granted by the given granter for the given subspace
+func GranterGroupAllowancePrefix(subspaceID uint64, granter string) []byte {
+	return append(SubspaceGroupAllowancePrefix(subspaceID), GetAddressBytes(granter)...)
 }
 
-func GroupAllowanceKey(subspaceId uint64, granter string, groupID uint32) []byte {
-	return append(GranterGroupAllowancePrefix(subspaceId, granter), GetGroupIDBytes(groupID)...)
+// GroupAllowanceKey returns the key used to store the group allowance
+func GroupAllowanceKey(subspaceID uint64, granter string, groupID uint32) []byte {
+	return append(GranterGroupAllowancePrefix(subspaceID, granter), GetGroupIDBytes(groupID)...)
 }
