@@ -174,7 +174,6 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 
 	for _, tc := range testCases {
 		tc := tc
-		suite.SetupTest()
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
 			if tc.malleate != nil {
