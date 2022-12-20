@@ -9,7 +9,7 @@ import (
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
-func (suite *KeeperTestsuite) TestMsgServer_CreateSubspace() {
+func (suite *KeeperTestSuite) TestMsgServer_CreateSubspace() {
 	blockTime := time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC)
 	testCases := []struct {
 		name        string
@@ -246,7 +246,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateSubspace() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestMsgServer_EditSubspace() {
+func (suite *KeeperTestSuite) TestMsgServer_EditSubspace() {
 	blockTime := time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC)
 	testCases := []struct {
 		name      string
@@ -429,7 +429,7 @@ func (suite *KeeperTestsuite) TestMsgServer_EditSubspace() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestMsgServer_DeleteSubspace() {
+func (suite *KeeperTestSuite) TestMsgServer_DeleteSubspace() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -543,7 +543,7 @@ func (suite *KeeperTestsuite) TestMsgServer_DeleteSubspace() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestMsgServer_CreateSection() {
+func (suite *KeeperTestSuite) TestMsgServer_CreateSection() {
 	testCases := []struct {
 		name        string
 		store       func(ctx sdk.Context)
@@ -787,7 +787,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateSection() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestMsgServer_EditSection() {
+func (suite *KeeperTestSuite) TestMsgServer_EditSection() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -982,7 +982,7 @@ func (suite *KeeperTestsuite) TestMsgServer_EditSection() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestMsgServer_MoveSection() {
+func (suite *KeeperTestSuite) TestMsgServer_MoveSection() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -1237,7 +1237,7 @@ func (suite *KeeperTestsuite) TestMsgServer_MoveSection() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestMsgServer_DeleteSection() {
+func (suite *KeeperTestSuite) TestMsgServer_DeleteSection() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -1380,7 +1380,7 @@ func (suite *KeeperTestsuite) TestMsgServer_DeleteSection() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestMsgServer_CreateUserGroup() {
+func (suite *KeeperTestSuite) TestMsgServer_CreateUserGroup() {
 	testCases := []struct {
 		name        string
 		store       func(ctx sdk.Context)
@@ -1618,7 +1618,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateUserGroup() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestMsgServer_EditUserGroup() {
+func (suite *KeeperTestSuite) TestMsgServer_EditUserGroup() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -1818,7 +1818,7 @@ func (suite *KeeperTestsuite) TestMsgServer_EditUserGroup() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestMsgServer_MoveUserGroup() {
+func (suite *KeeperTestSuite) TestMsgServer_MoveUserGroup() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -2125,7 +2125,7 @@ func (suite *KeeperTestsuite) TestMsgServer_MoveUserGroup() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestMsgServer_SetUserGroupPermissions() {
+func (suite *KeeperTestSuite) TestMsgServer_SetUserGroupPermissions() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -2394,7 +2394,7 @@ func (suite *KeeperTestsuite) TestMsgServer_SetUserGroupPermissions() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestMsgServer_DeleteUserGroup() {
+func (suite *KeeperTestSuite) TestMsgServer_DeleteUserGroup() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -2540,7 +2540,7 @@ func (suite *KeeperTestsuite) TestMsgServer_DeleteUserGroup() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestMsgServer_AddUserToGroup() {
+func (suite *KeeperTestSuite) TestMsgServer_AddUserToGroup() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -2722,7 +2722,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AddUserToGroup() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestMsgServer_RemoveUserFromGroup() {
+func (suite *KeeperTestSuite) TestMsgServer_RemoveUserFromGroup() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -2903,7 +2903,7 @@ func (suite *KeeperTestsuite) TestMsgServer_RemoveUserFromGroup() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestMsgServer_SetUserPermissions() {
+func (suite *KeeperTestSuite) TestMsgServer_SetUserPermissions() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)

@@ -7,7 +7,7 @@ import (
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
-func (suite *KeeperTestsuite) TestKeeper_SetNextGroupID() {
+func (suite *KeeperTestSuite) TestKeeper_SetNextGroupID() {
 	testCases := []struct {
 		name       string
 		subspaceID uint64
@@ -49,7 +49,7 @@ func (suite *KeeperTestsuite) TestKeeper_SetNextGroupID() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_HasNextGroupID() {
+func (suite *KeeperTestSuite) TestKeeper_HasNextGroupID() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -85,7 +85,7 @@ func (suite *KeeperTestsuite) TestKeeper_HasNextGroupID() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_GetNextGroupID() {
+func (suite *KeeperTestSuite) TestKeeper_GetNextGroupID() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -129,7 +129,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetNextGroupID() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_DeleteNextGroupID() {
+func (suite *KeeperTestSuite) TestKeeper_DeleteNextGroupID() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -173,7 +173,7 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteNextGroupID() {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-func (suite *KeeperTestsuite) TestKeeper_SaveUserGroup() {
+func (suite *KeeperTestSuite) TestKeeper_SaveUserGroup() {
 	testCases := []struct {
 		name  string
 		store func(ctx sdk.Context)
@@ -254,7 +254,7 @@ func (suite *KeeperTestsuite) TestKeeper_SaveUserGroup() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_HasUserGroup() {
+func (suite *KeeperTestSuite) TestKeeper_HasUserGroup() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -300,7 +300,7 @@ func (suite *KeeperTestsuite) TestKeeper_HasUserGroup() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_GetUserGroup() {
+func (suite *KeeperTestSuite) TestKeeper_GetUserGroup() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -358,7 +358,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetUserGroup() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_DeleteUserGroup() {
+func (suite *KeeperTestSuite) TestKeeper_DeleteUserGroup() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -431,7 +431,7 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteUserGroup() {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-func (suite *KeeperTestsuite) TestKeeper_AddUserToGroup() {
+func (suite *KeeperTestSuite) TestKeeper_AddUserToGroup() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -481,7 +481,7 @@ func (suite *KeeperTestsuite) TestKeeper_AddUserToGroup() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_IsMemberOfGroup() {
+func (suite *KeeperTestSuite) TestKeeper_IsMemberOfGroup() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -540,7 +540,7 @@ func (suite *KeeperTestsuite) TestKeeper_IsMemberOfGroup() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_RemoveUserFromGroup() {
+func (suite *KeeperTestSuite) TestKeeper_RemoveUserFromGroup() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)

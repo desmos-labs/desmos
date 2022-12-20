@@ -10,7 +10,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/feegrant"
 )
 
-func (suite *KeeperTestsuite) TestValidSubspacesInvariant() {
+func (suite *KeeperTestSuite) TestValidSubspacesInvariant() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -133,7 +133,7 @@ func (suite *KeeperTestsuite) TestValidSubspacesInvariant() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestValidSectionsInvariant() {
+func (suite *KeeperTestSuite) TestValidSectionsInvariant() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -287,7 +287,7 @@ func (suite *KeeperTestsuite) TestValidSectionsInvariant() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestValidUserGroupsInvariant() {
+func (suite *KeeperTestSuite) TestValidUserGroupsInvariant() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -478,7 +478,7 @@ func (suite *KeeperTestsuite) TestValidUserGroupsInvariant() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestValidUserGroupMembersInvariant() {
+func (suite *KeeperTestSuite) TestValidUserGroupMembersInvariant() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -567,7 +567,7 @@ func (suite *KeeperTestsuite) TestValidUserGroupMembersInvariant() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestValidUserPermissionsInvariant() {
+func (suite *KeeperTestSuite) TestValidUserPermissionsInvariant() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -678,7 +678,7 @@ func (suite *KeeperTestsuite) TestValidUserPermissionsInvariant() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestValidUserGrantsInvariant() {
+func (suite *KeeperTestSuite) TestValidUserGrantsInvariant() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -745,7 +745,7 @@ func (suite *KeeperTestsuite) TestValidUserGrantsInvariant() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestValidGroupGrantsInvariant() {
+func (suite *KeeperTestSuite) TestValidGroupGrantsInvariant() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)

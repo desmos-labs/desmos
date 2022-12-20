@@ -7,7 +7,7 @@ import (
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
-func (suite *KeeperTestsuite) TestKeeper_SaveUserGrant() {
+func (suite *KeeperTestSuite) TestKeeper_SaveUserGrant() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -84,7 +84,7 @@ func (suite *KeeperTestsuite) TestKeeper_SaveUserGrant() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_HasUserGrant() {
+func (suite *KeeperTestSuite) TestKeeper_HasUserGrant() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -126,7 +126,7 @@ func (suite *KeeperTestsuite) TestKeeper_HasUserGrant() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_GetUserGrant() {
+func (suite *KeeperTestSuite) TestKeeper_GetUserGrant() {
 	allowance, err := codectypes.NewAnyWithValue(&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(1)))})
 	suite.Require().NoError(err)
 
@@ -186,7 +186,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetUserGrant() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_DeleteUserGrant() {
+func (suite *KeeperTestSuite) TestKeeper_DeleteUserGrant() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -239,7 +239,7 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteUserGrant() {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-func (suite *KeeperTestsuite) TestKeeper_SaveGroupGrant() {
+func (suite *KeeperTestSuite) TestKeeper_SaveGroupGrant() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -306,7 +306,7 @@ func (suite *KeeperTestsuite) TestKeeper_SaveGroupGrant() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_HasGroupGrant() {
+func (suite *KeeperTestSuite) TestKeeper_HasGroupGrant() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -348,7 +348,7 @@ func (suite *KeeperTestsuite) TestKeeper_HasGroupGrant() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_GetGroupGrant() {
+func (suite *KeeperTestSuite) TestKeeper_GetGroupGrant() {
 	allowance, err := codectypes.NewAnyWithValue(&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(1)))})
 	suite.Require().NoError(err)
 
@@ -407,7 +407,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetGroupGrant() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_DeleteGroupGrant() {
+func (suite *KeeperTestSuite) TestKeeper_DeleteGroupGrant() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -460,7 +460,7 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteGroupGrant() {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-func (suite *KeeperTestsuite) TestKeeper_UseUserGrantedFees() {
+func (suite *KeeperTestSuite) TestKeeper_UseUserGrantedFees() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -551,7 +551,7 @@ func (suite *KeeperTestsuite) TestKeeper_UseUserGrantedFees() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_UseGroupGrantedFees() {
+func (suite *KeeperTestSuite) TestKeeper_UseGroupGrantedFees() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -658,7 +658,7 @@ func (suite *KeeperTestsuite) TestKeeper_UseGroupGrantedFees() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_UseGrantedFees() {
+func (suite *KeeperTestSuite) TestKeeper_UseGrantedFees() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)

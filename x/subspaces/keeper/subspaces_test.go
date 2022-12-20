@@ -9,7 +9,7 @@ import (
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
-func (suite *KeeperTestsuite) TestKeeper_SetSubspaceID() {
+func (suite *KeeperTestSuite) TestKeeper_SetSubspaceID() {
 	testCases := []struct {
 		name  string
 		id    uint64
@@ -46,7 +46,7 @@ func (suite *KeeperTestsuite) TestKeeper_SetSubspaceID() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_GetSubspaceID() {
+func (suite *KeeperTestSuite) TestKeeper_GetSubspaceID() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -89,7 +89,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetSubspaceID() {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-func (suite *KeeperTestsuite) TestKeeper_SaveSubspace() {
+func (suite *KeeperTestSuite) TestKeeper_SaveSubspace() {
 	testCases := []struct {
 		name     string
 		store    func(ctx sdk.Context)
@@ -181,7 +181,7 @@ func (suite *KeeperTestsuite) TestKeeper_SaveSubspace() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_HasSubspace() {
+func (suite *KeeperTestSuite) TestKeeper_HasSubspace() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -225,7 +225,7 @@ func (suite *KeeperTestsuite) TestKeeper_HasSubspace() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_GetSubspace() {
+func (suite *KeeperTestSuite) TestKeeper_GetSubspace() {
 	testCases := []struct {
 		name        string
 		store       func(ctx sdk.Context)
@@ -282,7 +282,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetSubspace() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_DeleteSubspace() {
+func (suite *KeeperTestSuite) TestKeeper_DeleteSubspace() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)

@@ -11,7 +11,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/feegrant"
 )
 
-func (suite *KeeperTestsuite) TestQueryServer_Subspaces() {
+func (suite *KeeperTestSuite) TestQueryServer_Subspaces() {
 	testCases := []struct {
 		name         string
 		store        func(ctx sdk.Context)
@@ -85,7 +85,7 @@ func (suite *KeeperTestsuite) TestQueryServer_Subspaces() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestQueryServer_Subspace() {
+func (suite *KeeperTestSuite) TestQueryServer_Subspace() {
 	testCases := []struct {
 		name        string
 		store       func(ctx sdk.Context)
@@ -146,7 +146,7 @@ func (suite *KeeperTestsuite) TestQueryServer_Subspace() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestQueryServer_Sections() {
+func (suite *KeeperTestSuite) TestQueryServer_Sections() {
 	testCases := []struct {
 		name        string
 		store       func(ctx sdk.Context)
@@ -273,7 +273,7 @@ func (suite *KeeperTestsuite) TestQueryServer_Sections() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestQueryServer_Section() {
+func (suite *KeeperTestSuite) TestQueryServer_Section() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -354,7 +354,7 @@ func (suite *KeeperTestsuite) TestQueryServer_Section() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestQueryServer_UserGroups() {
+func (suite *KeeperTestSuite) TestQueryServer_UserGroups() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -501,7 +501,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserGroups() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestQueryServer_UserGroup() {
+func (suite *KeeperTestSuite) TestQueryServer_UserGroup() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -568,7 +568,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserGroup() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestQueryServer_UserGroupMembers() {
+func (suite *KeeperTestSuite) TestQueryServer_UserGroupMembers() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -651,7 +651,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserGroupMembers() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestQueryServer_UserPermissions() {
+func (suite *KeeperTestSuite) TestQueryServer_UserPermissions() {
 	testCases := []struct {
 		name        string
 		store       func(ctx sdk.Context)
@@ -776,7 +776,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserPermissions() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestQueryServer_UserAllowances() {
+func (suite *KeeperTestSuite) TestQueryServer_UserAllowances() {
 	allowanceAny, err := codectypes.NewAnyWithValue(&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))})
 	suite.Require().NoError(err)
 
@@ -989,7 +989,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserAllowances() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestQueryServer_GroupAllowances() {
+func (suite *KeeperTestSuite) TestQueryServer_GroupAllowances() {
 	allowanceAny, err := codectypes.NewAnyWithValue(&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))})
 	suite.Require().NoError(err)
 

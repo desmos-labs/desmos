@@ -10,7 +10,7 @@ import (
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
-func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
+func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 	allowanceAny, err := codectypes.NewAnyWithValue(&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))})
 	suite.Require().NoError(err)
 
@@ -463,7 +463,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
+func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 	allowanceAny, err := codectypes.NewAnyWithValue(&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))})
 	suite.Require().NoError(err)
 

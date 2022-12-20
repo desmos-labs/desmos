@@ -10,7 +10,7 @@ import (
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
-func (suite *KeeperTestsuite) TestMsgServer_GrantUserAllowance() {
+func (suite *KeeperTestSuite) TestMsgServer_GrantUserAllowance() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -140,7 +140,7 @@ func (suite *KeeperTestsuite) TestMsgServer_GrantUserAllowance() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestMsgServer_RevokeUserAllowance() {
+func (suite *KeeperTestSuite) TestMsgServer_RevokeUserAllowance() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -213,7 +213,7 @@ func (suite *KeeperTestsuite) TestMsgServer_RevokeUserAllowance() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestMsgServer_GranGroupAllowance() {
+func (suite *KeeperTestSuite) TestMsgServer_GranGroupAllowance() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -367,7 +367,7 @@ func (suite *KeeperTestsuite) TestMsgServer_GranGroupAllowance() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestMsgServer_RevokeGroupAllowance() {
+func (suite *KeeperTestSuite) TestMsgServer_RevokeGroupAllowance() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
