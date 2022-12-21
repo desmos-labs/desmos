@@ -13,6 +13,8 @@ type SubspacesMsg struct {
 	AddUserToUserGroup      *json.RawMessage `json:"add_user_to_user_group"`
 	RemoveUserFromUserGroup *json.RawMessage `json:"remove_user_from_user_group"`
 	SetUserPermissions      *json.RawMessage `json:"set_user_permissions"`
+	GrantUserAllowance      *json.RawMessage `json:"grant_user_allowance"`
+	GrantGroupAllowance     *json.RawMessage `json:"grant_group_allowance"`
 }
 
 type SubspacesQuery struct {
@@ -22,4 +24,6 @@ type SubspacesQuery struct {
 	UserGroup        *json.RawMessage `json:"user_group"`
 	UserGroupMembers *json.RawMessage `json:"user_group_members"`
 	UserPermissions  *json.RawMessage `json:"user_permissions"`
+	UserAllowances   *json.RawMessage `json:"user_allowances"`
+	GroupAllowances  *json.RawMessage `json:"group_allowances"`
 }

@@ -81,6 +81,18 @@ func buildSetUserPermissionsRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessag
 	return bz
 }
 
+func buildGrantUserAllowanceRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
+	raw := json.RawMessage(cdc.MustMarshalJSON(msg))
+	bz, _ := json.Marshal(types.SubspacesMsg{GrantUserAllowance: &raw})
+	return bz
+}
+
+func buildGrantGroupAllowanceRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
+	raw := json.RawMessage(cdc.MustMarshalJSON(msg))
+	bz, _ := json.Marshal(types.SubspacesMsg{GrantGroupAllowance: &raw})
+	return bz
+}
+
 func buildSubspacesQueryRequest(cdc codec.Codec, query *types.QuerySubspacesRequest) json.RawMessage {
 	raw := json.RawMessage(cdc.MustMarshalJSON(query))
 	bz, _ := json.Marshal(types.SubspacesQuery{Subspaces: &raw})
@@ -114,6 +126,18 @@ func buildUserGroupMembersQueryRequest(cdc codec.Codec, query *types.QueryUserGr
 func buildUserPermissionsQueryRequest(cdc codec.Codec, query *types.QueryUserPermissionsRequest) json.RawMessage {
 	raw := json.RawMessage(cdc.MustMarshalJSON(query))
 	bz, _ := json.Marshal(types.SubspacesQuery{UserPermissions: &raw})
+	return bz
+}
+
+func buildUserAllowancesQueryRequest(cdc codec.Codec, query *types.QueryUserAllowancesRequest) json.RawMessage {
+	raw := json.RawMessage(cdc.MustMarshalJSON(query))
+	bz, _ := json.Marshal(types.SubspacesQuery{UserAllowances: &raw})
+	return bz
+}
+
+func buildGroupAllowancesQueryRequest(cdc codec.Codec, query *types.QueryGroupAllowancesRequest) json.RawMessage {
+	raw := json.RawMessage(cdc.MustMarshalJSON(query))
+	bz, _ := json.Marshal(types.SubspacesQuery{GroupAllowances: &raw})
 	return bz
 }
 

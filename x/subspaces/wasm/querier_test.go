@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"time"
 
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
+	"github.com/cosmos/cosmos-sdk/x/feegrant"
 
 	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
 	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
@@ -18,6 +20,8 @@ func (suite *TestSuite) TestSubspacesWasmQuerier_QueryCustom() {
 	profilesQueryBz, err := profilesQuery.Marshal()
 	suite.NoError(err)
 	wrongQueryBz, err := json.Marshal(profilesQueryBz)
+	suite.NoError(err)
+	allowanceAny, err := codectypes.NewAnyWithValue(&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10)))})
 	suite.NoError(err)
 
 	testCases := []struct {
@@ -232,6 +236,90 @@ func (suite *TestSuite) TestSubspacesWasmQuerier_QueryCustom() {
 				},
 			),
 		},
+		{
+			name: "user allowances query request is parsed correctly",
+			request: buildUserAllowancesQueryRequest(suite.cdc, types.NewQueryUserAllowancesRequest(
+				1,
+				"",
+				"",
+				nil,
+			)),
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+				suite.k.SaveUserGrant(ctx, types.UserGrant{
+					SubspaceID: 1,
+					Granter:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					Grantee:    "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e",
+					Allowance:  allowanceAny,
+				})
+			},
+			shouldErr: false,
+			expResponse: suite.cdc.MustMarshalJSON(
+				&types.QueryUserAllowancesResponse{
+					Grants: []types.UserGrant{{
+						SubspaceID: 1,
+						Granter:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+						Grantee:    "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e",
+						Allowance:  allowanceAny,
+					}},
+					Pagination: &query.PageResponse{NextKey: nil, Total: 1},
+				},
+			),
+		},
+		// {
+		// 	name: "group allowances query request is parsed correctly",
+		// 	request: buildGroupAllowancesQueryRequest(suite.cdc, types.NewQueryGroupAllowancesRequest(
+		// 		1,
+		// 		"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+		// 		1,
+		// 		nil,
+		// 	)),
+		// 	store: func(ctx sdk.Context) {
+		// 		suite.k.SaveSubspace(ctx, types.NewSubspace(
+		// 			1,
+		// 			"Test subspace",
+		// 			"This is a test subspace",
+		// 			"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+		// 			"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+		// 			"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+		// 			time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+		// 		))
+		// 		suite.k.SaveUserGroup(ctx, types.NewUserGroup(
+		// 			1,
+		// 			0,
+		// 			1,
+		// 			"First test group",
+		// 			"This is a test group",
+		// 			types.NewPermissions(poststypes.PermissionWrite),
+		// 		))
+		// 		suite.k.SaveGroupGrant(ctx, types.GroupGrant{
+		// 			SubspaceID: 1,
+		// 			Granter:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+		// 			GroupID:    1,
+		// 			Allowance:  allowanceAny,
+		// 		})
+		// 	},
+		// 	shouldErr: false,
+		// 	expResponse: suite.cdc.MustMarshalJSON(
+		// 		&types.QueryGroupAllowancesResponse{
+		// 			Grants: []types.GroupGrant{{
+		// 				SubspaceID: 1,
+		// 				Granter:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+		// 				GroupID:    1,
+		// 				Allowance:  allowanceAny,
+		// 			}},
+		// 			Pagination: &query.PageResponse{NextKey: nil, Total: 1},
+		// 		},
+		// 	),
+		// },
 	}
 
 	querier := wasm.NewSubspacesWasmQuerier(suite.k, suite.cdc)
@@ -247,8 +335,8 @@ func (suite *TestSuite) TestSubspacesWasmQuerier_QueryCustom() {
 				suite.Error(err)
 			} else {
 				suite.NoError(err)
+				suite.Equal(tc.expResponse, query)
 			}
-			suite.Equal(tc.expResponse, query)
 		})
 	}
 
