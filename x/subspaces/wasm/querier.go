@@ -45,7 +45,7 @@ func (querier SubspacesWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMe
 	case query.UserAllowances != nil:
 		return querier.handleUserAllowancesRequest(ctx, *query.UserAllowances)
 	case query.GroupAllowances != nil:
-		return querier.handleUserAllowancesRequest(ctx, *query.GroupAllowances)
+		return querier.handleGroupAllowancesRequest(ctx, *query.GroupAllowances)
 	default:
 		return nil, sdkerrors.ErrInvalidRequest
 	}
