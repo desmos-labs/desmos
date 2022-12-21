@@ -68,7 +68,7 @@ func isValidSubspaceTx(tx sdk.Tx) (uint64, bool) {
 	return subspaceId, true
 }
 
-// tryHandleSubspaceTx handles the fee deduction for subspace transaction, return false if the process is failed
+// tryHandleSubspaceTx handles the fee deduction for subspace transaction, returns false if the process is failed
 func (dfd DeductFeeDecorator) tryHandleSubspaceTx(ctx sdk.Context, tx sdk.FeeTx, subspaceID uint64) (newCtx sdk.Context, success bool, err error) {
 	fee := tx.GetFee()
 	feePayer := tx.FeePayer()
