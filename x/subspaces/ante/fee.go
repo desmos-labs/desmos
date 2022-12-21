@@ -39,10 +39,11 @@ func (dfd DeductFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bo
 			return ctx, sdkerrors.Wrap(sdkerrors.ErrTxDecode, "Tx must be a FeeTx")
 		}
 
-		newCtx, success, err := dfd.handleSubspaceTx(ctx, feeTx, id)
+		newCtx, success, err := dfd.tryHandleSubspaceTx(ctx, feeTx, id)
 		if err != nil {
 			return newCtx, err
 		}
+		// move to next ante if tryHandleSubspaceTx is success, or using auth.DeductFeeDecorator instead
 		if success {
 			return next(newCtx, tx, simulate)
 		}
@@ -67,14 +68,14 @@ func isValidSubspaceTx(tx sdk.Tx) (uint64, bool) {
 	return subspaceId, true
 }
 
-// handleSubspaceTx handles the fee deduction for subspace transaction, return false if the process is failed
-func (dfd DeductFeeDecorator) handleSubspaceTx(ctx sdk.Context, tx sdk.FeeTx, subspaceID uint64) (newCtx sdk.Context, success bool, err error) {
+// tryHandleSubspaceTx handles the fee deduction for subspace transaction, return false if the process is failed
+func (dfd DeductFeeDecorator) tryHandleSubspaceTx(ctx sdk.Context, tx sdk.FeeTx, subspaceID uint64) (newCtx sdk.Context, success bool, err error) {
 	fee := tx.GetFee()
 	feePayer := tx.FeePayer()
 	feeGranter := tx.FeeGranter()
 	deductFeesFrom := feePayer
 
-	// if feegranter does not set or fee granter equals to payer, then use auth.DeductFeeDecorator to deal with fees
+	// if feegranter is not set set or fee granter equals to payer, then use auth.DeductFeeDecorator to deal with fees
 	if feeGranter == nil || feeGranter.Equals(feePayer) {
 		return ctx, false, nil
 	}
