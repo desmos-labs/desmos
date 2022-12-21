@@ -232,12 +232,12 @@ func (k Keeper) UserAllowances(ctx context.Context, request *types.QueryUserAllo
 	// Get grants prefix store
 	grantsPrefix := types.UserAllowancePrefix
 	switch {
-	case request.Granter != "" && request.Grantee == "":
-		grantsPrefix = types.GranterUserAllowancePrefix(request.SubspaceId, request.Granter)
-	case request.Granter != "" && request.Grantee != "":
-		grantsPrefix = types.UserAllowanceKey(request.SubspaceId, request.Granter, request.Grantee)
-	case request.SubspaceId != 0:
+	case request.SubspaceId != 0 && request.Granter == "":
 		grantsPrefix = types.SubspaceUserAllowancePrefix(request.SubspaceId)
+	case request.SubspaceId != 0 && request.Granter != "" && request.Grantee == "":
+		grantsPrefix = types.GranterUserAllowancePrefix(request.SubspaceId, request.Granter)
+	case request.SubspaceId != 0 && request.Granter != "" && request.Grantee != "":
+		grantsPrefix = types.UserAllowanceKey(request.SubspaceId, request.Granter, request.Grantee)
 	}
 
 	grantsStore := prefix.NewStore(store, grantsPrefix)
@@ -279,12 +279,12 @@ func (k Keeper) GroupAllowances(ctx context.Context, request *types.QueryGroupAl
 	// Get grants prefix store
 	grantsPrefix := types.GroupAllowancePrefix
 	switch {
-	case request.Granter != "" && request.GroupId == 0:
-		grantsPrefix = types.GranterGroupAllowancePrefix(request.SubspaceId, request.Granter)
-	case request.Granter != "" && request.GroupId != 0:
-		grantsPrefix = types.GroupAllowanceKey(request.SubspaceId, request.Granter, request.GroupId)
-	case request.SubspaceId != 0:
+	case request.SubspaceId != 0 && request.Granter == "":
 		grantsPrefix = types.SubspaceGroupAllowancePrefix(request.SubspaceId)
+	case request.SubspaceId != 0 && request.Granter != "" && request.GroupId == 0:
+		grantsPrefix = types.GranterGroupAllowancePrefix(request.SubspaceId, request.Granter)
+	case request.SubspaceId != 0 && request.Granter != "" && request.GroupId != 0:
+		grantsPrefix = types.GroupAllowanceKey(request.SubspaceId, request.Granter, request.GroupId)
 	}
 
 	grantsStore := prefix.NewStore(store, grantsPrefix)

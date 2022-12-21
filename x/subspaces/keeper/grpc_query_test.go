@@ -969,6 +969,38 @@ func (suite *KeeperTestSuite) TestQueryServer_UserAllowances() {
 				Allowance:  allowanceAny,
 			}},
 		},
+		{
+			name: "valid query returns the correct data",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(1, "test", "test", "owner", "treasury", "creator", time.Now()))
+				suite.k.SaveUserGrant(ctx, types.UserGrant{
+					SubspaceID: 1,
+					Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					Allowance:  allowanceAny,
+				})
+				suite.k.SaveUserGrant(ctx, types.UserGrant{
+					SubspaceID: 1,
+					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+					Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					Allowance:  allowanceAny,
+				})
+				suite.k.SaveUserGrant(ctx, types.UserGrant{
+					SubspaceID: 1,
+					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+					Grantee:    "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					Allowance:  allowanceAny,
+				})
+			},
+			req:       types.NewQueryUserAllowancesRequest(1, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5", nil),
+			shouldErr: false,
+			expGrants: []types.UserGrant{{
+				SubspaceID: 1,
+				Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+				Allowance:  allowanceAny,
+			}},
+		},
 	}
 	for _, tc := range testCases {
 		tc := tc
@@ -1204,6 +1236,42 @@ func (suite *KeeperTestSuite) TestQueryServer_GroupAllowances() {
 			}, {
 				SubspaceID: 1,
 				Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				GroupID:    1,
+				Allowance:  allowanceAny,
+			}},
+		},
+		{
+			name: "valid query returns the correct data",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(1, "test", "test", "owner", "treasury", "creator", time.Now()))
+
+				suite.k.SaveUserGroup(ctx, types.NewUserGroup(1, 0, 1, "test", "tets", nil))
+				suite.k.SaveUserGroup(ctx, types.NewUserGroup(1, 0, 2, "test", "tets", nil))
+
+				suite.k.SaveGroupGrant(ctx, types.GroupGrant{
+					SubspaceID: 1,
+					Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					GroupID:    1,
+					Allowance:  allowanceAny,
+				})
+				suite.k.SaveGroupGrant(ctx, types.GroupGrant{
+					SubspaceID: 1,
+					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+					GroupID:    1,
+					Allowance:  allowanceAny,
+				})
+				suite.k.SaveGroupGrant(ctx, types.GroupGrant{
+					SubspaceID: 1,
+					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+					GroupID:    2,
+					Allowance:  allowanceAny,
+				})
+			},
+			req:       types.NewQueryGroupAllowancesRequest(1, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", 1, nil),
+			shouldErr: false,
+			expGrants: []types.GroupGrant{{
+				SubspaceID: 1,
+				Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				GroupID:    1,
 				Allowance:  allowanceAny,
 			}},
