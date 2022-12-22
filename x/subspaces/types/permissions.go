@@ -23,6 +23,9 @@ var (
 	// This includes managing user groups and the associated permissions
 	PermissionSetPermissions = RegisterPermission("set permissions")
 
+	// PermissionGrantAllowances allows users to grant others fee allowances
+	PermissionGrantAllowances = RegisterPermission("grant allowances")
+
 	// PermissionEverything allows to do everything.
 	// This should usually be reserved only to the owner (which has it by default)
 	PermissionEverything = RegisterPermission("everything")
