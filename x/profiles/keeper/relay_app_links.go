@@ -35,6 +35,7 @@ type resultData struct {
 
 // StartProfileConnection creates and sends an IBC packet containing the proper data allowing to call
 // the Band Protocol oracle script so that the sender account can be verified using the given verification data.
+//
 //nolint:interfacer
 func (k Keeper) StartProfileConnection(
 	ctx sdk.Context,

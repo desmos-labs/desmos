@@ -73,6 +73,7 @@ func NewRandomProfiles(r *rand.Rand, accounts []simtypes.Account, number int) []
 }
 
 // NewRandomProfile return a random ProfileData from random data and the given account
+//
 //nolint:interfacer
 func NewRandomProfile(r *rand.Rand, account authtypes.AccountI) *types.Profile {
 	profile, err := types.NewProfile(

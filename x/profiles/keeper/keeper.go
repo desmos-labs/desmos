@@ -35,10 +35,10 @@ type Keeper struct {
 
 // NewKeeper creates new instances of the Profiles Keeper.
 // This k stores the profile data using two different associations:
-// 1. Address -> Profile
-//    This is used to easily retrieve the profile of a user based on an address
-// 2. DTag -> Address
-//    This is used to get the address of a user based on a DTag
+//  1. Address -> Profile
+//     This is used to easily retrieve the profile of a user based on an address
+//  2. DTag -> Address
+//     This is used to get the address of a user based on a DTag
 func NewKeeper(
 	cdc codec.BinaryCodec,
 	legacyAmino *codec.LegacyAmino,

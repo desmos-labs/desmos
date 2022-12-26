@@ -1,4 +1,5 @@
 // Package types
+//
 //nolint:interfacer
 package types
 
