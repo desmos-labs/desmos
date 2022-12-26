@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"io/ioutil"
+	"os"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 
@@ -12,7 +12,7 @@ import (
 func ParseCreatePostJSON(cdc codec.Codec, dataFile string) (CreatePostJSON, error) {
 	var data CreatePostJSON
 
-	contents, err := ioutil.ReadFile(dataFile)
+	contents, err := os.ReadFile(dataFile)
 	if err != nil {
 		return data, err
 	}
@@ -29,7 +29,7 @@ func ParseCreatePostJSON(cdc codec.Codec, dataFile string) (CreatePostJSON, erro
 func ParseEditPostJSON(cdc codec.Codec, dataFile string) (EditPostJSON, error) {
 	var data EditPostJSON
 
-	contents, err := ioutil.ReadFile(dataFile)
+	contents, err := os.ReadFile(dataFile)
 	if err != nil {
 		return data, err
 	}
@@ -46,7 +46,7 @@ func ParseEditPostJSON(cdc codec.Codec, dataFile string) (EditPostJSON, error) {
 func ParseAttachmentContent(cdc codec.Codec, dataFile string) (types.AttachmentContent, error) {
 	var data types.AttachmentContent
 
-	contents, err := ioutil.ReadFile(dataFile)
+	contents, err := os.ReadFile(dataFile)
 	if err != nil {
 		return data, err
 	}

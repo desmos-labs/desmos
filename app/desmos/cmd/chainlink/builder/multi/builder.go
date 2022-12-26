@@ -3,7 +3,7 @@ package multi
 import (
 	"encoding/hex"
 	"fmt"
-	"io/ioutil"
+	"os"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
@@ -44,7 +44,7 @@ func (b *AccountChainLinkJSONBuilder) BuildChainLinkJSON(chain types.Chain) (uti
 	txCfg := encodingConfig.TxConfig
 
 	// Read the transaction file
-	bytes, err := ioutil.ReadFile(txFilePath)
+	bytes, err := os.ReadFile(txFilePath)
 	if err != nil {
 		return utils.ChainLinkJSON{}, err
 	}

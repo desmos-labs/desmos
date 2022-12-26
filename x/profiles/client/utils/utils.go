@@ -3,7 +3,7 @@ package utils
 // DONTCOVER
 
 import (
-	"io/ioutil"
+	"os"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 
@@ -50,7 +50,7 @@ func (link *ChainLinkJSON) UnpackInterfaces(unpacker codectypes.AnyUnpacker) err
 func ParseChainLinkJSON(cdc codec.Codec, dataFile string) (ChainLinkJSON, error) {
 	var data ChainLinkJSON
 
-	contents, err := ioutil.ReadFile(dataFile)
+	contents, err := os.ReadFile(dataFile)
 	if err != nil {
 		return data, err
 	}
