@@ -2,7 +2,7 @@ package chainlink
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 
 	"github.com/desmos-labs/desmos/v4/app/desmos/cmd/chainlink/builder"
 	chainlinktypes "github.com/desmos-labs/desmos/v4/app/desmos/cmd/chainlink/getter"
@@ -68,7 +68,7 @@ Providing an invalid transaction (either with an account-number or sequence not 
 				return err
 			}
 
-			err = ioutil.WriteFile(filename, bz, 0600)
+			err = os.WriteFile(filename, bz, 0600)
 			if err != nil {
 				return err
 			}

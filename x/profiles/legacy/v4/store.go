@@ -26,7 +26,8 @@ import (
 // - delete all the user blocks
 //
 // NOTE: This method must be called AFTER the migration from v0 to v1 of the x/relationships module.
-// 		 If this order is not preserved, all relationships and blocks WILL BE DELETED.
+//
+//	If this order is not preserved, all relationships and blocks WILL BE DELETED.
 func MigrateStore(ctx sdk.Context, ak authkeeper.AccountKeeper, storeKey sdk.StoreKey, amino *codec.LegacyAmino, cdc codec.BinaryCodec) error {
 	legacyKeeper := NewKeeper(storeKey, cdc)
 

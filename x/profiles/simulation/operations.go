@@ -19,6 +19,7 @@ import (
 )
 
 // Simulation operation weights constants
+//
 //nolint:gosec // These are not hardcoded credentials
 const (
 	OpWeightMsgSaveProfile            = "op_weight_msg_save_profile"

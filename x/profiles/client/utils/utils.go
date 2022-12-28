@@ -3,7 +3,7 @@ package utils
 // DONTCOVER
 
 import (
-	"io/ioutil"
+	"os"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 
@@ -13,6 +13,7 @@ import (
 )
 
 // NewChainLinkJSON allows to build a new ChainLinkJSON instance
+//
 //nolint:interfacer
 func NewChainLinkJSON(data types.AddressData, proof types.Proof, chainConfig types.ChainConfig) ChainLinkJSON {
 	any, err := codectypes.NewAnyWithValue(data)
@@ -49,7 +50,7 @@ func (link *ChainLinkJSON) UnpackInterfaces(unpacker codectypes.AnyUnpacker) err
 func ParseChainLinkJSON(cdc codec.Codec, dataFile string) (ChainLinkJSON, error) {
 	var data ChainLinkJSON
 
-	contents, err := ioutil.ReadFile(dataFile)
+	contents, err := os.ReadFile(dataFile)
 	if err != nil {
 		return data, err
 	}

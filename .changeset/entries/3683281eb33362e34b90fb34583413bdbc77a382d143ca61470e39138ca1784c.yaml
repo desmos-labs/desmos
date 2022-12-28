@@ -1,0 +1,6 @@
+type: feat
+module: other
+pull_request: 1059
+description: Added proper support for Ledger devices inside the `sign` command
+backward_compatible: true
+date: 2022-12-26T01:27:47.090245312Z

@@ -17,7 +17,8 @@ import (
 // - store all the user blocks present inside x/profiles into this module
 //
 // NOTE: This method must be called BEFORE the migration from v4 to v5 of the profiles module.
-// 		 If this order is not preserved, all relationships and blocks WILL BE DELETED.
+//
+//	If this order is not preserved, all relationships and blocks WILL BE DELETED.
 func MigrateStore(ctx sdk.Context, pk profilesv4.Keeper, relationshipsStoreKey sdk.StoreKey, cdc codec.BinaryCodec) error {
 	store := ctx.KVStore(relationshipsStoreKey)
 

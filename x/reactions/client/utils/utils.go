@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"io/ioutil"
+	"os"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 )
@@ -10,7 +10,7 @@ import (
 func ParseSetReactionsParamsJSON(cdc codec.Codec, dataFile string) (SetReactionsParamsJSON, error) {
 	var data SetReactionsParamsJSON
 
-	contents, err := ioutil.ReadFile(dataFile)
+	contents, err := os.ReadFile(dataFile)
 	if err != nil {
 		return data, err
 	}
