@@ -5552,18 +5552,16 @@ paths:
                     subspace_id:
                       type: string
                       format: uint64
-                      title: the id of the subspace where group granted an allowance
+                      title: >-
+                        Id of the subspace inside which the group was granted
+                        the allowance
                     granter:
                       type: string
-                      title: >-
-                        granter is the address of the user granting an allowance
-                        of their funds
+                      title: Address of the user that has granted the allowance
                     group_id:
                       type: integer
                       format: int64
-                      title: >-
-                        the id of the group being granted an allowance of
-                        another user's funds
+                      title: Id of the group that has been granted the allowance
                     allowance:
                       type: object
                       properties:
@@ -5742,8 +5740,8 @@ paths:
                               "value": "1.212s"
                             }
                       title: >-
-                        allowance can be any of basic, periodic, allowed fee
-                        allowance
+                        Allowance can be any allowance type implementing the
+                        FeeAllowanceI interface
                   title: GroupGrant represents a grant to a group
                 title: grants are allowance's granted for grantee by granter
               pagination:
@@ -6072,17 +6070,15 @@ paths:
                     subspace_id:
                       type: string
                       format: uint64
-                      title: the id of the subspace where group granted an allowance
+                      title: >-
+                        Id of the subspace inside which the user was granted the
+                        allowance
                     granter:
                       type: string
-                      title: >-
-                        granter is the address of the user granting an allowance
-                        of their funds
+                      title: Address of the user that granted the allowance
                     grantee:
                       type: string
-                      title: >-
-                        grantee is the address being granted an allowance of
-                        another user's funds
+                      title: Address of the user being granted the allowance
                     allowance:
                       type: object
                       properties:
@@ -6261,8 +6257,8 @@ paths:
                               "value": "1.212s"
                             }
                       title: >-
-                        allowance can be any of basic, periodic, allowed fee
-                        allowance
+                        Allowance can be any allowance type implementing the
+                        FeeAllowanceI interface
                   title: UserGrant represents a grant to a user
                 title: grants are allowance's granted for grantee by granter
               pagination:
@@ -18585,16 +18581,14 @@ definitions:
       subspace_id:
         type: string
         format: uint64
-        title: the id of the subspace where group granted an allowance
+        title: Id of the subspace inside which the group was granted the allowance
       granter:
         type: string
-        title: >-
-          granter is the address of the user granting an allowance of their
-          funds
+        title: Address of the user that has granted the allowance
       group_id:
         type: integer
         format: int64
-        title: the id of the group being granted an allowance of another user's funds
+        title: Id of the group that has been granted the allowance
       allowance:
         type: object
         properties:
@@ -18754,7 +18748,9 @@ definitions:
                 "@type": "type.googleapis.com/google.protobuf.Duration",
                 "value": "1.212s"
               }
-        title: 'allowance can be any of basic, periodic, allowed fee allowance'
+        title: >-
+          Allowance can be any allowance type implementing the FeeAllowanceI
+          interface
     title: GroupGrant represents a grant to a group
   desmos.subspaces.v3.PermissionDetail:
     type: object
@@ -18829,18 +18825,16 @@ definitions:
             subspace_id:
               type: string
               format: uint64
-              title: the id of the subspace where group granted an allowance
+              title: >-
+                Id of the subspace inside which the group was granted the
+                allowance
             granter:
               type: string
-              title: >-
-                granter is the address of the user granting an allowance of
-                their funds
+              title: Address of the user that has granted the allowance
             group_id:
               type: integer
               format: int64
-              title: >-
-                the id of the group being granted an allowance of another user's
-                funds
+              title: Id of the group that has been granted the allowance
             allowance:
               type: object
               properties:
@@ -19010,7 +19004,9 @@ definitions:
                       "@type": "type.googleapis.com/google.protobuf.Duration",
                       "value": "1.212s"
                     }
-              title: 'allowance can be any of basic, periodic, allowed fee allowance'
+              title: >-
+                Allowance can be any allowance type implementing the
+                FeeAllowanceI interface
           title: GroupGrant represents a grant to a group
         title: grants are allowance's granted for grantee by granter
       pagination:
@@ -19233,17 +19229,15 @@ definitions:
             subspace_id:
               type: string
               format: uint64
-              title: the id of the subspace where group granted an allowance
+              title: >-
+                Id of the subspace inside which the user was granted the
+                allowance
             granter:
               type: string
-              title: >-
-                granter is the address of the user granting an allowance of
-                their funds
+              title: Address of the user that granted the allowance
             grantee:
               type: string
-              title: >-
-                grantee is the address being granted an allowance of another
-                user's funds
+              title: Address of the user being granted the allowance
             allowance:
               type: object
               properties:
@@ -19413,7 +19407,9 @@ definitions:
                       "@type": "type.googleapis.com/google.protobuf.Duration",
                       "value": "1.212s"
                     }
-              title: 'allowance can be any of basic, periodic, allowed fee allowance'
+              title: >-
+                Allowance can be any allowance type implementing the
+                FeeAllowanceI interface
           title: UserGrant represents a grant to a user
         title: grants are allowance's granted for grantee by granter
       pagination:
@@ -19687,17 +19683,13 @@ definitions:
       subspace_id:
         type: string
         format: uint64
-        title: the id of the subspace where group granted an allowance
+        title: Id of the subspace inside which the user was granted the allowance
       granter:
         type: string
-        title: >-
-          granter is the address of the user granting an allowance of their
-          funds
+        title: Address of the user that granted the allowance
       grantee:
         type: string
-        title: >-
-          grantee is the address being granted an allowance of another user's
-          funds
+        title: Address of the user being granted the allowance
       allowance:
         type: object
         properties:
@@ -19857,7 +19849,9 @@ definitions:
                 "@type": "type.googleapis.com/google.protobuf.Duration",
                 "value": "1.212s"
               }
-        title: 'allowance can be any of basic, periodic, allowed fee allowance'
+        title: >-
+          Allowance can be any allowance type implementing the FeeAllowanceI
+          interface
     title: UserGrant represents a grant to a user
   desmos.subspaces.v3.UserGroup:
     type: object
