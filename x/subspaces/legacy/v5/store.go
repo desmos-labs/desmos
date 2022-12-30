@@ -2,6 +2,7 @@ package v4
 
 import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
+	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
@@ -30,6 +31,7 @@ func migrateUserAccountsInUserGroups(ctx sdk.Context, key sdk.StoreKey, accountK
 		accExists := accountKeeper.HasAccount(ctx, userAcc)
 		if !accExists {
 			accountKeeper.SetAccount(ctx, accountKeeper.NewAccountWithAddress(ctx, userAcc))
+			telemetry.IncrCounter(1, "new", "account")
 		}
 	}
 	return nil

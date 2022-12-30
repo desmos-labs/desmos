@@ -622,8 +622,8 @@ func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 				}},
 			},
 			check: func(ctx sdk.Context) {
-				stored, err := suite.k.GetUserGrant(ctx, 1, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
-				suite.Require().NoError(err)
+				stored, found := suite.k.GetUserGrant(ctx, 1, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
+				suite.Require().True(found)
 				suite.Require().Equal(types.UserGrant{
 					SubspaceID: 1,
 					Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -643,8 +643,8 @@ func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 				}},
 			},
 			check: func(ctx sdk.Context) {
-				stored, err := suite.k.GetGroupGrant(ctx, 1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", 1)
-				suite.Require().NoError(err)
+				stored, found := suite.k.GetGroupGrant(ctx, 1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", 1)
+				suite.Require().True(found)
 				suite.Require().Equal(types.GroupGrant{
 					SubspaceID: 1,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",

@@ -22,7 +22,7 @@ func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 		k.GetAllUserGroups(ctx),
 		k.getAllUserGroupsMembers(ctx),
 		k.GetAllUserGrants(ctx),
-		k.GetAllGroupGrants(ctx),
+		k.GetAllUserGroupsGrants(ctx),
 	)
 }
 

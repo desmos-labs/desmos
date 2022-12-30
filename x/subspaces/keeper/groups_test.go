@@ -408,7 +408,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteUserGroup() {
 				members := suite.k.GetUserGroupMembers(ctx, 1, 1)
 				suite.Require().Empty(members)
 
-				suite.Require().Empty(suite.k.GetGroupGrantsInGroup(ctx, 1, 1))
+				suite.Require().Empty(suite.k.GetUserGroupGrants(ctx, 1, 1))
 			},
 		},
 	}

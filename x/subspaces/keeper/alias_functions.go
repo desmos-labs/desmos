@@ -3,7 +3,9 @@ package keeper
 import (
 	"bytes"
 
+	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
@@ -384,8 +386,8 @@ func (k Keeper) GetSubspaceUserGrants(ctx sdk.Context, subspaceID uint64) []type
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// IterateGroupGrants iterates through the group grants and performs the given function
-func (k Keeper) IterateGroupGrants(ctx sdk.Context, fn func(grant types.GroupGrant) (stop bool)) {
+// IterateUserGroupsGrants iterates through the group grants and performs the given function
+func (k Keeper) IterateUserGroupsGrants(ctx sdk.Context, fn func(grant types.GroupGrant) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.GroupAllowancePrefix)
 	defer iterator.Close()
@@ -400,8 +402,8 @@ func (k Keeper) IterateGroupGrants(ctx sdk.Context, fn func(grant types.GroupGra
 	}
 }
 
-// IterateSubspaceGroupGrants iterates over all the group grants inside the subspace with the given id
-func (k Keeper) IterateSubspaceGroupGrants(ctx sdk.Context, subspaceID uint64, fn func(grant types.GroupGrant) (stop bool)) {
+// IterateSubspaceUserGroupGrants iterates over all the group grants inside the subspace with the given id
+func (k Keeper) IterateSubspaceUserGroupGrants(ctx sdk.Context, subspaceID uint64, fn func(grant types.GroupGrant) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 	prefix := types.SubspaceGroupAllowancePrefix(subspaceID)
 	iterator := sdk.KVStorePrefixIterator(store, prefix)
@@ -417,9 +419,9 @@ func (k Keeper) IterateSubspaceGroupGrants(ctx sdk.Context, subspaceID uint64, f
 	}
 }
 
-// IterateGroupGrantsInGroup iterates over all the group grants inside the group with the given id
-func (k Keeper) IterateGroupGrantsInGroup(ctx sdk.Context, subspaceID uint64, groupID uint32, fn func(grant types.GroupGrant) (stop bool)) {
-	k.IterateSubspaceGroupGrants(ctx, subspaceID, func(grant types.GroupGrant) (stop bool) {
+// IterateUserGroupGrants iterates over all the group grants inside the group with the given id
+func (k Keeper) IterateUserGroupGrants(ctx sdk.Context, subspaceID uint64, groupID uint32, fn func(grant types.GroupGrant) (stop bool)) {
+	k.IterateSubspaceUserGroupGrants(ctx, subspaceID, func(grant types.GroupGrant) (stop bool) {
 		if grant.GroupID == groupID {
 			stop = fn(grant)
 		}
@@ -445,10 +447,10 @@ func (k Keeper) IterateSubspaceGranterGroupGrants(ctx sdk.Context, subspaceID ui
 	}
 }
 
-// GetAllGroupGrants returns a list of all the group grants that have been store inside the given context
-func (k Keeper) GetAllGroupGrants(ctx sdk.Context) []types.GroupGrant {
+// GetAllUserGroupsGrants returns a list of all the group grants that have been store inside the given context
+func (k Keeper) GetAllUserGroupsGrants(ctx sdk.Context) []types.GroupGrant {
 	var grants []types.GroupGrant
-	k.IterateGroupGrants(ctx, func(grant types.GroupGrant) (stop bool) {
+	k.IterateUserGroupsGrants(ctx, func(grant types.GroupGrant) (stop bool) {
 		grants = append(grants, grant)
 		return false
 	})
@@ -456,22 +458,36 @@ func (k Keeper) GetAllGroupGrants(ctx sdk.Context) []types.GroupGrant {
 	return grants
 }
 
-// GetSubspaceGroupGrants returns all the group grants inside the given subspace
-func (k Keeper) GetSubspaceGroupGrants(ctx sdk.Context, subspaceID uint64) []types.GroupGrant {
+// GetSubspaceUserGroupsGrants returns all the group grants inside the given subspace
+func (k Keeper) GetSubspaceUserGroupsGrants(ctx sdk.Context, subspaceID uint64) []types.GroupGrant {
 	var grants []types.GroupGrant
-	k.IterateSubspaceGroupGrants(ctx, subspaceID, func(grant types.GroupGrant) (stop bool) {
+	k.IterateSubspaceUserGroupGrants(ctx, subspaceID, func(grant types.GroupGrant) (stop bool) {
 		grants = append(grants, grant)
 		return false
 	})
 	return grants
 }
 
-// GetGroupGrantsInGroup returns all the group grants inside the given group
-func (k Keeper) GetGroupGrantsInGroup(ctx sdk.Context, subspaceID uint64, groupID uint32) []types.GroupGrant {
+// GetUserGroupGrants returns all the group grants inside the given group
+func (k Keeper) GetUserGroupGrants(ctx sdk.Context, subspaceID uint64, groupID uint32) []types.GroupGrant {
 	var grants []types.GroupGrant
-	k.IterateGroupGrantsInGroup(ctx, subspaceID, groupID, func(grant types.GroupGrant) (stop bool) {
+	k.IterateUserGroupGrants(ctx, subspaceID, groupID, func(grant types.GroupGrant) (stop bool) {
 		grants = append(grants, grant)
 		return false
 	})
 	return grants
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// createAccount creates a new account for the given user who does not exist on chain
+func (k Keeper) creatAccount(ctx sdk.Context, user string) {
+	addr, err := sdk.AccAddressFromBech32(user)
+	if err != nil {
+		panic(err)
+	}
+	if !k.ak.HasAccount(ctx, addr) {
+		defer telemetry.IncrCounter(1, "new", "account")
+		k.ak.SetAccount(ctx, authtypes.NewBaseAccountWithAddress(addr))
+	}
 }

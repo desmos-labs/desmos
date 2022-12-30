@@ -1,22 +1,13 @@
 package keeper
 
 import (
-	"fmt"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
 // SaveUserGrant saves the given user grant
 func (k Keeper) SaveUserGrant(ctx sdk.Context, grant types.UserGrant) {
-	granteeAddr, err := sdk.AccAddressFromBech32(grant.Grantee)
-	if err != nil {
-		panic(err)
-	}
-	if !k.ak.HasAccount(ctx, granteeAddr) {
-		k.ak.SetAccount(ctx, authtypes.NewBaseAccountWithAddress(granteeAddr))
-	}
+	k.creatAccount(ctx, grant.Grantee)
 
 	store := ctx.KVStore(k.storeKey)
 	key := types.UserAllowanceKey(grant.SubspaceID, grant.Granter, grant.Grantee)
@@ -36,17 +27,17 @@ func (k Keeper) DeleteUserGrant(ctx sdk.Context, subspaceID uint64, granter stri
 }
 
 // GetUserGrant returns the grant having the granter and grantee from the provided subspace.
-// If there is no grant associated with the info the function will return an error.
-func (k Keeper) GetUserGrant(ctx sdk.Context, subspaceID uint64, granter, grantee string) (types.UserGrant, error) {
+// If there is no grant associated with the info the function will return false.
+func (k Keeper) GetUserGrant(ctx sdk.Context, subspaceID uint64, granter, grantee string) (types.UserGrant, bool) {
 	if !k.HasUserGrant(ctx, subspaceID, granter, grantee) {
-		return types.UserGrant{}, fmt.Errorf("user grant does not exist: subspace id %d, granter %s, grantee %s", subspaceID, granter, grantee)
+		return types.UserGrant{}, false
 	}
 
 	store := ctx.KVStore(k.storeKey)
 	bz := store.Get(types.UserAllowanceKey(subspaceID, granter, grantee))
 	var grant types.UserGrant
 	k.cdc.MustUnmarshal(bz, &grant)
-	return grant, nil
+	return grant, true
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -72,16 +63,16 @@ func (k Keeper) DeleteGroupGrant(ctx sdk.Context, subspaceID uint64, granter str
 
 // GetGroupGrant returns the grant having the granter and group id from the provided subspace.
 // If there is no grant associated with the info the function will return an error.
-func (k Keeper) GetGroupGrant(ctx sdk.Context, subspaceID uint64, granter string, groupID uint32) (types.GroupGrant, error) {
+func (k Keeper) GetGroupGrant(ctx sdk.Context, subspaceID uint64, granter string, groupID uint32) (types.GroupGrant, bool) {
 	if !k.HasGroupGrant(ctx, subspaceID, granter, groupID) {
-		return types.GroupGrant{}, fmt.Errorf("group grant does not exist: subspace id %d, granter %s, group id %d", subspaceID, granter, groupID)
+		return types.GroupGrant{}, false
 	}
 
 	store := ctx.KVStore(k.storeKey)
 	bz := store.Get(types.GroupAllowanceKey(subspaceID, granter, groupID))
 	var grant types.GroupGrant
 	k.cdc.MustUnmarshal(bz, &grant)
-	return grant, nil
+	return grant, true
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -100,8 +91,8 @@ func (k Keeper) UseGrantedFees(ctx sdk.Context, subspaceID uint64, granter, gran
 // UseUserGrantedFees will try to use the user grant to pay the given fee from the granter's account as requested by the grantee.
 // if no valid allowance exists, then return false to show the fee will not be paid in this phase.
 func (k Keeper) UseUserGrantedFees(ctx sdk.Context, subspaceID uint64, granter, grantee sdk.AccAddress, fee sdk.Coins, msgs []sdk.Msg) (used bool) {
-	grant, err := k.GetUserGrant(ctx, subspaceID, granter.String(), grantee.String())
-	if err != nil {
+	grant, found := k.GetUserGrant(ctx, subspaceID, granter.String(), grantee.String())
+	if !found {
 		return false
 	}
 

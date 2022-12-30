@@ -232,7 +232,7 @@ func randomRevokeGroupAllowanceFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
 ) (subspaceID uint64, granter string, groupID uint32, signer simtypes.Account, skip bool) {
 	// Get a grant
-	grants := k.GetAllGroupGrants(ctx)
+	grants := k.GetAllUserGroupsGrants(ctx)
 	if len(grants) == 0 {
 		// Skip because there are no subspaces
 		skip = true

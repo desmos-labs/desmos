@@ -21,7 +21,7 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 
 	testCases := []struct {
 		name      string
-		malleate  func(ctx sdk.Context)
+		setup     func(ctx sdk.Context)
 		buildTx   func() sdk.Tx
 		shouldErr bool
 		expEvents sdk.Events
@@ -29,7 +29,7 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 
 		{
 			name: "not set module fee collector returns error",
-			malleate: func(ctx sdk.Context) {
+			setup: func(ctx sdk.Context) {
 				suite.ak.EXPECT().GetModuleAddress(authtypes.FeeCollectorName).Return(nil)
 			},
 			buildTx: func() sdk.Tx {
@@ -43,7 +43,7 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 		},
 		{
 			name: "non existing granter account returns error",
-			malleate: func(ctx sdk.Context) {
+			setup: func(ctx sdk.Context) {
 				suite.sk.EXPECT().UseGrantedFees(ctx, subspaceID, granter, signer, feeAmount, []sdk.Msg{subspaceMsg}).Return(true)
 				suite.ak.EXPECT().GetModuleAddress(authtypes.FeeCollectorName).Return(module)
 				suite.ak.EXPECT().GetAccount(ctx, granter).Return(nil)
@@ -59,7 +59,7 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 		},
 		{
 			name: "not enough funds returns error",
-			malleate: func(ctx sdk.Context) {
+			setup: func(ctx sdk.Context) {
 				suite.sk.EXPECT().UseGrantedFees(ctx, subspaceID, granter, signer, feeAmount, []sdk.Msg{subspaceMsg}).Return(true)
 				suite.ak.EXPECT().GetModuleAddress(authtypes.FeeCollectorName).Return(module)
 				suite.ak.EXPECT().GetAccount(ctx, granter).Return(authtypes.NewBaseAccountWithAddress(granter))
@@ -76,7 +76,7 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 		},
 		{
 			name: "non-zero fees valid tx with returns no error",
-			malleate: func(ctx sdk.Context) {
+			setup: func(ctx sdk.Context) {
 				suite.sk.EXPECT().UseGrantedFees(ctx, subspaceID, granter, signer, feeAmount, []sdk.Msg{subspaceMsg}).Return(true)
 				suite.ak.EXPECT().GetModuleAddress(authtypes.FeeCollectorName).Return(module)
 				suite.ak.EXPECT().GetAccount(ctx, granter).Return(authtypes.NewBaseAccountWithAddress(granter))
@@ -93,7 +93,7 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 		},
 		{
 			name: "zero fees valid tx returns no error",
-			malleate: func(ctx sdk.Context) {
+			setup: func(ctx sdk.Context) {
 				suite.sk.EXPECT().UseGrantedFees(ctx, subspaceID, granter, signer, nil, []sdk.Msg{subspaceMsg}).Return(true)
 				suite.ak.EXPECT().GetModuleAddress(authtypes.FeeCollectorName).Return(module)
 				suite.ak.EXPECT().GetAccount(ctx, granter).Return(authtypes.NewBaseAccountWithAddress(granter))
@@ -109,7 +109,7 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 		},
 		{
 			name: "valid tx without grant returns no error",
-			malleate: func(ctx sdk.Context) {
+			setup: func(ctx sdk.Context) {
 				suite.ak.EXPECT().GetModuleAddress(authtypes.FeeCollectorName).Return(module)
 				suite.ak.EXPECT().GetAccount(ctx, signer).Return(authtypes.NewBaseAccountWithAddress(signer))
 				suite.bk.EXPECT().SendCoinsFromAccountToModule(ctx, signer, authtypes.FeeCollectorName, feeAmount).Return(nil)
@@ -124,7 +124,7 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 		},
 		{
 			name: "valid tx with valid feegrant allowance but no subspace allowance returns no error",
-			malleate: func(ctx sdk.Context) {
+			setup: func(ctx sdk.Context) {
 				suite.sk.EXPECT().UseGrantedFees(ctx, subspaceID, granter, signer, feeAmount, []sdk.Msg{subspaceMsg}).Return(false)
 				suite.ak.EXPECT().GetModuleAddress(authtypes.FeeCollectorName).Return(module).Times(2)
 				suite.ak.EXPECT().GetAccount(ctx, granter).Return(authtypes.NewBaseAccountWithAddress(granter))
@@ -142,7 +142,7 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 		},
 		{
 			name: "standard tx returns no error",
-			malleate: func(ctx sdk.Context) {
+			setup: func(ctx sdk.Context) {
 				suite.ak.EXPECT().GetModuleAddress(authtypes.FeeCollectorName).Return(module)
 				suite.ak.EXPECT().GetAccount(ctx, signer).Return(authtypes.NewBaseAccountWithAddress(signer))
 				suite.bk.EXPECT().SendCoinsFromAccountToModule(ctx, signer, authtypes.FeeCollectorName, feeAmount).Return(nil)
@@ -157,7 +157,7 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 		},
 		{
 			name: "valid tx with different subspaces msgs returns no error",
-			malleate: func(ctx sdk.Context) {
+			setup: func(ctx sdk.Context) {
 				suite.ak.EXPECT().GetModuleAddress(authtypes.FeeCollectorName).Return(module)
 				suite.ak.EXPECT().GetAccount(ctx, signer).Return(authtypes.NewBaseAccountWithAddress(signer))
 				suite.bk.EXPECT().SendCoinsFromAccountToModule(ctx, signer, authtypes.FeeCollectorName, feeAmount).Return(nil)
@@ -176,8 +176,8 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
-			if tc.malleate != nil {
-				tc.malleate(ctx)
+			if tc.setup != nil {
+				tc.setup(ctx)
 			}
 
 			tx := tc.buildTx()

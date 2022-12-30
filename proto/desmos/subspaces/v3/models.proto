@@ -128,7 +128,8 @@ message UserGrant {
   string granter = 2 [ (gogoproto.moretags) = "yaml:\"granter\"" ];
   // Address of the user being granted the allowance
   string grantee = 3 [ (gogoproto.moretags) = "yaml:\"grantee\"" ];
-  // Allowance can be any allowance type implementing the FeeAllowanceI interface
+  // Allowance can be any allowance type implementing the FeeAllowanceI
+  // interface
   google.protobuf.Any allowance = 4 [
     (cosmos_proto.accepts_interface) = "FeeAllowanceI",
     (gogoproto.moretags) = "yaml:\"allowance\""
@@ -152,7 +153,8 @@ message GroupGrant {
     (gogoproto.customname) = "GroupID",
     (gogoproto.moretags) = "yaml:\"group_id\""
   ];
-  // Allowance can be any allowance type implementing the FeeAllowanceI interface
+  // Allowance can be any allowance type implementing the FeeAllowanceI
+  // interface
   google.protobuf.Any allowance = 4 [
     (cosmos_proto.accepts_interface) = "FeeAllowanceI",
     (gogoproto.moretags) = "yaml:\"allowance\""

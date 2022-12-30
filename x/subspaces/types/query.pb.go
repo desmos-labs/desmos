@@ -1035,16 +1035,14 @@ func (m *PermissionDetail_Group) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_PermissionDetail_Group proto.InternalMessageInfo
 
-// QueryUserAllowancesRequest is the request type for the Query/UserAllowances RPC
-// method
+// QueryUserAllowancesRequest is the request type for the Query/UserAllowances
+// RPC method
 type QueryUserAllowancesRequest struct {
-	// the id of the subspace where the granter grants the allowance to the
-	// grantee
+	// Id of the subspace for which to get the grant(s)
 	SubspaceId uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
-	// (optional) the address of the user granting an allowance of their funds
+	// (optional) Address of the user that has granted an allowance
 	Granter string `protobuf:"bytes,2,opt,name=granter,proto3" json:"granter,omitempty" yaml:"granter"`
-	// (Optional) the address of the user being granted an allowance of another
-	// user's funds
+	// (Optional) Address of the user that was granted an allowance
 	Grantee string `protobuf:"bytes,3,opt,name=grantee,proto3" json:"grantee,omitempty" yaml:"grantee"`
 	// pagination defines an pagination for the request
 	Pagination *query.PageRequest `protobuf:"bytes,4,opt,name=pagination,proto3" json:"pagination,omitempty"`
@@ -1083,10 +1081,9 @@ func (m *QueryUserAllowancesRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryUserAllowancesRequest proto.InternalMessageInfo
 
-// QueryUserAllowancesResponse is the response type for the Query/UserAllowances RPC
-// method
+// QueryUserAllowancesResponse is the response type for the Query/UserAllowances
+// RPC method
 type QueryUserAllowancesResponse struct {
-	// grants are allowance's granted for grantee by granter
 	Grants []UserGrant `protobuf:"bytes,1,rep,name=grants,proto3" json:"grants" yaml:"grants"`
 	// pagination defines an pagination for the response
 	Pagination *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
@@ -1139,16 +1136,14 @@ func (m *QueryUserAllowancesResponse) GetPagination() *query.PageResponse {
 	return nil
 }
 
-// QueryGroupAllowancesRequest is the request type for the Query/GroupAllowances RPC
-// method
+// QueryGroupAllowancesRequest is the request type for the Query/GroupAllowances
+// RPC method
 type QueryGroupAllowancesRequest struct {
-	// the id of the subspace where the granter grants the allowance to the
-	// grantee
+	// Id of the subspace for which to get the grant(s)
 	SubspaceId uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
-	// (optional) the address of the user granting an allowance of their funds
+	// (optional) Address of the user that has granted the allowance(s)
 	Granter string `protobuf:"bytes,2,opt,name=granter,proto3" json:"granter,omitempty" yaml:"granter"`
-	// (Optional) the id of the group being granted an allowance of another user's
-	// funds
+	// (Optional) Id of the group that was granted an allowance
 	GroupId uint32 `protobuf:"varint,3,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty" yaml:"group_id"`
 	// pagination defines an pagination for the request
 	Pagination *query.PageRequest `protobuf:"bytes,4,opt,name=pagination,proto3" json:"pagination,omitempty"`
@@ -1187,10 +1182,9 @@ func (m *QueryGroupAllowancesRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryGroupAllowancesRequest proto.InternalMessageInfo
 
-// QueryGroupAllowancesResponse is the response type for the Query/GroupAllowances RPC
-// method
+// QueryGroupAllowancesResponse is the response type for the
+// Query/GroupAllowances RPC method
 type QueryGroupAllowancesResponse struct {
-	// grants are allowance's granted for grantee by granter
 	Grants []GroupGrant `protobuf:"bytes,1,rep,name=grants,proto3" json:"grants" yaml:"grants"`
 	// pagination defines an pagination for the response
 	Pagination *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`

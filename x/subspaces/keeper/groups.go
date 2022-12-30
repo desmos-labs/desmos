@@ -1,7 +1,6 @@
 package keeper
 
 import (
-	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
@@ -96,7 +95,7 @@ func (k Keeper) DeleteUserGroup(ctx sdk.Context, subspaceID uint64, groupID uint
 	})
 
 	// Remove all the group grants from this group
-	k.IterateGroupGrantsInGroup(ctx, subspaceID, groupID, func(grant types.GroupGrant) (stop bool) {
+	k.IterateUserGroupGrants(ctx, subspaceID, groupID, func(grant types.GroupGrant) (stop bool) {
 		k.DeleteGroupGrant(ctx, grant.SubspaceID, grant.Granter, grant.GroupID)
 		return false
 	})
@@ -114,14 +113,7 @@ func (k Keeper) DeleteUserGroup(ctx sdk.Context, subspaceID uint64, groupID uint
 // AddUserToGroup adds the given user to the group having the provided id inside the specified subspace.
 func (k Keeper) AddUserToGroup(ctx sdk.Context, subspaceID uint64, groupID uint32, user string) {
 	// Create account if user does not exist.
-	userAcc, err := sdk.AccAddressFromBech32(user)
-	if err != nil {
-		panic(err)
-	}
-	if !k.ak.HasAccount(ctx, userAcc) {
-		defer telemetry.IncrCounter(1, "new", "account")
-		k.ak.SetAccount(ctx, k.ak.NewAccountWithAddress(ctx, userAcc))
-	}
+	k.creatAccount(ctx, user)
 
 	store := ctx.KVStore(k.storeKey)
 	store.Set(types.GroupMemberStoreKey(subspaceID, groupID, user), []byte{0x01})

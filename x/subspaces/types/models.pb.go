@@ -374,13 +374,14 @@ func (m *UserPermission) GetPermissions() Permissions {
 
 // UserGrant represents a grant to a user
 type UserGrant struct {
-	// the id of the subspace where group granted an allowance
+	// Id of the subspace inside which the user was granted the allowance
 	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
-	// granter is the address of the user granting an allowance of their funds
+	// Address of the user that granted the allowance
 	Granter string `protobuf:"bytes,2,opt,name=granter,proto3" json:"granter,omitempty" yaml:"granter"`
-	// grantee is the address being granted an allowance of another user's funds
+	// Address of the user being granted the allowance
 	Grantee string `protobuf:"bytes,3,opt,name=grantee,proto3" json:"grantee,omitempty" yaml:"grantee"`
-	// allowance can be any of basic, periodic, allowed fee allowance
+	// Allowance can be any allowance type implementing the FeeAllowanceI
+	// interface
 	Allowance *types.Any `protobuf:"bytes,4,opt,name=allowance,proto3" json:"allowance,omitempty" yaml:"allowance"`
 }
 
@@ -447,13 +448,14 @@ func (m *UserGrant) GetAllowance() *types.Any {
 
 // GroupGrant represents a grant to a group
 type GroupGrant struct {
-	// the id of the subspace where group granted an allowance
+	// Id of the subspace inside which the group was granted the allowance
 	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
-	// granter is the address of the user granting an allowance of their funds
+	// Address of the user that has granted the allowance
 	Granter string `protobuf:"bytes,2,opt,name=granter,proto3" json:"granter,omitempty" yaml:"granter"`
-	// the id of the group being granted an allowance of another user's funds
+	// Id of the group that has been granted the allowance
 	GroupID uint32 `protobuf:"varint,3,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty" yaml:"group_id"`
-	// allowance can be any of basic, periodic, allowed fee allowance
+	// Allowance can be any allowance type implementing the FeeAllowanceI
+	// interface
 	Allowance *types.Any `protobuf:"bytes,4,opt,name=allowance,proto3" json:"allowance,omitempty" yaml:"allowance"`
 }
 

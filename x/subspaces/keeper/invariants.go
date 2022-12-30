@@ -334,7 +334,7 @@ func formatOutputUserGrants(entries []types.UserGrant) (output string) {
 func ValidGroupGrantsInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidEntries []types.GroupGrant
-		k.IterateGroupGrants(ctx, func(entry types.GroupGrant) (stop bool) {
+		k.IterateUserGroupsGrants(ctx, func(entry types.GroupGrant) (stop bool) {
 			invalid := false
 
 			// Check subspace existence

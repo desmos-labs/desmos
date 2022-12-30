@@ -1994,17 +1994,16 @@ func (m *MsgRevokeUserAllowanceResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgRevokeUserAllowanceResponse proto.InternalMessageInfo
 
-// MsgGrantGroupAllowance adds permissions for the group to spend up allowance
-// of fees from the granter inside the given subspace.
+// MsgGrantGroupAllowance allows creting a new grant for a given group inside a
+// given subspace
 type MsgGrantGroupAllowance struct {
-	// the id of the subspace where the granter grants the allowance to the
-	// grantee.
+	// Id of the subspace inside which the grant should be created
 	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
-	// the id of the group being granted an allowance of another user's funds.
+	// Id of the group being to which to grant the allowance
 	GroupID uint32 `protobuf:"varint,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty" yaml:"group_id"`
-	// the address of the user granting an allowance of their funds.
+	// Address of the user granting the allowance
 	Granter string `protobuf:"bytes,3,opt,name=granter,proto3" json:"granter,omitempty" yaml:"granter"`
-	// allowance can be any of fee allowances which implements FeeAllowanceI.
+	// Allowance can be any allowance type that implements FeeAllowanceI
 	Allowance *types.Any `protobuf:"bytes,4,opt,name=allowance,proto3" json:"allowance,omitempty" yaml:"allowance"`
 }
 
@@ -2107,14 +2106,14 @@ func (m *MsgGrantGroupAllowanceResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgGrantGroupAllowanceResponse proto.InternalMessageInfo
 
-// MsgRevokeGroupAllowance removes any existing allowance from granter to the
-// group inside the subspace.
+// MsgRevokeGroupAllowance removes any existing allowance creted from the
+// granter to the given group inside the specified subspace
 type MsgRevokeGroupAllowance struct {
-	// the id of the subspace where the granter grants the allowance to the group.
+	// Id of the subspace inside which the allowance to be deleted is
 	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
-	// the id of the group being granted an allowance of another user's funds.
+	// Id of the group for which to delete the allowance
 	GroupID uint32 `protobuf:"varint,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty" yaml:"group_id"`
-	// the address of the user granting an allowance of their funds.
+	// Address of the user that granted the allowance
 	Granter string `protobuf:"bytes,3,opt,name=granter,proto3" json:"granter,omitempty" yaml:"granter"`
 }
 
@@ -2399,13 +2398,13 @@ type MsgClient interface {
 	// grantee.
 	GrantUserAllowance(ctx context.Context, in *MsgGrantUserAllowance, opts ...grpc.CallOption) (*MsgGrantUserAllowanceResponse, error)
 	// RevokeUserAllowance allows a granter to revoke any existing allowance that
-	// has to been granted to the grantee.
+	// has been granted to the grantee.
 	RevokeUserAllowance(ctx context.Context, in *MsgRevokeUserAllowance, opts ...grpc.CallOption) (*MsgRevokeUserAllowanceResponse, error)
 	// GrantGroupAllowance allows the granter to grant a fee allowance to the
 	// group.
 	GrantGroupAllowance(ctx context.Context, in *MsgGrantGroupAllowance, opts ...grpc.CallOption) (*MsgGrantGroupAllowanceResponse, error)
 	// RevokeGroupAllowance allows a granter to revoke any existing allowance that
-	// has to been granted to the group.
+	// has been granted to the group.
 	RevokeGroupAllowance(ctx context.Context, in *MsgRevokeGroupAllowance, opts ...grpc.CallOption) (*MsgRevokeGroupAllowanceResponse, error)
 }
 
@@ -2625,13 +2624,13 @@ type MsgServer interface {
 	// grantee.
 	GrantUserAllowance(context.Context, *MsgGrantUserAllowance) (*MsgGrantUserAllowanceResponse, error)
 	// RevokeUserAllowance allows a granter to revoke any existing allowance that
-	// has to been granted to the grantee.
+	// has been granted to the grantee.
 	RevokeUserAllowance(context.Context, *MsgRevokeUserAllowance) (*MsgRevokeUserAllowanceResponse, error)
 	// GrantGroupAllowance allows the granter to grant a fee allowance to the
 	// group.
 	GrantGroupAllowance(context.Context, *MsgGrantGroupAllowance) (*MsgGrantGroupAllowanceResponse, error)
 	// RevokeGroupAllowance allows a granter to revoke any existing allowance that
-	// has to been granted to the group.
+	// has been granted to the group.
 	RevokeGroupAllowance(context.Context, *MsgRevokeGroupAllowance) (*MsgRevokeGroupAllowanceResponse, error)
 }
 

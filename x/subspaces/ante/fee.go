@@ -53,19 +53,21 @@ func (dfd DeductFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bo
 
 // isValidSubspaceTx returns the valid subspace id, returns false if it is invalid
 func isValidSubspaceTx(tx sdk.Tx) (uint64, bool) {
-	subspaceId := uint64(0)
+	subspaceID := uint64(0)
 	for _, msg := range tx.GetMsgs() {
-		subspaceMsg, ok := msg.(types.SubspaceMsg)
-		if !ok {
-			return 0, false
+		if subspaceMsg, ok := msg.(types.SubspaceMsg); ok {
+			if subspaceID == 0 {
+				subspaceID = subspaceMsg.GetSubspaceID()
+			}
+
+			if subspaceMsg.GetSubspaceID() == subspaceID {
+				continue
+			}
 		}
-		if subspaceId == 0 {
-			subspaceId = subspaceMsg.GetSubspaceID()
-		} else if subspaceId != subspaceMsg.GetSubspaceID() {
-			return 0, false
-		}
+
+		return 0, false
 	}
-	return subspaceId, true
+	return subspaceID, true
 }
 
 // tryHandleSubspaceTx handles the fee deduction for subspace transaction, returns false if the process is failed

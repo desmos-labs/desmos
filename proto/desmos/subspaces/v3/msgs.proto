@@ -552,26 +552,22 @@ message MsgRevokeUserAllowance {
 // response type.
 message MsgRevokeUserAllowanceResponse {}
 
-// MsgGrantGroupAllowance adds permissions for the group to spend up allowance
-// of fees from the granter inside the given subspace.
+// MsgGrantGroupAllowance allows creting a new grant for a given group inside a
+// given subspace
 message MsgGrantGroupAllowance {
-  // the id of the subspace where the granter grants the allowance to the
-  // grantee.
+  // Id of the subspace inside which the grant should be created
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
-
-  // the id of the group being granted an allowance of another user's funds.
+  // Id of the group being to which to grant the allowance
   uint32 group_id = 2 [
     (gogoproto.customname) = "GroupID",
     (gogoproto.moretags) = "yaml:\"group_id\""
   ];
-
-  // the address of the user granting an allowance of their funds.
+  // Address of the user granting the allowance
   string granter = 3 [ (gogoproto.moretags) = "yaml:\"granter\"" ];
-
-  // allowance can be any of fee allowances which implements FeeAllowanceI.
+  // Allowance can be any allowance type that implements FeeAllowanceI
   google.protobuf.Any allowance = 4 [
     (cosmos_proto.accepts_interface) = "FeeAllowanceI",
     (gogoproto.moretags) = "yaml:\"allowance\""
@@ -582,22 +578,20 @@ message MsgGrantGroupAllowance {
 // response type.
 message MsgGrantGroupAllowanceResponse {}
 
-// MsgRevokeGroupAllowance removes any existing allowance from granter to the
-// group inside the subspace.
+// MsgRevokeGroupAllowance removes any existing allowance creted from the
+// granter to the given group inside the specified subspace
 message MsgRevokeGroupAllowance {
-  // the id of the subspace where the granter grants the allowance to the group.
+  // Id of the subspace inside which the allowance to be deleted is
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
-
-  // the id of the group being granted an allowance of another user's funds.
+  // Id of the group for which to delete the allowance
   uint32 group_id = 2 [
     (gogoproto.customname) = "GroupID",
     (gogoproto.moretags) = "yaml:\"group_id\""
   ];
-
-  // the address of the user granting an allowance of their funds.
+  // Address of the user that granted the allowance
   string granter = 3 [ (gogoproto.moretags) = "yaml:\"granter\"" ];
 }
 
