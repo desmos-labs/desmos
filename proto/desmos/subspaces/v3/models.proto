@@ -140,19 +140,19 @@ message GroupGrant {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
-  // the id of the subspace where group granted an allowance
+  // Id of the subspace inside which the group was granted the allowance
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
-  // granter is the address of the user granting an allowance of their funds
+  // Address of the user that has granted the allowance
   string granter = 2 [ (gogoproto.moretags) = "yaml:\"granter\"" ];
-  // the id of the group being granted an allowance of another user's funds
+  // Id of the group that has been granted the allowance
   uint32 group_id = 3 [
     (gogoproto.customname) = "GroupID",
     (gogoproto.moretags) = "yaml:\"group_id\""
   ];
-  // allowance can be any of basic, periodic, allowed fee allowance
+  // Allowance can be any allowance type implementing the FeeAllowanceI interface
   google.protobuf.Any allowance = 4 [
     (cosmos_proto.accepts_interface) = "FeeAllowanceI",
     (gogoproto.moretags) = "yaml:\"allowance\""
