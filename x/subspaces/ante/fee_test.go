@@ -156,7 +156,7 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 			shouldErr: false,
 		},
 		{
-			name: "subspace tx with different subspaces msgs using auth.DeductFeeDecorator returns no error",
+			name: "valid tx with different subspaces msgs returns no error",
 			malleate: func(ctx sdk.Context) {
 				suite.ak.EXPECT().GetModuleAddress(authtypes.FeeCollectorName).Return(module)
 				suite.ak.EXPECT().GetAccount(ctx, signer).Return(authtypes.NewBaseAccountWithAddress(signer))
