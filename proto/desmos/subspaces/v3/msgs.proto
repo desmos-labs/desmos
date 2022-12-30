@@ -77,7 +77,7 @@ service Msg {
       returns (MsgGrantGroupAllowanceResponse);
 
   // RevokeGroupAllowance allows a granter to revoke any existing allowance that
-  // has to been granted to the group.
+  // has been granted to the group.
   rpc RevokeGroupAllowance(MsgRevokeGroupAllowance)
       returns (MsgRevokeGroupAllowanceResponse);
 }
