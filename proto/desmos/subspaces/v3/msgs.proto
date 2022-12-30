@@ -67,7 +67,7 @@ service Msg {
       returns (MsgGrantUserAllowanceResponse);
 
   // RevokeUserAllowance allows a granter to revoke any existing allowance that
-  // has to been granted to the grantee.
+  // has been granted to the grantee.
   rpc RevokeUserAllowance(MsgRevokeUserAllowance)
       returns (MsgRevokeUserAllowanceResponse);
 
