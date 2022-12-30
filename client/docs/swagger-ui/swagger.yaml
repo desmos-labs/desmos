@@ -5741,7 +5741,9 @@ paths:
                             }
                       title: >-
                         Allowance can be any allowance type implementing the
-                        FeeAllowanceI interface
+                        FeeAllowanceI
+
+                        interface
                   title: GroupGrant represents a grant to a group
               pagination:
                 type: object
@@ -5771,11 +5773,9 @@ paths:
                            PageResponse page = 2;
                    }
                 title: pagination defines an pagination for the response
-            title: >-
+            title: |-
               QueryGroupAllowancesResponse is the response type for the
-              Query/GroupAllowances RPC
-
-              method
+              Query/GroupAllowances RPC method
         default:
           description: An unexpected error response
           schema:
@@ -5967,26 +5967,18 @@ paths:
                         }
       parameters:
         - name: subspace_id
-          description: |-
-            the id of the subspace where the granter grants the allowance to the
-            grantee
+          description: Id of the subspace for which to get the grant(s)
           in: path
           required: true
           type: string
           format: uint64
         - name: granter
-          description: >-
-            (optional) the address of the user granting an allowance of their
-            funds.
+          description: (optional) Address of the user that has granted the allowance(s).
           in: query
           required: false
           type: string
         - name: group_id
-          description: >-
-            (Optional) the id of the group being granted an allowance of another
-            user's
-
-            funds.
+          description: (Optional) Id of the group that was granted an allowance.
           in: query
           required: false
           type: integer
@@ -6257,7 +6249,9 @@ paths:
                             }
                       title: >-
                         Allowance can be any allowance type implementing the
-                        FeeAllowanceI interface
+                        FeeAllowanceI
+
+                        interface
                   title: UserGrant represents a grant to a user
               pagination:
                 type: object
@@ -6289,9 +6283,9 @@ paths:
                 title: pagination defines an pagination for the response
             title: >-
               QueryUserAllowancesResponse is the response type for the
-              Query/UserAllowances RPC
+              Query/UserAllowances
 
-              method
+              RPC method
         default:
           description: An unexpected error response
           schema:
@@ -6483,26 +6477,18 @@ paths:
                         }
       parameters:
         - name: subspace_id
-          description: |-
-            the id of the subspace where the granter grants the allowance to the
-            grantee
+          description: Id of the subspace for which to get the grant(s)
           in: path
           required: true
           type: string
           format: uint64
         - name: granter
-          description: >-
-            (optional) the address of the user granting an allowance of their
-            funds.
+          description: (optional) Address of the user that has granted an allowance.
           in: query
           required: false
           type: string
         - name: grantee
-          description: >-
-            (Optional) the address of the user being granted an allowance of
-            another
-
-            user's funds.
+          description: (Optional) Address of the user that was granted an allowance.
           in: query
           required: false
           type: string
@@ -18746,7 +18732,7 @@ definitions:
                 "@type": "type.googleapis.com/google.protobuf.Duration",
                 "value": "1.212s"
               }
-        title: >-
+        title: |-
           Allowance can be any allowance type implementing the FeeAllowanceI
           interface
     title: GroupGrant represents a grant to a group
@@ -19004,7 +18990,9 @@ definitions:
                     }
               title: >-
                 Allowance can be any allowance type implementing the
-                FeeAllowanceI interface
+                FeeAllowanceI
+
+                interface
           title: GroupGrant represents a grant to a group
       pagination:
         type: object
@@ -19032,11 +19020,9 @@ definitions:
                    PageResponse page = 2;
            }
         title: pagination defines an pagination for the response
-    title: >-
+    title: |-
       QueryGroupAllowancesResponse is the response type for the
-      Query/GroupAllowances RPC
-
-      method
+      Query/GroupAllowances RPC method
   desmos.subspaces.v3.QuerySectionResponse:
     type: object
     properties:
@@ -19406,7 +19392,9 @@ definitions:
                     }
               title: >-
                 Allowance can be any allowance type implementing the
-                FeeAllowanceI interface
+                FeeAllowanceI
+
+                interface
           title: UserGrant represents a grant to a user
       pagination:
         type: object
@@ -19436,9 +19424,9 @@ definitions:
         title: pagination defines an pagination for the response
     title: >-
       QueryUserAllowancesResponse is the response type for the
-      Query/UserAllowances RPC
+      Query/UserAllowances
 
-      method
+      RPC method
   desmos.subspaces.v3.QueryUserGroupMembersResponse:
     type: object
     properties:
@@ -19845,7 +19833,7 @@ definitions:
                 "@type": "type.googleapis.com/google.protobuf.Duration",
                 "value": "1.212s"
               }
-        title: >-
+        title: |-
           Allowance can be any allowance type implementing the FeeAllowanceI
           interface
     title: UserGrant represents a grant to a user
