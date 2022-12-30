@@ -42,7 +42,7 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 			shouldErr: true,
 		},
 		{
-			name: "granter account does not exist returns error",
+			name: "non existing granter account returns error",
 			malleate: func(ctx sdk.Context) {
 				suite.sk.EXPECT().UseGrantedFees(ctx, subspaceID, granter, signer, feeAmount, []sdk.Msg{subspaceMsg}).Return(true)
 				suite.ak.EXPECT().GetModuleAddress(authtypes.FeeCollectorName).Return(module)
