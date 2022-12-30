@@ -179,6 +179,7 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 			if tc.malleate != nil {
 				tc.malleate(ctx)
 			}
+
 			tx := tc.buildTx()
 			ctx, err := suite.ante.AnteHandle(ctx, tx, false, func(ctx sdk.Context, tx sdk.Tx, simulate bool) (sdk.Context, error) {
 				return ctx, nil
