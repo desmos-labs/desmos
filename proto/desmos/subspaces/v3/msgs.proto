@@ -504,23 +504,19 @@ message MsgSetUserPermissionsResponse {}
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// MsgGrantUserAllowance adds permissions for the grantee to spend up allowance
-// of fees from the granter inside the given subspace.
+// MsgGrantUserAllowance creates a new grant from the grantee to the grantee,
+// within the given subspace
 message MsgGrantUserAllowance {
-  // the id of the subspace where the granter grants the allowance to the
-  // grantee.
+  // Id of the subspace inside which where the allowance should be granted
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
-
-  // the address of the user granting an allowance of their funds.
+  // Address of the user granting the allowance
   string granter = 2 [ (gogoproto.moretags) = "yaml:\"granter\"" ];
-
-  // the address of the user being granted an allowance of another user's funds.
+  // Address of the user being granted the allowance
   string grantee = 3 [ (gogoproto.moretags) = "yaml:\"grantee\"" ];
-
-  // allowance can be any of fee allowances which implements FeeAllowanceI.
+  // Allowance can be any allowance type that implements FeeAllowanceI
   google.protobuf.Any allowance = 4 [
     (cosmos_proto.accepts_interface) = "FeeAllowanceI",
     (gogoproto.moretags) = "yaml:\"allowance\""
@@ -531,20 +527,17 @@ message MsgGrantUserAllowance {
 // type.
 message MsgGrantUserAllowanceResponse {}
 
-// MsgRevokeUserAllowance removes any existing allowance from granter to the
-// grantee inside the subspace.
+// MsgRevokeUserAllowance removes any existing allowance created from granter to
+// the grantee inside the given subspace
 message MsgRevokeUserAllowance {
-  // the id of the subspace where the granter grants the allowance to the
-  // grantee.
+  // If of the subspace inside which the allowance to be deleted is
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
-
-  // the address of the user granting an allowance of their funds.
+  // Address of the user that created the allowance
   string granter = 2 [ (gogoproto.moretags) = "yaml:\"granter\"" ];
-
-  // the address of the user being granted an allowance of another user's funds.
+  // Address of the user that was granted the allowance
   string grantee = 3 [ (gogoproto.moretags) = "yaml:\"grantee\"" ];
 }
 

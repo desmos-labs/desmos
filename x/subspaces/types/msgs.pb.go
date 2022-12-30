@@ -1777,17 +1777,16 @@ func (m *MsgSetUserPermissionsResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgSetUserPermissionsResponse proto.InternalMessageInfo
 
-// MsgGrantUserAllowance adds permissions for the grantee to spend up allowance
-// of fees from the granter inside the given subspace.
+// MsgGrantUserAllowance creates a new grant from the grantee to the grantee,
+// within the given subspace
 type MsgGrantUserAllowance struct {
-	// the id of the subspace where the granter grants the allowance to the
-	// grantee.
+	// Id of the subspace inside which where the allowance should be granted
 	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
-	// the address of the user granting an allowance of their funds.
+	// Address of the user granting the allowance
 	Granter string `protobuf:"bytes,2,opt,name=granter,proto3" json:"granter,omitempty" yaml:"granter"`
-	// the address of the user being granted an allowance of another user's funds.
+	// Address of the user being granted the allowance
 	Grantee string `protobuf:"bytes,3,opt,name=grantee,proto3" json:"grantee,omitempty" yaml:"grantee"`
-	// allowance can be any of fee allowances which implements FeeAllowanceI.
+	// Allowance can be any allowance type that implements FeeAllowanceI
 	Allowance *types.Any `protobuf:"bytes,4,opt,name=allowance,proto3" json:"allowance,omitempty" yaml:"allowance"`
 }
 
@@ -1890,15 +1889,14 @@ func (m *MsgGrantUserAllowanceResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgGrantUserAllowanceResponse proto.InternalMessageInfo
 
-// MsgRevokeUserAllowance removes any existing allowance from granter to the
-// grantee inside the subspace.
+// MsgRevokeUserAllowance removes any existing allowance created from granter to
+// the grantee inside the given subspace
 type MsgRevokeUserAllowance struct {
-	// the id of the subspace where the granter grants the allowance to the
-	// grantee.
+	// If of the subspace inside which the allowance to be deleted is
 	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
-	// the address of the user granting an allowance of their funds.
+	// Address of the user that created the allowance
 	Granter string `protobuf:"bytes,2,opt,name=granter,proto3" json:"granter,omitempty" yaml:"granter"`
-	// the address of the user being granted an allowance of another user's funds.
+	// Address of the user that was granted the allowance
 	Grantee string `protobuf:"bytes,3,opt,name=grantee,proto3" json:"grantee,omitempty" yaml:"grantee"`
 }
 
