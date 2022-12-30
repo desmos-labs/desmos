@@ -334,7 +334,6 @@ message QueryGroupAllowancesRequest {
 // QueryGroupAllowancesResponse is the response type for the Query/GroupAllowances RPC
 // method
 message QueryGroupAllowancesResponse {
-  // grants are allowance's granted for grantee by granter
   repeated GroupGrant grants = 1 [
     (gogoproto.moretags) = "yaml:\"grants\"",
     (gogoproto.nullable) = false
