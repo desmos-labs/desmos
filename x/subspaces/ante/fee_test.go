@@ -92,7 +92,7 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 			shouldErr: false,
 		},
 		{
-			name: "0 fees subspace tx with the granter returns no error",
+			name: "zero fees valid tx returns no error",
 			malleate: func(ctx sdk.Context) {
 				suite.sk.EXPECT().UseGrantedFees(ctx, subspaceID, granter, signer, nil, []sdk.Msg{subspaceMsg}).Return(true)
 				suite.ak.EXPECT().GetModuleAddress(authtypes.FeeCollectorName).Return(module)
