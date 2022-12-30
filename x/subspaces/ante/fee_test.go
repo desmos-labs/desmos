@@ -28,7 +28,7 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 	}{
 
 		{
-			name: "module fee collector is not set returns error",
+			name: "not set module fee collector returns error",
 			malleate: func(ctx sdk.Context) {
 				suite.ak.EXPECT().GetModuleAddress(authtypes.FeeCollectorName).Return(nil)
 			},
