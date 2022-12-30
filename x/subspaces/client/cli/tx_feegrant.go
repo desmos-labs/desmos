@@ -113,8 +113,8 @@ func GetCmdGrantGroupAllowance() *cobra.Command {
 	cmd.Flags().StringSlice(FlagAllowedMsgs, []string{}, "Set of allowed messages for fee allowance")
 	cmd.Flags().String(FlagExpiration, "", "The RFC 3339 timestamp after which the grant expires for the user")
 	cmd.Flags().String(FlagSpendLimit, "", "Spend limit specifies the max limit can be used, if not mentioned there is no limit")
-	cmd.Flags().Int64(FlagPeriod, 0, "period specifies the time duration in which period_spend_limit coins can be spent before that allowance is reset")
-	cmd.Flags().String(FlagPeriodLimit, "", "period limit specifies the maximum number of coins that can be spent in the period")
+	cmd.Flags().Int64(FlagPeriod, 0, "Period specifies the time duration in which period_spend_limit coins can be spent before that allowance is reset")
+	cmd.Flags().String(FlagPeriodLimit, "", "Period limit specifies the maximum number of coins that can be spent in the period")
 
 	flags.AddTxFlagsToCmd(cmd)
 
