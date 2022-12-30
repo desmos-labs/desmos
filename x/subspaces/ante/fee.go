@@ -88,8 +88,8 @@ func (dfd DeductFeeDecorator) tryHandleSubspaceTx(ctx sdk.Context, tx sdk.FeeTx,
 	if !used {
 		return ctx, false, nil
 	}
-	deductFeesFrom = feeGranter
 
+	deductFeesFrom = feeGranter
 	deductFeesFromAcc := dfd.ak.GetAccount(ctx, deductFeesFrom)
 	if deductFeesFromAcc == nil {
 		return ctx, false, sdkerrors.Wrapf(sdkerrors.ErrUnknownAddress, "fee payer address: %s does not exist", deductFeesFrom)
