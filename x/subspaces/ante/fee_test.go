@@ -123,7 +123,7 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 			shouldErr: false,
 		},
 		{
-			name: "subspace tx with the user having valid feegrant allowance but no subspace allowance returns no error",
+			name: "valid tx with valid feegrant allowance but no subspace allowance returns no error",
 			malleate: func(ctx sdk.Context) {
 				suite.sk.EXPECT().UseGrantedFees(ctx, subspaceID, granter, signer, feeAmount, []sdk.Msg{subspaceMsg}).Return(false)
 				suite.ak.EXPECT().GetModuleAddress(authtypes.FeeCollectorName).Return(module).Times(2)
