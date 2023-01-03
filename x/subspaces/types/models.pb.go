@@ -446,7 +446,7 @@ func (m *Grant) GetAllowance() *types.Any {
 	return nil
 }
 
-// UserTarget contains the data of a grant about a user
+// UserTarget contains the target of a grant about a user
 type UserTarget struct {
 	User string `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty" yaml:"user"`
 }
@@ -491,7 +491,7 @@ func (m *UserTarget) GetUser() string {
 	return ""
 }
 
-// GroupGrant contains the data of a grant about a user
+// GroupTarget contains the target of a grant about a group
 type GroupTarget struct {
 	GroupID uint32 `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty" yaml:"group_id"`
 }

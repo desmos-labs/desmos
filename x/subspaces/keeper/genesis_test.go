@@ -11,6 +11,12 @@ import (
 )
 
 func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
+	userTargetAny, err := codectypes.NewAnyWithValue(types.NewUserTarget("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"))
+	suite.Require().NoError(err)
+
+	groupTargetAny, err := codectypes.NewAnyWithValue(types.NewGroupTarget(1))
+	suite.Require().NoError(err)
+
 	allowanceAny, err := codectypes.NewAnyWithValue(&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))})
 	suite.Require().NoError(err)
 
@@ -24,7 +30,7 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 			store: func(ctx sdk.Context) {
 				suite.k.SetSubspaceID(ctx, 1)
 			},
-			expGenesis: types.NewGenesisState(1, nil, nil, nil, nil, nil, nil, nil, nil),
+			expGenesis: types.NewGenesisState(1, nil, nil, nil, nil, nil, nil, nil),
 		},
 		{
 			name: "subspaces and their data are exported correctly",
@@ -91,7 +97,6 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 				},
 				nil,
 				nil,
-				nil,
 			),
 		},
 		{
@@ -130,7 +135,7 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 					"Another test section",
 					"This is another test section",
 				),
-			}, nil, nil, nil, nil, nil),
+			}, nil, nil, nil, nil),
 		},
 		{
 			name: "user permissions are exported correctly",
@@ -183,7 +188,6 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 				[]types.UserGroup{
 					types.DefaultUserGroup(2),
 				},
-				nil,
 				nil,
 				nil,
 			),
@@ -292,7 +296,6 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 					types.NewUserGroupMemberEntry(2, 1, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
 				},
 				nil,
-				nil,
 			),
 		},
 		{
@@ -308,16 +311,16 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
-				suite.k.SaveUserGrant(ctx, types.UserGrant{
+				suite.k.SaveGrant(ctx, types.Grant{
 					SubspaceID: 1,
 					Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					Target:     userTargetAny,
 					Allowance:  allowanceAny,
 				})
-				suite.k.SaveUserGrant(ctx, types.UserGrant{
+				suite.k.SaveGrant(ctx, types.Grant{
 					SubspaceID: 1,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-					Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					Target:     userTargetAny,
 					Allowance:  allowanceAny,
 				})
 			},
@@ -345,18 +348,17 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 					types.DefaultUserGroup(1),
 				},
 				nil,
-				[]types.UserGrant{{
+				[]types.Grant{{
 					SubspaceID: 1,
 					Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					Target:     userTargetAny,
 					Allowance:  allowanceAny,
 				}, {
 					SubspaceID: 1,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-					Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					Target:     userTargetAny,
 					Allowance:  allowanceAny,
 				}},
-				nil,
 			),
 		},
 		{
@@ -385,16 +387,16 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 				suite.k.AddUserToGroup(ctx, 1, 1, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
 				suite.k.AddUserToGroup(ctx, 1, 1, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
 
-				suite.k.SaveGroupGrant(ctx, types.GroupGrant{
+				suite.k.SaveGrant(ctx, types.Grant{
 					SubspaceID: 1,
 					Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					GroupID:    1,
+					Target:     groupTargetAny,
 					Allowance:  allowanceAny,
 				})
-				suite.k.SaveGroupGrant(ctx, types.GroupGrant{
+				suite.k.SaveGrant(ctx, types.Grant{
 					SubspaceID: 1,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-					GroupID:    1,
+					Target:     groupTargetAny,
 					Allowance:  allowanceAny,
 				})
 			},
@@ -433,16 +435,15 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 					types.NewUserGroupMemberEntry(1, 1, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm"),
 					types.NewUserGroupMemberEntry(1, 1, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
 				},
-				nil,
-				[]types.GroupGrant{{
+				[]types.Grant{{
 					SubspaceID: 1,
 					Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					GroupID:    1,
+					Target:     groupTargetAny,
 					Allowance:  allowanceAny,
 				}, {
 					SubspaceID: 1,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-					GroupID:    1,
+					Target:     groupTargetAny,
 					Allowance:  allowanceAny,
 				}},
 			),
@@ -464,6 +465,12 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 }
 
 func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
+	userTargetAny, err := codectypes.NewAnyWithValue(types.NewUserTarget("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"))
+	suite.Require().NoError(err)
+
+	groupTargetAny, err := codectypes.NewAnyWithValue(types.NewGroupTarget(1))
+	suite.Require().NoError(err)
+
 	allowanceAny, err := codectypes.NewAnyWithValue(&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))})
 	suite.Require().NoError(err)
 
@@ -614,20 +621,20 @@ func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 		{
 			name: "user grants are imported properly",
 			genesis: types.GenesisState{
-				UserGrants: []types.UserGrant{{
+				Grants: []types.Grant{{
 					SubspaceID: 1,
 					Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					Target:     userTargetAny,
 					Allowance:  allowanceAny,
 				}},
 			},
 			check: func(ctx sdk.Context) {
 				stored, found := suite.k.GetUserGrant(ctx, 1, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
 				suite.Require().True(found)
-				suite.Require().Equal(types.UserGrant{
+				suite.Require().Equal(types.Grant{
 					SubspaceID: 1,
 					Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					Target:     userTargetAny,
 					Allowance:  allowanceAny,
 				}, stored)
 			},
@@ -635,20 +642,20 @@ func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 		{
 			name: "group grants are imported properly",
 			genesis: types.GenesisState{
-				GroupGrants: []types.GroupGrant{{
+				Grants: []types.Grant{{
 					SubspaceID: 1,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-					GroupID:    1,
+					Target:     groupTargetAny,
 					Allowance:  allowanceAny,
 				}},
 			},
 			check: func(ctx sdk.Context) {
 				stored, found := suite.k.GetGroupGrant(ctx, 1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", 1)
 				suite.Require().True(found)
-				suite.Require().Equal(types.GroupGrant{
+				suite.Require().Equal(types.Grant{
 					SubspaceID: 1,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-					GroupID:    1,
+					Target:     groupTargetAny,
 					Allowance:  allowanceAny,
 				}, stored)
 			},

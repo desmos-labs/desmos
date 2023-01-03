@@ -21,6 +21,13 @@ func (suite *TestSuite) TestSubspacesWasmQuerier_QueryCustom() {
 	suite.NoError(err)
 	wrongQueryBz, err := json.Marshal(profilesQueryBz)
 	suite.NoError(err)
+
+	userTargetAny, err := codectypes.NewAnyWithValue(types.NewUserTarget("cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e"))
+	suite.NoError(err)
+
+	groupTargetAny, err := codectypes.NewAnyWithValue(types.NewGroupTarget(1))
+	suite.NoError(err)
+
 	allowanceAny, err := codectypes.NewAnyWithValue(&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10)))})
 	suite.NoError(err)
 
@@ -254,20 +261,20 @@ func (suite *TestSuite) TestSubspacesWasmQuerier_QueryCustom() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
-				suite.k.SaveUserGrant(ctx, types.UserGrant{
+				suite.k.SaveGrant(ctx, types.Grant{
 					SubspaceID: 1,
 					Granter:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					Grantee:    "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e",
+					Target:     userTargetAny,
 					Allowance:  allowanceAny,
 				})
 			},
 			shouldErr: false,
 			expResponse: suite.cdc.MustMarshalJSON(
 				&types.QueryUserAllowancesResponse{
-					Grants: []types.UserGrant{{
+					Grants: []types.Grant{{
 						SubspaceID: 1,
 						Granter:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-						Grantee:    "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e",
+						Target:     userTargetAny,
 						Allowance:  allowanceAny,
 					}},
 					Pagination: &query.PageResponse{NextKey: nil, Total: 1},
@@ -300,20 +307,20 @@ func (suite *TestSuite) TestSubspacesWasmQuerier_QueryCustom() {
 					"This is a test group",
 					types.NewPermissions(poststypes.PermissionWrite),
 				))
-				suite.k.SaveGroupGrant(ctx, types.GroupGrant{
+				suite.k.SaveGrant(ctx, types.Grant{
 					SubspaceID: 1,
 					Granter:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					GroupID:    1,
+					Target:     groupTargetAny,
 					Allowance:  allowanceAny,
 				})
 			},
 			shouldErr: false,
 			expResponse: suite.cdc.MustMarshalJSON(
 				&types.QueryGroupAllowancesResponse{
-					Grants: []types.GroupGrant{{
+					Grants: []types.Grant{{
 						SubspaceID: 1,
 						Granter:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-						GroupID:    1,
+						Target:     groupTargetAny,
 						Allowance:  allowanceAny,
 					}},
 					Pagination: &query.PageResponse{NextKey: nil, Total: 1},

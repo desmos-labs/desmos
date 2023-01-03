@@ -777,6 +777,12 @@ func (suite *KeeperTestSuite) TestQueryServer_UserPermissions() {
 }
 
 func (suite *KeeperTestSuite) TestQueryServer_UserAllowances() {
+	userTargetAny, err := codectypes.NewAnyWithValue(types.NewUserTarget("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"))
+	suite.Require().NoError(err)
+
+	otherUserTargetAny, err := codectypes.NewAnyWithValue(types.NewUserTarget("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"))
+	suite.Require().NoError(err)
+
 	allowanceAny, err := codectypes.NewAnyWithValue(&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))})
 	suite.Require().NoError(err)
 
@@ -785,7 +791,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserAllowances() {
 		store     func(ctx sdk.Context)
 		req       *types.QueryUserAllowancesRequest
 		shouldErr bool
-		expGrants []types.UserGrant
+		expGrants []types.Grant
 	}{
 		{
 			name:      "not found subspace returns error",
@@ -798,52 +804,52 @@ func (suite *KeeperTestSuite) TestQueryServer_UserAllowances() {
 				suite.k.SaveSubspace(ctx, types.NewSubspace(1, "test", "test", "owner", "treasury", "creator", time.Now()))
 				suite.k.SaveSubspace(ctx, types.NewSubspace(2, "test", "test", "owner", "treasury", "creator", time.Now()))
 
-				suite.k.SaveUserGrant(ctx, types.UserGrant{
+				suite.k.SaveGrant(ctx, types.Grant{
 					SubspaceID: 1,
 					Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					Target:     userTargetAny,
 					Allowance:  allowanceAny,
 				})
-				suite.k.SaveUserGrant(ctx, types.UserGrant{
+				suite.k.SaveGrant(ctx, types.Grant{
 					SubspaceID: 1,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-					Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					Target:     userTargetAny,
 					Allowance:  allowanceAny,
 				})
-				suite.k.SaveUserGrant(ctx, types.UserGrant{
+				suite.k.SaveGrant(ctx, types.Grant{
 					SubspaceID: 1,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-					Grantee:    "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					Target:     otherUserTargetAny,
 					Allowance:  allowanceAny,
 				})
-				suite.k.SaveUserGrant(ctx, types.UserGrant{
+				suite.k.SaveGrant(ctx, types.Grant{
 					SubspaceID: 2,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-					Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					Target:     userTargetAny,
 					Allowance:  allowanceAny,
 				})
 			},
 			req:       types.NewQueryUserAllowancesRequest(0, "", "", nil),
 			shouldErr: false,
-			expGrants: []types.UserGrant{{
+			expGrants: []types.Grant{{
 				SubspaceID: 1,
 				Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+				Target:     userTargetAny,
 				Allowance:  allowanceAny,
 			}, {
 				SubspaceID: 1,
 				Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-				Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+				Target:     userTargetAny,
 				Allowance:  allowanceAny,
 			}, {
 				SubspaceID: 1,
 				Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-				Grantee:    "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				Target:     otherUserTargetAny,
 				Allowance:  allowanceAny,
 			}, {
 				SubspaceID: 2,
 				Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-				Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+				Target:     userTargetAny,
 				Allowance:  allowanceAny,
 			}},
 		},
@@ -851,47 +857,47 @@ func (suite *KeeperTestSuite) TestQueryServer_UserAllowances() {
 			name: "query without granter and grantee returns all the grants in the given subspace",
 			store: func(ctx sdk.Context) {
 				suite.k.SaveSubspace(ctx, types.NewSubspace(1, "test", "test", "owner", "treasury", "creator", time.Now()))
-				suite.k.SaveUserGrant(ctx, types.UserGrant{
+				suite.k.SaveGrant(ctx, types.Grant{
 					SubspaceID: 1,
 					Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					Target:     userTargetAny,
 					Allowance:  allowanceAny,
 				})
-				suite.k.SaveUserGrant(ctx, types.UserGrant{
+				suite.k.SaveGrant(ctx, types.Grant{
 					SubspaceID: 1,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-					Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					Target:     userTargetAny,
 					Allowance:  allowanceAny,
 				})
-				suite.k.SaveUserGrant(ctx, types.UserGrant{
+				suite.k.SaveGrant(ctx, types.Grant{
 					SubspaceID: 1,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-					Grantee:    "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					Target:     otherUserTargetAny,
 					Allowance:  allowanceAny,
 				})
-				suite.k.SaveUserGrant(ctx, types.UserGrant{
+				suite.k.SaveGrant(ctx, types.Grant{
 					SubspaceID: 2,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-					Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					Target:     userTargetAny,
 					Allowance:  allowanceAny,
 				})
 			},
 			req:       types.NewQueryUserAllowancesRequest(1, "", "", nil),
 			shouldErr: false,
-			expGrants: []types.UserGrant{{
+			expGrants: []types.Grant{{
 				SubspaceID: 1,
 				Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+				Target:     userTargetAny,
 				Allowance:  allowanceAny,
 			}, {
 				SubspaceID: 1,
 				Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-				Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+				Target:     userTargetAny,
 				Allowance:  allowanceAny,
 			}, {
 				SubspaceID: 1,
 				Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-				Grantee:    "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				Target:     otherUserTargetAny,
 				Allowance:  allowanceAny,
 			}},
 		},
@@ -899,36 +905,36 @@ func (suite *KeeperTestSuite) TestQueryServer_UserAllowances() {
 			name: "query without grantee returns the correct data",
 			store: func(ctx sdk.Context) {
 				suite.k.SaveSubspace(ctx, types.NewSubspace(1, "test", "test", "owner", "treasury", "creator", time.Now()))
-				suite.k.SaveUserGrant(ctx, types.UserGrant{
+				suite.k.SaveGrant(ctx, types.Grant{
 					SubspaceID: 1,
 					Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					Target:     userTargetAny,
 					Allowance:  allowanceAny,
 				})
-				suite.k.SaveUserGrant(ctx, types.UserGrant{
+				suite.k.SaveGrant(ctx, types.Grant{
 					SubspaceID: 1,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-					Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					Target:     userTargetAny,
 					Allowance:  allowanceAny,
 				})
-				suite.k.SaveUserGrant(ctx, types.UserGrant{
+				suite.k.SaveGrant(ctx, types.Grant{
 					SubspaceID: 1,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-					Grantee:    "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					Target:     otherUserTargetAny,
 					Allowance:  allowanceAny,
 				})
 			},
 			req:       types.NewQueryUserAllowancesRequest(1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", "", nil),
 			shouldErr: false,
-			expGrants: []types.UserGrant{{
+			expGrants: []types.Grant{{
 				SubspaceID: 1,
 				Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-				Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+				Target:     userTargetAny,
 				Allowance:  allowanceAny,
 			}, {
 				SubspaceID: 1,
 				Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-				Grantee:    "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				Target:     otherUserTargetAny,
 				Allowance:  allowanceAny,
 			}},
 		},
@@ -936,36 +942,36 @@ func (suite *KeeperTestSuite) TestQueryServer_UserAllowances() {
 			name: "query without granter returns the correct data",
 			store: func(ctx sdk.Context) {
 				suite.k.SaveSubspace(ctx, types.NewSubspace(1, "test", "test", "owner", "treasury", "creator", time.Now()))
-				suite.k.SaveUserGrant(ctx, types.UserGrant{
+				suite.k.SaveGrant(ctx, types.Grant{
 					SubspaceID: 1,
 					Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					Target:     userTargetAny,
 					Allowance:  allowanceAny,
 				})
-				suite.k.SaveUserGrant(ctx, types.UserGrant{
+				suite.k.SaveGrant(ctx, types.Grant{
 					SubspaceID: 1,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-					Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					Target:     userTargetAny,
 					Allowance:  allowanceAny,
 				})
-				suite.k.SaveUserGrant(ctx, types.UserGrant{
+				suite.k.SaveGrant(ctx, types.Grant{
 					SubspaceID: 1,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-					Grantee:    "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					Target:     otherUserTargetAny,
 					Allowance:  allowanceAny,
 				})
 			},
 			req:       types.NewQueryUserAllowancesRequest(1, "", "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5", nil),
 			shouldErr: false,
-			expGrants: []types.UserGrant{{
+			expGrants: []types.Grant{{
 				SubspaceID: 1,
 				Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+				Target:     userTargetAny,
 				Allowance:  allowanceAny,
 			}, {
 				SubspaceID: 1,
 				Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-				Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+				Target:     userTargetAny,
 				Allowance:  allowanceAny,
 			}},
 		},
@@ -973,31 +979,31 @@ func (suite *KeeperTestSuite) TestQueryServer_UserAllowances() {
 			name: "valid query returns the correct data",
 			store: func(ctx sdk.Context) {
 				suite.k.SaveSubspace(ctx, types.NewSubspace(1, "test", "test", "owner", "treasury", "creator", time.Now()))
-				suite.k.SaveUserGrant(ctx, types.UserGrant{
+				suite.k.SaveGrant(ctx, types.Grant{
 					SubspaceID: 1,
 					Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					Target:     userTargetAny,
 					Allowance:  allowanceAny,
 				})
-				suite.k.SaveUserGrant(ctx, types.UserGrant{
+				suite.k.SaveGrant(ctx, types.Grant{
 					SubspaceID: 1,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-					Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					Target:     userTargetAny,
 					Allowance:  allowanceAny,
 				})
-				suite.k.SaveUserGrant(ctx, types.UserGrant{
+				suite.k.SaveGrant(ctx, types.Grant{
 					SubspaceID: 1,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-					Grantee:    "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					Target:     otherUserTargetAny,
 					Allowance:  allowanceAny,
 				})
 			},
 			req:       types.NewQueryUserAllowancesRequest(1, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5", nil),
 			shouldErr: false,
-			expGrants: []types.UserGrant{{
+			expGrants: []types.Grant{{
 				SubspaceID: 1,
 				Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+				Target:     userTargetAny,
 				Allowance:  allowanceAny,
 			}},
 		},
@@ -1022,6 +1028,12 @@ func (suite *KeeperTestSuite) TestQueryServer_UserAllowances() {
 }
 
 func (suite *KeeperTestSuite) TestQueryServer_GroupAllowances() {
+	groupTargetAny, err := codectypes.NewAnyWithValue(types.NewGroupTarget(1))
+	suite.Require().NoError(err)
+
+	otherGroupTargetAny, err := codectypes.NewAnyWithValue(types.NewGroupTarget(2))
+	suite.Require().NoError(err)
+
 	allowanceAny, err := codectypes.NewAnyWithValue(&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))})
 	suite.Require().NoError(err)
 
@@ -1030,7 +1042,7 @@ func (suite *KeeperTestSuite) TestQueryServer_GroupAllowances() {
 		store     func(ctx sdk.Context)
 		req       *types.QueryGroupAllowancesRequest
 		shouldErr bool
-		expGrants []types.GroupGrant
+		expGrants []types.Grant
 	}{
 		{
 			name:      "not found subspace returns error",
@@ -1055,52 +1067,52 @@ func (suite *KeeperTestSuite) TestQueryServer_GroupAllowances() {
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(1, 0, 2, "test", "tets", nil))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(2, 0, 1, "test", "tets", nil))
 
-				suite.k.SaveGroupGrant(ctx, types.GroupGrant{
+				suite.k.SaveGrant(ctx, types.Grant{
 					SubspaceID: 1,
 					Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					GroupID:    1,
+					Target:     groupTargetAny,
 					Allowance:  allowanceAny,
 				})
-				suite.k.SaveGroupGrant(ctx, types.GroupGrant{
+				suite.k.SaveGrant(ctx, types.Grant{
 					SubspaceID: 1,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-					GroupID:    1,
+					Target:     groupTargetAny,
 					Allowance:  allowanceAny,
 				})
-				suite.k.SaveGroupGrant(ctx, types.GroupGrant{
+				suite.k.SaveGrant(ctx, types.Grant{
 					SubspaceID: 1,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-					GroupID:    2,
+					Target:     otherGroupTargetAny,
 					Allowance:  allowanceAny,
 				})
-				suite.k.SaveGroupGrant(ctx, types.GroupGrant{
+				suite.k.SaveGrant(ctx, types.Grant{
 					SubspaceID: 2,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-					GroupID:    1,
+					Target:     groupTargetAny,
 					Allowance:  allowanceAny,
 				})
 			},
 			req:       types.NewQueryGroupAllowancesRequest(0, "", 0, nil),
 			shouldErr: false,
-			expGrants: []types.GroupGrant{{
+			expGrants: []types.Grant{{
 				SubspaceID: 1,
 				Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				GroupID:    1,
+				Target:     groupTargetAny,
 				Allowance:  allowanceAny,
 			}, {
 				SubspaceID: 1,
 				Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-				GroupID:    1,
+				Target:     groupTargetAny,
 				Allowance:  allowanceAny,
 			}, {
 				SubspaceID: 1,
 				Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-				GroupID:    2,
+				Target:     otherGroupTargetAny,
 				Allowance:  allowanceAny,
 			}, {
 				SubspaceID: 2,
 				Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-				GroupID:    1,
+				Target:     groupTargetAny,
 				Allowance:  allowanceAny,
 			}},
 		},
@@ -1114,47 +1126,47 @@ func (suite *KeeperTestSuite) TestQueryServer_GroupAllowances() {
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(1, 0, 2, "test", "tets", nil))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(2, 0, 1, "test", "tets", nil))
 
-				suite.k.SaveGroupGrant(ctx, types.GroupGrant{
+				suite.k.SaveGrant(ctx, types.Grant{
 					SubspaceID: 1,
 					Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					GroupID:    1,
+					Target:     groupTargetAny,
 					Allowance:  allowanceAny,
 				})
-				suite.k.SaveGroupGrant(ctx, types.GroupGrant{
+				suite.k.SaveGrant(ctx, types.Grant{
 					SubspaceID: 1,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-					GroupID:    1,
+					Target:     groupTargetAny,
 					Allowance:  allowanceAny,
 				})
-				suite.k.SaveGroupGrant(ctx, types.GroupGrant{
+				suite.k.SaveGrant(ctx, types.Grant{
 					SubspaceID: 1,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-					GroupID:    2,
+					Target:     otherGroupTargetAny,
 					Allowance:  allowanceAny,
 				})
-				suite.k.SaveGroupGrant(ctx, types.GroupGrant{
+				suite.k.SaveGrant(ctx, types.Grant{
 					SubspaceID: 2,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-					GroupID:    1,
+					Target:     groupTargetAny,
 					Allowance:  allowanceAny,
 				})
 			},
 			req:       types.NewQueryGroupAllowancesRequest(1, "", 0, nil),
 			shouldErr: false,
-			expGrants: []types.GroupGrant{{
+			expGrants: []types.Grant{{
 				SubspaceID: 1,
 				Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				GroupID:    1,
+				Target:     groupTargetAny,
 				Allowance:  allowanceAny,
 			}, {
 				SubspaceID: 1,
 				Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-				GroupID:    1,
+				Target:     groupTargetAny,
 				Allowance:  allowanceAny,
 			}, {
 				SubspaceID: 1,
 				Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-				GroupID:    2,
+				Target:     otherGroupTargetAny,
 				Allowance:  allowanceAny,
 			}},
 		},
@@ -1166,36 +1178,36 @@ func (suite *KeeperTestSuite) TestQueryServer_GroupAllowances() {
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(1, 0, 1, "test", "tets", nil))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(1, 0, 2, "test", "tets", nil))
 
-				suite.k.SaveGroupGrant(ctx, types.GroupGrant{
+				suite.k.SaveGrant(ctx, types.Grant{
 					SubspaceID: 1,
 					Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					GroupID:    1,
+					Target:     groupTargetAny,
 					Allowance:  allowanceAny,
 				})
-				suite.k.SaveGroupGrant(ctx, types.GroupGrant{
+				suite.k.SaveGrant(ctx, types.Grant{
 					SubspaceID: 1,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-					GroupID:    1,
+					Target:     groupTargetAny,
 					Allowance:  allowanceAny,
 				})
-				suite.k.SaveGroupGrant(ctx, types.GroupGrant{
+				suite.k.SaveGrant(ctx, types.Grant{
 					SubspaceID: 1,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-					GroupID:    2,
+					Target:     otherGroupTargetAny,
 					Allowance:  allowanceAny,
 				})
 			},
 			req:       types.NewQueryGroupAllowancesRequest(1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", 0, nil),
 			shouldErr: false,
-			expGrants: []types.GroupGrant{{
+			expGrants: []types.Grant{{
 				SubspaceID: 1,
 				Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-				GroupID:    1,
+				Target:     groupTargetAny,
 				Allowance:  allowanceAny,
 			}, {
 				SubspaceID: 1,
 				Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-				GroupID:    2,
+				Target:     otherGroupTargetAny,
 				Allowance:  allowanceAny,
 			}},
 		},
@@ -1207,36 +1219,36 @@ func (suite *KeeperTestSuite) TestQueryServer_GroupAllowances() {
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(1, 0, 1, "test", "tets", nil))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(1, 0, 2, "test", "tets", nil))
 
-				suite.k.SaveGroupGrant(ctx, types.GroupGrant{
+				suite.k.SaveGrant(ctx, types.Grant{
 					SubspaceID: 1,
 					Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					GroupID:    1,
+					Target:     groupTargetAny,
 					Allowance:  allowanceAny,
 				})
-				suite.k.SaveGroupGrant(ctx, types.GroupGrant{
+				suite.k.SaveGrant(ctx, types.Grant{
 					SubspaceID: 1,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-					GroupID:    1,
+					Target:     groupTargetAny,
 					Allowance:  allowanceAny,
 				})
-				suite.k.SaveGroupGrant(ctx, types.GroupGrant{
+				suite.k.SaveGrant(ctx, types.Grant{
 					SubspaceID: 1,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-					GroupID:    2,
+					Target:     otherGroupTargetAny,
 					Allowance:  allowanceAny,
 				})
 			},
 			req:       types.NewQueryGroupAllowancesRequest(1, "", 1, nil),
 			shouldErr: false,
-			expGrants: []types.GroupGrant{{
+			expGrants: []types.Grant{{
 				SubspaceID: 1,
 				Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				GroupID:    1,
+				Target:     groupTargetAny,
 				Allowance:  allowanceAny,
 			}, {
 				SubspaceID: 1,
 				Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-				GroupID:    1,
+				Target:     groupTargetAny,
 				Allowance:  allowanceAny,
 			}},
 		},
@@ -1248,31 +1260,31 @@ func (suite *KeeperTestSuite) TestQueryServer_GroupAllowances() {
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(1, 0, 1, "test", "tets", nil))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(1, 0, 2, "test", "tets", nil))
 
-				suite.k.SaveGroupGrant(ctx, types.GroupGrant{
+				suite.k.SaveGrant(ctx, types.Grant{
 					SubspaceID: 1,
 					Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					GroupID:    1,
+					Target:     groupTargetAny,
 					Allowance:  allowanceAny,
 				})
-				suite.k.SaveGroupGrant(ctx, types.GroupGrant{
+				suite.k.SaveGrant(ctx, types.Grant{
 					SubspaceID: 1,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-					GroupID:    1,
+					Target:     groupTargetAny,
 					Allowance:  allowanceAny,
 				})
-				suite.k.SaveGroupGrant(ctx, types.GroupGrant{
+				suite.k.SaveGrant(ctx, types.Grant{
 					SubspaceID: 1,
 					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-					GroupID:    2,
+					Target:     otherGroupTargetAny,
 					Allowance:  allowanceAny,
 				})
 			},
 			req:       types.NewQueryGroupAllowancesRequest(1, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", 1, nil),
 			shouldErr: false,
-			expGrants: []types.GroupGrant{{
+			expGrants: []types.Grant{{
 				SubspaceID: 1,
 				Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				GroupID:    1,
+				Target:     groupTargetAny,
 				Allowance:  allowanceAny,
 			}},
 		},

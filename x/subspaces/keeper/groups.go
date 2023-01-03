@@ -95,8 +95,8 @@ func (k Keeper) DeleteUserGroup(ctx sdk.Context, subspaceID uint64, groupID uint
 	})
 
 	// Remove all the group grants from this group
-	k.IterateUserGroupGrants(ctx, subspaceID, groupID, func(grant types.GroupGrant) (stop bool) {
-		k.DeleteGroupGrant(ctx, grant.SubspaceID, grant.Granter, grant.GroupID)
+	k.IterateUserGroupGrants(ctx, subspaceID, groupID, func(grant types.Grant) (stop bool) {
+		k.DeleteGroupGrant(ctx, grant.SubspaceID, grant.Granter, grant.Target.GetCachedValue().(*types.GroupTarget).GroupID)
 		return false
 	})
 

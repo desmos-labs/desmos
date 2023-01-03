@@ -60,7 +60,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 			),
 		},
-		nil, nil, nil, nil, nil, nil,
+		nil, nil, nil, nil, nil,
 	)
 	subspacesDataBz, err := cfg.Codec.MarshalJSON(subspacesGenesis)
 	s.Require().NoError(err)

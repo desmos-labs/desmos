@@ -27,9 +27,7 @@ message GenesisState {
   repeated UserGroupMemberEntry user_groups_members = 7
       [ (gogoproto.nullable) = false ];
 
-  repeated UserGrant user_grants = 8 [ (gogoproto.nullable) = false ];
-
-  repeated GroupGrant group_grants = 9 [ (gogoproto.nullable) = false ];
+  repeated Grant grants = 8 [ (gogoproto.nullable) = false ];
 }
 
 // SubspaceData contains the genesis data for a single subspace

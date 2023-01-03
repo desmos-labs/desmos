@@ -118,10 +118,10 @@ func randomRevokeUserAllowanceFields(
 		skip = true
 		return
 	}
-	grant := RandomUserGrant(r, grants)
+	grant := RandomGrant(r, grants)
 	subspaceID = grant.SubspaceID
 	granter = grant.Granter
-	grantee = grant.Grantee
+	grantee = grant.Target.GetCachedValue().(*types.UserTarget).User
 
 	// Get a signer account
 	acc := GetAccount(granter, accs)
@@ -238,10 +238,10 @@ func randomRevokeGroupAllowanceFields(
 		skip = true
 		return
 	}
-	grant := RandomGroupGrant(r, grants)
+	grant := RandomGrant(r, grants)
 	subspaceID = grant.SubspaceID
 	granter = grant.Granter
-	groupID = grant.GroupID
+	groupID = grant.Target.GetCachedValue().(*types.GroupTarget).GroupID
 
 	// Get a signer account
 	acc := GetAccount(granter, accs)

@@ -292,8 +292,8 @@ func formatOutputUserPermissions(entries []types.UserPermission) (output string)
 // ValidUserGrantsInvariant checks that all the user grants are valid
 func ValidUserGrantsInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
-		var invalidEntries []types.UserGrant
-		k.IterateUserGrants(ctx, func(entry types.UserGrant) (stop bool) {
+		var invalidEntries []types.Grant
+		k.IterateUserGrants(ctx, func(entry types.Grant) (stop bool) {
 			invalid := false
 
 			// Check subspace existence
@@ -321,9 +321,9 @@ func ValidUserGrantsInvariant(k Keeper) sdk.Invariant {
 }
 
 // formatOutputUserGrants concatenates the given user grants into a string
-func formatOutputUserGrants(entries []types.UserGrant) (output string) {
+func formatOutputUserGrants(entries []types.Grant) (output string) {
 	for _, entry := range entries {
-		output += fmt.Sprintf("SubspaceID: %d, Granter: %s, Grantee: %s\n", entry.SubspaceID, entry.Granter, entry.Grantee)
+		output += fmt.Sprintf("SubspaceID: %d, Granter: %s, Grantee: %s\n", entry.SubspaceID, entry.Granter, entry.Target.GetCachedValue().(*types.UserTarget).User)
 	}
 	return output
 }
@@ -333,8 +333,8 @@ func formatOutputUserGrants(entries []types.UserGrant) (output string) {
 // ValidGroupGrantsInvariant checks that all the user grants are valid
 func ValidGroupGrantsInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
-		var invalidEntries []types.GroupGrant
-		k.IterateUserGroupsGrants(ctx, func(entry types.GroupGrant) (stop bool) {
+		var invalidEntries []types.Grant
+		k.IterateUserGroupsGrants(ctx, func(entry types.Grant) (stop bool) {
 			invalid := false
 
 			// Check subspace existence
@@ -342,8 +342,9 @@ func ValidGroupGrantsInvariant(k Keeper) sdk.Invariant {
 				invalid = true
 			}
 
+			groupID := entry.Target.GetCachedValue().(*types.GroupTarget).GroupID
 			// Check group existence
-			if !k.HasUserGroup(ctx, entry.SubspaceID, entry.GroupID) {
+			if !k.HasUserGroup(ctx, entry.SubspaceID, groupID) {
 				invalid = true
 			}
 
@@ -367,9 +368,9 @@ func ValidGroupGrantsInvariant(k Keeper) sdk.Invariant {
 }
 
 // formatOutputGroupGrants concatenates the given group grants into a string
-func formatOutputGroupGrants(entries []types.GroupGrant) (output string) {
+func formatOutputGroupGrants(entries []types.Grant) (output string) {
 	for _, entry := range entries {
-		output += fmt.Sprintf("SubspaceID: %d, Granter: %s, GroupID: %d\n", entry.SubspaceID, entry.Granter, entry.GroupID)
+		output += fmt.Sprintf("SubspaceID: %d, Granter: %s, GroupID: %d\n", entry.SubspaceID, entry.Granter, entry.Target.GetCachedValue().(*types.GroupTarget).GroupID)
 	}
 	return output
 }

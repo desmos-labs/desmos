@@ -326,23 +326,23 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteSubspace() {
 					types.NewPermissions(types.PermissionEditSubspace),
 				)
 
-				userGrant, err := types.NewUserGrant(
+				userGrant, err := types.NewGrant(
 					1,
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					"cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e",
+					types.NewUserTarget("cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e"),
 					&feegrant.BasicAllowance{},
 				)
 				suite.Require().NoError(err)
-				suite.k.SaveUserGrant(ctx, userGrant)
+				suite.k.SaveGrant(ctx, userGrant)
 
-				groupGrant, err := types.NewGroupGrant(
+				groupGrant, err := types.NewGrant(
 					1,
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					1,
+					types.NewGroupTarget(1),
 					&feegrant.BasicAllowance{},
 				)
 				suite.Require().NoError(err)
-				suite.k.SaveGroupGrant(ctx, groupGrant)
+				suite.k.SaveGrant(ctx, groupGrant)
 			},
 			subspaceID: 1,
 			check: func(ctx sdk.Context) {

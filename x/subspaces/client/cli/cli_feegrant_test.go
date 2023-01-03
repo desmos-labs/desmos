@@ -19,6 +19,8 @@ import (
 )
 
 func (s *IntegrationTestSuite) TestCmdQueryUserAllowances() {
+	userTargetAny, err := codectypes.NewAnyWithValue(types.NewUserTarget("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"))
+	s.Require().NoError(err)
 	allowanceAny, err := codectypes.NewAnyWithValue(&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))})
 	s.Require().NoError(err)
 
@@ -66,11 +68,11 @@ func (s *IntegrationTestSuite) TestCmdQueryUserAllowances() {
 			},
 			shouldErr: false,
 			expResponse: types.QueryUserAllowancesResponse{
-				Grants: []types.UserGrant{
+				Grants: []types.Grant{
 					{
 						SubspaceID: 1,
 						Granter:    "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-						Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+						Target:     userTargetAny,
 						Allowance:  allowanceAny,
 					},
 				},
@@ -101,6 +103,9 @@ func (s *IntegrationTestSuite) TestCmdQueryUserAllowances() {
 }
 
 func (s *IntegrationTestSuite) TestCmdQueryGroupAllowances() {
+	groupTargetAny, err := codectypes.NewAnyWithValue(types.NewGroupTarget(1))
+	s.Require().NoError(err)
+
 	allowanceAny, err := codectypes.NewAnyWithValue(&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))})
 	s.Require().NoError(err)
 
@@ -148,11 +153,11 @@ func (s *IntegrationTestSuite) TestCmdQueryGroupAllowances() {
 			},
 			shouldErr: false,
 			expResponse: types.QueryGroupAllowancesResponse{
-				Grants: []types.GroupGrant{
+				Grants: []types.Grant{
 					{
 						SubspaceID: 1,
 						Granter:    "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-						GroupID:    1,
+						Target:     groupTargetAny,
 						Allowance:  allowanceAny,
 					},
 				},

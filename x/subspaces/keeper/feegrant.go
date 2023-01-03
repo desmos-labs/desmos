@@ -1,17 +1,31 @@
 package keeper
 
 import (
+	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
-// SaveUserGrant saves the given user grant
-func (k Keeper) SaveUserGrant(ctx sdk.Context, grant types.UserGrant) {
-	k.creatAccount(ctx, grant.Grantee)
-
+// SaveGrant saves the given grant inside the current context
+func (k Keeper) SaveGrant(ctx sdk.Context, grant types.Grant) {
 	store := ctx.KVStore(k.storeKey)
-	key := types.UserAllowanceKey(grant.SubspaceID, grant.Granter, grant.Grantee)
-	store.Set(key, k.cdc.MustMarshal(&grant))
+	store.Set(getGrantKey(grant), k.cdc.MustMarshal(&grant))
+	if target, ok := grant.Target.GetCachedValue().(*types.UserTarget); ok {
+		k.creatAccount(ctx, target.User)
+	}
+}
+
+// getGrantKey returns the store key used to save the grant reference based on its target type
+func getGrantKey(grant types.Grant) []byte {
+	switch target := grant.Target.GetCachedValue().(type) {
+	case *types.UserTarget:
+		return types.UserAllowanceKey(grant.SubspaceID, grant.Granter, target.User)
+	case *types.GroupTarget:
+		return types.GroupAllowanceKey(grant.SubspaceID, grant.Granter, target.GroupID)
+	default:
+		panic(fmt.Errorf("unsupported content type: %T", target))
+	}
 }
 
 // HasUserGrant tells whether the user grant having the given granter and grantee exists inside the provided subspace
@@ -28,26 +42,19 @@ func (k Keeper) DeleteUserGrant(ctx sdk.Context, subspaceID uint64, granter stri
 
 // GetUserGrant returns the grant having the granter and grantee from the provided subspace.
 // If there is no grant associated with the info the function will return false.
-func (k Keeper) GetUserGrant(ctx sdk.Context, subspaceID uint64, granter, grantee string) (types.UserGrant, bool) {
+func (k Keeper) GetUserGrant(ctx sdk.Context, subspaceID uint64, granter, grantee string) (types.Grant, bool) {
 	if !k.HasUserGrant(ctx, subspaceID, granter, grantee) {
-		return types.UserGrant{}, false
+		return types.Grant{}, false
 	}
 
 	store := ctx.KVStore(k.storeKey)
 	bz := store.Get(types.UserAllowanceKey(subspaceID, granter, grantee))
-	var grant types.UserGrant
+	var grant types.Grant
 	k.cdc.MustUnmarshal(bz, &grant)
 	return grant, true
 }
 
 // --------------------------------------------------------------------------------------------------------------------
-
-// SaveGroupGrant saves the given group grant
-func (k Keeper) SaveGroupGrant(ctx sdk.Context, grant types.GroupGrant) {
-	store := ctx.KVStore(k.storeKey)
-	key := types.GroupAllowanceKey(grant.SubspaceID, grant.Granter, grant.GroupID)
-	store.Set(key, k.cdc.MustMarshal(&grant))
-}
 
 // HasUserGrant tells whether the group grant having the given granter and group id exists inside the provided subspace
 func (k Keeper) HasGroupGrant(ctx sdk.Context, subspaceID uint64, granter string, groupID uint32) bool {
@@ -63,14 +70,14 @@ func (k Keeper) DeleteGroupGrant(ctx sdk.Context, subspaceID uint64, granter str
 
 // GetGroupGrant returns the grant having the granter and group id from the provided subspace.
 // If there is no grant associated with the info the function will return an error.
-func (k Keeper) GetGroupGrant(ctx sdk.Context, subspaceID uint64, granter string, groupID uint32) (types.GroupGrant, bool) {
+func (k Keeper) GetGroupGrant(ctx sdk.Context, subspaceID uint64, granter string, groupID uint32) (types.Grant, bool) {
 	if !k.HasGroupGrant(ctx, subspaceID, granter, groupID) {
-		return types.GroupGrant{}, false
+		return types.Grant{}, false
 	}
 
 	store := ctx.KVStore(k.storeKey)
 	bz := store.Get(types.GroupAllowanceKey(subspaceID, granter, groupID))
-	var grant types.GroupGrant
+	var grant types.Grant
 	k.cdc.MustUnmarshal(bz, &grant)
 	return grant, true
 }
@@ -111,11 +118,11 @@ func (k Keeper) UseUserGrantedFees(ctx sdk.Context, subspaceID uint64, granter, 
 
 	// update grant if allowance accept properly and still valid after execution
 	if !remove {
-		grant, err = types.NewUserGrant(subspaceID, granter.String(), grantee.String(), allowance)
+		grant, err = types.NewGrant(subspaceID, granter.String(), grant.Target.GetCachedValue().(types.GrantTarget), allowance)
 		if err != nil {
 			return false
 		}
-		k.SaveUserGrant(ctx, grant)
+		k.SaveGrant(ctx, grant)
 	}
 	return true
 }
@@ -123,8 +130,9 @@ func (k Keeper) UseUserGrantedFees(ctx sdk.Context, subspaceID uint64, granter, 
 // UseGroupGrantedFees will try to use group grant to pay the given fee from the granter's account as requested by the grantee.
 // if no valid allowance exists, then return false to show the fee will not be paid in this phase.
 func (k Keeper) UseGroupGrantedFees(ctx sdk.Context, subspaceID uint64, granter, grantee sdk.AccAddress, fee sdk.Coins, msgs []sdk.Msg) (used bool) {
-	k.IterateSubspaceGranterGroupGrants(ctx, subspaceID, granter.String(), func(grant types.GroupGrant) (stop bool) {
-		if !k.IsMemberOfGroup(ctx, grant.SubspaceID, grant.GroupID, grantee.String()) {
+	k.IterateSubspaceGranterGroupGrants(ctx, subspaceID, granter.String(), func(grant types.Grant) (stop bool) {
+		target := grant.Target.GetCachedValue().(*types.GroupTarget)
+		if !k.IsMemberOfGroup(ctx, grant.SubspaceID, target.GroupID, grantee.String()) {
 			return false
 		}
 
@@ -135,7 +143,7 @@ func (k Keeper) UseGroupGrantedFees(ctx sdk.Context, subspaceID uint64, granter,
 		}
 		remove, err := allowance.Accept(ctx, fee, msgs)
 		if remove {
-			k.DeleteGroupGrant(ctx, subspaceID, grant.Granter, grant.GroupID)
+			k.DeleteGroupGrant(ctx, subspaceID, grant.Granter, grant.Target.GetCachedValue().(*types.GroupTarget).GroupID)
 		}
 		if err != nil {
 			return false
@@ -143,11 +151,11 @@ func (k Keeper) UseGroupGrantedFees(ctx sdk.Context, subspaceID uint64, granter,
 
 		// update grant if allowance accept properly and still valid after execution
 		if !remove {
-			grant, err = types.NewGroupGrant(subspaceID, granter.String(), grant.GroupID, allowance)
+			grant, err = types.NewGrant(subspaceID, granter.String(), target, allowance)
 			if err != nil {
 				return false
 			}
-			k.SaveGroupGrant(ctx, grant)
+			k.SaveGrant(ctx, grant)
 		}
 
 		used = true

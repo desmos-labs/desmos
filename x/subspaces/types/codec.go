@@ -35,8 +35,8 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgRevokeGroupAllowance{}, "desmos/MsgRevokeGroupAllowance", nil)
 
 	cdc.RegisterInterface((*GrantTarget)(nil), nil)
-	cdc.RegisterConcrete(&UserTarget{}, "desmos/UserTarget", nil)
-	cdc.RegisterConcrete(&GroupTarget{}, "desmos/GroupTarget", nil)
+	cdc.RegisterConcrete(&UserTarget{}, "desmos/subspaces/UserTarget", nil)
+	cdc.RegisterConcrete(&GroupTarget{}, "desmos/subspaces/GroupTarget", nil)
 }
 
 func RegisterInterfaces(registry types.InterfaceRegistry) {

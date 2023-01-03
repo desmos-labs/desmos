@@ -241,13 +241,13 @@ func (k Keeper) UserAllowances(ctx context.Context, request *types.QueryUserAllo
 	}
 
 	grantsStore := prefix.NewStore(store, grantsPrefix)
-	var grants []types.UserGrant
+	var grants []types.Grant
 	pageRes, err := query.FilteredPaginate(grantsStore, request.Pagination, func(key []byte, value []byte, acc bool) (bool, error) {
-		var grant types.UserGrant
+		var grant types.Grant
 		if err := k.cdc.Unmarshal(value, &grant); err != nil {
 			return false, status.Error(codes.Internal, err.Error())
 		}
-		if grant.Grantee == request.Grantee || request.Grantee == "" {
+		if grant.Target.GetCachedValue().(*types.UserTarget).User == request.Grantee || request.Grantee == "" {
 			grants = append(grants, grant)
 			return true, nil
 		}
@@ -288,13 +288,13 @@ func (k Keeper) GroupAllowances(ctx context.Context, request *types.QueryGroupAl
 	}
 
 	grantsStore := prefix.NewStore(store, grantsPrefix)
-	var grants []types.GroupGrant
+	var grants []types.Grant
 	pageRes, err := query.FilteredPaginate(grantsStore, request.Pagination, func(key []byte, value []byte, acc bool) (bool, error) {
-		var grant types.GroupGrant
+		var grant types.Grant
 		if err := k.cdc.Unmarshal(value, &grant); err != nil {
 			return false, status.Error(codes.Internal, err.Error())
 		}
-		if grant.GroupID == request.GroupId || request.GroupId == 0 {
+		if grant.Target.GetCachedValue().(*types.GroupTarget).GroupID == request.GroupId || request.GroupId == 0 {
 			grants = append(grants, grant)
 			return true, nil
 		}

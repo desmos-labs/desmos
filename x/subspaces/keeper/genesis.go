@@ -21,8 +21,7 @@ func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 		k.GetAllPermissions(ctx),
 		k.GetAllUserGroups(ctx),
 		k.getAllUserGroupsMembers(ctx),
-		k.GetAllUserGrants(ctx),
-		k.GetAllUserGroupsGrants(ctx),
+		k.GetAllGrants(ctx),
 	)
 }
 
@@ -114,12 +113,7 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) {
 	}
 
 	// Initialize the user grants
-	for _, grant := range data.UserGrants {
-		k.SaveUserGrant(ctx, grant)
-	}
-
-	// Initialize the group grants
-	for _, grant := range data.GroupGrants {
-		k.SaveGroupGrant(ctx, grant)
+	for _, grant := range data.Grants {
+		k.SaveGrant(ctx, grant)
 	}
 }

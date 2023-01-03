@@ -61,13 +61,13 @@ func NewDecodeStore(cdc codec.Codec) func(kvA, kvB kv.Pair) string {
 			return fmt.Sprintf("SectionA: %s\nSectionB: %s\n", &sectionA, &sectionB)
 
 		case bytes.HasPrefix(kvA.Key, types.UserAllowancePrefix):
-			var grantA, grantB types.UserGrant
+			var grantA, grantB types.Grant
 			cdc.MustUnmarshal(kvA.Value, &grantA)
 			cdc.MustUnmarshal(kvB.Value, &grantB)
 			return fmt.Sprintf("UserGrantA: %s\nUserGrantB: %s\n", &grantA, &grantB)
 
 		case bytes.HasPrefix(kvA.Key, types.GroupAllowancePrefix):
-			var grantA, grantB types.GroupGrant
+			var grantA, grantB types.Grant
 			cdc.MustUnmarshal(kvA.Value, &grantA)
 			cdc.MustUnmarshal(kvB.Value, &grantB)
 			return fmt.Sprintf("GroupGrantA: %s\nGroupGrantB: %s\n", &grantA, &grantB)

@@ -49,6 +49,13 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	genesisState := cfg.GenesisState
 	cfg.NumValidators = 2
 
+	userTargetAny, err := codectypes.NewAnyWithValue(types.NewUserTarget("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"))
+	s.Require().NoError(err)
+	otherUserTargetAny, err := codectypes.NewAnyWithValue(types.NewUserTarget("cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"))
+	s.Require().NoError(err)
+
+	groupTargetAny, err := codectypes.NewAnyWithValue(types.NewGroupTarget(1))
+
 	allowanceAny, err := codectypes.NewAnyWithValue(&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))})
 	s.Require().NoError(err)
 
@@ -119,31 +126,29 @@ func (s *IntegrationTestSuite) SetupSuite() {
 			types.NewUserGroupMemberEntry(2, 1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"),
 			types.NewUserGroupMemberEntry(2, 1, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
 		},
-		[]types.UserGrant{
+		[]types.Grant{
 			{
 				SubspaceID: 1,
 				Granter:    "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-				Grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+				Target:     userTargetAny,
 				Allowance:  allowanceAny,
 			},
 			{
 				SubspaceID: 1,
 				Granter:    "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-				Grantee:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				Target:     otherUserTargetAny,
 				Allowance:  allowanceAny,
 			},
-		},
-		[]types.GroupGrant{
 			{
 				SubspaceID: 1,
 				Granter:    "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-				GroupID:    1,
+				Target:     groupTargetAny,
 				Allowance:  allowanceAny,
 			},
 			{
 				SubspaceID: 2,
 				Granter:    "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-				GroupID:    1,
+				Target:     groupTargetAny,
 				Allowance:  allowanceAny,
 			},
 		},

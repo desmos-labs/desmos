@@ -295,7 +295,7 @@ message QueryUserAllowancesRequest {
 // QueryUserAllowancesResponse is the response type for the Query/UserAllowances
 // RPC method
 message QueryUserAllowancesResponse {
-  repeated UserGrant grants = 1 [
+  repeated Grant grants = 1 [
     (gogoproto.moretags) = "yaml:\"grants\"",
     (gogoproto.nullable) = false
   ];
@@ -324,7 +324,7 @@ message QueryGroupAllowancesRequest {
 // QueryGroupAllowancesResponse is the response type for the
 // Query/GroupAllowances RPC method
 message QueryGroupAllowancesResponse {
-  repeated GroupGrant grants = 1 [
+  repeated Grant grants = 1 [
     (gogoproto.moretags) = "yaml:\"grants\"",
     (gogoproto.nullable) = false
   ];

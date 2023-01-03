@@ -27,11 +27,11 @@ func (k msgServer) GrantUserAllowance(goCtx context.Context, msg *types.MsgGrant
 	if err != nil {
 		return nil, err
 	}
-	grant, err := types.NewUserGrant(msg.SubspaceID, msg.Granter, msg.Grantee, allowance)
+	grant, err := types.NewGrant(msg.SubspaceID, msg.Granter, types.NewUserTarget(msg.Grantee), allowance)
 	if err != nil {
 		return nil, err
 	}
-	k.Keeper.SaveUserGrant(ctx, grant)
+	k.Keeper.SaveGrant(ctx, grant)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
@@ -97,11 +97,11 @@ func (k msgServer) GrantGroupAllowance(goCtx context.Context, msg *types.MsgGran
 	if err != nil {
 		return nil, err
 	}
-	grant, err := types.NewGroupGrant(msg.SubspaceID, msg.Granter, msg.GroupID, allowance)
+	grant, err := types.NewGrant(msg.SubspaceID, msg.Granter, types.NewGroupTarget(msg.GroupID), allowance)
 	if err != nil {
 		return nil, err
 	}
-	k.Keeper.SaveGroupGrant(ctx, grant)
+	k.Keeper.SaveGrant(ctx, grant)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
