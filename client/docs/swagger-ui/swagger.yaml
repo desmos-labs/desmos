@@ -5918,7 +5918,7 @@ paths:
                         FeeAllowanceI
 
                         interface
-                  title: grant represents a grant to a user or a group
+                  title: Grant represents a grant to a user or a group
               pagination:
                 type: object
                 properties:
@@ -6601,7 +6601,7 @@ paths:
                         FeeAllowanceI
 
                         interface
-                  title: grant represents a grant to a user or a group
+                  title: Grant represents a grant to a user or a group
               pagination:
                 type: object
                 properties:
@@ -19240,7 +19240,7 @@ definitions:
         title: |-
           Allowance can be any allowance type implementing the FeeAllowanceI
           interface
-    title: grant represents a grant to a user or a group
+    title: Grant represents a grant to a user or a group
   desmos.subspaces.v3.PermissionDetail:
     type: object
     properties:
@@ -19664,7 +19664,7 @@ definitions:
                 FeeAllowanceI
 
                 interface
-          title: grant represents a grant to a user or a group
+          title: Grant represents a grant to a user or a group
       pagination:
         type: object
         properties:
@@ -20233,7 +20233,7 @@ definitions:
                 FeeAllowanceI
 
                 interface
-          title: grant represents a grant to a user or a group
+          title: Grant represents a grant to a user or a group
       pagination:
         type: object
         properties:
