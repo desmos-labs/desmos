@@ -372,7 +372,7 @@ func (m *UserPermission) GetPermissions() Permissions {
 	return nil
 }
 
-// grant represents a grant to a user or a group
+// Grant represents a grant to a user or a group
 type Grant struct {
 	// Id of the subspace inside which the user was granted the allowance
 	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`

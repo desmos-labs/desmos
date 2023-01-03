@@ -55,6 +55,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	s.Require().NoError(err)
 
 	groupTargetAny, err := codectypes.NewAnyWithValue(types.NewGroupTarget(1))
+	s.Require().NoError(err)
 
 	allowanceAny, err := codectypes.NewAnyWithValue(&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))})
 	s.Require().NoError(err)

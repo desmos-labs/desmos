@@ -114,7 +114,7 @@ message UserPermission {
   repeated string permissions = 4 [ (gogoproto.castrepeated) = "Permissions" ];
 }
 
-// grant represents a grant to a user or a group
+// Grant represents a grant to a user or a group
 message Grant {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
