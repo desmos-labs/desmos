@@ -3,6 +3,7 @@ package types
 import (
 	"fmt"
 
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -15,8 +16,7 @@ func NewGenesisState(
 	userPermissions []UserPermission,
 	userGroups []UserGroup,
 	userGroupMembers []UserGroupMemberEntry,
-	userGrants []UserGrant,
-	groupGrants []GroupGrant,
+	grants []Grant,
 ) *GenesisState {
 	return &GenesisState{
 		InitialSubspaceID: initialSubspaceID,
@@ -26,16 +26,25 @@ func NewGenesisState(
 		UserPermissions:   userPermissions,
 		UserGroups:        userGroups,
 		UserGroupsMembers: userGroupMembers,
-		UserGrants:        userGrants,
-		GroupGrants:       groupGrants,
+		Grants:            grants,
 	}
+}
+
+// UnpackInterfaces implements UnpackInterfacesMessage.UnpackInterfaces
+func (data GenesisState) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
+	for _, grant := range data.Grants {
+		err := grant.UnpackInterfaces(unpacker)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // DefaultGenesisState returns a default GenesisState
 func DefaultGenesisState() *GenesisState {
 	return NewGenesisState(
 		1,
-		nil,
 		nil,
 		nil,
 		nil,
@@ -125,21 +134,9 @@ func ValidateGenesis(data *GenesisState) error {
 	}
 
 	// Validate the user grants
-	for _, grant := range data.UserGrants {
-		if containsDuplicatedUserGrants(data.UserGrants, grant) {
-			return fmt.Errorf("duplicated user grant: subspace id %d, granter %s, grantee %s", grant.SubspaceID, grant.Granter, grant.Grantee)
-		}
-
-		err := grant.Validate()
-		if err != nil {
-			return err
-		}
-	}
-
-	// Validate the group grants
-	for _, grant := range data.GroupGrants {
-		if containsDuplicatedGroupGrants(data.GroupGrants, grant) {
-			return fmt.Errorf("duplicated group grant: subspace id %d, granter %s, group id %d", grant.SubspaceID, grant.Granter, grant.GroupID)
+	for _, grant := range data.Grants {
+		if containsDuplicatedGrants(data.Grants, grant) {
+			return fmt.Errorf("duplicated user grant: subspace id %d, granter %s, target %s", grant.SubspaceID, grant.Granter, grant.Target.GetCachedValue())
 		}
 
 		err := grant.Validate()
@@ -282,24 +279,12 @@ func (entry UserGroupMemberEntry) Validate() error {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// containsDuplicatedUserGrants tells whether the given grant slice contains two or more
-// grants with the same granter grantee set for the same subspace
-func containsDuplicatedUserGrants(grants []UserGrant, grant UserGrant) bool {
+// containsDuplicatedGrants tells whether the given grant slice contains two or more
+// grants for the same subspace
+func containsDuplicatedGrants(grants []Grant, grant Grant) bool {
 	var count = 0
 	for _, g := range grants {
-		if g.SubspaceID == grant.SubspaceID && g.Granter == grant.Granter && g.Grantee == grant.Grantee {
-			count++
-		}
-	}
-	return count > 1
-}
-
-// containsDuplicatedGroupGrants tells whether the given grant slice contains two or more
-// grants with the same granter group id set for the same subspace
-func containsDuplicatedGroupGrants(grants []GroupGrant, grant GroupGrant) bool {
-	var count = 0
-	for _, g := range grants {
-		if g.SubspaceID == grant.SubspaceID && g.Granter == grant.Granter && g.GroupID == grant.GroupID {
+		if g.SubspaceID == grant.SubspaceID && g.Granter == grant.Granter && g.Target.Equal(grant.Target) {
 			count++
 		}
 	}

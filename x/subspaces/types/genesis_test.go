@@ -12,6 +12,10 @@ import (
 )
 
 func TestValidateGenesis(t *testing.T) {
+	targetAny, err := codectypes.NewAnyWithValue(types.NewUserTarget("cosmos19gz9jn5pl6ke6qg5s4gt9ga9my7w8a0x3ar0qy"))
+	require.NoError(t, err)
+	invalidTargetAny, err := codectypes.NewAnyWithValue(types.NewUserTarget(""))
+	require.NoError(t, err)
 	allowanceAny, err := codectypes.NewAnyWithValue(&feegrant.BasicAllowance{})
 	require.NoError(t, err)
 
@@ -22,7 +26,7 @@ func TestValidateGenesis(t *testing.T) {
 	}{
 		{
 			name:      "invalid initial subspace id returns error",
-			genesis:   types.NewGenesisState(0, nil, nil, nil, nil, nil, nil, nil, nil),
+			genesis:   types.NewGenesisState(0, nil, nil, nil, nil, nil, nil, nil),
 			shouldErr: true,
 		},
 		{
@@ -30,14 +34,14 @@ func TestValidateGenesis(t *testing.T) {
 			genesis: types.NewGenesisState(1, []types.SubspaceData{
 				types.NewSubspaceData(1, 1, 1),
 				types.NewSubspaceData(1, 1, 1),
-			}, nil, nil, nil, nil, nil, nil, nil),
+			}, nil, nil, nil, nil, nil, nil),
 			shouldErr: true,
 		},
 		{
 			name: "invalid subspace data returns error",
 			genesis: types.NewGenesisState(1, []types.SubspaceData{
 				types.NewSubspaceData(1, 1, 0),
-			}, nil, nil, nil, nil, nil, nil, nil),
+			}, nil, nil, nil, nil, nil, nil),
 			shouldErr: true,
 		},
 		{
@@ -61,7 +65,7 @@ func TestValidateGenesis(t *testing.T) {
 					"cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				),
-			}, nil, nil, nil, nil, nil, nil),
+			}, nil, nil, nil, nil, nil),
 			shouldErr: true,
 		},
 		{
@@ -76,7 +80,7 @@ func TestValidateGenesis(t *testing.T) {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				),
-			}, nil, nil, nil, nil, nil, nil),
+			}, nil, nil, nil, nil, nil),
 			shouldErr: true,
 		},
 		{
@@ -84,14 +88,14 @@ func TestValidateGenesis(t *testing.T) {
 			genesis: types.NewGenesisState(1, nil, nil, []types.Section{
 				types.NewSection(1, 1, 0, "Test section", "Test section"),
 				types.NewSection(1, 1, 0, "Test section", "Test section"),
-			}, nil, nil, nil, nil, nil),
+			}, nil, nil, nil, nil),
 			shouldErr: true,
 		},
 		{
 			name: "invalid section returns error",
 			genesis: types.NewGenesisState(1, nil, nil, []types.Section{
 				types.NewSection(0, 1, 0, "Test section", "Test section"),
-			}, nil, nil, nil, nil, nil),
+			}, nil, nil, nil, nil),
 			shouldErr: true,
 		},
 		{
@@ -99,14 +103,14 @@ func TestValidateGenesis(t *testing.T) {
 			genesis: types.NewGenesisState(1, nil, nil, nil, []types.UserPermission{
 				types.NewUserPermission(1, 1, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", types.NewPermissions(types.PermissionEditSubspace)),
 				types.NewUserPermission(1, 1, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", types.NewPermissions(types.PermissionSetPermissions)),
-			}, nil, nil, nil, nil),
+			}, nil, nil, nil),
 			shouldErr: true,
 		},
 		{
 			name: "invalid user permission returns error",
 			genesis: types.NewGenesisState(1, nil, nil, nil, []types.UserPermission{
 				types.NewUserPermission(0, 0, "", types.NewPermissions(types.PermissionEditSubspace)),
-			}, nil, nil, nil, nil),
+			}, nil, nil, nil),
 			shouldErr: true,
 		},
 		{
@@ -128,7 +132,7 @@ func TestValidateGenesis(t *testing.T) {
 					"This is a test group",
 					types.NewPermissions(types.PermissionEditSubspace),
 				),
-			}, nil, nil, nil),
+			}, nil, nil),
 			shouldErr: true,
 		},
 		{
@@ -142,7 +146,7 @@ func TestValidateGenesis(t *testing.T) {
 					"This is a test group",
 					types.NewPermissions(types.PermissionEditSubspace),
 				),
-			}, nil, nil, nil),
+			}, nil, nil),
 			shouldErr: true,
 		},
 		{
@@ -150,64 +154,40 @@ func TestValidateGenesis(t *testing.T) {
 			genesis: types.NewGenesisState(1, nil, nil, nil, nil, nil, []types.UserGroupMemberEntry{
 				types.NewUserGroupMemberEntry(1, 1, ""),
 				types.NewUserGroupMemberEntry(1, 1, ""),
-			}, nil, nil),
+			}, nil),
 			shouldErr: true,
 		},
-		{
-			name: "invalid user grants returns error",
-			genesis: types.NewGenesisState(1, nil, nil, nil, nil, nil, nil, []types.UserGrant{{
-				SubspaceID: 1,
-				Granter:    "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd",
-				Grantee:    "",
-				Allowance:  allowanceAny,
-			}}, nil),
-			shouldErr: true,
-		},
-		{
-			name: "duplicated user grants returns error",
-			genesis: types.NewGenesisState(1, nil, nil, nil, nil, nil, nil, []types.UserGrant{{
-				SubspaceID: 1,
-				Granter:    "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd",
-				Grantee:    "cosmos19gz9jn5pl6ke6qg5s4gt9ga9my7w8a0x3ar0qy",
-				Allowance:  allowanceAny,
-			}, {
-				SubspaceID: 1,
-				Granter:    "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd",
-				Grantee:    "cosmos19gz9jn5pl6ke6qg5s4gt9ga9my7w8a0x3ar0qy",
-				Allowance:  allowanceAny,
-			}}, nil),
-			shouldErr: true,
-		},
-		{
-			name: "invalid group grants returns error",
-			genesis: types.NewGenesisState(1, nil, nil, nil, nil, nil, nil, nil, []types.GroupGrant{{
-				SubspaceID: 1,
-				Granter:    "",
-				GroupID:    1,
-				Allowance:  allowanceAny,
-			}}),
-			shouldErr: true,
-		},
-		{
-			name: "duplicated group grants returns error",
-			genesis: types.NewGenesisState(1, nil, nil, nil, nil, nil, nil, nil, []types.GroupGrant{{
-				SubspaceID: 1,
-				Granter:    "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd",
-				GroupID:    1,
-				Allowance:  allowanceAny,
-			}, {
-				SubspaceID: 1,
-				Granter:    "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd",
-				GroupID:    1,
-				Allowance:  allowanceAny,
-			}}),
-			shouldErr: true,
-		},
+
 		{
 			name: "invalid group members entry returns error",
 			genesis: types.NewGenesisState(1, nil, nil, nil, nil, nil, []types.UserGroupMemberEntry{
 				types.NewUserGroupMemberEntry(1, 0, ""),
-			}, nil, nil),
+			}, nil),
+			shouldErr: true,
+		},
+		{
+			name: "invalid grants returns error",
+			genesis: types.NewGenesisState(1, nil, nil, nil, nil, nil, nil, []types.Grant{{
+				SubspaceID: 1,
+				Granter:    "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd",
+				Target:     invalidTargetAny,
+				Allowance:  allowanceAny,
+			}}),
+			shouldErr: true,
+		},
+		{
+			name: "duplicated grants returns error",
+			genesis: types.NewGenesisState(1, nil, nil, nil, nil, nil, nil, []types.Grant{{
+				SubspaceID: 1,
+				Granter:    "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd",
+				Target:     targetAny,
+				Allowance:  allowanceAny,
+			}, {
+				SubspaceID: 1,
+				Granter:    "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd",
+				Target:     targetAny,
+				Allowance:  allowanceAny,
+			}}),
 			shouldErr: true,
 		},
 		{
@@ -273,43 +253,23 @@ func TestValidateGenesis(t *testing.T) {
 					types.NewUserGroupMemberEntry(2, 1, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd"),
 					types.NewUserGroupMemberEntry(2, 1, "cosmos19gz9jn5pl6ke6qg5s4gt9ga9my7w8a0x3ar0qy"),
 				},
-				[]types.UserGrant{
+				[]types.Grant{
 					{
 						SubspaceID: 1,
 						Granter:    "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd",
-						Grantee:    "cosmos19gz9jn5pl6ke6qg5s4gt9ga9my7w8a0x3ar0qy",
+						Target:     targetAny,
 						Allowance:  allowanceAny,
 					},
 					{
 						SubspaceID: 1,
 						Granter:    "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-						Grantee:    "cosmos19gz9jn5pl6ke6qg5s4gt9ga9my7w8a0x3ar0qy",
+						Target:     targetAny,
 						Allowance:  allowanceAny,
 					},
 					{
 						SubspaceID: 2,
 						Granter:    "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-						Grantee:    "cosmos19gz9jn5pl6ke6qg5s4gt9ga9my7w8a0x3ar0qy",
-						Allowance:  allowanceAny,
-					},
-				},
-				[]types.GroupGrant{
-					{
-						SubspaceID: 1,
-						Granter:    "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd",
-						GroupID:    1,
-						Allowance:  allowanceAny,
-					},
-					{
-						SubspaceID: 1,
-						Granter:    "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-						GroupID:    1,
-						Allowance:  allowanceAny,
-					},
-					{
-						SubspaceID: 2,
-						Granter:    "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-						GroupID:    1,
+						Target:     targetAny,
 						Allowance:  allowanceAny,
 					},
 				},

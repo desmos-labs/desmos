@@ -9,67 +9,78 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestUserGrant_Validate(t *testing.T) {
-	validGrant, err := types.NewUserGrant(1, "cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0", "cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez", &feegrant.BasicAllowance{})
+func TestGrant_Validate(t *testing.T) {
+	validUserTarget := types.NewUserTarget("cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez")
+	validTargetAny, err := codectypes.NewAnyWithValue(types.NewUserTarget("cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0"))
 	require.NoError(t, err)
+
+	userGrant, err := types.NewGrant(1, "cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0", validUserTarget, &feegrant.BasicAllowance{})
+	require.NoError(t, err)
+
+	invalidTargetAny, err := codectypes.NewAnyWithValue(types.NewUserTarget(""))
+	require.NoError(t, err)
+
+	invalidUserTargetAny, err := codectypes.NewAnyWithValue(types.NewUserTarget("cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0"))
+	require.NoError(t, err)
+
 	testCases := []struct {
 		name      string
-		grant     types.UserGrant
+		grant     types.Grant
 		shouldErr bool
 	}{
 		{
 			name: "invalid subspace id returns error",
-			grant: types.UserGrant{
+			grant: types.Grant{
 				SubspaceID: 0,
 				Granter:    "cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
-				Grantee:    "cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez",
+				Target:     &codectypes.Any{},
 				Allowance:  &codectypes.Any{},
 			},
 			shouldErr: true,
 		},
 		{
 			name: "invalid granter returns error",
-			grant: types.UserGrant{
+			grant: types.Grant{
 				SubspaceID: 1,
 				Granter:    "",
-				Grantee:    "cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez",
+				Target:     &codectypes.Any{},
 				Allowance:  &codectypes.Any{},
 			},
 			shouldErr: true,
 		},
 		{
-			name: "invalid grantee returns error",
-			grant: types.UserGrant{
+			name: "invalid target returns error",
+			grant: types.Grant{
 				SubspaceID: 1,
 				Granter:    "cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
-				Grantee:    "",
+				Target:     invalidTargetAny,
 				Allowance:  &codectypes.Any{},
 			},
 			shouldErr: true,
 		},
 		{
 			name: "granter self-grant returns error",
-			grant: types.UserGrant{
+			grant: types.Grant{
 				SubspaceID: 1,
 				Granter:    "cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
-				Grantee:    "cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
+				Target:     invalidUserTargetAny,
 				Allowance:  &codectypes.Any{},
 			},
 			shouldErr: true,
 		},
 		{
 			name: "invalid allowance returns error",
-			grant: types.UserGrant{
+			grant: types.Grant{
 				SubspaceID: 1,
 				Granter:    "cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
-				Grantee:    "cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez",
+				Target:     validTargetAny,
 				Allowance:  &codectypes.Any{},
 			},
 			shouldErr: true,
 		},
 		{
 			name:      "valid grant returns no error",
-			grant:     validGrant,
+			grant:     userGrant,
 			shouldErr: false,
 		},
 	}
@@ -89,70 +100,70 @@ func TestUserGrant_Validate(t *testing.T) {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-func TestGroupGrant_Validate(t *testing.T) {
-	validGrant, err := types.NewGroupGrant(1, "cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0", 1, &feegrant.BasicAllowance{})
-	require.NoError(t, err)
-	testCases := []struct {
-		name      string
-		grant     types.GroupGrant
-		shouldErr bool
-	}{
-		{
-			name: "invalid subspace id returns error",
-			grant: types.GroupGrant{
-				SubspaceID: 0,
-				Granter:    "cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
-				GroupID:    1,
-				Allowance:  &codectypes.Any{},
-			},
-			shouldErr: true,
-		},
-		{
-			name: "invalid granter returns error",
-			grant: types.GroupGrant{
-				SubspaceID: 1,
-				Granter:    "",
-				GroupID:    1,
-				Allowance:  &codectypes.Any{},
-			},
-			shouldErr: true,
-		},
-		{
-			name: "invalid group id returns error",
-			grant: types.GroupGrant{
-				SubspaceID: 1,
-				Granter:    "cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
-				GroupID:    0,
-				Allowance:  &codectypes.Any{},
-			},
-			shouldErr: true,
-		},
-		{
-			name: "invalid allowance returns error",
-			grant: types.GroupGrant{
-				SubspaceID: 1,
-				Granter:    "cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
-				GroupID:    1,
-				Allowance:  &codectypes.Any{},
-			},
-			shouldErr: true,
-		},
-		{
-			name:      "valid grant returns no error",
-			grant:     validGrant,
-			shouldErr: false,
-		},
-	}
+// func TestGroupGrant_Validate(t *testing.T) {
+// 	validGrant, err := types.NewGroupGrant(1, "cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0", 1, &feegrant.BasicAllowance{})
+// 	require.NoError(t, err)
+// 	testCases := []struct {
+// 		name      string
+// 		grant     types.GroupGrant
+// 		shouldErr bool
+// 	}{
+// 		{
+// 			name: "invalid subspace id returns error",
+// 			grant: types.GroupGrant{
+// 				SubspaceID: 0,
+// 				Granter:    "cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
+// 				GroupID:    1,
+// 				Allowance:  &codectypes.Any{},
+// 			},
+// 			shouldErr: true,
+// 		},
+// 		{
+// 			name: "invalid granter returns error",
+// 			grant: types.GroupGrant{
+// 				SubspaceID: 1,
+// 				Granter:    "",
+// 				GroupID:    1,
+// 				Allowance:  &codectypes.Any{},
+// 			},
+// 			shouldErr: true,
+// 		},
+// 		{
+// 			name: "invalid group id returns error",
+// 			grant: types.GroupGrant{
+// 				SubspaceID: 1,
+// 				Granter:    "cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
+// 				GroupID:    0,
+// 				Allowance:  &codectypes.Any{},
+// 			},
+// 			shouldErr: true,
+// 		},
+// 		{
+// 			name: "invalid allowance returns error",
+// 			grant: types.GroupGrant{
+// 				SubspaceID: 1,
+// 				Granter:    "cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
+// 				GroupID:    1,
+// 				Allowance:  &codectypes.Any{},
+// 			},
+// 			shouldErr: true,
+// 		},
+// 		{
+// 			name:      "valid grant returns no error",
+// 			grant:     validGrant,
+// 			shouldErr: false,
+// 		},
+// 	}
 
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(t *testing.T) {
-			err := tc.grant.Validate()
-			if tc.shouldErr {
-				require.Error(t, err)
-			} else {
-				require.NoError(t, err)
-			}
-		})
-	}
-}
+// 	for _, tc := range testCases {
+// 		tc := tc
+// 		t.Run(tc.name, func(t *testing.T) {
+// 			err := tc.grant.Validate()
+// 			if tc.shouldErr {
+// 				require.Error(t, err)
+// 			} else {
+// 				require.NoError(t, err)
+// 			}
+// 		})
+// 	}
+// }

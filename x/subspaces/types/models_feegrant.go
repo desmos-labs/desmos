@@ -10,102 +10,102 @@ import (
 	proto "github.com/gogo/protobuf/proto"
 )
 
-var _ codectypes.UnpackInterfacesMessage = &UserGrant{}
-var _ codectypes.UnpackInterfacesMessage = &GroupGrant{}
+var _ codectypes.UnpackInterfacesMessage = &Grant{}
 
-// NewUserGrant is a constructor for the UserGrant type
-func NewUserGrant(subspaceID uint64, granter, grantee string, feeAllowance feegranttypes.FeeAllowanceI) (UserGrant, error) {
-	msg, ok := feeAllowance.(proto.Message)
-	if !ok {
-		return UserGrant{}, sdkerrors.Wrapf(sdkerrors.ErrPackAny, "cannot proto marshal %T", feeAllowance)
-	}
+// GrantTarget represents a generic grant target
+type GrantTarget interface {
+	proto.Message
 
-	any, err := codectypes.NewAnyWithValue(msg)
-	if err != nil {
-		return UserGrant{}, err
-	}
-
-	return UserGrant{
-		SubspaceID: subspaceID,
-		Granter:    granter,
-		Grantee:    grantee,
-		Allowance:  any,
-	}, nil
+	isGrantTarget()
+	Validate() error
 }
 
-// Validate implements fmt.Validator
-func (u UserGrant) Validate() error {
-	if u.SubspaceID == 0 {
-		return fmt.Errorf("invalid subspace id: %d", u.SubspaceID)
+// NewUserTarget is a constructor for the UserTarget type
+func NewUserTarget(user string) *UserTarget {
+	return &UserTarget{
+		User: user,
 	}
-	_, err := sdk.AccAddressFromBech32(u.Granter)
-	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid granter address")
-	}
-	_, err = sdk.AccAddressFromBech32(u.Grantee)
+}
+
+// isGrantTarget implements GrantTarget
+func (t *UserTarget) isGrantTarget() {}
+
+// isGrantTarget implements GrantTarget
+func (t *UserTarget) Validate() error {
+	_, err := sdk.AccAddressFromBech32(t.User)
 	if err != nil {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid grantee address")
 	}
-	if u.Grantee == u.Granter {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "cannot self-grant fee authorization")
-	}
-
-	f, err := u.GetUnpackedAllowance()
-	if err != nil {
-		return err
-	}
-	return f.ValidateBasic()
-}
-
-// GetUnpackedAllowance unpacks allowance
-func (u UserGrant) GetUnpackedAllowance() (feegranttypes.FeeAllowanceI, error) {
-	allowance, ok := u.Allowance.GetCachedValue().(feegranttypes.FeeAllowanceI)
-	if !ok {
-		return nil, fmt.Errorf("failed to unpack allowance")
-	}
-
-	return allowance, nil
-}
-
-// UnpackInterfaces implements UnpackInterfacesMessage.UnpackInterfaces
-func (u UserGrant) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
-	var allowance feegranttypes.FeeAllowanceI
-	return unpacker.UnpackAny(u.Allowance, &allowance)
+	return err
 }
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// NewGroupGrant is a constructor for the GroupGrant type
-func NewGroupGrant(subspaceID uint64, granter string, groupID uint32, feeAllowance feegranttypes.FeeAllowanceI) (GroupGrant, error) {
+// NewGroupTarget is a constructor for the GroupTarget type
+func NewGroupTarget(groupID uint32) *GroupTarget {
+	return &GroupTarget{
+		GroupID: groupID,
+	}
+}
+
+// isGrantTarget implements GrantTarget
+func (t *GroupTarget) isGrantTarget() {}
+
+// isGrantTarget implements GrantTarget
+func (t *GroupTarget) Validate() error {
+	if t.GroupID == 0 {
+		return fmt.Errorf("invalid group id: %d", t.GroupID)
+	}
+	return nil
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// NewGrant is a constructor for the Grant type
+func NewGrant(subspaceID uint64, granter string, target GrantTarget, feeAllowance feegranttypes.FeeAllowanceI) (Grant, error) {
 	msg, ok := feeAllowance.(proto.Message)
 	if !ok {
-		return GroupGrant{}, sdkerrors.Wrapf(sdkerrors.ErrPackAny, "cannot proto marshal %T", feeAllowance)
+		return Grant{}, sdkerrors.Wrapf(sdkerrors.ErrPackAny, "cannot proto marshal %T", feeAllowance)
 	}
 
-	any, err := codectypes.NewAnyWithValue(msg)
+	allowanceAny, err := codectypes.NewAnyWithValue(msg)
 	if err != nil {
-		return GroupGrant{}, err
+		return Grant{}, err
 	}
 
-	return GroupGrant{
+	targetAny, err := codectypes.NewAnyWithValue(target)
+	if err != nil {
+		return Grant{}, err
+	}
+
+	return Grant{
 		SubspaceID: subspaceID,
 		Granter:    granter,
-		GroupID:    groupID,
-		Allowance:  any,
+		Target:     targetAny,
+		Allowance:  allowanceAny,
 	}, nil
 }
 
 // Validate implements fmt.Validator
-func (g GroupGrant) Validate() error {
+func (g Grant) Validate() error {
 	if g.SubspaceID == 0 {
 		return fmt.Errorf("invalid subspace id: %d", g.SubspaceID)
-	}
-	if g.GroupID == 0 {
-		return fmt.Errorf("invalid group id: %d", g.GroupID)
 	}
 	_, err := sdk.AccAddressFromBech32(g.Granter)
 	if err != nil {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid granter address")
+	}
+
+	target := g.Target.GetCachedValue().(GrantTarget)
+	err = target.Validate()
+	if err != nil {
+		return err
+	}
+
+	if u, ok := target.(*UserTarget); ok {
+		if u.User == g.Granter {
+			return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "cannot self-grant fee authorization")
+		}
 	}
 
 	f, err := g.GetUnpackedAllowance()
@@ -116,8 +116,8 @@ func (g GroupGrant) Validate() error {
 }
 
 // GetUnpackedAllowance unpacks allowance
-func (g GroupGrant) GetUnpackedAllowance() (feegranttypes.FeeAllowanceI, error) {
-	allowance, ok := g.Allowance.GetCachedValue().(feegranttypes.FeeAllowanceI)
+func (u Grant) GetUnpackedAllowance() (feegranttypes.FeeAllowanceI, error) {
+	allowance, ok := u.Allowance.GetCachedValue().(feegranttypes.FeeAllowanceI)
 	if !ok {
 		return nil, fmt.Errorf("failed to unpack allowance")
 	}
@@ -126,7 +126,12 @@ func (g GroupGrant) GetUnpackedAllowance() (feegranttypes.FeeAllowanceI, error) 
 }
 
 // UnpackInterfaces implements UnpackInterfacesMessage.UnpackInterfaces
-func (a GroupGrant) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
+func (u Grant) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
+	var target GrantTarget
+	err := unpacker.UnpackAny(u.Target, &target)
+	if err != nil {
+		return err
+	}
 	var allowance feegranttypes.FeeAllowanceI
-	return unpacker.UnpackAny(a.Allowance, &allowance)
+	return unpacker.UnpackAny(u.Allowance, &allowance)
 }
