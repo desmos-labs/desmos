@@ -5558,7 +5558,7 @@ paths:
                     granter:
                       type: string
                       title: Address of the user that granted the allowance
-                    target:
+                    grantee:
                       type: object
                       properties:
                         type_url:
@@ -6241,7 +6241,7 @@ paths:
                     granter:
                       type: string
                       title: Address of the user that granted the allowance
-                    target:
+                    grantee:
                       type: object
                       properties:
                         type_url:
@@ -18918,7 +18918,7 @@ definitions:
       granter:
         type: string
         title: Address of the user that granted the allowance
-      target:
+      grantee:
         type: object
         properties:
           type_url:
@@ -19320,7 +19320,7 @@ definitions:
             granter:
               type: string
               title: Address of the user that granted the allowance
-            target:
+            grantee:
               type: object
               properties:
                 type_url:
@@ -19889,7 +19889,7 @@ definitions:
             granter:
               type: string
               title: Address of the user that granted the allowance
-            target:
+            grantee:
               type: object
               properties:
                 type_url:
