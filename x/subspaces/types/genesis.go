@@ -136,7 +136,7 @@ func ValidateGenesis(data *GenesisState) error {
 	// Validate the user grants
 	for _, grant := range data.Grants {
 		if containsDuplicatedGrants(data.Grants, grant) {
-			return fmt.Errorf("duplicated user grant: subspace id %d, granter %s, target %s", grant.SubspaceID, grant.Granter, grant.Target.GetCachedValue())
+			return fmt.Errorf("duplicated user grant: subspace id %d, granter %s, grantee %s", grant.SubspaceID, grant.Granter, grant.Grantee.GetCachedValue())
 		}
 
 		err := grant.Validate()
@@ -284,7 +284,7 @@ func (entry UserGroupMemberEntry) Validate() error {
 func containsDuplicatedGrants(grants []Grant, grant Grant) bool {
 	var count = 0
 	for _, g := range grants {
-		if g.SubspaceID == grant.SubspaceID && g.Granter == grant.Granter && g.Target.Equal(grant.Target) {
+		if g.SubspaceID == grant.SubspaceID && g.Granter == grant.Granter && g.Grantee.Equal(grant.Grantee) {
 			count++
 		}
 	}

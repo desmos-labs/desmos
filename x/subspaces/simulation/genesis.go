@@ -188,7 +188,7 @@ func randomUserGrants(r *rand.Rand, accounts []simtypes.Account, subspaces []typ
 		if granter.Address.String() == grantee.Address.String() {
 			continue
 		}
-		grant, _ := types.NewGrant(subspace.ID, granter.Address.String(), types.NewUserTarget(grantee.Address.String()), &feegrant.BasicAllowance{})
+		grant, _ := types.NewGrant(subspace.ID, granter.Address.String(), types.NewUserGrantee(grantee.Address.String()), &feegrant.BasicAllowance{})
 		if !containsGrant(grants, grant) {
 			grants[i] = grant
 			i++
@@ -207,7 +207,7 @@ func randomGroupGrants(r *rand.Rand, accounts []simtypes.Account, groups []types
 	for i := 0; i < grantsNumber; {
 		group := RandomGroup(r, groups)
 		granter, _ := simtypes.RandomAcc(r, accounts)
-		grant, _ := types.NewGrant(group.SubspaceID, granter.Address.String(), types.NewGroupTarget(group.ID), &feegrant.BasicAllowance{})
+		grant, _ := types.NewGrant(group.SubspaceID, granter.Address.String(), types.NewGroupGrantee(group.ID), &feegrant.BasicAllowance{})
 		if !containsGrant(grants, grant) {
 			grants[i] = grant
 			i++
@@ -218,7 +218,7 @@ func randomGroupGrants(r *rand.Rand, accounts []simtypes.Account, groups []types
 
 func containsGrant(slice []types.Grant, grant types.Grant) bool {
 	for _, g := range slice {
-		if g.SubspaceID == grant.SubspaceID && g.Granter == grant.Granter && g.Target.Equal(grant.Target) {
+		if g.SubspaceID == grant.SubspaceID && g.Granter == grant.Granter && g.Grantee.Equal(grant.Grantee) {
 			return true
 		}
 	}

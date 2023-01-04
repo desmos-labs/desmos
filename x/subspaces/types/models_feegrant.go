@@ -12,26 +12,26 @@ import (
 
 var _ codectypes.UnpackInterfacesMessage = &Grant{}
 
-// GrantTarget represents a generic grant target
-type GrantTarget interface {
+// Grantee represents a generic grant grantee
+type Grantee interface {
 	proto.Message
 
-	isGrantTarget()
+	isGrantee()
 	Validate() error
 }
 
-// NewUserTarget is a constructor for the UserTarget type
-func NewUserTarget(user string) *UserTarget {
-	return &UserTarget{
+// NewUserGrantee is a constructor for the UserGrantee type
+func NewUserGrantee(user string) *UserGrantee {
+	return &UserGrantee{
 		User: user,
 	}
 }
 
-// isGrantTarget implements GrantTarget
-func (t *UserTarget) isGrantTarget() {}
+// isGrantee implements Grantee
+func (t *UserGrantee) isGrantee() {}
 
-// isGrantTarget implements GrantTarget
-func (t *UserTarget) Validate() error {
+// isGrantee implements Grantee
+func (t *UserGrantee) Validate() error {
 	_, err := sdk.AccAddressFromBech32(t.User)
 	if err != nil {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid grantee address")
@@ -41,18 +41,18 @@ func (t *UserTarget) Validate() error {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// NewGroupTarget is a constructor for the GroupTarget type
-func NewGroupTarget(groupID uint32) *GroupTarget {
-	return &GroupTarget{
+// NewGroupGrantee is a constructor for the GroupGrantee type
+func NewGroupGrantee(groupID uint32) *GroupGrantee {
+	return &GroupGrantee{
 		GroupID: groupID,
 	}
 }
 
-// isGrantTarget implements GrantTarget
-func (t *GroupTarget) isGrantTarget() {}
+// isGrantee implements Grantee
+func (t *GroupGrantee) isGrantee() {}
 
-// isGrantTarget implements GrantTarget
-func (t *GroupTarget) Validate() error {
+// isGrantee implements Grantee
+func (t *GroupGrantee) Validate() error {
 	if t.GroupID == 0 {
 		return fmt.Errorf("invalid group id: %d", t.GroupID)
 	}
@@ -62,7 +62,7 @@ func (t *GroupTarget) Validate() error {
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewGrant is a constructor for the Grant type
-func NewGrant(subspaceID uint64, granter string, target GrantTarget, feeAllowance feegranttypes.FeeAllowanceI) (Grant, error) {
+func NewGrant(subspaceID uint64, granter string, grantee Grantee, feeAllowance feegranttypes.FeeAllowanceI) (Grant, error) {
 	msg, ok := feeAllowance.(proto.Message)
 	if !ok {
 		return Grant{}, sdkerrors.Wrapf(sdkerrors.ErrPackAny, "cannot proto marshal %T", feeAllowance)
@@ -73,7 +73,7 @@ func NewGrant(subspaceID uint64, granter string, target GrantTarget, feeAllowanc
 		return Grant{}, err
 	}
 
-	targetAny, err := codectypes.NewAnyWithValue(target)
+	granteeAny, err := codectypes.NewAnyWithValue(grantee)
 	if err != nil {
 		return Grant{}, err
 	}
@@ -81,7 +81,7 @@ func NewGrant(subspaceID uint64, granter string, target GrantTarget, feeAllowanc
 	return Grant{
 		SubspaceID: subspaceID,
 		Granter:    granter,
-		Target:     targetAny,
+		Grantee:    granteeAny,
 		Allowance:  allowanceAny,
 	}, nil
 }
@@ -96,13 +96,13 @@ func (g Grant) Validate() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid granter address")
 	}
 
-	target := g.Target.GetCachedValue().(GrantTarget)
-	err = target.Validate()
+	grantee := g.Grantee.GetCachedValue().(Grantee)
+	err = grantee.Validate()
 	if err != nil {
 		return err
 	}
 
-	if u, ok := target.(*UserTarget); ok {
+	if u, ok := grantee.(*UserGrantee); ok {
 		if u.User == g.Granter {
 			return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "cannot self-grant fee authorization")
 		}
@@ -127,8 +127,8 @@ func (u Grant) GetUnpackedAllowance() (feegranttypes.FeeAllowanceI, error) {
 
 // UnpackInterfaces implements UnpackInterfacesMessage.UnpackInterfaces
 func (u Grant) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
-	var target GrantTarget
-	err := unpacker.UnpackAny(u.Target, &target)
+	var grantee Grantee
+	err := unpacker.UnpackAny(u.Grantee, &grantee)
 	if err != nil {
 		return err
 	}

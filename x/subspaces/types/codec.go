@@ -34,17 +34,17 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgGrantGroupAllowance{}, "desmos/MsgGrantGroupAllowance", nil)
 	cdc.RegisterConcrete(&MsgRevokeGroupAllowance{}, "desmos/MsgRevokeGroupAllowance", nil)
 
-	cdc.RegisterInterface((*GrantTarget)(nil), nil)
-	cdc.RegisterConcrete(&UserTarget{}, "desmos/subspaces/UserTarget", nil)
-	cdc.RegisterConcrete(&GroupTarget{}, "desmos/subspaces/GroupTarget", nil)
+	cdc.RegisterInterface((*Grantee)(nil), nil)
+	cdc.RegisterConcrete(&UserGrantee{}, "desmos/UserGrantee", nil)
+	cdc.RegisterConcrete(&GroupGrantee{}, "desmos/GroupGrantee", nil)
 }
 
 func RegisterInterfaces(registry types.InterfaceRegistry) {
 	registry.RegisterInterface(
-		"desmos.subspaces.v3.GrantTarget",
-		(*GrantTarget)(nil),
-		&UserTarget{},
-		&GroupTarget{},
+		"desmos.subspaces.v3.Grantee",
+		(*Grantee)(nil),
+		&UserGrantee{},
+		&GroupGrantee{},
 	)
 
 	registry.RegisterImplementations((*sdk.Msg)(nil),

@@ -393,7 +393,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteUserGroup() {
 				grant, err := types.NewGrant(
 					1,
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					types.NewGroupTarget(1),
+					types.NewGroupGrantee(1),
 					&feegrant.BasicAllowance{},
 				)
 				suite.Require().NoError(err)

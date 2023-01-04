@@ -22,10 +22,10 @@ func (suite *TestSuite) TestSubspacesWasmQuerier_QueryCustom() {
 	wrongQueryBz, err := json.Marshal(profilesQueryBz)
 	suite.NoError(err)
 
-	userTargetAny, err := codectypes.NewAnyWithValue(types.NewUserTarget("cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e"))
+	userGranteeAny, err := codectypes.NewAnyWithValue(types.NewUserGrantee("cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e"))
 	suite.NoError(err)
 
-	groupTargetAny, err := codectypes.NewAnyWithValue(types.NewGroupTarget(1))
+	groupGranteeAny, err := codectypes.NewAnyWithValue(types.NewGroupGrantee(1))
 	suite.NoError(err)
 
 	allowanceAny, err := codectypes.NewAnyWithValue(&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10)))})
@@ -264,7 +264,7 @@ func (suite *TestSuite) TestSubspacesWasmQuerier_QueryCustom() {
 				suite.k.SaveGrant(ctx, types.Grant{
 					SubspaceID: 1,
 					Granter:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					Target:     userTargetAny,
+					Grantee:    userGranteeAny,
 					Allowance:  allowanceAny,
 				})
 			},
@@ -274,7 +274,7 @@ func (suite *TestSuite) TestSubspacesWasmQuerier_QueryCustom() {
 					Grants: []types.Grant{{
 						SubspaceID: 1,
 						Granter:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-						Target:     userTargetAny,
+						Grantee:    userGranteeAny,
 						Allowance:  allowanceAny,
 					}},
 					Pagination: &query.PageResponse{NextKey: nil, Total: 1},
@@ -310,7 +310,7 @@ func (suite *TestSuite) TestSubspacesWasmQuerier_QueryCustom() {
 				suite.k.SaveGrant(ctx, types.Grant{
 					SubspaceID: 1,
 					Granter:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					Target:     groupTargetAny,
+					Grantee:    groupGranteeAny,
 					Allowance:  allowanceAny,
 				})
 			},
@@ -320,7 +320,7 @@ func (suite *TestSuite) TestSubspacesWasmQuerier_QueryCustom() {
 					Grants: []types.Grant{{
 						SubspaceID: 1,
 						Granter:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-						Target:     groupTargetAny,
+						Grantee:    groupGranteeAny,
 						Allowance:  allowanceAny,
 					}},
 					Pagination: &query.PageResponse{NextKey: nil, Total: 1},

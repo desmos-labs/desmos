@@ -63,7 +63,7 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantUserAllowance() {
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
 				suite.k.SetUserPermissions(ctx, 1, types.RootSectionID, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", types.NewPermissions(types.PermissionGrantAllowances))
-				grant, err := types.NewGrant(1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", types.NewUserTarget("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"), &feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))})
+				grant, err := types.NewGrant(1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"), &feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))})
 				suite.Require().NoError(err)
 				suite.k.SaveGrant(ctx, grant)
 			},
@@ -131,7 +131,7 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantUserAllowance() {
 				grant, found := suite.k.GetUserGrant(ctx, 1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
 				suite.Require().True(found)
 
-				expected, err := types.NewGrant(1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", types.NewUserTarget("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"), &feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))})
+				expected, err := types.NewGrant(1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"), &feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))})
 				suite.Require().NoError(err)
 				suite.Require().Equal(expected, grant)
 			},
@@ -185,7 +185,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RevokeUserAllowance() {
 		{
 			name: "user allowance revoked properly",
 			store: func(ctx sdk.Context) {
-				grant, err := types.NewGrant(1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", types.NewUserTarget("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"), &feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))})
+				grant, err := types.NewGrant(1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"), &feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))})
 				suite.Require().NoError(err)
 				suite.k.SaveGrant(ctx, grant)
 			},
@@ -313,7 +313,7 @@ func (suite *KeeperTestSuite) TestMsgServer_GranGroupAllowance() {
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(1, 0, 1, "test", "test", nil))
 				suite.k.SetUserPermissions(ctx, 1, types.RootSectionID, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", types.NewPermissions(types.PermissionGrantAllowances))
-				grant, err := types.NewGrant(1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", types.NewGroupTarget(1), &feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))})
+				grant, err := types.NewGrant(1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", types.NewGroupGrantee(1), &feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))})
 				suite.Require().NoError(err)
 				suite.k.SaveGrant(ctx, grant)
 			},
@@ -383,7 +383,7 @@ func (suite *KeeperTestSuite) TestMsgServer_GranGroupAllowance() {
 				grant, found := suite.k.GetGroupGrant(ctx, 1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", 1)
 				suite.Require().True(found)
 
-				expected, err := types.NewGrant(1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", types.NewGroupTarget(1), &feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))})
+				expected, err := types.NewGrant(1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", types.NewGroupGrantee(1), &feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))})
 				suite.Require().NoError(err)
 				suite.Require().Equal(expected, grant)
 			},
@@ -437,7 +437,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RevokeGroupAllowance() {
 		{
 			name: "group allowance revoked properly",
 			store: func(ctx sdk.Context) {
-				grant, err := types.NewGrant(1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", types.NewGroupTarget(1), &feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))})
+				grant, err := types.NewGrant(1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", types.NewGroupGrantee(1), &feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))})
 				suite.Require().NoError(err)
 				suite.k.SaveGrant(ctx, grant)
 			},

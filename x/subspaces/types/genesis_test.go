@@ -12,9 +12,9 @@ import (
 )
 
 func TestValidateGenesis(t *testing.T) {
-	targetAny, err := codectypes.NewAnyWithValue(types.NewUserTarget("cosmos19gz9jn5pl6ke6qg5s4gt9ga9my7w8a0x3ar0qy"))
+	granteeAny, err := codectypes.NewAnyWithValue(types.NewUserGrantee("cosmos19gz9jn5pl6ke6qg5s4gt9ga9my7w8a0x3ar0qy"))
 	require.NoError(t, err)
-	invalidTargetAny, err := codectypes.NewAnyWithValue(types.NewUserTarget(""))
+	invalidGranteeAny, err := codectypes.NewAnyWithValue(types.NewUserGrantee(""))
 	require.NoError(t, err)
 	allowanceAny, err := codectypes.NewAnyWithValue(&feegrant.BasicAllowance{})
 	require.NoError(t, err)
@@ -170,7 +170,7 @@ func TestValidateGenesis(t *testing.T) {
 			genesis: types.NewGenesisState(1, nil, nil, nil, nil, nil, nil, []types.Grant{{
 				SubspaceID: 1,
 				Granter:    "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd",
-				Target:     invalidTargetAny,
+				Grantee:    invalidGranteeAny,
 				Allowance:  allowanceAny,
 			}}),
 			shouldErr: true,
@@ -180,12 +180,12 @@ func TestValidateGenesis(t *testing.T) {
 			genesis: types.NewGenesisState(1, nil, nil, nil, nil, nil, nil, []types.Grant{{
 				SubspaceID: 1,
 				Granter:    "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd",
-				Target:     targetAny,
+				Grantee:    granteeAny,
 				Allowance:  allowanceAny,
 			}, {
 				SubspaceID: 1,
 				Granter:    "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd",
-				Target:     targetAny,
+				Grantee:    granteeAny,
 				Allowance:  allowanceAny,
 			}}),
 			shouldErr: true,
@@ -257,19 +257,19 @@ func TestValidateGenesis(t *testing.T) {
 					{
 						SubspaceID: 1,
 						Granter:    "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd",
-						Target:     targetAny,
+						Grantee:    granteeAny,
 						Allowance:  allowanceAny,
 					},
 					{
 						SubspaceID: 1,
 						Granter:    "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-						Target:     targetAny,
+						Grantee:    granteeAny,
 						Allowance:  allowanceAny,
 					},
 					{
 						SubspaceID: 2,
 						Granter:    "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-						Target:     targetAny,
+						Grantee:    granteeAny,
 						Allowance:  allowanceAny,
 					},
 				},

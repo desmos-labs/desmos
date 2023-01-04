@@ -1220,7 +1220,7 @@ func TestMsgSetUserPermissions_ValidateBasic(t *testing.T) {
 			shouldErr: true,
 		},
 		{
-			name: "invalid target returns error",
+			name: "invalid grantee returns error",
 			msg: types.NewMsgSetUserPermissions(
 				1,
 				1,

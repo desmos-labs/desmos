@@ -426,7 +426,7 @@ func (k Keeper) IterateSubspaceUserGroupGrants(ctx sdk.Context, subspaceID uint6
 // IterateUserGroupGrants iterates over all the group grants inside the group with the given id
 func (k Keeper) IterateUserGroupGrants(ctx sdk.Context, subspaceID uint64, groupID uint32, fn func(grant types.Grant) (stop bool)) {
 	k.IterateSubspaceUserGroupGrants(ctx, subspaceID, func(grant types.Grant) (stop bool) {
-		if grant.Target.GetCachedValue().(*types.GroupTarget).GroupID == groupID {
+		if grant.Grantee.GetCachedValue().(*types.GroupGrantee).GroupID == groupID {
 			stop = fn(grant)
 		}
 		return stop

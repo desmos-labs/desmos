@@ -127,9 +127,9 @@ message Grant {
   // Address of the user that granted the allowance
   string granter = 2 [ (gogoproto.moretags) = "yaml:\"granter\"" ];
   // Address of the user being granted the allowance
-  google.protobuf.Any target = 3 [
-    (cosmos_proto.accepts_interface) = "GrantTarget",
-    (gogoproto.moretags) = "yaml:\"target\""
+  google.protobuf.Any grantee = 3 [
+    (cosmos_proto.accepts_interface) = "Grantee",
+    (gogoproto.moretags) = "yaml:\"grantee\""
   ];
   // Allowance can be any allowance type implementing the FeeAllowanceI
   // interface
@@ -139,16 +139,16 @@ message Grant {
   ];
 }
 
-// UserTarget contains the target of a grant about a user
-message UserTarget {
+// UserGrantee contains the target of a grant about a user
+message UserGrantee {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
   string user = 1 [ (gogoproto.moretags) = "yaml:\"user\"" ];
 }
 
-// GroupTarget contains the target of a grant about a group
-message GroupTarget {
+// GroupGrantee contains the target of a grant about a group
+message GroupGrantee {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 

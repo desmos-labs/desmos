@@ -247,7 +247,7 @@ func (k Keeper) UserAllowances(ctx context.Context, request *types.QueryUserAllo
 		if err := k.cdc.Unmarshal(value, &grant); err != nil {
 			return false, status.Error(codes.Internal, err.Error())
 		}
-		if grant.Target.GetCachedValue().(*types.UserTarget).User == request.Grantee || request.Grantee == "" {
+		if grant.Grantee.GetCachedValue().(*types.UserGrantee).User == request.Grantee || request.Grantee == "" {
 			grants = append(grants, grant)
 			return true, nil
 		}
@@ -294,7 +294,7 @@ func (k Keeper) GroupAllowances(ctx context.Context, request *types.QueryGroupAl
 		if err := k.cdc.Unmarshal(value, &grant); err != nil {
 			return false, status.Error(codes.Internal, err.Error())
 		}
-		if grant.Target.GetCachedValue().(*types.GroupTarget).GroupID == request.GroupId || request.GroupId == 0 {
+		if grant.Grantee.GetCachedValue().(*types.GroupGrantee).GroupID == request.GroupId || request.GroupId == 0 {
 			grants = append(grants, grant)
 			return true, nil
 		}

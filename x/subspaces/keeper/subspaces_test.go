@@ -329,7 +329,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteSubspace() {
 				userGrant, err := types.NewGrant(
 					1,
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					types.NewUserTarget("cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e"),
+					types.NewUserGrantee("cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e"),
 					&feegrant.BasicAllowance{},
 				)
 				suite.Require().NoError(err)
@@ -338,7 +338,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteSubspace() {
 				groupGrant, err := types.NewGrant(
 					1,
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					types.NewGroupTarget(1),
+					types.NewGroupGrantee(1),
 					&feegrant.BasicAllowance{},
 				)
 				suite.Require().NoError(err)

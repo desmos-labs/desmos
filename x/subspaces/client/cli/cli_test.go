@@ -49,12 +49,12 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	genesisState := cfg.GenesisState
 	cfg.NumValidators = 2
 
-	userTargetAny, err := codectypes.NewAnyWithValue(types.NewUserTarget("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"))
+	userGranteeAny, err := codectypes.NewAnyWithValue(types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"))
 	s.Require().NoError(err)
-	otherUserTargetAny, err := codectypes.NewAnyWithValue(types.NewUserTarget("cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"))
+	otherUserGranteeAny, err := codectypes.NewAnyWithValue(types.NewUserGrantee("cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"))
 	s.Require().NoError(err)
 
-	groupTargetAny, err := codectypes.NewAnyWithValue(types.NewGroupTarget(1))
+	groupGranteeAny, err := codectypes.NewAnyWithValue(types.NewGroupGrantee(1))
 	s.Require().NoError(err)
 
 	allowanceAny, err := codectypes.NewAnyWithValue(&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))})
@@ -131,25 +131,25 @@ func (s *IntegrationTestSuite) SetupSuite() {
 			{
 				SubspaceID: 1,
 				Granter:    "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-				Target:     userTargetAny,
+				Grantee:    userGranteeAny,
 				Allowance:  allowanceAny,
 			},
 			{
 				SubspaceID: 1,
 				Granter:    "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-				Target:     otherUserTargetAny,
+				Grantee:    otherUserGranteeAny,
 				Allowance:  allowanceAny,
 			},
 			{
 				SubspaceID: 1,
 				Granter:    "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-				Target:     groupTargetAny,
+				Grantee:    groupGranteeAny,
 				Allowance:  allowanceAny,
 			},
 			{
 				SubspaceID: 2,
 				Granter:    "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-				Target:     groupTargetAny,
+				Grantee:    groupGranteeAny,
 				Allowance:  allowanceAny,
 			},
 		},
@@ -1374,7 +1374,7 @@ func (s *IntegrationTestSuite) TestCmdSetPermissions() {
 			shouldErr: true,
 		},
 		{
-			name:      "invalid target returns error",
+			name:      "invalid grantee returns error",
 			args:      []string{"1", "", "Write"},
 			shouldErr: true,
 		},

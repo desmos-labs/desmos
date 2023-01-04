@@ -27,7 +27,7 @@ func (k msgServer) GrantUserAllowance(goCtx context.Context, msg *types.MsgGrant
 	if err != nil {
 		return nil, err
 	}
-	grant, err := types.NewGrant(msg.SubspaceID, msg.Granter, types.NewUserTarget(msg.Grantee), allowance)
+	grant, err := types.NewGrant(msg.SubspaceID, msg.Granter, types.NewUserGrantee(msg.Grantee), allowance)
 	if err != nil {
 		return nil, err
 	}
@@ -97,7 +97,7 @@ func (k msgServer) GrantGroupAllowance(goCtx context.Context, msg *types.MsgGran
 	if err != nil {
 		return nil, err
 	}
-	grant, err := types.NewGrant(msg.SubspaceID, msg.Granter, types.NewGroupTarget(msg.GroupID), allowance)
+	grant, err := types.NewGrant(msg.SubspaceID, msg.Granter, types.NewGroupGrantee(msg.GroupID), allowance)
 	if err != nil {
 		return nil, err
 	}

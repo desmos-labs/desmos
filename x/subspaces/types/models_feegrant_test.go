@@ -9,20 +9,20 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestGroupTarget_Validate(t *testing.T) {
+func TestGroupGrantee_Validate(t *testing.T) {
 	testCases := []struct {
 		name      string
-		target    *types.GroupTarget
+		grantee   *types.GroupGrantee
 		shouldErr bool
 	}{
 		{
 			name:      "invalid group id returns error",
-			target:    types.NewGroupTarget(0),
+			grantee:   types.NewGroupGrantee(0),
 			shouldErr: true,
 		},
 		{
 			name:      "valid grant returns no error",
-			target:    types.NewGroupTarget(1),
+			grantee:   types.NewGroupGrantee(1),
 			shouldErr: false,
 		},
 	}
@@ -30,7 +30,7 @@ func TestGroupTarget_Validate(t *testing.T) {
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			err := tc.target.Validate()
+			err := tc.grantee.Validate()
 			if tc.shouldErr {
 				require.Error(t, err)
 			} else {
@@ -40,20 +40,20 @@ func TestGroupTarget_Validate(t *testing.T) {
 	}
 }
 
-func TestUserTarget_Validate(t *testing.T) {
+func TestUserGrantee_Validate(t *testing.T) {
 	testCases := []struct {
 		name      string
-		target    *types.UserTarget
+		grantee   *types.UserGrantee
 		shouldErr bool
 	}{
 		{
 			name:      "invalid user address returns error",
-			target:    types.NewUserTarget(""),
+			grantee:   types.NewUserGrantee(""),
 			shouldErr: true,
 		},
 		{
 			name:      "valid grant returns no error",
-			target:    types.NewUserTarget("cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez"),
+			grantee:   types.NewUserGrantee("cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez"),
 			shouldErr: false,
 		},
 	}
@@ -61,7 +61,7 @@ func TestUserTarget_Validate(t *testing.T) {
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			err := tc.target.Validate()
+			err := tc.grantee.Validate()
 			if tc.shouldErr {
 				require.Error(t, err)
 			} else {
@@ -72,17 +72,17 @@ func TestUserTarget_Validate(t *testing.T) {
 }
 
 func TestGrant_Validate(t *testing.T) {
-	validUserTarget := types.NewUserTarget("cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez")
-	validTargetAny, err := codectypes.NewAnyWithValue(types.NewUserTarget("cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0"))
+	validUserGrantee := types.NewUserGrantee("cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez")
+	validgranteeAny, err := codectypes.NewAnyWithValue(types.NewUserGrantee("cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0"))
 	require.NoError(t, err)
 
-	userGrant, err := types.NewGrant(1, "cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0", validUserTarget, &feegrant.BasicAllowance{})
+	userGrant, err := types.NewGrant(1, "cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0", validUserGrantee, &feegrant.BasicAllowance{})
 	require.NoError(t, err)
 
-	invalidTargetAny, err := codectypes.NewAnyWithValue(types.NewUserTarget(""))
+	invalidGranteeAny, err := codectypes.NewAnyWithValue(types.NewUserGrantee(""))
 	require.NoError(t, err)
 
-	invalidUserTargetAny, err := codectypes.NewAnyWithValue(types.NewUserTarget("cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0"))
+	invaliduserGranteeAny, err := codectypes.NewAnyWithValue(types.NewUserGrantee("cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0"))
 	require.NoError(t, err)
 
 	testCases := []struct {
@@ -95,7 +95,7 @@ func TestGrant_Validate(t *testing.T) {
 			grant: types.Grant{
 				SubspaceID: 0,
 				Granter:    "cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
-				Target:     &codectypes.Any{},
+				Grantee:    &codectypes.Any{},
 				Allowance:  &codectypes.Any{},
 			},
 			shouldErr: true,
@@ -105,17 +105,17 @@ func TestGrant_Validate(t *testing.T) {
 			grant: types.Grant{
 				SubspaceID: 1,
 				Granter:    "",
-				Target:     &codectypes.Any{},
+				Grantee:    &codectypes.Any{},
 				Allowance:  &codectypes.Any{},
 			},
 			shouldErr: true,
 		},
 		{
-			name: "invalid target returns error",
+			name: "invalid grantee returns error",
 			grant: types.Grant{
 				SubspaceID: 1,
 				Granter:    "cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
-				Target:     invalidTargetAny,
+				Grantee:    invalidGranteeAny,
 				Allowance:  &codectypes.Any{},
 			},
 			shouldErr: true,
@@ -125,7 +125,7 @@ func TestGrant_Validate(t *testing.T) {
 			grant: types.Grant{
 				SubspaceID: 1,
 				Granter:    "cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
-				Target:     invalidUserTargetAny,
+				Grantee:    invaliduserGranteeAny,
 				Allowance:  &codectypes.Any{},
 			},
 			shouldErr: true,
@@ -135,7 +135,7 @@ func TestGrant_Validate(t *testing.T) {
 			grant: types.Grant{
 				SubspaceID: 1,
 				Granter:    "cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
-				Target:     validTargetAny,
+				Grantee:    validgranteeAny,
 				Allowance:  &codectypes.Any{},
 			},
 			shouldErr: true,
