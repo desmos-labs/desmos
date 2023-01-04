@@ -8,9 +8,10 @@ DISABLED_MUTATORS='branch/*'
 # Only consider the following:
 # * go files in types, keeper, or module root directories
 # * ignore test and Protobuf files
-go_file_exclusions="-type f ! -path */client/* ! -path */simulation/* ! -path */wasm/* ! -path */legacy/* -name *.go -and -not -name *_test.go -and -not -name *pb* -and -not -name module.go -and -not -name ibc_module.go"
+# * ignore simulation test files
+# * ignore legacy files
+go_file_exclusions="-type f ! -path */client/* ! -path */simulation/* ! -path */legacy/* -name *.go -and -not -name *_test.go -and -not -name *pb* -and -not -name module.go -and -not -name ibc_module.go"
 MUTATION_SOURCES=$(find ./x  $go_file_exclusions )
-MUTATION_SOURCES+=$(find ./x -maxdepth 2 $go_file_exclusions )
 
 # Filter on a module-by-module basis as provided by input
 arg_len=$#
@@ -28,11 +29,15 @@ done
 
 MUTATION_SOURCES=$(echo "$MUTATION_SOURCES" | grep "$MODULE_FORMAT")
 
-#Collect multiple lines into a single line to be fed into go-mutesting
-MUTATION_SOURCES=$(echo $MUTATION_SOURCES | tr '\n' ' ')
+# Collect multiple lines into a single line to be fed into go-mutesting
+MUTATION_SOURCES=$(echo "$MUTATION_SOURCES" | tr '\n' ' ')
+
+echo "################################################################################"
+echo "WARNING! This test will take hours to complete!"
+echo "################################################################################"
 
 echo "running mutation tests for the following module(s): $MODULE_NAMES"
-OUTPUT=$(go run github.com/osmosis-labs/go-mutesting/cmd/go-mutesting --disable=$DISABLED_MUTATORS $MUTATION_SOURCES)
+OUTPUT=$(go run github.com/osmosis-labs/go-mutesting/cmd/go-mutesting --disable=$DISABLED_MUTATORS $MUTATION_SOURCES | tee /dev/tty)
 
 # Fetch the final result output and the overall mutation testing score
 RESULT=$(echo "$OUTPUT" | grep 'The mutation score')
