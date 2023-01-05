@@ -36,10 +36,8 @@ const (
 	OpWeightMsgRemoveUserFromUserGroup = "op_weight_msg_remove_user_from_user_group"
 	OpWeightMsgSetUserPermissions      = "op_weight_msg_set_user_permissions"
 
-	OpWeightMsgGrantUserAllowance   = "op_weight_msg_grant_user_allowance"
-	OpWeightMsgRevokeUserAllowance  = "op_weight_msg_revoke_group_allowance"
-	OpWeightMsgGrantGroupAllowance  = "op_weight_msg_grant_user_allowance"
-	OpWeightMsgRevokeGroupAllowance = "op_weight_msg_revoke_group_allowance"
+	OpWeightMsgGrantAllowance  = "op_weight_msg_grant_allowance"
+	OpWeightMsgRevokeAllowance = "op_weight_msg_revoke_allowance"
 
 	DefaultGasValue = 200_000
 )
@@ -155,30 +153,16 @@ func WeightedOperations(
 	)
 
 	var weightMsgGrantUserAllowance int
-	appParams.GetOrGenerate(cdc, OpWeightMsgGrantUserAllowance, &weightMsgGrantUserAllowance, nil,
+	appParams.GetOrGenerate(cdc, OpWeightMsgGrantAllowance, &weightMsgGrantUserAllowance, nil,
 		func(_ *rand.Rand) {
-			weightMsgGrantUserAllowance = params.DefaultWeightMsgGrantUserAllowance
+			weightMsgGrantUserAllowance = params.DefaultWeightMsgGrantAllowance
 		},
 	)
 
 	var weightMsgRevokeUserAllowance int
-	appParams.GetOrGenerate(cdc, OpWeightMsgRevokeUserAllowance, &weightMsgRevokeUserAllowance, nil,
+	appParams.GetOrGenerate(cdc, OpWeightMsgRevokeAllowance, &weightMsgRevokeUserAllowance, nil,
 		func(_ *rand.Rand) {
-			weightMsgRevokeUserAllowance = params.DefaultWeightMsgRevokeUserAllowance
-		},
-	)
-
-	var weightMsgGrantGroupAllowance int
-	appParams.GetOrGenerate(cdc, OpWeightMsgGrantGroupAllowance, &weightMsgGrantGroupAllowance, nil,
-		func(_ *rand.Rand) {
-			weightMsgGrantGroupAllowance = params.DefaultWeightMsgGrantGroupAllowance
-		},
-	)
-
-	var weightMsgRevokeGroupAllowance int
-	appParams.GetOrGenerate(cdc, OpWeightMsgRevokeGroupAllowance, &weightMsgRevokeGroupAllowance, nil,
-		func(_ *rand.Rand) {
-			weightMsgRevokeGroupAllowance = params.DefaultWeightMsgRevokeGroupAllowance
+			weightMsgRevokeUserAllowance = params.DefaultWeightMsgRevokeAllowance
 		},
 	)
 
@@ -245,19 +229,11 @@ func WeightedOperations(
 		),
 		sim.NewWeightedOperation(
 			weightMsgGrantUserAllowance,
-			SimulateMsgGrantUserAllowance(k, ak, bk, fk),
+			SimulateMsgGrantAllowance(k, ak, bk, fk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgRevokeUserAllowance,
-			SimulateMsgRevokeUserAllowance(k, ak, bk, fk),
-		),
-		sim.NewWeightedOperation(
-			weightMsgGrantGroupAllowance,
-			SimulateMsgGrantGroupAllowance(k, ak, bk, fk),
-		),
-		sim.NewWeightedOperation(
-			weightMsgRevokeGroupAllowance,
-			SimulateMsgRevokeGroupAllowance(k, ak, bk, fk),
+			SimulateMsgRevokeAllowance(k, ak, bk, fk),
 		),
 	}
 }

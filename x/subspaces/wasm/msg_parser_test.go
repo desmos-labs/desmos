@@ -239,37 +239,35 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 		},
 		{
 			name: "grant user allowance message is parsed correctly",
-			msg: buildGrantUserAllowanceRequest(cdc, types.NewMsgGrantUserAllowance(
+			msg: buildGrantAllowanceRequest(cdc, types.NewMsgGrantAllowance(
 				1,
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-				"cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
+				types.NewUserGrantee("cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0"),
 				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10)))},
 			)),
 			shouldErr: false,
 			expMsgs: []sdk.Msg{
-				types.NewMsgGrantUserAllowance(
+				types.NewMsgGrantAllowance(
 					1,
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
+					types.NewUserGrantee("cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0"),
 					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10)))},
 				),
 			},
 		},
 		{
-			name: "grant group allowance message is parsed correctly",
-			msg: buildGrantGroupAllowanceRequest(cdc, types.NewMsgGrantGroupAllowance(
+			name: "revoke user allowance message is parsed correctly",
+			msg: buildRevokeAllowanceRequest(cdc, types.NewMsgRevokeAllowance(
 				1,
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-				1,
-				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10)))},
+				types.NewUserGrantee("cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0"),
 			)),
 			shouldErr: false,
 			expMsgs: []sdk.Msg{
-				types.NewMsgGrantGroupAllowance(
+				types.NewMsgRevokeAllowance(
 					1,
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					1,
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10)))},
+					types.NewUserGrantee("cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0"),
 				),
 			},
 		},

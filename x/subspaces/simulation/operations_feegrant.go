@@ -18,8 +18,8 @@ import (
 
 // DONTCOVER
 
-// SimulateMsgGrantUserAllowance tests and runs a single MsgGrantUserAllowance
-func SimulateMsgGrantUserAllowance(
+// SimulateMsgGrantAllowance tests and runs a single MsgGrantAllowance
+func SimulateMsgGrantAllowance(
 	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
 ) simtypes.Operation {
 	return func(
@@ -27,27 +27,27 @@ func SimulateMsgGrantUserAllowance(
 		accs []simtypes.Account, chainID string,
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 		// Get the data
-		subspaceID, granter, grantee, signer, skip := randomGrantUserAllowanceFields(r, ctx, accs, k, ak)
+		subspaceID, granter, grantee, signer, skip := randomGrantAllowanceFields(r, ctx, accs, k, ak)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgGrantUserAllowance"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgGrantAllowance"), nil, nil
 		}
 
 		// Build the message
-		msg := types.NewMsgGrantUserAllowance(subspaceID, granter, grantee, &feegrant.BasicAllowance{})
+		msg := types.NewMsgGrantAllowance(subspaceID, granter, grantee, &feegrant.BasicAllowance{})
 
 		// Send the message
 		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgGrantUserAllowance"), nil, err
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgGrantAllowance"), nil, err
 		}
-		return simtypes.NewOperationMsg(msg, true, "MsgGrantUserAllowance", nil), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "MsgGrantAllowance", nil), nil, nil
 	}
 }
 
-// randomGrantUserAllowanceFields returns the data used to build a random MsgGrantUserAllowance
-func randomGrantUserAllowanceFields(
+// randomGrantAllowanceFields returns the data used to build a random MsgGrantAllowance
+func randomGrantAllowanceFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, ak authkeeper.AccountKeeper,
-) (subspaceID uint64, granter string, grantee string, signer simtypes.Account, skip bool) {
+) (subspaceID uint64, granter string, grantee types.Grantee, signer simtypes.Account, skip bool) {
 	// Get a subspace id
 	subspaces := k.GetAllSubspaces(ctx)
 	if len(subspaces) == 0 {
@@ -55,16 +55,35 @@ func randomGrantUserAllowanceFields(
 		skip = true
 		return
 	}
-	subspace := RandomSubspace(r, subspaces)
-	subspaceID = subspace.ID
 
 	// Get a granter and grantee
 	accounts := ak.GetAllAccounts(ctx)
 	granter = RandomAuthAccount(r, accounts).GetAddress().String()
-	grantee = RandomAuthAccount(r, accounts).GetAddress().String()
-	if granter == grantee {
-		skip = true
-		return
+
+	if r.Intn(100) < 50 {
+		// 50% of having a user grantee
+		subspaceID = RandomSubspace(r, subspaces).ID
+		userAddr := RandomAuthAccount(r, accounts).GetAddress().String()
+		if granter == userAddr {
+			skip = true
+			return
+		}
+		grantee = types.NewUserGrantee(userAddr)
+	} else {
+		groups := k.GetAllUserGroups(ctx)
+		if len(groups) == 0 {
+			// Skip because there are no subspaces
+			skip = true
+			return
+		}
+		group := RandomGroup(r, groups)
+		if group.ID == 0 {
+			// Skip because we cannot remove users from the group with ID 0 since it's the default one
+			skip = true
+			return
+		}
+		subspaceID = group.SubspaceID
+		grantee = types.NewGroupGrantee(group.ID)
 	}
 
 	// Get a signer account
@@ -81,8 +100,8 @@ func randomGrantUserAllowanceFields(
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// SimulateMsgRevokeUserAllowance tests and runs a single MsgRevokeUserAllowance
-func SimulateMsgRevokeUserAllowance(
+// SimulateMsgRevokeAllowance tests and runs a single MsgRevokeAllowance
+func SimulateMsgRevokeAllowance(
 	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
 ) simtypes.Operation {
 	return func(
@@ -90,38 +109,42 @@ func SimulateMsgRevokeUserAllowance(
 		accs []simtypes.Account, chainID string,
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 		// Get the data
-		subspaceID, granter, grantee, signer, skip := randomRevokeUserAllowanceFields(r, ctx, accs, k)
+		subspaceID, granter, grantee, signer, skip := randomRevokeAllowanceFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRevokeUserAllowance"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRevokeAllowance"), nil, nil
 		}
 
 		// Build the message
-		msg := types.NewMsgRevokeUserAllowance(subspaceID, granter, grantee)
+		msg := types.NewMsgRevokeAllowance(subspaceID, granter, grantee)
 
 		// Send the message
 		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRevokeUserAllowance"), nil, err
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRevokeAllowance"), nil, err
 		}
-		return simtypes.NewOperationMsg(msg, true, "MsgRevokeUserAllowance", nil), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "MsgRevokeAllowance", nil), nil, nil
 	}
 }
 
-// randomRevokeUserAllowanceFields returns the data used to build a random MsgRevokeUserAllowance
-func randomRevokeUserAllowanceFields(
+// randomRevokeAllowanceFields returns the data used to build a random MsgRevokeAllowance
+func randomRevokeAllowanceFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
-) (subspaceID uint64, granter string, grantee string, signer simtypes.Account, skip bool) {
-	// Get a grant
-	grants := k.GetAllUserGrants(ctx)
+) (subspaceID uint64, granter string, grantee types.Grantee, signer simtypes.Account, skip bool) {
+	var grants []types.Grant
+	if r.Intn(100) < 50 {
+		grants = k.GetAllUserGrants(ctx)
+	} else {
+		grants = k.GetAllUserGroupsGrants(ctx)
+	}
 	if len(grants) == 0 {
-		// Skip if there are no grants
+		// Skip because there are no grants
 		skip = true
 		return
 	}
 	grant := RandomGrant(r, grants)
 	subspaceID = grant.SubspaceID
 	granter = grant.Granter
-	grantee = grant.Grantee.GetCachedValue().(*types.UserGrantee).User
+	grantee = grant.Grantee.GetCachedValue().(types.Grantee)
 
 	// Get a signer account
 	acc := GetAccount(granter, accs)
@@ -133,124 +156,4 @@ func randomRevokeUserAllowanceFields(
 	signer = *acc
 
 	return subspaceID, granter, grantee, signer, false
-}
-
-// --------------------------------------------------------------------------------------------------------------------
-
-// SimulateMsgGrantGroupAllowance tests and runs a single MsgGrantGroupAllowance
-func SimulateMsgGrantGroupAllowance(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
-) simtypes.Operation {
-	return func(
-		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
-		accs []simtypes.Account, chainID string,
-	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
-		// Get the data
-		subspaceID, granter, groupID, signer, skip := randomGrantGroupAllowanceFields(r, ctx, accs, k, ak)
-		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgGrantGroupAllowance"), nil, nil
-		}
-
-		// Build the message
-		msg := types.NewMsgGrantGroupAllowance(subspaceID, granter, groupID, &feegrant.BasicAllowance{})
-
-		// Send the message
-		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgGrantGroupAllowance"), nil, err
-		}
-		return simtypes.NewOperationMsg(msg, true, "MsgGrantGroupAllowance", nil), nil, nil
-	}
-}
-
-// randomGrantGroupAllowanceFields returns the data used to build a random MsgGrantGroupAllowance
-func randomGrantGroupAllowanceFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, ak authkeeper.AccountKeeper,
-) (subspaceID uint64, granter string, groupID uint32, signer simtypes.Account, skip bool) {
-	// Get a group
-	groups := k.GetAllUserGroups(ctx)
-	if len(groups) == 0 {
-		// Skip because there are no subspaces
-		skip = true
-		return
-	}
-	group := RandomGroup(r, groups)
-	if group.ID == 0 {
-		// Skip because we cannot remove users from the group with ID 0 since it's the default one
-		skip = true
-		return
-	}
-	subspaceID = group.SubspaceID
-	groupID = group.ID
-
-	// Get a granter and grantee
-	accounts := ak.GetAllAccounts(ctx)
-	granter = RandomAuthAccount(r, accounts).GetAddress().String()
-
-	// Get a signer account
-	acc := GetAccount(granter, accs)
-	if acc == nil {
-		// Skip the operation without error as the account is not valid
-		skip = true
-		return
-	}
-	signer = *acc
-
-	return subspaceID, granter, groupID, signer, false
-}
-
-// --------------------------------------------------------------------------------------------------------------------
-
-// SimulateMsgRevokeGroupAllowance tests and runs a single MsgRevokeGroupAllowance
-func SimulateMsgRevokeGroupAllowance(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
-) simtypes.Operation {
-	return func(
-		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
-		accs []simtypes.Account, chainID string,
-	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
-		// Get the data
-		subspaceID, granter, groupID, signer, skip := randomRevokeGroupAllowanceFields(r, ctx, accs, k)
-		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRevokeGroupAllowance"), nil, nil
-		}
-
-		// Build the message
-		msg := types.NewMsgRevokeGroupAllowance(subspaceID, granter, groupID)
-
-		// Send the message
-		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRevokeGroupAllowance"), nil, err
-		}
-		return simtypes.NewOperationMsg(msg, true, "MsgRevokeGroupAllowance", nil), nil, nil
-	}
-}
-
-// randomRevokeGroupAllowanceFields returns the data used to build a random MsgRevokeGroupAllowance
-func randomRevokeGroupAllowanceFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
-) (subspaceID uint64, granter string, groupID uint32, signer simtypes.Account, skip bool) {
-	// Get a grant
-	grants := k.GetAllUserGroupsGrants(ctx)
-	if len(grants) == 0 {
-		// Skip because there are no subspaces
-		skip = true
-		return
-	}
-	grant := RandomGrant(r, grants)
-	subspaceID = grant.SubspaceID
-	granter = grant.Granter
-	groupID = grant.Grantee.GetCachedValue().(*types.GroupGrantee).GroupID
-
-	// Get a signer account
-	acc := GetAccount(granter, accs)
-	if acc == nil {
-		// Skip the operation without error as the account is not valid
-		skip = true
-		return
-	}
-	signer = *acc
-
-	return subspaceID, granter, groupID, signer, false
 }

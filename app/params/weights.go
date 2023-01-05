@@ -33,10 +33,8 @@ const (
 	DefaultWeightMsgRemoveUserFromUserGroup int = 3
 	DefaultWeightMsgSetUserPermissions      int = 85
 
-	DefaultWeightMsgGrantUserAllowance   int = 30
-	DefaultWeightMsgRevokeUserAllowance  int = 15
-	DefaultWeightMsgGrantGroupAllowance  int = 30
-	DefaultWeightMsgRevokeGroupAllowance int = 15
+	DefaultWeightMsgGrantAllowance  int = 50
+	DefaultWeightMsgRevokeAllowance int = 25
 
 	DefaultWeightMsgCreatePost           int = 80
 	DefaultWeightMsgEditPost             int = 40

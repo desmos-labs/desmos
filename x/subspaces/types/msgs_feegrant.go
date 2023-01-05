@@ -12,22 +12,18 @@ import (
 )
 
 var (
-	_ sdk.Msg = &MsgGrantUserAllowance{}
-	_ sdk.Msg = &MsgRevokeUserAllowance{}
-	_ sdk.Msg = &MsgGrantGroupAllowance{}
-	_ sdk.Msg = &MsgRevokeGroupAllowance{}
+	_ sdk.Msg = &MsgGrantAllowance{}
+	_ sdk.Msg = &MsgRevokeAllowance{}
 
-	_ legacytx.LegacyMsg = &MsgGrantUserAllowance{}
-	_ legacytx.LegacyMsg = &MsgRevokeUserAllowance{}
-	_ legacytx.LegacyMsg = &MsgGrantGroupAllowance{}
-	_ legacytx.LegacyMsg = &MsgRevokeGroupAllowance{}
+	_ legacytx.LegacyMsg = &MsgGrantAllowance{}
+	_ legacytx.LegacyMsg = &MsgRevokeAllowance{}
 
-	_ codectypes.UnpackInterfacesMessage = &MsgGrantUserAllowance{}
-	_ codectypes.UnpackInterfacesMessage = &MsgGrantGroupAllowance{}
+	_ codectypes.UnpackInterfacesMessage = &MsgGrantAllowance{}
+	_ codectypes.UnpackInterfacesMessage = &MsgRevokeAllowance{}
 )
 
-// NewMsgGrantUserAllowance creates a new MsgGrantUserAllowance instance
-func NewMsgGrantUserAllowance(subspaceID uint64, granter string, grantee string, allowance feegranttypes.FeeAllowanceI) *MsgGrantUserAllowance {
+// NewMsgGrantAllowance creates a new MsgGrantAllowance instance
+func NewMsgGrantAllowance(subspaceID uint64, granter string, grantee Grantee, allowance feegranttypes.FeeAllowanceI) *MsgGrantAllowance {
 	msg, ok := allowance.(proto.Message)
 	if !ok {
 		panic("cannot proto marshal allowance")
@@ -36,16 +32,20 @@ func NewMsgGrantUserAllowance(subspaceID uint64, granter string, grantee string,
 	if err != nil {
 		panic("failed to pack allowance to any type")
 	}
-	return &MsgGrantUserAllowance{
+	granteeAny, err := codectypes.NewAnyWithValue(grantee)
+	if err != nil {
+		panic("failed to pack grantee to any type")
+	}
+	return &MsgGrantAllowance{
 		SubspaceID: subspaceID,
 		Granter:    granter,
-		Grantee:    grantee,
+		Grantee:    granteeAny,
 		Allowance:  any,
 	}
 }
 
 // ValidateBasic implements sdk.Msg
-func (msg MsgGrantUserAllowance) ValidateBasic() error {
+func (msg MsgGrantAllowance) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
 		return fmt.Errorf("invalid subspace id: %d", msg.SubspaceID)
 	}
@@ -53,12 +53,15 @@ func (msg MsgGrantUserAllowance) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid granter address")
 	}
-	_, err = sdk.AccAddressFromBech32(msg.Grantee)
+	grantee := msg.Grantee.GetCachedValue().(Grantee)
+	err = grantee.Validate()
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid grantee address")
+		return err
 	}
-	if msg.Grantee == msg.Granter {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "cannot self-grant fee authorization")
+	if u, ok := grantee.(*UserGrantee); ok {
+		if u.User == msg.Granter {
+			return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "cannot self-grant fee authorization")
+		}
 	}
 	allowance, err := msg.GetUnpackedAllowance()
 	if err != nil {
@@ -69,7 +72,7 @@ func (msg MsgGrantUserAllowance) ValidateBasic() error {
 }
 
 // GetSigners implements sdk.Msg
-func (msg MsgGrantUserAllowance) GetSigners() []sdk.AccAddress {
+func (msg MsgGrantAllowance) GetSigners() []sdk.AccAddress {
 	granter, err := sdk.AccAddressFromBech32(msg.Granter)
 	if err != nil {
 		panic(err)
@@ -78,22 +81,22 @@ func (msg MsgGrantUserAllowance) GetSigners() []sdk.AccAddress {
 }
 
 // Type implements legacytx.LegacyMsg
-func (msg MsgGrantUserAllowance) Type() string {
-	return ActionGrantUserAllowance
+func (msg MsgGrantAllowance) Type() string {
+	return ActionGrantAllowance
 }
 
 // Route implements legacytx.LegacyMsg
-func (msg MsgGrantUserAllowance) Route() string {
+func (msg MsgGrantAllowance) Route() string {
 	return RouterKey
 }
 
 // GetSignBytes implements legacytx.LegacyMsg
-func (msg MsgGrantUserAllowance) GetSignBytes() []byte {
+func (msg MsgGrantAllowance) GetSignBytes() []byte {
 	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
 }
 
 // GetUnpackedAllowance gets the unpacked allowance from the cached value of the allowance
-func (msg MsgGrantUserAllowance) GetUnpackedAllowance() (feegranttypes.FeeAllowanceI, error) {
+func (msg MsgGrantAllowance) GetUnpackedAllowance() (feegranttypes.FeeAllowanceI, error) {
 	allowance, ok := msg.Allowance.GetCachedValue().(feegranttypes.FeeAllowanceI)
 	if !ok {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid allowance type %T", allowance)
@@ -102,104 +105,49 @@ func (msg MsgGrantUserAllowance) GetUnpackedAllowance() (feegranttypes.FeeAllowa
 }
 
 // UnpackInterfaces implements codectypes.UnpackInterfacesMessage
-func (msg MsgGrantUserAllowance) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
+func (msg MsgGrantAllowance) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 	var allowance feegranttypes.FeeAllowanceI
-	return unpacker.UnpackAny(msg.Allowance, &allowance)
-}
-
-// --------------------------------------------------------------------------------------------------------------------
-
-// NewMsgRevokeUserAllowance creates a new MsgRevokeUserAllowance instance
-func NewMsgRevokeUserAllowance(subspaceID uint64, granter string, grantee string) *MsgRevokeUserAllowance {
-	return &MsgRevokeUserAllowance{
-		SubspaceID: subspaceID,
-		Granter:    granter,
-		Grantee:    grantee,
-	}
-}
-
-// ValidateBasic implements sdk.Msg
-func (msg MsgRevokeUserAllowance) ValidateBasic() error {
-	if msg.SubspaceID == 0 {
-		return fmt.Errorf("invalid subspace id: %d", msg.SubspaceID)
-	}
-	_, err := sdk.AccAddressFromBech32(msg.Granter)
-	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid granter address")
-	}
-	_, err = sdk.AccAddressFromBech32(msg.Grantee)
-	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid grantee address")
-	}
-	return nil
-}
-
-// GetSigners implements sdk.Msg
-func (msg MsgRevokeUserAllowance) GetSigners() []sdk.AccAddress {
-	granter, err := sdk.AccAddressFromBech32(msg.Granter)
-	if err != nil {
-		panic(err)
-	}
-	return []sdk.AccAddress{granter}
-}
-
-// Type implements legacytx.LegacyMsg
-func (msg MsgRevokeUserAllowance) Type() string {
-	return ActionRevokeUserAllowance
-}
-
-// Route implements legacytx.LegacyMsg
-func (msg MsgRevokeUserAllowance) Route() string {
-	return RouterKey
-}
-
-// GetSignBytes implements legacytx.LegacyMsg
-func (msg MsgRevokeUserAllowance) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
-}
-
-// --------------------------------------------------------------------------------------------------------------------
-
-// NewMsgGrantGroupAllowance creates a new MsgGrantGroupAllowance instance
-func NewMsgGrantGroupAllowance(subspaceID uint64, granter string, groupID uint32, allowance feegranttypes.FeeAllowanceI) *MsgGrantGroupAllowance {
-	msg, ok := allowance.(proto.Message)
-	if !ok {
-		panic("cannot proto marshal allowance")
-	}
-	any, err := codectypes.NewAnyWithValue(msg)
-	if err != nil {
-		panic("failed to pack allowance to any type")
-	}
-	return &MsgGrantGroupAllowance{
-		SubspaceID: subspaceID,
-		Granter:    granter,
-		GroupID:    groupID,
-		Allowance:  any,
-	}
-}
-
-// ValidateBasic implements sdk.Msg
-func (msg MsgGrantGroupAllowance) ValidateBasic() error {
-	if msg.SubspaceID == 0 {
-		return fmt.Errorf("invalid subspace id: %d", msg.SubspaceID)
-	}
-	if msg.GroupID == 0 {
-		return fmt.Errorf("invalid group id: %d", msg.GroupID)
-	}
-	_, err := sdk.AccAddressFromBech32(msg.Granter)
-	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid granter address")
-	}
-
-	f, err := msg.GetUnpackedAllowance()
+	err := unpacker.UnpackAny(msg.Allowance, &allowance)
 	if err != nil {
 		return err
 	}
-	return f.ValidateBasic()
+	var grantee Grantee
+	return unpacker.UnpackAny(msg.Grantee, &grantee)
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// NewMsgRevokeAllowance creates a new MsgRevokeAllowance instance
+func NewMsgRevokeAllowance(subspaceID uint64, granter string, grantee Grantee) *MsgRevokeAllowance {
+	granteeAny, err := codectypes.NewAnyWithValue(grantee)
+	if err != nil {
+		panic("failed to pack grantee to any type")
+	}
+	return &MsgRevokeAllowance{
+		SubspaceID: subspaceID,
+		Granter:    granter,
+		Grantee:    granteeAny,
+	}
+}
+
+// ValidateBasic implements sdk.Msg
+func (msg MsgRevokeAllowance) ValidateBasic() error {
+	if msg.SubspaceID == 0 {
+		return fmt.Errorf("invalid subspace id: %d", msg.SubspaceID)
+	}
+	_, err := sdk.AccAddressFromBech32(msg.Granter)
+	if err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid granter address")
+	}
+	err = msg.Grantee.GetCachedValue().(Grantee).Validate()
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // GetSigners implements sdk.Msg
-func (msg MsgGrantGroupAllowance) GetSigners() []sdk.AccAddress {
+func (msg MsgRevokeAllowance) GetSigners() []sdk.AccAddress {
 	granter, err := sdk.AccAddressFromBech32(msg.Granter)
 	if err != nil {
 		panic(err)
@@ -208,82 +156,22 @@ func (msg MsgGrantGroupAllowance) GetSigners() []sdk.AccAddress {
 }
 
 // Type implements legacytx.LegacyMsg
-func (msg MsgGrantGroupAllowance) Type() string {
-	return ActionGrantGroupAllowance
+func (msg MsgRevokeAllowance) Type() string {
+	return ActionRevokeAllowance
 }
 
 // Route implements legacytx.LegacyMsg
-func (msg MsgGrantGroupAllowance) Route() string {
+func (msg MsgRevokeAllowance) Route() string {
 	return RouterKey
 }
 
 // GetSignBytes implements legacytx.LegacyMsg
-func (msg MsgGrantGroupAllowance) GetSignBytes() []byte {
+func (msg MsgRevokeAllowance) GetSignBytes() []byte {
 	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
-}
-
-// GetUnpackedAllowance gets the unpacked allowance from the cached value of the allowance
-func (msg MsgGrantGroupAllowance) GetUnpackedAllowance() (feegranttypes.FeeAllowanceI, error) {
-	allowance, ok := msg.Allowance.GetCachedValue().(feegranttypes.FeeAllowanceI)
-	if !ok {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid allowance type %T", allowance)
-	}
-
-	return allowance, nil
 }
 
 // UnpackInterfaces implements codectypes.UnpackInterfacesMessage
-func (msg MsgGrantGroupAllowance) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
-	var allowance feegranttypes.FeeAllowanceI
-	return unpacker.UnpackAny(msg.Allowance, &allowance)
-}
-
-// --------------------------------------------------------------------------------------------------------------------
-
-// NewMsgRevokeGroupAllowance creates a new MsgRevokeGroupAllowance instance
-func NewMsgRevokeGroupAllowance(subspaceID uint64, granter string, groupID uint32) *MsgRevokeGroupAllowance {
-	return &MsgRevokeGroupAllowance{
-		SubspaceID: subspaceID,
-		Granter:    granter,
-		GroupID:    groupID,
-	}
-}
-
-// ValidateBasic implements sdk.Msg
-func (msg MsgRevokeGroupAllowance) ValidateBasic() error {
-	if msg.SubspaceID == 0 {
-		return fmt.Errorf("invalid subspace id: %d", msg.SubspaceID)
-	}
-	if msg.GroupID == 0 {
-		return fmt.Errorf("invalid group id: %d", msg.GroupID)
-	}
-	_, err := sdk.AccAddressFromBech32(msg.Granter)
-	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid granter address")
-	}
-	return nil
-}
-
-// GetSigners implements sdk.Msg
-func (msg MsgRevokeGroupAllowance) GetSigners() []sdk.AccAddress {
-	granter, err := sdk.AccAddressFromBech32(msg.Granter)
-	if err != nil {
-		panic(err)
-	}
-	return []sdk.AccAddress{granter}
-}
-
-// Type implements sdk.Msg
-func (msg MsgRevokeGroupAllowance) Type() string {
-	return ActionRevokeGroupAllowance
-}
-
-// Route implements sdk.Msg
-func (msg MsgRevokeGroupAllowance) Route() string {
-	return RouterKey
-}
-
-// GetSignBytes implements sdk.Msg
-func (msg MsgRevokeGroupAllowance) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
+func (msg MsgRevokeAllowance) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
+	var grantee Grantee
+	return unpacker.UnpackAny(msg.Grantee, &grantee)
 }

@@ -9,8 +9,8 @@ import (
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
-// GrantUserAllowance defines a rpc method for MsgGrantUserAllowance
-func (k msgServer) GrantUserAllowance(goCtx context.Context, msg *types.MsgGrantUserAllowance) (*types.MsgGrantUserAllowanceResponse, error) {
+// GrantAllowance defines a rpc method for MsgGrantAllowance
+func (k msgServer) GrantAllowance(goCtx context.Context, msg *types.MsgGrantAllowance) (*types.MsgGrantAllowanceResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
@@ -19,130 +19,95 @@ func (k msgServer) GrantUserAllowance(goCtx context.Context, msg *types.MsgGrant
 	if !k.HasPermission(ctx, msg.SubspaceID, types.RootSectionID, msg.Granter, types.PermissionGrantAllowances) {
 		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot grant allowances in this subspace")
 	}
-	if k.HasUserGrant(ctx, msg.SubspaceID, msg.Granter, msg.Grantee) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "fee allowance already exists")
+
+	var events sdk.Events = sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Granter),
+		),
+	}
+
+	grantee := msg.Grantee.GetCachedValue().(types.Grantee)
+	switch grantee := grantee.(type) {
+	case *types.UserGrantee:
+		if k.HasUserGrant(ctx, msg.SubspaceID, msg.Granter, grantee.User) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "fee allowance already exists")
+		}
+		events = events.AppendEvent(sdk.NewEvent(
+			types.EventTypeGrantAllowance,
+			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			sdk.NewAttribute(types.AttributeKeyGranter, msg.Granter),
+			sdk.NewAttribute(types.AttributeKeyUserGrantee, grantee.User),
+		))
+
+	case *types.GroupGrantee:
+		if !k.HasUserGroup(ctx, msg.SubspaceID, grantee.GroupID) {
+			return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "group with id %d not found", grantee.GroupID)
+		}
+		if k.HasGroupGrant(ctx, msg.SubspaceID, msg.Granter, grantee.GroupID) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "fee allowance already exists")
+		}
+		events = events.AppendEvent(sdk.NewEvent(
+			types.EventTypeGrantAllowance,
+			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			sdk.NewAttribute(types.AttributeKeyGranter, msg.Granter),
+			sdk.NewAttribute(types.AttributeKeyGroupGrantee, fmt.Sprintf("%d", grantee.GroupID)),
+		))
+	default:
+		panic(fmt.Errorf("unsupported type %T", grantee))
 	}
 
 	allowance, err := msg.GetUnpackedAllowance()
 	if err != nil {
 		return nil, err
 	}
-	grant, err := types.NewGrant(msg.SubspaceID, msg.Granter, types.NewUserGrantee(msg.Grantee), allowance)
-	if err != nil {
-		return nil, err
-	}
-	k.Keeper.SaveGrant(ctx, grant)
-
-	ctx.EventManager().EmitEvents(sdk.Events{
-		sdk.NewEvent(
-			sdk.EventTypeMessage,
-			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
-			sdk.NewAttribute(sdk.AttributeKeySender, msg.Granter),
-		),
-		sdk.NewEvent(
-			types.EventTypeGrantUserAllowance,
-			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
-			sdk.NewAttribute(types.AttributeKeyGranter, msg.Granter),
-			sdk.NewAttribute(types.AttributeKeyGrantee, msg.Grantee),
-		),
-	})
-	return &types.MsgGrantUserAllowanceResponse{}, nil
+	k.Keeper.SaveGrant(ctx, types.NewGrant(msg.SubspaceID, msg.Granter, grantee, allowance))
+	ctx.EventManager().EmitEvents(events)
+	return &types.MsgGrantAllowanceResponse{}, nil
 }
 
-// RevokeUserAllowance defines a rpc method for MsgRevokeUserAllowance
-func (k msgServer) RevokeUserAllowance(goCtx context.Context, msg *types.MsgRevokeUserAllowance) (*types.MsgRevokeUserAllowanceResponse, error) {
+// RevokeAllowance defines a rpc method for MsgRevokeAllowance
+func (k msgServer) RevokeAllowance(goCtx context.Context, msg *types.MsgRevokeAllowance) (*types.MsgRevokeAllowanceResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if !k.HasUserGrant(ctx, msg.SubspaceID, msg.Granter, msg.Grantee) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "fee allowance does not exist")
-	}
-	k.DeleteUserGrant(ctx, msg.SubspaceID, msg.Granter, msg.Grantee)
-
-	ctx.EventManager().EmitEvents(sdk.Events{
+	var events sdk.Events = sdk.Events{
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
 			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.Granter),
 		),
-		sdk.NewEvent(
-			types.EventTypeRevokeUserAllowance,
+	}
+
+	switch grantee := msg.Grantee.GetCachedValue().(type) {
+	case *types.UserGrantee:
+		if !k.HasUserGrant(ctx, msg.SubspaceID, msg.Granter, grantee.User) {
+			return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "fee allowance does not exist")
+		}
+		k.DeleteUserGrant(ctx, msg.SubspaceID, msg.Granter, grantee.User)
+		events = events.AppendEvent(sdk.NewEvent(
+			types.EventTypeRevokeAllowance,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyGranter, msg.Granter),
-			sdk.NewAttribute(types.AttributeKeyGrantee, msg.Grantee),
-		),
-	})
-	return &types.MsgRevokeUserAllowanceResponse{}, nil
-}
+			sdk.NewAttribute(types.AttributeKeyUserGrantee, grantee.User),
+		))
 
-// GrantGroupAllowance defines a rpc method for MsgGrantGroupAllowance
-func (k msgServer) GrantGroupAllowance(goCtx context.Context, msg *types.MsgGrantGroupAllowance) (*types.MsgGrantGroupAllowanceResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	if !k.HasSubspace(ctx, msg.SubspaceID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
-	}
-	if !k.HasUserGroup(ctx, msg.SubspaceID, msg.GroupID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "group with id %d not found", msg.GroupID)
-	}
-	if !k.HasPermission(ctx, msg.SubspaceID, types.RootSectionID, msg.Granter, types.PermissionGrantAllowances) {
-		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot grant allowances in this subspace")
-	}
-	if k.HasGroupGrant(ctx, msg.SubspaceID, msg.Granter, msg.GroupID) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "fee allowance already exists")
-	}
-
-	allowance, err := msg.GetUnpackedAllowance()
-	if err != nil {
-		return nil, err
-	}
-	grant, err := types.NewGrant(msg.SubspaceID, msg.Granter, types.NewGroupGrantee(msg.GroupID), allowance)
-	if err != nil {
-		return nil, err
-	}
-	k.Keeper.SaveGrant(ctx, grant)
-
-	ctx.EventManager().EmitEvents(sdk.Events{
-		sdk.NewEvent(
-			sdk.EventTypeMessage,
-			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
-			sdk.NewAttribute(sdk.AttributeKeySender, msg.Granter),
-		),
-		sdk.NewEvent(
-			types.EventTypeGrantGroupAllowance,
+	case *types.GroupGrantee:
+		if !k.HasGroupGrant(ctx, msg.SubspaceID, msg.Granter, grantee.GroupID) {
+			return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "fee allowance does not exist")
+		}
+		k.DeleteGroupGrant(ctx, msg.SubspaceID, msg.Granter, grantee.GroupID)
+		events = events.AppendEvent(sdk.NewEvent(
+			types.EventTypeRevokeAllowance,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyGranter, msg.Granter),
-			sdk.NewAttribute(types.AttributeKeyUserGroupID, fmt.Sprintf("%d", msg.GroupID)),
-		),
-	})
-	return &types.MsgGrantGroupAllowanceResponse{}, nil
-}
-
-// RevokeGroupAllowance defines a rpc method for MsgRevokeGroupAllowance
-func (k msgServer) RevokeGroupAllowance(goCtx context.Context, msg *types.MsgRevokeGroupAllowance) (*types.MsgRevokeGroupAllowanceResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	if !k.HasGroupGrant(ctx, msg.SubspaceID, msg.Granter, msg.GroupID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "fee allowance does not exist")
+			sdk.NewAttribute(types.AttributeKeyGroupGrantee, fmt.Sprintf("%d", grantee.GroupID)),
+		))
+	default:
+		panic(fmt.Errorf("unsupported type %T", grantee))
 	}
-
-	k.DeleteGroupGrant(ctx, msg.SubspaceID, msg.Granter, msg.GroupID)
-
-	ctx.EventManager().EmitEvents(sdk.Events{
-		sdk.NewEvent(
-			sdk.EventTypeMessage,
-			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
-			sdk.NewAttribute(sdk.AttributeKeySender, msg.Granter),
-		),
-		sdk.NewEvent(
-			types.EventTypeRevokeGroupAllowance,
-			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
-			sdk.NewAttribute(types.AttributeKeyGranter, msg.Granter),
-			sdk.NewAttribute(types.AttributeKeyUserGroupID, fmt.Sprintf("%d", msg.GroupID)),
-		),
-	})
-	return &types.MsgRevokeGroupAllowanceResponse{}, nil
+	ctx.EventManager().EmitEvents(events)
+	return &types.MsgRevokeAllowanceResponse{}, nil
 }

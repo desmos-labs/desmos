@@ -62,20 +62,20 @@ func (t *GroupGrantee) Validate() error {
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewGrant is a constructor for the Grant type
-func NewGrant(subspaceID uint64, granter string, grantee Grantee, feeAllowance feegranttypes.FeeAllowanceI) (Grant, error) {
+func NewGrant(subspaceID uint64, granter string, grantee Grantee, feeAllowance feegranttypes.FeeAllowanceI) Grant {
 	msg, ok := feeAllowance.(proto.Message)
 	if !ok {
-		return Grant{}, sdkerrors.Wrapf(sdkerrors.ErrPackAny, "cannot proto marshal %T", feeAllowance)
+		panic(sdkerrors.Wrapf(sdkerrors.ErrPackAny, "cannot proto marshal %T", feeAllowance))
 	}
 
 	allowanceAny, err := codectypes.NewAnyWithValue(msg)
 	if err != nil {
-		return Grant{}, err
+		panic("failed to pack allowance to any type")
 	}
 
 	granteeAny, err := codectypes.NewAnyWithValue(grantee)
 	if err != nil {
-		return Grant{}, err
+		panic("failed to pack grantee to any type")
 	}
 
 	return Grant{
@@ -83,7 +83,7 @@ func NewGrant(subspaceID uint64, granter string, grantee Grantee, feeAllowance f
 		Granter:    granter,
 		Grantee:    granteeAny,
 		Allowance:  allowanceAny,
-	}, nil
+	}
 }
 
 // Validate implements fmt.Validator

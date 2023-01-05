@@ -14,18 +14,14 @@ import (
 	"github.com/spf13/pflag"
 )
 
-// GetCmdGrantUserAllowance returns the command used to grant a user fee allowance
-func GetCmdGrantUserAllowance() *cobra.Command {
+// GetCmdGrantAllowance returns the command used to grant a fee allowance
+func GetCmdGrantAllowance() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "grant-user-allowance [subspace-id] [grantee]",
+		Use:   "grant-allowance [subspace-id]",
 		Short: "Grant a fee allowance to an address",
-		Args:  cobra.ExactArgs(2),
+		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
-			if err != nil {
-				return err
-			}
-			allowance, err := createAllowanceFromFlags(cmd.Flags())
 			if err != nil {
 				return err
 			}
@@ -33,7 +29,15 @@ func GetCmdGrantUserAllowance() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			msg := types.NewMsgGrantUserAllowance(subspaceID, clientCtx.FromAddress.String(), args[1], allowance)
+			grantee, err := createGranteeFromFlags(cmd.Flags())
+			if err != nil {
+				return err
+			}
+			allowance, err := createAllowanceFromFlags(cmd.Flags())
+			if err != nil {
+				return err
+			}
+			msg := types.NewMsgGrantAllowance(subspaceID, clientCtx.FromAddress.String(), grantee, allowance)
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}
@@ -41,6 +45,8 @@ func GetCmdGrantUserAllowance() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().String(FlagUserGrantee, "", "Address of the user being the allowance grantee")
+	cmd.Flags().Uint32(FlagGroupGrantee, 0, "Id of group being the allowance grantee")
 	cmd.Flags().StringSlice(FlagAllowedMsgs, []string{}, "Set of allowed messages for fee allowance")
 	cmd.Flags().String(FlagExpiration, "", "The RFC 3339 timestamp after which the grant expires for the user")
 	cmd.Flags().String(FlagSpendLimit, "", "Spend limit specifies the max limit can be used, if not mentioned there is no limit")
@@ -51,12 +57,12 @@ func GetCmdGrantUserAllowance() *cobra.Command {
 	return cmd
 }
 
-// GetCmdRevokeUserAllowance returns the command used to revoke a user fee allowance
-func GetCmdRevokeUserAllowance() *cobra.Command {
+// GetCmdRevokeAllowance returns the command used to revoke a fee allowance
+func GetCmdRevokeAllowance() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "revoke-user-allowance [subspace-id] [user]",
+		Use:   "revoke-user-allowance [subspace-id]",
 		Short: "Revoke a fee allowance from an address",
-		Args:  cobra.ExactArgs(2),
+		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -66,7 +72,11 @@ func GetCmdRevokeUserAllowance() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			msg := types.NewMsgRevokeUserAllowance(subspaceID, clientCtx.FromAddress.String(), args[1])
+			grantee, err := createGranteeFromFlags(cmd.Flags())
+			if err != nil {
+				return err
+			}
+			msg := types.NewMsgRevokeAllowance(subspaceID, clientCtx.FromAddress.String(), grantee)
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}
@@ -74,82 +84,35 @@ func GetCmdRevokeUserAllowance() *cobra.Command {
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
+	cmd.Flags().String(FlagUserGrantee, "", "Address of the user being the allowance grantee")
+	cmd.Flags().Uint32(FlagGroupGrantee, 0, "Id of group being the allowance grantee")
 	flags.AddTxFlagsToCmd(cmd)
 	return cmd
 }
 
-// GetCmdGrantGroupAllowance returns the command used to grant a group fee allowance
-func GetCmdGrantGroupAllowance() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "grant-group-allowance [subspace-id] [group-id]",
-		Short: "Grant a fee allowance to a group",
-		Args:  cobra.ExactArgs(2),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx, err := client.GetClientTxContext(cmd)
-			if err != nil {
-				return err
-			}
-			allowance, err := createAllowanceFromFlags(cmd.Flags())
-			if err != nil {
-				return err
-			}
-
-			subspaceID, err := types.ParseSubspaceID(args[0])
-			if err != nil {
-				return err
-			}
-			groupID, err := types.ParseGroupID(args[1])
-			if err != nil {
-				return err
-			}
-			msg := types.NewMsgGrantGroupAllowance(subspaceID, clientCtx.FromAddress.String(), groupID, allowance)
-			if err = msg.ValidateBasic(); err != nil {
-				return fmt.Errorf("message validation failed: %w", err)
-			}
-			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
-		},
+// createGranteeFromFlags create a grantee from flags
+func createGranteeFromFlags(flags *pflag.FlagSet) (types.Grantee, error) {
+	userGrantee, err := flags.GetString(FlagUserGrantee)
+	if err != nil {
+		return nil, err
 	}
 
-	cmd.Flags().StringSlice(FlagAllowedMsgs, []string{}, "Set of allowed messages for fee allowance")
-	cmd.Flags().String(FlagExpiration, "", "The RFC 3339 timestamp after which the grant expires for the user")
-	cmd.Flags().String(FlagSpendLimit, "", "Spend limit specifies the max limit can be used, if not mentioned there is no limit")
-	cmd.Flags().Int64(FlagPeriod, 0, "Period specifies the time duration in which period_spend_limit coins can be spent before that allowance is reset")
-	cmd.Flags().String(FlagPeriodLimit, "", "Period limit specifies the maximum number of coins that can be spent in the period")
-
-	flags.AddTxFlagsToCmd(cmd)
-
-	return cmd
-}
-
-// GetCmdRevokeUserFeeAllowance returns the command used to revoke a group fee allowance
-func GetCmdRevokeGroupAllowance() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "revoke-group-allowance [subspace-id] [group-id]",
-		Short: "Revoke a fee allowance from a group",
-		Args:  cobra.ExactArgs(2),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx, err := client.GetClientTxContext(cmd)
-			if err != nil {
-				return err
-			}
-			subspaceID, err := types.ParseSubspaceID(args[0])
-			if err != nil {
-				return err
-			}
-			groupID, err := types.ParseGroupID(args[1])
-			if err != nil {
-				return err
-			}
-			msg := types.NewMsgRevokeGroupAllowance(subspaceID, clientCtx.FromAddress.String(), groupID)
-			if err = msg.ValidateBasic(); err != nil {
-				return fmt.Errorf("message validation failed: %w", err)
-			}
-
-			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
-		},
+	groupGrantee, err := flags.GetUint32(FlagGroupGrantee)
+	if err != nil {
+		return nil, err
 	}
-	flags.AddTxFlagsToCmd(cmd)
-	return cmd
+
+	switch {
+	case userGrantee != "" && groupGrantee != 0:
+		return nil, fmt.Errorf("only one of --%s or --%s must be used", FlagUserGrantee, FlagGroupGrantee)
+
+	case userGrantee != "":
+		return types.NewUserGrantee(userGrantee), nil
+
+	case groupGrantee != 0:
+		return types.NewGroupGrantee(groupGrantee), nil
+	}
+	return nil, fmt.Errorf("one of --%s or --%s must be used", FlagUserGrantee, FlagGroupGrantee)
 }
 
 // createAllowanceFromFlags create a allowance from flags

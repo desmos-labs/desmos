@@ -28,10 +28,8 @@ const (
 	ActionAddUserToUserGroup      = "add_user_to_user_group"
 	ActionRemoveUserFromUserGroup = "remove_user_from_user_group"
 	ActionSetUserPermissions      = "set_user_permissions"
-	ActionGrantUserAllowance      = "grant_user_fee_allowance"
-	ActionRevokeUserAllowance     = "revoke_user_fee_allowance"
-	ActionGrantGroupAllowance     = "grant_group_fee_allowance"
-	ActionRevokeGroupAllowance    = "revoke_group_fee_allowance"
+	ActionGrantAllowance          = "grant_allowance"
+	ActionRevokeAllowance         = "revoke_allowance"
 
 	DoNotModify = "[do-not-modify]"
 )

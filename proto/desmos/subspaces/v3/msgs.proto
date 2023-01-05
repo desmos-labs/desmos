@@ -61,25 +61,15 @@ service Msg {
   rpc SetUserPermissions(MsgSetUserPermissions)
       returns (MsgSetUserPermissionsResponse);
 
-  // GrantUserAllowance allows the granter to grant a fee allowance to the
+  // GrantAllowance allows the granter to grant a fee allowance to the
   // grantee.
-  rpc GrantUserAllowance(MsgGrantUserAllowance)
-      returns (MsgGrantUserAllowanceResponse);
+  rpc GrantAllowance(MsgGrantAllowance)
+      returns (MsgGrantAllowanceResponse);
 
-  // RevokeUserAllowance allows a granter to revoke any existing allowance that
+  // RevokeAllowance allows a granter to revoke any existing allowance that
   // has been granted to the grantee.
-  rpc RevokeUserAllowance(MsgRevokeUserAllowance)
-      returns (MsgRevokeUserAllowanceResponse);
-
-  // GrantGroupAllowance allows the granter to grant a fee allowance to the
-  // group.
-  rpc GrantGroupAllowance(MsgGrantGroupAllowance)
-      returns (MsgGrantGroupAllowanceResponse);
-
-  // RevokeGroupAllowance allows a granter to revoke any existing allowance that
-  // has been granted to the group.
-  rpc RevokeGroupAllowance(MsgRevokeGroupAllowance)
-      returns (MsgRevokeGroupAllowanceResponse);
+  rpc RevokeAllowance(MsgRevokeAllowance)
+      returns (MsgRevokeAllowanceResponse);
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -504,9 +494,9 @@ message MsgSetUserPermissionsResponse {}
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// MsgGrantUserAllowance creates a new grant from the grantee to the grantee,
+// MsgGrantAllowance creates a new grant from the grantee to the grantee,
 // within the given subspace
-message MsgGrantUserAllowance {
+message MsgGrantAllowance {
   // Id of the subspace inside which where the allowance should be granted
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
@@ -514,22 +504,25 @@ message MsgGrantUserAllowance {
   ];
   // Address of the user granting the allowance
   string granter = 2 [ (gogoproto.moretags) = "yaml:\"granter\"" ];
-  // Address of the user being granted the allowance
-  string grantee = 3 [ (gogoproto.moretags) = "yaml:\"grantee\"" ];
-  // Allowance can be any allowance type that implements FeeAllowanceI
+  // Target being granted the allowance
+  google.protobuf.Any grantee = 3 [
+    (cosmos_proto.accepts_interface) = "Grantee",
+    (gogoproto.moretags) = "yaml:\"grantee\""
+  ];
+  // Allowance can be any allowance type that implements AllowanceI
   google.protobuf.Any allowance = 4 [
-    (cosmos_proto.accepts_interface) = "FeeAllowanceI",
+    (cosmos_proto.accepts_interface) = "AllowanceI",
     (gogoproto.moretags) = "yaml:\"allowance\""
   ];
 }
 
-// MsgGrantUserAllowanceResponse defines the Msg/GrantAllowanceResponse response
+// MsgGrantAllowanceResponse defines the Msg/GrantAllowanceResponse response
 // type.
-message MsgGrantUserAllowanceResponse {}
+message MsgGrantAllowanceResponse {}
 
-// MsgRevokeUserAllowance removes any existing allowance created from granter to
+// MsgRevokeAllowance removes any existing allowance created from granter to
 // the grantee inside the given subspace
-message MsgRevokeUserAllowance {
+message MsgRevokeAllowance {
   // If of the subspace inside which the allowance to be deleted is
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
@@ -537,57 +530,13 @@ message MsgRevokeUserAllowance {
   ];
   // Address of the user that created the allowance
   string granter = 2 [ (gogoproto.moretags) = "yaml:\"granter\"" ];
-  // Address of the user that was granted the allowance
-  string grantee = 3 [ (gogoproto.moretags) = "yaml:\"grantee\"" ];
-}
-
-// MsgRevokeUserAllowanceResponse defines the Msg/RevokeAllowanceResponse
-// response type.
-message MsgRevokeUserAllowanceResponse {}
-
-// MsgGrantGroupAllowance allows creting a new grant for a given group inside a
-// given subspace
-message MsgGrantGroupAllowance {
-  // Id of the subspace inside which the grant should be created
-  uint64 subspace_id = 1 [
-    (gogoproto.customname) = "SubspaceID",
-    (gogoproto.moretags) = "yaml:\"subspace_id\""
-  ];
-  // Id of the group being to which to grant the allowance
-  uint32 group_id = 2 [
-    (gogoproto.customname) = "GroupID",
-    (gogoproto.moretags) = "yaml:\"group_id\""
-  ];
-  // Address of the user granting the allowance
-  string granter = 3 [ (gogoproto.moretags) = "yaml:\"granter\"" ];
-  // Allowance can be any allowance type that implements FeeAllowanceI
-  google.protobuf.Any allowance = 4 [
-    (cosmos_proto.accepts_interface) = "FeeAllowanceI",
-    (gogoproto.moretags) = "yaml:\"allowance\""
+  // Target being granted the allowance
+  google.protobuf.Any grantee = 3 [
+    (cosmos_proto.accepts_interface) = "Grantee",
+    (gogoproto.moretags) = "yaml:\"grantee\""
   ];
 }
 
-// MsgGrantGroupAllowanceResponse defines the Msg/GrantAllowanceResponse
+// MsgRevokeAllowanceResponse defines the Msg/RevokeAllowanceResponse
 // response type.
-message MsgGrantGroupAllowanceResponse {}
-
-// MsgRevokeGroupAllowance removes any existing allowance creted from the
-// granter to the given group inside the specified subspace
-message MsgRevokeGroupAllowance {
-  // Id of the subspace inside which the allowance to be deleted is
-  uint64 subspace_id = 1 [
-    (gogoproto.customname) = "SubspaceID",
-    (gogoproto.moretags) = "yaml:\"subspace_id\""
-  ];
-  // Id of the group for which to delete the allowance
-  uint32 group_id = 2 [
-    (gogoproto.customname) = "GroupID",
-    (gogoproto.moretags) = "yaml:\"group_id\""
-  ];
-  // Address of the user that granted the allowance
-  string granter = 3 [ (gogoproto.moretags) = "yaml:\"granter\"" ];
-}
-
-// MsgRevokeGroupAllowanceResponse defines the Msg/RevokeAllowanceResponse
-// response type.
-message MsgRevokeGroupAllowanceResponse {}
+message MsgRevokeAllowanceResponse {}

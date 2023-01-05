@@ -1777,31 +1777,31 @@ func (m *MsgSetUserPermissionsResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgSetUserPermissionsResponse proto.InternalMessageInfo
 
-// MsgGrantUserAllowance creates a new grant from the grantee to the grantee,
+// MsgGrantAllowance creates a new grant from the grantee to the grantee,
 // within the given subspace
-type MsgGrantUserAllowance struct {
+type MsgGrantAllowance struct {
 	// Id of the subspace inside which where the allowance should be granted
 	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
 	// Address of the user granting the allowance
 	Granter string `protobuf:"bytes,2,opt,name=granter,proto3" json:"granter,omitempty" yaml:"granter"`
-	// Address of the user being granted the allowance
-	Grantee string `protobuf:"bytes,3,opt,name=grantee,proto3" json:"grantee,omitempty" yaml:"grantee"`
-	// Allowance can be any allowance type that implements FeeAllowanceI
+	// Target being granted the allowance
+	Grantee *types.Any `protobuf:"bytes,3,opt,name=grantee,proto3" json:"grantee,omitempty" yaml:"grantee"`
+	// Allowance can be any allowance type that implements AllowanceI
 	Allowance *types.Any `protobuf:"bytes,4,opt,name=allowance,proto3" json:"allowance,omitempty" yaml:"allowance"`
 }
 
-func (m *MsgGrantUserAllowance) Reset()         { *m = MsgGrantUserAllowance{} }
-func (m *MsgGrantUserAllowance) String() string { return proto.CompactTextString(m) }
-func (*MsgGrantUserAllowance) ProtoMessage()    {}
-func (*MsgGrantUserAllowance) Descriptor() ([]byte, []int) {
+func (m *MsgGrantAllowance) Reset()         { *m = MsgGrantAllowance{} }
+func (m *MsgGrantAllowance) String() string { return proto.CompactTextString(m) }
+func (*MsgGrantAllowance) ProtoMessage()    {}
+func (*MsgGrantAllowance) Descriptor() ([]byte, []int) {
 	return fileDescriptor_35d68359a074bdd9, []int{30}
 }
-func (m *MsgGrantUserAllowance) XXX_Unmarshal(b []byte) error {
+func (m *MsgGrantAllowance) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgGrantUserAllowance) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgGrantAllowance) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgGrantUserAllowance.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgGrantAllowance.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -1811,63 +1811,63 @@ func (m *MsgGrantUserAllowance) XXX_Marshal(b []byte, deterministic bool) ([]byt
 		return b[:n], nil
 	}
 }
-func (m *MsgGrantUserAllowance) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgGrantUserAllowance.Merge(m, src)
+func (m *MsgGrantAllowance) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgGrantAllowance.Merge(m, src)
 }
-func (m *MsgGrantUserAllowance) XXX_Size() int {
+func (m *MsgGrantAllowance) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgGrantUserAllowance) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgGrantUserAllowance.DiscardUnknown(m)
+func (m *MsgGrantAllowance) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgGrantAllowance.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgGrantUserAllowance proto.InternalMessageInfo
+var xxx_messageInfo_MsgGrantAllowance proto.InternalMessageInfo
 
-func (m *MsgGrantUserAllowance) GetSubspaceID() uint64 {
+func (m *MsgGrantAllowance) GetSubspaceID() uint64 {
 	if m != nil {
 		return m.SubspaceID
 	}
 	return 0
 }
 
-func (m *MsgGrantUserAllowance) GetGranter() string {
+func (m *MsgGrantAllowance) GetGranter() string {
 	if m != nil {
 		return m.Granter
 	}
 	return ""
 }
 
-func (m *MsgGrantUserAllowance) GetGrantee() string {
+func (m *MsgGrantAllowance) GetGrantee() *types.Any {
 	if m != nil {
 		return m.Grantee
 	}
-	return ""
+	return nil
 }
 
-func (m *MsgGrantUserAllowance) GetAllowance() *types.Any {
+func (m *MsgGrantAllowance) GetAllowance() *types.Any {
 	if m != nil {
 		return m.Allowance
 	}
 	return nil
 }
 
-// MsgGrantUserAllowanceResponse defines the Msg/GrantAllowanceResponse response
+// MsgGrantAllowanceResponse defines the Msg/GrantAllowanceResponse response
 // type.
-type MsgGrantUserAllowanceResponse struct {
+type MsgGrantAllowanceResponse struct {
 }
 
-func (m *MsgGrantUserAllowanceResponse) Reset()         { *m = MsgGrantUserAllowanceResponse{} }
-func (m *MsgGrantUserAllowanceResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgGrantUserAllowanceResponse) ProtoMessage()    {}
-func (*MsgGrantUserAllowanceResponse) Descriptor() ([]byte, []int) {
+func (m *MsgGrantAllowanceResponse) Reset()         { *m = MsgGrantAllowanceResponse{} }
+func (m *MsgGrantAllowanceResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgGrantAllowanceResponse) ProtoMessage()    {}
+func (*MsgGrantAllowanceResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_35d68359a074bdd9, []int{31}
 }
-func (m *MsgGrantUserAllowanceResponse) XXX_Unmarshal(b []byte) error {
+func (m *MsgGrantAllowanceResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgGrantUserAllowanceResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgGrantAllowanceResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgGrantUserAllowanceResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgGrantAllowanceResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -1877,41 +1877,41 @@ func (m *MsgGrantUserAllowanceResponse) XXX_Marshal(b []byte, deterministic bool
 		return b[:n], nil
 	}
 }
-func (m *MsgGrantUserAllowanceResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgGrantUserAllowanceResponse.Merge(m, src)
+func (m *MsgGrantAllowanceResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgGrantAllowanceResponse.Merge(m, src)
 }
-func (m *MsgGrantUserAllowanceResponse) XXX_Size() int {
+func (m *MsgGrantAllowanceResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgGrantUserAllowanceResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgGrantUserAllowanceResponse.DiscardUnknown(m)
+func (m *MsgGrantAllowanceResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgGrantAllowanceResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgGrantUserAllowanceResponse proto.InternalMessageInfo
+var xxx_messageInfo_MsgGrantAllowanceResponse proto.InternalMessageInfo
 
-// MsgRevokeUserAllowance removes any existing allowance created from granter to
+// MsgRevokeAllowance removes any existing allowance created from granter to
 // the grantee inside the given subspace
-type MsgRevokeUserAllowance struct {
+type MsgRevokeAllowance struct {
 	// If of the subspace inside which the allowance to be deleted is
 	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
 	// Address of the user that created the allowance
 	Granter string `protobuf:"bytes,2,opt,name=granter,proto3" json:"granter,omitempty" yaml:"granter"`
-	// Address of the user that was granted the allowance
-	Grantee string `protobuf:"bytes,3,opt,name=grantee,proto3" json:"grantee,omitempty" yaml:"grantee"`
+	// Target being granted the allowance
+	Grantee *types.Any `protobuf:"bytes,3,opt,name=grantee,proto3" json:"grantee,omitempty" yaml:"grantee"`
 }
 
-func (m *MsgRevokeUserAllowance) Reset()         { *m = MsgRevokeUserAllowance{} }
-func (m *MsgRevokeUserAllowance) String() string { return proto.CompactTextString(m) }
-func (*MsgRevokeUserAllowance) ProtoMessage()    {}
-func (*MsgRevokeUserAllowance) Descriptor() ([]byte, []int) {
+func (m *MsgRevokeAllowance) Reset()         { *m = MsgRevokeAllowance{} }
+func (m *MsgRevokeAllowance) String() string { return proto.CompactTextString(m) }
+func (*MsgRevokeAllowance) ProtoMessage()    {}
+func (*MsgRevokeAllowance) Descriptor() ([]byte, []int) {
 	return fileDescriptor_35d68359a074bdd9, []int{32}
 }
-func (m *MsgRevokeUserAllowance) XXX_Unmarshal(b []byte) error {
+func (m *MsgRevokeAllowance) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgRevokeUserAllowance) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgRevokeAllowance) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgRevokeUserAllowance.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgRevokeAllowance.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -1921,168 +1921,56 @@ func (m *MsgRevokeUserAllowance) XXX_Marshal(b []byte, deterministic bool) ([]by
 		return b[:n], nil
 	}
 }
-func (m *MsgRevokeUserAllowance) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgRevokeUserAllowance.Merge(m, src)
+func (m *MsgRevokeAllowance) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgRevokeAllowance.Merge(m, src)
 }
-func (m *MsgRevokeUserAllowance) XXX_Size() int {
+func (m *MsgRevokeAllowance) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgRevokeUserAllowance) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgRevokeUserAllowance.DiscardUnknown(m)
+func (m *MsgRevokeAllowance) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgRevokeAllowance.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgRevokeUserAllowance proto.InternalMessageInfo
+var xxx_messageInfo_MsgRevokeAllowance proto.InternalMessageInfo
 
-func (m *MsgRevokeUserAllowance) GetSubspaceID() uint64 {
+func (m *MsgRevokeAllowance) GetSubspaceID() uint64 {
 	if m != nil {
 		return m.SubspaceID
 	}
 	return 0
 }
 
-func (m *MsgRevokeUserAllowance) GetGranter() string {
+func (m *MsgRevokeAllowance) GetGranter() string {
 	if m != nil {
 		return m.Granter
 	}
 	return ""
 }
 
-func (m *MsgRevokeUserAllowance) GetGrantee() string {
+func (m *MsgRevokeAllowance) GetGrantee() *types.Any {
 	if m != nil {
 		return m.Grantee
-	}
-	return ""
-}
-
-// MsgRevokeUserAllowanceResponse defines the Msg/RevokeAllowanceResponse
-// response type.
-type MsgRevokeUserAllowanceResponse struct {
-}
-
-func (m *MsgRevokeUserAllowanceResponse) Reset()         { *m = MsgRevokeUserAllowanceResponse{} }
-func (m *MsgRevokeUserAllowanceResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgRevokeUserAllowanceResponse) ProtoMessage()    {}
-func (*MsgRevokeUserAllowanceResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_35d68359a074bdd9, []int{33}
-}
-func (m *MsgRevokeUserAllowanceResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *MsgRevokeUserAllowanceResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_MsgRevokeUserAllowanceResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *MsgRevokeUserAllowanceResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgRevokeUserAllowanceResponse.Merge(m, src)
-}
-func (m *MsgRevokeUserAllowanceResponse) XXX_Size() int {
-	return m.Size()
-}
-func (m *MsgRevokeUserAllowanceResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgRevokeUserAllowanceResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_MsgRevokeUserAllowanceResponse proto.InternalMessageInfo
-
-// MsgGrantGroupAllowance allows creting a new grant for a given group inside a
-// given subspace
-type MsgGrantGroupAllowance struct {
-	// Id of the subspace inside which the grant should be created
-	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
-	// Id of the group being to which to grant the allowance
-	GroupID uint32 `protobuf:"varint,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty" yaml:"group_id"`
-	// Address of the user granting the allowance
-	Granter string `protobuf:"bytes,3,opt,name=granter,proto3" json:"granter,omitempty" yaml:"granter"`
-	// Allowance can be any allowance type that implements FeeAllowanceI
-	Allowance *types.Any `protobuf:"bytes,4,opt,name=allowance,proto3" json:"allowance,omitempty" yaml:"allowance"`
-}
-
-func (m *MsgGrantGroupAllowance) Reset()         { *m = MsgGrantGroupAllowance{} }
-func (m *MsgGrantGroupAllowance) String() string { return proto.CompactTextString(m) }
-func (*MsgGrantGroupAllowance) ProtoMessage()    {}
-func (*MsgGrantGroupAllowance) Descriptor() ([]byte, []int) {
-	return fileDescriptor_35d68359a074bdd9, []int{34}
-}
-func (m *MsgGrantGroupAllowance) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *MsgGrantGroupAllowance) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_MsgGrantGroupAllowance.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *MsgGrantGroupAllowance) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgGrantGroupAllowance.Merge(m, src)
-}
-func (m *MsgGrantGroupAllowance) XXX_Size() int {
-	return m.Size()
-}
-func (m *MsgGrantGroupAllowance) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgGrantGroupAllowance.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_MsgGrantGroupAllowance proto.InternalMessageInfo
-
-func (m *MsgGrantGroupAllowance) GetSubspaceID() uint64 {
-	if m != nil {
-		return m.SubspaceID
-	}
-	return 0
-}
-
-func (m *MsgGrantGroupAllowance) GetGroupID() uint32 {
-	if m != nil {
-		return m.GroupID
-	}
-	return 0
-}
-
-func (m *MsgGrantGroupAllowance) GetGranter() string {
-	if m != nil {
-		return m.Granter
-	}
-	return ""
-}
-
-func (m *MsgGrantGroupAllowance) GetAllowance() *types.Any {
-	if m != nil {
-		return m.Allowance
 	}
 	return nil
 }
 
-// MsgGrantGroupAllowanceResponse defines the Msg/GrantAllowanceResponse
+// MsgRevokeAllowanceResponse defines the Msg/RevokeAllowanceResponse
 // response type.
-type MsgGrantGroupAllowanceResponse struct {
+type MsgRevokeAllowanceResponse struct {
 }
 
-func (m *MsgGrantGroupAllowanceResponse) Reset()         { *m = MsgGrantGroupAllowanceResponse{} }
-func (m *MsgGrantGroupAllowanceResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgGrantGroupAllowanceResponse) ProtoMessage()    {}
-func (*MsgGrantGroupAllowanceResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_35d68359a074bdd9, []int{35}
+func (m *MsgRevokeAllowanceResponse) Reset()         { *m = MsgRevokeAllowanceResponse{} }
+func (m *MsgRevokeAllowanceResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgRevokeAllowanceResponse) ProtoMessage()    {}
+func (*MsgRevokeAllowanceResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_35d68359a074bdd9, []int{33}
 }
-func (m *MsgGrantGroupAllowanceResponse) XXX_Unmarshal(b []byte) error {
+func (m *MsgRevokeAllowanceResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgGrantGroupAllowanceResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgRevokeAllowanceResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgGrantGroupAllowanceResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgRevokeAllowanceResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -2092,120 +1980,17 @@ func (m *MsgGrantGroupAllowanceResponse) XXX_Marshal(b []byte, deterministic boo
 		return b[:n], nil
 	}
 }
-func (m *MsgGrantGroupAllowanceResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgGrantGroupAllowanceResponse.Merge(m, src)
+func (m *MsgRevokeAllowanceResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgRevokeAllowanceResponse.Merge(m, src)
 }
-func (m *MsgGrantGroupAllowanceResponse) XXX_Size() int {
+func (m *MsgRevokeAllowanceResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgGrantGroupAllowanceResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgGrantGroupAllowanceResponse.DiscardUnknown(m)
+func (m *MsgRevokeAllowanceResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgRevokeAllowanceResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgGrantGroupAllowanceResponse proto.InternalMessageInfo
-
-// MsgRevokeGroupAllowance removes any existing allowance creted from the
-// granter to the given group inside the specified subspace
-type MsgRevokeGroupAllowance struct {
-	// Id of the subspace inside which the allowance to be deleted is
-	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
-	// Id of the group for which to delete the allowance
-	GroupID uint32 `protobuf:"varint,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty" yaml:"group_id"`
-	// Address of the user that granted the allowance
-	Granter string `protobuf:"bytes,3,opt,name=granter,proto3" json:"granter,omitempty" yaml:"granter"`
-}
-
-func (m *MsgRevokeGroupAllowance) Reset()         { *m = MsgRevokeGroupAllowance{} }
-func (m *MsgRevokeGroupAllowance) String() string { return proto.CompactTextString(m) }
-func (*MsgRevokeGroupAllowance) ProtoMessage()    {}
-func (*MsgRevokeGroupAllowance) Descriptor() ([]byte, []int) {
-	return fileDescriptor_35d68359a074bdd9, []int{36}
-}
-func (m *MsgRevokeGroupAllowance) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *MsgRevokeGroupAllowance) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_MsgRevokeGroupAllowance.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *MsgRevokeGroupAllowance) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgRevokeGroupAllowance.Merge(m, src)
-}
-func (m *MsgRevokeGroupAllowance) XXX_Size() int {
-	return m.Size()
-}
-func (m *MsgRevokeGroupAllowance) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgRevokeGroupAllowance.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_MsgRevokeGroupAllowance proto.InternalMessageInfo
-
-func (m *MsgRevokeGroupAllowance) GetSubspaceID() uint64 {
-	if m != nil {
-		return m.SubspaceID
-	}
-	return 0
-}
-
-func (m *MsgRevokeGroupAllowance) GetGroupID() uint32 {
-	if m != nil {
-		return m.GroupID
-	}
-	return 0
-}
-
-func (m *MsgRevokeGroupAllowance) GetGranter() string {
-	if m != nil {
-		return m.Granter
-	}
-	return ""
-}
-
-// MsgRevokeGroupAllowanceResponse defines the Msg/RevokeAllowanceResponse
-// response type.
-type MsgRevokeGroupAllowanceResponse struct {
-}
-
-func (m *MsgRevokeGroupAllowanceResponse) Reset()         { *m = MsgRevokeGroupAllowanceResponse{} }
-func (m *MsgRevokeGroupAllowanceResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgRevokeGroupAllowanceResponse) ProtoMessage()    {}
-func (*MsgRevokeGroupAllowanceResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_35d68359a074bdd9, []int{37}
-}
-func (m *MsgRevokeGroupAllowanceResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *MsgRevokeGroupAllowanceResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_MsgRevokeGroupAllowanceResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *MsgRevokeGroupAllowanceResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgRevokeGroupAllowanceResponse.Merge(m, src)
-}
-func (m *MsgRevokeGroupAllowanceResponse) XXX_Size() int {
-	return m.Size()
-}
-func (m *MsgRevokeGroupAllowanceResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgRevokeGroupAllowanceResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_MsgRevokeGroupAllowanceResponse proto.InternalMessageInfo
+var xxx_messageInfo_MsgRevokeAllowanceResponse proto.InternalMessageInfo
 
 func init() {
 	proto.RegisterType((*MsgCreateSubspace)(nil), "desmos.subspaces.v3.MsgCreateSubspace")
@@ -2238,115 +2023,106 @@ func init() {
 	proto.RegisterType((*MsgRemoveUserFromUserGroupResponse)(nil), "desmos.subspaces.v3.MsgRemoveUserFromUserGroupResponse")
 	proto.RegisterType((*MsgSetUserPermissions)(nil), "desmos.subspaces.v3.MsgSetUserPermissions")
 	proto.RegisterType((*MsgSetUserPermissionsResponse)(nil), "desmos.subspaces.v3.MsgSetUserPermissionsResponse")
-	proto.RegisterType((*MsgGrantUserAllowance)(nil), "desmos.subspaces.v3.MsgGrantUserAllowance")
-	proto.RegisterType((*MsgGrantUserAllowanceResponse)(nil), "desmos.subspaces.v3.MsgGrantUserAllowanceResponse")
-	proto.RegisterType((*MsgRevokeUserAllowance)(nil), "desmos.subspaces.v3.MsgRevokeUserAllowance")
-	proto.RegisterType((*MsgRevokeUserAllowanceResponse)(nil), "desmos.subspaces.v3.MsgRevokeUserAllowanceResponse")
-	proto.RegisterType((*MsgGrantGroupAllowance)(nil), "desmos.subspaces.v3.MsgGrantGroupAllowance")
-	proto.RegisterType((*MsgGrantGroupAllowanceResponse)(nil), "desmos.subspaces.v3.MsgGrantGroupAllowanceResponse")
-	proto.RegisterType((*MsgRevokeGroupAllowance)(nil), "desmos.subspaces.v3.MsgRevokeGroupAllowance")
-	proto.RegisterType((*MsgRevokeGroupAllowanceResponse)(nil), "desmos.subspaces.v3.MsgRevokeGroupAllowanceResponse")
+	proto.RegisterType((*MsgGrantAllowance)(nil), "desmos.subspaces.v3.MsgGrantAllowance")
+	proto.RegisterType((*MsgGrantAllowanceResponse)(nil), "desmos.subspaces.v3.MsgGrantAllowanceResponse")
+	proto.RegisterType((*MsgRevokeAllowance)(nil), "desmos.subspaces.v3.MsgRevokeAllowance")
+	proto.RegisterType((*MsgRevokeAllowanceResponse)(nil), "desmos.subspaces.v3.MsgRevokeAllowanceResponse")
 }
 
 func init() { proto.RegisterFile("desmos/subspaces/v3/msgs.proto", fileDescriptor_35d68359a074bdd9) }
 
 var fileDescriptor_35d68359a074bdd9 = []byte{
-	// 1506 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe4, 0x99, 0x4b, 0x6c, 0x1b, 0x45,
-	0x18, 0xc7, 0xbb, 0xb6, 0xf3, 0xfa, 0x9c, 0x57, 0x37, 0x69, 0xeb, 0x2e, 0xe0, 0x0d, 0xd3, 0xa6,
-	0xcf, 0xc4, 0x96, 0x92, 0x4a, 0x14, 0x24, 0x0e, 0x71, 0x5f, 0x8a, 0x20, 0x6d, 0xb5, 0x05, 0x21,
-	0x90, 0x50, 0xb4, 0xce, 0x4e, 0xb7, 0x56, 0xed, 0x5d, 0x6b, 0xc7, 0x4e, 0x08, 0xd7, 0x8a, 0x7b,
-	0x85, 0xc4, 0x95, 0x0b, 0x70, 0xe2, 0xca, 0xad, 0x27, 0x4e, 0x3c, 0x4e, 0xe5, 0xc6, 0x69, 0x85,
-	0xdc, 0x13, 0x17, 0x0e, 0xbe, 0x71, 0x43, 0x3b, 0xb3, 0x3b, 0x3b, 0x6b, 0xef, 0xda, 0xeb, 0xe2,
-	0x42, 0x0a, 0xb7, 0xf5, 0xcc, 0x7f, 0x1e, 0xdf, 0xef, 0x7b, 0x64, 0x66, 0x02, 0x45, 0x03, 0x93,
-	0x86, 0x4d, 0xca, 0xa4, 0x5d, 0x25, 0x4d, 0x7d, 0x0f, 0x93, 0xf2, 0xfe, 0x66, 0xb9, 0x41, 0x4c,
-	0x52, 0x6a, 0x3a, 0x76, 0xcb, 0x96, 0x97, 0x58, 0x7f, 0x89, 0xf7, 0x97, 0xf6, 0x37, 0x95, 0x65,
-	0xd3, 0x36, 0x6d, 0xda, 0x5f, 0xf6, 0xbe, 0x98, 0x54, 0x59, 0x89, 0x9d, 0xca, 0x36, 0x70, 0xdd,
-	0x9f, 0x4c, 0x39, 0x6d, 0xda, 0xb6, 0x59, 0xc7, 0x65, 0xfa, 0xab, 0xda, 0xbe, 0x5f, 0xd6, 0xad,
-	0xc3, 0xa0, 0x6b, 0xcf, 0xf6, 0x06, 0xef, 0xb2, 0x59, 0xd9, 0x0f, 0xd6, 0x85, 0xfe, 0x94, 0xe0,
-	0xf8, 0x0e, 0x31, 0xaf, 0x39, 0x58, 0x6f, 0xe1, 0x7b, 0xfe, 0xe4, 0xf2, 0x19, 0xc8, 0x59, 0x7a,
-	0x03, 0x17, 0xa4, 0x15, 0xe9, 0xc2, 0x4c, 0x65, 0xa1, 0xeb, 0xaa, 0xf9, 0x43, 0xbd, 0x51, 0x7f,
-	0x0b, 0x79, 0xad, 0x48, 0xa3, 0x9d, 0xf2, 0x55, 0xc8, 0x1b, 0x98, 0xec, 0x39, 0xb5, 0x66, 0xab,
-	0x66, 0x5b, 0x85, 0x0c, 0xd5, 0x9e, 0xec, 0xba, 0xaa, 0xcc, 0xb4, 0x42, 0x27, 0xd2, 0x44, 0xa9,
-	0x5c, 0x86, 0xe9, 0x96, 0x83, 0x75, 0xd2, 0x76, 0x0e, 0x0b, 0x59, 0x3a, 0x6c, 0xa9, 0xeb, 0xaa,
-	0x0b, 0x6c, 0x58, 0xd0, 0x83, 0x34, 0x2e, 0x92, 0xcf, 0xc1, 0x84, 0x7d, 0x60, 0x61, 0xa7, 0x90,
-	0xa3, 0xea, 0xc5, 0xae, 0xab, 0xce, 0x32, 0x35, 0x6d, 0x46, 0x1a, 0xeb, 0x96, 0xd7, 0x60, 0x6a,
-	0xcf, 0xb3, 0xc4, 0x76, 0x0a, 0x13, 0x54, 0x29, 0x77, 0x5d, 0x75, 0x9e, 0x29, 0xfd, 0x0e, 0xa4,
-	0x05, 0x12, 0x54, 0x85, 0xd3, 0x7d, 0xa6, 0x6b, 0x98, 0x34, 0x6d, 0x8b, 0x60, 0xf9, 0x06, 0xe4,
-	0x03, 0xd6, 0xbb, 0x35, 0x83, 0x92, 0xc8, 0x55, 0xce, 0x76, 0x5c, 0x15, 0x02, 0xe9, 0xf6, 0xf5,
-	0xd0, 0x56, 0x41, 0x8a, 0x34, 0x08, 0x7e, 0x6d, 0x1b, 0xe8, 0x49, 0x06, 0x16, 0x76, 0x88, 0x79,
-	0xc3, 0xa8, 0xb5, 0x38, 0xdd, 0xf1, 0x4c, 0xcd, 0x9d, 0x94, 0x19, 0xc1, 0x49, 0xd9, 0xe7, 0x73,
-	0x52, 0x6e, 0x24, 0x27, 0x4d, 0x0c, 0x76, 0xd2, 0x45, 0x98, 0x24, 0x35, 0xd3, 0x13, 0x4e, 0x52,
-	0xe1, 0xf1, 0xae, 0xab, 0xce, 0xf9, 0xb6, 0xd2, 0x76, 0xa4, 0xf9, 0x02, 0x74, 0x1a, 0x4e, 0xf5,
-	0xc0, 0x0b, 0xfc, 0x83, 0x3e, 0x63, 0x81, 0x7b, 0x1d, 0xd7, 0xb1, 0x10, 0xb8, 0x63, 0x42, 0x1b,
-	0x6e, 0x31, 0x33, 0x6c, 0x8b, 0xaf, 0xd0, 0x20, 0x8a, 0x6e, 0x83, 0x6f, 0xf2, 0x9b, 0x0c, 0x2c,
-	0x86, 0x21, 0x86, 0xf7, 0x28, 0xd8, 0x97, 0xc3, 0xfd, 0x6f, 0xc3, 0x4c, 0x53, 0x77, 0xb0, 0xd5,
-	0xf2, 0xf6, 0xe8, 0xf9, 0x7f, 0xae, 0xb2, 0xd2, 0x71, 0xd5, 0xe9, 0xbb, 0xb4, 0x91, 0xee, 0x70,
-	0x91, 0xcd, 0xc1, 0x65, 0x48, 0x9b, 0x66, 0xdf, 0xdb, 0xc6, 0x88, 0x99, 0xf8, 0x31, 0x14, 0x7a,
-	0x31, 0xf1, 0x44, 0xdc, 0x02, 0x20, 0xac, 0x29, 0xa0, 0x35, 0x57, 0x41, 0x1d, 0x57, 0x9d, 0xf1,
-	0x85, 0x74, 0x2b, 0xc7, 0x7d, 0x58, 0x5c, 0x88, 0xb4, 0x19, 0xff, 0xc7, 0xb6, 0x81, 0xbe, 0xce,
-	0xc0, 0x7c, 0x10, 0x47, 0xe3, 0x75, 0x42, 0x74, 0x73, 0x99, 0xe7, 0xd8, 0x1c, 0xf7, 0x63, 0x76,
-	0x04, 0x3f, 0xe6, 0xd2, 0xfb, 0xf1, 0x22, 0x4c, 0x62, 0xa3, 0x16, 0xfa, 0x41, 0x08, 0x65, 0xd6,
-	0x8e, 0x34, 0x5f, 0x80, 0x0a, 0x70, 0x32, 0x4a, 0x89, 0xc7, 0xf1, 0xe7, 0x0c, 0xe0, 0x8e, 0xbd,
-	0x8f, 0x8f, 0x1e, 0xc0, 0x77, 0x60, 0xce, 0xc2, 0x07, 0xbb, 0x61, 0xb4, 0x66, 0xe9, 0x2c, 0xe7,
-	0x3b, 0xae, 0x9a, 0xbf, 0x8d, 0x0f, 0x84, 0x80, 0x5d, 0xf6, 0xc1, 0x8a, 0x6a, 0xa4, 0xe5, 0x2d,
-	0x2e, 0x12, 0x33, 0x3f, 0x37, 0x2c, 0xf3, 0x19, 0x2e, 0x81, 0x09, 0xc7, 0xf5, 0x83, 0x44, 0xd3,
-	0xde, 0x2f, 0x0a, 0x47, 0x0e, 0x58, 0x68, 0x63, 0x76, 0x98, 0x8d, 0x0a, 0x4d, 0xcc, 0x88, 0x21,
-	0xdc, 0xca, 0xef, 0xb3, 0x20, 0xf3, 0xac, 0x7d, 0x9f, 0x60, 0xe7, 0x96, 0x63, 0xb7, 0x9b, 0xff,
-	0x9f, 0xcc, 0xba, 0x03, 0x4b, 0x06, 0xbe, 0xaf, 0xb7, 0xeb, 0xad, 0xdd, 0x26, 0x76, 0x1a, 0x35,
-	0x42, 0x6a, 0xb6, 0x45, 0x0a, 0x13, 0x2b, 0xd9, 0x0b, 0x33, 0x95, 0x62, 0xd7, 0x55, 0x95, 0x60,
-	0x86, 0x3e, 0x11, 0xd2, 0x64, 0xbf, 0xf5, 0x6e, 0xd8, 0x28, 0x5f, 0x83, 0x85, 0x9a, 0x55, 0x6b,
-	0xd5, 0xf4, 0xfa, 0x6e, 0x03, 0x37, 0xaa, 0xd8, 0x21, 0x85, 0x49, 0x3a, 0x99, 0xd2, 0x75, 0xd5,
-	0x93, 0x6c, 0xb2, 0x1e, 0x01, 0xd2, 0xe6, 0xfd, 0x96, 0x1d, 0xd6, 0x20, 0x16, 0xde, 0xa9, 0xe1,
-	0x85, 0xf7, 0x03, 0x50, 0xfa, 0x5d, 0xc8, 0x4b, 0xef, 0x9b, 0x30, 0x6d, 0x7a, 0x0d, 0x61, 0xe1,
-	0x2d, 0x76, 0x5c, 0x75, 0x8a, 0x8a, 0x28, 0x7f, 0xff, 0x34, 0x10, 0x88, 0x90, 0x36, 0x45, 0x3f,
-	0xb7, 0x0d, 0xf4, 0x25, 0xfb, 0xcb, 0xe7, 0x15, 0x93, 0xb1, 0x87, 0x86, 0xb8, 0xad, 0xcc, 0x48,
-	0xdb, 0xfa, 0x07, 0x8a, 0xad, 0x9f, 0x59, 0x13, 0xe9, 0x32, 0x2b, 0xc2, 0x87, 0x67, 0xd6, 0x63,
-	0x06, 0xcf, 0x2b, 0x2d, 0x47, 0x09, 0xde, 0x1d, 0x98, 0xf7, 0x4a, 0xa7, 0x90, 0x96, 0xac, 0xd2,
-	0x5e, 0xec, 0xb8, 0xea, 0xec, 0x6d, 0x7c, 0x20, 0x66, 0xe6, 0x89, 0xb0, 0xd4, 0x8a, 0xd9, 0x39,
-	0x6b, 0x85, 0xb2, 0x91, 0x8a, 0x2d, 0xc3, 0x15, 0x21, 0xc2, 0x71, 0x3d, 0xca, 0xd0, 0x28, 0xbe,
-	0x87, 0x43, 0x94, 0x62, 0x5a, 0xfd, 0xfb, 0xe0, 0xae, 0x42, 0x5e, 0xac, 0x10, 0x59, 0x9a, 0xd4,
-	0x42, 0x40, 0x45, 0x2a, 0x83, 0x28, 0x1d, 0x85, 0xd0, 0x59, 0x40, 0xc9, 0x10, 0xc2, 0xa2, 0x2d,
-	0xd1, 0xa2, 0xcd, 0x2a, 0xfa, 0x51, 0x0a, 0xae, 0x11, 0xfe, 0x28, 0xbd, 0x4a, 0xdd, 0xdd, 0x63,
-	0x02, 0xb7, 0xf0, 0x77, 0x09, 0x4e, 0xec, 0x10, 0x73, 0xcb, 0x30, 0xbc, 0xbe, 0xf7, 0xec, 0x23,
-	0x56, 0x7e, 0xda, 0x84, 0x9b, 0x28, 0x94, 0x1f, 0xaf, 0x15, 0x69, 0xb4, 0x73, 0x14, 0x9f, 0xab,
-	0xf0, 0x5a, 0xac, 0xa9, 0x1c, 0xc6, 0x1f, 0x12, 0x65, 0xa5, 0xe1, 0x86, 0x9f, 0x39, 0x37, 0x1d,
-	0xbb, 0xf1, 0x5f, 0x26, 0xc2, 0xb2, 0x20, 0xc1, 0x5e, 0x8e, 0xe5, 0xdb, 0x0c, 0x8d, 0x11, 0x3f,
-	0x59, 0x5e, 0x40, 0xb1, 0x18, 0xcf, 0xe9, 0x65, 0x38, 0x99, 0x9e, 0xca, 0x92, 0x7b, 0x9e, 0xca,
-	0x32, 0x91, 0x2e, 0xca, 0xfa, 0x61, 0x71, 0x9c, 0x5f, 0x30, 0x9c, 0xb7, 0x1c, 0xdd, 0xa2, 0x9a,
-	0xad, 0x7a, 0xdd, 0x3e, 0xd0, 0xad, 0xf1, 0xdd, 0xc7, 0xd7, 0x60, 0xca, 0xf4, 0x26, 0xe7, 0x17,
-	0x72, 0xe1, 0x50, 0xe3, 0x77, 0xd0, 0x98, 0xa2, 0x5f, 0xa1, 0x3a, 0xf8, 0x3b, 0xdf, 0xa7, 0xc6,
-	0x5c, 0x8d, 0xe5, 0x0f, 0x61, 0x46, 0x0f, 0xf6, 0x4b, 0xe3, 0x2b, 0xbf, 0xb1, 0x5c, 0x62, 0x6f,
-	0x69, 0xa5, 0xe0, 0x2d, 0xad, 0xb4, 0x65, 0x1d, 0x56, 0x56, 0xc3, 0x2b, 0x2f, 0x1f, 0x80, 0x7e,
-	0xfe, 0x6e, 0x7d, 0xee, 0x26, 0xc6, 0xdc, 0xe2, 0x6d, 0x2d, 0x9c, 0xcd, 0x07, 0xd7, 0x8f, 0x85,
-	0x83, 0x7b, 0x22, 0xd1, 0x3b, 0x84, 0x86, 0xf7, 0xed, 0x87, 0xf8, 0x65, 0x23, 0x87, 0x56, 0xa0,
-	0x18, 0xbf, 0x79, 0x6e, 0xdf, 0x57, 0x19, 0x6a, 0x1f, 0x25, 0x40, 0x33, 0x70, 0xec, 0xf6, 0xfd,
-	0x8d, 0xd2, 0x23, 0xa0, 0xc9, 0x0e, 0x47, 0xf3, 0x02, 0xc3, 0x84, 0x71, 0x8c, 0x81, 0xc4, 0x39,
-	0xfe, 0x24, 0xd1, 0x87, 0x30, 0x86, 0xfa, 0xe5, 0x06, 0x89, 0x5e, 0x07, 0x35, 0xc1, 0x94, 0xc0,
-	0xdc, 0x8d, 0x5f, 0x16, 0x21, 0xbb, 0x43, 0x4c, 0xf9, 0x01, 0xcc, 0xf7, 0x3c, 0x4c, 0x9f, 0x2b,
-	0xc5, 0x3c, 0x99, 0x97, 0xfa, 0x5e, 0x71, 0x95, 0x52, 0x3a, 0x1d, 0xbf, 0xe9, 0x54, 0x61, 0x36,
-	0xf2, 0x44, 0x7b, 0x36, 0x69, 0xbc, 0xa8, 0x52, 0xd6, 0xd2, 0xa8, 0xf8, 0x1a, 0x0f, 0x60, 0xbe,
-	0xe7, 0xb5, 0x32, 0xd1, 0x9a, 0xa8, 0x2e, 0xd9, 0x9a, 0xf8, 0x67, 0x47, 0x19, 0xc3, 0x5c, 0xf4,
-	0xc9, 0x71, 0x75, 0x08, 0x0e, 0x26, 0x53, 0xd6, 0x53, 0xc9, 0xf8, 0x32, 0xbb, 0x90, 0x17, 0x9f,
-	0xd4, 0xce, 0x0c, 0xa4, 0xe1, 0x2f, 0x71, 0x39, 0x85, 0x48, 0x5c, 0x40, 0x7c, 0x72, 0x4a, 0x5c,
-	0x40, 0x10, 0x25, 0x2f, 0x10, 0xf3, 0x50, 0xe3, 0x81, 0x8a, 0x3e, 0xd2, 0xac, 0x0e, 0x21, 0x3d,
-	0x0c, 0x54, 0xec, 0x4b, 0x89, 0xfc, 0x10, 0x16, 0x7a, 0x5f, 0x49, 0xce, 0x0f, 0x46, 0xcd, 0x85,
-	0x4a, 0x39, 0xa5, 0x50, 0xb4, 0x29, 0x7a, 0xeb, 0x5e, 0x1d, 0x84, 0x3c, 0x5c, 0x68, 0x3d, 0x95,
-	0x4c, 0x5c, 0x26, 0x7a, 0x3f, 0x5d, 0x1d, 0x04, 0x3e, 0xc5, 0x32, 0xb1, 0x77, 0x3b, 0xf9, 0x91,
-	0x04, 0xa7, 0x92, 0x2e, 0x76, 0x89, 0x68, 0x12, 0x06, 0x28, 0x6f, 0x8c, 0x38, 0x40, 0x74, 0x60,
-	0xef, 0x8d, 0xe9, 0xfc, 0xe0, 0x10, 0x48, 0xe1, 0xc0, 0x84, 0x0b, 0x8c, 0xdc, 0x02, 0x39, 0xe6,
-	0xf2, 0x72, 0x29, 0x69, 0x9a, 0x7e, 0xad, 0xb2, 0x91, 0x5e, 0x1b, 0x01, 0x9d, 0x74, 0x4d, 0x48,
-	0x34, 0x21, 0x61, 0x40, 0x32, 0xe8, 0x21, 0x07, 0x73, 0xcf, 0xf6, 0x98, 0x43, 0xf9, 0xa5, 0x21,
-	0x7e, 0x13, 0x7d, 0xbc, 0x91, 0x5e, 0x2b, 0xae, 0x1a, 0x73, 0x76, 0x4d, 0x5c, 0xb5, 0x5f, 0x9b,
-	0xbc, 0x6a, 0xf2, 0xe1, 0x4f, 0x3e, 0x80, 0xa5, 0xb8, 0x83, 0xdf, 0xe5, 0x64, 0x76, 0x7d, 0x62,
-	0x65, 0x73, 0x04, 0xb1, 0xb8, 0x70, 0xdc, 0x89, 0xec, 0xf2, 0x40, 0x1b, 0xa2, 0xe2, 0xe4, 0x85,
-	0x07, 0x1c, 0x63, 0xe4, 0x4f, 0x61, 0x39, 0xf6, 0x08, 0xb3, 0x36, 0xd8, 0x8a, 0x9e, 0xa5, 0xaf,
-	0x8c, 0xa2, 0x0e, 0xd6, 0xae, 0xbc, 0xfb, 0x63, 0xa7, 0x28, 0x3d, 0xed, 0x14, 0xa5, 0xdf, 0x3a,
-	0x45, 0xe9, 0xf1, 0xb3, 0xe2, 0xb1, 0xa7, 0xcf, 0x8a, 0xc7, 0x7e, 0x7d, 0x56, 0x3c, 0xf6, 0xd1,
-	0x86, 0x59, 0x6b, 0x3d, 0x68, 0x57, 0x4b, 0x7b, 0x76, 0xa3, 0xcc, 0x66, 0x5e, 0xaf, 0xeb, 0x55,
-	0xe2, 0x7f, 0x97, 0xf7, 0xaf, 0x94, 0x3f, 0x11, 0xfe, 0xed, 0xde, 0x3a, 0x6c, 0x62, 0x52, 0x9d,
-	0xa4, 0x47, 0xbe, 0xcd, 0xbf, 0x02, 0x00, 0x00, 0xff, 0xff, 0x21, 0x2c, 0xdd, 0xc1, 0xe2, 0x1f,
-	0x00, 0x00,
+	// 1438 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe4, 0x59, 0xcd, 0x8f, 0xdb, 0x44,
+	0x14, 0x6f, 0xbe, 0x36, 0x9b, 0xc9, 0x6e, 0xb6, 0x75, 0xbf, 0x52, 0x43, 0xe3, 0xd5, 0xb4, 0xdb,
+	0x6d, 0x4b, 0x37, 0x96, 0xb6, 0x48, 0x14, 0x24, 0x0e, 0x9b, 0xb6, 0x54, 0x11, 0xa4, 0xad, 0x5c,
+	0x3e, 0x24, 0x24, 0x14, 0x39, 0xf1, 0xd4, 0xb5, 0x9a, 0xd8, 0x91, 0xc7, 0xd9, 0x65, 0xcf, 0x15,
+	0xf7, 0x8a, 0x3f, 0x80, 0x13, 0x9c, 0x38, 0x70, 0xe1, 0xc6, 0x09, 0x09, 0x09, 0xc4, 0xa9, 0xc7,
+	0x9e, 0x2c, 0x94, 0x9e, 0xb8, 0x70, 0xc8, 0x8d, 0x1b, 0xf2, 0x8c, 0x3d, 0x1e, 0x3b, 0x71, 0xe2,
+	0x54, 0x01, 0x96, 0x72, 0x73, 0x66, 0x7e, 0xf3, 0x66, 0xde, 0xef, 0xbd, 0xf7, 0x9b, 0x8f, 0x80,
+	0x9a, 0x86, 0x70, 0xdf, 0xc2, 0x32, 0x1e, 0x76, 0xf0, 0x40, 0xed, 0x22, 0x2c, 0xef, 0x5f, 0x97,
+	0xfb, 0x58, 0xc7, 0xf5, 0x81, 0x6d, 0x39, 0x96, 0x70, 0x92, 0xf6, 0xd7, 0x59, 0x7f, 0x7d, 0xff,
+	0xba, 0x78, 0x4a, 0xb7, 0x74, 0x8b, 0xf4, 0xcb, 0xde, 0x17, 0x85, 0x8a, 0x9b, 0x53, 0x4d, 0x59,
+	0x1a, 0xea, 0xf9, 0xc6, 0xc4, 0x73, 0xba, 0x65, 0xe9, 0x3d, 0x24, 0x93, 0x5f, 0x9d, 0xe1, 0x43,
+	0x59, 0x35, 0x0f, 0x83, 0xae, 0xae, 0xe5, 0x0d, 0x6e, 0x53, 0xab, 0xf4, 0x07, 0xed, 0x82, 0x7f,
+	0x66, 0xc0, 0x89, 0x16, 0xd6, 0x6f, 0xda, 0x48, 0x75, 0xd0, 0x03, 0xdf, 0xb8, 0x70, 0x01, 0xe4,
+	0x4d, 0xb5, 0x8f, 0xaa, 0x99, 0xcd, 0xcc, 0xe5, 0x52, 0x63, 0x63, 0xec, 0x4a, 0xe5, 0x43, 0xb5,
+	0xdf, 0x7b, 0x07, 0x7a, 0xad, 0x50, 0x21, 0x9d, 0xc2, 0x0d, 0x50, 0xd6, 0x10, 0xee, 0xda, 0xc6,
+	0xc0, 0x31, 0x2c, 0xb3, 0x9a, 0x25, 0xd8, 0x33, 0x63, 0x57, 0x12, 0x28, 0x96, 0xeb, 0x84, 0x0a,
+	0x0f, 0x15, 0x64, 0xb0, 0xea, 0xd8, 0x48, 0xc5, 0x43, 0xfb, 0xb0, 0x9a, 0x23, 0xc3, 0x4e, 0x8e,
+	0x5d, 0x69, 0x83, 0x0e, 0x0b, 0x7a, 0xa0, 0xc2, 0x40, 0xc2, 0x25, 0x50, 0xb0, 0x0e, 0x4c, 0x64,
+	0x57, 0xf3, 0x04, 0x7d, 0x7c, 0xec, 0x4a, 0x6b, 0x14, 0x4d, 0x9a, 0xa1, 0x42, 0xbb, 0x85, 0x6b,
+	0xa0, 0xd8, 0xf5, 0x3c, 0xb1, 0xec, 0x6a, 0x81, 0x20, 0x85, 0xb1, 0x2b, 0x55, 0x28, 0xd2, 0xef,
+	0x80, 0x4a, 0x00, 0x81, 0x1d, 0x70, 0x6e, 0xc2, 0x75, 0x05, 0xe1, 0x81, 0x65, 0x62, 0x24, 0xdc,
+	0x06, 0xe5, 0x80, 0xeb, 0xb6, 0xa1, 0x11, 0x26, 0xf2, 0x8d, 0x8b, 0x23, 0x57, 0x02, 0x01, 0xb4,
+	0x79, 0x2b, 0xf4, 0x95, 0x83, 0x42, 0x05, 0x04, 0xbf, 0x9a, 0x1a, 0xfc, 0x21, 0x0b, 0x36, 0x5a,
+	0x58, 0xbf, 0xad, 0x19, 0x0e, 0x63, 0x77, 0x39, 0xa6, 0x59, 0x90, 0xb2, 0x0b, 0x04, 0x29, 0xf7,
+	0x72, 0x41, 0xca, 0x2f, 0x14, 0xa4, 0xc2, 0xec, 0x20, 0x5d, 0x01, 0x2b, 0xd8, 0xd0, 0x3d, 0xe0,
+	0x0a, 0x01, 0x9e, 0x18, 0xbb, 0xd2, 0xba, 0xef, 0x2b, 0x69, 0x87, 0x8a, 0x0f, 0x80, 0xe7, 0xc0,
+	0xd9, 0x18, 0x79, 0x41, 0x7c, 0xe0, 0x17, 0x34, 0x71, 0x6f, 0xa1, 0x1e, 0xe2, 0x12, 0x77, 0x49,
+	0xd4, 0x86, 0x4b, 0xcc, 0xce, 0x5b, 0xe2, 0x6b, 0x24, 0x89, 0xa2, 0xcb, 0x60, 0x8b, 0xfc, 0x26,
+	0x0b, 0x8e, 0x87, 0x29, 0x86, 0xba, 0x84, 0xd8, 0xff, 0x46, 0xf8, 0xdf, 0x05, 0xa5, 0x81, 0x6a,
+	0x23, 0xd3, 0xf1, 0xd6, 0xe8, 0xc5, 0x7f, 0xbd, 0xb1, 0x39, 0x72, 0xa5, 0xd5, 0xfb, 0xa4, 0x91,
+	0xac, 0xf0, 0x38, 0xb5, 0xc1, 0x60, 0x50, 0x59, 0xa5, 0xdf, 0x4d, 0x6d, 0xc1, 0x4a, 0xfc, 0x0c,
+	0x54, 0xe3, 0x34, 0xb1, 0x42, 0xdc, 0x03, 0x00, 0xd3, 0xa6, 0x80, 0xad, 0xf5, 0x06, 0x1c, 0xb9,
+	0x52, 0xc9, 0x07, 0x92, 0xa5, 0x9c, 0xf0, 0xc9, 0x62, 0x40, 0xa8, 0x94, 0xfc, 0x1f, 0x4d, 0x0d,
+	0x7e, 0x9d, 0x05, 0x95, 0x20, 0x8f, 0x96, 0x1b, 0x84, 0xe8, 0xe2, 0xb2, 0x2f, 0xb1, 0x38, 0x16,
+	0xc7, 0xdc, 0x02, 0x71, 0xcc, 0xa7, 0x8f, 0xe3, 0x15, 0xb0, 0x82, 0x34, 0x23, 0x8c, 0x03, 0x97,
+	0xca, 0xb4, 0x1d, 0x2a, 0x3e, 0x00, 0x56, 0xc1, 0x99, 0x28, 0x4b, 0x2c, 0x8f, 0xbf, 0xa4, 0x04,
+	0xb6, 0xac, 0x7d, 0x74, 0xf4, 0x08, 0x7c, 0x1f, 0xac, 0x9b, 0xe8, 0xa0, 0x1d, 0x66, 0x6b, 0x8e,
+	0x58, 0xd9, 0x1e, 0xb9, 0x52, 0xf9, 0x2e, 0x3a, 0xe0, 0x12, 0xf6, 0x94, 0x4f, 0x2c, 0x8f, 0x86,
+	0x4a, 0xd9, 0x64, 0x20, 0xbe, 0xf2, 0xf3, 0xf3, 0x2a, 0x9f, 0xd2, 0xc5, 0x71, 0xc2, 0xe8, 0xfa,
+	0x39, 0x43, 0xca, 0xde, 0x17, 0x85, 0x23, 0x47, 0x58, 0xe8, 0x63, 0x6e, 0x9e, 0x8f, 0x22, 0x29,
+	0xcc, 0x88, 0x23, 0xcc, 0xcb, 0x1f, 0x73, 0x40, 0x60, 0x55, 0xfb, 0x11, 0x46, 0xf6, 0x1d, 0xdb,
+	0x1a, 0x0e, 0xfe, 0x3f, 0x95, 0x75, 0x0f, 0x9c, 0xd4, 0xd0, 0x43, 0x75, 0xd8, 0x73, 0xda, 0x03,
+	0x64, 0xf7, 0x0d, 0x8c, 0x0d, 0xcb, 0xc4, 0xd5, 0xc2, 0x66, 0xee, 0x72, 0xa9, 0x51, 0x1b, 0xbb,
+	0x92, 0x18, 0x58, 0x98, 0x00, 0x41, 0x45, 0xf0, 0x5b, 0xef, 0x87, 0x8d, 0xc2, 0x4d, 0xb0, 0x61,
+	0x98, 0x86, 0x63, 0xa8, 0xbd, 0x76, 0x1f, 0xf5, 0x3b, 0xc8, 0xc6, 0xd5, 0x15, 0x62, 0x4c, 0x1c,
+	0xbb, 0xd2, 0x19, 0x6a, 0x2c, 0x06, 0x80, 0x4a, 0xc5, 0x6f, 0x69, 0xd1, 0x06, 0x5e, 0x78, 0x8b,
+	0xf3, 0x85, 0xf7, 0x13, 0x20, 0x4e, 0x86, 0x90, 0x49, 0xef, 0xdb, 0x60, 0x55, 0xf7, 0x1a, 0x42,
+	0xe1, 0xad, 0x8d, 0x5c, 0xa9, 0x48, 0x40, 0x84, 0x7f, 0xff, 0x34, 0x10, 0x80, 0xa0, 0x52, 0x24,
+	0x9f, 0x4d, 0x0d, 0x7e, 0x45, 0x77, 0x3e, 0x4f, 0x4c, 0x96, 0x9e, 0x1a, 0xfc, 0xb2, 0xb2, 0x0b,
+	0x2d, 0xeb, 0x1f, 0x10, 0x5b, 0xbf, 0xb2, 0x0a, 0xe9, 0x2a, 0x2b, 0xc2, 0x0f, 0xab, 0xac, 0xa7,
+	0x94, 0x3c, 0x4f, 0x5a, 0x8e, 0x12, 0x79, 0xf7, 0x40, 0xc5, 0x93, 0x4e, 0xae, 0x2c, 0xa9, 0xd2,
+	0x5e, 0x19, 0xb9, 0xd2, 0xda, 0x5d, 0x74, 0xc0, 0x57, 0xe6, 0xe9, 0x50, 0x6a, 0xf9, 0xea, 0x5c,
+	0x33, 0x43, 0xd8, 0x42, 0x62, 0x4b, 0xe9, 0x8a, 0x30, 0xc2, 0xe8, 0x7a, 0x92, 0x25, 0x59, 0xfc,
+	0x00, 0x85, 0x54, 0xf2, 0x65, 0xf5, 0xef, 0x13, 0x77, 0x03, 0x94, 0x79, 0x85, 0xc8, 0x91, 0xa2,
+	0xe6, 0x12, 0x2a, 0xa2, 0x0c, 0x3c, 0x74, 0x11, 0x86, 0x2e, 0x02, 0x98, 0x4c, 0x42, 0x28, 0xda,
+	0x19, 0x22, 0xda, 0x54, 0xd1, 0x8f, 0x52, 0x72, 0x2d, 0xb0, 0x29, 0xbd, 0x4e, 0xc2, 0x1d, 0x73,
+	0x81, 0x79, 0xf8, 0x7b, 0x06, 0x9c, 0x6e, 0x61, 0x7d, 0x4f, 0xd3, 0xbc, 0xbe, 0x0f, 0xad, 0x23,
+	0x26, 0x3f, 0x43, 0xcc, 0x5c, 0xe4, 0xe4, 0xc7, 0x6b, 0x85, 0x0a, 0xe9, 0x5c, 0x24, 0xe6, 0x12,
+	0x38, 0x3f, 0xd5, 0x55, 0x46, 0xc6, 0x1f, 0x19, 0xc2, 0x95, 0x82, 0xfa, 0x7e, 0xe5, 0xbc, 0x67,
+	0x5b, 0xfd, 0x57, 0x99, 0x11, 0x5a, 0x05, 0x09, 0xfe, 0x32, 0x5a, 0xbe, 0xcd, 0x92, 0x1c, 0xf1,
+	0x8b, 0xe5, 0x6f, 0x10, 0x8b, 0xe5, 0x9c, 0x5e, 0xe6, 0x33, 0x13, 0x53, 0x96, 0xfc, 0xcb, 0x28,
+	0x4b, 0x21, 0x5d, 0x96, 0x4d, 0x92, 0xc5, 0xe8, 0xfc, 0x2e, 0x4b, 0xee, 0xe2, 0x77, 0x6c, 0xd5,
+	0x74, 0xf6, 0x7a, 0x3d, 0xeb, 0x40, 0x35, 0x97, 0x77, 0x17, 0xbf, 0x06, 0x8a, 0xba, 0x67, 0x98,
+	0x5d, 0xc6, 0xb9, 0x03, 0x8d, 0xdf, 0x41, 0xf2, 0x89, 0x7c, 0x09, 0xad, 0x00, 0x4d, 0xf7, 0xf8,
+	0xf2, 0xee, 0xa9, 0x3a, 0x7d, 0x17, 0xab, 0x07, 0xef, 0x62, 0xf5, 0x3d, 0xf3, 0xb0, 0x71, 0x3e,
+	0x6e, 0x03, 0xc1, 0x5f, 0xbf, 0xdf, 0x29, 0xde, 0xa1, 0xdf, 0x81, 0x39, 0x24, 0x7c, 0x0c, 0x4a,
+	0x6a, 0xe0, 0x10, 0x49, 0xbe, 0x24, 0x83, 0x30, 0xbc, 0x0f, 0xb3, 0x01, 0x9e, 0x49, 0xc0, 0xf8,
+	0x68, 0x2a, 0xa1, 0x29, 0xff, 0xd5, 0x20, 0x4a, 0x18, 0xa3, 0xf3, 0x39, 0xd5, 0x68, 0x05, 0xed,
+	0x5b, 0x8f, 0xd1, 0x2b, 0xc5, 0xa7, 0x2f, 0xdd, 0x31, 0xcf, 0x02, 0xc7, 0x77, 0x7f, 0xaa, 0x80,
+	0x5c, 0x0b, 0xeb, 0xc2, 0x23, 0x50, 0x89, 0x3d, 0x48, 0x5e, 0xaa, 0x4f, 0x79, 0x2a, 0xad, 0x4f,
+	0xbc, 0xde, 0x89, 0xf5, 0x74, 0x38, 0x76, 0xc2, 0xed, 0x80, 0xb5, 0xc8, 0xd3, 0xdc, 0xc5, 0xa4,
+	0xf1, 0x3c, 0x4a, 0xbc, 0x96, 0x06, 0xc5, 0xe6, 0x78, 0x04, 0x2a, 0xb1, 0x57, 0xaa, 0x44, 0x6f,
+	0xa2, 0xb8, 0x64, 0x6f, 0xa6, 0x3f, 0x37, 0x09, 0x08, 0xac, 0x47, 0x9f, 0x9a, 0xb6, 0xe6, 0xd0,
+	0x41, 0x61, 0xe2, 0x4e, 0x2a, 0x18, 0x9b, 0xa6, 0x0d, 0xca, 0xfc, 0x53, 0xca, 0x85, 0x99, 0x6c,
+	0xf8, 0x53, 0xbc, 0x91, 0x02, 0xc4, 0x4f, 0xc0, 0x3f, 0x35, 0x24, 0x4e, 0xc0, 0x81, 0x92, 0x27,
+	0x98, 0x72, 0x41, 0xf7, 0x88, 0x8a, 0x5e, 0xce, 0xb7, 0xe6, 0x30, 0x3d, 0x8f, 0xa8, 0xa9, 0x37,
+	0x64, 0xe1, 0x31, 0xd8, 0x88, 0xdf, 0x8e, 0xb7, 0x67, 0x53, 0xcd, 0x80, 0xa2, 0x9c, 0x12, 0xc8,
+	0xfb, 0x14, 0xbd, 0x6d, 0x6d, 0xcd, 0xa2, 0x3c, 0x9c, 0x68, 0x27, 0x15, 0x8c, 0x9f, 0x26, 0x7a,
+	0x2f, 0xd9, 0x9a, 0x45, 0x7c, 0x8a, 0x69, 0xa6, 0x9e, 0xe9, 0x85, 0x27, 0x19, 0x70, 0x36, 0xe9,
+	0x40, 0x9f, 0x48, 0x4d, 0xc2, 0x00, 0xf1, 0xad, 0x05, 0x07, 0xf0, 0x01, 0x8c, 0x9f, 0x94, 0xb7,
+	0x67, 0xa7, 0x40, 0x8a, 0x00, 0x26, 0x1c, 0x5c, 0x05, 0x07, 0x08, 0x53, 0x0e, 0xad, 0x57, 0x93,
+	0xcc, 0x4c, 0x62, 0xc5, 0xdd, 0xf4, 0xd8, 0x08, 0xd1, 0x49, 0xc7, 0xc3, 0x44, 0x17, 0x12, 0x06,
+	0x24, 0x13, 0x3d, 0xe7, 0x40, 0xe6, 0xf9, 0x3e, 0xe5, 0x30, 0x76, 0x75, 0x4e, 0xdc, 0xf8, 0x18,
+	0xef, 0xa6, 0xc7, 0xf2, 0xca, 0x1c, 0x3b, 0xb3, 0x24, 0x2a, 0x73, 0x14, 0x97, 0xac, 0xcc, 0xd3,
+	0xb7, 0x74, 0x2f, 0x91, 0xe2, 0xdb, 0xf9, 0x76, 0x32, 0x57, 0x11, 0xa0, 0x28, 0xa7, 0x04, 0x06,
+	0x93, 0x35, 0x3e, 0xf8, 0x65, 0x54, 0xcb, 0x3c, 0x1b, 0xd5, 0x32, 0xbf, 0x8d, 0x6a, 0x99, 0xa7,
+	0x2f, 0x6a, 0xc7, 0x9e, 0xbd, 0xa8, 0x1d, 0x7b, 0xfe, 0xa2, 0x76, 0xec, 0xd3, 0x5d, 0xdd, 0x70,
+	0x1e, 0x0d, 0x3b, 0xf5, 0xae, 0xd5, 0x97, 0xa9, 0xd1, 0x9d, 0x9e, 0xda, 0xc1, 0xfe, 0xb7, 0xbc,
+	0xff, 0xa6, 0xfc, 0x39, 0xf7, 0x0f, 0xa3, 0x73, 0x38, 0x40, 0xb8, 0xb3, 0x42, 0x36, 0xfa, 0xeb,
+	0x7f, 0x05, 0x00, 0x00, 0xff, 0xff, 0x54, 0x14, 0x46, 0x96, 0xcd, 0x1c, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -2392,18 +2168,12 @@ type MsgClient interface {
 	RemoveUserFromUserGroup(ctx context.Context, in *MsgRemoveUserFromUserGroup, opts ...grpc.CallOption) (*MsgRemoveUserFromUserGroupResponse, error)
 	// SetUserPermissions allows to set the permissions for a specific user
 	SetUserPermissions(ctx context.Context, in *MsgSetUserPermissions, opts ...grpc.CallOption) (*MsgSetUserPermissionsResponse, error)
-	// GrantUserAllowance allows the granter to grant a fee allowance to the
+	// GrantAllowance allows the granter to grant a fee allowance to the
 	// grantee.
-	GrantUserAllowance(ctx context.Context, in *MsgGrantUserAllowance, opts ...grpc.CallOption) (*MsgGrantUserAllowanceResponse, error)
-	// RevokeUserAllowance allows a granter to revoke any existing allowance that
+	GrantAllowance(ctx context.Context, in *MsgGrantAllowance, opts ...grpc.CallOption) (*MsgGrantAllowanceResponse, error)
+	// RevokeAllowance allows a granter to revoke any existing allowance that
 	// has been granted to the grantee.
-	RevokeUserAllowance(ctx context.Context, in *MsgRevokeUserAllowance, opts ...grpc.CallOption) (*MsgRevokeUserAllowanceResponse, error)
-	// GrantGroupAllowance allows the granter to grant a fee allowance to the
-	// group.
-	GrantGroupAllowance(ctx context.Context, in *MsgGrantGroupAllowance, opts ...grpc.CallOption) (*MsgGrantGroupAllowanceResponse, error)
-	// RevokeGroupAllowance allows a granter to revoke any existing allowance that
-	// has been granted to the group.
-	RevokeGroupAllowance(ctx context.Context, in *MsgRevokeGroupAllowance, opts ...grpc.CallOption) (*MsgRevokeGroupAllowanceResponse, error)
+	RevokeAllowance(ctx context.Context, in *MsgRevokeAllowance, opts ...grpc.CallOption) (*MsgRevokeAllowanceResponse, error)
 }
 
 type msgClient struct {
@@ -2549,36 +2319,18 @@ func (c *msgClient) SetUserPermissions(ctx context.Context, in *MsgSetUserPermis
 	return out, nil
 }
 
-func (c *msgClient) GrantUserAllowance(ctx context.Context, in *MsgGrantUserAllowance, opts ...grpc.CallOption) (*MsgGrantUserAllowanceResponse, error) {
-	out := new(MsgGrantUserAllowanceResponse)
-	err := c.cc.Invoke(ctx, "/desmos.subspaces.v3.Msg/GrantUserAllowance", in, out, opts...)
+func (c *msgClient) GrantAllowance(ctx context.Context, in *MsgGrantAllowance, opts ...grpc.CallOption) (*MsgGrantAllowanceResponse, error) {
+	out := new(MsgGrantAllowanceResponse)
+	err := c.cc.Invoke(ctx, "/desmos.subspaces.v3.Msg/GrantAllowance", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *msgClient) RevokeUserAllowance(ctx context.Context, in *MsgRevokeUserAllowance, opts ...grpc.CallOption) (*MsgRevokeUserAllowanceResponse, error) {
-	out := new(MsgRevokeUserAllowanceResponse)
-	err := c.cc.Invoke(ctx, "/desmos.subspaces.v3.Msg/RevokeUserAllowance", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *msgClient) GrantGroupAllowance(ctx context.Context, in *MsgGrantGroupAllowance, opts ...grpc.CallOption) (*MsgGrantGroupAllowanceResponse, error) {
-	out := new(MsgGrantGroupAllowanceResponse)
-	err := c.cc.Invoke(ctx, "/desmos.subspaces.v3.Msg/GrantGroupAllowance", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *msgClient) RevokeGroupAllowance(ctx context.Context, in *MsgRevokeGroupAllowance, opts ...grpc.CallOption) (*MsgRevokeGroupAllowanceResponse, error) {
-	out := new(MsgRevokeGroupAllowanceResponse)
-	err := c.cc.Invoke(ctx, "/desmos.subspaces.v3.Msg/RevokeGroupAllowance", in, out, opts...)
+func (c *msgClient) RevokeAllowance(ctx context.Context, in *MsgRevokeAllowance, opts ...grpc.CallOption) (*MsgRevokeAllowanceResponse, error) {
+	out := new(MsgRevokeAllowanceResponse)
+	err := c.cc.Invoke(ctx, "/desmos.subspaces.v3.Msg/RevokeAllowance", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2618,18 +2370,12 @@ type MsgServer interface {
 	RemoveUserFromUserGroup(context.Context, *MsgRemoveUserFromUserGroup) (*MsgRemoveUserFromUserGroupResponse, error)
 	// SetUserPermissions allows to set the permissions for a specific user
 	SetUserPermissions(context.Context, *MsgSetUserPermissions) (*MsgSetUserPermissionsResponse, error)
-	// GrantUserAllowance allows the granter to grant a fee allowance to the
+	// GrantAllowance allows the granter to grant a fee allowance to the
 	// grantee.
-	GrantUserAllowance(context.Context, *MsgGrantUserAllowance) (*MsgGrantUserAllowanceResponse, error)
-	// RevokeUserAllowance allows a granter to revoke any existing allowance that
+	GrantAllowance(context.Context, *MsgGrantAllowance) (*MsgGrantAllowanceResponse, error)
+	// RevokeAllowance allows a granter to revoke any existing allowance that
 	// has been granted to the grantee.
-	RevokeUserAllowance(context.Context, *MsgRevokeUserAllowance) (*MsgRevokeUserAllowanceResponse, error)
-	// GrantGroupAllowance allows the granter to grant a fee allowance to the
-	// group.
-	GrantGroupAllowance(context.Context, *MsgGrantGroupAllowance) (*MsgGrantGroupAllowanceResponse, error)
-	// RevokeGroupAllowance allows a granter to revoke any existing allowance that
-	// has been granted to the group.
-	RevokeGroupAllowance(context.Context, *MsgRevokeGroupAllowance) (*MsgRevokeGroupAllowanceResponse, error)
+	RevokeAllowance(context.Context, *MsgRevokeAllowance) (*MsgRevokeAllowanceResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
@@ -2681,17 +2427,11 @@ func (*UnimplementedMsgServer) RemoveUserFromUserGroup(ctx context.Context, req 
 func (*UnimplementedMsgServer) SetUserPermissions(ctx context.Context, req *MsgSetUserPermissions) (*MsgSetUserPermissionsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetUserPermissions not implemented")
 }
-func (*UnimplementedMsgServer) GrantUserAllowance(ctx context.Context, req *MsgGrantUserAllowance) (*MsgGrantUserAllowanceResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GrantUserAllowance not implemented")
+func (*UnimplementedMsgServer) GrantAllowance(ctx context.Context, req *MsgGrantAllowance) (*MsgGrantAllowanceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GrantAllowance not implemented")
 }
-func (*UnimplementedMsgServer) RevokeUserAllowance(ctx context.Context, req *MsgRevokeUserAllowance) (*MsgRevokeUserAllowanceResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RevokeUserAllowance not implemented")
-}
-func (*UnimplementedMsgServer) GrantGroupAllowance(ctx context.Context, req *MsgGrantGroupAllowance) (*MsgGrantGroupAllowanceResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GrantGroupAllowance not implemented")
-}
-func (*UnimplementedMsgServer) RevokeGroupAllowance(ctx context.Context, req *MsgRevokeGroupAllowance) (*MsgRevokeGroupAllowanceResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RevokeGroupAllowance not implemented")
+func (*UnimplementedMsgServer) RevokeAllowance(ctx context.Context, req *MsgRevokeAllowance) (*MsgRevokeAllowanceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RevokeAllowance not implemented")
 }
 
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
@@ -2968,74 +2708,38 @@ func _Msg_SetUserPermissions_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Msg_GrantUserAllowance_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgGrantUserAllowance)
+func _Msg_GrantAllowance_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgGrantAllowance)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MsgServer).GrantUserAllowance(ctx, in)
+		return srv.(MsgServer).GrantAllowance(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/desmos.subspaces.v3.Msg/GrantUserAllowance",
+		FullMethod: "/desmos.subspaces.v3.Msg/GrantAllowance",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).GrantUserAllowance(ctx, req.(*MsgGrantUserAllowance))
+		return srv.(MsgServer).GrantAllowance(ctx, req.(*MsgGrantAllowance))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Msg_RevokeUserAllowance_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgRevokeUserAllowance)
+func _Msg_RevokeAllowance_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgRevokeAllowance)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MsgServer).RevokeUserAllowance(ctx, in)
+		return srv.(MsgServer).RevokeAllowance(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/desmos.subspaces.v3.Msg/RevokeUserAllowance",
+		FullMethod: "/desmos.subspaces.v3.Msg/RevokeAllowance",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).RevokeUserAllowance(ctx, req.(*MsgRevokeUserAllowance))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Msg_GrantGroupAllowance_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgGrantGroupAllowance)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MsgServer).GrantGroupAllowance(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/desmos.subspaces.v3.Msg/GrantGroupAllowance",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).GrantGroupAllowance(ctx, req.(*MsgGrantGroupAllowance))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Msg_RevokeGroupAllowance_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgRevokeGroupAllowance)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MsgServer).RevokeGroupAllowance(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/desmos.subspaces.v3.Msg/RevokeGroupAllowance",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).RevokeGroupAllowance(ctx, req.(*MsgRevokeGroupAllowance))
+		return srv.(MsgServer).RevokeAllowance(ctx, req.(*MsgRevokeAllowance))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -3105,20 +2809,12 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Msg_SetUserPermissions_Handler,
 		},
 		{
-			MethodName: "GrantUserAllowance",
-			Handler:    _Msg_GrantUserAllowance_Handler,
+			MethodName: "GrantAllowance",
+			Handler:    _Msg_GrantAllowance_Handler,
 		},
 		{
-			MethodName: "RevokeUserAllowance",
-			Handler:    _Msg_RevokeUserAllowance_Handler,
-		},
-		{
-			MethodName: "GrantGroupAllowance",
-			Handler:    _Msg_GrantGroupAllowance_Handler,
-		},
-		{
-			MethodName: "RevokeGroupAllowance",
-			Handler:    _Msg_RevokeGroupAllowance_Handler,
+			MethodName: "RevokeAllowance",
+			Handler:    _Msg_RevokeAllowance_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -4244,7 +3940,7 @@ func (m *MsgSetUserPermissionsResponse) MarshalToSizedBuffer(dAtA []byte) (int, 
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgGrantUserAllowance) Marshal() (dAtA []byte, err error) {
+func (m *MsgGrantAllowance) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -4254,12 +3950,12 @@ func (m *MsgGrantUserAllowance) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgGrantUserAllowance) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgGrantAllowance) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgGrantUserAllowance) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgGrantAllowance) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -4276,10 +3972,15 @@ func (m *MsgGrantUserAllowance) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x22
 	}
-	if len(m.Grantee) > 0 {
-		i -= len(m.Grantee)
-		copy(dAtA[i:], m.Grantee)
-		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Grantee)))
+	if m.Grantee != nil {
+		{
+			size, err := m.Grantee.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintMsgs(dAtA, i, uint64(size))
+		}
 		i--
 		dAtA[i] = 0x1a
 	}
@@ -4298,7 +3999,7 @@ func (m *MsgGrantUserAllowance) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgGrantUserAllowanceResponse) Marshal() (dAtA []byte, err error) {
+func (m *MsgGrantAllowanceResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -4308,12 +4009,12 @@ func (m *MsgGrantUserAllowanceResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgGrantUserAllowanceResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgGrantAllowanceResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgGrantUserAllowanceResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgGrantAllowanceResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -4321,7 +4022,7 @@ func (m *MsgGrantUserAllowanceResponse) MarshalToSizedBuffer(dAtA []byte) (int, 
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgRevokeUserAllowance) Marshal() (dAtA []byte, err error) {
+func (m *MsgRevokeAllowance) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -4331,20 +4032,25 @@ func (m *MsgRevokeUserAllowance) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgRevokeUserAllowance) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgRevokeAllowance) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgRevokeUserAllowance) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgRevokeAllowance) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Grantee) > 0 {
-		i -= len(m.Grantee)
-		copy(dAtA[i:], m.Grantee)
-		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Grantee)))
+	if m.Grantee != nil {
+		{
+			size, err := m.Grantee.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintMsgs(dAtA, i, uint64(size))
+		}
 		i--
 		dAtA[i] = 0x1a
 	}
@@ -4363,7 +4069,7 @@ func (m *MsgRevokeUserAllowance) MarshalToSizedBuffer(dAtA []byte) (int, error) 
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgRevokeUserAllowanceResponse) Marshal() (dAtA []byte, err error) {
+func (m *MsgRevokeAllowanceResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -4373,150 +4079,12 @@ func (m *MsgRevokeUserAllowanceResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgRevokeUserAllowanceResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgRevokeAllowanceResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgRevokeUserAllowanceResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	return len(dAtA) - i, nil
-}
-
-func (m *MsgGrantGroupAllowance) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *MsgGrantGroupAllowance) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *MsgGrantGroupAllowance) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.Allowance != nil {
-		{
-			size, err := m.Allowance.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintMsgs(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x22
-	}
-	if len(m.Granter) > 0 {
-		i -= len(m.Granter)
-		copy(dAtA[i:], m.Granter)
-		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Granter)))
-		i--
-		dAtA[i] = 0x1a
-	}
-	if m.GroupID != 0 {
-		i = encodeVarintMsgs(dAtA, i, uint64(m.GroupID))
-		i--
-		dAtA[i] = 0x10
-	}
-	if m.SubspaceID != 0 {
-		i = encodeVarintMsgs(dAtA, i, uint64(m.SubspaceID))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *MsgGrantGroupAllowanceResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *MsgGrantGroupAllowanceResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *MsgGrantGroupAllowanceResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	return len(dAtA) - i, nil
-}
-
-func (m *MsgRevokeGroupAllowance) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *MsgRevokeGroupAllowance) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *MsgRevokeGroupAllowance) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.Granter) > 0 {
-		i -= len(m.Granter)
-		copy(dAtA[i:], m.Granter)
-		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Granter)))
-		i--
-		dAtA[i] = 0x1a
-	}
-	if m.GroupID != 0 {
-		i = encodeVarintMsgs(dAtA, i, uint64(m.GroupID))
-		i--
-		dAtA[i] = 0x10
-	}
-	if m.SubspaceID != 0 {
-		i = encodeVarintMsgs(dAtA, i, uint64(m.SubspaceID))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *MsgRevokeGroupAllowanceResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *MsgRevokeGroupAllowanceResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *MsgRevokeGroupAllowanceResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgRevokeAllowanceResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -5058,7 +4626,7 @@ func (m *MsgSetUserPermissionsResponse) Size() (n int) {
 	return n
 }
 
-func (m *MsgGrantUserAllowance) Size() (n int) {
+func (m *MsgGrantAllowance) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -5071,8 +4639,8 @@ func (m *MsgGrantUserAllowance) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovMsgs(uint64(l))
 	}
-	l = len(m.Grantee)
-	if l > 0 {
+	if m.Grantee != nil {
+		l = m.Grantee.Size()
 		n += 1 + l + sovMsgs(uint64(l))
 	}
 	if m.Allowance != nil {
@@ -5082,7 +4650,7 @@ func (m *MsgGrantUserAllowance) Size() (n int) {
 	return n
 }
 
-func (m *MsgGrantUserAllowanceResponse) Size() (n int) {
+func (m *MsgGrantAllowanceResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -5091,7 +4659,7 @@ func (m *MsgGrantUserAllowanceResponse) Size() (n int) {
 	return n
 }
 
-func (m *MsgRevokeUserAllowance) Size() (n int) {
+func (m *MsgRevokeAllowance) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -5104,74 +4672,14 @@ func (m *MsgRevokeUserAllowance) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovMsgs(uint64(l))
 	}
-	l = len(m.Grantee)
-	if l > 0 {
+	if m.Grantee != nil {
+		l = m.Grantee.Size()
 		n += 1 + l + sovMsgs(uint64(l))
 	}
 	return n
 }
 
-func (m *MsgRevokeUserAllowanceResponse) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	return n
-}
-
-func (m *MsgGrantGroupAllowance) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.SubspaceID != 0 {
-		n += 1 + sovMsgs(uint64(m.SubspaceID))
-	}
-	if m.GroupID != 0 {
-		n += 1 + sovMsgs(uint64(m.GroupID))
-	}
-	l = len(m.Granter)
-	if l > 0 {
-		n += 1 + l + sovMsgs(uint64(l))
-	}
-	if m.Allowance != nil {
-		l = m.Allowance.Size()
-		n += 1 + l + sovMsgs(uint64(l))
-	}
-	return n
-}
-
-func (m *MsgGrantGroupAllowanceResponse) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	return n
-}
-
-func (m *MsgRevokeGroupAllowance) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.SubspaceID != 0 {
-		n += 1 + sovMsgs(uint64(m.SubspaceID))
-	}
-	if m.GroupID != 0 {
-		n += 1 + sovMsgs(uint64(m.GroupID))
-	}
-	l = len(m.Granter)
-	if l > 0 {
-		n += 1 + l + sovMsgs(uint64(l))
-	}
-	return n
-}
-
-func (m *MsgRevokeGroupAllowanceResponse) Size() (n int) {
+func (m *MsgRevokeAllowanceResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -8491,7 +7999,7 @@ func (m *MsgSetUserPermissionsResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgGrantUserAllowance) Unmarshal(dAtA []byte) error {
+func (m *MsgGrantAllowance) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -8514,10 +8022,10 @@ func (m *MsgGrantUserAllowance) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgGrantUserAllowance: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgGrantAllowance: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgGrantUserAllowance: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgGrantAllowance: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -8575,7 +8083,7 @@ func (m *MsgGrantUserAllowance) Unmarshal(dAtA []byte) error {
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Grantee", wireType)
 			}
-			var stringLen uint64
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowMsgs
@@ -8585,23 +8093,27 @@ func (m *MsgGrantUserAllowance) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
+			if msglen < 0 {
 				return ErrInvalidLengthMsgs
 			}
-			postIndex := iNdEx + intStringLen
+			postIndex := iNdEx + msglen
 			if postIndex < 0 {
 				return ErrInvalidLengthMsgs
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Grantee = string(dAtA[iNdEx:postIndex])
+			if m.Grantee == nil {
+				m.Grantee = &types.Any{}
+			}
+			if err := m.Grantee.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
 			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {
@@ -8660,7 +8172,7 @@ func (m *MsgGrantUserAllowance) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgGrantUserAllowanceResponse) Unmarshal(dAtA []byte) error {
+func (m *MsgGrantAllowanceResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -8683,10 +8195,10 @@ func (m *MsgGrantUserAllowanceResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgGrantUserAllowanceResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgGrantAllowanceResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgGrantUserAllowanceResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgGrantAllowanceResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:
@@ -8710,7 +8222,7 @@ func (m *MsgGrantUserAllowanceResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgRevokeUserAllowance) Unmarshal(dAtA []byte) error {
+func (m *MsgRevokeAllowance) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -8733,10 +8245,10 @@ func (m *MsgRevokeUserAllowance) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgRevokeUserAllowance: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgRevokeAllowance: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgRevokeUserAllowance: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgRevokeAllowance: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -8794,208 +8306,6 @@ func (m *MsgRevokeUserAllowance) Unmarshal(dAtA []byte) error {
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Grantee", wireType)
 			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMsgs
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthMsgs
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthMsgs
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Grantee = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipMsgs(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthMsgs
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *MsgRevokeUserAllowanceResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowMsgs
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: MsgRevokeUserAllowanceResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgRevokeUserAllowanceResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		default:
-			iNdEx = preIndex
-			skippy, err := skipMsgs(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthMsgs
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *MsgGrantGroupAllowance) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowMsgs
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: MsgGrantGroupAllowance: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgGrantGroupAllowance: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field SubspaceID", wireType)
-			}
-			m.SubspaceID = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMsgs
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.SubspaceID |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field GroupID", wireType)
-			}
-			m.GroupID = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMsgs
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.GroupID |= uint32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Granter", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMsgs
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthMsgs
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthMsgs
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Granter = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Allowance", wireType)
-			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
@@ -9021,10 +8331,10 @@ func (m *MsgGrantGroupAllowance) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if m.Allowance == nil {
-				m.Allowance = &types.Any{}
+			if m.Grantee == nil {
+				m.Grantee = &types.Any{}
 			}
-			if err := m.Allowance.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			if err := m.Grantee.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -9049,7 +8359,7 @@ func (m *MsgGrantGroupAllowance) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgGrantGroupAllowanceResponse) Unmarshal(dAtA []byte) error {
+func (m *MsgRevokeAllowanceResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -9072,180 +8382,10 @@ func (m *MsgGrantGroupAllowanceResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgGrantGroupAllowanceResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgRevokeAllowanceResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgGrantGroupAllowanceResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		default:
-			iNdEx = preIndex
-			skippy, err := skipMsgs(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthMsgs
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *MsgRevokeGroupAllowance) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowMsgs
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: MsgRevokeGroupAllowance: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgRevokeGroupAllowance: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field SubspaceID", wireType)
-			}
-			m.SubspaceID = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMsgs
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.SubspaceID |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field GroupID", wireType)
-			}
-			m.GroupID = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMsgs
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.GroupID |= uint32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Granter", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMsgs
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthMsgs
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthMsgs
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Granter = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipMsgs(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthMsgs
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *MsgRevokeGroupAllowanceResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowMsgs
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: MsgRevokeGroupAllowanceResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgRevokeGroupAllowanceResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgRevokeAllowanceResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:

@@ -189,7 +189,7 @@ func (s *IntegrationTestSuite) TestCmdQueryGroupAllowances() {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-func (s *IntegrationTestSuite) TestCmdGrantUserAllowance() {
+func (s *IntegrationTestSuite) TestCmdGrantAllowance() {
 	val := s.network.Validators[0]
 	testCases := []struct {
 		name      string
@@ -199,19 +199,36 @@ func (s *IntegrationTestSuite) TestCmdGrantUserAllowance() {
 	}{
 		{
 			name:      "invalid subspace id returns error",
-			args:      []string{"id", "grantee"},
+			args:      []string{"id"},
 			shouldErr: true,
 		},
 		{
-			name:      "invalid grantee returns error",
-			args:      []string{"1", "grantee"},
+			name:      "empty grantee returns error",
+			args:      []string{"1"},
+			shouldErr: true,
+		},
+		{
+			name: "invalid grantee returns error",
+			args: []string{
+				"1",
+				fmt.Sprintf("--%s=%s", cli.FlagUserGrantee, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
+				fmt.Sprintf("--%s=%s", cli.FlagGroupGrantee, "1"),
+			},
+			shouldErr: true,
+		},
+		{
+			name: "invalid msg returns error",
+			args: []string{
+				"0",
+				fmt.Sprintf("--%s=%s", cli.FlagUserGrantee, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
+			},
 			shouldErr: true,
 		},
 		{
 			name: "invalid expiration returns error",
 			args: []string{
 				"1",
-				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+				fmt.Sprintf("--%s=%s", cli.FlagUserGrantee, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
 				fmt.Sprintf("--%s=%s", cli.FlagExpiration, "invalid"),
 			},
 			shouldErr: true,
@@ -221,7 +238,7 @@ func (s *IntegrationTestSuite) TestCmdGrantUserAllowance() {
 			args: append(
 				[]string{
 					"1",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					fmt.Sprintf("--%s=%s", cli.FlagUserGrantee, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
 					fmt.Sprintf("--%s=%s", cli.FlagSpendLimit, "100stake"),
 					fmt.Sprintf("--%s=%s", cli.FlagExpiration, getFormattedExpiration(3600)),
 					fmt.Sprintf("--%s=%d", cli.FlagPeriod, 36000),
@@ -236,7 +253,7 @@ func (s *IntegrationTestSuite) TestCmdGrantUserAllowance() {
 			args: append(
 				[]string{
 					"1",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					fmt.Sprintf("--%s=%s", cli.FlagUserGrantee, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
 					fmt.Sprintf("--%s=%s", cli.FlagSpendLimit, "100stake"),
 					fmt.Sprintf("--%s=%s", cli.FlagPeriodLimit, "10stake"),
 				},
@@ -247,7 +264,8 @@ func (s *IntegrationTestSuite) TestCmdGrantUserAllowance() {
 		{
 			name: "valid data with default allowance returns no error",
 			args: []string{
-				"1", "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+				"1",
+				fmt.Sprintf("--%s=%s", cli.FlagUserGrantee, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
@@ -261,7 +279,7 @@ func (s *IntegrationTestSuite) TestCmdGrantUserAllowance() {
 			args: append(
 				[]string{
 					"1",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					fmt.Sprintf("--%s=%s", cli.FlagUserGrantee, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
 					fmt.Sprintf("--%s=%s", cli.FlagSpendLimit, "100stake"),
 					fmt.Sprintf("--%s=%s", cli.FlagExpiration, getFormattedExpiration(3600)),
 					fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
@@ -278,7 +296,7 @@ func (s *IntegrationTestSuite) TestCmdGrantUserAllowance() {
 			args: append(
 				[]string{
 					"1",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					fmt.Sprintf("--%s=%s", cli.FlagUserGrantee, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
 					fmt.Sprintf("--%s=%s", cli.FlagSpendLimit, "100stake"),
 					fmt.Sprintf("--%s=%d", cli.FlagPeriod, 3600),
 					fmt.Sprintf("--%s=%s", cli.FlagPeriodLimit, "10stake"),
@@ -296,7 +314,7 @@ func (s *IntegrationTestSuite) TestCmdGrantUserAllowance() {
 			args: append(
 				[]string{
 					"1",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					fmt.Sprintf("--%s=%s", cli.FlagUserGrantee, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
 					fmt.Sprintf("--%s=%s", cli.FlagAllowedMsgs, "/desmos.posts.v2.MsgCreatPost"),
 					fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 					fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
@@ -312,7 +330,7 @@ func (s *IntegrationTestSuite) TestCmdGrantUserAllowance() {
 	for _, tc := range testCases {
 		tc := tc
 		s.Run(tc.name, func() {
-			cmd := cli.GetCmdGrantUserAllowance()
+			cmd := cli.GetCmdGrantAllowance()
 			clientCtx := val.ClientCtx
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
@@ -326,7 +344,7 @@ func (s *IntegrationTestSuite) TestCmdGrantUserAllowance() {
 	}
 }
 
-func (s *IntegrationTestSuite) TestCmdRevokeUserAllowance() {
+func (s *IntegrationTestSuite) TestCmdRevokeAllowance() {
 	val := s.network.Validators[0]
 	testCases := []struct {
 		name      string
@@ -336,18 +354,36 @@ func (s *IntegrationTestSuite) TestCmdRevokeUserAllowance() {
 	}{
 		{
 			name:      "invalid subspace id returns error",
-			args:      []string{"id", "grantee"},
+			args:      []string{"id"},
 			shouldErr: true,
 		},
 		{
-			name:      "invalid grantee returns error",
-			args:      []string{"1", "grantee"},
+			name:      "empty grantee returns error",
+			args:      []string{"1"},
+			shouldErr: true,
+		},
+		{
+			name: "invalid grantee returns error",
+			args: []string{
+				"1",
+				fmt.Sprintf("--%s=%s", cli.FlagUserGrantee, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
+				fmt.Sprintf("--%s=%s", cli.FlagGroupGrantee, "1"),
+			},
+			shouldErr: true,
+		},
+		{
+			name: "invalid msg returns error",
+			args: []string{
+				"0",
+				fmt.Sprintf("--%s=%s", cli.FlagUserGrantee, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
+			},
 			shouldErr: true,
 		},
 		{
 			name: "valid data returns no error",
 			args: []string{
-				"1", "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+				"1",
+				fmt.Sprintf("--%s=%s", cli.FlagUserGrantee, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
@@ -361,194 +397,7 @@ func (s *IntegrationTestSuite) TestCmdRevokeUserAllowance() {
 	for _, tc := range testCases {
 		tc := tc
 		s.Run(tc.name, func() {
-			cmd := cli.GetCmdRevokeUserAllowance()
-			clientCtx := val.ClientCtx
-
-			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-			if tc.shouldErr {
-				s.Require().Error(err)
-			} else {
-				s.Require().NoError(err)
-				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
-			}
-		})
-	}
-}
-
-func (s *IntegrationTestSuite) TestCmdGrantGroupAllowance() {
-	val := s.network.Validators[0]
-	testCases := []struct {
-		name      string
-		args      []string
-		shouldErr bool
-		respType  proto.Message
-	}{
-		{
-			name:      "invalid subspace id returns error",
-			args:      []string{"id", "group"},
-			shouldErr: true,
-		},
-		{
-			name:      "invalid group id returns error",
-			args:      []string{"1", "group"},
-			shouldErr: true,
-		},
-		{
-			name: "invalid expiration returns error",
-			args: []string{
-				"1",
-				"1",
-				fmt.Sprintf("--%s=%s", cli.FlagExpiration, "invalid"),
-			},
-			shouldErr: true,
-		},
-		{
-			name: "invalid periodic allowance returns error - period is greater than expiration",
-			args: append(
-				[]string{
-					"1",
-					"1",
-					fmt.Sprintf("--%s=%s", cli.FlagSpendLimit, "100stake"),
-					fmt.Sprintf("--%s=%s", cli.FlagExpiration, getFormattedExpiration(3600)),
-					fmt.Sprintf("--%s=%d", cli.FlagPeriod, 36000),
-					fmt.Sprintf("--%s=%s", cli.FlagPeriodLimit, "10stake"),
-				},
-			),
-			shouldErr: true,
-			respType:  &sdk.TxResponse{},
-		},
-		{
-			name: "invalid periodic allowance returns error - invalid number of args",
-			args: append(
-				[]string{
-					"1",
-					"1",
-					fmt.Sprintf("--%s=%s", cli.FlagSpendLimit, "100stake"),
-					fmt.Sprintf("--%s=%s", cli.FlagPeriodLimit, "10stake"),
-				},
-			),
-			shouldErr: true,
-			respType:  &sdk.TxResponse{},
-		},
-		{
-			name: "valid data with default allowance returns no error",
-			args: []string{
-				"1",
-				"1",
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
-				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
-			},
-			shouldErr: false,
-			respType:  &sdk.TxResponse{},
-		},
-		{
-			name: "valid data with basic allowance returns no error",
-			args: append(
-				[]string{
-					"1",
-					"1",
-					fmt.Sprintf("--%s=%s", cli.FlagSpendLimit, "100stake"),
-					fmt.Sprintf("--%s=%s", cli.FlagExpiration, getFormattedExpiration(3600)),
-					fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-					fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-					fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
-					fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
-				},
-			),
-			shouldErr: false,
-			respType:  &sdk.TxResponse{},
-		},
-		{
-			name: "valid data with periodic allowance returns no error",
-			args: append(
-				[]string{
-					"1",
-					"1",
-					fmt.Sprintf("--%s=%s", cli.FlagSpendLimit, "100stake"),
-					fmt.Sprintf("--%s=%d", cli.FlagPeriod, 3600),
-					fmt.Sprintf("--%s=%s", cli.FlagPeriodLimit, "10stake"),
-					fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-					fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-					fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
-					fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
-				},
-			),
-			shouldErr: false,
-			respType:  &sdk.TxResponse{},
-		},
-		{
-			name: "valid data with filtered allowance returns no error",
-			args: append(
-				[]string{
-					"1",
-					"1",
-					fmt.Sprintf("--%s=%s", cli.FlagAllowedMsgs, "/desmos.posts.v2.MsgCreatPost"),
-					fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-					fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-					fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
-					fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
-				},
-			),
-			shouldErr: false,
-			respType:  &sdk.TxResponse{},
-		},
-	}
-
-	for _, tc := range testCases {
-		tc := tc
-		s.Run(tc.name, func() {
-			cmd := cli.GetCmdGrantGroupAllowance()
-			clientCtx := val.ClientCtx
-
-			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-			if tc.shouldErr {
-				s.Require().Error(err)
-			} else {
-				s.Require().NoError(err)
-				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
-			}
-		})
-	}
-}
-
-func (s *IntegrationTestSuite) TestCmdRevokeGroupAllowance() {
-	val := s.network.Validators[0]
-	testCases := []struct {
-		name      string
-		args      []string
-		shouldErr bool
-		respType  proto.Message
-	}{
-		{
-			name:      "invalid subspace id returns error",
-			args:      []string{"id", "group"},
-			shouldErr: true,
-		},
-		{
-			name:      "invalid group id returns error",
-			args:      []string{"1", "group"},
-			shouldErr: true,
-		},
-		{
-			name: "valid data returns no error",
-			args: []string{
-				"1", "1",
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
-				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
-			},
-			shouldErr: false,
-			respType:  &sdk.TxResponse{},
-		},
-	}
-
-	for _, tc := range testCases {
-		tc := tc
-		s.Run(tc.name, func() {
-			cmd := cli.GetCmdRevokeGroupAllowance()
+			cmd := cli.GetCmdRevokeAllowance()
 			clientCtx := val.ClientCtx
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)

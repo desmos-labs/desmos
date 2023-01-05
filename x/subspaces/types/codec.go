@@ -29,10 +29,8 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 
 	cdc.RegisterConcrete(&MsgSetUserPermissions{}, "desmos/MsgSetUserPermissions", nil)
 
-	cdc.RegisterConcrete(&MsgGrantUserAllowance{}, "desmos/MsgGrantUserAllowance", nil)
-	cdc.RegisterConcrete(&MsgRevokeUserAllowance{}, "desmos/MsgRevokeUserAllowance", nil)
-	cdc.RegisterConcrete(&MsgGrantGroupAllowance{}, "desmos/MsgGrantGroupAllowance", nil)
-	cdc.RegisterConcrete(&MsgRevokeGroupAllowance{}, "desmos/MsgRevokeGroupAllowance", nil)
+	cdc.RegisterConcrete(&MsgGrantAllowance{}, "desmos/MsgGrantAllowance", nil)
+	cdc.RegisterConcrete(&MsgRevokeAllowance{}, "desmos/MsgRevokeAllowance", nil)
 
 	cdc.RegisterInterface((*Grantee)(nil), nil)
 	cdc.RegisterConcrete(&UserGrantee{}, "desmos/UserGrantee", nil)
@@ -62,10 +60,8 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 		&MsgAddUserToUserGroup{},
 		&MsgRemoveUserFromUserGroup{},
 		&MsgSetUserPermissions{},
-		&MsgGrantUserAllowance{},
-		&MsgRevokeUserAllowance{},
-		&MsgGrantGroupAllowance{},
-		&MsgRevokeGroupAllowance{},
+		&MsgGrantAllowance{},
+		&MsgRevokeAllowance{},
 	)
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)

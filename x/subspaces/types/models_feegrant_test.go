@@ -72,17 +72,7 @@ func TestUserGrantee_Validate(t *testing.T) {
 }
 
 func TestGrant_Validate(t *testing.T) {
-	validUserGrantee := types.NewUserGrantee("cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez")
-	validgranteeAny, err := codectypes.NewAnyWithValue(types.NewUserGrantee("cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0"))
-	require.NoError(t, err)
-
-	userGrant, err := types.NewGrant(1, "cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0", validUserGrantee, &feegrant.BasicAllowance{})
-	require.NoError(t, err)
-
-	invalidGranteeAny, err := codectypes.NewAnyWithValue(types.NewUserGrantee(""))
-	require.NoError(t, err)
-
-	invaliduserGranteeAny, err := codectypes.NewAnyWithValue(types.NewUserGrantee("cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0"))
+	validGranteeAny, err := codectypes.NewAnyWithValue(types.NewUserGrantee("cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez"))
 	require.NoError(t, err)
 
 	testCases := []struct {
@@ -92,42 +82,34 @@ func TestGrant_Validate(t *testing.T) {
 	}{
 		{
 			name: "invalid subspace id returns error",
-			grant: types.Grant{
-				SubspaceID: 0,
-				Granter:    "cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
-				Grantee:    &codectypes.Any{},
-				Allowance:  &codectypes.Any{},
-			},
+			grant: types.NewGrant(0,
+				"cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
+				types.NewUserGrantee("cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0"),
+				&feegrant.BasicAllowance{}),
 			shouldErr: true,
 		},
 		{
 			name: "invalid granter returns error",
-			grant: types.Grant{
-				SubspaceID: 1,
-				Granter:    "",
-				Grantee:    &codectypes.Any{},
-				Allowance:  &codectypes.Any{},
-			},
+			grant: types.NewGrant(1,
+				"",
+				types.NewUserGrantee("cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0"),
+				&feegrant.BasicAllowance{}),
 			shouldErr: true,
 		},
 		{
 			name: "invalid grantee returns error",
-			grant: types.Grant{
-				SubspaceID: 1,
-				Granter:    "cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
-				Grantee:    invalidGranteeAny,
-				Allowance:  &codectypes.Any{},
-			},
+			grant: types.NewGrant(1,
+				"cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
+				types.NewUserGrantee(""),
+				&feegrant.BasicAllowance{}),
 			shouldErr: true,
 		},
 		{
 			name: "granter self-grant returns error",
-			grant: types.Grant{
-				SubspaceID: 1,
-				Granter:    "cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
-				Grantee:    invaliduserGranteeAny,
-				Allowance:  &codectypes.Any{},
-			},
+			grant: types.NewGrant(1,
+				"cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
+				types.NewUserGrantee("cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0"),
+				&feegrant.BasicAllowance{}),
 			shouldErr: true,
 		},
 		{
@@ -135,14 +117,17 @@ func TestGrant_Validate(t *testing.T) {
 			grant: types.Grant{
 				SubspaceID: 1,
 				Granter:    "cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
-				Grantee:    validgranteeAny,
+				Grantee:    validGranteeAny,
 				Allowance:  &codectypes.Any{},
 			},
 			shouldErr: true,
 		},
 		{
-			name:      "valid grant returns no error",
-			grant:     userGrant,
+			name: "valid grant returns no error",
+			grant: types.NewGrant(1,
+				"cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
+				types.NewUserGrantee("cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez"),
+				&feegrant.BasicAllowance{}),
 			shouldErr: false,
 		},
 	}

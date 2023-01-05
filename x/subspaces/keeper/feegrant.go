@@ -118,11 +118,10 @@ func (k Keeper) UseUserGrantedFees(ctx sdk.Context, subspaceID uint64, granter, 
 
 	// update grant if allowance accept properly and still valid after execution
 	if !remove {
-		grant, err = types.NewGrant(subspaceID, granter.String(), grant.Grantee.GetCachedValue().(types.Grantee), allowance)
-		if err != nil {
-			return false
-		}
-		k.SaveGrant(ctx, grant)
+		k.SaveGrant(ctx, types.NewGrant(subspaceID,
+			granter.String(),
+			grant.Grantee.GetCachedValue().(types.Grantee),
+			allowance))
 	}
 	return true
 }
@@ -151,11 +150,7 @@ func (k Keeper) UseGroupGrantedFees(ctx sdk.Context, subspaceID uint64, granter,
 
 		// update grant if allowance accept properly and still valid after execution
 		if !remove {
-			grant, err = types.NewGrant(subspaceID, granter.String(), groupGrantee, allowance)
-			if err != nil {
-				return false
-			}
-			k.SaveGrant(ctx, grant)
+			k.SaveGrant(ctx, types.NewGrant(subspaceID, granter.String(), groupGrantee, allowance))
 		}
 
 		used = true

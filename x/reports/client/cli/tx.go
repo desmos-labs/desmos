@@ -79,7 +79,7 @@ To report a post, --%s must be used instead.`, FlagUser, FlagPostID),
 			}
 
 			if target == nil {
-				return fmt.Errorf("at least one of --%s or --%s must be specfieid", FlagUser, FlagPostID)
+				return fmt.Errorf("at least one of --%s or --%s must be specified", FlagUser, FlagPostID)
 			}
 
 			message, err := cmd.Flags().GetString(FlagMessage)

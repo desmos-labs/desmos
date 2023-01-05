@@ -81,15 +81,15 @@ func buildSetUserPermissionsRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessag
 	return bz
 }
 
-func buildGrantUserAllowanceRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
+func buildGrantAllowanceRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
 	raw := json.RawMessage(cdc.MustMarshalJSON(msg))
-	bz, _ := json.Marshal(types.SubspacesMsg{GrantUserAllowance: &raw})
+	bz, _ := json.Marshal(types.SubspacesMsg{GrantAllowance: &raw})
 	return bz
 }
 
-func buildGrantGroupAllowanceRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
+func buildRevokeAllowanceRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
 	raw := json.RawMessage(cdc.MustMarshalJSON(msg))
-	bz, _ := json.Marshal(types.SubspacesMsg{GrantGroupAllowance: &raw})
+	bz, _ := json.Marshal(types.SubspacesMsg{RevokeAllowance: &raw})
 	return bz
 }
 

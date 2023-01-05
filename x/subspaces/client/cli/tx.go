@@ -36,6 +36,8 @@ const (
 	FlagPeriodLimit    = "period-limit"
 	FlagSpendLimit     = "spend-limit"
 	FlagAllowedMsgs    = "allowed-messages"
+	FlagUserGrantee    = "user"
+	FlagGroupGrantee   = "group"
 )
 
 // NewTxCmd returns a new command to perform subspaces transactions
@@ -56,10 +58,8 @@ func NewTxCmd() *cobra.Command {
 		NewGroupsTxCmd(),
 		GetCmdSetUserPermissions(),
 		GetCmdGrantAuthorization(),
-		GetCmdGrantUserAllowance(),
-		GetCmdGrantGroupAllowance(),
-		GetCmdRevokeUserAllowance(),
-		GetCmdRevokeGroupAllowance(),
+		GetCmdGrantAllowance(),
+		GetCmdRevokeAllowance(),
 	)
 
 	return subspacesTxCmd

@@ -18,10 +18,8 @@ const (
 	EventTypeRemoveUserFromGroup     = "remove_group_member"
 	EventTypeSetUserPermissions      = "set_user_permissions"
 
-	EventTypeGrantUserAllowance   = "grant_user_allowance"
-	EventTypeRevokeUserAllowance  = "revoke_user_allowance"
-	EventTypeGrantGroupAllowance  = "grant_group_allowance"
-	EventTypeRevokeGroupAllowance = "revoke_group_allowance"
+	EventTypeGrantAllowance  = "grant_allowance"
+	EventTypeRevokeAllowance = "revoke_allowance"
 
 	AttributeValueCategory      = ModuleName
 	AttributeKeySubspaceID      = "subspace_id"
@@ -32,5 +30,6 @@ const (
 	AttributeKeyUserGroupID     = "user_group_id"
 	AttributeKeyUser            = "user"
 	AttributeKeyGranter         = "granter"
-	AttributeKeyGrantee         = "grantee"
+	AttributeKeyUserGrantee     = "user_grantee"
+	AttributeKeyGroupGrantee    = "group_grantee"
 )
