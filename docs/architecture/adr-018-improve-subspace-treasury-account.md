@@ -5,79 +5,37 @@
 
 ## Status
 
-DRAFT
+PROPOSED
 
 ## Abstract
 
-This ADR introduces a new treasury account structure, whish guarantee the account 100% controlled by the subspace.
+This ADR introduces a new treasury account structure, which guarantees the account fully controlled by the subspace.
 
 ## Context
 
-Currently, the subspace address is a third-party account assigned by the subspace manager(s). The subspace has no methods to control their treasury. It would cause the issues below:
-1. the managers can assign a rich account no controlled by them as their treasury in order to scam their users;
-2. if we implement the feature to allow managers to spend money from treasury account in the future, the managers can assign any other account to thieve money.
+Currently, each subspace's treasury is a third-party accounts assigned by the subspace's manager(s). The subspace itself has no control over its treasury, which can lead to the following issues:
+1. subspace managers can assign a wealthy account not controlled by them as their treasury in order to scam users.;
+2. if we implement a feature that allows managers to spend money from the treasury in the future, they could assign any other account in order to steal funds.
 
 ## Decision
 
-In order to solve the issues above, we will implement a new treasury account structure. The new treasury address will be generated from the subspace with `authtypes.NewModuleAddress` when the subspace is created, and can not be later edited. In addition, we need a new permission and method to allow user to spend from the treasury.
+To address the issues mentioned above, we propose implementing a new treasury account structure. The new treasury address will be generated using `authtypes.NewModuleAddress` from its subspace id when the subspace is created, and will not be able to be edited thereafter. This will ensure that the subspace's treasury is controlled solely by the subspace itself, rather than being managed by external third-party accounts.
+
+Additionally, we will introduce a new permission and method to allow authorized users to spend funds from the treasury. 
 
 ## `Msg` Service
 
-To disallow the later edit the treasury account, we need to remove the `treasury` field in the current `MsgCreateSubspace` and `MsgEditSubspace`. The new ones will be like:
+To prevent the treasury account from being edited later, we will remove the `treasury` field from the current `MsgCreateSubspace` and `MsgEditSubspace` messages.
 
-```protobuf
-// MsgCreateSubspace represents the message used to create a subspace
-message MsgCreateSubspace {
-  // Name of the subspace
-  string name = 1 [ (gogoproto.moretags) = "yaml:\"name\"" ];
-
-  // (optional) Description of the subspace
-  string description = 2 [ (gogoproto.moretags) = "yaml:\"description\"" ];
-
-  // (optional) Owner of this subspace. If not specified, the creator will be
-  // the default owner.
-  string owner = 3 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
-
-  // Address creating the subspace
-  string creator = 4 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
-}
-
-// MsgEditSubspace represents the message used to edit a subspace fields
-message MsgEditSubspace {
-  // Id of the subspace to edit
-  uint64 subspace_id = 1 [
-    (gogoproto.customname) = "SubspaceID",
-    (gogoproto.moretags) = "yaml:\"subspace_id\""
-  ];
-
-  // New name of the subspace. If it shouldn't be changed, use [do-not-modify]
-  // instead.
-  string name = 2 [ (gogoproto.moretags) = "yaml:\"name\"" ];
-
-  // New description of the subspace. If it shouldn't be changed, use
-  // [do-not-modify] instead.
-  string description = 3 [ (gogoproto.moretags) = "yaml:\"description\"" ];
-
-  // New owner of the subspace. If it shouldn't be changed, use [do-not-modify]
-  // instead.
-  string owner = 4 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
-
-  // Address of the user editing the subspace
-  string signer = 5 [ (gogoproto.moretags) = "yaml:\"signer\"" ];
-}
-
-// MsgEditSubspaceResponse defines the Msg/EditSubspace response type
-message MsgEditSubspaceResponse {}
-```
-In addition, we need implement a new operation to allow managers to spend money from treasury account bellow:
+Additionally, we will implement a new operation to allow authorized users to spend funds from the treasury account as follows:
 
 ```protobuf
 service Msg {
-    // SpendTreasury allows user who has the spend permission to transfer tokens out from the treasury
+    // SpendTreasury allows users who have the permission to transfer tokens out of the treasury
     rpc SpendTreasury(MsgSpendTreasury) returns (MsgSpendTreasuryResponse);
 }
 
-// MsgSpendTreasury transfers the amount of money from the treasury of the given subspace money to other address
+// MsgSpendTreasury transfers funds from the treasury of the given subspace to another address
 message MsgSpendTreasury {
     // Id of the subspace where the spender transfer money out from the treasury
     uint64 subspace_id = 1;
@@ -93,3 +51,24 @@ message MsgSpendTreasury {
 message MsgSpendTreasuryResponse{}
 ```
 
+## Consequences
+
+### Backwards Compatibility
+
+The solution outlined above is **not** backwards compatible and will require a migration script to update all existing subspaces to the new version. This script will handle the following tasks:
+- migrate all subspaces to have a new treasury address generated from the its subspace's ID.
+
+### Positive
+
+- Ensure that the treasury account is fully controlled by the subspace
+
+### Negative
+
+(none known)
+
+### Neutral
+
+(none known)
+
+## References
+- [Issue #1057 discussion](https://github.com/desmos-labs/desmos/pull/1057#discussion_r1059423029)
