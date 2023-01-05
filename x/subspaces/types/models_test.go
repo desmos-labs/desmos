@@ -183,7 +183,6 @@ func TestSubspace_Update(t *testing.T) {
 				types.DoNotModify,
 				types.DoNotModify,
 				types.DoNotModify,
-				types.DoNotModify,
 			),
 			expResult: types.NewSubspace(
 				1,
@@ -209,14 +208,13 @@ func TestSubspace_Update(t *testing.T) {
 			update: types.NewSubspaceUpdate(
 				"New subspace name",
 				"New subspace description",
-				"cosmos1l6rkljkrh5g0vyeh9m8tsl4cy626shunv6ksz7",
 				"cosmos10ya9y35qkf4puaklx5fs07sxfxqncx9usgsnz6",
 			),
 			expResult: types.NewSubspace(
 				1,
 				"New subspace name",
 				"New subspace description",
-				"cosmos1l6rkljkrh5g0vyeh9m8tsl4cy626shunv6ksz7",
+				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 				"cosmos10ya9y35qkf4puaklx5fs07sxfxqncx9usgsnz6",
 				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),

@@ -588,11 +588,10 @@ func (s *IntegrationTestSuite) TestCmdCreateSubspace() {
 			respType:  &sdk.TxResponse{},
 		},
 		{
-			name: "valid data returns no error with custom treasury and owner",
+			name: "valid data returns no error with custom owner",
 			args: []string{
 				"Another test subspace",
 				fmt.Sprintf("--%s=%s", cli.FlagDescription, "Another test subspace"),
-				fmt.Sprintf("--%s=%s", cli.FlagTreasury, "cosmos1lqjd4p6uxvsvus6kf3gf00uz7luj4jcxpyahul"),
 				fmt.Sprintf("--%s=%s", cli.FlagOwner, "cosmos1et50whs236j9dacacz7feh05jjum9jk04cdt9u"),
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),

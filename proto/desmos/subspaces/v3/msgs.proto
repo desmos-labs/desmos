@@ -70,15 +70,12 @@ message MsgCreateSubspace {
   // (optional) Description of the subspace
   string description = 2 [ (gogoproto.moretags) = "yaml:\"description\"" ];
 
-  // (optional) Treasury address associated to this subspace
-  string treasury = 3 [ (gogoproto.moretags) = "yaml:\"treasury\"" ];
-
   // (optional) Owner of this subspace. If not specified, the creator will be
   // the default owner.
-  string owner = 4 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
+  string owner = 3 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
 
   // Address creating the subspace
-  string creator = 5 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
+  string creator = 4 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
 }
 
 // MsgCreateSubspaceResponse defines the Msg/CreateSubspace response type
@@ -106,16 +103,12 @@ message MsgEditSubspace {
   // [do-not-modify] instead.
   string description = 3 [ (gogoproto.moretags) = "yaml:\"description\"" ];
 
-  // New treasury address of the subspace. If it shouldn't be changed, use
-  // [do-not-modify] instead.
-  string treasury = 4 [ (gogoproto.moretags) = "yaml:\"treasury\"" ];
-
   // New owner of the subspace. If it shouldn't be changed, use [do-not-modify]
   // instead.
-  string owner = 5 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
+  string owner = 4 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
 
   // Address of the user editing the subspace
-  string signer = 6 [ (gogoproto.moretags) = "yaml:\"signer\"" ];
+  string signer = 5 [ (gogoproto.moretags) = "yaml:\"signer\"" ];
 }
 
 // MsgEditSubspaceResponse defines the Msg/EditSubspace response type

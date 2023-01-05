@@ -38,7 +38,6 @@ var (
 func NewMsgCreateSubspace(
 	name string,
 	description string,
-	treasury string,
 	owner string,
 	creator string,
 ) *MsgCreateSubspace {
@@ -50,7 +49,6 @@ func NewMsgCreateSubspace(
 	return &MsgCreateSubspace{
 		Name:        name,
 		Description: description,
-		Treasury:    treasury,
 		Owner:       owner,
 		Creator:     creator,
 	}
@@ -66,13 +64,6 @@ func (msg MsgCreateSubspace) Type() string { return ActionCreateSubspace }
 func (msg MsgCreateSubspace) ValidateBasic() error {
 	if strings.TrimSpace(msg.Name) == "" {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "subspace name cannot be empty or blank")
-	}
-
-	if msg.Treasury != "" {
-		_, err := sdk.AccAddressFromBech32(msg.Treasury)
-		if err != nil {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid treasury address")
-		}
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.Owner)
@@ -106,7 +97,6 @@ func NewMsgEditSubspace(
 	subspaceID uint64,
 	name string,
 	description,
-	treasury string,
 	owner string,
 	signer string,
 ) *MsgEditSubspace {
@@ -114,7 +104,6 @@ func NewMsgEditSubspace(
 		SubspaceID:  subspaceID,
 		Name:        name,
 		Description: description,
-		Treasury:    treasury,
 		Owner:       owner,
 		Signer:      signer,
 	}

@@ -27,7 +27,6 @@ const (
 	FlagDescription    = "description"
 	FlagParent         = "parent"
 	FlagSection        = "section"
-	FlagTreasury       = "treasury"
 	FlagOwner          = "owner"
 	FlagPermissions    = "permissions"
 	FlagInitialMembers = "initial-members"
@@ -84,17 +83,12 @@ The name must be a human readable name.`,
 				return err
 			}
 
-			treasury, err := cmd.Flags().GetString(FlagTreasury)
-			if err != nil {
-				return err
-			}
-
 			owner, err := cmd.Flags().GetString(FlagOwner)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgCreateSubspace(name, description, treasury, owner, clientCtx.FromAddress.String())
+			msg := types.NewMsgCreateSubspace(name, description, owner, clientCtx.FromAddress.String())
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}
@@ -104,7 +98,6 @@ The name must be a human readable name.`,
 	}
 
 	cmd.Flags().String(FlagDescription, "", "Description of the subspace")
-	cmd.Flags().String(FlagTreasury, "", "Treasury of the subspace")
 	cmd.Flags().String(FlagOwner, "", "Owner of the subspace")
 
 	flags.AddTxFlagsToCmd(cmd)
@@ -147,17 +140,12 @@ func GetCmdEditSubspace() *cobra.Command {
 				return err
 			}
 
-			treasury, err := cmd.Flags().GetString(FlagTreasury)
-			if err != nil {
-				return err
-			}
-
 			owner, err := cmd.Flags().GetString(FlagOwner)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgEditSubspace(subspaceID, name, description, treasury, owner, clientCtx.FromAddress.String())
+			msg := types.NewMsgEditSubspace(subspaceID, name, description, owner, clientCtx.FromAddress.String())
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}
@@ -168,7 +156,6 @@ func GetCmdEditSubspace() *cobra.Command {
 
 	cmd.Flags().String(FlagName, types.DoNotModify, "New human readable name of the subspace")
 	cmd.Flags().String(FlagDescription, types.DoNotModify, "Description of the subspace")
-	cmd.Flags().String(FlagTreasury, types.DoNotModify, "Treasury of the subspace")
 	cmd.Flags().String(FlagOwner, types.DoNotModify, "Owner of the subspace")
 
 	flags.AddTxFlagsToCmd(cmd)
