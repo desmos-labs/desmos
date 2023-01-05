@@ -19,7 +19,7 @@ Currently, each subspace's treasury is a third-party accounts assigned by the su
 
 ## Decision
 
-To address the issues mentioned above, we propose implementing a new treasury account structure. The new treasury address will be generated using `authtypes.NewModuleAddress` from its subspace id when the subspace is created, and will not be able to be edited thereafter. This will ensure that the subspace's treasury is controlled solely by the subspace itself, rather than being managed by external third-party accounts.
+To address the issues mentioned above, we propose implementing a new treasury account structure. The new treasury address will be generated using `authtypes.NewModuleAddress` from its subspace id when the subspace is created, and will not be able to be edited thereafter. This will ensure that the subspace's treasury is fully controlled by the subspace itself, rather than being managed by external third-party accounts.
 
 Additionally, we will introduce a new permission and method to allow authorized users to spend funds from the treasury. 
 
