@@ -32,6 +32,7 @@ var (
 	_ sdk.Msg = &MsgAddUserToUserGroup{}
 	_ sdk.Msg = &MsgRemoveUserFromUserGroup{}
 	_ sdk.Msg = &MsgSetUserPermissions{}
+	_ sdk.Msg = &MsgGrantTreasuryAuthorization{}
 )
 
 // NewMsgCreateSubspace creates a new MsgCreateSubspace instance
