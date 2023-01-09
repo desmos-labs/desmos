@@ -14,7 +14,7 @@ This ADR introduces a new treasury account structure, which guarantees the accou
 ## Context
 
 Currently, each subspace's treasury is a third-party accounts assigned by the subspace's manager(s). The subspace itself has no control over its treasury, which can lead to the following issues:
-1. subspace managers can assign a wealthy account not controlled by them as their treasury in order to scam users.;
+1. subspace managers can assign a wealthy account not controlled by them as their treasury in order to scam users;
 2. if we implement a feature that allows managers to spend money from the treasury in the future, they could assign any other account in order to steal funds.
 
 ## Decision
