@@ -9,7 +9,7 @@ PROPOSED
 
 ## Abstract
 
-This ADR introduces a new treasury account structure, which guarantees the account fully controlled by the subspace.
+This ADR introduces a new treasury account structure, which guarantees the account is fully controlled by the subspace admins.
 
 ## Context
 
