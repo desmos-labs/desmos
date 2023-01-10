@@ -9,37 +9,37 @@ jobs:
   Test:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout repo
+      - name: Checkout 🛎️
         uses: actions/checkout@v3
 
-      - name: Setup Golang
+      - name: Setup Go 🧰
         uses: actions/setup-go@v3
         with:
           go-version: 1.18
 
-      - name: Run mutation test
+      - name: Run mutation tests 🧪
         continue-on-error: true
         run: make test-mutation $MODULES
         env:
           MODULES: fees,profiles,subspaces,relationships,posts,reports,reactions
       
-      - name: Execute mutation test format script
+      - name: Format output 🔍
         id: mutest-formatted
         run: |
           cat mutation_test_result.txt | grep -Ev "PASS" | grep -Ev "SKIP" | tee mutation_test_result.txt
       
-      - name: Generate code blocks
+      - name: Generate code blocks 🧑‍💻
         id: gen-code-blocks
         run: |
           cat mutation_test_result.txt  | sed "s# @@# @@\n\`\`\`go\n#g " | sed "s#FAIL#\`\`\`\nFAIL\n\n\n#g " > go_mutation_test_result.txt
       
-      - name: Read mutation_test_txt file
+      - name: Read output file 👀
         id: result
         uses: juliangruber/read-file-action@v1
         with:
           path: go_mutation_test_result.txt
       
-      - name: Create an mutation test output issue
+      - name: Create issue 🚩
         uses: dacbd/create-issue-action@main
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
