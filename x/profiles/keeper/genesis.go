@@ -25,6 +25,20 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) []abci.Val
 	// Initialize the module params
 	k.SetParams(ctx, data.Params)
 
+	// Initialize the IBC settings
+	k.SetPort(ctx, data.IBCPortID)
+
+	// Only try to bind to port if it is not already bound, since we may already own
+	// port capability from capability InitGenesis
+	if !k.IsBound(ctx, data.IBCPortID) {
+		// module binds to the port on InitChain
+		// and claims the returned capability
+		err := k.BindPort(ctx, data.IBCPortID)
+		if err != nil {
+			panic("could not claim port capability: " + err.Error())
+		}
+	}
+
 	// Initialize the Profiles
 	k.ak.IterateAccounts(ctx, func(account authtypes.AccountI) (stop bool) {
 		if profile, ok := (account).(*types.Profile); ok {
@@ -41,19 +55,6 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) []abci.Val
 		err := k.SaveDTagTransferRequest(ctx, request)
 		if err != nil {
 			panic(err)
-		}
-	}
-
-	k.SetPort(ctx, data.IBCPortID)
-
-	// Only try to bind to port if it is not already bound, since we may already own
-	// port capability from capability InitGenesis
-	if !k.IsBound(ctx, data.IBCPortID) {
-		// module binds to the port on InitChain
-		// and claims the returned capability
-		err := k.BindPort(ctx, data.IBCPortID)
-		if err != nil {
-			panic("could not claim port capability: " + err.Error())
 		}
 	}
 

@@ -3,8 +3,6 @@ package keeper_test
 import (
 	"fmt"
 
-	relationshipstypes "github.com/desmos-labs/desmos/v4/x/relationships/types"
-
 	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -16,6 +14,7 @@ import (
 func (suite *KeeperTestSuite) TestMsgServer_RequestDTagTransfer() {
 	testCases := []struct {
 		name      string
+		setup     func(ctx sdk.Context)
 		store     func(ctx sdk.Context)
 		msg       *types.MsgRequestDTagTransfer
 		shouldErr bool
@@ -23,17 +22,14 @@ func (suite *KeeperTestSuite) TestMsgServer_RequestDTagTransfer() {
 	}{
 		{
 			name: "blocked receiver making request returns error",
+			setup: func(ctx sdk.Context) {
+				suite.rk.EXPECT().HasUserBlocked(ctx, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", uint64(0)).Return(true)
+			},
 			store: func(ctx sdk.Context) {
 				suite.Require().NoError(suite.k.SaveProfile(ctx,
 					profilestesting.ProfileFromAddr("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")))
 				suite.Require().NoError(suite.k.SaveProfile(ctx,
 					profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")))
-				suite.rk.SaveUserBlock(ctx, relationshipstypes.NewUserBlock(
-					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					"This user has been blocked",
-					0,
-				))
 			},
 			msg: types.NewMsgRequestDTagTransfer(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -43,6 +39,9 @@ func (suite *KeeperTestSuite) TestMsgServer_RequestDTagTransfer() {
 		},
 		{
 			name: "no DTag to transfer returns error",
+			setup: func(ctx sdk.Context) {
+				suite.rk.EXPECT().HasUserBlocked(ctx, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", uint64(0)).Return(false)
+			},
 			msg: types.NewMsgRequestDTagTransfer(
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -51,6 +50,9 @@ func (suite *KeeperTestSuite) TestMsgServer_RequestDTagTransfer() {
 		},
 		{
 			name: "Already present request returns error",
+			setup: func(ctx sdk.Context) {
+				suite.rk.EXPECT().HasUserBlocked(ctx, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", uint64(0)).Return(false)
+			},
 			store: func(ctx sdk.Context) {
 				request := types.NewDTagTransferRequest(
 					"dtag",
@@ -68,6 +70,9 @@ func (suite *KeeperTestSuite) TestMsgServer_RequestDTagTransfer() {
 		},
 		{
 			name: "not already present request is saved correctly",
+			setup: func(ctx sdk.Context) {
+				suite.rk.EXPECT().HasUserBlocked(ctx, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", uint64(0)).Return(false)
+			},
 			store: func(ctx sdk.Context) {
 				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")))
 			},
@@ -97,6 +102,9 @@ func (suite *KeeperTestSuite) TestMsgServer_RequestDTagTransfer() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup(ctx)
+			}
 			if tc.store != nil {
 				tc.store(ctx)
 			}
