@@ -33,7 +33,7 @@ MUTATION_SOURCES=$(echo "$MUTATION_SOURCES" | grep "$MODULE_FORMAT")
 MUTATION_SOURCES=$(echo "$MUTATION_SOURCES" | tr '\n' ' ')
 
 echo "################################################################################"
-echo "WARNING! This test will take hours to complete!"
+echo "### WARNING! This test will take hours to complete!"
 echo "################################################################################"
 
 echo "running mutation tests for the following module(s): $MODULE_NAMES"
