@@ -40,9 +40,9 @@ service Msg {
     (MsgRevokeTreasuryAuthorizationResponse);
 }
 
-// MsgGrantTreasuryAuthorization grants an authorization of the treasury to a user
+// MsgGrantTreasuryAuthorization grants an authorization on behalf of the treasury to a user
 message MsgGrantTreasuryAuthorization {
-    // Id of the subspace where the granter grants a treasury authorization
+    // Id of the subspace where the authorization should be granted
     uint64 subspace_id = 1;
     // Address of the user granting a treasury authorization
     string granter = 2;
