@@ -55,13 +55,13 @@ message MsgGrantTreasuryAuthorization {
 // MsgGrantTreasuryAuthorizationResponse defines the Msg/MsgGrantTreasuryAuthorization response type
 message MsgGrantTreasuryAuthorizationResponse{}
 
-// MsgRevokeTreasuryAuthorization revokes an authorization of the treasury from a user
+// MsgRevokeTreasuryAuthorization revokes an existing treasury authorization from a user
 message MsgRevokeTreasuryAuthorization {
-    // Id of the subspace where the granter revokes a treasury authorization
+    // Id of the subspace from which the authorization should be revoked
     uint64 subspace_id = 1;
-    // Address of the user revoking a treasury authorization
+    // Address of the user revoking the treasury authorization
     string granter = 2;
-    // Address of the user who is being revoked a treasury authorization
+    // Address of the user who is being revoked the treasury authorization
     string grantee = 3;
 }
 
