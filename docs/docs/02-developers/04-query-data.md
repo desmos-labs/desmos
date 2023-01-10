@@ -61,7 +61,7 @@ The above endpoints can be used with the following endpoints to get the desired 
 * [Fees REST endpoints](02-modules/fees/06-client.md#rest).
 
 ## GQL
-Another way to query the Desmos data is GQL. GQL is different from the above methods because it offers high possibilities of customisation for developers based on their needs. It is possible to interact with GQL endpoints in the client you are building by using one of the many libraries available for this kind of interaction. You can check what suites your needs here: [GraphQL resources](https://graphql.org/code/).
+Another way to query the Desmos data is GQL. GQL is different from the above methods because it offers high possibilities of customisation for developers based on their needs. It is possible to interact with GQL endpoints in the client you are building by using one of the many libraries available for this kind of interaction. You can check what suits your needs here: [GraphQL resources](https://graphql.org/code/).
 
 The GQL endpoints for Desmos chains are the following:
 1. [Testnet GQL endpoint](../05-testnet/05-endpoints.md#gql)
