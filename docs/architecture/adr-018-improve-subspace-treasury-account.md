@@ -35,7 +35,7 @@ service Msg {
     // GrantTreasuryAuthorization allows managers who have the permission to grant a treasury authorization to a user
     rpc GrantTreasuryAuthorization(MsgGrantTreasuryAuthorization) returns (MsgGrantTreasuryAuthorizationResponse);
 
-    // GrantTreasuryAuthorization allows managers who have the permission to revoke a treasury authorization from a user
+    // RevokeTreasuryAuthorization allows managers who have the permission to revoke an existing treasury authorization
     rpc RevokeTreasuryAuthorization(MsgRevokeTreasuryAuthorization) returns
     (MsgRevokeTreasuryAuthorizationResponse);
 }
