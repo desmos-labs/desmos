@@ -581,3 +581,7 @@ func TestUserGroup_Update(t *testing.T) {
 		})
 	}
 }
+
+func TestGetTreasuryAddress(t *testing.T) {
+	require.Equal(t, "cosmos1cyjzgj9j7d2gdqk78pa0fgvfnlzradat97aek9", types.GetTreasuryAddress(1).String())
+}

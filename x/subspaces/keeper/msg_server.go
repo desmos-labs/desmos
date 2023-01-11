@@ -38,6 +38,8 @@ func (k msgServer) CreateSubspace(goCtx context.Context, msg *types.MsgCreateSub
 	if err := subspace.Validate(); err != nil {
 		return nil, err
 	}
+	// Create a treasury account for subspace
+	k.creatAccount(ctx, subspace.Treasury)
 
 	// Save the subspace
 	k.SaveSubspace(ctx, subspace)
@@ -827,28 +829,4 @@ func (k msgServer) SetUserPermissions(goCtx context.Context, msg *types.MsgSetUs
 	})
 
 	return &types.MsgSetUserPermissionsResponse{}, nil
-}
-
-func (k msgServer) GrantTreasuryAuthorization(goCtx context.Context, msg *types.MsgGrantTreasuryAuthorization) (*types.MsgGrantTreasuryAuthorizationResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
-	subspace, _ := k.GetSubspace(ctx, msg.SubspaceID)
-	treasury, _ := sdk.AccAddressFromBech32(subspace.Treasury)
-	grantee, _ := sdk.AccAddressFromBech32(msg.Grantee)
-	err := k.authzKeeper.SaveGrant(ctx, grantee, treasury, msg.Grant.GetAuthorization(), msg.Grant.Expiration)
-	if err != nil {
-		return nil, err
-	}
-	return &types.MsgGrantTreasuryAuthorizationResponse{}, nil
-}
-
-func (k msgServer) RevokeTreasuryAuthorization(goCtx context.Context, msg *types.MsgRevokeTreasuryAuthorization) (*types.MsgRevokeTreasuryAuthorizationResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
-	subspace, _ := k.GetSubspace(ctx, msg.SubspaceID)
-	treasury, _ := sdk.AccAddressFromBech32(subspace.Treasury)
-	grantee, _ := sdk.AccAddressFromBech32(msg.Grantee)
-	err := k.authzKeeper.DeleteGrant(ctx, grantee, treasury, msg.MsgTypeUrl)
-	if err != nil {
-		return nil, err
-	}
-	return &types.MsgRevokeTreasuryAuthorizationResponse{}, nil
 }
