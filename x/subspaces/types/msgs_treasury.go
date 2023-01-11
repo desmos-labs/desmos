@@ -40,7 +40,7 @@ func NewMsgGrantTreasuryAuthorization(subspaceID uint64, granter string, grantee
 func (msg MsgGrantTreasuryAuthorization) Route() string { return RouterKey }
 
 // Type implements legacytx.LegacyMsg
-func (msg MsgGrantTreasuryAuthorization) Type() string { return ActionCreateSubspace }
+func (msg MsgGrantTreasuryAuthorization) Type() string { return ActionGrantTreasuryAuthorization }
 
 // ValidateBasic implements sdk.Msg
 func (msg MsgGrantTreasuryAuthorization) ValidateBasic() error {
@@ -92,7 +92,7 @@ func NewMsgRevokeTreasuryAuthorization(subspaceID uint64, granter string, grante
 func (msg MsgRevokeTreasuryAuthorization) Route() string { return RouterKey }
 
 // GetSignBytes implements legacytx.LegacyMsg
-func (msg MsgRevokeTreasuryAuthorization) Type() string { return ActionCreateSubspace }
+func (msg MsgRevokeTreasuryAuthorization) Type() string { return ActionRevokeTreasuryAuthorization }
 
 // ValidateBasic implements sdk.Msg
 func (msg MsgRevokeTreasuryAuthorization) ValidateBasic() error {
