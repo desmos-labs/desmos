@@ -110,7 +110,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 		app.GetMaccPerms(),
 	)
 
-	// gomock initializations
+	// Mocks initializations
 	ctrl := gomock.NewController(suite.T())
 	suite.rk = testutil.NewMockRelationshipsKeeper(ctrl)
 	suite.channelKeeper = testutil.NewMockChannelKeeper(ctrl)
