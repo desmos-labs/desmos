@@ -353,7 +353,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteAllUserIncomingDTagTransferReques
 				user := "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"
 
 				var iterations = 0
-				suite.k.IterateUserIncomingDTagTransferRequests(ctx, user, func(_ int64, _ types.DTagTransferRequest) (stop bool) {
+				suite.k.IterateUserIncomingDTagTransferRequests(ctx, user, func(_ types.DTagTransferRequest) (stop bool) {
 					iterations += 1
 					return false
 				})
