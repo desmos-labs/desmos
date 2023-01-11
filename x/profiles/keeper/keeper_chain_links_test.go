@@ -551,7 +551,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteAllUserChainLinks() {
 			check: func(ctx sdk.Context) {
 				address := "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"
 				var iterations = 0
-				suite.k.IterateUserChainLinks(ctx, address, func(index int64, link types.ChainLink) (stop bool) {
+				suite.k.IterateUserChainLinks(ctx, address, func(link types.ChainLink) (stop bool) {
 					iterations++
 					return false
 				})
@@ -601,7 +601,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteAllUserChainLinks() {
 			check: func(ctx sdk.Context) {
 				address := "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"
 				var iterations = 0
-				suite.k.IterateUserChainLinks(ctx, address, func(index int64, link types.ChainLink) (stop bool) {
+				suite.k.IterateUserChainLinks(ctx, address, func(link types.ChainLink) (stop bool) {
 					iterations++
 					return false
 				})

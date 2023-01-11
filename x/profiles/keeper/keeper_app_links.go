@@ -120,7 +120,7 @@ func (k Keeper) DeleteApplicationLink(ctx sdk.Context, appLink types.Application
 // DeleteAllUserApplicationLinks delete all the applications links associated with the given user
 func (k Keeper) DeleteAllUserApplicationLinks(ctx sdk.Context, user string) {
 	var links []types.ApplicationLink
-	k.IterateUserApplicationLinks(ctx, user, func(index int64, link types.ApplicationLink) (stop bool) {
+	k.IterateUserApplicationLinks(ctx, user, func(link types.ApplicationLink) (stop bool) {
 		links = append(links, link)
 		return false
 	})
