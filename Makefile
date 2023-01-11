@@ -290,6 +290,10 @@ benchmark:
 	@test -e bench-master.txt && benchstat bench-master.txt bench-$(REF_NAME).txt || benchstat bench-$(REF_NAME).txt
 .PHONY: benchmark
 
+test-mutation:
+	@bash scripts/mutation-test.sh $(MODULES)
+.PHONY: test-mutation
+
 ###############################################################################
 ###                                Linting                                  ###
 ###############################################################################
