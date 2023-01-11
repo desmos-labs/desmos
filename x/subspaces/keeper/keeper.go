@@ -9,17 +9,20 @@ import (
 )
 
 type Keeper struct {
-	storeKey    sdk.StoreKey
-	cdc         codec.BinaryCodec
-	hooks       types.SubspacesHooks
+	storeKey sdk.StoreKey
+	cdc      codec.BinaryCodec
+	hooks    types.SubspacesHooks
+
+	ak          types.AccountKeeper
 	authzKeeper types.AuthzKeeper
 }
 
 // NewKeeper creates new instances of the subspaces keeper
-func NewKeeper(cdc codec.BinaryCodec, storeKey sdk.StoreKey, authzKeeper types.AuthzKeeper) Keeper {
+func NewKeeper(cdc codec.BinaryCodec, storeKey sdk.StoreKey, ak types.AccountKeeper, authzKeeper types.AuthzKeeper) Keeper {
 	return Keeper{
 		storeKey:    storeKey,
 		cdc:         cdc,
+		ak:          ak,
 		authzKeeper: authzKeeper,
 	}
 }

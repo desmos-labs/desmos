@@ -35,6 +35,7 @@ func GetTreasuryTxCmd() *cobra.Command {
 
 	treasuryTxCmd.AddCommand(
 		GetCmdGrantTreasuryAuthorization(),
+		GetCmdRevokeTreasuryAuthorization(),
 	)
 
 	return treasuryTxCmd
@@ -42,7 +43,7 @@ func GetTreasuryTxCmd() *cobra.Command {
 
 func GetCmdGrantTreasuryAuthorization() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "grant <subspace-id> <grantee> <authorization_type=\"send\"|\"generic\"|\"delegate\"|\"unbond\"|\"redelegate\"> --from <granter>",
+		Use:   "grant [subspace-id] [grantee] [authorization_type=\"send\"|\"generic\"|\"delegate\"|\"unbond\"|\"redelegate\"] --from [granter]",
 		Short: "Grant a treasury authorization to a user",
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`grant treasury authorization to an address to execute a transaction on your behalf:
@@ -177,4 +178,39 @@ func bech32toValidatorAddresses(validators []string) ([]sdk.ValAddress, error) {
 		vals[i] = addr
 	}
 	return vals, nil
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+func GetCmdRevokeTreasuryAuthorization() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "revoke [subspace-id] [grantee] [msg_type] --from=[granter]",
+		Short: "revoke a treasury authorization",
+		Long: strings.TrimSpace(
+			fmt.Sprintf(`revoke treasury authorization from a granter to a grantee:
+Example:
+ $ %s tx %s revoke desmos1463vltcqk6ql6zpk0g6s595jjcrzk4804hyqw7 %s --from=desmos1463vltcqk6ql6zpk0g6s595jjcrzk4804hyqw7
+			`, version.AppName, authz.ModuleName, banktypes.SendAuthorization{}.MsgTypeURL()),
+		),
+		Args: cobra.ExactArgs(3),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			subspaceID, err := types.ParseSubspaceID(args[0])
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgRevokeTreasuryAuthorization(subspaceID, clientCtx.GetFromAddress().String(), args[1], args[2])
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+	flags.AddTxFlagsToCmd(cmd)
+	return cmd
 }

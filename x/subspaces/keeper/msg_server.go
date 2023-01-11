@@ -840,3 +840,15 @@ func (k msgServer) GrantTreasuryAuthorization(goCtx context.Context, msg *types.
 	}
 	return &types.MsgGrantTreasuryAuthorizationResponse{}, nil
 }
+
+func (k msgServer) RevokeTreasuryAuthorization(goCtx context.Context, msg *types.MsgRevokeTreasuryAuthorization) (*types.MsgRevokeTreasuryAuthorizationResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+	subspace, _ := k.GetSubspace(ctx, msg.SubspaceID)
+	treasury, _ := sdk.AccAddressFromBech32(subspace.Treasury)
+	grantee, _ := sdk.AccAddressFromBech32(msg.Grantee)
+	err := k.authzKeeper.DeleteGrant(ctx, grantee, treasury, msg.MsgTypeUrl)
+	if err != nil {
+		return nil, err
+	}
+	return &types.MsgRevokeTreasuryAuthorizationResponse{}, nil
+}

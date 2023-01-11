@@ -3,7 +3,7 @@ package desmos.subspaces.v3;
 
 import "gogoproto/gogo.proto";
 import "desmos/subspaces/v3/models.proto";
-import "cosmos/authz/v1beta1/authz.proto";
+import "desmos/subspaces/v3/msgs_treasury.proto";
 
 option go_package = "github.com/desmos-labs/desmos/v4/x/subspaces/types";
 
@@ -62,6 +62,10 @@ service Msg {
 
   // GrantTreasuryAuthorization allows managers who have the permission to grant a treasury authorization to a user
   rpc GrantTreasuryAuthorization(MsgGrantTreasuryAuthorization) returns (MsgGrantTreasuryAuthorizationResponse);
+
+  // RevokeTreasuryAuthorization allows managers who have the permission to revoke an existing treasury authorization
+  rpc RevokeTreasuryAuthorization(MsgRevokeTreasuryAuthorization) returns
+  (MsgRevokeTreasuryAuthorizationResponse);
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -476,22 +480,3 @@ message MsgSetUserPermissions {
 // MsgSetUserPermissionsResponse defines the Msg/SetPermissionsResponse
 // response type
 message MsgSetUserPermissionsResponse {}
-
-// --------------------------------------------------------------------------------------------------------------------
-
-// MsgGrantTreasuryAuthorization grants an authorization of the treasury to a user
-message MsgGrantTreasuryAuthorization {
-  // Id of the subspace where the granter grants a treasury authorization
-  uint64 subspace_id = 1 [
-    (gogoproto.customname) = "SubspaceID",
-    (gogoproto.moretags) = "yaml:\"subspace_id\""
-  ];
-  // Address of the user granting a treasury authorization
-  string granter = 2;
-  // Address of the user who is being granted a treasury authorization
-  string grantee = 3;
-  // Grant represents the authorization to execute the provided methods
-  cosmos.authz.v1beta1.Grant grant = 4 [(gogoproto.nullable) = false];
-}
-// MsgGrantTreasuryAuthorizationResponse defines the Msg/MsgGrantTreasuryAuthorization response type
-message MsgGrantTreasuryAuthorizationResponse{}
