@@ -1,5 +1,5 @@
-// //go:build norace
-// // +build norace
+//go:build norace
+// +build norace
 
 package cli_test
 
