@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
+	"github.com/golang/mock/gomock"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -187,7 +188,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 
 	testCases := []struct {
 		name        string
-		setup       func(ctx sdk.Context)
+		setup       func()
 		store       func(ctx sdk.Context)
 		genesis     *types.GenesisState
 		shouldPanic bool
@@ -203,10 +204,10 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 				nil,
 				nil,
 			),
-			setup: func(ctx sdk.Context) {
-				suite.scopedKeeper.EXPECT().GetCapability(ctx, host.PortPath(types.IBCPortID)).Return(capabilitytypes.NewCapability(1), false)
-				suite.portKeeper.EXPECT().BindPort(ctx, types.IBCPortID).Return(capabilitytypes.NewCapability(1))
-				suite.scopedKeeper.EXPECT().ClaimCapability(ctx, capabilitytypes.NewCapability(1), host.PortPath(types.IBCPortID)).Return(fmt.Errorf("failed to bind port"))
+			setup: func() {
+				suite.scopedKeeper.EXPECT().GetCapability(gomock.Any(), host.PortPath(types.IBCPortID)).Return(capabilitytypes.NewCapability(1), false)
+				suite.portKeeper.EXPECT().BindPort(gomock.Any(), types.IBCPortID).Return(capabilitytypes.NewCapability(1))
+				suite.scopedKeeper.EXPECT().ClaimCapability(gomock.Any(), capabilitytypes.NewCapability(1), host.PortPath(types.IBCPortID)).Return(fmt.Errorf("failed to bind port"))
 			},
 			shouldPanic: true,
 		},
@@ -220,10 +221,10 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 				nil,
 				nil,
 			),
-			setup: func(ctx sdk.Context) {
-				suite.scopedKeeper.EXPECT().GetCapability(ctx, host.PortPath(types.IBCPortID)).Return(capabilitytypes.NewCapability(1), false)
-				suite.portKeeper.EXPECT().BindPort(ctx, types.IBCPortID).Return(capabilitytypes.NewCapability(1))
-				suite.scopedKeeper.EXPECT().ClaimCapability(ctx, capabilitytypes.NewCapability(1), host.PortPath(types.IBCPortID)).Return(nil)
+			setup: func() {
+				suite.scopedKeeper.EXPECT().GetCapability(gomock.Any(), host.PortPath(types.IBCPortID)).Return(capabilitytypes.NewCapability(1), false)
+				suite.portKeeper.EXPECT().BindPort(gomock.Any(), types.IBCPortID).Return(capabilitytypes.NewCapability(1))
+				suite.scopedKeeper.EXPECT().ClaimCapability(gomock.Any(), capabilitytypes.NewCapability(1), host.PortPath(types.IBCPortID)).Return(nil)
 			},
 			check: func(ctx sdk.Context) {
 				suite.Require().Equal([]types.DTagTransferRequest(nil), suite.k.GetDTagTransferRequests(ctx))
@@ -242,8 +243,8 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 				nil,
 				nil,
 			),
-			setup: func(ctx sdk.Context) {
-				suite.scopedKeeper.EXPECT().GetCapability(ctx, host.PortPath(types.IBCPortID)).Return(capabilitytypes.NewCapability(1), true)
+			setup: func() {
+				suite.scopedKeeper.EXPECT().GetCapability(gomock.Any(), host.PortPath(types.IBCPortID)).Return(capabilitytypes.NewCapability(1), true)
 			},
 			check: func(ctx sdk.Context) {
 				suite.Require().Equal([]types.DTagTransferRequest(nil), suite.k.GetDTagTransferRequests(ctx))
@@ -254,8 +255,8 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 		},
 		{
 			name: "double chain link panics",
-			setup: func(ctx sdk.Context) {
-				suite.scopedKeeper.EXPECT().GetCapability(ctx, host.PortPath("profiles-port-id")).Return(capabilitytypes.NewCapability(1), true)
+			setup: func() {
+				suite.scopedKeeper.EXPECT().GetCapability(gomock.Any(), host.PortPath("profiles-port-id")).Return(capabilitytypes.NewCapability(1), true)
 			},
 			genesis: types.NewGenesisState(
 				nil,
@@ -284,8 +285,8 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 		},
 		{
 			name: "valid genesis does not panic",
-			setup: func(ctx sdk.Context) {
-				suite.scopedKeeper.EXPECT().GetCapability(ctx, host.PortPath("profiles-port-id")).Return(capabilitytypes.NewCapability(1), true)
+			setup: func() {
+				suite.scopedKeeper.EXPECT().GetCapability(gomock.Any(), host.PortPath("profiles-port-id")).Return(capabilitytypes.NewCapability(1), true)
 			},
 			store: func(ctx sdk.Context) {
 				profile1 := profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
@@ -428,7 +429,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
 			if tc.setup != nil {
-				tc.setup(ctx)
+				tc.setup()
 			}
 			if tc.store != nil {
 				tc.store(ctx)
