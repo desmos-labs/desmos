@@ -50,12 +50,12 @@ func (msg MsgGrantTreasuryAuthorization) ValidateBasic() error {
 
 	_, err := sdk.AccAddressFromBech32(msg.Granter)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid granter address")
+		return sdkerrors.ErrInvalidAddress.Wrapf("invalid granter address: %s", msg.Granter)
 	}
 
 	_, err = sdk.AccAddressFromBech32(msg.Grantee)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid grantee address")
+		return sdkerrors.ErrInvalidAddress.Wrapf("invalid grantee address: %s", msg.Grantee)
 	}
 
 	return msg.Grant.ValidateBasic()
@@ -102,12 +102,12 @@ func (msg MsgRevokeTreasuryAuthorization) ValidateBasic() error {
 
 	_, err := sdk.AccAddressFromBech32(msg.Granter)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid granter address")
+		return sdkerrors.ErrInvalidAddress.Wrapf("invalid granter address: %s", msg.Granter)
 	}
 
 	_, err = sdk.AccAddressFromBech32(msg.Grantee)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid grantee address")
+		return sdkerrors.ErrInvalidAddress.Wrapf("invalid grantee address: %s", msg.Grantee)
 	}
 
 	if strings.TrimSpace(msg.MsgTypeUrl) == "" {
