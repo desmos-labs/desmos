@@ -32,7 +32,7 @@ Sending a transaction is pretty straight forward. All what you need to have is a
 Please note that when sending transactions you are required to pay a **fee** so that the chain can sustain economically. To avoid paying a higher fee and wasting the user's funds, you should always **put multiple messages inside the same transactions**. This will also decrease the overall execution of all messages and can allow you to save time and provide the users a better UX overall. 
 
 ### How long does transactions take to be executed? 
-Unluckily there is no way to know how long a transaction will take before being executed. The time that passes between it being received by a full node and it's actual execution and verification can vary a lot based on how many messages are inside, how complex each operation to perform is as well as how high the paid fees are. 
+Unluckily there is no way to know how long a transaction will take before being executed. The time that passes between it being received by a full node and its actual execution and verification can vary a lot based on how many messages are inside, how complex each operation to perform is as well as how high the paid fees are. 
 
 If you want you can try speeding up the transactions execution by specifying a higher fee to be paid during the execution itself, but this might now change a lot if other users are doing the same.
 

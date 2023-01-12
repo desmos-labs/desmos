@@ -46,7 +46,7 @@ func AllInvariants(k Keeper) sdk.Invariant {
 func ValidProfilesInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidProfiles []*types.Profile
-		k.IterateProfiles(ctx, func(_ int64, profile *types.Profile) (stop bool) {
+		k.IterateProfiles(ctx, func(profile *types.Profile) (stop bool) {
 			if err := profile.Validate(); err != nil {
 				invalidProfiles = append(invalidProfiles, profile)
 			}
@@ -78,7 +78,7 @@ func formatOutputProfiles(invalidProfiles []*types.Profile) (outputProfiles stri
 func ValidDTagTransferRequests(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidDTagTransferRequests []types.DTagTransferRequest
-		k.IterateDTagTransferRequests(ctx, func(index int64, request types.DTagTransferRequest) (stop bool) {
+		k.IterateDTagTransferRequests(ctx, func(request types.DTagTransferRequest) (stop bool) {
 			if !k.HasProfile(ctx, request.Receiver) || request.Sender == request.Receiver {
 				invalidDTagTransferRequests = append(invalidDTagTransferRequests, request)
 			}
@@ -109,7 +109,7 @@ func formatOutputDTagTransferRequests(requests []types.DTagTransferRequest) (out
 func ValidChainLinks(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidChainLinks []types.ChainLink
-		k.IterateChainLinks(ctx, func(index int64, link types.ChainLink) (stop bool) {
+		k.IterateChainLinks(ctx, func(link types.ChainLink) (stop bool) {
 			if !k.HasProfile(ctx, link.User) {
 				invalidChainLinks = append(invalidChainLinks, link)
 			}
@@ -141,7 +141,7 @@ func formatOutputChainLinks(links []types.ChainLink) (output string) {
 func ValidApplicationLinks(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidApplicationLinks []types.ApplicationLink
-		k.IterateApplicationLinks(ctx, func(index int64, link types.ApplicationLink) (stop bool) {
+		k.IterateApplicationLinks(ctx, func(link types.ApplicationLink) (stop bool) {
 			if !k.HasProfile(ctx, link.User) {
 				invalidApplicationLinks = append(invalidApplicationLinks, link)
 			}

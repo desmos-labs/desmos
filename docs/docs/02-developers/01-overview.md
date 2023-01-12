@@ -14,7 +14,7 @@ If you want to know more about the base concepts of a blockchain and understand 
 ## Core features
 The core features of Desmos are organised in **modules** following the specification of the [Cosmos-SDK](https://docs.cosmos.network/main/building-modules/intro.html).   
 
-Here a brief description of each one of these:
+Here is a brief description of each one of these:
 
 * `Profiles`: Handles the creation and management of a decentralized identity and its own links with both your other chains wallets and centralised applications;
 
