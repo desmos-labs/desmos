@@ -24,7 +24,7 @@ var (
 	PermissionSetPermissions = RegisterPermission("set permissions")
 
 	// PermissionManageTreasuryAuthorization allows users to manage treasury authorization
-	PermissionManageTreasuryAuthorization = RegisterPermission("manage_treasury_authorization")
+	PermissionManageTreasuryAuthorization = RegisterPermission("manage treasury authorization")
 
 	// PermissionEverything allows to do everything.
 	// This should usually be reserved only to the owner (which has it by default)
