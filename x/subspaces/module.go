@@ -36,7 +36,7 @@ import (
 )
 
 const (
-	consensusVersion = 4
+	consensusVersion = 5
 )
 
 // type check to ensure the interface is properly implemented
@@ -117,7 +117,7 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
 	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
 
-	m := keeper.NewMigrator(am.keeper, am.authzk)
+	m := keeper.NewMigrator(am.keeper, am.authzk, am.ak)
 	err := cfg.RegisterMigration(types.ModuleName, 1, m.Migrate1to2)
 	if err != nil {
 		panic(err)
@@ -130,6 +130,7 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 	if err != nil {
 		panic(err)
 	}
+	err = cfg.RegisterMigration(types.ModuleName, 4, m.Migrate4to5)
 }
 
 // NewAppModule creates a new AppModule Object
