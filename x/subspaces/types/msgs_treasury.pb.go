@@ -142,7 +142,7 @@ type MsgRevokeTreasuryAuthorization struct {
 	Granter string `protobuf:"bytes,2,opt,name=granter,proto3" json:"granter,omitempty" yaml:"granter"`
 	// Address of the user who is being revoked the treasury authorization
 	Grantee string `protobuf:"bytes,3,opt,name=grantee,proto3" json:"grantee,omitempty" yaml:"grant"`
-	// Type url of the message which is being revoked
+	// Type url of the authorized message which is being revoked
 	MsgTypeUrl string `protobuf:"bytes,4,opt,name=msg_type_url,json=msgTypeUrl,proto3" json:"msg_type_url,omitempty" yaml:"msg_type_url"`
 }
 
