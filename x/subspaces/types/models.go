@@ -10,6 +10,7 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 )
 
+// GetTreasuryAddress generates a treasury address from subspace id
 func GetTreasuryAddress(subspaceID uint64) sdk.AccAddress {
 	return authtypes.NewModuleAddress(fmt.Sprintf("subspace-%d", subspaceID))
 }
