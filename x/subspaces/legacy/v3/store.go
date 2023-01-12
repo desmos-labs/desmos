@@ -45,6 +45,7 @@ func MigrateStore(ctx sdk.Context, storeKey sdk.StoreKey, cdc codec.BinaryCodec)
 func setupSubspacesSections(store sdk.KVStore, cdc codec.BinaryCodec) error {
 	subspacesStore := prefix.NewStore(store, types.SubspacePrefix)
 	iterator := subspacesStore.Iterator(nil, nil)
+	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
 		var subspace types.Subspace
