@@ -8,6 +8,8 @@ import (
 	authztypes "github.com/cosmos/cosmos-sdk/x/authz"
 )
 
+// DONTCOVER
+
 type AccountKeeper interface {
 	NewAccountWithAddress(ctx sdk.Context, addr sdk.AccAddress) authtypes.AccountI
 	HasAccount(ctx sdk.Context, addr sdk.AccAddress) bool

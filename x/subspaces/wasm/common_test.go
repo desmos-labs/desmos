@@ -78,6 +78,18 @@ func buildSetUserPermissionsRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessag
 	return bz
 }
 
+func buildGrantTreasuryAuthorizationRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
+	raw := json.RawMessage(cdc.MustMarshalJSON(msg))
+	bz, _ := json.Marshal(types.SubspacesMsg{GrantTreasuryAuthorization: &raw})
+	return bz
+}
+
+func buildRevokeTreasuryAuthorizationRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
+	raw := json.RawMessage(cdc.MustMarshalJSON(msg))
+	bz, _ := json.Marshal(types.SubspacesMsg{RevokeTreasuryAuthorization: &raw})
+	return bz
+}
+
 func buildSubspacesQueryRequest(cdc codec.Codec, query *types.QuerySubspacesRequest) json.RawMessage {
 	raw := json.RawMessage(cdc.MustMarshalJSON(query))
 	bz, _ := json.Marshal(types.SubspacesQuery{Subspaces: &raw})
@@ -145,7 +157,7 @@ func (suite *Testsuite) SetupTest() {
 	suite.cdc, suite.legacyAminoCdc = app.MakeCodecs()
 
 	// Define keeper
-	suite.k = keeper.NewKeeper(suite.cdc, suite.storeKey)
+	suite.k = keeper.NewKeeper(suite.cdc, suite.storeKey, nil, nil)
 }
 
 func TestKeeperTestSuite(t *testing.T) {

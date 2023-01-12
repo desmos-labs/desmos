@@ -3,8 +3,10 @@ package wasm_test
 import (
 	"encoding/json"
 	"testing"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/x/authz"
 	"github.com/stretchr/testify/require"
 
 	"github.com/desmos-labs/desmos/v4/app"
@@ -229,6 +231,48 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					types.NewPermissions(types.PermissionEverything),
 					"cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
+				),
+			},
+		},
+		{
+			name: "grant treasury authorization message is parsed correctly",
+			msg: buildGrantTreasuryAuthorizationRequest(cdc,
+				types.NewMsgGrantTreasuryAuthorization(
+					1,
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
+					authz.NewGenericAuthorization("/cosmos.bank.v1beta1.MsgSend"),
+					time.Date(2023, 1, 11, 1, 1, 1, 1, time.UTC),
+				),
+			),
+			shouldErr: false,
+			expMsgs: []sdk.Msg{
+				types.NewMsgGrantTreasuryAuthorization(
+					1,
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
+					authz.NewGenericAuthorization("/cosmos.bank.v1beta1.MsgSend"),
+					time.Date(2023, 1, 11, 1, 1, 1, 1, time.UTC),
+				),
+			},
+		},
+		{
+			name: "revoke treasury authorization message is parsed correctly",
+			msg: buildRevokeTreasuryAuthorizationRequest(cdc,
+				types.NewMsgRevokeTreasuryAuthorization(
+					1,
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
+					"/cosmos.bank.v1beta1.MsgSend",
+				),
+			),
+			shouldErr: false,
+			expMsgs: []sdk.Msg{
+				types.NewMsgRevokeTreasuryAuthorization(
+					1,
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
+					"/cosmos.bank.v1beta1.MsgSend",
 				),
 			},
 		},
