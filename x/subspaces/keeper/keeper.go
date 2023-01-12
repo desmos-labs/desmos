@@ -13,17 +13,17 @@ type Keeper struct {
 	cdc      codec.BinaryCodec
 	hooks    types.SubspacesHooks
 
-	ak          types.AccountKeeper
-	authzKeeper types.AuthzKeeper
+	ak     types.AccountKeeper
+	authzk types.AuthzKeeper
 }
 
 // NewKeeper creates new instances of the subspaces keeper
 func NewKeeper(cdc codec.BinaryCodec, storeKey sdk.StoreKey, ak types.AccountKeeper, authzKeeper types.AuthzKeeper) Keeper {
 	return Keeper{
-		storeKey:    storeKey,
-		cdc:         cdc,
-		ak:          ak,
-		authzKeeper: authzKeeper,
+		storeKey: storeKey,
+		cdc:      cdc,
+		ak:       ak,
+		authzk:   authzKeeper,
 	}
 }
 

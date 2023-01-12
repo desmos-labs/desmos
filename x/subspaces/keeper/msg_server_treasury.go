@@ -31,7 +31,7 @@ func (k msgServer) GrantTreasuryAuthorization(goCtx context.Context, msg *types.
 		return nil, sdkerrors.ErrInvalidAddress.Wrapf("invalid grantee address: %s", msg.Grantee)
 	}
 
-	err = k.authzKeeper.SaveGrant(ctx, grantee, treasury, msg.Grant.GetAuthorization(), msg.Grant.Expiration)
+	err = k.authzk.SaveGrant(ctx, grantee, treasury, msg.Grant.GetAuthorization(), msg.Grant.Expiration)
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +75,7 @@ func (k msgServer) RevokeTreasuryAuthorization(goCtx context.Context, msg *types
 		return nil, sdkerrors.ErrInvalidAddress.Wrapf("invalid grantee address: %s", msg.Grantee)
 	}
 
-	err = k.authzKeeper.DeleteGrant(ctx, grantee, treasury, msg.MsgTypeUrl)
+	err = k.authzk.DeleteGrant(ctx, grantee, treasury, msg.MsgTypeUrl)
 	if err != nil {
 		return nil, err
 	}
