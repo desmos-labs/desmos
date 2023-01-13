@@ -2,12 +2,16 @@ package keeper_test
 
 import (
 	"encoding/hex"
+	"fmt"
 	"time"
 
 	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
+	"github.com/golang/mock/gomock"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
+	host "github.com/cosmos/ibc-go/v3/modules/core/24-host"
 
 	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
@@ -183,14 +187,15 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 	ext := suite.GetRandomProfile()
 
 	testCases := []struct {
-		name      string
-		store     func(ctx sdk.Context)
-		genesis   *types.GenesisState
-		shouldErr bool
-		check     func(ctx sdk.Context)
+		name        string
+		setup       func()
+		store       func(ctx sdk.Context)
+		genesis     *types.GenesisState
+		shouldPanic bool
+		check       func(ctx sdk.Context)
 	}{
 		{
-			name: "empty genesis",
+			name: "bind port panics",
 			genesis: types.NewGenesisState(
 				nil,
 				types.DefaultParams(),
@@ -199,6 +204,48 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 				nil,
 				nil,
 			),
+			setup: func() {
+				suite.scopedKeeper.EXPECT().GetCapability(gomock.Any(), host.PortPath(types.IBCPortID)).Return(capabilitytypes.NewCapability(1), false)
+				suite.portKeeper.EXPECT().BindPort(gomock.Any(), types.IBCPortID).Return(capabilitytypes.NewCapability(1))
+				suite.scopedKeeper.EXPECT().ClaimCapability(gomock.Any(), capabilitytypes.NewCapability(1), host.PortPath(types.IBCPortID)).Return(fmt.Errorf("failed to bind port"))
+			},
+			shouldPanic: true,
+		},
+		{
+			name: "empty genesis - unbounded port",
+			genesis: types.NewGenesisState(
+				nil,
+				types.DefaultParams(),
+				types.IBCPortID,
+				nil,
+				nil,
+				nil,
+			),
+			setup: func() {
+				suite.scopedKeeper.EXPECT().GetCapability(gomock.Any(), host.PortPath(types.IBCPortID)).Return(capabilitytypes.NewCapability(1), false)
+				suite.portKeeper.EXPECT().BindPort(gomock.Any(), types.IBCPortID).Return(capabilitytypes.NewCapability(1))
+				suite.scopedKeeper.EXPECT().ClaimCapability(gomock.Any(), capabilitytypes.NewCapability(1), host.PortPath(types.IBCPortID)).Return(nil)
+			},
+			check: func(ctx sdk.Context) {
+				suite.Require().Equal([]types.DTagTransferRequest(nil), suite.k.GetDTagTransferRequests(ctx))
+				suite.Require().Equal(types.DefaultParams(), suite.k.GetParams(ctx))
+				suite.Require().Equal(types.IBCPortID, suite.k.GetPort(ctx))
+				suite.Require().Equal([]types.ApplicationLink(nil), suite.k.GetApplicationLinks(ctx))
+			},
+		},
+		{
+			name: "empty genesis - bounded port",
+			genesis: types.NewGenesisState(
+				nil,
+				types.DefaultParams(),
+				types.IBCPortID,
+				nil,
+				nil,
+				nil,
+			),
+			setup: func() {
+				suite.scopedKeeper.EXPECT().GetCapability(gomock.Any(), host.PortPath(types.IBCPortID)).Return(capabilitytypes.NewCapability(1), true)
+			},
 			check: func(ctx sdk.Context) {
 				suite.Require().Equal([]types.DTagTransferRequest(nil), suite.k.GetDTagTransferRequests(ctx))
 				suite.Require().Equal(types.DefaultParams(), suite.k.GetParams(ctx))
@@ -208,6 +255,9 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 		},
 		{
 			name: "double chain link panics",
+			setup: func() {
+				suite.scopedKeeper.EXPECT().GetCapability(gomock.Any(), host.PortPath("profiles-port-id")).Return(capabilitytypes.NewCapability(1), true)
+			},
 			genesis: types.NewGenesisState(
 				nil,
 				types.DefaultParams(),
@@ -231,10 +281,13 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 				nil,
 				nil,
 			),
-			shouldErr: true,
+			shouldPanic: true,
 		},
 		{
 			name: "valid genesis does not panic",
+			setup: func() {
+				suite.scopedKeeper.EXPECT().GetCapability(gomock.Any(), host.PortPath("profiles-port-id")).Return(capabilitytypes.NewCapability(1), true)
+			},
 			store: func(ctx sdk.Context) {
 				profile1 := profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 				suite.ak.SetAccount(ctx, profile1)
@@ -375,11 +428,14 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup()
+			}
 			if tc.store != nil {
 				tc.store(ctx)
 			}
 
-			if tc.shouldErr {
+			if tc.shouldPanic {
 				suite.Require().Panics(func() { suite.k.InitGenesis(ctx, *tc.genesis) })
 			} else {
 				suite.Require().NotPanics(func() { suite.k.InitGenesis(ctx, *tc.genesis) })

@@ -140,7 +140,7 @@ func (suite *KeeperTestSuite) TestKeeper_IterateUserIncomingDTagTransferRequests
 	iterations := 0
 	suite.k.IterateUserIncomingDTagTransferRequests(suite.ctx, address, func(request types.DTagTransferRequest) (stop bool) {
 		iterations++
-		return iterations == 1
+		return iterations == 2
 	})
 	suite.Require().Equal(iterations, 2)
 }
@@ -206,7 +206,7 @@ func (suite *KeeperTestSuite) TestKeeper_IterateUserApplicationLinks() {
 	var iterated []types.ApplicationLink
 	suite.k.IterateUserApplicationLinks(ctx, address, func(link types.ApplicationLink) (stop bool) {
 		iterated = append(iterated, link)
-		return len(iterated) == 1
+		return len(iterated) == 2
 	})
 
 	suite.Require().Equal([]types.ApplicationLink{links[0], links[1]}, iterated)
