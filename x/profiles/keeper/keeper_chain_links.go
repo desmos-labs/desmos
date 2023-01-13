@@ -96,7 +96,7 @@ func (k Keeper) DeleteChainLink(ctx sdk.Context, link types.ChainLink) {
 // DeleteAllUserChainLinks deletes all the chain links associated with the given user
 func (k Keeper) DeleteAllUserChainLinks(ctx sdk.Context, user string) {
 	var links []types.ChainLink
-	k.IterateUserChainLinks(ctx, user, func(index int64, link types.ChainLink) (stop bool) {
+	k.IterateUserChainLinks(ctx, user, func(link types.ChainLink) (stop bool) {
 		links = append(links, link)
 		return false
 	})

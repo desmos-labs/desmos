@@ -56,7 +56,7 @@ func (suite *KeeperTestSuite) TestKeeper_IterateProfile() {
 	}
 
 	var validProfiles []*types.Profile
-	suite.k.IterateProfiles(suite.ctx, func(_ int64, profile *types.Profile) (stop bool) {
+	suite.k.IterateProfiles(suite.ctx, func(profile *types.Profile) (stop bool) {
 		if profile.DTag == "not" {
 			return false
 		}
@@ -138,9 +138,9 @@ func (suite *KeeperTestSuite) TestKeeper_IterateUserIncomingDTagTransferRequests
 	}
 
 	iterations := 0
-	suite.k.IterateUserIncomingDTagTransferRequests(suite.ctx, address, func(index int64, request types.DTagTransferRequest) (stop bool) {
-		iterations += 1
-		return index == 1
+	suite.k.IterateUserIncomingDTagTransferRequests(suite.ctx, address, func(request types.DTagTransferRequest) (stop bool) {
+		iterations++
+		return iterations == 1
 	})
 	suite.Require().Equal(iterations, 2)
 }
@@ -204,9 +204,9 @@ func (suite *KeeperTestSuite) TestKeeper_IterateUserApplicationLinks() {
 	}
 
 	var iterated []types.ApplicationLink
-	suite.k.IterateUserApplicationLinks(ctx, address, func(index int64, link types.ApplicationLink) (stop bool) {
+	suite.k.IterateUserApplicationLinks(ctx, address, func(link types.ApplicationLink) (stop bool) {
 		iterated = append(iterated, link)
-		return index == 1
+		return len(iterated) == 1
 	})
 
 	suite.Require().Equal([]types.ApplicationLink{links[0], links[1]}, iterated)
@@ -349,7 +349,7 @@ func (suite *KeeperTestSuite) TestKeeper_IterateExpiringApplicationLinks() {
 			}
 
 			var iteratedLinks []types.ApplicationLink
-			suite.k.IterateExpiringApplicationLinks(ctx, func(index int64, link types.ApplicationLink) (stop bool) {
+			suite.k.IterateExpiringApplicationLinks(ctx, func(link types.ApplicationLink) (stop bool) {
 				iteratedLinks = append(iteratedLinks, link)
 				return false
 			})

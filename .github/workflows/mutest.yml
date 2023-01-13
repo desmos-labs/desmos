@@ -1,0 +1,47 @@
+name: Generate Mutation Test Errors
+
+on:
+  tags:
+    - "v[0-9]+.[0-9]+.[0-9]+" # Push events to matching v*, i.e. v1.0, v20.15.10
+    - "v[0-9]+.[0-9]+.[0-9]+-rc*" # Push events to matching v*, i.e. v1.0-rc1, v20.15.10-rc5
+
+jobs:
+  Test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v3
+
+      - name: Setup Go 🧰
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.18
+
+      - name: Run mutation tests 🧪
+        continue-on-error: true
+        run: make test-mutation $MODULES
+        env:
+          MODULES: fees,profiles,subspaces,relationships,posts,reports,reactions
+      
+      - name: Format output 🔍
+        id: mutest-formatted
+        run: |
+          cat mutation_test_result.txt | grep -Ev "PASS" | grep -Ev "SKIP" | tee mutation_test_result.txt
+      
+      - name: Generate code blocks 🧑‍💻
+        id: gen-code-blocks
+        run: |
+          cat mutation_test_result.txt  | sed "s# @@# @@\n\`\`\`go\n#g " | sed "s#FAIL#\`\`\`\nFAIL\n\n\n#g " > go_mutation_test_result.txt
+      
+      - name: Read output file 👀
+        id: result
+        uses: juliangruber/read-file-action@v1
+        with:
+          path: go_mutation_test_result.txt
+      
+      - name: Create issue 🚩
+        uses: dacbd/create-issue-action@main
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: Mutation test ${{ steps.vars.outputs.tag }}
+          body: ${{ steps.result.outputs.content }}
