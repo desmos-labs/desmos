@@ -7,7 +7,13 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 )
+
+// GetTreasuryAddress generates a treasury address from subspace id
+func GetTreasuryAddress(subspaceID uint64) sdk.AccAddress {
+	return authtypes.NewModuleAddress(fmt.Sprintf("subspace-%d", subspaceID))
+}
 
 // ParseSubspaceID parses the given value as a subspace id, returning an error if it's invalid
 func ParseSubspaceID(value string) (uint64, error) {
@@ -93,10 +99,6 @@ func (sub Subspace) Update(update SubspaceUpdate) Subspace {
 		update.Description = sub.Description
 	}
 
-	if update.Treasury == DoNotModify {
-		update.Treasury = sub.Treasury
-	}
-
 	if update.Owner == DoNotModify {
 		update.Owner = sub.Owner
 	}
@@ -105,7 +107,7 @@ func (sub Subspace) Update(update SubspaceUpdate) Subspace {
 		sub.ID,
 		update.Name,
 		update.Description,
-		update.Treasury,
+		sub.Treasury,
 		update.Owner,
 		sub.Creator,
 		sub.CreationTime,
@@ -117,16 +119,14 @@ func (sub Subspace) Update(update SubspaceUpdate) Subspace {
 type SubspaceUpdate struct {
 	Name        string
 	Description string
-	Treasury    string
 	Owner       string
 }
 
 // NewSubspaceUpdate builds a new SubspaceUpdate instance containing the given data
-func NewSubspaceUpdate(name, description, treasury, owner string) SubspaceUpdate {
+func NewSubspaceUpdate(name, description, owner string) SubspaceUpdate {
 	return SubspaceUpdate{
 		Name:        name,
 		Description: description,
-		Treasury:    treasury,
 		Owner:       owner,
 	}
 }

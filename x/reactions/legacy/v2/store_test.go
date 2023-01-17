@@ -39,7 +39,7 @@ func TestMigrateStore(t *testing.T) {
 	paramsKeeper := paramskeeper.NewKeeper(cdc, legacyAminoCdc, keys[paramstypes.StoreKey], tKeys[paramstypes.TStoreKey])
 	authKeeper := authkeeper.NewAccountKeeper(cdc, keys[authtypes.StoreKey], paramsKeeper.Subspace(authtypes.ModuleName), authtypes.ProtoBaseAccount, app.GetMaccPerms())
 
-	sk := subspaceskeeper.NewKeeper(cdc, keys[subspacestypes.StoreKey])
+	sk := subspaceskeeper.NewKeeper(cdc, keys[subspacestypes.StoreKey], nil, nil)
 	rk := relationshipskeeper.NewKeeper(cdc, keys[relationshipstypes.StoreKey], sk)
 	ak := profileskeeper.NewKeeper(cdc, legacyAminoCdc, keys[profilestypes.StoreKey], paramsKeeper.Subspace(profilestypes.DefaultParamsSpace), authKeeper, rk, nil, nil, nil)
 	pk := postskeeper.NewKeeper(cdc, keys[poststypes.StoreKey], paramsKeeper.Subspace(poststypes.DefaultParamsSpace), ak, sk, rk)

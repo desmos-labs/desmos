@@ -1,9 +1,12 @@
 package types_test
 
 import (
+	"fmt"
+	"math/rand"
 	"testing"
 	"time"
 
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 
 	"github.com/stretchr/testify/require"
@@ -183,7 +186,6 @@ func TestSubspace_Update(t *testing.T) {
 				types.DoNotModify,
 				types.DoNotModify,
 				types.DoNotModify,
-				types.DoNotModify,
 			),
 			expResult: types.NewSubspace(
 				1,
@@ -209,14 +211,13 @@ func TestSubspace_Update(t *testing.T) {
 			update: types.NewSubspaceUpdate(
 				"New subspace name",
 				"New subspace description",
-				"cosmos1l6rkljkrh5g0vyeh9m8tsl4cy626shunv6ksz7",
 				"cosmos10ya9y35qkf4puaklx5fs07sxfxqncx9usgsnz6",
 			),
 			expResult: types.NewSubspace(
 				1,
 				"New subspace name",
 				"New subspace description",
-				"cosmos1l6rkljkrh5g0vyeh9m8tsl4cy626shunv6ksz7",
+				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 				"cosmos10ya9y35qkf4puaklx5fs07sxfxqncx9usgsnz6",
 				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -582,4 +583,32 @@ func TestUserGroup_Update(t *testing.T) {
 			require.Equal(t, tc.expResult, result)
 		})
 	}
+}
+
+func TestGetTreasuryAddress(t *testing.T) {
+	subspaceIDs := getRandomSubspaceIDs(1000)
+	treasuryAddrSet := make(map[string]bool, 1000)
+	for _, subspaceID := range subspaceIDs {
+		treasuryAddr := types.GetTreasuryAddress(subspaceID).String()
+
+		// Ensure that address is generated using `authtypes.NewModuleAddress` and each address is unique
+		require.Equal(t, authtypes.NewModuleAddress(fmt.Sprintf("subspace-%d", subspaceID)).String(), treasuryAddr)
+		require.False(t, treasuryAddrSet[treasuryAddr])
+		treasuryAddrSet[treasuryAddr] = true
+	}
+}
+
+func getRandomSubspaceIDs(size int) []uint64 {
+	subspaceIDs := make([]uint64, size)
+	subspaceIDsSet := make(map[uint64]bool, size)
+	for i := 0; i < size; {
+		newID := rand.Uint64()
+		// Add it if new ID is not found in the set
+		if found := subspaceIDsSet[newID]; !found {
+			subspaceIDs[i] = newID
+			subspaceIDsSet[newID] = true
+			i++
+		}
+	}
+	return subspaceIDs
 }
