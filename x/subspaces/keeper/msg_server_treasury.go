@@ -62,7 +62,7 @@ func (k msgServer) RevokeTreasuryAuthorization(goCtx context.Context, msg *types
 	}
 
 	if !k.HasPermission(ctx, msg.SubspaceID, types.RootSectionID, msg.Granter, types.PermissionManageTreasuryAuthorization) {
-		return nil, types.ErrPermissionDenied.Wrap("you cannot manage this subspace treasury authorization")
+		return nil, types.ErrPermissionDenied.Wrap("you cannot manage this subspace's treasury authorizations")
 	}
 
 	treasury, err := sdk.AccAddressFromBech32(subspace.Treasury)
