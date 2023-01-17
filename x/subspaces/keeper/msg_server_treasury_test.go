@@ -199,7 +199,7 @@ func (suite *KeeperTestsuite) TestMsgServer_RevokeTreasuryAuthorization() {
 		check       func(ctx sdk.Context)
 	}{
 		{
-			name: "subspace does not exist returns error",
+			name: "non existing subspace returns error",
 			msg: types.NewMsgRevokeTreasuryAuthorization(
 				1,
 				"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez",
