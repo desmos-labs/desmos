@@ -1,9 +1,12 @@
 package types_test
 
 import (
+	"fmt"
+	"math/rand"
 	"testing"
 	"time"
 
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 
 	"github.com/stretchr/testify/require"
@@ -583,5 +586,29 @@ func TestUserGroup_Update(t *testing.T) {
 }
 
 func TestGetTreasuryAddress(t *testing.T) {
-	require.Equal(t, "cosmos1cyjzgj9j7d2gdqk78pa0fgvfnlzradat97aek9", types.GetTreasuryAddress(1).String())
+	subspaceIDs := getRandomSubspaceIDs(1000)
+	treasuryAddrSet := make(map[string]bool, 1000)
+	for _, subspaceID := range subspaceIDs {
+		treasuryAddr := types.GetTreasuryAddress(subspaceID).String()
+
+		// Ensure that address is generated using `authtypes.NewModuleAddress` and each address is unique
+		require.Equal(t, authtypes.NewModuleAddress(fmt.Sprintf("subspace-%d", subspaceID)).String(), treasuryAddr)
+		require.False(t, treasuryAddrSet[treasuryAddr])
+		treasuryAddrSet[treasuryAddr] = true
+	}
+}
+
+func getRandomSubspaceIDs(size int) []uint64 {
+	subspaceIDs := make([]uint64, size)
+	subspaceIDsSet := make(map[uint64]bool, size)
+	for i := 0; i < size; {
+		newID := rand.Uint64()
+		// Add it if new ID is not found in the set
+		if found := subspaceIDsSet[newID]; !found {
+			subspaceIDs[i] = newID
+			subspaceIDsSet[newID] = true
+			i++
+		}
+	}
+	return subspaceIDs
 }
