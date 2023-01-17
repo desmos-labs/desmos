@@ -1,18 +1,10 @@
 package keeper_test
 
 import (
-	"path/filepath"
 	"testing"
 	"time"
 
-	relationshipskeeper "github.com/desmos-labs/desmos/v4/x/relationships/keeper"
-	relationshipstypes "github.com/desmos-labs/desmos/v4/x/relationships/types"
-
-	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
-	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
-
-	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
-	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
+	"github.com/golang/mock/gomock"
 
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	"github.com/cosmos/go-bip39"
@@ -36,17 +28,8 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	db "github.com/tendermint/tm-db"
 
-	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
-	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-
-	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
-	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
-	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
-	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	ibchost "github.com/cosmos/ibc-go/v3/modules/core/24-host"
-	ibckeeper "github.com/cosmos/ibc-go/v3/modules/core/keeper"
-
 	"github.com/desmos-labs/desmos/v4/x/profiles/keeper"
+	"github.com/desmos-labs/desmos/v4/x/profiles/testutil"
 	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
@@ -57,20 +40,18 @@ func TestKeeperTestSuite(t *testing.T) {
 type KeeperTestSuite struct {
 	suite.Suite
 
-	cdc              codec.Codec
-	legacyAminoCdc   *codec.LegacyAmino
-	ctx              sdk.Context
-	storeKey         sdk.StoreKey
-	k                keeper.Keeper
-	ak               authkeeper.AccountKeeper
-	rk               relationshipskeeper.Keeper
-	sk               subspaceskeeper.Keeper
-	paramsKeeper     paramskeeper.Keeper
-	bankKeeper       bankkeeper.Keeper
-	stakingKeeper    stakingkeeper.Keeper
-	upgradeKeeper    upgradekeeper.Keeper
-	IBCKeeper        *ibckeeper.Keeper
-	capabilityKeeper *capabilitykeeper.Keeper
+	cdc            codec.Codec
+	legacyAminoCdc *codec.LegacyAmino
+	ctx            sdk.Context
+	storeKey       sdk.StoreKey
+	k              keeper.Keeper
+	ak             authkeeper.AccountKeeper
+	paramsKeeper   paramskeeper.Keeper
+
+	rk            *testutil.MockRelationshipsKeeper
+	channelKeeper *testutil.MockChannelKeeper
+	portKeeper    *testutil.MockPortKeeper
+	scopedKeeper  *testutil.MockScopedKeeper
 
 	// Used for IBC testing
 	coordinator *ibctesting.Coordinator
@@ -96,12 +77,8 @@ func (p TestProfile) Sign(data []byte) []byte {
 
 func (suite *KeeperTestSuite) SetupTest() {
 	// Define the store keys
-	keys := sdk.NewKVStoreKeys(
-		types.StoreKey, relationshipstypes.StoreKey, subspacestypes.StoreKey,
-		authtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, capabilitytypes.StoreKey,
-	)
+	keys := sdk.NewKVStoreKeys(types.StoreKey, authtypes.StoreKey, paramstypes.StoreKey)
 	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
-	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
 	suite.storeKey = keys[types.StoreKey]
 
@@ -114,10 +91,6 @@ func (suite *KeeperTestSuite) SetupTest() {
 	for _, tKey := range tKeys {
 		ms.MountStoreWithDB(tKey, sdk.StoreTypeTransient, memDB)
 	}
-	for _, memKey := range memKeys {
-		ms.MountStoreWithDB(memKey, sdk.StoreTypeMemory, nil)
-	}
-
 	if err := ms.LoadLatestVersion(); err != nil {
 		panic(err)
 	}
@@ -125,10 +98,10 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.ctx = sdk.NewContext(ms, tmproto.Header{ChainID: "test-chain-id"}, false, log.NewNopLogger())
 	suite.cdc, suite.legacyAminoCdc = app.MakeCodecs()
 
+	// Dependencies initializations
 	suite.paramsKeeper = paramskeeper.NewKeeper(
 		suite.cdc, suite.legacyAminoCdc, keys[paramstypes.StoreKey], tKeys[paramstypes.TStoreKey],
 	)
-
 	suite.ak = authkeeper.NewAccountKeeper(
 		suite.cdc,
 		keys[authtypes.StoreKey],
@@ -137,45 +110,13 @@ func (suite *KeeperTestSuite) SetupTest() {
 		app.GetMaccPerms(),
 	)
 
-	suite.capabilityKeeper = capabilitykeeper.NewKeeper(suite.cdc, keys[capabilitytypes.StoreKey], memKeys[capabilitytypes.MemStoreKey])
-	homeDir := filepath.Join(suite.T().TempDir(), "x_upgrade_keeper_test")
-	suite.upgradeKeeper = upgradekeeper.NewKeeper(
-		nil,
-		keys[upgradetypes.StoreKey],
-		suite.cdc,
-		homeDir,
-		nil,
-	)
+	// Mocks initializations
+	ctrl := gomock.NewController(suite.T())
+	suite.rk = testutil.NewMockRelationshipsKeeper(ctrl)
+	suite.channelKeeper = testutil.NewMockChannelKeeper(ctrl)
+	suite.portKeeper = testutil.NewMockPortKeeper(ctrl)
+	suite.scopedKeeper = testutil.NewMockScopedKeeper(ctrl)
 
-	suite.bankKeeper = bankkeeper.NewBaseKeeper(
-		suite.cdc,
-		keys[banktypes.StoreKey],
-		suite.ak,
-		suite.paramsKeeper.Subspace(banktypes.ModuleName),
-		nil,
-	)
-
-	suite.stakingKeeper = stakingkeeper.NewKeeper(
-		suite.cdc,
-		keys[stakingtypes.StoreKey],
-		suite.ak,
-		suite.bankKeeper,
-		suite.paramsKeeper.Subspace(stakingtypes.ModuleName),
-	)
-
-	scopedIBCKeeper := suite.capabilityKeeper.ScopeToModule(ibchost.ModuleName)
-	scopedProfilesKeeper := suite.capabilityKeeper.ScopeToModule(types.ModuleName)
-	suite.IBCKeeper = ibckeeper.NewKeeper(
-		suite.cdc,
-		keys[ibchost.StoreKey],
-		suite.paramsKeeper.Subspace(ibchost.ModuleName),
-		suite.stakingKeeper,
-		suite.upgradeKeeper,
-		scopedIBCKeeper,
-	)
-
-	suite.sk = subspaceskeeper.NewKeeper(suite.cdc, keys[subspacestypes.StoreKey], nil, nil)
-	suite.rk = relationshipskeeper.NewKeeper(suite.cdc, keys[relationshipstypes.StoreKey], suite.sk)
 	suite.k = keeper.NewKeeper(
 		suite.cdc,
 		suite.legacyAminoCdc,
@@ -183,9 +124,9 @@ func (suite *KeeperTestSuite) SetupTest() {
 		suite.paramsKeeper.Subspace(types.DefaultParamsSpace),
 		suite.ak,
 		suite.rk,
-		suite.IBCKeeper.ChannelKeeper,
-		&suite.IBCKeeper.PortKeeper,
-		scopedProfilesKeeper,
+		suite.channelKeeper,
+		suite.portKeeper,
+		suite.scopedKeeper,
 	)
 
 	// Set the IBC data
