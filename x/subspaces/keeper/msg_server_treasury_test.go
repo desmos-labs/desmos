@@ -33,7 +33,7 @@ func (suite *KeeperTestsuite) TestMsgServer_GrantTreasuryAuthorization() {
 			shouldErr: true,
 		},
 		{
-			name: "granter has no permission returns error",
+			name: "granter without permissions returns error",
 			store: func(ctx sdk.Context) {
 				suite.k.SaveSubspace(ctx, types.NewSubspace(1,
 					"Test subspace",
