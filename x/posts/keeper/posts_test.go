@@ -3,7 +3,7 @@ package keeper_test
 import (
 	"time"
 
-	relationshipstypes "github.com/desmos-labs/desmos/v4/x/relationships/types"
+	"github.com/golang/mock/gomock"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -153,6 +153,7 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteNextPostID() {
 func (suite *KeeperTestsuite) TestKeeper_ValidatePostReference() {
 	testCases := []struct {
 		name        string
+		setup       func()
 		store       func(ctx sdk.Context)
 		postAuthor  string
 		subspaceID  uint64
@@ -168,14 +169,13 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePostReference() {
 		},
 		{
 			name: "blocked post author returns error",
-			store: func(ctx sdk.Context) {
-				suite.rk.SaveUserBlock(ctx, relationshipstypes.NewUserBlock(
+			setup: func() {
+				suite.rk.EXPECT().HasUserBlocked(gomock.Any(),
 					"cosmos1fvnkn5yjhdc6sxwlph8e98udw8nsly0w9yznrk",
 					"cosmos1t457f629cc3ykftepjejgzxv0vmz5dw2gn940g",
-					"",
-					1,
-				))
-
+					uint64(1)).Return(true)
+			},
+			store: func(ctx sdk.Context) {
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					0,
@@ -199,6 +199,12 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePostReference() {
 		},
 		{
 			name: "valid post reference returns no error",
+			setup: func() {
+				suite.rk.EXPECT().HasUserBlocked(gomock.Any(),
+					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+					"cosmos1t457f629cc3ykftepjejgzxv0vmz5dw2gn940g",
+					uint64(1)).Return(false)
+			},
 			store: func(ctx sdk.Context) {
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
@@ -227,6 +233,9 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePostReference() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup()
+			}
 			if tc.store != nil {
 				tc.store(ctx)
 			}
@@ -244,6 +253,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePostReference() {
 func (suite *KeeperTestsuite) TestKeeper_ValidatePostReply() {
 	testCases := []struct {
 		name        string
+		setup       func()
 		store       func(ctx sdk.Context)
 		postAuthor  string
 		subspaceID  uint64
@@ -259,6 +269,12 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePostReply() {
 		},
 		{
 			name: "REPLY_SETTING_FOLLOWERS and not follower returns error",
+			setup: func() {
+				suite.rk.EXPECT().HasRelationship(gomock.Any(),
+					"cosmos1t457f629cc3ykftepjejgzxv0vmz5dw2gn940g",
+					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+					uint64(1)).Return(false)
+			},
 			store: func(ctx sdk.Context) {
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
@@ -283,13 +299,13 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePostReply() {
 		},
 		{
 			name: "REPLY_SETTING_FOLLOWERS and follower returns no error",
-			store: func(ctx sdk.Context) {
-				suite.rk.SaveRelationship(ctx, relationshipstypes.NewRelationship(
+			setup: func() {
+				suite.rk.EXPECT().HasRelationship(gomock.Any(),
 					"cosmos1t457f629cc3ykftepjejgzxv0vmz5dw2gn940g",
 					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
-					1,
-				))
-
+					uint64(1)).Return(true)
+			},
+			store: func(ctx sdk.Context) {
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					0,
@@ -313,13 +329,17 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePostReply() {
 		},
 		{
 			name: "REPLY_SETTING_MUTUAL and not mutual returns error",
-			store: func(ctx sdk.Context) {
-				suite.rk.SaveRelationship(ctx, relationshipstypes.NewRelationship(
+			setup: func() {
+				suite.rk.EXPECT().HasRelationship(gomock.Any(),
 					"cosmos1t457f629cc3ykftepjejgzxv0vmz5dw2gn940g",
 					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
-					1,
-				))
-
+					uint64(1)).Return(true)
+				suite.rk.EXPECT().HasRelationship(gomock.Any(),
+					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+					"cosmos1t457f629cc3ykftepjejgzxv0vmz5dw2gn940g",
+					uint64(1)).Return(false)
+			},
+			store: func(ctx sdk.Context) {
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					0,
@@ -330,8 +350,8 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePostReply() {
 					0,
 					nil,
 					nil,
-
-					nil, types.REPLY_SETTING_MENTIONS,
+					nil,
+					types.REPLY_SETTING_MUTUAL,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
 				))
@@ -343,19 +363,17 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePostReply() {
 		},
 		{
 			name: "REPLY_SETTING_MUTUAL and mutual returns no error",
+			setup: func() {
+				suite.rk.EXPECT().HasRelationship(gomock.Any(),
+					"cosmos1t457f629cc3ykftepjejgzxv0vmz5dw2gn940g",
+					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+					uint64(1)).Return(true)
+				suite.rk.EXPECT().HasRelationship(gomock.Any(),
+					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+					"cosmos1t457f629cc3ykftepjejgzxv0vmz5dw2gn940g",
+					uint64(1)).Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.rk.SaveRelationship(ctx, relationshipstypes.NewRelationship(
-					"cosmos1t457f629cc3ykftepjejgzxv0vmz5dw2gn940g",
-					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
-					1,
-				))
-
-				suite.rk.SaveRelationship(ctx, relationshipstypes.NewRelationship(
-					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
-					"cosmos1t457f629cc3ykftepjejgzxv0vmz5dw2gn940g",
-					1,
-				))
-
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					0,
@@ -366,8 +384,8 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePostReply() {
 					0,
 					nil,
 					nil,
-
-					nil, types.REPLY_SETTING_MENTIONS,
+					nil,
+					types.REPLY_SETTING_MUTUAL,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
 				))
@@ -375,7 +393,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePostReply() {
 			postAuthor:  "cosmos1t457f629cc3ykftepjejgzxv0vmz5dw2gn940g",
 			subspaceID:  1,
 			referenceID: 1,
-			shouldErr:   true,
+			shouldErr:   false,
 		},
 		{
 			name: "REPLY_SETTING_MENTIONS and no mention returns error",
@@ -433,6 +451,9 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePostReply() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup()
+			}
 			if tc.store != nil {
 				tc.store(ctx)
 			}
@@ -450,6 +471,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePostReply() {
 func (suite *KeeperTestsuite) TestKeeper_ValidatePost() {
 	testCases := []struct {
 		name      string
+		setup     func()
 		store     func(ctx sdk.Context)
 		post      types.Post
 		shouldErr bool
@@ -546,6 +568,14 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePost() {
 		},
 		{
 			name: "valid post returns no error",
+			setup: func() {
+				suite.rk.EXPECT().HasUserBlocked(gomock.Any(),
+					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+					uint64(1)).
+					Return(false).
+					AnyTimes()
+			},
 			store: func(ctx sdk.Context) {
 				suite.k.SetParams(ctx, types.DefaultParams())
 				suite.k.SavePost(ctx, types.NewPost(
@@ -558,8 +588,8 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePost() {
 					0,
 					nil,
 					nil,
-
-					nil, types.REPLY_SETTING_EVERYONE,
+					nil,
+					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
 				))
@@ -599,6 +629,9 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePost() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup()
+			}
 			if tc.store != nil {
 				tc.store(ctx)
 			}
