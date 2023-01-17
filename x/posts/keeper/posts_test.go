@@ -216,8 +216,8 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePostReference() {
 					0,
 					nil,
 					nil,
-
-					nil, types.REPLY_SETTING_EVERYONE,
+					nil,
+					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
 				))
@@ -286,8 +286,8 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePostReply() {
 					0,
 					nil,
 					nil,
-
-					nil, types.REPLY_SETTING_FOLLOWERS,
+					nil,
+					types.REPLY_SETTING_FOLLOWERS,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
 				))
@@ -316,8 +316,8 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePostReply() {
 					0,
 					nil,
 					nil,
-
-					nil, types.REPLY_SETTING_FOLLOWERS,
+					nil,
+					types.REPLY_SETTING_FOLLOWERS,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
 				))
@@ -408,8 +408,8 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePostReply() {
 					0,
 					nil,
 					nil,
-
-					nil, types.REPLY_SETTING_MENTIONS,
+					nil,
+					types.REPLY_SETTING_MENTIONS,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
 				))
