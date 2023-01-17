@@ -7,6 +7,7 @@ import (
 	"time"
 
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 
 	"github.com/stretchr/testify/require"

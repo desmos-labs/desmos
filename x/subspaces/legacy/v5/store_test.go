@@ -11,11 +11,12 @@ import (
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
+	"github.com/stretchr/testify/require"
+
 	"github.com/desmos-labs/desmos/v4/app"
 	"github.com/desmos-labs/desmos/v4/testutil/storetesting"
 	v5 "github.com/desmos-labs/desmos/v4/x/subspaces/legacy/v5"
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
-	"github.com/stretchr/testify/require"
 )
 
 func TestMigrateStore(t *testing.T) {

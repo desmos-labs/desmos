@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
 	"github.com/golang/mock/gomock"
+
+	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
