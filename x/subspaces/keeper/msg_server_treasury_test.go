@@ -252,7 +252,7 @@ func (suite *KeeperTestsuite) TestMsgServer_RevokeTreasuryAuthorization() {
 			shouldErr: true,
 		},
 		{
-			name: "invalid Revokeee address returns error",
+			name: "invalid revoker address returns error",
 			store: func(ctx sdk.Context) {
 				suite.k.SaveSubspace(ctx, types.NewSubspace(1,
 					"Test subspace",
