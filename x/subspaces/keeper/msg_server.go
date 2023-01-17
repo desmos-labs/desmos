@@ -39,7 +39,7 @@ func (k msgServer) CreateSubspace(goCtx context.Context, msg *types.MsgCreateSub
 		return nil, err
 	}
 	// Create a treasury account for subspace
-	k.creatAccount(ctx, subspace.Treasury)
+	k.createAccountIfNotExists(ctx, subspace.Treasury)
 
 	// Save the subspace
 	k.SaveSubspace(ctx, subspace)

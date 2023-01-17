@@ -10,8 +10,8 @@ import (
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
-// createAccount creates a new account for the given user if it does not exist already
-func (k Keeper) creatAccount(ctx sdk.Context, user string) {
+// createAccountIfNotExists creates a new account for the given user if it does not exist already
+func (k Keeper) createAccountIfNotExists(ctx sdk.Context, user string) {
 	addr, err := sdk.AccAddressFromBech32(user)
 	if err != nil {
 		panic(err)
