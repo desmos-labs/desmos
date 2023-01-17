@@ -209,7 +209,7 @@ func (suite *KeeperTestsuite) TestMsgServer_RevokeTreasuryAuthorization() {
 			shouldErr: true,
 		},
 		{
-			name: "Revokeer has no permission returns error",
+			name: "revoker with no permissions returns error",
 			store: func(ctx sdk.Context) {
 				suite.k.SaveSubspace(ctx, types.NewSubspace(1,
 					"Test subspace",
