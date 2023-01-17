@@ -43,9 +43,10 @@ jobs:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
 
-      - name: Write preview url
+      - name: Comment preview URL 🗨️
+        if: env.GIT_DIFF
         uses: thollander/actions-comment-pull-request@v2
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           message: '👀 Docs preview available here: ${{ steps.deploy-preview.outputs.deploy-url }}'
-          comment_includes: '👀 Docs preview available here: '
+          comment_tag: '👀 Docs preview available here: '

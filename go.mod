@@ -19,6 +19,7 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
 	github.com/manifoldco/promptui v0.9.0
 	github.com/mr-tron/base58 v1.2.0
+	github.com/osmosis-labs/go-mutesting v0.0.0-20221219192234-827e6d6b9d4e
 	github.com/prometheus/client_golang v1.14.0
 	github.com/rakyll/statik v0.1.7
 	github.com/regen-network/cosmos-proto v0.3.1
@@ -150,6 +151,7 @@ require (
 	github.com/hexops/gotextdiff v1.0.3 // indirect
 	github.com/improbable-eng/grpc-web v0.14.1 // indirect
 	github.com/inconshreveable/mousetrap v1.0.1 // indirect
+	github.com/jessevdk/go-flags v1.4.0 // indirect
 	github.com/jgautheron/goconst v1.5.1 // indirect
 	github.com/jingyugao/rowserrcheck v1.1.1 // indirect
 	github.com/jirfag/go-printf-func-name v0.0.0-20200119135958-7558a9eaa5af // indirect
@@ -242,6 +244,9 @@ require (
 	github.com/uudashr/gocognit v1.0.6 // indirect
 	github.com/yagipy/maintidx v1.0.0 // indirect
 	github.com/yeya24/promlinter v0.2.0 // indirect
+	github.com/zimmski/go-mutesting v0.0.0-20210610104036-6d9217011a00 // indirect
+	github.com/zimmski/go-tool v0.0.0-20150119110811-2dfdc9ac8439 // indirect
+	github.com/zimmski/osutil v0.0.0-20190128123334-0d0b3ca231ac // indirect
 	github.com/zondax/hid v0.9.0 // indirect
 	gitlab.com/bosi/decorder v0.2.3 // indirect
 	go.etcd.io/bbolt v1.3.6 // indirect
