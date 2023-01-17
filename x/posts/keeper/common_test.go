@@ -66,7 +66,7 @@ func (suite *KeeperTestsuite) SetupTest() {
 
 	// Dependencies initializations
 	paramsKeeper := paramskeeper.NewKeeper(suite.cdc, suite.legacyAminoCdc, keys[paramstypes.StoreKey], tKeys[paramstypes.TStoreKey])
-	suite.sk = subspaceskeeper.NewKeeper(suite.cdc, keys[subspacestypes.StoreKey])
+	suite.sk = subspaceskeeper.NewKeeper(suite.cdc, keys[subspacestypes.StoreKey], nil, nil)
 
 	// Mocks initializations
 	ctrl := gomock.NewController(suite.T())
