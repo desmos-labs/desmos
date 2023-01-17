@@ -300,7 +300,7 @@ func (suite *KeeperTestsuite) TestMsgServer_RevokeTreasuryAuthorization() {
 			shouldErr: true,
 		},
 		{
-			name: "authorization is deleted properly",
+			name: "valid request deletes authorization properly",
 			store: func(ctx sdk.Context) {
 				suite.k.SaveSubspace(ctx, types.NewSubspace(1,
 					"Test subspace",
