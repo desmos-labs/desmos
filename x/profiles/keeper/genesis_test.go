@@ -428,6 +428,9 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup()
+			}
 			if tc.store != nil {
 				tc.store(ctx)
 			}
