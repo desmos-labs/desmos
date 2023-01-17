@@ -417,6 +417,9 @@ proto-update-deps:
 	@mkdir -p $(COSMOS_TYPES)/crypto/multisig/v1beta1
 	@curl -sSL $(COSMOS_URL)/crypto/multisig/v1beta1/multisig.proto > $(COSMOS_TYPES)/crypto/multisig/v1beta1/multisig.proto
 
+	@mkdir -p $(COSMOS_TYPES)/authz/v1beta1
+	@curl -sSL $(COSMOS_URL)/authz/v1beta1/authz.proto > $(COSMOS_TYPES)/authz/v1beta1/authz.proto
+
 ## Importing of tendermint protobuf definitions currently requires the
 ## use of `sed` in order to build properly with cosmos-sdk's proto file layout
 ## (which is the standard Buf.build FILE_LAYOUT)

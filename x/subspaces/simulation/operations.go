@@ -10,6 +10,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
 
@@ -20,21 +21,23 @@ import (
 // Simulation operation weights constants
 // #nosec G101 -- This is a false positive
 const (
-	OpWeightMsgCreateSubspace          = "op_weight_msg_create_subspace"
-	OpWeightMsgEditSubspace            = "op_weight_msg_edit_subspace"
-	OpWeightMsgDeleteSubspace          = "op_weight_msg_delete_subspace"
-	OpWeightMsgCreateSection           = "op_weight_msg_create_section"
-	OpWeightMsgEditSection             = "op_weight_msg_edit_section"
-	OpWeightMsgMoveSection             = "op_weight_msg_move_section"
-	OpWeightMsgDeleteSection           = "op_weight_msg_delete_section"
-	OpWeightMsgCreateUserGroup         = "op_weight_msg_create_user_group"
-	OpWeightMsgEditUserGroup           = "op_weight_msg_edit_user_group"
-	OpWeightMsgMoveUserGroup           = "op_weight_msg_move_user_group"
-	OpWeightMsgSetUserGroupPermissions = "op_weight_msg_set_user_group_permissions"
-	OpWeightMsgDeleteUserGroup         = "op_weight_msg_delete_user_group"
-	OpWeightMsgAddUserToUserGroup      = "op_weight_msg_add_user_to_user_group"
-	OpWeightMsgRemoveUserFromUserGroup = "op_weight_msg_remove_user_from_user_group"
-	OpWeightMsgSetUserPermissions      = "op_weight_msg_set_user_permissions"
+	OpWeightMsgCreateSubspace              = "op_weight_msg_create_subspace"
+	OpWeightMsgEditSubspace                = "op_weight_msg_edit_subspace"
+	OpWeightMsgDeleteSubspace              = "op_weight_msg_delete_subspace"
+	OpWeightMsgCreateSection               = "op_weight_msg_create_section"
+	OpWeightMsgEditSection                 = "op_weight_msg_edit_section"
+	OpWeightMsgMoveSection                 = "op_weight_msg_move_section"
+	OpWeightMsgDeleteSection               = "op_weight_msg_delete_section"
+	OpWeightMsgCreateUserGroup             = "op_weight_msg_create_user_group"
+	OpWeightMsgEditUserGroup               = "op_weight_msg_edit_user_group"
+	OpWeightMsgMoveUserGroup               = "op_weight_msg_move_user_group"
+	OpWeightMsgSetUserGroupPermissions     = "op_weight_msg_set_user_group_permissions"
+	OpWeightMsgDeleteUserGroup             = "op_weight_msg_delete_user_group"
+	OpWeightMsgAddUserToUserGroup          = "op_weight_msg_add_user_to_user_group"
+	OpWeightMsgRemoveUserFromUserGroup     = "op_weight_msg_remove_user_from_user_group"
+	OpWeightMsgSetUserPermissions          = "op_weight_msg_set_user_permissions"
+	OpWeightMsgGrantTreasuryAuthorization  = "op_weight_msg_grant_treasury_authorization"
+	OpWeightMsgRevokeTreasuryAuthorization = "op_weight_msg_revoke_treasury_authorization"
 
 	DefaultGasValue = 200_000
 )
@@ -42,7 +45,7 @@ const (
 // WeightedOperations returns all the operations from the module with their respective weights
 func WeightedOperations(
 	appParams simtypes.AppParams, cdc codec.JSONCodec,
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper, authzk authzkeeper.Keeper,
 ) sim.WeightedOperations {
 
 	var weightMsgCreateSubspace int
@@ -149,6 +152,20 @@ func WeightedOperations(
 		},
 	)
 
+	var weightMsgGrantTreasuryAuthorization int
+	appParams.GetOrGenerate(cdc, OpWeightMsgGrantTreasuryAuthorization, &weightMsgGrantTreasuryAuthorization, nil,
+		func(_ *rand.Rand) {
+			weightMsgGrantTreasuryAuthorization = params.DefaultWeightMsgGrantTreasuryAuthorization
+		},
+	)
+
+	var weightMsgRevokeTreasuryAuthorization int
+	appParams.GetOrGenerate(cdc, OpWeightMsgRevokeTreasuryAuthorization, &weightMsgRevokeTreasuryAuthorization, nil,
+		func(_ *rand.Rand) {
+			weightMsgRevokeTreasuryAuthorization = params.DefaultWeightMsgRevokeTreasuryAuthorization
+		},
+	)
+
 	return sim.WeightedOperations{
 		sim.NewWeightedOperation(
 			weightMsgCreateSubspace,
@@ -209,6 +226,14 @@ func WeightedOperations(
 		sim.NewWeightedOperation(
 			weightMsgSetUserPermissions,
 			SimulateMsgSetUserPermissions(k, ak, bk, fk),
+		),
+		sim.NewWeightedOperation(
+			weightMsgGrantTreasuryAuthorization,
+			SimulateMsgGrantTreasuryAuthorization(k, ak, bk, fk),
+		),
+		sim.NewWeightedOperation(
+			weightMsgRevokeTreasuryAuthorization,
+			SimulateMsgRevokeTreasuryAuthorization(k, ak, bk, fk, authzk),
 		),
 	}
 }

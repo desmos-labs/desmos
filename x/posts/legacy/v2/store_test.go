@@ -31,7 +31,7 @@ func TestMigrateStore(t *testing.T) {
 	paramsSubspace := pk.Subspace(types.ModuleName)
 	paramsSubspace = paramsSubspace.WithKeyTable(types.ParamKeyTable())
 
-	sk := subspaceskeeper.NewKeeper(cdc, keys[subspacestypes.StoreKey])
+	sk := subspaceskeeper.NewKeeper(cdc, keys[subspacestypes.StoreKey], nil, nil)
 
 	testCases := []struct {
 		name      string

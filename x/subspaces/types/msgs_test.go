@@ -12,7 +12,6 @@ import (
 var msgCreateSubspace = types.NewMsgCreateSubspace(
 	"Test subspace",
 	"This is a test subspace",
-	"cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
 	"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez",
 	"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 )
@@ -38,18 +37,6 @@ func TestMsgCreateSubspace_ValidateBasic(t *testing.T) {
 				"This is a test subspace",
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-			),
-			shouldErr: true,
-		},
-		{
-			name: "invalid treasury returns error",
-			msg: types.NewMsgCreateSubspace(
-				"Test subspace",
-				"This is a test subspace",
-				"cosmos1qzskhrcjnkdz2ln4",
-				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 			),
 			shouldErr: true,
 		},
@@ -58,7 +45,6 @@ func TestMsgCreateSubspace_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreateSubspace(
 				"Test subspace",
 				"This is a test subspace",
-				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 				"cosmos1qzskhrcjnkdz2ln4ye",
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 			),
@@ -69,7 +55,6 @@ func TestMsgCreateSubspace_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreateSubspace(
 				"Test subspace",
 				"This is a test subspace",
-				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 				"",
 			),
@@ -95,7 +80,7 @@ func TestMsgCreateSubspace_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgCreateSubspace_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgCreateSubspace","value":{"creator":"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69","description":"This is a test subspace","name":"Test subspace","owner":"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez","treasury":"cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0"}}`
+	expected := `{"type":"desmos/MsgCreateSubspace","value":{"creator":"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69","description":"This is a test subspace","name":"Test subspace","owner":"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez"}}`
 	require.Equal(t, expected, string(msgCreateSubspace.GetSignBytes()))
 }
 
@@ -110,7 +95,6 @@ var msgEditSubspace = types.NewMsgEditSubspace(
 	1,
 	"This is a new name",
 	"This is a new description",
-	"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 	"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 	"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 )
@@ -137,7 +121,6 @@ func TestMsgEditSubspace_ValidateBasic(t *testing.T) {
 				"This is a new description",
 				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 			),
 			shouldErr: true,
 		},
@@ -147,7 +130,6 @@ func TestMsgEditSubspace_ValidateBasic(t *testing.T) {
 				1,
 				"This is a new name",
 				"This is a new description",
-				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 				"cosmos1m0czrla04f7rp3z",
 			),
@@ -173,7 +155,7 @@ func TestMsgEditSubspace_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgEditSubspace_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgEditSubspace","value":{"description":"This is a new description","name":"This is a new name","owner":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","signer":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","subspace_id":"1","treasury":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"}}`
+	expected := `{"type":"desmos/MsgEditSubspace","value":{"description":"This is a new description","name":"This is a new name","owner":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","signer":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","subspace_id":"1"}}`
 	require.Equal(t, expected, string(msgEditSubspace.GetSignBytes()))
 }
 

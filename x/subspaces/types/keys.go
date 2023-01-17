@@ -29,6 +29,9 @@ const (
 	ActionRemoveUserFromUserGroup = "remove_user_from_user_group"
 	ActionSetUserPermissions      = "set_user_permissions"
 
+	ActionGrantTreasuryAuthorization  = "grant_treasury_authorization"
+	ActionRevokeTreasuryAuthorization = "revoke_treasury_authorization"
+
 	DoNotModify = "[do-not-modify]"
 )
 

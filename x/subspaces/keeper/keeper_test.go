@@ -29,7 +29,7 @@ func TestKeeper_SetHooks(t *testing.T) {
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			subspaceKeeper := keeper.NewKeeper(nil, nil)
+			subspaceKeeper := keeper.NewKeeper(nil, nil, nil, nil)
 			k := subspaceKeeper.SetHooks(tc.hooks)
 
 			if tc.shouldErr {

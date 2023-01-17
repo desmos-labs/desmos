@@ -3,10 +3,26 @@ package keeper
 import (
 	"bytes"
 
+	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
+
+// createAccountIfNotExists creates a new account for the given user if it does not exist already
+func (k Keeper) createAccountIfNotExists(ctx sdk.Context, user string) {
+	addr, err := sdk.AccAddressFromBech32(user)
+	if err != nil {
+		panic(err)
+	}
+	if !k.ak.HasAccount(ctx, addr) {
+		defer telemetry.IncrCounter(1, "new", "account")
+		k.ak.SetAccount(ctx, authtypes.NewBaseAccountWithAddress(addr))
+	}
+}
+
+// --------------------------------------------------------------------------------------------------------------------
 
 // IterateSubspaces iterates through the subspaces set and performs the given function
 func (k Keeper) IterateSubspaces(ctx sdk.Context, fn func(subspace types.Subspace) (stop bool)) {

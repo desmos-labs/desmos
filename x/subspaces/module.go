@@ -36,7 +36,7 @@ import (
 )
 
 const (
-	consensusVersion = 4
+	consensusVersion = 5
 )
 
 // type check to ensure the interface is properly implemented
@@ -117,7 +117,7 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
 	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
 
-	m := keeper.NewMigrator(am.keeper, am.authzk)
+	m := keeper.NewMigrator(am.keeper, am.authzk, am.ak)
 	err := cfg.RegisterMigration(types.ModuleName, 1, m.Migrate1to2)
 	if err != nil {
 		panic(err)
@@ -127,6 +127,10 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 		panic(err)
 	}
 	err = cfg.RegisterMigration(types.ModuleName, 3, m.Migrate3to4)
+	if err != nil {
+		panic(err)
+	}
+	err = cfg.RegisterMigration(types.ModuleName, 4, m.Migrate4to5)
 	if err != nil {
 		panic(err)
 	}
@@ -230,5 +234,5 @@ func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
 
 // WeightedOperations returns the all the subspaces module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
-	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.ak, am.bk, am.fk)
+	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.ak, am.bk, am.fk, am.authzk)
 }

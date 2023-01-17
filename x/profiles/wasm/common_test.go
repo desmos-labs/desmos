@@ -255,7 +255,7 @@ func (suite *TestSuite) SetupTest() {
 		scopedIBCKeeper,
 	)
 
-	suite.sk = subspaceskeeper.NewKeeper(suite.cdc, keys[subspacestypes.StoreKey])
+	suite.sk = subspaceskeeper.NewKeeper(suite.cdc, keys[subspacestypes.StoreKey], nil, nil)
 	suite.rk = relationshipskeeper.NewKeeper(suite.cdc, keys[relationshipstypes.StoreKey], suite.sk)
 	suite.k = keeper.NewKeeper(
 		suite.cdc,

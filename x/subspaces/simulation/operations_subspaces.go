@@ -39,7 +39,6 @@ func SimulateMsgCreateSubspace(
 		msg := types.NewMsgCreateSubspace(
 			subspace.Name,
 			subspace.Description,
-			subspace.Treasury,
 			subspace.Owner,
 			creator.Address.String(),
 		)
@@ -95,7 +94,6 @@ func SimulateMsgEditSubspace(
 			subspaceID,
 			update.Name,
 			update.Description,
-			update.Treasury,
 			update.Owner,
 			editor.Address.String(),
 		)
@@ -139,7 +137,6 @@ func randomEditSubspaceFields(
 		RandomName(r),
 		RandomDescription(r),
 		account.Address.String(),
-		account.Address.String(),
 	)
 	if r.Intn(101) < 50 {
 		// 50% of chance of not editing the name
@@ -148,10 +145,6 @@ func randomEditSubspaceFields(
 	if r.Intn(101) < 50 {
 		// 50% of chance of not editing the description
 		update.Description = types.DoNotModify
-	}
-	if r.Intn(101) < 50 {
-		// 50% of chance of not editing the treasury
-		update.Treasury = types.DoNotModify
 	}
 	if r.Intn(101) < 50 {
 		// 50% of chance of not editing the owner

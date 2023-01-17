@@ -34,10 +34,12 @@ func (k msgServer) CreateSubspace(goCtx context.Context, msg *types.MsgCreateSub
 	}
 
 	// Create and validate the subspace
-	subspace := types.NewSubspace(subspaceID, msg.Name, msg.Description, msg.Treasury, msg.Owner, msg.Creator, ctx.BlockTime())
+	subspace := types.NewSubspace(subspaceID, msg.Name, msg.Description, types.GetTreasuryAddress(subspaceID).String(), msg.Owner, msg.Creator, ctx.BlockTime())
 	if err := subspace.Validate(); err != nil {
 		return nil, err
 	}
+	// Create a treasury account for subspace
+	k.createAccountIfNotExists(ctx, subspace.Treasury)
 
 	// Save the subspace
 	k.SaveSubspace(ctx, subspace)
@@ -87,7 +89,7 @@ func (k msgServer) EditSubspace(goCtx context.Context, msg *types.MsgEditSubspac
 	}
 
 	// Update the subspace and validate it
-	updated := subspace.Update(types.NewSubspaceUpdate(msg.Name, msg.Description, msg.Treasury, msg.Owner))
+	updated := subspace.Update(types.NewSubspaceUpdate(msg.Name, msg.Description, msg.Owner))
 	err = updated.Validate()
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
