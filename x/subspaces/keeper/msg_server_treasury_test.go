@@ -103,7 +103,7 @@ func (suite *KeeperTestsuite) TestMsgServer_GrantTreasuryAuthorization() {
 			shouldErr: true,
 		},
 		{
-			name: "authorization is set properly",
+			name: "valid request creates authorization properly",
 			store: func(ctx sdk.Context) {
 				suite.k.SaveSubspace(ctx, types.NewSubspace(1,
 					"Test subspace",
