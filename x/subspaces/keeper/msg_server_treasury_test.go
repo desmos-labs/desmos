@@ -276,7 +276,7 @@ func (suite *KeeperTestsuite) TestMsgServer_RevokeTreasuryAuthorization() {
 			shouldErr: true,
 		},
 		{
-			name: "authorization does not exist returns error",
+			name: "non exiting authorization returns error",
 			store: func(ctx sdk.Context) {
 				suite.k.SaveSubspace(ctx, types.NewSubspace(1,
 					"Test subspace",
