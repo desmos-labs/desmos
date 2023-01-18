@@ -1,0 +1,6 @@
+type: fix
+module: other
+pull_request: 1069
+description: Register missing Wasm snapshotter extension
+backward_compatible: true
+date: 2023-01-17T16:57:07.714192798Z
