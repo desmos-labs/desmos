@@ -6,6 +6,7 @@ import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 
 import "desmos/subspaces/v3/models.proto";
+import "desmos/subspaces/v3/query_feegrant.proto";
 
 option go_package = "github.com/desmos-labs/desmos/v4/x/subspaces/types";
 
@@ -61,6 +62,13 @@ service Query {
       returns (QueryUserPermissionsResponse) {
     option (google.api.http).get =
         "/desmos/subspaces/v3/subspaces/{subspace_id}/permissions/{user}";
+  }
+
+  // Allowances returns all the grants for users
+  rpc Allowances(QueryAllowancesRequest)
+      returns (QueryAllowancesResponse) {
+    option (google.api.http).get =
+        "/desmos/subspaces/v3/subspaces/{subspace_id}/allowances";
   }
 }
 
