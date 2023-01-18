@@ -3,8 +3,10 @@ syntax = "proto3";
 package desmos.subspaces.v3;
 
 import "gogoproto/gogo.proto";
-import "desmos/subspaces/v3/models.proto";
 import "cosmos/authz/v1beta1/authz.proto";
+
+import "desmos/subspaces/v3/models.proto";
+
 
 option go_package = "github.com/desmos-labs/desmos/v4/x/subspaces/types";
 

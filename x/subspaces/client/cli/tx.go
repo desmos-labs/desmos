@@ -51,6 +51,7 @@ func NewTxCmd() *cobra.Command {
 		GetCmdSetUserPermissions(),
 		GetCmdGrantAuthorization(),
 		GetTreasuryTxCmd(),
+		GetAllowanceTxCmd(),
 	)
 
 	return subspacesTxCmd

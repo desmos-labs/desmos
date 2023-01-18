@@ -9,7 +9,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-func (suite *KeeperTestsuite) TestValidSubspacesInvariant() {
+func (suite *KeeperTestSuite) TestValidSubspacesInvariant() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -132,7 +132,7 @@ func (suite *KeeperTestsuite) TestValidSubspacesInvariant() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestValidSectionsInvariant() {
+func (suite *KeeperTestSuite) TestValidSectionsInvariant() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -286,7 +286,7 @@ func (suite *KeeperTestsuite) TestValidSectionsInvariant() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestValidUserGroupsInvariant() {
+func (suite *KeeperTestSuite) TestValidUserGroupsInvariant() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -477,7 +477,7 @@ func (suite *KeeperTestsuite) TestValidUserGroupsInvariant() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestValidUserGroupMembersInvariant() {
+func (suite *KeeperTestSuite) TestValidUserGroupMembersInvariant() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -566,7 +566,7 @@ func (suite *KeeperTestsuite) TestValidUserGroupMembersInvariant() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestValidUserPermissionsInvariant() {
+func (suite *KeeperTestSuite) TestValidUserPermissionsInvariant() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)

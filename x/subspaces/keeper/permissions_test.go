@@ -8,7 +8,7 @@ import (
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
-func (suite *KeeperTestsuite) TestKeeper_SetUserPermissions() {
+func (suite *KeeperTestSuite) TestKeeper_SetUserPermissions() {
 	testCases := []struct {
 		name        string
 		store       func(ctx sdk.Context)
@@ -67,7 +67,7 @@ func (suite *KeeperTestsuite) TestKeeper_SetUserPermissions() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_HasPermission() {
+func (suite *KeeperTestSuite) TestKeeper_HasPermission() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -184,7 +184,7 @@ func (suite *KeeperTestsuite) TestKeeper_HasPermission() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_GetUserPermissions() {
+func (suite *KeeperTestSuite) TestKeeper_GetUserPermissions() {
 	testCases := []struct {
 		name           string
 		store          func(ctx sdk.Context)
@@ -258,7 +258,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetUserPermissions() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_GetGroupsInheritedPermissions() {
+func (suite *KeeperTestSuite) TestKeeper_GetGroupsInheritedPermissions() {
 	testCases := []struct {
 		name           string
 		store          func(ctx sdk.Context)
@@ -378,7 +378,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetGroupsInheritedPermissions() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_GetUsersWithRootPermissions() {
+func (suite *KeeperTestSuite) TestKeeper_GetUsersWithRootPermissions() {
 	testCases := []struct {
 		name        string
 		store       func(ctx sdk.Context)
@@ -528,7 +528,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetUsersWithRootPermissions() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_RemoveUserPermissions() {
+func (suite *KeeperTestSuite) TestKeeper_RemoveUserPermissions() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)

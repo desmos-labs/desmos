@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/types/module"
+	"github.com/cosmos/cosmos-sdk/x/feegrant"
 
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
@@ -22,9 +23,10 @@ func RandomizeGenState(simState *module.SimulationState) {
 	members := randomUserGroupsMembers(simState.Rand, simState.Accounts, groups)
 	acl := randomACL(simState.Rand, simState.Accounts, subspaces)
 	initialSubspaceID, subspacesData := getSubspacesDataEntries(subspaces, sections, groups)
+	grants := append(randomUserGrants(simState.Rand, simState.Accounts, subspaces), randomGroupGrants(simState.Rand, simState.Accounts, groups)...)
 
 	// Create the genesis and sanitize it
-	subspacesGenesis := types.NewGenesisState(initialSubspaceID, subspacesData, subspaces, sections, acl, groups, members)
+	subspacesGenesis := types.NewGenesisState(initialSubspaceID, subspacesData, subspaces, sections, acl, groups, members, grants)
 	subspacesGenesis = sanitizeGenesis(subspacesGenesis)
 
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(subspacesGenesis)
@@ -172,6 +174,57 @@ func randomACL(r *rand.Rand, accounts []simtypes.Account, subspaces []types.Subs
 	return entries
 }
 
+// randomUserGrants returns randomly generated user grants
+func randomUserGrants(r *rand.Rand, accounts []simtypes.Account, subspaces []types.Subspace) []types.Grant {
+	if len(subspaces) == 0 {
+		return nil
+	}
+	grantsNumber := r.Intn(30)
+	grants := make([]types.Grant, grantsNumber)
+	for i := 0; i < grantsNumber; {
+		subspace := RandomSubspace(r, subspaces)
+		granter, _ := simtypes.RandomAcc(r, accounts)
+		grantee, _ := simtypes.RandomAcc(r, accounts)
+		if granter.Address.String() == grantee.Address.String() {
+			continue
+		}
+		grant := types.NewGrant(subspace.ID, granter.Address.String(), types.NewUserGrantee(grantee.Address.String()), &feegrant.BasicAllowance{})
+		if !containsGrant(grants, grant) {
+			grants[i] = grant
+			i++
+		}
+	}
+	return grants
+}
+
+// randomGroupGrants returns randomly generated group grants
+func randomGroupGrants(r *rand.Rand, accounts []simtypes.Account, groups []types.UserGroup) []types.Grant {
+	if len(groups) == 0 {
+		return nil
+	}
+	grantsNumber := r.Intn(30)
+	grants := make([]types.Grant, grantsNumber)
+	for i := 0; i < grantsNumber; {
+		group := RandomGroup(r, groups)
+		granter, _ := simtypes.RandomAcc(r, accounts)
+		grant := types.NewGrant(group.SubspaceID, granter.Address.String(), types.NewGroupGrantee(group.ID), &feegrant.BasicAllowance{})
+		if !containsGrant(grants, grant) {
+			grants[i] = grant
+			i++
+		}
+	}
+	return grants
+}
+
+func containsGrant(slice []types.Grant, grant types.Grant) bool {
+	for _, g := range slice {
+		if g.SubspaceID == grant.SubspaceID && g.Granter == grant.Granter && g.Grantee.Equal(grant.Grantee) {
+			return true
+		}
+	}
+	return false
+}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 // sanitizeGenesis sanitizes the given genesis by removing all the double subspaces,
@@ -185,6 +238,7 @@ func sanitizeGenesis(genesis *types.GenesisState) *types.GenesisState {
 		sanitizeUserPermissions(genesis.UserPermissions),
 		sanitizeUserGroups(genesis.UserGroups),
 		genesis.UserGroupsMembers,
+		genesis.Grants,
 	)
 }
 

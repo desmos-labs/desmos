@@ -15,6 +15,8 @@ type SubspacesMsg struct {
 	SetUserPermissions          *json.RawMessage `json:"set_user_permissions"`
 	GrantTreasuryAuthorization  *json.RawMessage `json:"grant_treasury_authorization"`
 	RevokeTreasuryAuthorization *json.RawMessage `json:"revoke_treasury_authorization"`
+	GrantAllowance              *json.RawMessage `json:"grant_allowance"`
+	RevokeAllowance             *json.RawMessage `json:"revoke_allowance"`
 }
 
 type SubspacesQuery struct {

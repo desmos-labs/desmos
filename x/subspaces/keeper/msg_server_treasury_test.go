@@ -10,7 +10,7 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 )
 
-func (suite *KeeperTestsuite) TestMsgServer_GrantTreasuryAuthorization() {
+func (suite *KeeperTestSuite) TestMsgServer_GrantTreasuryAuthorization() {
 	blockTime := time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC)
 	testCases := []struct {
 		name        string
@@ -187,7 +187,7 @@ func (suite *KeeperTestsuite) TestMsgServer_GrantTreasuryAuthorization() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestMsgServer_RevokeTreasuryAuthorization() {
+func (suite *KeeperTestSuite) TestMsgServer_RevokeTreasuryAuthorization() {
 	blockTime := time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC)
 	testCases := []struct {
 		name        string

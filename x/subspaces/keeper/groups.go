@@ -106,6 +106,9 @@ func (k Keeper) DeleteUserGroup(ctx sdk.Context, subspaceID uint64, groupID uint
 
 // AddUserToGroup adds the given user to the group having the provided id inside the specified subspace.
 func (k Keeper) AddUserToGroup(ctx sdk.Context, subspaceID uint64, groupID uint32, user string) {
+	// Create account if user does not exist.
+	k.createAccountIfNotExists(ctx, user)
+
 	store := ctx.KVStore(k.storeKey)
 	store.Set(types.GroupMemberStoreKey(subspaceID, groupID, user), []byte{0x01})
 

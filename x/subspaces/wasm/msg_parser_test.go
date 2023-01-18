@@ -7,6 +7,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/authz"
+	"github.com/cosmos/cosmos-sdk/x/feegrant"
 	"github.com/stretchr/testify/require"
 
 	"github.com/desmos-labs/desmos/v4/app"
@@ -273,6 +274,40 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					"cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
 					"/cosmos.bank.v1beta1.MsgSend",
+				),
+			},
+		},
+		{
+			name: "grant user allowance message is parsed correctly",
+			msg: buildGrantAllowanceRequest(cdc, types.NewMsgGrantAllowance(
+				1,
+				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+				types.NewUserGrantee("cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0"),
+				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10)))},
+			)),
+			shouldErr: false,
+			expMsgs: []sdk.Msg{
+				types.NewMsgGrantAllowance(
+					1,
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					types.NewUserGrantee("cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0"),
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10)))},
+				),
+			},
+		},
+		{
+			name: "revoke user allowance message is parsed correctly",
+			msg: buildRevokeAllowanceRequest(cdc, types.NewMsgRevokeAllowance(
+				1,
+				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+				types.NewUserGrantee("cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0"),
+			)),
+			shouldErr: false,
+			expMsgs: []sdk.Msg{
+				types.NewMsgRevokeAllowance(
+					1,
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					types.NewUserGrantee("cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0"),
 				),
 			},
 		},
