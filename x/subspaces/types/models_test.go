@@ -4,6 +4,11 @@ import (
 	"testing"
 	"time"
 
+<<<<<<< HEAD
+=======
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+
+>>>>>>> ac7d4c72 (fix: register missing Wasm snapshotter extension (#1069))
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 
 	"github.com/stretchr/testify/require"

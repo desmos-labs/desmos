@@ -4,6 +4,12 @@ import (
 	"encoding/hex"
 	"time"
 
+<<<<<<< HEAD
+	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
+=======
+	"github.com/golang/mock/gomock"
+>>>>>>> ac7d4c72 (fix: register missing Wasm snapshotter extension (#1069))
+
 	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
