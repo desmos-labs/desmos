@@ -154,7 +154,7 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantAllowance() {
 				),
 			},
 			check: func(ctx sdk.Context) {
-				grant, found := suite.k.GetUserGrant(ctx, 1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
+				grant, found := suite.k.GetUserGrant(ctx, 1, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
 				suite.Require().True(found)
 				suite.Require().Equal(types.NewGrant(1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
@@ -195,7 +195,7 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantAllowance() {
 				),
 			},
 			check: func(ctx sdk.Context) {
-				grant, found := suite.k.GetGroupGrant(ctx, 1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", 1)
+				grant, found := suite.k.GetGroupGrant(ctx, 1, 1)
 				suite.Require().True(found)
 
 				suite.Require().Equal(types.NewGrant(1,
@@ -284,7 +284,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RevokeAllowance() {
 				),
 			},
 			check: func(ctx sdk.Context) {
-				suite.Require().False(suite.k.HasUserGrant(ctx, 1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"))
+				suite.Require().False(suite.k.HasUserGrant(ctx, 1, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"))
 			},
 		},
 		{
@@ -312,7 +312,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RevokeAllowance() {
 				),
 			},
 			check: func(ctx sdk.Context) {
-				suite.Require().False(suite.k.HasGroupGrant(ctx, 1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", 1))
+				suite.Require().False(suite.k.HasGroupGrant(ctx, 1, 1))
 			},
 		},
 	}

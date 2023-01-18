@@ -13,7 +13,8 @@ import (
 func (suite *AnteTestSuite) TestAnte_Ante() {
 	feeAmount := sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(100)))
 	signer := sdk.MustAccAddressFromBech32("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
-	granter := sdk.MustAccAddressFromBech32("cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53")
+	granter := types.GetTreasuryAddress(1)
+	//invalidGranter := sdk.MustAccAddressFromBech32("cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53")
 	module := sdk.MustAccAddressFromBech32("cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
 	nonSubspaceMsg := testdata.NewTestMsg(signer)
 	subspaceID, otherSubspaceID := uint64(1), uint64(2)
@@ -27,7 +28,22 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 		shouldErr bool
 		expEvents sdk.Events
 	}{
-
+		{
+			name: "non existing granter account returns error",
+			setup: func() {
+				suite.ak.EXPECT().GetModuleAddress(authtypes.FeeCollectorName).Return(module)
+				suite.sk.EXPECT().UseGrantedFees(gomock.Any(), subspaceID, signer, feeAmount, []sdk.Msg{subspaceMsg}).Return(true)
+				suite.ak.EXPECT().GetAccount(gomock.Any(), granter).Return(nil)
+			},
+			buildTx: func() sdk.Tx {
+				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
+				txBuilder.SetMsgs(subspaceMsg)
+				txBuilder.SetFeeGranter(granter)
+				txBuilder.SetFeeAmount(feeAmount)
+				return txBuilder.GetTx()
+			},
+			shouldErr: true,
+		},
 		{
 			name: "not set module fee collector returns error",
 			setup: func() {
@@ -43,26 +59,10 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 			shouldErr: true,
 		},
 		{
-			name: "non existing granter account returns error",
-			setup: func() {
-				suite.sk.EXPECT().UseGrantedFees(gomock.Any(), subspaceID, granter, signer, feeAmount, []sdk.Msg{subspaceMsg}).Return(true)
-				suite.ak.EXPECT().GetModuleAddress(authtypes.FeeCollectorName).Return(module)
-				suite.ak.EXPECT().GetAccount(gomock.Any(), granter).Return(nil)
-			},
-			buildTx: func() sdk.Tx {
-				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
-				txBuilder.SetMsgs(subspaceMsg)
-				txBuilder.SetFeeGranter(granter)
-				txBuilder.SetFeeAmount(feeAmount)
-				return txBuilder.GetTx()
-			},
-			shouldErr: true,
-		},
-		{
 			name: "not enough funds returns error",
 			setup: func() {
-				suite.sk.EXPECT().UseGrantedFees(gomock.Any(), subspaceID, granter, signer, feeAmount, []sdk.Msg{subspaceMsg}).Return(true)
 				suite.ak.EXPECT().GetModuleAddress(authtypes.FeeCollectorName).Return(module)
+				suite.sk.EXPECT().UseGrantedFees(gomock.Any(), subspaceID, signer, feeAmount, []sdk.Msg{subspaceMsg}).Return(true)
 				suite.ak.EXPECT().GetAccount(gomock.Any(), granter).Return(authtypes.NewBaseAccountWithAddress(granter))
 				suite.bk.EXPECT().SendCoinsFromAccountToModule(gomock.Any(), granter, authtypes.FeeCollectorName, feeAmount).Return(sdkerrors.ErrInsufficientFunds)
 			},
@@ -78,8 +78,8 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 		{
 			name: "non-zero fees valid tx with returns no error",
 			setup: func() {
-				suite.sk.EXPECT().UseGrantedFees(gomock.Any(), subspaceID, granter, signer, feeAmount, []sdk.Msg{subspaceMsg}).Return(true)
 				suite.ak.EXPECT().GetModuleAddress(authtypes.FeeCollectorName).Return(module)
+				suite.sk.EXPECT().UseGrantedFees(gomock.Any(), subspaceID, signer, feeAmount, []sdk.Msg{subspaceMsg}).Return(true)
 				suite.ak.EXPECT().GetAccount(gomock.Any(), granter).Return(authtypes.NewBaseAccountWithAddress(granter))
 				suite.bk.EXPECT().SendCoinsFromAccountToModule(gomock.Any(), granter, authtypes.FeeCollectorName, feeAmount).Return(nil)
 			},
@@ -95,8 +95,8 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 		{
 			name: "zero fees valid tx returns no error",
 			setup: func() {
-				suite.sk.EXPECT().UseGrantedFees(gomock.Any(), subspaceID, granter, signer, nil, []sdk.Msg{subspaceMsg}).Return(true)
 				suite.ak.EXPECT().GetModuleAddress(authtypes.FeeCollectorName).Return(module)
+				suite.sk.EXPECT().UseGrantedFees(gomock.Any(), subspaceID, signer, nil, []sdk.Msg{subspaceMsg}).Return(true)
 				suite.ak.EXPECT().GetAccount(gomock.Any(), granter).Return(authtypes.NewBaseAccountWithAddress(granter))
 			},
 			buildTx: func() sdk.Tx {
@@ -126,8 +126,8 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 		{
 			name: "valid tx with valid feegrant allowance but no subspace allowance returns no error",
 			setup: func() {
-				suite.sk.EXPECT().UseGrantedFees(gomock.Any(), subspaceID, granter, signer, feeAmount, []sdk.Msg{subspaceMsg}).Return(false)
 				suite.ak.EXPECT().GetModuleAddress(authtypes.FeeCollectorName).Return(module).Times(2)
+				suite.sk.EXPECT().UseGrantedFees(gomock.Any(), subspaceID, signer, feeAmount, []sdk.Msg{subspaceMsg}).Return(false)
 				suite.ak.EXPECT().GetAccount(gomock.Any(), granter).Return(authtypes.NewBaseAccountWithAddress(granter))
 				suite.fk.EXPECT().UseGrantedFees(gomock.Any(), granter, signer, feeAmount, []sdk.Msg{subspaceMsg}).Return(nil)
 				suite.bk.EXPECT().SendCoinsFromAccountToModule(gomock.Any(), granter, authtypes.FeeCollectorName, feeAmount).Return(nil)

@@ -3,6 +3,7 @@ package types
 // DONTCOVER
 
 import (
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 )
 
@@ -97,4 +98,35 @@ func NewPermissionDetailGroup(subspaceID uint64, sectionID uint32, groupID uint3
 			},
 		},
 	}
+}
+
+// NewQueryAllowancesRequest returns a new QueryAllowancesRequest instance
+func NewQueryAllowancesRequest(subspaceID uint64, granter string, grantee Grantee, pagination *query.PageRequest) *QueryAllowancesRequest {
+	var granteeAny *codectypes.Any
+
+	if grantee != nil {
+		any, err := codectypes.NewAnyWithValue(grantee)
+		if err != nil {
+			panic("failed to pack target to any type")
+		}
+		granteeAny = any
+	}
+
+	return &QueryAllowancesRequest{
+		SubspaceId: subspaceID,
+		Granter:    granter,
+		Grantee:    granteeAny,
+		Pagination: pagination,
+	}
+}
+
+// UnpackInterfaces implements codectypes.UnpackInterfacesMessage
+func (r *QueryAllowancesResponse) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
+	for _, grant := range r.Grants {
+		err := grant.UnpackInterfaces(unpacker)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }

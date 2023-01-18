@@ -447,24 +447,6 @@ func (k Keeper) IterateUserGroupGrants(ctx sdk.Context, subspaceID uint64, group
 	})
 }
 
-// IterateSubspaceGranterGroupGrants iterates over all the group grants for the given granter and performs the provided function
-func (k Keeper) IterateSubspaceGranterGroupGrants(ctx sdk.Context, subspaceID uint64, granter string, fn func(entry types.Grant) (stop bool)) {
-	store := ctx.KVStore(k.storeKey)
-	prefix := types.GranterGroupAllowancePrefix(subspaceID, granter)
-	iterator := sdk.KVStorePrefixIterator(store, prefix)
-	defer iterator.Close()
-
-	for ; iterator.Valid(); iterator.Next() {
-		var grant types.Grant
-		k.cdc.MustUnmarshal(iterator.Value(), &grant)
-
-		stop := fn(grant)
-		if stop {
-			break
-		}
-	}
-}
-
 // GetAllUserGroupsGrants returns a list of all the group grants that have been store inside the given context
 func (k Keeper) GetAllUserGroupsGrants(ctx sdk.Context) []types.Grant {
 	var grants []types.Grant

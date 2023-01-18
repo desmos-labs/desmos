@@ -32,7 +32,7 @@ func (k msgServer) GrantAllowance(goCtx context.Context, msg *types.MsgGrantAllo
 	grantee := msg.Grantee.GetCachedValue().(types.Grantee)
 	switch grantee := grantee.(type) {
 	case *types.UserGrantee:
-		if k.HasUserGrant(ctx, msg.SubspaceID, msg.Granter, grantee.User) {
+		if k.HasUserGrant(ctx, msg.SubspaceID, grantee.User) {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "fee allowance already exists")
 		}
 		events = events.AppendEvent(sdk.NewEvent(
@@ -46,7 +46,7 @@ func (k msgServer) GrantAllowance(goCtx context.Context, msg *types.MsgGrantAllo
 		if !k.HasUserGroup(ctx, msg.SubspaceID, grantee.GroupID) {
 			return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "group with id %d not found", grantee.GroupID)
 		}
-		if k.HasGroupGrant(ctx, msg.SubspaceID, msg.Granter, grantee.GroupID) {
+		if k.HasGroupGrant(ctx, msg.SubspaceID, grantee.GroupID) {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "fee allowance already exists")
 		}
 		events = events.AppendEvent(sdk.NewEvent(
@@ -83,10 +83,10 @@ func (k msgServer) RevokeAllowance(goCtx context.Context, msg *types.MsgRevokeAl
 
 	switch grantee := msg.Grantee.GetCachedValue().(type) {
 	case *types.UserGrantee:
-		if !k.HasUserGrant(ctx, msg.SubspaceID, msg.Granter, grantee.User) {
+		if !k.HasUserGrant(ctx, msg.SubspaceID, grantee.User) {
 			return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "fee allowance does not exist")
 		}
-		k.DeleteUserGrant(ctx, msg.SubspaceID, msg.Granter, grantee.User)
+		k.DeleteUserGrant(ctx, msg.SubspaceID, grantee.User)
 		events = events.AppendEvent(sdk.NewEvent(
 			types.EventTypeRevokeAllowance,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
@@ -95,10 +95,10 @@ func (k msgServer) RevokeAllowance(goCtx context.Context, msg *types.MsgRevokeAl
 		))
 
 	case *types.GroupGrantee:
-		if !k.HasGroupGrant(ctx, msg.SubspaceID, msg.Granter, grantee.GroupID) {
+		if !k.HasGroupGrant(ctx, msg.SubspaceID, grantee.GroupID) {
 			return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "fee allowance does not exist")
 		}
-		k.DeleteGroupGrant(ctx, msg.SubspaceID, msg.Granter, grantee.GroupID)
+		k.DeleteGroupGrant(ctx, msg.SubspaceID, grantee.GroupID)
 		events = events.AppendEvent(sdk.NewEvent(
 			types.EventTypeRevokeAllowance,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),

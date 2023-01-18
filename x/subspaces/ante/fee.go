@@ -78,7 +78,7 @@ func (dfd DeductFeeDecorator) tryHandleSubspaceTx(ctx sdk.Context, tx sdk.FeeTx,
 	deductFeesFrom := feePayer
 
 	// if feegranter is not set set or fee granter equals to payer, then use auth.DeductFeeDecorator to deal with fees
-	if feeGranter == nil || feeGranter.Equals(feePayer) {
+	if feeGranter == nil || !feeGranter.Equals(types.GetTreasuryAddress(subspaceID)) {
 		return ctx, false, nil
 	}
 
@@ -86,7 +86,7 @@ func (dfd DeductFeeDecorator) tryHandleSubspaceTx(ctx sdk.Context, tx sdk.FeeTx,
 		return ctx, false, fmt.Errorf("fee collector module account (%s) has not been set", authtypes.FeeCollectorName)
 	}
 
-	used := dfd.sk.UseGrantedFees(ctx, subspaceID, feeGranter, feePayer, fee, tx.GetMsgs())
+	used := dfd.sk.UseGrantedFees(ctx, subspaceID, feePayer, fee, tx.GetMsgs())
 	if !used {
 		return ctx, false, nil
 	}

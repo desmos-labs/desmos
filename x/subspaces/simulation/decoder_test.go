@@ -90,11 +90,11 @@ func TestDecodeStore(t *testing.T) {
 			Value: cdc.MustMarshal(&section),
 		},
 		{
-			Key:   types.UserAllowanceKey(1, "cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn", "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e"),
+			Key:   types.UserAllowanceKey(1, "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e"),
 			Value: cdc.MustMarshal(&userGrant),
 		},
 		{
-			Key:   types.GroupAllowanceKey(1, "cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn", 1),
+			Key:   types.GroupAllowanceKey(1, 1),
 			Value: cdc.MustMarshal(&groupGrant),
 		},
 		{
