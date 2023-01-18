@@ -6,8 +6,9 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 	"github.com/stretchr/testify/require"
+
+	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
 var msgGrantTreasuryAuthorization = types.NewMsgGrantTreasuryAuthorization(
