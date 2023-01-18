@@ -43,7 +43,7 @@ The `x/feegrant` module already provides an interface (`FeeAllowanceI`) to repre
 
 #### Grant
 
-In order to represent a fee grant granted to a user or user group, we will implement a custom `Grant` type. This will contain the `granter`, `grantee`, which is the interface to include user and user group, and what kind of `allowance` is granted to the grantee:
+In order to represent a fee grant granted to a user or user group, we will implement a custom `Grant` type. This will contain a `granter` field, a `grantee` (an interface to represent either a user or user group), and what kind of `allowance` is granted to the grantee:
 
 ```protobuf
 message Grant {
