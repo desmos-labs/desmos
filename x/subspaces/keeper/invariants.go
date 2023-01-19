@@ -342,9 +342,9 @@ func ValidGroupGrantsInvariant(k Keeper) sdk.Invariant {
 				invalid = true
 			}
 
-			groupID := entry.Grantee.GetCachedValue().(*types.GroupGrantee).GroupID
 			// Check group existence
-			if !k.HasUserGroup(ctx, entry.SubspaceID, groupID) {
+			grantee := entry.Grantee.GetCachedValue().(*types.GroupGrantee)
+			if !k.HasUserGroup(ctx, entry.SubspaceID, grantee.GroupID) {
 				invalid = true
 			}
 
