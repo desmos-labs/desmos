@@ -96,7 +96,7 @@ func (k Keeper) UseGrantedFees(ctx sdk.Context, subspaceID uint64, grantee sdk.A
 }
 
 // UseUserGrantedFees will try to use the user grant to pay the given fees from treasury as requested by the grantee.
-// if no valid allowance exists, then returns false to show the fees will not be paid in this phase.
+// If no valid allowance exists, then returns false to show the fees will not be paid in this phase.
 func (k Keeper) UseUserGrantedFees(ctx sdk.Context, subspaceID uint64, grantee sdk.AccAddress, fees sdk.Coins, msgs []sdk.Msg) (used bool) {
 	grant, found := k.GetUserGrant(ctx, subspaceID, grantee.String())
 	if !found {
