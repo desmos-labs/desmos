@@ -141,6 +141,12 @@ func buildUserPermissionsQueryRequest(cdc codec.Codec, query *types.QueryUserPer
 	return bz
 }
 
+func buildUserAllowancesQueryRequest(cdc codec.Codec, query *types.QueryAllowancesRequest) json.RawMessage {
+	raw := json.RawMessage(cdc.MustMarshalJSON(query))
+	bz, _ := json.Marshal(types.SubspacesQuery{Allowances: &raw})
+	return bz
+}
+
 type TestSuite struct {
 	suite.Suite
 
