@@ -6148,11 +6148,6 @@ paths:
           required: true
           type: string
           format: uint64
-        - name: granter
-          description: (optional) Address of the user that has granted an allowance.
-          in: query
-          required: false
-          type: string
         - name: grantee.type_url
           description: >-
             A URL/resource name that uniquely identifies the type of the
