@@ -5536,7 +5536,7 @@ paths:
         - Query
   '/desmos/subspaces/v3/subspaces/{subspace_id}/allowances':
     get:
-      summary: Allowances returns all the grants for users
+      summary: Allowances returns all the grants for the given target
       operationId: Allowances
       responses:
         '200':
