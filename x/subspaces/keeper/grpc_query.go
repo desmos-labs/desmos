@@ -250,13 +250,13 @@ func (k Keeper) Allowances(ctx context.Context, request *types.QueryAllowancesRe
 
 	grantsStore := prefix.NewStore(store, grantsPrefix)
 	var grants []types.Grant
-	pageRes, err := query.FilteredPaginate(grantsStore, request.Pagination, func(key []byte, value []byte, acc bool) (bool, error) {
+	pageRes, err := query.Paginate(grantsStore, request.Pagination, func(_, value []byte) error {
 		var grant types.Grant
 		if err := k.cdc.Unmarshal(value, &grant); err != nil {
-			return false, status.Error(codes.Internal, err.Error())
+			return status.Error(codes.Internal, err.Error())
 		}
 		grants = append(grants, grant)
-		return false, nil
+		return nil
 	})
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())

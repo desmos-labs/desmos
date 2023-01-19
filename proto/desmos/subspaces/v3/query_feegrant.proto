@@ -15,29 +15,29 @@ option go_package = "github.com/desmos-labs/desmos/v4/x/subspaces/types";
 // QueryAllowancesRequest is the request type for the Query/Allowances
 // RPC method
 message QueryAllowancesRequest {
-    option (gogoproto.equal) = false;
-    option (gogoproto.goproto_getters) = false;
-    // Id of the subspace for which to get the grant(s)
-    uint64 subspace_id = 1 [ (gogoproto.moretags) = "yaml:\"subspace_id\"" ];
-    // (optional) Address of the user that has granted an allowance
-    string granter = 2 [ (gogoproto.moretags) = "yaml:\"granter\"" ];
-    // Target that was granted an allowance
-    google.protobuf.Any grantee = 3 [
-        (cosmos_proto.accepts_interface) = "Grantee",
-        (gogoproto.moretags) = "yaml:\"grantee\""
-    ];
-    // pagination defines an pagination for the request
-    cosmos.base.query.v1beta1.PageRequest pagination = 4;
-  }
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  // Id of the subspace for which to get the grant(s)
+  uint64 subspace_id = 1 [ (gogoproto.moretags) = "yaml:\"subspace_id\"" ];
+
+  // Target that was granted an allowance
+  google.protobuf.Any grantee = 3 [
+    (cosmos_proto.accepts_interface) = "Grantee",
+    (gogoproto.moretags) = "yaml:\"grantee\""
+  ];
+  // pagination defines an pagination for the request
+  cosmos.base.query.v1beta1.PageRequest pagination = 4;
+}
   
-  // QueryAllowancesResponse is the response type for the Query/UserAllowances
-  // RPC method
-  message QueryAllowancesResponse {
-    repeated Grant grants = 1 [
-      (gogoproto.moretags) = "yaml:\"grants\"",
-      (gogoproto.nullable) = false
-    ];
-  
-    // pagination defines an pagination for the response
-    cosmos.base.query.v1beta1.PageResponse pagination = 2;
-  }
+// QueryAllowancesResponse is the response type for the Query/UserAllowances
+// RPC method
+message QueryAllowancesResponse {
+  repeated Grant grants = 1 [
+    (gogoproto.moretags) = "yaml:\"grants\"",
+    (gogoproto.nullable) = false
+  ];
+
+  // pagination defines an pagination for the response
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
