@@ -24,7 +24,7 @@ func getGrantKey(grant types.Grant) []byte {
 	case *types.GroupGrantee:
 		return types.GroupAllowanceKey(grant.SubspaceID, grantee.GroupID)
 	default:
-		panic(fmt.Errorf("unsupported content type: %T", grantee))
+		panic(fmt.Errorf("unsupported grantee type: %T", grantee))
 	}
 }
 
