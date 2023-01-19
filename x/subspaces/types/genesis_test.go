@@ -261,12 +261,6 @@ func TestValidateGenesis(t *testing.T) {
 						Allowance:  allowanceAny,
 					},
 					{
-						SubspaceID: 1,
-						Granter:    "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-						Grantee:    granteeAny,
-						Allowance:  allowanceAny,
-					},
-					{
 						SubspaceID: 2,
 						Granter:    "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
 						Grantee:    granteeAny,

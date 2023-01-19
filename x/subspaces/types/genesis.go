@@ -284,7 +284,7 @@ func (entry UserGroupMemberEntry) Validate() error {
 func containsDuplicatedGrants(grants []Grant, grant Grant) bool {
 	var count = 0
 	for _, g := range grants {
-		if g.SubspaceID == grant.SubspaceID && g.Granter == grant.Granter && g.Grantee.Equal(grant.Grantee) {
+		if g.SubspaceID == grant.SubspaceID && g.Grantee.Equal(grant.Grantee) {
 			count++
 		}
 	}
