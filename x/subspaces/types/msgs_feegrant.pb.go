@@ -25,8 +25,8 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// MsgGrantAllowance creates a new grant from the grantee to the grantee,
-// within the given subspace
+// MsgGrantAllowance adds grants for the grantee to spend up allowance of fees
+// from the granter inside the given subspace
 type MsgGrantAllowance struct {
 	// Id of the subspace inside which where the allowance should be granted
 	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
@@ -137,14 +137,14 @@ func (m *MsgGrantAllowanceResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgGrantAllowanceResponse proto.InternalMessageInfo
 
-// MsgRevokeAllowance removes any existing allowance created from granter to
-// the grantee inside the given subspace
+// MsgRevokeAllowance removes any existing allowance to the grantee inside the
+// subspace
 type MsgRevokeAllowance struct {
 	// If of the subspace inside which the allowance to be deleted is
 	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
 	// Address of the user that created the allowance
 	Granter string `protobuf:"bytes,2,opt,name=granter,proto3" json:"granter,omitempty" yaml:"granter"`
-	// Target being granted the allowance
+	// Target being revoked the allowance
 	Grantee *types.Any `protobuf:"bytes,3,opt,name=grantee,proto3" json:"grantee,omitempty" yaml:"grantee"`
 }
 

@@ -9,44 +9,44 @@ option go_package = "github.com/desmos-labs/desmos/v4/x/subspaces/types";
 
 // Grant represents a grant to a user or a group
 message Grant {
-    option (gogoproto.equal) = true;
-    option (gogoproto.goproto_stringer) = true;
-  
-    // Id of the subspace inside which the user was granted the allowance
-    uint64 subspace_id = 1 [
-      (gogoproto.customname) = "SubspaceID",
-      (gogoproto.moretags) = "yaml:\"subspace_id\""
-    ];
-    // Address of the user that granted the allowance
-    string granter = 2 [ (gogoproto.moretags) = "yaml:\"granter\"" ];
-    // Address of the user being granted the allowance
-    google.protobuf.Any grantee = 3 [
-      (cosmos_proto.accepts_interface) = "Grantee",
-      (gogoproto.moretags) = "yaml:\"grantee\""
-    ];
-    // Allowance can be any allowance type implementing the FeeAllowanceI
-    // interface
-    google.protobuf.Any allowance = 4 [
-      (cosmos_proto.accepts_interface) = "FeeAllowanceI",
-      (gogoproto.moretags) = "yaml:\"allowance\""
-    ];
-  }
-  
-  // UserGrantee contains the target of a grant about a user
-  message UserGrantee {
-    option (gogoproto.equal) = true;
-    option (gogoproto.goproto_stringer) = true;
-  
-    string user = 1 [ (gogoproto.moretags) = "yaml:\"user\"" ];
-  }
-  
-  // GroupGrantee contains the target of a grant about a group
-  message GroupGrantee {
-    option (gogoproto.equal) = true;
-    option (gogoproto.goproto_stringer) = true;
-  
-    uint32 group_id = 1 [
-      (gogoproto.customname) = "GroupID",
-      (gogoproto.moretags) = "yaml:\"group_id\""
-    ];
-  }
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  // Id of the subspace inside which the user was granted the allowance
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+  // Address of the user that granted the allowance
+  string granter = 2 [ (gogoproto.moretags) = "yaml:\"granter\"" ];
+  // Address of the user being granted the allowance
+  google.protobuf.Any grantee = 3 [
+    (cosmos_proto.accepts_interface) = "Grantee",
+    (gogoproto.moretags) = "yaml:\"grantee\""
+  ];
+  // Allowance can be any allowance type implementing the FeeAllowanceI
+  // interface
+  google.protobuf.Any allowance = 4 [
+    (cosmos_proto.accepts_interface) = "FeeAllowanceI",
+    (gogoproto.moretags) = "yaml:\"allowance\""
+  ];
+}
+
+// UserGrantee contains the target of a grant about a user
+message UserGrantee {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  string user = 1 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+}
+
+// GroupGrantee contains the target of a grant about a group
+message GroupGrantee {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  uint32 group_id = 1 [
+    (gogoproto.customname) = "GroupID",
+    (gogoproto.moretags) = "yaml:\"group_id\""
+  ];
+}

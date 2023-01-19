@@ -1924,15 +1924,17 @@ type MsgClient interface {
 	RemoveUserFromUserGroup(ctx context.Context, in *MsgRemoveUserFromUserGroup, opts ...grpc.CallOption) (*MsgRemoveUserFromUserGroupResponse, error)
 	// SetUserPermissions allows to set the permissions for a specific user
 	SetUserPermissions(ctx context.Context, in *MsgSetUserPermissions, opts ...grpc.CallOption) (*MsgSetUserPermissionsResponse, error)
-	// GrantTreasuryAuthorization allows managers who have the permission to grant a treasury authorization to a user
+	// GrantTreasuryAuthorization allows managers who have the permission to grant
+	// a treasury authorization to a user
 	GrantTreasuryAuthorization(ctx context.Context, in *MsgGrantTreasuryAuthorization, opts ...grpc.CallOption) (*MsgGrantTreasuryAuthorizationResponse, error)
-	// RevokeTreasuryAuthorization allows managers who have the permission to revoke an existing treasury authorization
+	// RevokeTreasuryAuthorization allows managers who have the permission to
+	// revoke an existing treasury authorization
 	RevokeTreasuryAuthorization(ctx context.Context, in *MsgRevokeTreasuryAuthorization, opts ...grpc.CallOption) (*MsgRevokeTreasuryAuthorizationResponse, error)
 	// GrantAllowance allows the granter to grant a fee allowance to the
-	// grantee.
+	// grantee
 	GrantAllowance(ctx context.Context, in *MsgGrantAllowance, opts ...grpc.CallOption) (*MsgGrantAllowanceResponse, error)
-	// RevokeAllowance allows a granter to revoke any existing treasury allowance that
-	// has been granted to the grantee.
+	// RevokeAllowance allows a granter to revoke any existing treasury allowance
+	// that has been granted to the grantee
 	RevokeAllowance(ctx context.Context, in *MsgRevokeAllowance, opts ...grpc.CallOption) (*MsgRevokeAllowanceResponse, error)
 }
 
@@ -2148,15 +2150,17 @@ type MsgServer interface {
 	RemoveUserFromUserGroup(context.Context, *MsgRemoveUserFromUserGroup) (*MsgRemoveUserFromUserGroupResponse, error)
 	// SetUserPermissions allows to set the permissions for a specific user
 	SetUserPermissions(context.Context, *MsgSetUserPermissions) (*MsgSetUserPermissionsResponse, error)
-	// GrantTreasuryAuthorization allows managers who have the permission to grant a treasury authorization to a user
+	// GrantTreasuryAuthorization allows managers who have the permission to grant
+	// a treasury authorization to a user
 	GrantTreasuryAuthorization(context.Context, *MsgGrantTreasuryAuthorization) (*MsgGrantTreasuryAuthorizationResponse, error)
-	// RevokeTreasuryAuthorization allows managers who have the permission to revoke an existing treasury authorization
+	// RevokeTreasuryAuthorization allows managers who have the permission to
+	// revoke an existing treasury authorization
 	RevokeTreasuryAuthorization(context.Context, *MsgRevokeTreasuryAuthorization) (*MsgRevokeTreasuryAuthorizationResponse, error)
 	// GrantAllowance allows the granter to grant a fee allowance to the
-	// grantee.
+	// grantee
 	GrantAllowance(context.Context, *MsgGrantAllowance) (*MsgGrantAllowanceResponse, error)
-	// RevokeAllowance allows a granter to revoke any existing treasury allowance that
-	// has been granted to the grantee.
+	// RevokeAllowance allows a granter to revoke any existing treasury allowance
+	// that has been granted to the grantee
 	RevokeAllowance(context.Context, *MsgRevokeAllowance) (*MsgRevokeAllowanceResponse, error)
 }
 

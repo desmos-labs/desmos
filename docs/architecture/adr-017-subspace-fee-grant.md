@@ -161,7 +161,7 @@ message MsgGrantAllowance {
   // Address of the user granting an allowance of subspace treasury funds
   string granter = 2 [ (gogoproto.moretags) = "yaml:\"granter\"" ];
 
-  // Target being granted an allowance of subspace treasury funds
+  // Target being granted an allowance of subspace treasury funds.
   google.protobuf.Any grantee = 3 [
     (cosmos_proto.accepts_interface) = "Grantee",
     (gogoproto.moretags) = "yaml:\"grantee\""
@@ -177,7 +177,7 @@ message MsgGrantAllowance {
 // MsgGrantAllowanceResponse defines the Msg/GrantAllowanceResponse response type
 message MsgGrantAllowanceResponse {}
 
-// MsgRevokeUserAllowance removes any existing allowance from granter to the grantee inside the subspace.
+// MsgRevokeAllowance removes any existing allowance to the grantee inside the subspace.
 message MsgRevokeAllowance {
   // Id of the subspace inside which the allowance to be deleted is
   uint64 subspace_id = 1 [
@@ -211,8 +211,8 @@ service Query {
     }
 }
 
-// QueryUserAllowancesRequest is the request type for the Query/UserAllowances RPC method.
-message QueryUserAllowancesRequest {
+// QueryAllowancesRequest is the request type for the Query/UserAllowances RPC method.
+message QueryAllowancesRequest {
     // the id of the subspace where the granter grants the allowance to the grantee.
     uint64 subspace_id = 1;
 

@@ -63,22 +63,23 @@ service Msg {
   rpc SetUserPermissions(MsgSetUserPermissions)
       returns (MsgSetUserPermissionsResponse);
 
-  // GrantTreasuryAuthorization allows managers who have the permission to grant a treasury authorization to a user
-  rpc GrantTreasuryAuthorization(MsgGrantTreasuryAuthorization) returns (MsgGrantTreasuryAuthorizationResponse);
+  // GrantTreasuryAuthorization allows managers who have the permission to grant
+  // a treasury authorization to a user
+  rpc GrantTreasuryAuthorization(MsgGrantTreasuryAuthorization)
+      returns (MsgGrantTreasuryAuthorizationResponse);
 
-  // RevokeTreasuryAuthorization allows managers who have the permission to revoke an existing treasury authorization
-  rpc RevokeTreasuryAuthorization(MsgRevokeTreasuryAuthorization) returns
-  (MsgRevokeTreasuryAuthorizationResponse);
+  // RevokeTreasuryAuthorization allows managers who have the permission to
+  // revoke an existing treasury authorization
+  rpc RevokeTreasuryAuthorization(MsgRevokeTreasuryAuthorization)
+      returns (MsgRevokeTreasuryAuthorizationResponse);
 
   // GrantAllowance allows the granter to grant a fee allowance to the
-  // grantee.
-  rpc GrantAllowance(MsgGrantAllowance)
-      returns (MsgGrantAllowanceResponse);
+  // grantee
+  rpc GrantAllowance(MsgGrantAllowance) returns (MsgGrantAllowanceResponse);
 
-  // RevokeAllowance allows a granter to revoke any existing treasury allowance that
-  // has been granted to the grantee.
-  rpc RevokeAllowance(MsgRevokeAllowance)
-      returns (MsgRevokeAllowanceResponse);
+  // RevokeAllowance allows a granter to revoke any existing treasury allowance
+  // that has been granted to the grantee
+  rpc RevokeAllowance(MsgRevokeAllowance) returns (MsgRevokeAllowanceResponse);
 }
 
 // --------------------------------------------------------------------------------------------------------------------

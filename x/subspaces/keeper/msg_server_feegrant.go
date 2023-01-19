@@ -16,8 +16,8 @@ func (k msgServer) GrantAllowance(goCtx context.Context, msg *types.MsgGrantAllo
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
-	if !k.HasPermission(ctx, msg.SubspaceID, types.RootSectionID, msg.Granter, types.PermissionGrantAllowances) {
-		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot grant allowances in this subspace")
+	if !k.HasPermission(ctx, msg.SubspaceID, types.RootSectionID, msg.Granter, types.PermissionManageAllowances) {
+		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage allowances in this subspace")
 	}
 
 	var events sdk.Events = sdk.Events{
@@ -55,6 +55,7 @@ func (k msgServer) GrantAllowance(goCtx context.Context, msg *types.MsgGrantAllo
 			sdk.NewAttribute(types.AttributeKeyGranter, msg.Granter),
 			sdk.NewAttribute(types.AttributeKeyGroupGrantee, fmt.Sprintf("%d", grantee.GroupID)),
 		))
+
 	default:
 		panic(fmt.Errorf("unsupported type %T", grantee))
 	}
@@ -71,6 +72,13 @@ func (k msgServer) GrantAllowance(goCtx context.Context, msg *types.MsgGrantAllo
 // RevokeAllowance defines a rpc method for MsgRevokeAllowance
 func (k msgServer) RevokeAllowance(goCtx context.Context, msg *types.MsgRevokeAllowance) (*types.MsgRevokeAllowanceResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if !k.HasSubspace(ctx, msg.SubspaceID) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+	}
+	if !k.HasPermission(ctx, msg.SubspaceID, types.RootSectionID, msg.Granter, types.PermissionManageAllowances) {
+		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage allowances in this subspace")
+	}
 
 	var events sdk.Events = sdk.Events{
 		sdk.NewEvent(

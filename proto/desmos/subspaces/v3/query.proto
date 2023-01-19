@@ -65,8 +65,7 @@ service Query {
   }
 
   // Allowances returns all the grants for users
-  rpc Allowances(QueryAllowancesRequest)
-      returns (QueryAllowancesResponse) {
+  rpc Allowances(QueryAllowancesRequest) returns (QueryAllowancesResponse) {
     option (google.api.http).get =
         "/desmos/subspaces/v3/subspaces/{subspace_id}/allowances";
   }

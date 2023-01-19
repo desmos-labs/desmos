@@ -26,10 +26,11 @@ message QueryAllowancesRequest {
     (cosmos_proto.accepts_interface) = "Grantee",
     (gogoproto.moretags) = "yaml:\"grantee\""
   ];
+
   // pagination defines an pagination for the request
   cosmos.base.query.v1beta1.PageRequest pagination = 4;
 }
-  
+
 // QueryAllowancesResponse is the response type for the Query/UserAllowances
 // RPC method
 message QueryAllowancesResponse {
