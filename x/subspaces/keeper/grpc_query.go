@@ -225,22 +225,27 @@ func (k Keeper) Allowances(ctx context.Context, request *types.QueryAllowancesRe
 	store := sdkCtx.KVStore(k.storeKey)
 
 	// Check if the subspace exists
-	if request.SubspaceId != 0 && !k.HasSubspace(sdkCtx, request.SubspaceId) {
+	if request.SubspaceId == 0 || !k.HasSubspace(sdkCtx, request.SubspaceId) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", request.SubspaceId)
 	}
 
 	// Get grants prefix store
 	var grantsPrefix []byte
-	switch typ := request.Grantee.GetCachedValue().(type) {
+	switch grantee := request.Grantee.GetCachedValue().(type) {
 
 	case *types.UserGrantee:
-		grantsPrefix = types.UserAllowancePrefix
+		grantsPrefix = types.UserAllowanceKey(request.SubspaceId, grantee.User)
 
 	case *types.GroupGrantee:
-		grantsPrefix = types.GroupAllowancePrefix
+		if grantee.GroupID == 0 {
+			grantsPrefix = types.SubspaceGroupAllowancePrefix(request.SubspaceId)
+			break
+		}
+
+		grantsPrefix = types.GroupAllowanceKey(request.SubspaceId, grantee.GroupID)
 
 	default:
-		return nil, sdkerrors.ErrInvalidRequest.Wrapf("invalid grantee type: %T", typ)
+		return nil, sdkerrors.ErrInvalidRequest.Wrapf("invalid grantee type: %T", grantee)
 	}
 
 	grantsStore := prefix.NewStore(store, grantsPrefix)
@@ -250,6 +255,7 @@ func (k Keeper) Allowances(ctx context.Context, request *types.QueryAllowancesRe
 		if err := k.cdc.Unmarshal(value, &grant); err != nil {
 			return false, status.Error(codes.Internal, err.Error())
 		}
+		grants = append(grants, grant)
 		return false, nil
 	})
 	if err != nil {

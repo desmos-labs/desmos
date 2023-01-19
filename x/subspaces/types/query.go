@@ -101,7 +101,7 @@ func NewPermissionDetailGroup(subspaceID uint64, sectionID uint32, groupID uint3
 }
 
 // NewQueryAllowancesRequest returns a new QueryAllowancesRequest instance
-func NewQueryAllowancesRequest(subspaceID uint64, granter string, grantee Grantee, pagination *query.PageRequest) *QueryAllowancesRequest {
+func NewQueryAllowancesRequest(subspaceID uint64, grantee Grantee, pagination *query.PageRequest) *QueryAllowancesRequest {
 	var granteeAny *codectypes.Any
 
 	if grantee != nil {
@@ -114,10 +114,15 @@ func NewQueryAllowancesRequest(subspaceID uint64, granter string, grantee Grante
 
 	return &QueryAllowancesRequest{
 		SubspaceId: subspaceID,
-		Granter:    granter,
 		Grantee:    granteeAny,
 		Pagination: pagination,
 	}
+}
+
+// UnpackInterfaces implements codectypes.UnpackInterfacesMessage
+func (r *QueryAllowancesRequest) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
+	var grantee Grantee
+	return unpacker.UnpackAny(r.Grantee, &grantee)
 }
 
 // UnpackInterfaces implements codectypes.UnpackInterfacesMessage

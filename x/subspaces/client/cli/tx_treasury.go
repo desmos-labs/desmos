@@ -53,7 +53,7 @@ func GetCmdGrantTreasuryAuthorization() *cobra.Command {
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`grant treasury authorization to an address to execute a transaction on your behalf:
 Examples:
- $ %[1]s tx %[2]s grant desmos1463vltcqk6ql6zpk0g6s595jjcrzk4804hyqw7 send --spend-limit=1000stake --from=cosmos1skl..
+ $ %[1]s tx %[2]s grant desmos1463vltcqk6ql6zpk0g6s595jjcrzk4804hyqw7 send --spend-limit=1000stake --from=desmos1463vltcqk6ql6zpk0g6s595jjcrzk4804hyqw7
  $ %[1]s tx %[2]s grant desmos1463vltcqk6ql6zpk0g6s595jjcrzk4804hyqw7 generic --msg-type=/cosmos.gov.v1beta1.MsgVote --from=desmos1463vltcqk6ql6zpk0g6s595jjcrzk4804hyqw7
 	`, version.AppName, types.ModuleName),
 		),

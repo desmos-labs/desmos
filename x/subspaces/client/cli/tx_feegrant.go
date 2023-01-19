@@ -4,24 +4,22 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/feegrant"
+	feegrantcli "github.com/cosmos/cosmos-sdk/x/feegrant/client/cli"
+
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
-	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
 )
 
 // DONTCOVER
 
 const (
-	FlagExpiration   = "expiration"
-	FlagPeriod       = "period"
-	FlagPeriodLimit  = "period-limit"
-	FlagSpendLimit   = "spend-limit"
-	FlagAllowedMsgs  = "allowed-messages"
 	FlagUserGrantee  = "user"
 	FlagGroupGrantee = "group"
 )
@@ -59,11 +57,11 @@ func GetCmdGrantAllowance() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			grantee, err := createGranteeFromFlags(cmd.Flags())
+			grantee, err := getGranteeFromFlags(cmd.Flags())
 			if err != nil {
 				return err
 			}
-			allowance, err := createAllowanceFromFlags(cmd.Flags())
+			allowance, err := getAllowanceFromFlags(cmd.Flags())
 			if err != nil {
 				return err
 			}
@@ -77,11 +75,11 @@ func GetCmdGrantAllowance() *cobra.Command {
 
 	cmd.Flags().String(FlagUserGrantee, "", "Address of the user being the allowance grantee")
 	cmd.Flags().Uint32(FlagGroupGrantee, 0, "Id of group being the allowance grantee")
-	cmd.Flags().StringSlice(FlagAllowedMsgs, []string{}, "Set of allowed messages for fee allowance")
-	cmd.Flags().String(FlagExpiration, "", "The RFC 3339 timestamp after which the grant expires for the user")
-	cmd.Flags().String(FlagSpendLimit, "", "Spend limit specifies the max limit can be used, if not mentioned there is no limit")
-	cmd.Flags().Int64(FlagPeriod, 0, "Period specifies the time duration in which period_spend_limit coins can be spent before that allowance is reset")
-	cmd.Flags().String(FlagPeriodLimit, "", "Period limit specifies the maximum number of coins that can be spent in the period")
+	cmd.Flags().StringSlice(feegrantcli.FlagAllowedMsgs, []string{}, "Set of allowed messages for fee allowance")
+	cmd.Flags().String(feegrantcli.FlagExpiration, "", "The RFC 3339 timestamp after which the grant expires for the user")
+	cmd.Flags().String(feegrantcli.FlagSpendLimit, "", "Spend limit specifies the max limit can be used, if not mentioned there is no limit")
+	cmd.Flags().Int64(feegrantcli.FlagPeriod, 0, "Period specifies the time duration in which period_spend_limit coins can be spent before that allowance is reset")
+	cmd.Flags().String(feegrantcli.FlagPeriodLimit, "", "Period limit specifies the maximum number of coins that can be spent in the period")
 	flags.AddTxFlagsToCmd(cmd)
 
 	return cmd
@@ -102,7 +100,7 @@ func GetCmdRevokeAllowance() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			grantee, err := createGranteeFromFlags(cmd.Flags())
+			grantee, err := getGranteeFromFlags(cmd.Flags())
 			if err != nil {
 				return err
 			}
@@ -120,8 +118,8 @@ func GetCmdRevokeAllowance() *cobra.Command {
 	return cmd
 }
 
-// createGranteeFromFlags create a grantee from flags
-func createGranteeFromFlags(flags *pflag.FlagSet) (types.Grantee, error) {
+// getGranteeFromFlags creates a grantee from flags
+func getGranteeFromFlags(flags *pflag.FlagSet) (types.Grantee, error) {
 	userGrantee, err := flags.GetString(FlagUserGrantee)
 	if err != nil {
 		return nil, err
@@ -142,12 +140,13 @@ func createGranteeFromFlags(flags *pflag.FlagSet) (types.Grantee, error) {
 	case groupGrantee != 0:
 		return types.NewGroupGrantee(groupGrantee), nil
 	}
+
 	return nil, fmt.Errorf("one of --%s or --%s must be used", FlagUserGrantee, FlagGroupGrantee)
 }
 
-// createAllowanceFromFlags create a allowance from flags
-func createAllowanceFromFlags(flags *pflag.FlagSet) (feegrant.FeeAllowanceI, error) {
-	spendLimit, err := flags.GetString(FlagSpendLimit)
+// getAllowanceFromFlags create a allowance from flags
+func getAllowanceFromFlags(flags *pflag.FlagSet) (feegrant.FeeAllowanceI, error) {
+	spendLimit, err := flags.GetString(feegrantcli.FlagSpendLimit)
 	if err != nil {
 		return nil, err
 	}
@@ -156,19 +155,19 @@ func createAllowanceFromFlags(flags *pflag.FlagSet) (feegrant.FeeAllowanceI, err
 	if err != nil {
 		return nil, err
 	}
-	expired, err := flags.GetString(FlagExpiration)
+	expired, err := flags.GetString(feegrantcli.FlagExpiration)
 	if err != nil {
 		return nil, err
 	}
-	periodClock, err := flags.GetInt64(FlagPeriod)
+	periodClock, err := flags.GetInt64(feegrantcli.FlagPeriod)
 	if err != nil {
 		return nil, err
 	}
-	periodLimit, err := flags.GetString(FlagPeriodLimit)
+	periodLimit, err := flags.GetString(feegrantcli.FlagPeriodLimit)
 	if err != nil {
 		return nil, err
 	}
-	allowedMsgs, err := flags.GetStringSlice(FlagAllowedMsgs)
+	allowedMsgs, err := flags.GetStringSlice(feegrantcli.FlagAllowedMsgs)
 	if err != nil {
 		return nil, err
 	}

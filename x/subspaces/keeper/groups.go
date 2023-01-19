@@ -94,6 +94,11 @@ func (k Keeper) DeleteUserGroup(ctx sdk.Context, subspaceID uint64, groupID uint
 		return false
 	})
 
+	k.IterateUserGroupGrants(ctx, subspaceID, groupID, func(grant types.Grant) bool {
+		k.DeleteGroupGrant(ctx, subspaceID, groupID)
+		return false
+	})
+
 	// Delete the group
 	store := ctx.KVStore(k.storeKey)
 	store.Delete(types.GroupStoreKey(subspaceID, group.SectionID, group.ID))
