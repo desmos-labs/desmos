@@ -1315,7 +1315,7 @@ type QueryClient interface {
 	UserGroupMembers(ctx context.Context, in *QueryUserGroupMembersRequest, opts ...grpc.CallOption) (*QueryUserGroupMembersResponse, error)
 	// UserPermissions queries the permissions for the given user
 	UserPermissions(ctx context.Context, in *QueryUserPermissionsRequest, opts ...grpc.CallOption) (*QueryUserPermissionsResponse, error)
-	// Allowances returns all the grants for users
+	// Allowances returns all the grants for the given target
 	Allowances(ctx context.Context, in *QueryAllowancesRequest, opts ...grpc.CallOption) (*QueryAllowancesResponse, error)
 }
 
@@ -1428,7 +1428,7 @@ type QueryServer interface {
 	UserGroupMembers(context.Context, *QueryUserGroupMembersRequest) (*QueryUserGroupMembersResponse, error)
 	// UserPermissions queries the permissions for the given user
 	UserPermissions(context.Context, *QueryUserPermissionsRequest) (*QueryUserPermissionsResponse, error)
-	// Allowances returns all the grants for users
+	// Allowances returns all the grants for the given target
 	Allowances(context.Context, *QueryAllowancesRequest) (*QueryAllowancesResponse, error)
 }
 

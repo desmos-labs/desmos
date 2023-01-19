@@ -22,13 +22,13 @@ message QueryAllowancesRequest {
   uint64 subspace_id = 1 [ (gogoproto.moretags) = "yaml:\"subspace_id\"" ];
 
   // Target that was granted an allowance
-  google.protobuf.Any grantee = 3 [
+  google.protobuf.Any grantee = 2 [
     (cosmos_proto.accepts_interface) = "Grantee",
     (gogoproto.moretags) = "yaml:\"grantee\""
   ];
 
   // pagination defines an pagination for the request
-  cosmos.base.query.v1beta1.PageRequest pagination = 4;
+  cosmos.base.query.v1beta1.PageRequest pagination = 3;
 }
 
 // QueryAllowancesResponse is the response type for the Query/UserAllowances
