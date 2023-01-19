@@ -14,13 +14,21 @@ import (
 
 // DONTCOVER
 
+const (
+	userGranteeType  = "user"
+	groupGranteeType = "group"
+)
+
 // GetCmdQueryAllowances returns the command to query the fee allowances of a specific user
 func GetCmdQueryAllowances() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "allowances [subspace-id] [grantee-type] [[user-address or group-id]]",
-		Short:   "Query allowances for the given user or user group",
-		Example: fmt.Sprintf(`%s query subspaces allowances 1 user desmos1463vltcqk6ql6zpk0g6s595jjcrzk4804hyqw7`, version.AppName),
-		Args:    cobra.RangeArgs(2, 3),
+		Use:   "allowances [subspace-id] [grantee-type] [[user-address or group-id]]",
+		Short: "Query allowances for the given user or user group",
+		Example: fmt.Sprintf(`
+		%[1]s query subspaces allowances 1 %[2]s desmos1463vltcqk6ql6zpk0g6s595jjcrzk4804hyqw7
+		%[1]s query subspaces allowances 1 %[3]s 1
+		`, version.AppName, userGranteeType, groupGranteeType),
+		Args: cobra.RangeArgs(2, 3),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
@@ -36,7 +44,7 @@ func GetCmdQueryAllowances() *cobra.Command {
 
 			var grantee types.Grantee
 			switch args[1] {
-			case "user":
+			case userGranteeType:
 				if len(args) < 3 {
 					grantee = types.NewUserGrantee("")
 					break
@@ -49,7 +57,7 @@ func GetCmdQueryAllowances() *cobra.Command {
 
 				grantee = types.NewUserGrantee(args[2])
 
-			case "group":
+			case groupGranteeType:
 				if len(args) < 3 {
 					grantee = types.NewGroupGrantee(0)
 					break

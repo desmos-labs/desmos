@@ -17,7 +17,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveGrant() {
 		check      func(ctx sdk.Context)
 	}{
 		{
-			name:       "grant is saved properly",
+			name:       "user grant is saved properly",
 			subspaceID: 1,
 			granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 			grantee:    types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
@@ -34,13 +34,12 @@ func (suite *KeeperTestSuite) TestKeeper_SaveGrant() {
 					grant)
 
 				// check if account is set properly
-				addr, err := sdk.AccAddressFromBech32("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
-				suite.Require().NoError(err)
+				addr := sdk.MustAccAddressFromBech32("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
 				suite.Require().True(suite.ak.HasAccount(ctx, addr))
 			},
 		},
 		{
-			name: "existing grant is overridden properly",
+			name: "existing user grant is overridden properly",
 			store: func(ctx sdk.Context) {
 				suite.k.SaveGrant(ctx, types.NewGrant(1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
@@ -63,13 +62,12 @@ func (suite *KeeperTestSuite) TestKeeper_SaveGrant() {
 					grant)
 
 				// check if account is set properly
-				addr, err := sdk.AccAddressFromBech32("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
-				suite.Require().NoError(err)
+				addr := sdk.MustAccAddressFromBech32("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
 				suite.Require().True(suite.ak.HasAccount(ctx, addr))
 			},
 		},
 		{
-			name:       "grant is saved properly",
+			name:       "group grant is saved properly",
 			subspaceID: 1,
 			granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 			grantee:    types.NewGroupGrantee(1),

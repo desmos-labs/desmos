@@ -24,8 +24,8 @@ const (
 	FlagGroupGrantee = "group"
 )
 
-// GetAllowanceTxCmd returns a new command to perform subspaces treasury transactions
-func GetAllowanceTxCmd() *cobra.Command {
+// GetAllowancesTxCmd returns a new command to perform subspaces treasury transactions
+func GetAllowancesTxCmd() *cobra.Command {
 	treasuryTxCmd := &cobra.Command{
 		Use:                        "allowances",
 		Short:                      "Tx commands for subspace treasury",
@@ -118,7 +118,7 @@ func GetCmdRevokeAllowance() *cobra.Command {
 	return cmd
 }
 
-// getGranteeFromFlags creates a grantee from flags
+// getGranteeFromFlags returns a grantee from flags
 func getGranteeFromFlags(flags *pflag.FlagSet) (types.Grantee, error) {
 	userGrantee, err := flags.GetString(FlagUserGrantee)
 	if err != nil {
@@ -144,7 +144,7 @@ func getGranteeFromFlags(flags *pflag.FlagSet) (types.Grantee, error) {
 	return nil, fmt.Errorf("one of --%s or --%s must be used", FlagUserGrantee, FlagGroupGrantee)
 }
 
-// getAllowanceFromFlags create a allowance from flags
+// getAllowanceFromFlags returns an allowance from flags
 func getAllowanceFromFlags(flags *pflag.FlagSet) (feegrant.FeeAllowanceI, error) {
 	spendLimit, err := flags.GetString(feegrantcli.FlagSpendLimit)
 	if err != nil {

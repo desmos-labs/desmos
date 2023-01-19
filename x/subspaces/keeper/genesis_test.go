@@ -3,7 +3,6 @@ package keeper_test
 import (
 	"time"
 
-	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/feegrant"
 
@@ -11,21 +10,6 @@ import (
 )
 
 func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
-	userGranteeAny, err := codectypes.NewAnyWithValue(types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"))
-	suite.Require().NoError(err)
-
-	otherUserGranteeAny, err := codectypes.NewAnyWithValue(types.NewUserGrantee("cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69"))
-	suite.Require().NoError(err)
-
-	groupGranteeAny, err := codectypes.NewAnyWithValue(types.NewGroupGrantee(1))
-	suite.Require().NoError(err)
-
-	otherGroupGranteeAny, err := codectypes.NewAnyWithValue(types.NewGroupGrantee(2))
-	suite.Require().NoError(err)
-
-	allowanceAny, err := codectypes.NewAnyWithValue(&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))})
-	suite.Require().NoError(err)
-
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -317,18 +301,16 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
-				suite.k.SaveGrant(ctx, types.Grant{
-					SubspaceID: 1,
-					Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					Grantee:    userGranteeAny,
-					Allowance:  allowanceAny,
-				})
-				suite.k.SaveGrant(ctx, types.Grant{
-					SubspaceID: 1,
-					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-					Grantee:    otherUserGranteeAny,
-					Allowance:  allowanceAny,
-				})
+
+				suite.k.SaveGrant(ctx, types.NewGrant(1,
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))}))
+
+				suite.k.SaveGrant(ctx, types.NewGrant(1,
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					types.NewUserGrantee("cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69"),
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))}))
 			},
 			expGenesis: types.NewGenesisState(
 				3,
@@ -354,17 +336,19 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 					types.DefaultUserGroup(1),
 				},
 				nil,
-				[]types.Grant{{
-					SubspaceID: 1,
-					Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					Grantee:    userGranteeAny,
-					Allowance:  allowanceAny,
-				}, {
-					SubspaceID: 1,
-					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-					Grantee:    otherUserGranteeAny,
-					Allowance:  allowanceAny,
-				}},
+				[]types.Grant{
+					types.NewGrant(1,
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
+						&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+					),
+					types.NewGrant(
+						1,
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						types.NewUserGrantee("cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69"),
+						&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+					),
+				},
 			),
 		},
 		{
@@ -393,18 +377,16 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 				suite.k.AddUserToGroup(ctx, 1, 1, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
 				suite.k.AddUserToGroup(ctx, 1, 1, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
 
-				suite.k.SaveGrant(ctx, types.Grant{
-					SubspaceID: 1,
-					Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					Grantee:    groupGranteeAny,
-					Allowance:  allowanceAny,
-				})
-				suite.k.SaveGrant(ctx, types.Grant{
-					SubspaceID: 1,
-					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-					Grantee:    otherGroupGranteeAny,
-					Allowance:  allowanceAny,
-				})
+				suite.k.SaveGrant(ctx, types.NewGrant(1,
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					types.NewGroupGrantee(1),
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				))
+				suite.k.SaveGrant(ctx, types.NewGrant(1,
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					types.NewGroupGrantee(2),
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				))
 			},
 			expGenesis: types.NewGenesisState(
 				3,
@@ -441,17 +423,18 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 					types.NewUserGroupMemberEntry(1, 1, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm"),
 					types.NewUserGroupMemberEntry(1, 1, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
 				},
-				[]types.Grant{{
-					SubspaceID: 1,
-					Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					Grantee:    groupGranteeAny,
-					Allowance:  allowanceAny,
-				}, {
-					SubspaceID: 1,
-					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-					Grantee:    otherGroupGranteeAny,
-					Allowance:  allowanceAny,
-				}},
+				[]types.Grant{
+					types.NewGrant(1,
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						types.NewGroupGrantee(1),
+						&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+					),
+					types.NewGrant(1,
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						types.NewGroupGrantee(2),
+						&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+					),
+				},
 			),
 		},
 	}
@@ -471,15 +454,6 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 }
 
 func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
-	userGranteeAny, err := codectypes.NewAnyWithValue(types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"))
-	suite.Require().NoError(err)
-
-	groupGranteeAny, err := codectypes.NewAnyWithValue(types.NewGroupGrantee(1))
-	suite.Require().NoError(err)
-
-	allowanceAny, err := codectypes.NewAnyWithValue(&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))})
-	suite.Require().NoError(err)
-
 	testCases := []struct {
 		name    string
 		genesis types.GenesisState
@@ -627,43 +601,37 @@ func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 		{
 			name: "user grants are imported properly",
 			genesis: types.GenesisState{
-				Grants: []types.Grant{{
-					SubspaceID: 1,
-					Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					Grantee:    userGranteeAny,
-					Allowance:  allowanceAny,
-				}},
+				Grants: []types.Grant{types.NewGrant(1,
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					types.NewUserGrantee("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))})},
 			},
 			check: func(ctx sdk.Context) {
-				stored, found := suite.k.GetUserGrant(ctx, 1, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
+				stored, found := suite.k.GetUserGrant(ctx, 1, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 				suite.Require().True(found)
-				suite.Require().Equal(types.Grant{
-					SubspaceID: 1,
-					Granter:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					Grantee:    userGranteeAny,
-					Allowance:  allowanceAny,
-				}, stored)
+				suite.Require().Equal(types.NewGrant(1,
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					types.NewUserGrantee("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))}),
+					stored)
 			},
 		},
 		{
 			name: "group grants are imported properly",
 			genesis: types.GenesisState{
-				Grants: []types.Grant{{
-					SubspaceID: 1,
-					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-					Grantee:    groupGranteeAny,
-					Allowance:  allowanceAny,
-				}},
+				Grants: []types.Grant{types.NewGrant(1,
+					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+					types.NewGroupGrantee(1),
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))})},
 			},
 			check: func(ctx sdk.Context) {
 				stored, found := suite.k.GetGroupGrant(ctx, 1, 1)
 				suite.Require().True(found)
-				suite.Require().Equal(types.Grant{
-					SubspaceID: 1,
-					Granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-					Grantee:    groupGranteeAny,
-					Allowance:  allowanceAny,
-				}, stored)
+				suite.Require().Equal(types.NewGrant(1,
+					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+					types.NewGroupGrantee(1),
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))}),
+					stored)
 			},
 		},
 	}
