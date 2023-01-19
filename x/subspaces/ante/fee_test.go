@@ -92,7 +92,7 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 			shouldErr: true,
 		},
 		{
-			name: "non-zero fees valid tx with returns no error",
+			name: "non-zero fees valid tx returns no error",
 			setup: func() {
 				suite.ak.EXPECT().GetModuleAddress(authtypes.FeeCollectorName).Return(module)
 				suite.sk.EXPECT().UseGrantedFees(gomock.Any(), subspaceID, signer, feeAmount, []sdk.Msg{subspaceMsg}).Return(true)
