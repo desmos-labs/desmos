@@ -96,7 +96,11 @@ func (g Grant) Validate() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid granter address")
 	}
 
-	grantee := g.Grantee.GetCachedValue().(Grantee)
+	grantee, ok := g.Grantee.GetCachedValue().(Grantee)
+	if !ok {
+		return fmt.Errorf("invalid grantee type: %T", grantee)
+	}
+
 	err = grantee.Validate()
 	if err != nil {
 		return err
@@ -115,7 +119,7 @@ func (g Grant) Validate() error {
 	return f.ValidateBasic()
 }
 
-// GetUnpackedAllowance unpacks allowance
+// GetUnpackedAllowance returns unpacked allowance
 func (u Grant) GetUnpackedAllowance() (feegranttypes.FeeAllowanceI, error) {
 	allowance, ok := u.Allowance.GetCachedValue().(feegranttypes.FeeAllowanceI)
 	if !ok {

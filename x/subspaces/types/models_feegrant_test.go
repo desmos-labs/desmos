@@ -97,6 +97,15 @@ func TestGrant_Validate(t *testing.T) {
 			shouldErr: true,
 		},
 		{
+			name: "invalid grantee type returns error",
+			grant: types.Grant{
+				SubspaceID: 1,
+				Granter:    "cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
+				Grantee:    &codectypes.Any{},
+				Allowance:  nil},
+			shouldErr: true,
+		},
+		{
 			name: "invalid grantee returns error",
 			grant: types.NewGrant(1,
 				"cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
