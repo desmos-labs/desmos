@@ -26,7 +26,7 @@ var (
 	// PermissionManageTreasuryAuthorization allows users to manage treasury authorization
 	PermissionManageTreasuryAuthorization = RegisterPermission("manage treasury authorizations")
 
-	// PermissionManageAllowances allows users to grant others fee allowances
+	// PermissionManageAllowances allows users to manage others fee allowances
 	PermissionManageAllowances = RegisterPermission("manage allowances")
 
 	// PermissionEverything allows to do everything.
