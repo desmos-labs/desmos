@@ -84,7 +84,7 @@ func TestMigrateStore(t *testing.T) {
 				store.Set(types.GroupMemberStoreKey(1, 1, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm"), []byte{0x01})
 			},
 			check: func(ctx sdk.Context) {
-				userAcc, _ := sdk.AccAddressFromBech32("cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
+				userAcc := sdk.MustAccAddressFromBech32("cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
 				require.True(t, authKeeper.HasAccount(ctx, userAcc))
 			},
 		},

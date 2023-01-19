@@ -48,6 +48,7 @@ func migrateSubspaces(ctx sdk.Context, storeKey sdk.StoreKey, cdc codec.BinaryCo
 	return nil
 }
 
+// migrateUserAccountsInUserGroups creates an account for users who are in a user group
 func migrateUserAccountsInUserGroups(ctx sdk.Context, key sdk.StoreKey, accountKeeper AccountKeeper) error {
 	groupsStore := prefix.NewStore(ctx.KVStore(key), types.GroupsMembersPrefix)
 	iterator := groupsStore.Iterator(nil, nil)
