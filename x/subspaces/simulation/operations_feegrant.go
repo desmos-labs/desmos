@@ -56,13 +56,15 @@ func randomGrantAllowanceFields(
 		return
 	}
 
-	// Get a granter and grantee
-	accounts := ak.GetAllAccounts(ctx)
-	granter = RandomAuthAccount(r, accounts).GetAddress().String()
+	subspaceID = RandomSubspace(r, subspaces).ID
 
+	// Get a granter
+	granters := k.GetUsersWithRootPermissions(ctx, subspaceID, types.NewPermissions(types.PermissionManageTreasuryAuthorization))
+	granter = RandomAddress(r, granters)
+
+	// 50% of having a user grantee, otherwise a group grantee
 	if r.Intn(100) < 50 {
-		// 50% of having a user grantee
-		subspaceID = RandomSubspace(r, subspaces).ID
+		accounts := ak.GetAllAccounts(ctx)
 		userAddr := RandomAuthAccount(r, accounts).GetAddress().String()
 		if granter == userAddr {
 			skip = true
@@ -130,12 +132,14 @@ func SimulateMsgRevokeAllowance(
 func randomRevokeAllowanceFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
 ) (subspaceID uint64, granter string, grantee types.Grantee, signer simtypes.Account, skip bool) {
+	// 50% of having user grants, otherwise group grants
 	var grants []types.Grant
 	if r.Intn(100) < 50 {
 		grants = k.GetAllUserGrants(ctx)
 	} else {
 		grants = k.GetAllUserGroupsGrants(ctx)
 	}
+
 	if len(grants) == 0 {
 		// Skip because there are no grants
 		skip = true
@@ -143,8 +147,10 @@ func randomRevokeAllowanceFields(
 	}
 	grant := RandomGrant(r, grants)
 	subspaceID = grant.SubspaceID
-	granter = grant.Granter
 	grantee = grant.Grantee.GetCachedValue().(types.Grantee)
+
+	granters := k.GetUsersWithRootPermissions(ctx, subspaceID, types.NewPermissions(types.PermissionManageTreasuryAuthorization))
+	granter = RandomAddress(r, granters)
 
 	// Get a signer account
 	acc := GetAccount(granter, accs)

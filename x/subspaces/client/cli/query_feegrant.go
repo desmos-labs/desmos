@@ -30,6 +30,9 @@ func GetCmdQueryAllowances() *cobra.Command {
 
 			var subspaceID uint64
 			subspaceID, err = types.ParseSubspaceID(args[0])
+			if err != nil {
+				return err
+			}
 
 			var grantee types.Grantee
 			switch args[1] {

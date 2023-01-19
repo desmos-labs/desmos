@@ -20,7 +20,7 @@ func (k msgServer) GrantAllowance(goCtx context.Context, msg *types.MsgGrantAllo
 		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage allowances in this subspace")
 	}
 
-	var events sdk.Events = sdk.Events{
+	events := sdk.Events{
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
@@ -80,7 +80,7 @@ func (k msgServer) RevokeAllowance(goCtx context.Context, msg *types.MsgRevokeAl
 		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage allowances in this subspace")
 	}
 
-	var events sdk.Events = sdk.Events{
+	events := sdk.Events{
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
