@@ -2,6 +2,7 @@ package app
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -15,18 +16,8 @@ import (
 	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
 
 	"github.com/desmos-labs/desmos/v4/app/upgrades"
-	v300 "github.com/desmos-labs/desmos/v4/app/upgrades/v300"
-	v310 "github.com/desmos-labs/desmos/v4/app/upgrades/v310"
-	v320 "github.com/desmos-labs/desmos/v4/app/upgrades/v320"
 	v4 "github.com/desmos-labs/desmos/v4/app/upgrades/v4"
-	v400 "github.com/desmos-labs/desmos/v4/app/upgrades/v400"
-	v410 "github.com/desmos-labs/desmos/v4/app/upgrades/v410"
-	v420 "github.com/desmos-labs/desmos/v4/app/upgrades/v420"
-	v430 "github.com/desmos-labs/desmos/v4/app/upgrades/v430"
-	v441 "github.com/desmos-labs/desmos/v4/app/upgrades/v441"
-	v450 "github.com/desmos-labs/desmos/v4/app/upgrades/v450"
-	v460 "github.com/desmos-labs/desmos/v4/app/upgrades/v460"
-	v470 "github.com/desmos-labs/desmos/v4/app/upgrades/v470"
+	v471 "github.com/desmos-labs/desmos/v4/app/upgrades/v471"
 
 	profilesv4 "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v4"
 
@@ -912,6 +903,17 @@ func NewDesmosApp(
 	app.SetAnteHandler(anteHandler)
 	app.SetEndBlocker(app.EndBlocker)
 
+	// Must be before Loading version.
+	// Requires the snapshot store to be created and registered as a BaseAppOption
+	if manager := app.SnapshotManager(); manager != nil {
+		err := manager.RegisterExtensions(
+			wasmkeeper.NewWasmSnapshotter(app.CommitMultiStore(), &app.WasmKeeper),
+		)
+		if err != nil {
+			panic(fmt.Errorf("failed to register snapshot extension: %s", err))
+		}
+	}
+
 	if loadLatest {
 		if err := app.LoadLatestVersion(); err != nil {
 			tmos.Exit(err.Error())
@@ -1075,17 +1077,7 @@ func (app *DesmosApp) RegisterNodeService(clientCtx client.Context) {
 
 // registerUpgradeHandlers registers all the upgrade handlers that are supported by the app
 func (app *DesmosApp) registerUpgradeHandlers() {
-	app.registerUpgrade(v300.NewUpgrade(app.mm, app.configurator))
-	app.registerUpgrade(v310.NewUpgrade(app.mm, app.configurator))
-	app.registerUpgrade(v320.NewUpgrade(app.mm, app.configurator))
-	app.registerUpgrade(v400.NewUpgrade(app.mm, app.configurator))
-	app.registerUpgrade(v410.NewUpgrade(app.mm, app.configurator))
-	app.registerUpgrade(v420.NewUpgrade(app.mm, app.configurator))
-	app.registerUpgrade(v430.NewUpgrade(app.mm, app.configurator))
-	app.registerUpgrade(v441.NewUpgrade(app.mm, app.configurator))
-	app.registerUpgrade(v450.NewUpgrade(app.mm, app.configurator))
-	app.registerUpgrade(v460.NewUpgrade(app.mm, app.configurator))
-	app.registerUpgrade(v470.NewUpgrade(app.mm, app.configurator, app.BankKeeper))
+	app.registerUpgrade(v471.NewUpgrade(app.mm, app.configurator, app.BankKeeper))
 	app.registerUpgrade(v4.NewUpgrade(app.mm, app.configurator, app.BankKeeper))
 }
 
