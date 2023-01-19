@@ -362,7 +362,8 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteSubspace() {
 				suite.Require().Empty(permissions)
 
 				// Make sure the user grants are deleted
-				suite.Require().Empty(suite.k.GetSubspaceUserGrants(ctx, 1))
+				userGrants := suite.k.GetSubspaceUserGrants(ctx, 1)
+				suite.Require().Empty(userGrants)
 
 				// Make sure the group grants are deleted
 				groupsGrants := suite.k.GetSubspaceUserGroupsGrants(ctx, 1)
