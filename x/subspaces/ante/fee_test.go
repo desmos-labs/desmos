@@ -16,7 +16,7 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 	feeAmount := sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(100)))
 	signer := sdk.MustAccAddressFromBech32("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
 	granter := types.GetTreasuryAddress(1)
-	//invalidGranter := sdk.MustAccAddressFromBech32("cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53")
+	nonTreasuryGranter := sdk.MustAccAddressFromBech32("cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53")
 	module := sdk.MustAccAddressFromBech32("cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
 	nonSubspaceMsg := testdata.NewTestMsg(signer)
 	subspaceID, otherSubspaceID := uint64(1), uint64(2)
@@ -30,6 +30,20 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 		shouldErr bool
 		expEvents sdk.Events
 	}{
+		{
+			name: "non treasury account granter using auth decorator",
+			setup: func() {
+				suite.authDeductFeeDecorator.EXPECT().AnteHandle(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(suite.ctx, nil)
+			},
+			buildTx: func() sdk.Tx {
+				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
+				txBuilder.SetMsgs(subspaceMsg)
+				txBuilder.SetFeeGranter(nonTreasuryGranter)
+				txBuilder.SetFeeAmount(feeAmount)
+				return txBuilder.GetTx()
+			},
+			shouldErr: false,
+		},
 		{
 			name: "non existing granter account returns error",
 			setup: func() {
