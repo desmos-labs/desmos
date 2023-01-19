@@ -59,7 +59,7 @@ func randomGrantAllowanceFields(
 	subspaceID = RandomSubspace(r, subspaces).ID
 
 	// Get a granter
-	granters := k.GetUsersWithRootPermissions(ctx, subspaceID, types.NewPermissions(types.PermissionManageTreasuryAuthorization))
+	granters := k.GetUsersWithRootPermissions(ctx, subspaceID, types.NewPermissions(types.PermissionManageAllowances))
 	granter = RandomAddress(r, granters)
 
 	// 50% of having a user grantee, otherwise a group grantee
@@ -149,7 +149,8 @@ func randomRevokeAllowanceFields(
 	subspaceID = grant.SubspaceID
 	grantee = grant.Grantee.GetCachedValue().(types.Grantee)
 
-	granters := k.GetUsersWithRootPermissions(ctx, subspaceID, types.NewPermissions(types.PermissionManageTreasuryAuthorization))
+	// Get a granter
+	granters := k.GetUsersWithRootPermissions(ctx, subspaceID, types.NewPermissions(types.PermissionManageAllowances))
 	granter = RandomAddress(r, granters)
 
 	// Get a signer account
