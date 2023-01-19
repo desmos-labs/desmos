@@ -61,30 +61,44 @@ func randomGrantAllowanceFields(
 	// Get a granter
 	granters := k.GetUsersWithRootPermissions(ctx, subspaceID, types.NewPermissions(types.PermissionManageAllowances))
 	granter = RandomAddress(r, granters)
+	if len(granters) == 0 {
+		skip = true
+		return
+	}
 
 	// 50% of having a user grantee, otherwise a group grantee
 	if r.Intn(100) < 50 {
 		accounts := ak.GetAllAccounts(ctx)
-		userAddr := RandomAuthAccount(r, accounts).GetAddress().String()
-		if granter == userAddr {
+		granteeAddr := RandomAuthAccount(r, accounts).GetAddress().String()
+
+		if k.HasUserGrant(ctx, subspaceID, granteeAddr) {
+			// Skip because grant does exist
 			skip = true
 			return
 		}
-		grantee = types.NewUserGrantee(userAddr)
+
+		grantee = types.NewUserGrantee(granteeAddr)
 	} else {
 		groups := k.GetAllUserGroups(ctx)
 		if len(groups) == 0 {
-			// Skip because there are no subspaces
+			// Skip because there are no groups
 			skip = true
 			return
 		}
+
 		group := RandomGroup(r, groups)
 		if group.ID == 0 {
-			// Skip because we cannot remove users from the group with ID 0 since it's the default one
+			// Skip because we cannot grant the group with ID 0
 			skip = true
 			return
 		}
-		subspaceID = group.SubspaceID
+
+		if k.HasGroupGrant(ctx, subspaceID, group.ID) {
+			// Skip because grant does exist
+			skip = true
+			return
+		}
+
 		grantee = types.NewGroupGrantee(group.ID)
 	}
 
@@ -151,6 +165,11 @@ func randomRevokeAllowanceFields(
 
 	// Get a granter
 	granters := k.GetUsersWithRootPermissions(ctx, subspaceID, types.NewPermissions(types.PermissionManageAllowances))
+	if len(granters) == 0 {
+		skip = true
+		return
+	}
+
 	granter = RandomAddress(r, granters)
 
 	// Get a signer account
