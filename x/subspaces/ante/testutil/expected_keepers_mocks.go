@@ -126,43 +126,6 @@ func (mr *MockBankKeeperMockRecorder) SendCoinsFromAccountToModule(ctx, senderAd
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendCoinsFromAccountToModule", reflect.TypeOf((*MockBankKeeper)(nil).SendCoinsFromAccountToModule), ctx, senderAddr, recipientModule, amt)
 }
 
-// MockFeegrantKeeper is a mock of FeegrantKeeper interface.
-type MockFeegrantKeeper struct {
-	ctrl     *gomock.Controller
-	recorder *MockFeegrantKeeperMockRecorder
-}
-
-// MockFeegrantKeeperMockRecorder is the mock recorder for MockFeegrantKeeper.
-type MockFeegrantKeeperMockRecorder struct {
-	mock *MockFeegrantKeeper
-}
-
-// NewMockFeegrantKeeper creates a new mock instance.
-func NewMockFeegrantKeeper(ctrl *gomock.Controller) *MockFeegrantKeeper {
-	mock := &MockFeegrantKeeper{ctrl: ctrl}
-	mock.recorder = &MockFeegrantKeeperMockRecorder{mock}
-	return mock
-}
-
-// EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockFeegrantKeeper) EXPECT() *MockFeegrantKeeperMockRecorder {
-	return m.recorder
-}
-
-// UseGrantedFees mocks base method.
-func (m *MockFeegrantKeeper) UseGrantedFees(ctx types.Context, granter, grantee types.AccAddress, fee types.Coins, msgs []types.Msg) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UseGrantedFees", ctx, granter, grantee, fee, msgs)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// UseGrantedFees indicates an expected call of UseGrantedFees.
-func (mr *MockFeegrantKeeperMockRecorder) UseGrantedFees(ctx, granter, grantee, fee, msgs interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UseGrantedFees", reflect.TypeOf((*MockFeegrantKeeper)(nil).UseGrantedFees), ctx, granter, grantee, fee, msgs)
-}
-
 // MockSubspacesKeeper is a mock of SubspacesKeeper interface.
 type MockSubspacesKeeper struct {
 	ctrl     *gomock.Controller
@@ -198,4 +161,42 @@ func (m *MockSubspacesKeeper) UseGrantedFees(ctx types.Context, subspaceID uint6
 func (mr *MockSubspacesKeeperMockRecorder) UseGrantedFees(ctx, subspaceID, grantee, fee, msgs interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UseGrantedFees", reflect.TypeOf((*MockSubspacesKeeper)(nil).UseGrantedFees), ctx, subspaceID, grantee, fee, msgs)
+}
+
+// MockAuthDeductFeeDecorator is a mock of AuthDeductFeeDecorator interface.
+type MockAuthDeductFeeDecorator struct {
+	ctrl     *gomock.Controller
+	recorder *MockAuthDeductFeeDecoratorMockRecorder
+}
+
+// MockAuthDeductFeeDecoratorMockRecorder is the mock recorder for MockAuthDeductFeeDecorator.
+type MockAuthDeductFeeDecoratorMockRecorder struct {
+	mock *MockAuthDeductFeeDecorator
+}
+
+// NewMockAuthDeductFeeDecorator creates a new mock instance.
+func NewMockAuthDeductFeeDecorator(ctrl *gomock.Controller) *MockAuthDeductFeeDecorator {
+	mock := &MockAuthDeductFeeDecorator{ctrl: ctrl}
+	mock.recorder = &MockAuthDeductFeeDecoratorMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockAuthDeductFeeDecorator) EXPECT() *MockAuthDeductFeeDecoratorMockRecorder {
+	return m.recorder
+}
+
+// AnteHandle mocks base method.
+func (m *MockAuthDeductFeeDecorator) AnteHandle(ctx types.Context, tx types.Tx, simulate bool, next types.AnteHandler) (types.Context, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AnteHandle", ctx, tx, simulate, next)
+	ret0, _ := ret[0].(types.Context)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// AnteHandle indicates an expected call of AnteHandle.
+func (mr *MockAuthDeductFeeDecoratorMockRecorder) AnteHandle(ctx, tx, simulate, next interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AnteHandle", reflect.TypeOf((*MockAuthDeductFeeDecorator)(nil).AnteHandle), ctx, tx, simulate, next)
 }

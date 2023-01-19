@@ -15,19 +15,19 @@ var _ sdk.AnteDecorator = &DeductFeeDecorator{}
 
 // DeductFeeDecorator represents the decorator used to deduct fee
 type DeductFeeDecorator struct {
-	authDeductAnte ante.DeductFeeDecorator
-	ak             AccountKeeper
-	bk             BankKeeper
-	sk             SubspacesKeeper
+	authDeductFeeDecorator AuthDeductFeeDecorator
+	ak                     AccountKeeper
+	bk                     BankKeeper
+	sk                     SubspacesKeeper
 }
 
 // NewDeductFeeDecorator returns a new DeductFeeDecorator instance
-func NewDeductFeeDecorator(ak AccountKeeper, bk BankKeeper, fk FeegrantKeeper, sk SubspacesKeeper) DeductFeeDecorator {
+func NewDeductFeeDecorator(authDeductFeeDecorator AuthDeductFeeDecorator, ak AccountKeeper, bk BankKeeper, sk SubspacesKeeper) DeductFeeDecorator {
 	return DeductFeeDecorator{
-		authDeductAnte: ante.NewDeductFeeDecorator(ak, bk, fk),
-		ak:             ak,
-		bk:             bk,
-		sk:             sk,
+		authDeductFeeDecorator: authDeductFeeDecorator,
+		ak:                     ak,
+		bk:                     bk,
+		sk:                     sk,
 	}
 }
 
@@ -48,7 +48,7 @@ func (dfd DeductFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bo
 			return next(newCtx, tx, simulate)
 		}
 	}
-	return dfd.authDeductAnte.AnteHandle(ctx, tx, simulate, next)
+	return dfd.authDeductFeeDecorator.AnteHandle(ctx, tx, simulate, next)
 }
 
 // isValidSubspaceTx returns the valid subspace id, returns false if it is invalid

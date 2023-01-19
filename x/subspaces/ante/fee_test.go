@@ -109,33 +109,13 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 			shouldErr: false,
 		},
 		{
-			name: "valid tx without grant returns no error",
+			name: "valid tx without granter returns no error",
 			setup: func() {
-				suite.ak.EXPECT().GetModuleAddress(authtypes.FeeCollectorName).Return(module)
-				suite.ak.EXPECT().GetAccount(gomock.Any(), signer).Return(authtypes.NewBaseAccountWithAddress(signer))
-				suite.bk.EXPECT().SendCoinsFromAccountToModule(gomock.Any(), signer, authtypes.FeeCollectorName, feeAmount).Return(nil)
+				suite.authDeductFeeDecorator.EXPECT().AnteHandle(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(suite.ctx, nil)
 			},
 			buildTx: func() sdk.Tx {
 				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
 				txBuilder.SetMsgs(subspaceMsg)
-				txBuilder.SetFeeAmount(feeAmount)
-				return txBuilder.GetTx()
-			},
-			shouldErr: false,
-		},
-		{
-			name: "valid tx with valid feegrant allowance but no subspace allowance returns no error",
-			setup: func() {
-				suite.ak.EXPECT().GetModuleAddress(authtypes.FeeCollectorName).Return(module).Times(2)
-				suite.sk.EXPECT().UseGrantedFees(gomock.Any(), subspaceID, signer, feeAmount, []sdk.Msg{subspaceMsg}).Return(false)
-				suite.ak.EXPECT().GetAccount(gomock.Any(), granter).Return(authtypes.NewBaseAccountWithAddress(granter))
-				suite.fk.EXPECT().UseGrantedFees(gomock.Any(), granter, signer, feeAmount, []sdk.Msg{subspaceMsg}).Return(nil)
-				suite.bk.EXPECT().SendCoinsFromAccountToModule(gomock.Any(), granter, authtypes.FeeCollectorName, feeAmount).Return(nil)
-			},
-			buildTx: func() sdk.Tx {
-				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
-				txBuilder.SetMsgs(subspaceMsg)
-				txBuilder.SetFeeGranter(granter)
 				txBuilder.SetFeeAmount(feeAmount)
 				return txBuilder.GetTx()
 			},
@@ -144,9 +124,7 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 		{
 			name: "standard tx returns no error",
 			setup: func() {
-				suite.ak.EXPECT().GetModuleAddress(authtypes.FeeCollectorName).Return(module)
-				suite.ak.EXPECT().GetAccount(gomock.Any(), signer).Return(authtypes.NewBaseAccountWithAddress(signer))
-				suite.bk.EXPECT().SendCoinsFromAccountToModule(gomock.Any(), signer, authtypes.FeeCollectorName, feeAmount).Return(nil)
+				suite.authDeductFeeDecorator.EXPECT().AnteHandle(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(suite.ctx, nil)
 			},
 			buildTx: func() sdk.Tx {
 				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
@@ -159,9 +137,7 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 		{
 			name: "valid tx with different subspaces msgs returns no error",
 			setup: func() {
-				suite.ak.EXPECT().GetModuleAddress(authtypes.FeeCollectorName).Return(module)
-				suite.ak.EXPECT().GetAccount(gomock.Any(), signer).Return(authtypes.NewBaseAccountWithAddress(signer))
-				suite.bk.EXPECT().SendCoinsFromAccountToModule(gomock.Any(), signer, authtypes.FeeCollectorName, feeAmount).Return(nil)
+				suite.authDeductFeeDecorator.EXPECT().AnteHandle(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(suite.ctx, nil)
 			},
 			buildTx: func() sdk.Tx {
 				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
