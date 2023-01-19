@@ -41,7 +41,8 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantTreasuryAuthorization() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC)))
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC)),
+				)
 			},
 			msg: types.NewMsgGrantTreasuryAuthorization(
 				1,
@@ -61,12 +62,15 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantTreasuryAuthorization() {
 					"",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC)))
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC)),
+				)
+
 				suite.k.SetUserPermissions(ctx,
 					1,
 					types.RootSectionID,
 					"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez",
-					types.NewPermissions(types.PermissionManageTreasuryAuthorization))
+					types.NewPermissions(types.PermissionManageTreasuryAuthorization),
+				)
 			},
 			msg: types.NewMsgGrantTreasuryAuthorization(
 				1,
@@ -86,12 +90,15 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantTreasuryAuthorization() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC)))
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC)),
+				)
+
 				suite.k.SetUserPermissions(ctx,
 					1,
 					types.RootSectionID,
 					"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez",
-					types.NewPermissions(types.PermissionManageTreasuryAuthorization))
+					types.NewPermissions(types.PermissionManageTreasuryAuthorization),
+				)
 			},
 			msg: types.NewMsgGrantTreasuryAuthorization(
 				1,
@@ -111,12 +118,15 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantTreasuryAuthorization() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC)))
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC)),
+				)
+
 				suite.k.SetUserPermissions(ctx,
 					1,
 					types.RootSectionID,
 					"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez",
-					types.NewPermissions(types.PermissionManageTreasuryAuthorization))
+					types.NewPermissions(types.PermissionManageTreasuryAuthorization),
+				)
 			},
 			msg: types.NewMsgGrantTreasuryAuthorization(
 				1,
@@ -217,7 +227,8 @@ func (suite *KeeperTestSuite) TestMsgServer_RevokeTreasuryAuthorization() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC)))
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC)),
+				)
 			},
 			msg: types.NewMsgRevokeTreasuryAuthorization(
 				1,
@@ -236,12 +247,15 @@ func (suite *KeeperTestSuite) TestMsgServer_RevokeTreasuryAuthorization() {
 					"",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC)))
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC)),
+				)
+
 				suite.k.SetUserPermissions(ctx,
 					1,
 					types.RootSectionID,
 					"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez",
-					types.NewPermissions(types.PermissionManageTreasuryAuthorization))
+					types.NewPermissions(types.PermissionManageTreasuryAuthorization),
+				)
 			},
 			msg: types.NewMsgRevokeTreasuryAuthorization(
 				1,
@@ -260,12 +274,15 @@ func (suite *KeeperTestSuite) TestMsgServer_RevokeTreasuryAuthorization() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC)))
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC)),
+				)
+
 				suite.k.SetUserPermissions(ctx,
 					1,
 					types.RootSectionID,
 					"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez",
-					types.NewPermissions(types.PermissionManageTreasuryAuthorization))
+					types.NewPermissions(types.PermissionManageTreasuryAuthorization),
+				)
 			},
 			msg: types.NewMsgRevokeTreasuryAuthorization(
 				1,
@@ -284,12 +301,15 @@ func (suite *KeeperTestSuite) TestMsgServer_RevokeTreasuryAuthorization() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC)))
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC)),
+				)
+
 				suite.k.SetUserPermissions(ctx,
 					1,
 					types.RootSectionID,
 					"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez",
-					types.NewPermissions(types.PermissionManageTreasuryAuthorization))
+					types.NewPermissions(types.PermissionManageTreasuryAuthorization),
+				)
 			},
 			msg: types.NewMsgRevokeTreasuryAuthorization(
 				1,
@@ -308,12 +328,15 @@ func (suite *KeeperTestSuite) TestMsgServer_RevokeTreasuryAuthorization() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC)))
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC)),
+				)
+
 				suite.k.SetUserPermissions(ctx,
 					1,
 					types.RootSectionID,
 					"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez",
-					types.NewPermissions(types.PermissionManageTreasuryAuthorization))
+					types.NewPermissions(types.PermissionManageTreasuryAuthorization),
+				)
 
 				treasury, err := sdk.AccAddressFromBech32("cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn")
 				suite.Require().NoError(err)
@@ -324,7 +347,8 @@ func (suite *KeeperTestSuite) TestMsgServer_RevokeTreasuryAuthorization() {
 					grantee,
 					treasury,
 					&banktypes.SendAuthorization{SpendLimit: sdk.NewCoins(sdk.NewInt64Coin("steak", 100))},
-					time.Date(2024, 1, 11, 1, 1, 1, 1, time.UTC))
+					time.Date(2024, 1, 11, 1, 1, 1, 1, time.UTC),
+				)
 				suite.Require().NoError(err)
 			},
 			msg: types.NewMsgRevokeTreasuryAuthorization(

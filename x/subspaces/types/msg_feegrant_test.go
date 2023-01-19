@@ -6,11 +6,12 @@ import (
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/feegrant"
-	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 	"github.com/stretchr/testify/require"
+
+	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
-var MsgGrantAllowance = types.NewMsgGrantAllowance(
+var msgGrantAllowance = types.NewMsgGrantAllowance(
 	1,
 	"cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
 	types.NewUserGrantee("cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez"),
@@ -18,11 +19,11 @@ var MsgGrantAllowance = types.NewMsgGrantAllowance(
 )
 
 func TestMsgGrantAllowance_Route(t *testing.T) {
-	require.Equal(t, types.RouterKey, MsgGrantAllowance.Route())
+	require.Equal(t, types.RouterKey, msgGrantAllowance.Route())
 }
 
 func TestMsgGrantAllowance_Type(t *testing.T) {
-	require.Equal(t, types.ActionGrantAllowance, MsgGrantAllowance.Type())
+	require.Equal(t, types.ActionGrantAllowance, msgGrantAllowance.Type())
 }
 
 func TestMsgGrantAllowance_ValidateBasic(t *testing.T) {
@@ -86,7 +87,7 @@ func TestMsgGrantAllowance_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "valid message returns no error",
-			msg:  MsgGrantAllowance,
+			msg:  msgGrantAllowance,
 		},
 	}
 
@@ -105,28 +106,28 @@ func TestMsgGrantAllowance_ValidateBasic(t *testing.T) {
 
 func TestMsgGrantAllowance_GetSignBytes(t *testing.T) {
 	expected := `{"type":"desmos/MsgGrantAllowance","value":{"allowance":{"spend_limit":[]},"grantee":{"type":"desmos/UserGrantee","value":{"user":"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez"}},"granter":"cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0","subspace_id":"1"}}`
-	require.Equal(t, expected, string(MsgGrantAllowance.GetSignBytes()))
+	require.Equal(t, expected, string(msgGrantAllowance.GetSignBytes()))
 }
 
 func TestMsgGrantAllowance_GetSigners(t *testing.T) {
-	addr, _ := sdk.AccAddressFromBech32(MsgGrantAllowance.Granter)
-	require.Equal(t, []sdk.AccAddress{addr}, MsgGrantAllowance.GetSigners())
+	addr, _ := sdk.AccAddressFromBech32(msgGrantAllowance.Granter)
+	require.Equal(t, []sdk.AccAddress{addr}, msgGrantAllowance.GetSigners())
 }
 
 // --------------------------------------------------------------------------------------------------------------------
 
-var MsgRevokeAllowance = types.NewMsgRevokeAllowance(
+var msgRevokeAllowance = types.NewMsgRevokeAllowance(
 	1,
 	"cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
 	types.NewUserGrantee("cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez"),
 )
 
 func TestMsgRevokeAllowance_Route(t *testing.T) {
-	require.Equal(t, types.RouterKey, MsgRevokeAllowance.Route())
+	require.Equal(t, types.RouterKey, msgRevokeAllowance.Route())
 }
 
 func TestMsgRevokeAllowance_Type(t *testing.T) {
-	require.Equal(t, types.ActionRevokeAllowance, MsgRevokeAllowance.Type())
+	require.Equal(t, types.ActionRevokeAllowance, msgRevokeAllowance.Type())
 }
 
 func TestMsgRevokeAllowance_ValidateBasic(t *testing.T) {
@@ -164,7 +165,7 @@ func TestMsgRevokeAllowance_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "valid message returns no error",
-			msg:  MsgRevokeAllowance,
+			msg:  msgRevokeAllowance,
 		},
 	}
 
@@ -183,10 +184,10 @@ func TestMsgRevokeAllowance_ValidateBasic(t *testing.T) {
 
 func TestMsgRevokeAllowance_GetSignBytes(t *testing.T) {
 	expected := `{"type":"desmos/MsgRevokeAllowance","value":{"grantee":{"type":"desmos/UserGrantee","value":{"user":"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez"}},"granter":"cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0","subspace_id":"1"}}`
-	require.Equal(t, expected, string(MsgRevokeAllowance.GetSignBytes()))
+	require.Equal(t, expected, string(msgRevokeAllowance.GetSignBytes()))
 }
 
 func TestMsgRevokeAllowance_GetSigners(t *testing.T) {
-	addr, _ := sdk.AccAddressFromBech32(MsgRevokeAllowance.Granter)
-	require.Equal(t, []sdk.AccAddress{addr}, MsgRevokeAllowance.GetSigners())
+	addr, _ := sdk.AccAddressFromBech32(msgRevokeAllowance.Granter)
+	require.Equal(t, []sdk.AccAddress{addr}, msgRevokeAllowance.GetSigners())
 }

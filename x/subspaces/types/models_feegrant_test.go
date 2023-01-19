@@ -5,8 +5,9 @@ import (
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/x/feegrant"
-	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 	"github.com/stretchr/testify/require"
+
+	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
 func TestGroupGrantee_Validate(t *testing.T) {
@@ -82,18 +83,22 @@ func TestGrant_Validate(t *testing.T) {
 	}{
 		{
 			name: "invalid subspace id returns error",
-			grant: types.NewGrant(0,
+			grant: types.NewGrant(
+				0,
 				"cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
 				types.NewUserGrantee("cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0"),
-				&feegrant.BasicAllowance{}),
+				&feegrant.BasicAllowance{},
+			),
 			shouldErr: true,
 		},
 		{
 			name: "invalid granter returns error",
-			grant: types.NewGrant(1,
+			grant: types.NewGrant(
+				1,
 				"",
 				types.NewUserGrantee("cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0"),
-				&feegrant.BasicAllowance{}),
+				&feegrant.BasicAllowance{},
+			),
 			shouldErr: true,
 		},
 		{
@@ -102,23 +107,28 @@ func TestGrant_Validate(t *testing.T) {
 				SubspaceID: 1,
 				Granter:    "cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
 				Grantee:    &codectypes.Any{},
-				Allowance:  nil},
+				Allowance:  nil,
+			},
 			shouldErr: true,
 		},
 		{
 			name: "invalid grantee returns error",
-			grant: types.NewGrant(1,
+			grant: types.NewGrant(
+				1,
 				"cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
 				types.NewUserGrantee(""),
-				&feegrant.BasicAllowance{}),
+				&feegrant.BasicAllowance{},
+			),
 			shouldErr: true,
 		},
 		{
 			name: "granter self-grant returns error",
-			grant: types.NewGrant(1,
+			grant: types.NewGrant(
+				1,
 				"cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
 				types.NewUserGrantee("cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0"),
-				&feegrant.BasicAllowance{}),
+				&feegrant.BasicAllowance{},
+			),
 			shouldErr: true,
 		},
 		{
@@ -133,10 +143,12 @@ func TestGrant_Validate(t *testing.T) {
 		},
 		{
 			name: "valid grant returns no error",
-			grant: types.NewGrant(1,
+			grant: types.NewGrant(
+				1,
 				"cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
 				types.NewUserGrantee("cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez"),
-				&feegrant.BasicAllowance{}),
+				&feegrant.BasicAllowance{},
+			),
 			shouldErr: false,
 		},
 	}

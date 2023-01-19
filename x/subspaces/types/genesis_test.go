@@ -6,14 +6,13 @@ import (
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/x/feegrant"
+
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 
 	"github.com/stretchr/testify/require"
 )
 
 func TestValidateGenesis(t *testing.T) {
-	granteeAny, err := codectypes.NewAnyWithValue(types.NewUserGrantee("cosmos19gz9jn5pl6ke6qg5s4gt9ga9my7w8a0x3ar0qy"))
-	require.NoError(t, err)
 	invalidGranteeAny, err := codectypes.NewAnyWithValue(types.NewUserGrantee(""))
 	require.NoError(t, err)
 	allowanceAny, err := codectypes.NewAnyWithValue(&feegrant.BasicAllowance{})
@@ -177,17 +176,20 @@ func TestValidateGenesis(t *testing.T) {
 		},
 		{
 			name: "duplicated grants returns error",
-			genesis: types.NewGenesisState(1, nil, nil, nil, nil, nil, nil, []types.Grant{{
-				SubspaceID: 1,
-				Granter:    "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd",
-				Grantee:    granteeAny,
-				Allowance:  allowanceAny,
-			}, {
-				SubspaceID: 1,
-				Granter:    "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd",
-				Grantee:    granteeAny,
-				Allowance:  allowanceAny,
-			}}),
+			genesis: types.NewGenesisState(1, nil, nil, nil, nil, nil, nil, []types.Grant{
+				types.NewGrant(
+					1,
+					"cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd",
+					types.NewUserGrantee("cosmos19gz9jn5pl6ke6qg5s4gt9ga9my7w8a0x3ar0qy"),
+					&feegrant.BasicAllowance{},
+				),
+				types.NewGrant(
+					1,
+					"cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd",
+					types.NewUserGrantee("cosmos19gz9jn5pl6ke6qg5s4gt9ga9my7w8a0x3ar0qy"),
+					&feegrant.BasicAllowance{},
+				),
+			}),
 			shouldErr: true,
 		},
 		{
@@ -254,18 +256,18 @@ func TestValidateGenesis(t *testing.T) {
 					types.NewUserGroupMemberEntry(2, 1, "cosmos19gz9jn5pl6ke6qg5s4gt9ga9my7w8a0x3ar0qy"),
 				},
 				[]types.Grant{
-					{
-						SubspaceID: 1,
-						Granter:    "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd",
-						Grantee:    granteeAny,
-						Allowance:  allowanceAny,
-					},
-					{
-						SubspaceID: 2,
-						Granter:    "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-						Grantee:    granteeAny,
-						Allowance:  allowanceAny,
-					},
+					types.NewGrant(
+						1,
+						"cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd",
+						types.NewUserGrantee("cosmos19gz9jn5pl6ke6qg5s4gt9ga9my7w8a0x3ar0qy"),
+						&feegrant.BasicAllowance{},
+					),
+					types.NewGrant(
+						2,
+						"cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd",
+						types.NewUserGrantee("cosmos19gz9jn5pl6ke6qg5s4gt9ga9my7w8a0x3ar0qy"),
+						&feegrant.BasicAllowance{},
+					),
 				},
 			),
 			shouldErr: false,

@@ -3,10 +3,11 @@ package ante_test
 import (
 	"testing"
 
+	"github.com/golang/mock/gomock"
+
 	"github.com/desmos-labs/desmos/v4/app"
 	"github.com/desmos-labs/desmos/v4/x/subspaces/ante"
 	"github.com/desmos-labs/desmos/v4/x/subspaces/ante/testutil"
-	"github.com/golang/mock/gomock"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	sdktestutil "github.com/cosmos/cosmos-sdk/testutil"
@@ -39,8 +40,9 @@ func (suite *AnteTestSuite) SetupTest() {
 	suite.sk = testutil.NewMockSubspacesKeeper(ctrl)
 	suite.ak = testutil.NewMockAccountKeeper(ctrl)
 	suite.authDeductFeeDecorator = testutil.NewMockAuthDeductFeeDecorator(ctrl)
+
 	encodingConfig := app.MakeTestEncodingConfig()
-	suite.clientCtx = client.Context{}.
-		WithTxConfig(encodingConfig.TxConfig)
+	suite.clientCtx = client.Context{}.WithTxConfig(encodingConfig.TxConfig)
+
 	suite.ante = ante.NewDeductFeeDecorator(suite.authDeductFeeDecorator, suite.ak, suite.bk, suite.sk)
 }

@@ -687,10 +687,12 @@ func (suite *KeeperTestSuite) TestValidUserGrantsInvariant() {
 		{
 			name: "non existing subspace breaks invariant",
 			store: func(ctx sdk.Context) {
-				suite.k.SaveGrant(ctx, types.NewGrant(1,
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
 					"cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4",
 					types.NewUserGrantee("cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"),
-					&feegrant.BasicAllowance{}))
+					&feegrant.BasicAllowance{},
+				))
 			},
 			expBroken: true,
 		},
@@ -706,10 +708,12 @@ func (suite *KeeperTestSuite) TestValidUserGrantsInvariant() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
-				suite.k.SaveGrant(ctx, types.NewGrant(1,
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
 					"cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4",
 					types.NewUserGrantee("cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4"),
-					&feegrant.BasicAllowance{}))
+					&feegrant.BasicAllowance{},
+				))
 			},
 			expBroken: true,
 		},
@@ -725,10 +729,12 @@ func (suite *KeeperTestSuite) TestValidUserGrantsInvariant() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
-				suite.k.SaveGrant(ctx, types.NewGrant(1,
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
 					"cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4",
 					types.NewUserGrantee("cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"),
-					&feegrant.BasicAllowance{}))
+					&feegrant.BasicAllowance{},
+				))
 			},
 			expBroken: false,
 		},
@@ -779,7 +785,8 @@ func (suite *KeeperTestSuite) TestValidGroupGrantsInvariant() {
 				suite.k.SaveGrant(ctx, types.NewGrant(1,
 					"cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4",
 					types.NewGroupGrantee(1),
-					&feegrant.BasicAllowance{}))
+					&feegrant.BasicAllowance{},
+				))
 			},
 			expBroken: true,
 		},
@@ -803,10 +810,12 @@ func (suite *KeeperTestSuite) TestValidGroupGrantsInvariant() {
 					"This is a test group",
 					types.NewPermissions(types.PermissionEditSubspace),
 				))
-				suite.k.SaveGrant(ctx, types.NewGrant(0,
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					0,
 					"cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4",
 					types.NewGroupGrantee(1),
-					&feegrant.BasicAllowance{}))
+					&feegrant.BasicAllowance{},
+				))
 			},
 			expBroken: true,
 		},
@@ -830,10 +839,12 @@ func (suite *KeeperTestSuite) TestValidGroupGrantsInvariant() {
 					"This is a test group",
 					types.NewPermissions(types.PermissionEditSubspace),
 				))
-				suite.k.SaveGrant(ctx, types.NewGrant(1,
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
 					"cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4",
 					types.NewGroupGrantee(1),
-					&feegrant.BasicAllowance{}))
+					&feegrant.BasicAllowance{},
+				))
 			},
 			expBroken: false,
 		},

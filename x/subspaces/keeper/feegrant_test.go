@@ -3,37 +3,38 @@ package keeper_test
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/feegrant"
+
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
 func (suite *KeeperTestSuite) TestKeeper_SaveGrant() {
 	testCases := []struct {
-		name       string
-		store      func(ctx sdk.Context)
-		subspaceID uint64
-		granter    string
-		grantee    types.Grantee
-		allowance  feegrant.FeeAllowanceI
-		check      func(ctx sdk.Context)
+		name  string
+		store func(ctx sdk.Context)
+		grant types.Grant
+		check func(ctx sdk.Context)
 	}{
 		{
-			name:       "user grant is saved properly",
-			subspaceID: 1,
-			granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-			grantee:    types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
-			allowance:  &feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+			name: "user grant is saved properly",
+			grant: types.NewGrant(
+				1,
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
+				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+			),
 			check: func(ctx sdk.Context) {
 				grant, found := suite.k.GetUserGrant(ctx, 1, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
 				suite.Require().True(found)
 
-				// check if grant is set properly
-				suite.Require().Equal(types.NewGrant(1,
+				// Check if grant is set properly
+				suite.Require().Equal(types.NewGrant(
+					1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))}),
-					grant)
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				), grant)
 
-				// check if account is set properly
+				// Check if account is set properly
 				addr := sdk.MustAccAddressFromBech32("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
 				suite.Require().True(suite.ak.HasAccount(ctx, addr))
 			},
@@ -41,69 +42,84 @@ func (suite *KeeperTestSuite) TestKeeper_SaveGrant() {
 		{
 			name: "existing user grant is overridden properly",
 			store: func(ctx sdk.Context) {
-				suite.k.SaveGrant(ctx, types.NewGrant(1,
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(1)))}))
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(1)))},
+				))
 			},
-			subspaceID: 1,
-			granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-			grantee:    types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
-			allowance:  &feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+			grant: types.NewGrant(
+				1,
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
+				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+			),
 			check: func(ctx sdk.Context) {
 				grant, found := suite.k.GetUserGrant(ctx, 1, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
 				suite.Require().True(found)
 
-				// check if grant is set properly
-				suite.Require().Equal(types.NewGrant(1,
+				// Check if grant is set properly
+				suite.Require().Equal(types.NewGrant(
+					1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))}),
-					grant)
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				), grant)
 
-				// check if account is set properly
+				// Check if account is set properly
 				addr := sdk.MustAccAddressFromBech32("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
 				suite.Require().True(suite.ak.HasAccount(ctx, addr))
 			},
 		},
 		{
-			name:       "group grant is saved properly",
-			subspaceID: 1,
-			granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-			grantee:    types.NewGroupGrantee(1),
-			allowance:  &feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+			name: "group grant is saved properly",
+			grant: types.NewGrant(
+				1,
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				types.NewGroupGrantee(1),
+				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+			),
 			check: func(ctx sdk.Context) {
 				grant, found := suite.k.GetGroupGrant(ctx, 1, 1)
 				suite.Require().True(found)
 
-				// check if grant is set properly
-				suite.Require().Equal(types.NewGrant(1,
+				// Check if grant is set properly
+				suite.Require().Equal(types.NewGrant(
+					1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-					types.NewGroupGrantee(1), &feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))}),
-					grant)
+					types.NewGroupGrantee(1),
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				), grant)
 			},
 		},
 		{
 			name: "existing group grant is overridden properly",
 			store: func(ctx sdk.Context) {
-				suite.k.SaveGrant(ctx, types.NewGrant(1,
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(1)))}))
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(1)))},
+				))
 			},
-			subspaceID: 1,
-			granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-			grantee:    types.NewGroupGrantee(1),
-			allowance:  &feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+			grant: types.NewGrant(
+				1,
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				types.NewGroupGrantee(1),
+				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+			),
 			check: func(ctx sdk.Context) {
 				grant, found := suite.k.GetGroupGrant(ctx, 1, 1)
 				suite.Require().True(found)
 
-				// check if grant is set properly
-				suite.Require().Equal(types.NewGrant(1,
+				// Check if grant is set properly
+				suite.Require().Equal(types.NewGrant(
+					1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewGroupGrantee(1),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))}), grant)
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				), grant)
 			},
 		},
 	}
@@ -115,11 +131,8 @@ func (suite *KeeperTestSuite) TestKeeper_SaveGrant() {
 			if tc.store != nil {
 				tc.store(ctx)
 			}
-			suite.k.SaveGrant(ctx, types.NewGrant(tc.subspaceID,
-				tc.granter,
-				tc.grantee,
-				tc.allowance))
 
+			suite.k.SaveGrant(ctx, tc.grant)
 			if tc.check != nil {
 				tc.check(ctx)
 			}
@@ -135,25 +148,27 @@ func (suite *KeeperTestSuite) TestKeeper_HasUserGrant() {
 		store      func(ctx sdk.Context)
 		subspaceID uint64
 		grantee    string
-		expResult  bool
+		expFound   bool
 	}{
 		{
 			name:       "grant does not exist returns false",
 			subspaceID: 1,
 			grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-			expResult:  false,
+			expFound:   false,
 		},
 		{
 			name: "existing grant returns true",
 			store: func(ctx sdk.Context) {
-				suite.k.SaveGrant(ctx, types.NewGrant(1,
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(1)))}))
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(1)))},
+				))
 			},
 			subspaceID: 1,
 			grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-			expResult:  true,
+			expFound:   true,
 		},
 	}
 
@@ -164,41 +179,47 @@ func (suite *KeeperTestSuite) TestKeeper_HasUserGrant() {
 			if tc.store != nil {
 				tc.store(ctx)
 			}
-			suite.Require().Equal(tc.expResult, suite.k.HasUserGrant(ctx, tc.subspaceID, tc.grantee))
+
+			result := suite.k.HasUserGrant(ctx, tc.subspaceID, tc.grantee)
+			suite.Require().Equal(tc.expFound, result)
 		})
 	}
 }
 
 func (suite *KeeperTestSuite) TestKeeper_GetUserGrant() {
 	testCases := []struct {
-		name        string
-		store       func(ctx sdk.Context)
-		subspaceID  uint64
-		grantee     string
-		shouldFound bool
-		expResult   types.Grant
+		name       string
+		store      func(ctx sdk.Context)
+		subspaceID uint64
+		grantee    string
+		expFound   bool
+		expGrant   types.Grant
 	}{
 		{
-			name:        "non-existing grant returns error",
-			subspaceID:  1,
-			grantee:     "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-			shouldFound: false,
+			name:       "non-existing grant returns error",
+			subspaceID: 1,
+			grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+			expFound:   false,
 		},
 		{
 			name: "existing grant returns no error",
 			store: func(ctx sdk.Context) {
-				suite.k.SaveGrant(ctx, types.NewGrant(1,
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(1)))}))
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(1)))},
+				))
 			},
-			subspaceID:  1,
-			grantee:     "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-			shouldFound: true,
-			expResult: types.NewGrant(1,
+			subspaceID: 1,
+			grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+			expFound:   true,
+			expGrant: types.NewGrant(
+				1,
 				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 				types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
-				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(1)))}),
+				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(1)))},
+			),
 		},
 	}
 
@@ -211,9 +232,8 @@ func (suite *KeeperTestSuite) TestKeeper_GetUserGrant() {
 			}
 
 			grant, found := suite.k.GetUserGrant(ctx, tc.subspaceID, tc.grantee)
-
-			suite.Require().Equal(tc.shouldFound, found)
-			suite.Require().Equal(tc.expResult, grant)
+			suite.Require().Equal(tc.expFound, found)
+			suite.Require().Equal(tc.expGrant, grant)
 		})
 	}
 }
@@ -237,10 +257,12 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteUserGrant() {
 		{
 			name: "existing grant is deleted properly",
 			store: func(ctx sdk.Context) {
-				suite.k.SaveGrant(ctx, types.NewGrant(1,
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(1)))}))
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(1)))},
+				))
 			},
 			subspaceID: 1,
 			grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
@@ -259,7 +281,6 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteUserGrant() {
 			}
 
 			suite.k.DeleteUserGrant(ctx, tc.subspaceID, tc.grantee)
-
 			if tc.check != nil {
 				tc.check(ctx)
 			}
@@ -276,26 +297,29 @@ func (suite *KeeperTestSuite) TestKeeper_HasGroupGrant() {
 		subspaceID uint64
 		granter    string
 		groupID    uint32
-		expResult  bool
+		expFound   bool
 	}{
 		{
 			name:       "grant does not exist returns false",
 			subspaceID: 1,
 			granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 			groupID:    1,
-			expResult:  false,
+			expFound:   false,
 		},
 		{
 			name: "existing grant returns true",
 			store: func(ctx sdk.Context) {
-				suite.k.SaveGrant(ctx, types.NewGrant(1,
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-					types.NewGroupGrantee(1), &feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(1)))}))
+					types.NewGroupGrantee(1),
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(1)))},
+				))
 			},
 			subspaceID: 1,
 			granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 			groupID:    1,
-			expResult:  true,
+			expFound:   true,
 		},
 	}
 
@@ -306,41 +330,45 @@ func (suite *KeeperTestSuite) TestKeeper_HasGroupGrant() {
 			if tc.store != nil {
 				tc.store(ctx)
 			}
-			suite.Require().Equal(tc.expResult, suite.k.HasGroupGrant(ctx, tc.subspaceID, tc.groupID))
+
+			result := suite.k.HasGroupGrant(ctx, tc.subspaceID, tc.groupID)
+			suite.Require().Equal(tc.expFound, result)
 		})
 	}
 }
 
 func (suite *KeeperTestSuite) TestKeeper_GetGroupGrant() {
 	testCases := []struct {
-		name        string
-		store       func(ctx sdk.Context)
-		subspaceID  uint64
-		granter     string
-		groupID     uint32
-		shouldFound bool
-		expResult   types.Grant
+		name       string
+		store      func(ctx sdk.Context)
+		subspaceID uint64
+		granter    string
+		groupID    uint32
+		expFound   bool
+		expGrant   types.Grant
 	}{
 		{
-			name:        "non-existing grant returns error",
-			subspaceID:  1,
-			granter:     "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-			groupID:     1,
-			shouldFound: false,
+			name:       "non-existing grant returns error",
+			subspaceID: 1,
+			granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+			groupID:    1,
+			expFound:   false,
 		},
 		{
 			name: "existing grant returns no error",
 			store: func(ctx sdk.Context) {
-				suite.k.SaveGrant(ctx, types.NewGrant(1,
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewGroupGrantee(1),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(1)))}))
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(1)))},
+				))
 			},
-			subspaceID:  1,
-			granter:     "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-			groupID:     1,
-			shouldFound: true,
-			expResult: types.NewGrant(
+			subspaceID: 1,
+			granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+			groupID:    1,
+			expFound:   true,
+			expGrant: types.NewGrant(
 				1,
 				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 				types.NewGroupGrantee(1),
@@ -356,10 +384,10 @@ func (suite *KeeperTestSuite) TestKeeper_GetGroupGrant() {
 			if tc.store != nil {
 				tc.store(ctx)
 			}
-			grant, found := suite.k.GetGroupGrant(ctx, tc.subspaceID, tc.groupID)
 
-			suite.Require().Equal(tc.shouldFound, found)
-			suite.Require().Equal(tc.expResult, grant)
+			grant, found := suite.k.GetGroupGrant(ctx, tc.subspaceID, tc.groupID)
+			suite.Require().Equal(tc.expFound, found)
+			suite.Require().Equal(tc.expGrant, grant)
 		})
 	}
 }
@@ -383,10 +411,12 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteGroupGrant() {
 		{
 			name: "existing grant is deleted properly",
 			store: func(ctx sdk.Context) {
-				suite.k.SaveGrant(ctx, types.NewGrant(1,
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(1)))}))
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(1)))},
+				))
 			},
 			subspaceID: 1,
 			groupID:    1,
@@ -405,7 +435,6 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteGroupGrant() {
 			}
 
 			suite.k.DeleteGroupGrant(ctx, tc.subspaceID, tc.groupID)
-
 			if tc.check != nil {
 				tc.check(ctx)
 			}
@@ -423,67 +452,75 @@ func (suite *KeeperTestSuite) TestKeeper_UseUserGrantedFees() {
 		grantee    string
 		fees       sdk.Coins
 		check      func(ctx sdk.Context)
-		expResult  bool
+		expUsed    bool
 	}{
 		{
 			name:       "no any grant exists returns false",
 			subspaceID: 1,
 			grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 			fees:       sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100))),
-			expResult:  false,
+			expUsed:    false,
 		},
 		{
 			name: "invalid user grant returns false",
 			store: func(ctx sdk.Context) {
-				suite.k.SaveGrant(ctx, types.NewGrant(1,
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))}))
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				))
 			},
 			subspaceID: 1,
 			grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 			fees:       sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(101))),
-			expResult:  false,
+			expUsed:    false,
 		},
 		{
 			name: "valid user grant returns true",
 			store: func(ctx sdk.Context) {
-				suite.k.SaveGrant(ctx, types.NewGrant(1,
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))}))
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				))
 			},
 			subspaceID: 1,
 			grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 			fees:       sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(10))),
+			expUsed:    true,
 			check: func(ctx sdk.Context) {
 				grant, found := suite.k.GetUserGrant(ctx, 1, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
 				suite.Require().True(found)
-				suite.Require().Equal(types.NewGrant(1,
+				suite.Require().Equal(types.NewGrant(
+					1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(90)))}),
-					grant)
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(90)))},
+				), grant)
 			},
-			expResult: true,
 		},
 		{
 			name: "use up user grant returns true",
 			store: func(ctx sdk.Context) {
-				suite.k.SaveGrant(ctx, types.NewGrant(1,
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))}))
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				))
 			},
 			subspaceID: 1,
 			grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 			fees:       sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100))),
+			expUsed:    true,
 			check: func(ctx sdk.Context) {
 				suite.Require().False(suite.k.HasUserGrant(ctx, 1, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"))
 			},
-			expResult: true,
 		},
 	}
+
 	for _, tc := range testCases {
 		tc := tc
 		suite.Run(tc.name, func() {
@@ -495,8 +532,8 @@ func (suite *KeeperTestSuite) TestKeeper_UseUserGrantedFees() {
 			granteeAddr, err := sdk.AccAddressFromBech32(tc.grantee)
 			suite.Require().NoError(err)
 
-			suite.Require().Equal(tc.expResult, suite.k.UseUserGrantedFees(ctx, tc.subspaceID, granteeAddr, tc.fees, nil))
-
+			used := suite.k.UseUserGrantedFees(ctx, tc.subspaceID, granteeAddr, tc.fees, nil)
+			suite.Require().Equal(tc.expUsed, used)
 			if tc.check != nil {
 				tc.check(ctx)
 			}
@@ -512,80 +549,89 @@ func (suite *KeeperTestSuite) TestKeeper_UseGroupGrantedFees() {
 		grantee    string
 		fees       sdk.Coins
 		check      func(ctx sdk.Context)
-		expResult  bool
+		expUsed    bool
 	}{
 		{
 			name:       "no any grant exists returns false",
 			subspaceID: 1,
 			grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 			fees:       sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100))),
-			expResult:  false,
+			expUsed:    false,
 		},
 		{
 			name: "user not in the granted group returns false",
 			store: func(ctx sdk.Context) {
-				suite.k.SaveGrant(ctx, types.NewGrant(1,
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewGroupGrantee(1),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))}))
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				))
 			},
 			subspaceID: 1,
 			grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 			fees:       sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100))),
-			expResult:  false,
+			expUsed:    false,
 		},
 		{
 			name: "invalid grant returns false",
 			store: func(ctx sdk.Context) {
 				suite.k.AddUserToGroup(ctx, 1, 1, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
-				suite.k.SaveGrant(ctx, types.NewGrant(1,
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewGroupGrantee(1),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))}))
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				))
 			},
 			subspaceID: 1,
 			grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 			fees:       sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(101))),
-			expResult:  false,
+			expUsed:    false,
 		},
 		{
 			name: "valid grant returns true",
 			store: func(ctx sdk.Context) {
 				suite.k.AddUserToGroup(ctx, 1, 1, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
-				suite.k.SaveGrant(ctx, types.NewGrant(1,
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewGroupGrantee(1),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))}))
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				))
 			},
 			subspaceID: 1,
 			grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 			fees:       sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(10))),
+			expUsed:    true,
 			check: func(ctx sdk.Context) {
 				grant, found := suite.k.GetGroupGrant(ctx, 1, 1)
 				suite.Require().True(found)
 				suite.Require().Equal(types.NewGrant(1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewGroupGrantee(1),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(90)))}),
-					grant)
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(90)))},
+				), grant)
 			},
-			expResult: true,
 		},
 		{
-			name: "use up grant returns true",
+			name: "consuming grant returns true",
 			store: func(ctx sdk.Context) {
 				suite.k.AddUserToGroup(ctx, 1, 1, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
-				suite.k.SaveGrant(ctx, types.NewGrant(1,
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-					types.NewGroupGrantee(1), &feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))}))
+					types.NewGroupGrantee(1),
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				))
 			},
 			subspaceID: 1,
 			grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 			fees:       sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100))),
+			expUsed:    true,
 			check: func(ctx sdk.Context) {
 				suite.Require().False(suite.k.HasGroupGrant(ctx, 1, 1))
 			},
-			expResult: true,
 		},
 	}
 	for _, tc := range testCases {
@@ -599,8 +645,8 @@ func (suite *KeeperTestSuite) TestKeeper_UseGroupGrantedFees() {
 			granteeAddr, err := sdk.AccAddressFromBech32(tc.grantee)
 			suite.Require().NoError(err)
 
-			suite.Require().Equal(tc.expResult, suite.k.UseGroupGrantedFees(ctx, tc.subspaceID, granteeAddr, tc.fees, nil))
-
+			used := suite.k.UseGroupGrantedFees(ctx, tc.subspaceID, granteeAddr, tc.fees, nil)
+			suite.Require().Equal(tc.expUsed, used)
 			if tc.check != nil {
 				tc.check(ctx)
 			}
@@ -615,43 +661,48 @@ func (suite *KeeperTestSuite) TestKeeper_UseGrantedFees() {
 		subspaceID uint64
 		grantee    string
 		fees       sdk.Coins
-		expResult  bool
+		expUsed    bool
 	}{
 		{
 			name:       "no any grant exists returns false",
 			subspaceID: 1,
 			grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 			fees:       sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100))),
-			expResult:  false,
+			expUsed:    false,
 		},
 		{
 			name: "valid user grant returns true",
 			store: func(ctx sdk.Context) {
-				suite.k.SaveGrant(ctx, types.NewGrant(1,
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))}))
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				))
 			},
 			subspaceID: 1,
 			grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 			fees:       sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(10))),
-			expResult:  true,
+			expUsed:    true,
 		},
 		{
 			name: "valid group grant returns true",
 			store: func(ctx sdk.Context) {
 				suite.k.AddUserToGroup(ctx, 1, 1, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
-				suite.k.SaveGrant(ctx, types.NewGrant(1,
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewGroupGrantee(1),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))}))
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				))
 			},
 			subspaceID: 1,
 			grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 			fees:       sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(10))),
-			expResult:  true,
+			expUsed:    true,
 		},
 	}
+
 	for _, tc := range testCases {
 		tc := tc
 		suite.Run(tc.name, func() {
@@ -663,7 +714,8 @@ func (suite *KeeperTestSuite) TestKeeper_UseGrantedFees() {
 			granteeAddr, err := sdk.AccAddressFromBech32(tc.grantee)
 			suite.Require().NoError(err)
 
-			suite.Require().Equal(tc.expResult, suite.k.UseGrantedFees(ctx, tc.subspaceID, granteeAddr, tc.fees, nil))
+			used := suite.k.UseGrantedFees(ctx, tc.subspaceID, granteeAddr, tc.fees, nil)
+			suite.Require().Equal(tc.expUsed, used)
 		})
 	}
 }
