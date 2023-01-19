@@ -14,9 +14,10 @@ import (
 	authzcli "github.com/cosmos/cosmos-sdk/x/authz/client/cli"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
+
+	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
 // DONTCOVER
