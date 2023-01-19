@@ -241,8 +241,8 @@ func (suite *TestSuite) TestSubspacesWasmQuerier_QueryCustom() {
 			),
 		},
 		{
-			name: "user allowances query request is parsed correctly",
-			request: buildUserAllowancesQueryRequest(suite.cdc, types.NewQueryAllowancesRequest(
+			name: "allowances query request is parsed correctly",
+			request: buildAllowancesQueryRequest(suite.cdc, types.NewQueryAllowancesRequest(
 				1,
 				types.NewUserGrantee(""),
 				nil,
