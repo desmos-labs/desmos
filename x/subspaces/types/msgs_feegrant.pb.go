@@ -26,7 +26,7 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // MsgGrantAllowance adds grants for the grantee to spend up allowance of fees
-// from the granter inside the given subspace
+// from the treasury inside the given subspace
 type MsgGrantAllowance struct {
 	// Id of the subspace inside which where the allowance should be granted
 	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`

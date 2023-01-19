@@ -150,7 +150,7 @@ service Msg {
     rpc RevokeAllowance(MsgRevokeUserAllowance) returns(MsgRevokeAllowanceResponse);
 }
 
-// MsgGrantAllowance adds permissions for the grantee to spend up allowance of fees from the granter inside the given subspace.
+// MsgGrantAllowance adds permissions for the grantee to spend up allowance of fees from the treasury inside the given subspace.
 message MsgGrantAllowance {
   // Id of the subspace where the granter grants the allowance to the grantee
   uint64 subspace_id = 1 [

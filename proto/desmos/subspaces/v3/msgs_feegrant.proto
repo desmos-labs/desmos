@@ -10,7 +10,7 @@ import "desmos/subspaces/v3/models_feegrant.proto";
 option go_package = "github.com/desmos-labs/desmos/v4/x/subspaces/types";
 
 // MsgGrantAllowance adds grants for the grantee to spend up allowance of fees
-// from the granter inside the given subspace
+// from the treasury inside the given subspace
 message MsgGrantAllowance {
   // Id of the subspace inside which where the allowance should be granted
   uint64 subspace_id = 1 [
