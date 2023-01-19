@@ -1,6 +1,8 @@
 package ante_test
 
 import (
+	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/testutil/testdata"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -133,6 +135,19 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 				return txBuilder.GetTx()
 			},
 			shouldErr: false,
+		},
+		{
+			name: "standard tx but failed in auth fee deduction phase returns error",
+			setup: func() {
+				suite.authDeductFeeDecorator.EXPECT().AnteHandle(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(suite.ctx, fmt.Errorf("error"))
+			},
+			buildTx: func() sdk.Tx {
+				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
+				txBuilder.SetMsgs(nonSubspaceMsg)
+				txBuilder.SetFeeAmount(feeAmount)
+				return txBuilder.GetTx()
+			},
+			shouldErr: true,
 		},
 		{
 			name: "valid tx with different subspaces msgs returns no error",
