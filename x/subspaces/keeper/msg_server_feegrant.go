@@ -29,8 +29,7 @@ func (k msgServer) GrantAllowance(goCtx context.Context, msg *types.MsgGrantAllo
 		),
 	}
 
-	grantee := msg.Grantee.GetCachedValue().(types.Grantee)
-	switch grantee := grantee.(type) {
+	switch grantee := msg.Grantee.GetCachedValue().(type) {
 	case *types.UserGrantee:
 		if k.HasUserGrant(ctx, msg.SubspaceID, grantee.User) {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "fee allowance already exists")
@@ -64,7 +63,7 @@ func (k msgServer) GrantAllowance(goCtx context.Context, msg *types.MsgGrantAllo
 	if err != nil {
 		return nil, err
 	}
-	k.Keeper.SaveGrant(ctx, types.NewGrant(msg.SubspaceID, msg.Granter, grantee, allowance))
+	k.Keeper.SaveGrant(ctx, types.NewGrant(msg.SubspaceID, msg.Granter, msg.Grantee.GetCachedValue().(types.Grantee), allowance))
 	ctx.EventManager().EmitEvents(events)
 	return &types.MsgGrantAllowanceResponse{}, nil
 }
