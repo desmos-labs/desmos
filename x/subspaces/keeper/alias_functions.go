@@ -345,6 +345,7 @@ func (k Keeper) GetSectionUserPermissions(ctx sdk.Context, subspaceID uint64, se
 
 // --------------------------------------------------------------------------------------------------------------------
 
+// GetAllGrants returns all the grants inside x/subspace
 func (k Keeper) GetAllGrants(ctx sdk.Context) []types.Grant {
 	return append(k.GetAllUserGrants(ctx), k.GetAllUserGroupsGrants(ctx)...)
 }

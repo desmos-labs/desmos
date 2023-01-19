@@ -150,17 +150,17 @@ func (m *MockSubspacesKeeper) EXPECT() *MockSubspacesKeeperMockRecorder {
 }
 
 // UseGrantedFees mocks base method.
-func (m *MockSubspacesKeeper) UseGrantedFees(ctx types.Context, subspaceID uint64, grantee types.AccAddress, fee types.Coins, msgs []types.Msg) bool {
+func (m *MockSubspacesKeeper) UseGrantedFees(ctx types.Context, subspaceID uint64, grantee types.AccAddress, fees types.Coins, msgs []types.Msg) bool {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UseGrantedFees", ctx, subspaceID, grantee, fee, msgs)
+	ret := m.ctrl.Call(m, "UseGrantedFees", ctx, subspaceID, grantee, fees, msgs)
 	ret0, _ := ret[0].(bool)
 	return ret0
 }
 
 // UseGrantedFees indicates an expected call of UseGrantedFees.
-func (mr *MockSubspacesKeeperMockRecorder) UseGrantedFees(ctx, subspaceID, grantee, fee, msgs interface{}) *gomock.Call {
+func (mr *MockSubspacesKeeperMockRecorder) UseGrantedFees(ctx, subspaceID, grantee, fees, msgs interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UseGrantedFees", reflect.TypeOf((*MockSubspacesKeeper)(nil).UseGrantedFees), ctx, subspaceID, grantee, fee, msgs)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UseGrantedFees", reflect.TypeOf((*MockSubspacesKeeper)(nil).UseGrantedFees), ctx, subspaceID, grantee, fees, msgs)
 }
 
 // MockAuthDeductFeeDecorator is a mock of AuthDeductFeeDecorator interface.

@@ -28,19 +28,19 @@ func getGrantKey(grant types.Grant) []byte {
 	}
 }
 
-// HasUserGrant tells whether the user grant having the given granter and grantee exists inside the provided subspace
+// HasUserGrant tells whether the user grant associated to the given user exists inside the provided subspace
 func (k Keeper) HasUserGrant(ctx sdk.Context, subspaceID uint64, grantee string) bool {
 	return ctx.KVStore(k.storeKey).Has(types.UserAllowanceKey(subspaceID, grantee))
 }
 
-// DeleteSection deletes the grant having the given granter and grantee from the subspace with the provided id
+// DeleteSection deletes the grant associated the given user grantee from the subspace with the provided id
 func (k Keeper) DeleteUserGrant(ctx sdk.Context, subspaceID uint64, grantee string) {
 	store := ctx.KVStore(k.storeKey)
 	key := types.UserAllowanceKey(subspaceID, grantee)
 	store.Delete(key)
 }
 
-// GetUserGrant returns the grant having the granter and grantee from the provided subspace.
+// GetUserGrant returns the grant associated to the given user from the provided subspace.
 // If there is no grant associated with the info the function will return false.
 func (k Keeper) GetUserGrant(ctx sdk.Context, subspaceID uint64, grantee string) (types.Grant, bool) {
 	if !k.HasUserGrant(ctx, subspaceID, grantee) {
@@ -56,19 +56,19 @@ func (k Keeper) GetUserGrant(ctx sdk.Context, subspaceID uint64, grantee string)
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// HasUserGrant tells whether the group grant having the given granter and group id exists inside the provided subspace
+// HasUserGrant tells whether the group grant associated to the given group id exists inside the provided subspace
 func (k Keeper) HasGroupGrant(ctx sdk.Context, subspaceID uint64, groupID uint32) bool {
 	return ctx.KVStore(k.storeKey).Has(types.GroupAllowanceKey(subspaceID, groupID))
 }
 
-// DeleteSection deletes the grant having the given granter and group id from the subspace with the provided id
+// DeleteSection deletes the grant having associated to the given group id from the subspace with the provided id
 func (k Keeper) DeleteGroupGrant(ctx sdk.Context, subspaceID uint64, groupID uint32) {
 	store := ctx.KVStore(k.storeKey)
 	key := types.GroupAllowanceKey(subspaceID, groupID)
 	store.Delete(key)
 }
 
-// GetGroupGrant returns the grant having the granter and group id from the provided subspace.
+// GetGroupGrant returns the grant associated to the given group id from the provided subspace.
 // If there is no grant associated with the info the function will return an error.
 func (k Keeper) GetGroupGrant(ctx sdk.Context, subspaceID uint64, groupID uint32) (types.Grant, bool) {
 	if !k.HasGroupGrant(ctx, subspaceID, groupID) {
@@ -84,20 +84,20 @@ func (k Keeper) GetGroupGrant(ctx sdk.Context, subspaceID uint64, groupID uint32
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// UseGrantedFees will try to pay the given fee from the granter's account as requested by the grantee
-// if no valid allowance exists, then return false to show the fee will not be paid in this phase.
-func (k Keeper) UseGrantedFees(ctx sdk.Context, subspaceID uint64, grantee sdk.AccAddress, fee sdk.Coins, msgs []sdk.Msg) bool {
-	used := k.UseUserGrantedFees(ctx, subspaceID, grantee, fee, msgs)
+// UseGrantedFees will try to pay the given fees from the treasury account as requested by the grantee
+// if no valid allowance exists, then returns false to show the fees will not be paid in this phase.
+func (k Keeper) UseGrantedFees(ctx sdk.Context, subspaceID uint64, grantee sdk.AccAddress, fees sdk.Coins, msgs []sdk.Msg) bool {
+	used := k.UseUserGrantedFees(ctx, subspaceID, grantee, fees, msgs)
 	if used {
 		return used
 	}
-	used = k.UseGroupGrantedFees(ctx, subspaceID, grantee, fee, msgs)
+	used = k.UseGroupGrantedFees(ctx, subspaceID, grantee, fees, msgs)
 	return used
 }
 
-// UseUserGrantedFees will try to use the user grant to pay the given fee from the granter's account as requested by the grantee.
-// if no valid allowance exists, then return false to show the fee will not be paid in this phase.
-func (k Keeper) UseUserGrantedFees(ctx sdk.Context, subspaceID uint64, grantee sdk.AccAddress, fee sdk.Coins, msgs []sdk.Msg) (used bool) {
+// UseUserGrantedFees will try to use the user grant to pay the given fees from treasury as requested by the grantee.
+// if no valid allowance exists, then returns false to show the fees will not be paid in this phase.
+func (k Keeper) UseUserGrantedFees(ctx sdk.Context, subspaceID uint64, grantee sdk.AccAddress, fees sdk.Coins, msgs []sdk.Msg) (used bool) {
 	grant, found := k.GetUserGrant(ctx, subspaceID, grantee.String())
 	if !found {
 		return false
@@ -108,7 +108,7 @@ func (k Keeper) UseUserGrantedFees(ctx sdk.Context, subspaceID uint64, grantee s
 	if err != nil {
 		return false
 	}
-	remove, err := allowance.Accept(ctx, fee, msgs)
+	remove, err := allowance.Accept(ctx, fees, msgs)
 	if remove {
 		k.DeleteUserGrant(ctx, subspaceID, grantee.String())
 	}
@@ -127,7 +127,7 @@ func (k Keeper) UseUserGrantedFees(ctx sdk.Context, subspaceID uint64, grantee s
 }
 
 // UseGroupGrantedFees will try to use group grant to pay the given fee from the granter's account as requested by the grantee.
-// if no valid allowance exists, then return false to show the fee will not be paid in this phase.
+// if no valid allowance exists, then returns false to show the fees will not be paid in this phase.
 func (k Keeper) UseGroupGrantedFees(ctx sdk.Context, subspaceID uint64, grantee sdk.AccAddress, fee sdk.Coins, msgs []sdk.Msg) (used bool) {
 	k.IterateSubspaceUserGroupGrants(ctx, subspaceID, func(grant types.Grant) (stop bool) {
 		groupGrantee := grant.Grantee.GetCachedValue().(*types.GroupGrantee)

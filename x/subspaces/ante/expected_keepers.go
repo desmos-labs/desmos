@@ -22,7 +22,7 @@ type BankKeeper interface {
 
 // SubspacesKeeper represents the expected keeper used to interact with x/subspaces
 type SubspacesKeeper interface {
-	UseGrantedFees(ctx sdk.Context, subspaceID uint64, grantee sdk.AccAddress, fee sdk.Coins, msgs []sdk.Msg) bool
+	UseGrantedFees(ctx sdk.Context, subspaceID uint64, grantee sdk.AccAddress, fees sdk.Coins, msgs []sdk.Msg) bool
 }
 
 // AuthDeductFeeDecorator represents the expected keeper used to interact with auth.DeductFeeDecorator

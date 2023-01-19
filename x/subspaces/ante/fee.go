@@ -72,7 +72,7 @@ func isValidSubspaceTx(tx sdk.Tx) (uint64, bool) {
 
 // tryHandleSubspaceTx handles the fee deduction for subspace transaction, returns false if the process is failed
 func (dfd DeductFeeDecorator) tryHandleSubspaceTx(ctx sdk.Context, tx sdk.FeeTx, subspaceID uint64) (newCtx sdk.Context, success bool, err error) {
-	fee := tx.GetFee()
+	fees := tx.GetFee()
 	feePayer := tx.FeePayer()
 	feeGranter := tx.FeeGranter()
 	deductFeesFrom := feePayer
@@ -86,7 +86,7 @@ func (dfd DeductFeeDecorator) tryHandleSubspaceTx(ctx sdk.Context, tx sdk.FeeTx,
 		return ctx, false, fmt.Errorf("fee collector module account (%s) has not been set", authtypes.FeeCollectorName)
 	}
 
-	used := dfd.sk.UseGrantedFees(ctx, subspaceID, feePayer, fee, tx.GetMsgs())
+	used := dfd.sk.UseGrantedFees(ctx, subspaceID, feePayer, fees, tx.GetMsgs())
 	if !used {
 		return ctx, false, nil
 	}
@@ -98,8 +98,8 @@ func (dfd DeductFeeDecorator) tryHandleSubspaceTx(ctx sdk.Context, tx sdk.FeeTx,
 	}
 
 	// deduct the fees
-	if !fee.IsZero() {
-		err = ante.DeductFees(dfd.bk, ctx, deductFeesFromAcc, fee)
+	if !fees.IsZero() {
+		err = ante.DeductFees(dfd.bk, ctx, deductFeesFromAcc, fees)
 		if err != nil {
 			return ctx, false, err
 		}
@@ -108,7 +108,7 @@ func (dfd DeductFeeDecorator) tryHandleSubspaceTx(ctx sdk.Context, tx sdk.FeeTx,
 	events := sdk.Events{
 		sdk.NewEvent(
 			sdk.EventTypeTx,
-			sdk.NewAttribute(sdk.AttributeKeyFee, fee.String()),
+			sdk.NewAttribute(sdk.AttributeKeyFee, fees.String()),
 			sdk.NewAttribute(sdk.AttributeKeyFeePayer, deductFeesFrom.String()),
 		),
 	}
