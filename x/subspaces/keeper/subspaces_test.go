@@ -365,7 +365,8 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteSubspace() {
 				suite.Require().Empty(suite.k.GetSubspaceUserGrants(ctx, 1))
 
 				// Make sure the group grants are deleted
-				suite.Require().Empty(suite.k.GetSubspaceUserGroupsGrants(ctx, 1))
+				groupsGrants := suite.k.GetSubspaceUserGroupsGrants(ctx, 1)
+				suite.Require().Empty(groupsGrants)
 			},
 		},
 	}
