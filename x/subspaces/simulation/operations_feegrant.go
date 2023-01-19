@@ -159,6 +159,7 @@ func randomRevokeAllowanceFields(
 		skip = true
 		return
 	}
+
 	grant := RandomGrant(r, grants)
 	subspaceID = grant.SubspaceID
 	grantee = grant.Grantee.GetCachedValue().(types.Grantee)

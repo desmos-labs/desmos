@@ -216,9 +216,10 @@ func randomGroupGrants(r *rand.Rand, accounts []simtypes.Account, groups []types
 	return grants
 }
 
+// containsGrant checks if the grants does exist or not
 func containsGrant(slice []types.Grant, grant types.Grant) bool {
 	for _, g := range slice {
-		if g.SubspaceID == grant.SubspaceID && g.Granter == grant.Granter && g.Grantee.Equal(grant.Grantee) {
+		if g.SubspaceID == grant.SubspaceID && g.Grantee.Equal(grant.Grantee) {
 			return true
 		}
 	}
