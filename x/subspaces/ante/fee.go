@@ -33,8 +33,8 @@ func NewDeductFeeDecorator(authDeductFeeDecorator AuthDeductFeeDecorator, ak Acc
 
 // AnteHandle implements AnteDecorator
 func (dfd DeductFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, next sdk.AnteHandler) (newCtx sdk.Context, err error) {
-	id, ok := GetTxSubspaceID(tx)
-	if !ok {
+	subspaceID, isSubspaceTx := GetTxSubspaceID(tx)
+	if !isSubspaceTx {
 		return dfd.authDeductFeeDecorator.AnteHandle(ctx, tx, simulate, next)
 	}
 
@@ -43,7 +43,7 @@ func (dfd DeductFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bo
 		return ctx, sdkerrors.Wrap(sdkerrors.ErrTxDecode, "Tx must be a FeeTx")
 	}
 
-	newCtx, success, err := dfd.tryHandleSubspaceTx(ctx, feeTx, id)
+	newCtx, success, err := dfd.tryHandleSubspaceTx(ctx, feeTx, subspaceID)
 	if err != nil {
 		return newCtx, err
 	}
