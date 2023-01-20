@@ -276,6 +276,8 @@ message PermissionDetail {
   }
 }
 
+// --------------------------------------------------------------------------------------------------------------------
+
 // QueryUserAllowancesRequest is the request type for the Query/UserAllowances
 // RPC method
 message QueryUserAllowancesRequest {
