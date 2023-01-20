@@ -4,12 +4,14 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/spf13/cobra"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
+
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
-	"github.com/spf13/cobra"
 )
 
 // DONTCOVER

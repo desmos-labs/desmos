@@ -31,6 +31,45 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 		expEvents sdk.Events
 	}{
 		{
+			name: "standard tx returns no error",
+			setup: func() {
+				suite.authDeductFeeDecorator.EXPECT().AnteHandle(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(suite.ctx, nil)
+			},
+			buildTx: func() sdk.Tx {
+				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
+				txBuilder.SetMsgs(nonSubspaceMsg)
+				txBuilder.SetFeeAmount(feeAmount)
+				return txBuilder.GetTx()
+			},
+			shouldErr: false,
+		},
+		{
+			name: "standard tx but failed in auth fee deduction phase returns error",
+			setup: func() {
+				suite.authDeductFeeDecorator.EXPECT().AnteHandle(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(suite.ctx, fmt.Errorf("error"))
+			},
+			buildTx: func() sdk.Tx {
+				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
+				txBuilder.SetMsgs(nonSubspaceMsg)
+				txBuilder.SetFeeAmount(feeAmount)
+				return txBuilder.GetTx()
+			},
+			shouldErr: true,
+		},
+		{
+			name: "valid tx with different subspaces msgs returns no error",
+			setup: func() {
+				suite.authDeductFeeDecorator.EXPECT().AnteHandle(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(suite.ctx, nil)
+			},
+			buildTx: func() sdk.Tx {
+				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
+				txBuilder.SetMsgs(subspaceMsg, otherSubspaceMsg)
+				txBuilder.SetFeeAmount(feeAmount)
+				return txBuilder.GetTx()
+			},
+			shouldErr: false,
+		},
+		{
 			name: "non treasury account granter using auth decorator",
 			setup: func() {
 				suite.authDeductFeeDecorator.EXPECT().AnteHandle(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(suite.ctx, nil)
@@ -132,45 +171,6 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 			buildTx: func() sdk.Tx {
 				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
 				txBuilder.SetMsgs(subspaceMsg)
-				txBuilder.SetFeeAmount(feeAmount)
-				return txBuilder.GetTx()
-			},
-			shouldErr: false,
-		},
-		{
-			name: "standard tx returns no error",
-			setup: func() {
-				suite.authDeductFeeDecorator.EXPECT().AnteHandle(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(suite.ctx, nil)
-			},
-			buildTx: func() sdk.Tx {
-				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
-				txBuilder.SetMsgs(nonSubspaceMsg)
-				txBuilder.SetFeeAmount(feeAmount)
-				return txBuilder.GetTx()
-			},
-			shouldErr: false,
-		},
-		{
-			name: "standard tx but failed in auth fee deduction phase returns error",
-			setup: func() {
-				suite.authDeductFeeDecorator.EXPECT().AnteHandle(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(suite.ctx, fmt.Errorf("error"))
-			},
-			buildTx: func() sdk.Tx {
-				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
-				txBuilder.SetMsgs(nonSubspaceMsg)
-				txBuilder.SetFeeAmount(feeAmount)
-				return txBuilder.GetTx()
-			},
-			shouldErr: true,
-		},
-		{
-			name: "valid tx with different subspaces msgs returns no error",
-			setup: func() {
-				suite.authDeductFeeDecorator.EXPECT().AnteHandle(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(suite.ctx, nil)
-			},
-			buildTx: func() sdk.Tx {
-				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
-				txBuilder.SetMsgs(subspaceMsg, otherSubspaceMsg)
 				txBuilder.SetFeeAmount(feeAmount)
 				return txBuilder.GetTx()
 			},

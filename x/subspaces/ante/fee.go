@@ -33,26 +33,31 @@ func NewDeductFeeDecorator(authDeductFeeDecorator AuthDeductFeeDecorator, ak Acc
 
 // AnteHandle implements AnteDecorator
 func (dfd DeductFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, next sdk.AnteHandler) (newCtx sdk.Context, err error) {
-	if id, ok := isValidSubspaceTx(tx); ok {
-		feeTx, ok := tx.(sdk.FeeTx)
-		if !ok {
-			return ctx, sdkerrors.Wrap(sdkerrors.ErrTxDecode, "Tx must be a FeeTx")
-		}
-
-		newCtx, success, err := dfd.tryHandleSubspaceTx(ctx, feeTx, id)
-		if err != nil {
-			return newCtx, err
-		}
-		// move to next ante if tryHandleSubspaceTx is success, or using auth.DeductFeeDecorator instead
-		if success {
-			return next(newCtx, tx, simulate)
-		}
+	id, ok := GetTxSubspaceID(tx)
+	if !ok {
+		return dfd.authDeductFeeDecorator.AnteHandle(ctx, tx, simulate, next)
 	}
+
+	feeTx, ok := tx.(sdk.FeeTx)
+	if !ok {
+		return ctx, sdkerrors.Wrap(sdkerrors.ErrTxDecode, "Tx must be a FeeTx")
+	}
+
+	newCtx, success, err := dfd.tryHandleSubspaceTx(ctx, feeTx, id)
+	if err != nil {
+		return newCtx, err
+	}
+
+	// move to next ante if tryHandleSubspaceTx is success, or using auth.DeductFeeDecorator instead
+	if success {
+		return next(newCtx, tx, simulate)
+	}
+
 	return dfd.authDeductFeeDecorator.AnteHandle(ctx, tx, simulate, next)
 }
 
-// isValidSubspaceTx returns the valid subspace id, returns false if it is invalid
-func isValidSubspaceTx(tx sdk.Tx) (uint64, bool) {
+// GetTxSubspaceID  returns the valid subspace id, returns false if it is invalid
+func GetTxSubspaceID(tx sdk.Tx) (uint64, bool) {
 	subspaceID := uint64(0)
 	for _, msg := range tx.GetMsgs() {
 		if subspaceMsg, ok := msg.(types.SubspaceMsg); ok {
