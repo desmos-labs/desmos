@@ -179,7 +179,7 @@ func randomUserGrants(r *rand.Rand, accounts []simtypes.Account, subspaces []typ
 	if len(subspaces) == 0 {
 		return nil
 	}
-	grantsNumber := r.Intn(30)
+	grantsNumber := r.Intn(10)
 	grants := make([]types.Grant, grantsNumber)
 	for i := 0; i < grantsNumber; {
 		subspace := RandomSubspace(r, subspaces)
@@ -202,7 +202,7 @@ func randomGroupGrants(r *rand.Rand, accounts []simtypes.Account, groups []types
 	if len(groups) == 0 {
 		return nil
 	}
-	grantsNumber := r.Intn(30)
+	grantsNumber := r.Intn(10)
 	grants := make([]types.Grant, grantsNumber)
 	for i := 0; i < grantsNumber; {
 		group := RandomGroup(r, groups)

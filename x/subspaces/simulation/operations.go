@@ -175,10 +175,10 @@ func WeightedOperations(
 		},
 	)
 
-	var weightMsgRevokeUserAllowance int
-	appParams.GetOrGenerate(cdc, OpWeightMsgRevokeAllowance, &weightMsgRevokeUserAllowance, nil,
+	var weightMsgRevokeAllowance int
+	appParams.GetOrGenerate(cdc, OpWeightMsgRevokeAllowance, &weightMsgRevokeAllowance, nil,
 		func(_ *rand.Rand) {
-			weightMsgRevokeUserAllowance = params.DefaultWeightMsgRevokeAllowance
+			weightMsgRevokeAllowance = params.DefaultWeightMsgRevokeAllowance
 		},
 	)
 
@@ -256,7 +256,7 @@ func WeightedOperations(
 			SimulateMsgGrantAllowance(k, ak, bk, fk),
 		),
 		sim.NewWeightedOperation(
-			weightMsgRevokeUserAllowance,
+			weightMsgRevokeAllowance,
 			SimulateMsgRevokeAllowance(k, ak, bk, fk),
 		),
 	}
