@@ -100,33 +100,37 @@ func NewPermissionDetailGroup(subspaceID uint64, sectionID uint32, groupID uint3
 	}
 }
 
-// NewQueryAllowancesRequest returns a new QueryAllowancesRequest instance
-func NewQueryAllowancesRequest(subspaceID uint64, grantee Grantee, pagination *query.PageRequest) *QueryAllowancesRequest {
-	var granteeAny *codectypes.Any
-
-	if grantee != nil {
-		any, err := codectypes.NewAnyWithValue(grantee)
-		if err != nil {
-			panic("failed to pack target to any type")
-		}
-		granteeAny = any
-	}
-
-	return &QueryAllowancesRequest{
+// NewQueryUserAllowancesRequest returns a new QueryUserAllowancesRequest instance
+func NewQueryUserAllowancesRequest(subspaceID uint64, grantee string, pagination *query.PageRequest) *QueryUserAllowancesRequest {
+	return &QueryUserAllowancesRequest{
 		SubspaceId: subspaceID,
-		Grantee:    granteeAny,
+		Grantee:    grantee,
 		Pagination: pagination,
 	}
 }
 
 // UnpackInterfaces implements codectypes.UnpackInterfacesMessage
-func (r *QueryAllowancesRequest) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
-	var grantee Grantee
-	return unpacker.UnpackAny(r.Grantee, &grantee)
+func (r *QueryUserAllowancesResponse) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
+	for _, grant := range r.Grants {
+		err := grant.UnpackInterfaces(unpacker)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// NewQueryGroupAllowancesRequest returns a new QueryGroupAllowancesRequest instance
+func NewQueryGroupAllowancesRequest(subspaceID uint64, groupID uint32, pagination *query.PageRequest) *QueryGroupAllowancesRequest {
+	return &QueryGroupAllowancesRequest{
+		SubspaceId: subspaceID,
+		GroupId:    groupID,
+		Pagination: pagination,
+	}
 }
 
 // UnpackInterfaces implements codectypes.UnpackInterfacesMessage
-func (r *QueryAllowancesResponse) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
+func (r *QueryGroupAllowancesResponse) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 	for _, grant := range r.Grants {
 		err := grant.UnpackInterfaces(unpacker)
 		if err != nil {

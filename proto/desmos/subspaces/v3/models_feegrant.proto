@@ -36,6 +36,7 @@ message Grant {
 message UserGrantee {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
+  option (cosmos_proto.implements_interface) = "Grantee";
 
   string user = 1 [ (gogoproto.moretags) = "yaml:\"user\"" ];
 }
@@ -44,6 +45,7 @@ message UserGrantee {
 message GroupGrantee {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
+  option (cosmos_proto.implements_interface) = "Grantee";
 
   uint32 group_id = 1 [
     (gogoproto.customname) = "GroupID",

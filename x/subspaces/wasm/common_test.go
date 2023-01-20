@@ -141,9 +141,15 @@ func buildUserPermissionsQueryRequest(cdc codec.Codec, query *types.QueryUserPer
 	return bz
 }
 
-func buildAllowancesQueryRequest(cdc codec.Codec, query *types.QueryAllowancesRequest) json.RawMessage {
+func buildUserAllowancesQueryRequest(cdc codec.Codec, query *types.QueryUserAllowancesRequest) json.RawMessage {
 	raw := json.RawMessage(cdc.MustMarshalJSON(query))
-	bz, _ := json.Marshal(types.SubspacesQuery{Allowances: &raw})
+	bz, _ := json.Marshal(types.SubspacesQuery{UserAllowances: &raw})
+	return bz
+}
+
+func buildGroupAllowancesQueryRequest(cdc codec.Codec, query *types.QueryGroupAllowancesRequest) json.RawMessage {
+	raw := json.RawMessage(cdc.MustMarshalJSON(query))
+	bz, _ := json.Marshal(types.SubspacesQuery{GroupAllowances: &raw})
 	return bz
 }
 

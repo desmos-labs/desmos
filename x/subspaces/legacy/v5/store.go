@@ -15,7 +15,7 @@ func MigrateStore(ctx sdk.Context, storeKey sdk.StoreKey, cdc codec.BinaryCodec,
 	if err != nil {
 		return err
 	}
-	return migrateUserAccountsInUserGroups(ctx, storeKey, accountKeeper)
+	return createNonExistingAccounts(ctx, storeKey, accountKeeper)
 }
 
 // migrateSubspaces migrates subspace to have new treasury address generated from subspace id
@@ -48,8 +48,8 @@ func migrateSubspaces(ctx sdk.Context, storeKey sdk.StoreKey, cdc codec.BinaryCo
 	return nil
 }
 
-// migrateUserAccountsInUserGroups creates an account for users who are in a user group
-func migrateUserAccountsInUserGroups(ctx sdk.Context, key sdk.StoreKey, accountKeeper AccountKeeper) error {
+// createNonExistingAccounts creates an account for users who are in a user group
+func createNonExistingAccounts(ctx sdk.Context, key sdk.StoreKey, accountKeeper AccountKeeper) error {
 	groupsStore := prefix.NewStore(ctx.KVStore(key), types.GroupsMembersPrefix)
 	iterator := groupsStore.Iterator(nil, nil)
 	defer iterator.Close()

@@ -88,12 +88,7 @@ func (k Keeper) GetGroupGrant(ctx sdk.Context, subspaceID uint64, groupID uint32
 // UseGrantedFees will try to pay the given fees from the treasury account as requested by the grantee.
 // If no valid allowance exists, then returns false to show the fees will not be paid in this phase.
 func (k Keeper) UseGrantedFees(ctx sdk.Context, subspaceID uint64, grantee sdk.AccAddress, fees sdk.Coins, msgs []sdk.Msg) bool {
-	used := k.UseUserGrantedFees(ctx, subspaceID, grantee, fees, msgs)
-	if used {
-		return used
-	}
-	used = k.UseGroupGrantedFees(ctx, subspaceID, grantee, fees, msgs)
-	return used
+	return k.UseUserGrantedFees(ctx, subspaceID, grantee, fees, msgs) || k.UseGroupGrantedFees(ctx, subspaceID, grantee, fees, msgs)
 }
 
 // UseUserGrantedFees will try to use the user grant to pay the given fees from treasury as requested by the grantee.

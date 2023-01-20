@@ -26,5 +26,6 @@ type SubspacesQuery struct {
 	UserGroup        *json.RawMessage `json:"user_group"`
 	UserGroupMembers *json.RawMessage `json:"user_group_members"`
 	UserPermissions  *json.RawMessage `json:"user_permissions"`
-	Allowances       *json.RawMessage `json:"allowances"`
+	UserAllowances   *json.RawMessage `json:"user_allowances"`
+	GroupAllowances  *json.RawMessage `json:"group_allowances"`
 }

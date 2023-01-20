@@ -775,22 +775,22 @@ func (suite *KeeperTestSuite) TestQueryServer_UserPermissions() {
 	}
 }
 
-func (suite *KeeperTestSuite) TestQueryServer_Allowances() {
+func (suite *KeeperTestSuite) TestQueryServer_UserAllowances() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
-		req       *types.QueryAllowancesRequest
+		req       *types.QueryUserAllowancesRequest
 		shouldErr bool
 		expGrants []types.Grant
 	}{
 		{
 			name:      "invalid subspace id returns error",
-			req:       types.NewQueryAllowancesRequest(0, types.NewGroupGrantee(1), nil),
+			req:       types.NewQueryUserAllowancesRequest(0, "", nil),
 			shouldErr: true,
 		},
 		{
 			name:      "not found subspace returns error",
-			req:       types.NewQueryAllowancesRequest(1, types.NewGroupGrantee(1), nil),
+			req:       types.NewQueryUserAllowancesRequest(1, "", nil),
 			shouldErr: true,
 		},
 		{
@@ -798,19 +798,21 @@ func (suite *KeeperTestSuite) TestQueryServer_Allowances() {
 			store: func(ctx sdk.Context) {
 				suite.k.SaveSubspace(ctx, types.NewSubspace(1, "test", "test", "owner", "treasury", "creator", time.Now()))
 
-				suite.k.SaveGrant(ctx, types.NewGrant(1,
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
 					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
 				))
 
-				suite.k.SaveGrant(ctx, types.NewGrant(1,
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					types.NewUserGrantee("cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69"),
 					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
 				))
 			},
-			req:       types.NewQueryAllowancesRequest(1, types.NewUserGrantee(""), nil),
+			req:       types.NewQueryUserAllowancesRequest(1, "", nil),
 			shouldErr: false,
 			expGrants: []types.Grant{
 				types.NewGrant(
@@ -838,13 +840,14 @@ func (suite *KeeperTestSuite) TestQueryServer_Allowances() {
 					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
 				))
 
-				suite.k.SaveGrant(ctx, types.NewGrant(1,
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					types.NewUserGrantee("cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69"),
 					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
 				))
 			},
-			req:       types.NewQueryAllowancesRequest(1, types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"), nil),
+			req:       types.NewQueryUserAllowancesRequest(1, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5", nil),
 			shouldErr: false,
 			expGrants: []types.Grant{
 				types.NewGrant(
@@ -854,6 +857,44 @@ func (suite *KeeperTestSuite) TestQueryServer_Allowances() {
 					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
 				),
 			},
+		},
+	}
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			res, err := suite.k.UserAllowances(sdk.WrapSDKContext(ctx), tc.req)
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(tc.expGrants, res.Grants)
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestQueryServerGroupAllowances() {
+	testCases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		req       *types.QueryGroupAllowancesRequest
+		shouldErr bool
+		expGrants []types.Grant
+	}{
+		{
+			name:      "invalid subspace id returns error",
+			req:       types.NewQueryGroupAllowancesRequest(0, 1, nil),
+			shouldErr: true,
+		},
+		{
+			name:      "not found subspace returns error",
+			req:       types.NewQueryGroupAllowancesRequest(1, 1, nil),
+			shouldErr: true,
 		},
 		{
 			name: "group grants query without group id returns the correct data",
@@ -869,13 +910,14 @@ func (suite *KeeperTestSuite) TestQueryServer_Allowances() {
 					types.NewGroupGrantee(1),
 					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
 				))
-				suite.k.SaveGrant(ctx, types.NewGrant(1,
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					types.NewGroupGrantee(2),
 					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
 				))
 			},
-			req:       types.NewQueryAllowancesRequest(1, types.NewGroupGrantee(0), nil),
+			req:       types.NewQueryGroupAllowancesRequest(1, 0, nil),
 			shouldErr: false,
 			expGrants: []types.Grant{
 				types.NewGrant(1,
@@ -898,18 +940,20 @@ func (suite *KeeperTestSuite) TestQueryServer_Allowances() {
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(1, 0, 1, "test", "tets", nil))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(1, 0, 2, "test", "tets", nil))
 
-				suite.k.SaveGrant(ctx, types.NewGrant(1,
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					types.NewGroupGrantee(1),
 					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
 				))
-				suite.k.SaveGrant(ctx, types.NewGrant(1,
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					types.NewGroupGrantee(2),
 					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
 				))
 			},
-			req:       types.NewQueryAllowancesRequest(1, types.NewGroupGrantee(1), nil),
+			req:       types.NewQueryGroupAllowancesRequest(1, 1, nil),
 			shouldErr: false,
 			expGrants: []types.Grant{
 				types.NewGrant(
@@ -929,7 +973,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Allowances() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.Allowances(sdk.WrapSDKContext(ctx), tc.req)
+			res, err := suite.k.GroupAllowances(sdk.WrapSDKContext(ctx), tc.req)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {

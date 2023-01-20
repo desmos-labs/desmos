@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/feegrant"
@@ -20,28 +19,19 @@ import (
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
-func (s *IntegrationTestSuite) TestCmdQueryAllowances() {
-	userGranteeAny, err := codectypes.NewAnyWithValue(types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"))
-	s.Require().NoError(err)
-
-	groupGranteeAny, err := codectypes.NewAnyWithValue(types.NewGroupGrantee(1))
-	s.Require().NoError(err)
-
-	allowanceAny, err := codectypes.NewAnyWithValue(&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))})
-	s.Require().NoError(err)
-
+func (s *IntegrationTestSuite) TestCmdQueryUserAllowances() {
 	val := s.network.Validators[0]
 	testCases := []struct {
 		name        string
 		args        []string
 		shouldErr   bool
-		expResponse types.QueryAllowancesResponse
+		expResponse types.QueryUserAllowancesResponse
 	}{
 		{
 			name: "invalid subspace id returns error",
 			args: []string{
-				"x",
-				"user",
+				"subspace",
+				"grantee",
 			},
 			shouldErr: true,
 		},
@@ -49,95 +39,44 @@ func (s *IntegrationTestSuite) TestCmdQueryAllowances() {
 			name: "invalid grantee returns error",
 			args: []string{
 				"1",
-				"user",
 				"grantee",
 			},
 			shouldErr: true,
 		},
 		{
-			name: "invalid group id returns error",
+			name: "valid query without grantee is returned correctly",
 			args: []string{
 				"1",
-				"group",
-				"x",
-			},
-			shouldErr: true,
-		},
-		{
-			name: "valid user grants query without user is returned correctly",
-			args: []string{
-				"1",
-				"user",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			shouldErr: false,
-			expResponse: types.QueryAllowancesResponse{
+			expResponse: types.QueryUserAllowancesResponse{
 				Grants: []types.Grant{
-					{
-						SubspaceID: 1,
-						Granter:    "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-						Grantee:    userGranteeAny,
-						Allowance:  allowanceAny,
-					},
+					types.NewGrant(
+						1,
+						"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+						types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
+						&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+					),
 				},
 			},
 		},
 		{
-			name: "valid user grants query is returned correctly",
+			name: "valid query is returned correctly",
 			args: []string{
 				"1",
-				"user",
 				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			shouldErr: false,
-			expResponse: types.QueryAllowancesResponse{
+			expResponse: types.QueryUserAllowancesResponse{
 				Grants: []types.Grant{
-					{
-						SubspaceID: 1,
-						Granter:    "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-						Grantee:    userGranteeAny,
-						Allowance:  allowanceAny,
-					},
-				},
-			},
-		},
-		{
-			name: "valid group grants query without ID is returned correctly",
-			args: []string{
-				"1",
-				"group",
-				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
-			},
-			shouldErr: false,
-			expResponse: types.QueryAllowancesResponse{
-				Grants: []types.Grant{
-					{
-						SubspaceID: 1,
-						Granter:    "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-						Grantee:    groupGranteeAny,
-						Allowance:  allowanceAny,
-					},
-				},
-			},
-		},
-		{
-			name: "valid group grants query is returned correctly",
-			args: []string{
-				"1",
-				"group",
-				"1",
-				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
-			},
-			shouldErr: false,
-			expResponse: types.QueryAllowancesResponse{
-				Grants: []types.Grant{
-					{
-						SubspaceID: 1,
-						Granter:    "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-						Grantee:    groupGranteeAny,
-						Allowance:  allowanceAny,
-					},
+					types.NewGrant(
+						1,
+						"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+						types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
+						&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+					),
 				},
 			},
 		},
@@ -146,7 +85,7 @@ func (s *IntegrationTestSuite) TestCmdQueryAllowances() {
 	for _, tc := range testCases {
 		tc := tc
 		s.Run(tc.name, func() {
-			cmd := cli.GetCmdQueryAllowances()
+			cmd := cli.GetCmdQueryUserAllowances()
 			clientCtx := val.ClientCtx
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
 
@@ -155,7 +94,7 @@ func (s *IntegrationTestSuite) TestCmdQueryAllowances() {
 			} else {
 				s.Require().NoError(err)
 
-				var response types.QueryAllowancesResponse
+				var response types.QueryUserAllowancesResponse
 				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
 				for i, grant := range tc.expResponse.Grants {
 					s.Require().True(grant.Equal(response.Grants[i]))
@@ -164,6 +103,93 @@ func (s *IntegrationTestSuite) TestCmdQueryAllowances() {
 		})
 	}
 }
+
+func (s *IntegrationTestSuite) TestCmdQueryGroupAllowances() {
+	val := s.network.Validators[0]
+	testCases := []struct {
+		name        string
+		args        []string
+		shouldErr   bool
+		expResponse types.QueryGroupAllowancesResponse
+	}{
+		{
+			name: "invalid subspace id returns error",
+			args: []string{
+				"subspace",
+				"group",
+			},
+			shouldErr: true,
+		},
+		{
+			name: "invalid group id returns error",
+			args: []string{
+				"1",
+				"group",
+			},
+			shouldErr: true,
+		},
+		{
+			name: "valid query without group id is returned correctly",
+			args: []string{
+				"1",
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			shouldErr: false,
+			expResponse: types.QueryGroupAllowancesResponse{
+				Grants: []types.Grant{
+					types.NewGrant(
+						1,
+						"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+						types.NewGroupGrantee(1),
+						&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+					),
+				},
+			},
+		},
+		{
+			name: "valid query is returned correctly",
+			args: []string{
+				"1",
+				"1",
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			shouldErr: false,
+			expResponse: types.QueryGroupAllowancesResponse{
+				Grants: []types.Grant{
+					types.NewGrant(
+						1,
+						"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+						types.NewGroupGrantee(1),
+						&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+					),
+				},
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdQueryGroupAllowances()
+			clientCtx := val.ClientCtx
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+
+			if tc.shouldErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+
+				var response types.QueryGroupAllowancesResponse
+				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
+				for i, grant := range tc.expResponse.Grants {
+					s.Require().True(grant.Equal(response.Grants[i]))
+				}
+			}
+		})
+	}
+}
+
+// --------------------------------------------------------------------------------------------------------------------
 
 func (s *IntegrationTestSuite) TestCmdGrantAllowance() {
 	val := s.network.Validators[0]

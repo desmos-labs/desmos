@@ -219,38 +219,26 @@ func (k Keeper) UserPermissions(ctx context.Context, request *types.QueryUserPer
 	}, nil
 }
 
-// Allowances implements the Query/UserAllowances gRPC method
-func (k Keeper) Allowances(ctx context.Context, request *types.QueryAllowancesRequest) (*types.QueryAllowancesResponse, error) {
+// UserAllowances implements the Query/UserAllowances gRPC method
+func (k Keeper) UserAllowances(ctx context.Context, request *types.QueryUserAllowancesRequest) (*types.QueryUserAllowancesResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	store := sdkCtx.KVStore(k.storeKey)
 
+	if request.SubspaceId == 0 {
+		return nil, sdkerrors.ErrInvalidRequest.Wrapf("invalid subspace id %d", request.SubspaceId)
+	}
+
 	// Check if the subspace exists
-	if request.SubspaceId == 0 || !k.HasSubspace(sdkCtx, request.SubspaceId) {
+	if !k.HasSubspace(sdkCtx, request.SubspaceId) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", request.SubspaceId)
 	}
 
 	// Get grants prefix store
-	var grantsPrefix []byte
-	switch grantee := request.Grantee.GetCachedValue().(type) {
-
-	case *types.UserGrantee:
-		grantsPrefix = types.UserAllowanceKey(request.SubspaceId, grantee.User)
-
-	case *types.GroupGrantee:
-		if grantee.GroupID == 0 {
-			grantsPrefix = types.SubspaceGroupAllowancePrefix(request.SubspaceId)
-			break
-		}
-
-		grantsPrefix = types.GroupAllowanceKey(request.SubspaceId, grantee.GroupID)
-
-	default:
-		return nil, sdkerrors.ErrInvalidRequest.Wrapf("invalid grantee type: %T", grantee)
-	}
-
+	grantsPrefix := types.UserAllowanceKey(request.SubspaceId, request.Grantee)
 	grantsStore := prefix.NewStore(store, grantsPrefix)
+
 	var grants []types.Grant
-	pageRes, err := query.Paginate(grantsStore, request.Pagination, func(_, value []byte) error {
+	pageRes, err := query.Paginate(grantsStore, request.Pagination, func(key []byte, value []byte) error {
 		var grant types.Grant
 		if err := k.cdc.Unmarshal(value, &grant); err != nil {
 			return status.Error(codes.Internal, err.Error())
@@ -262,7 +250,47 @@ func (k Keeper) Allowances(ctx context.Context, request *types.QueryAllowancesRe
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &types.QueryAllowancesResponse{
+	return &types.QueryUserAllowancesResponse{
+		Grants:     grants,
+		Pagination: pageRes,
+	}, nil
+}
+
+// GroupAllowances implements the Query/GroupAllowances gRPC method
+func (k Keeper) GroupAllowances(ctx context.Context, request *types.QueryGroupAllowancesRequest) (*types.QueryGroupAllowancesResponse, error) {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	store := sdkCtx.KVStore(k.storeKey)
+
+	if request.SubspaceId == 0 {
+		return nil, sdkerrors.ErrInvalidRequest.Wrapf("invalid subspace id %d", request.SubspaceId)
+	}
+
+	// Check if the subspace exists
+	if !k.HasSubspace(sdkCtx, request.SubspaceId) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", request.SubspaceId)
+	}
+
+	// Get grants prefix store
+	grantsPrefix := types.GroupAllowanceKey(request.SubspaceId, request.GroupId)
+	if request.GroupId == 0 {
+		grantsPrefix = types.SubspaceGroupAllowancePrefix(request.SubspaceId)
+	}
+	grantsStore := prefix.NewStore(store, grantsPrefix)
+
+	var grants []types.Grant
+	pageRes, err := query.Paginate(grantsStore, request.Pagination, func(key []byte, value []byte) error {
+		var grant types.Grant
+		if err := k.cdc.Unmarshal(value, &grant); err != nil {
+			return status.Error(codes.Internal, err.Error())
+		}
+		grants = append(grants, grant)
+		return nil
+	})
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &types.QueryGroupAllowancesResponse{
 		Grants:     grants,
 		Pagination: pageRes,
 	}, nil

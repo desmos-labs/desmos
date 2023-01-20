@@ -121,8 +121,8 @@ func TestDecodeStore(t *testing.T) {
 			&permission, &permission)},
 		{"Section ID", fmt.Sprintf("SectionIDA: %d\nSectionIDB: %d\n", 1, 1)},
 		{"Section", fmt.Sprintf("SectionA: %s\nSectionB: %s\n", &section, &section)},
-		{"User grant", fmt.Sprintf("UserGrantA: %s\nUserGrantB: %s\n", &userGrant, &userGrant)},
-		{"Group grant", fmt.Sprintf("GroupGrantA: %s\nGroupGrantB: %s\n", &groupGrant, &groupGrant)},
+		{"User grant", fmt.Sprintf("GrantA: %s\nGrantB: %s\n", &userGrant, &userGrant)},
+		{"Group grant", fmt.Sprintf("GrantA: %s\nGrantB: %s\n", &groupGrant, &groupGrant)},
 		{"other", ""},
 	}
 
