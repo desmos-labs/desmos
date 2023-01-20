@@ -53,8 +53,8 @@ service Query {
   // UserGroupMembers queries all the members of a given user group
   rpc UserGroupMembers(QueryUserGroupMembersRequest)
       returns (QueryUserGroupMembersResponse) {
-    option (google.api.http).get = 
-        "/desmos/subspaces/v3/subspaces/{subspace_id}/groups/{group_id}/members";
+    option (google.api.http).get = "/desmos/subspaces/v3/subspaces/"
+                                   "{subspace_id}/groups/{group_id}/members";
   }
 
   // UserPermissions queries the permissions for the given user
