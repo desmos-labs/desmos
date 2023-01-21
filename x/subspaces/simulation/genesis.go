@@ -179,15 +179,14 @@ func randomUserGrants(r *rand.Rand, accounts []simtypes.Account, subspaces []typ
 	if len(subspaces) == 0 {
 		return nil
 	}
-	grantsNumber := r.Intn(10)
+
+	grantsNumber := r.Intn(5)
 	grants := make([]types.Grant, grantsNumber)
 	for i := 0; i < grantsNumber; {
 		subspace := RandomSubspace(r, subspaces)
 		granter, _ := simtypes.RandomAcc(r, accounts)
 		grantee, _ := simtypes.RandomAcc(r, accounts)
-		if granter.Address.String() == grantee.Address.String() {
-			continue
-		}
+
 		grant := types.NewGrant(subspace.ID, granter.Address.String(), types.NewUserGrantee(grantee.Address.String()), &feegrant.BasicAllowance{})
 		if !containsGrant(grants, grant) {
 			grants[i] = grant
@@ -202,11 +201,12 @@ func randomGroupGrants(r *rand.Rand, accounts []simtypes.Account, groups []types
 	if len(groups) == 0 {
 		return nil
 	}
-	grantsNumber := r.Intn(10)
+	grantsNumber := r.Intn(5)
 	grants := make([]types.Grant, grantsNumber)
 	for i := 0; i < grantsNumber; {
 		group := RandomGroup(r, groups)
 		granter, _ := simtypes.RandomAcc(r, accounts)
+
 		grant := types.NewGrant(group.SubspaceID, granter.Address.String(), types.NewGroupGrantee(group.ID), &feegrant.BasicAllowance{})
 		if !containsGrant(grants, grant) {
 			grants[i] = grant
