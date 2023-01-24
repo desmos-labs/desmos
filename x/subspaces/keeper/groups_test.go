@@ -390,10 +390,12 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteUserGroup() {
 				suite.k.AddUserToGroup(ctx, 1, 1, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
 				suite.k.AddUserToGroup(ctx, 1, 1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53")
 
-				suite.k.SaveGrant(ctx, types.NewGrant(1,
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					types.NewGroupGrantee(1),
-					&feegrant.BasicAllowance{}))
+					&feegrant.BasicAllowance{},
+				))
 			},
 			subspaceID: 1,
 			groupID:    1,
@@ -404,7 +406,8 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteUserGroup() {
 				members := suite.k.GetUserGroupMembers(ctx, 1, 1)
 				suite.Require().Empty(members)
 
-				suite.Require().Empty(suite.k.GetUserGroupGrants(ctx, 1, 1))
+				groupGrants := suite.k.GetUserGroupGrants(ctx, 1, 1)
+				suite.Require().Empty(groupGrants)
 			},
 		},
 	}
