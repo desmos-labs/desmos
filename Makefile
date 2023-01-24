@@ -371,12 +371,12 @@ proto-lint:
 proto-check-breaking:
 	@$(DOCKER_BUF) breaking --against $(HTTPS_GIT)#branch=master
 
-TM_URL           = https://raw.githubusercontent.com/tendermint/tendermint/v0.34.19/proto/tendermint
+TM_URL           = https://raw.githubusercontent.com/tendermint/tendermint/v0.34.23/proto/tendermint
 GOGO_PROTO_URL   = https://raw.githubusercontent.com/regen-network/protobuf/cosmos
-COSMOS_URL 		 = https://raw.githubusercontent.com/cosmos/cosmos-sdk/v0.45.4/proto/cosmos
+COSMOS_URL 		 = https://raw.githubusercontent.com/cosmos/cosmos-sdk/v0.45.11/proto/cosmos
 COSMOS_PROTO_URL = https://raw.githubusercontent.com/regen-network/cosmos-proto/master
 CONFIO_URL 		 = https://raw.githubusercontent.com/confio/ics23/v0.6.3
-IBC_URL 		 = https://raw.githubusercontent.com/cosmos/ibc-go/v3.1.0/proto/ibc
+IBC_URL 		 = https://raw.githubusercontent.com/cosmos/ibc-go/v3.4.0/proto/ibc
 ETHERMINT_URL 	 = https://raw.githubusercontent.com/evmos/ethermint/v0.17.1/proto/ethermint/
 
 TM_CRYPTO_TYPES     = third_party/proto/tendermint/crypto
