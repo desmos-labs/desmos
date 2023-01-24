@@ -62,11 +62,20 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantAllowance() {
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
-				suite.k.SetUserPermissions(ctx, 1, types.RootSectionID, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", types.NewPermissions(types.PermissionManageAllowances))
-				suite.k.SaveGrant(ctx, types.NewGrant(1,
+
+				suite.k.SetUserPermissions(ctx,
+					1,
+					types.RootSectionID,
+					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+					types.NewPermissions(types.PermissionManageAllowances),
+				)
+
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))}))
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				))
 			},
 			msg: types.NewMsgGrantAllowance(
 				1,
@@ -88,7 +97,13 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantAllowance() {
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
-				suite.k.SetUserPermissions(ctx, 1, types.RootSectionID, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", types.NewPermissions(types.PermissionManageAllowances))
+
+				suite.k.SetUserPermissions(ctx,
+					1,
+					types.RootSectionID,
+					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+					types.NewPermissions(types.PermissionManageAllowances),
+				)
 			},
 			msg: types.NewMsgGrantAllowance(
 				1,
@@ -110,12 +125,29 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantAllowance() {
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
-				suite.k.SaveUserGroup(ctx, types.NewUserGroup(1, 0, 1, "test", "test", nil))
-				suite.k.SetUserPermissions(ctx, 1, types.RootSectionID, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", types.NewPermissions(types.PermissionManageAllowances))
-				suite.k.SaveGrant(ctx, types.NewGrant(1,
+
+				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
+					1,
+					0,
+					1,
+					"test",
+					"test",
+					nil,
+				))
+
+				suite.k.SetUserPermissions(ctx,
+					1,
+					types.RootSectionID,
+					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+					types.NewPermissions(types.PermissionManageAllowances),
+				)
+
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewGroupGrantee(1),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))}))
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				))
 			},
 			msg: types.NewMsgGrantAllowance(
 				1,
@@ -137,9 +169,20 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantAllowance() {
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
-				suite.k.SetUserPermissions(ctx, 1, types.RootSectionID, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", types.NewPermissions(types.PermissionManageAllowances))
+
+				suite.k.SetUserPermissions(ctx,
+					1,
+					types.RootSectionID,
+					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+					types.NewPermissions(types.PermissionManageAllowances),
+				)
 			},
-			msg:       types.NewMsgGrantAllowance(1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"), &feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))}),
+			msg: types.NewMsgGrantAllowance(
+				1,
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
+				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+			),
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
@@ -158,11 +201,12 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantAllowance() {
 			check: func(ctx sdk.Context) {
 				grant, found := suite.k.GetUserGrant(ctx, 1, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
 				suite.Require().True(found)
-				suite.Require().Equal(types.NewGrant(1,
+				suite.Require().Equal(types.NewGrant(
+					1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))}),
-					grant)
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				), grant)
 			},
 		},
 		{
@@ -177,10 +221,29 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantAllowance() {
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
-				suite.k.SaveUserGroup(ctx, types.NewUserGroup(1, 0, 1, "test", "test", nil))
-				suite.k.SetUserPermissions(ctx, 1, types.RootSectionID, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", types.NewPermissions(types.PermissionManageAllowances))
+
+				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
+					1,
+					0,
+					1,
+					"test",
+					"test",
+					nil,
+				))
+
+				suite.k.SetUserPermissions(ctx,
+					1,
+					types.RootSectionID,
+					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+					types.NewPermissions(types.PermissionManageAllowances),
+				)
 			},
-			msg:       types.NewMsgGrantAllowance(1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", types.NewGroupGrantee(1), &feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))}),
+			msg: types.NewMsgGrantAllowance(
+				1,
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				types.NewGroupGrantee(1),
+				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+			),
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
@@ -199,11 +262,11 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantAllowance() {
 			check: func(ctx sdk.Context) {
 				grant, found := suite.k.GetGroupGrant(ctx, 1, 1)
 				suite.Require().True(found)
-
 				suite.Require().Equal(types.NewGrant(1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-					types.NewGroupGrantee(1), &feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))}),
-					grant)
+					types.NewGroupGrantee(1),
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				), grant)
 			},
 		},
 	}
@@ -275,7 +338,13 @@ func (suite *KeeperTestSuite) TestMsgServer_RevokeAllowance() {
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
-				suite.k.SetUserPermissions(ctx, 1, types.RootSectionID, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", types.NewPermissions(types.PermissionManageAllowances))
+
+				suite.k.SetUserPermissions(ctx,
+					1,
+					types.RootSectionID,
+					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+					types.NewPermissions(types.PermissionManageAllowances),
+				)
 			},
 			msg: types.NewMsgRevokeAllowance(
 				1,
@@ -296,7 +365,13 @@ func (suite *KeeperTestSuite) TestMsgServer_RevokeAllowance() {
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
-				suite.k.SetUserPermissions(ctx, 1, types.RootSectionID, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", types.NewPermissions(types.PermissionManageAllowances))
+
+				suite.k.SetUserPermissions(ctx,
+					1,
+					types.RootSectionID,
+					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+					types.NewPermissions(types.PermissionManageAllowances),
+				)
 			},
 			msg: types.NewMsgRevokeAllowance(
 				1,
@@ -317,13 +392,26 @@ func (suite *KeeperTestSuite) TestMsgServer_RevokeAllowance() {
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
-				suite.k.SetUserPermissions(ctx, 1, types.RootSectionID, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", types.NewPermissions(types.PermissionManageAllowances))
+
+				suite.k.SetUserPermissions(ctx,
+					1,
+					types.RootSectionID,
+					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+					types.NewPermissions(types.PermissionManageAllowances),
+				)
+
 				suite.k.SaveGrant(ctx, types.NewGrant(
-					1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+					1,
+					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))}))
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				))
 			},
-			msg:       types.NewMsgRevokeAllowance(1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")),
+			msg: types.NewMsgRevokeAllowance(
+				1,
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
+			),
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
@@ -355,13 +443,25 @@ func (suite *KeeperTestSuite) TestMsgServer_RevokeAllowance() {
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
-				suite.k.SetUserPermissions(ctx, 1, types.RootSectionID, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", types.NewPermissions(types.PermissionManageAllowances))
+
+				suite.k.SetUserPermissions(ctx,
+					1,
+					types.RootSectionID,
+					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+					types.NewPermissions(types.PermissionManageAllowances),
+				)
+
 				suite.k.SaveGrant(ctx, types.NewGrant(1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewGroupGrantee(1),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))}))
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				))
 			},
-			msg:       types.NewMsgRevokeAllowance(1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", types.NewGroupGrantee(1)),
+			msg: types.NewMsgRevokeAllowance(
+				1,
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				types.NewGroupGrantee(1),
+			),
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
