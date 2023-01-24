@@ -6147,7 +6147,9 @@ paths:
           type: string
           format: uint64
         - name: group_id
-          description: (optional) Address of the user that has granted the allowance(s).
+          description: >-
+            (optional) Address of the user group that was granted the
+            allowance(s).
           in: query
           required: false
           type: integer
