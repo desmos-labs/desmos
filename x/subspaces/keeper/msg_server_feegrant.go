@@ -60,12 +60,18 @@ func (k msgServer) GrantAllowance(goCtx context.Context, msg *types.MsgGrantAllo
 		panic(fmt.Errorf("unsupported type %T", grantee))
 	}
 
+	// Unpack the allowance
 	allowance, err := msg.GetUnpackedAllowance()
 	if err != nil {
 		return nil, err
 	}
+	
+	// Save the grant 
 	k.Keeper.SaveGrant(ctx, types.NewGrant(msg.SubspaceID, msg.Granter, msg.Grantee.GetCachedValue().(types.Grantee), allowance))
+	
+	// Emit the events
 	ctx.EventManager().EmitEvents(events)
+	
 	return &types.MsgGrantAllowanceResponse{}, nil
 }
 
