@@ -147,7 +147,7 @@ func (k Keeper) UseGroupGrantedFees(ctx sdk.Context, subspaceID uint64, grantee 
 			return false
 		}
 
-		// update grant if allowance accept properly and still valid after execution
+		// Update the grant if the allowance was accepted properly and is still valid after execution
 		if !remove {
 			k.SaveGrant(ctx, types.NewGrant(subspaceID, grant.Granter, groupGrantee, allowance))
 		}
