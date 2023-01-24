@@ -196,7 +196,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetUserGrant() {
 		expGrant   types.Grant
 	}{
 		{
-			name:       "non-existing grant returns error",
+			name:       "non-existing grant returns properly",
 			subspaceID: 1,
 			grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 			expFound:   false,
@@ -348,7 +348,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetGroupGrant() {
 		expGrant   types.Grant
 	}{
 		{
-			name:       "non-existing grant returns error",
+			name:       "non-existing grant returns properly",
 			subspaceID: 1,
 			granter:    "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 			groupID:    1,
