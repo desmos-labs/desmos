@@ -317,7 +317,7 @@ message QueryGroupAllowancesRequest {
   // Id of the subspace for which to get the grant(s)
   uint64 subspace_id = 1 [ (gogoproto.moretags) = "yaml:\"subspace_id\"" ];
 
-  // (optional) Address of the user that has granted the allowance(s)
+  // (optional) Address of the user group that was granted the allowance(s)
   uint32 group_id = 2 [ (gogoproto.moretags) = "yaml:\"group_id\"" ];
 
   // pagination defines an pagination for the request
