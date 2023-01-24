@@ -49,24 +49,24 @@ func (msg MsgGrantAllowance) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
 		return fmt.Errorf("invalid subspace id: %d", msg.SubspaceID)
 	}
-	
+
 	_, err := sdk.AccAddressFromBech32(msg.Granter)
 	if err != nil {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid granter address")
 	}
-	
+
 	grantee := msg.Grantee.GetCachedValue().(Grantee)
 	err = grantee.Validate()
 	if err != nil {
 		return err
 	}
-	
+
 	if u, ok := grantee.(*UserGrantee); ok {
 		if u.User == msg.Granter {
 			return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "cannot self-grant fee authorization")
 		}
 	}
-	
+
 	allowance, err := msg.GetUnpackedAllowance()
 	if err != nil {
 		return err
@@ -139,12 +139,12 @@ func (msg MsgRevokeAllowance) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
 		return fmt.Errorf("invalid subspace id: %d", msg.SubspaceID)
 	}
-	
+
 	_, err := sdk.AccAddressFromBech32(msg.Granter)
 	if err != nil {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid granter address")
 	}
-	
+
 	return msg.Grantee.GetCachedValue().(Grantee).Validate()
 }
 
