@@ -52,9 +52,19 @@ func TestDecodeStore(t *testing.T) {
 		types.NewPermissions(types.PermissionEverything),
 	)
 
-	userGrant := types.NewGrant(1, "cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn", types.NewUserGrantee("cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e"), &feegrant.BasicAllowance{})
+	userGrant := types.NewGrant(
+		1,
+		"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+		types.NewUserGrantee("cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e"),
+		&feegrant.BasicAllowance{},
+	)
 
-	groupGrant := types.NewGrant(1, "cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn", types.NewGroupGrantee(1), &feegrant.BasicAllowance{})
+	groupGrant := types.NewGrant(
+		1,
+		"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+		types.NewGroupGrantee(1),
+		&feegrant.BasicAllowance{},
+	)
 
 	kvPairs := kv.Pairs{Pairs: []kv.Pair{
 		{
