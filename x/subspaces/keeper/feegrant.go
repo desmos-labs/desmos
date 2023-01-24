@@ -99,11 +99,12 @@ func (k Keeper) UseUserGrantedFees(ctx sdk.Context, subspaceID uint64, grantee s
 		return false
 	}
 
-	// update the allowance
+	// Get and accept the allowance
 	allowance, err := grant.GetUnpackedAllowance()
 	if err != nil {
 		return false
 	}
+
 	remove, err := allowance.Accept(ctx, fees, msgs)
 	if remove {
 		k.DeleteUserGrant(ctx, subspaceID, grantee.String())
