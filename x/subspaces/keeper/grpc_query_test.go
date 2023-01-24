@@ -879,7 +879,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserAllowances() {
 	}
 }
 
-func (suite *KeeperTestSuite) TestQueryServerGroupAllowances() {
+func (suite *KeeperTestSuite) TestQueryServer_GroupAllowances() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
