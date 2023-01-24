@@ -122,6 +122,9 @@ func (k msgServer) RevokeAllowance(goCtx context.Context, msg *types.MsgRevokeAl
 	default:
 		panic(fmt.Errorf("unsupported type %T", grantee))
 	}
+	
+	// Emit the events
 	ctx.EventManager().EmitEvents(events)
+	
 	return &types.MsgRevokeAllowanceResponse{}, nil
 }
