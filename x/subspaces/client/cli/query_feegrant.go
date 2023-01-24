@@ -90,7 +90,7 @@ func GetCmdQueryUserAllowances() *cobra.Command {
 func GetCmdQueryGroupAllowances() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "group-allowances [subspace-id] [[group-id]]",
-		Short:   "Query allowances for the given group",
+		Short:   "Query the user group allowances within a subspace, for an optional given group",
 		Example: fmt.Sprintf(`%s query subspaces group-allowances 1 1`, version.AppName),
 		Args:    cobra.RangeArgs(1, 2),
 		RunE: func(cmd *cobra.Command, args []string) error {
