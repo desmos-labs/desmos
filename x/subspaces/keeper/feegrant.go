@@ -117,7 +117,8 @@ func (k Keeper) UseUserGrantedFees(ctx sdk.Context, subspaceID uint64, grantee s
 		k.SaveGrant(ctx, types.NewGrant(subspaceID,
 			grant.Granter,
 			grant.Grantee.GetCachedValue().(types.Grantee),
-			allowance))
+			allowance,
+		))
 	}
 	return true
 }

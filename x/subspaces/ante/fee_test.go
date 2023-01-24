@@ -44,7 +44,7 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 			shouldErr: false,
 		},
 		{
-			name: "standard tx but failed in auth fee deduction phase returns error",
+			name: "standard tx that fails in auth fee deduction phase returns error",
 			setup: func() {
 				suite.authDeductFeeDecorator.EXPECT().AnteHandle(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(suite.ctx, fmt.Errorf("error"))
 			},
@@ -70,7 +70,7 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 			shouldErr: false,
 		},
 		{
-			name: "non treasury account granter using auth decorator",
+			name: "valid tx with non treasury account granter returns no error",
 			setup: func() {
 				suite.authDeductFeeDecorator.EXPECT().AnteHandle(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(suite.ctx, nil)
 			},

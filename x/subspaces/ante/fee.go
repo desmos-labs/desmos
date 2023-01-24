@@ -48,11 +48,12 @@ func (dfd DeductFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bo
 		return newCtx, err
 	}
 
-	// move to next ante if tryHandleSubspaceTx is success, or using auth.DeductFeeDecorator instead
+	// Move to next ante if the process was  successful
 	if success {
 		return next(newCtx, tx, simulate)
 	}
 
+	// If the custom handling was not successful, fallback to the default handling
 	return dfd.authDeductFeeDecorator.AnteHandle(ctx, tx, simulate, next)
 }
 
@@ -75,14 +76,16 @@ func GetTxSubspaceID(tx sdk.Tx) (uint64, bool) {
 	return subspaceID, true
 }
 
-// tryHandleSubspaceTx handles the fee deduction for subspace transaction, returns false if the process is failed
+// tryHandleSubspaceTx handles the fee deduction for a single-subspace transaction,
+// and returns if the process succeeded or not
 func (dfd DeductFeeDecorator) tryHandleSubspaceTx(ctx sdk.Context, tx sdk.FeeTx, subspaceID uint64) (newCtx sdk.Context, success bool, err error) {
 	fees := tx.GetFee()
 	feePayer := tx.FeePayer()
 	feeGranter := tx.FeeGranter()
 	deductFeesFrom := feePayer
 
-	// if feegranter is not set set or fee granter equals to subspace treasury, then use auth.DeductFeeDecorator to deal with fees
+	// If the fee granter is not set, or it's not equal to the subspace treasury,
+	// then use auth.DeductFeeDecorator to deal with fees
 	if feeGranter == nil || !feeGranter.Equals(types.GetTreasuryAddress(subspaceID)) {
 		return ctx, false, nil
 	}
@@ -91,6 +94,7 @@ func (dfd DeductFeeDecorator) tryHandleSubspaceTx(ctx sdk.Context, tx sdk.FeeTx,
 		return ctx, false, fmt.Errorf("fee collector module account (%s) has not been set", authtypes.FeeCollectorName)
 	}
 
+	// Try using the granted fee grant to deduct the fee. If we can't, it means no grant exists
 	used := dfd.sk.UseGrantedFees(ctx, subspaceID, feePayer, fees, tx.GetMsgs())
 	if !used {
 		return ctx, false, nil
@@ -102,7 +106,7 @@ func (dfd DeductFeeDecorator) tryHandleSubspaceTx(ctx sdk.Context, tx sdk.FeeTx,
 		return ctx, false, sdkerrors.Wrapf(sdkerrors.ErrUnknownAddress, "fee payer address: %s does not exist", deductFeesFrom)
 	}
 
-	// deduct the fees
+	// Deduct the fees
 	if !fees.IsZero() {
 		err = ante.DeductFees(dfd.bk, ctx, deductFeesFromAcc, fees)
 		if err != nil {
@@ -110,13 +114,13 @@ func (dfd DeductFeeDecorator) tryHandleSubspaceTx(ctx sdk.Context, tx sdk.FeeTx,
 		}
 	}
 
-	events := sdk.Events{
+	// Emit the fee deduction events
+	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			sdk.EventTypeTx,
 			sdk.NewAttribute(sdk.AttributeKeyFee, fees.String()),
 			sdk.NewAttribute(sdk.AttributeKeyFeePayer, deductFeesFrom.String()),
 		),
-	}
-	ctx.EventManager().EmitEvents(events)
+	})
 	return ctx, true, err
 }
