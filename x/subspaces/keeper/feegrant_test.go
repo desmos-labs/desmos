@@ -455,7 +455,7 @@ func (suite *KeeperTestSuite) TestKeeper_UseUserGrantedFees() {
 		expUsed    bool
 	}{
 		{
-			name:       "no any grant exists returns false",
+			name:       "not existing grant returns false",
 			subspaceID: 1,
 			grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 			fees:       sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100))),
@@ -502,7 +502,7 @@ func (suite *KeeperTestSuite) TestKeeper_UseUserGrantedFees() {
 			},
 		},
 		{
-			name: "use up user grant returns true",
+			name: "consuming grant returns true",
 			store: func(ctx sdk.Context) {
 				suite.k.SaveGrant(ctx, types.NewGrant(
 					1,
@@ -552,7 +552,7 @@ func (suite *KeeperTestSuite) TestKeeper_UseGroupGrantedFees() {
 		expUsed    bool
 	}{
 		{
-			name:       "no any grant exists returns false",
+			name:       "not existing grant returns false",
 			subspaceID: 1,
 			grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 			fees:       sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100))),
@@ -664,7 +664,7 @@ func (suite *KeeperTestSuite) TestKeeper_UseGrantedFees() {
 		expUsed    bool
 	}{
 		{
-			name:       "no any grant exists returns false",
+			name:       "not existing grant returns false",
 			subspaceID: 1,
 			grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 			fees:       sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100))),
