@@ -1139,7 +1139,7 @@ func (m *QueryUserAllowancesResponse) GetPagination() *query.PageResponse {
 type QueryGroupAllowancesRequest struct {
 	// Id of the subspace for which to get the grant(s)
 	SubspaceId uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
-	// (optional) Address of the user that has granted the allowance(s)
+	// (optional) Address of the user group that was granted the allowance(s)
 	GroupId uint32 `protobuf:"varint,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty" yaml:"group_id"`
 	// pagination defines an pagination for the request
 	Pagination *query.PageRequest `protobuf:"bytes,3,opt,name=pagination,proto3" json:"pagination,omitempty"`
