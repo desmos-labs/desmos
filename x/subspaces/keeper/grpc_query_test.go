@@ -966,6 +966,7 @@ func (suite *KeeperTestSuite) TestQueryServer_GroupAllowances() {
 			},
 		},
 	}
+
 	for _, tc := range testCases {
 		tc := tc
 		suite.Run(tc.name, func() {
