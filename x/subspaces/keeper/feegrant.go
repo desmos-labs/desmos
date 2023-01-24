@@ -133,11 +133,12 @@ func (k Keeper) UseGroupGrantedFees(ctx sdk.Context, subspaceID uint64, grantee 
 			return false
 		}
 
-		// update the allowance
+		// Get and update the allowance
 		allowance, err := grant.GetUnpackedAllowance()
 		if err != nil {
 			return false
 		}
+
 		remove, err := allowance.Accept(ctx, fee, msgs)
 		if remove {
 			k.DeleteGroupGrant(ctx, subspaceID, grant.Grantee.GetCachedValue().(*types.GroupGrantee).GroupID)
