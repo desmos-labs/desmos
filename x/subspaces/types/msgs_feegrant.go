@@ -139,15 +139,13 @@ func (msg MsgRevokeAllowance) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
 		return fmt.Errorf("invalid subspace id: %d", msg.SubspaceID)
 	}
+	
 	_, err := sdk.AccAddressFromBech32(msg.Granter)
 	if err != nil {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid granter address")
 	}
-	err = msg.Grantee.GetCachedValue().(Grantee).Validate()
-	if err != nil {
-		return err
-	}
-	return nil
+	
+	return msg.Grantee.GetCachedValue().(Grantee).Validate()
 }
 
 // GetSigners implements sdk.Msg
