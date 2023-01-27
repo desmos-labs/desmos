@@ -1,5 +1,7 @@
 package v4
 
+// DONTCOVER
+
 import (
 	"time"
 
