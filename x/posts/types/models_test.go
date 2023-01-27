@@ -886,23 +886,40 @@ func TestPoll_ProvidedAnswer_Validate(t *testing.T) {
 		},
 		{
 			name: "invalid attachment returns error",
-			answer: types.NewProvidedAnswer("Cat", []types.Attachment{
-				types.NewAttachment(1, 1, 0, types.NewMedia("", "")),
+			answer: types.NewProvidedAnswer("Cat", []types.AttachmentContent{
+				types.NewMedia("", ""),
+			}),
+			shouldErr: true,
+		},
+		{
+			name: "poll attachment returns error",
+			answer: types.NewProvidedAnswer("Cat", []types.AttachmentContent{
+				types.NewPoll(
+					"What animal is best?",
+					[]types.Poll_ProvidedAnswer{
+						types.NewProvidedAnswer("Cat", nil),
+						types.NewProvidedAnswer("Dog", nil),
+					},
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					false,
+					false,
+					nil,
+				),
 			}),
 			shouldErr: true,
 		},
 		{
 			name: "duplicated attachment returns error",
-			answer: types.NewProvidedAnswer("Cat", []types.Attachment{
-				types.NewAttachment(1, 1, 1, types.NewMedia("ftp://user:password@example.com/image.png", "image/png")),
-				types.NewAttachment(1, 1, 1, types.NewMedia("ftp://user:password@example.com/image.png", "image/png")),
+			answer: types.NewProvidedAnswer("Cat", []types.AttachmentContent{
+				types.NewMedia("ftp://user:password@example.com/image.png", "image/png"),
+				types.NewMedia("ftp://user:password@example.com/image.png", "image/png"),
 			}),
 			shouldErr: true,
 		},
 		{
 			name: "valid answer returns no error",
-			answer: types.NewProvidedAnswer("Cat", []types.Attachment{
-				types.NewAttachment(1, 1, 1, types.NewMedia("ftp://user:password@example.com/image.png", "image/png")),
+			answer: types.NewProvidedAnswer("Cat", []types.AttachmentContent{
+				types.NewMedia("ftp://user:password@example.com/image.png", "image/png"),
 			}),
 			shouldErr: false,
 		},

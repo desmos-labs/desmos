@@ -18,7 +18,12 @@ var attachments = []types.AttachmentContent{
 	types.NewPoll(
 		"What animal is best?",
 		[]types.Poll_ProvidedAnswer{
-			types.NewProvidedAnswer("Cat", nil),
+			types.NewProvidedAnswer("Cat", []types.AttachmentContent{
+				types.NewMedia(
+					"ftp://user:password@example.com/cat.png",
+					"image/png",
+				),
+			}),
 			types.NewProvidedAnswer("Dog", nil),
 		},
 		time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -214,7 +219,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgCreatePost_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgCreatePost","value":{"attachments":[{"type":"desmos/Media","value":{"mime_type":"image/png","uri":"ftp://user:password@example.com/image.png"}},{"type":"desmos/Poll","value":{"end_date":"2020-01-01T12:00:00Z","provided_answers":[{"attachments":null,"text":"Cat"},{"attachments":null,"text":"Dog"}],"question":"What animal is best?"}}],"author":"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd","conversation_id":"1","entities":{"hashtags":[{"end":"3","start":"1","tag":"tag"}],"mentions":[{"end":"6","start":"4","tag":"tag"}],"urls":[{"display_url":"Display URL","end":"9","start":"7","url":"URL"}]},"external_id":"External ID","referenced_posts":[{"post_id":"1","type":2}],"reply_settings":1,"section_id":1,"subspace_id":"1","tags":["general"],"text":"This is a text"}}`
+	expected := `{"type":"desmos/MsgCreatePost","value":{"attachments":[{"type":"desmos/Media","value":{"mime_type":"image/png","uri":"ftp://user:password@example.com/image.png"}},{"type":"desmos/Poll","value":{"end_date":"2020-01-01T12:00:00Z","provided_answers":[{"attachments":[{"type":"desmos/Media","value":{"mime_type":"image/png","uri":"ftp://user:password@example.com/cat.png"}}],"text":"Cat"},{"text":"Dog"}],"question":"What animal is best?"}}],"author":"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd","conversation_id":"1","entities":{"hashtags":[{"end":"3","start":"1","tag":"tag"}],"mentions":[{"end":"6","start":"4","tag":"tag"}],"urls":[{"display_url":"Display URL","end":"9","start":"7","url":"URL"}]},"external_id":"External ID","referenced_posts":[{"post_id":"1","type":2}],"reply_settings":1,"section_id":1,"subspace_id":"1","tags":["general"],"text":"This is a text"}}`
 	require.Equal(t, expected, string(msgCreatePost.GetSignBytes()))
 }
 

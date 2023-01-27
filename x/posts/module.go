@@ -7,6 +7,7 @@ import (
 	"math/rand"
 
 	v2 "github.com/desmos-labs/desmos/v4/x/posts/legacy/v2"
+	v4 "github.com/desmos-labs/desmos/v4/x/posts/legacy/v4"
 
 	"github.com/desmos-labs/desmos/v4/x/posts/simulation"
 	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
@@ -32,7 +33,7 @@ import (
 )
 
 const (
-	consensusVersion = 4
+	consensusVersion = 5
 )
 
 // type check to ensure the interface is properly implemented
@@ -93,6 +94,7 @@ func (AppModuleBasic) GetQueryCmd() *cobra.Command {
 func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) {
 	types.RegisterInterfaces(registry)
 	v2.RegisterInterfaces(registry)
+	v4.RegisterInterfaces(registry)
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -122,6 +124,10 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 		panic(err)
 	}
 	err = cfg.RegisterMigration(types.ModuleName, 3, m.Migrate3to4)
+	if err != nil {
+		panic(err)
+	}
+	err = cfg.RegisterMigration(types.ModuleName, 4, m.Migrate4to5)
 	if err != nil {
 		panic(err)
 	}
