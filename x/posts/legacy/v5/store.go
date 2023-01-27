@@ -2,7 +2,11 @@ package v5
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
+	v4 "github.com/desmos-labs/desmos/v4/x/posts/legacy/v4"
+	"github.com/desmos-labs/desmos/v4/x/posts/types"
 )
 
 // MigrateStore performs the migration from version 4 to version 5 of the store.
@@ -10,6 +14,108 @@ import (
 // the new storing format (AttachmentContent instead of Attachment).
 // It also removes all the Polls that have been saved as a Poll_ProvidedAnswer's attachment.
 func MigrateStore(ctx sdk.Context, storeKey sdk.StoreKey, cdc codec.BinaryCodec) error {
-	// TODO: Implement this
-	panic("TODO: Implement me")
+	store := ctx.KVStore(storeKey)
+
+	// Migrate the poll attachments
+	return migratePollAttachments(store, cdc)
+}
+
+// migratePollAttachments migrates all the poll attachments to v5
+func migratePollAttachments(store sdk.KVStore, cdc codec.BinaryCodec) error {
+	attachmentsStore := prefix.NewStore(store, types.AttachmentPrefix)
+	attachmentsIterator := attachmentsStore.Iterator(nil, nil)
+	defer attachmentsIterator.Close()
+
+	for ; attachmentsIterator.Valid(); attachmentsIterator.Next() {
+		// Get the attachment
+		var attachment v4.Attachment
+		err := cdc.Unmarshal(attachmentsIterator.Value(), &attachment)
+		if err != nil {
+			return err
+		}
+
+		// Check if the attachment is a poll
+		if poll, isPoll := attachment.Content.GetCachedValue().(*v4.Poll); isPoll {
+			err = migratePoll(attachment, poll, store, cdc)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// migratePoll migrates the given attachment, containing the provided poll, into v5 format
+func migratePoll(attachment v4.Attachment, poll *v4.Poll, store sdk.KVStore, cdc codec.BinaryCodec) error {
+	// Get the new provided answers
+	providedAnswers := make([]types.Poll_ProvidedAnswer, len(poll.ProvidedAnswers))
+	for i, answer := range poll.ProvidedAnswers {
+		attachmentContents, err := migrateProvidedAnswerAttachments(answer.Attachments, cdc)
+		if err != nil {
+			return err
+		}
+		providedAnswers[i] = types.NewProvidedAnswer(answer.Text, attachmentContents)
+	}
+
+	// Build the new attachment
+	v5Attachment := types.NewAttachment(
+		attachment.SubspaceID,
+		attachment.PostID,
+		attachment.ID,
+		types.NewPoll(
+			poll.Question,
+			providedAnswers,
+			poll.EndDate,
+			poll.AllowsMultipleAnswers,
+			poll.AllowsAnswerEdits,
+			migratePollFinalTallyResults(poll.FinalTallyResults),
+		),
+	)
+
+	// Store the new attachment - This will override the old store key
+	store.Set(
+		types.AttachmentStoreKey(v5Attachment.SubspaceID, v5Attachment.PostID, v5Attachment.ID),
+		cdc.MustMarshal(&v5Attachment),
+	)
+
+	return nil
+}
+
+// migrateProvidedAnswerAttachments migrates the given attachments slide
+// converting them into AttachmentContent instances. It also filters all
+// the poll attachments to exclude them
+func migrateProvidedAnswerAttachments(attachments []v4.Attachment, cdc codec.BinaryCodec) ([]types.AttachmentContent, error) {
+	if attachments == nil {
+		return nil, nil
+	}
+
+	var attachmentContents []types.AttachmentContent
+	for _, attachment := range attachments {
+		var content v4.AttachmentContent
+		err := cdc.UnpackAny(attachment.Content, &content)
+		if err != nil {
+			return nil, err
+		}
+
+		// Convert the media only
+		if media, isMedia := content.(*v4.Media); isMedia {
+			attachmentContents = append(attachmentContents, types.NewMedia(media.Uri, media.MimeType))
+		}
+	}
+
+	return attachmentContents, nil
+}
+
+// migratePollFinalTallyResults migrates the given v4 poll tally results into v5
+func migratePollFinalTallyResults(results *v4.PollTallyResults) *types.PollTallyResults {
+	if results == nil {
+		return nil
+	}
+
+	answersResults := make([]types.PollTallyResults_AnswerResult, len(results.Results))
+	for i, result := range results.Results {
+		answersResults[i] = types.NewAnswerResult(result.AnswerIndex, result.Votes)
+	}
+	return types.NewPollTallyResults(answersResults)
 }
