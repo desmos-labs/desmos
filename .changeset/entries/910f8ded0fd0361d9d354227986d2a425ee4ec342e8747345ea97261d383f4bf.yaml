@@ -1,0 +1,6 @@
+type: fix
+module: x/subspaces
+pull_request: 1074
+description: Added missing MsgDeleteSubspace Amino registration
+backward_compatible: false
+date: 2023-01-27T17:11:47.443053713Z

@@ -215,7 +215,7 @@ func TestMsgDeleteSubspace_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgDeleteSubspace_GetSignBytes(t *testing.T) {
-	expected := `{"signer":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","subspace_id":"1"}`
+	expected := `{"type":"desmos/MsgDeleteSubspace","value":{"signer":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","subspace_id":"1"}}`
 	require.Equal(t, expected, string(msgDeleteSubspace.GetSignBytes()))
 }
 

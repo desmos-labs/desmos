@@ -12,13 +12,14 @@ import (
 func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgCreateSubspace{}, "desmos/MsgCreateSubspace", nil)
 	cdc.RegisterConcrete(&MsgEditSubspace{}, "desmos/MsgEditSubspace", nil)
-	cdc.RegisterConcrete(&MsgCreateUserGroup{}, "desmos/MsgCreateUserGroup", nil)
+	cdc.RegisterConcrete(&MsgDeleteSubspace{}, "desmos/MsgDeleteSubspace", nil)
 
 	cdc.RegisterConcrete(&MsgCreateSection{}, "desmos/MsgCreateSection", nil)
 	cdc.RegisterConcrete(&MsgEditSection{}, "desmos/MsgEditSection", nil)
 	cdc.RegisterConcrete(&MsgMoveSection{}, "desmos/MsgMoveSection", nil)
 	cdc.RegisterConcrete(&MsgDeleteSection{}, "desmos/MsgDeleteSection", nil)
 
+	cdc.RegisterConcrete(&MsgCreateUserGroup{}, "desmos/MsgCreateUserGroup", nil)
 	cdc.RegisterConcrete(&MsgEditUserGroup{}, "desmos/MsgEditUserGroup", nil)
 	cdc.RegisterConcrete(&MsgMoveUserGroup{}, "desmos/MsgMoveUserGroup", nil)
 	cdc.RegisterConcrete(&MsgSetUserGroupPermissions{}, "desmos/MsgSetUserGroupPermissions", nil)
