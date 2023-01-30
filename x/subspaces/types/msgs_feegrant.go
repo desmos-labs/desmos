@@ -24,23 +24,26 @@ var (
 
 // NewMsgGrantAllowance creates a new MsgGrantAllowance instance
 func NewMsgGrantAllowance(subspaceID uint64, granter string, grantee Grantee, allowance feegranttypes.FeeAllowanceI) *MsgGrantAllowance {
-	msg, ok := allowance.(proto.Message)
-	if !ok {
+	allowanceProto, isProto := allowance.(proto.Message)
+	if !isProto {
 		panic("cannot proto marshal allowance")
 	}
-	any, err := codectypes.NewAnyWithValue(msg)
+
+	allowanceAny, err := codectypes.NewAnyWithValue(allowanceProto)
 	if err != nil {
 		panic("failed to pack allowance to any type")
 	}
+
 	granteeAny, err := codectypes.NewAnyWithValue(grantee)
 	if err != nil {
 		panic("failed to pack grantee to any type")
 	}
+
 	return &MsgGrantAllowance{
 		SubspaceID: subspaceID,
 		Granter:    granter,
 		Grantee:    granteeAny,
-		Allowance:  any,
+		Allowance:  allowanceAny,
 	}
 }
 
@@ -127,6 +130,7 @@ func NewMsgRevokeAllowance(subspaceID uint64, granter string, grantee Grantee) *
 	if err != nil {
 		panic("failed to pack grantee to any type")
 	}
+
 	return &MsgRevokeAllowance{
 		SubspaceID: subspaceID,
 		Granter:    granter,

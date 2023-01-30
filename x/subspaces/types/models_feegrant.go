@@ -36,7 +36,8 @@ func (t *UserGrantee) Validate() error {
 	if err != nil {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid grantee address")
 	}
-	return err
+
+	return nil
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -63,12 +64,12 @@ func (t *GroupGrantee) Validate() error {
 
 // NewGrant is a constructor for the Grant type
 func NewGrant(subspaceID uint64, granter string, grantee Grantee, feeAllowance feegranttypes.FeeAllowanceI) Grant {
-	msg, ok := feeAllowance.(proto.Message)
-	if !ok {
+	allowanceProto, isProto := feeAllowance.(proto.Message)
+	if !isProto {
 		panic(sdkerrors.Wrapf(sdkerrors.ErrPackAny, "cannot proto marshal %T", feeAllowance))
 	}
 
-	allowanceAny, err := codectypes.NewAnyWithValue(msg)
+	allowanceAny, err := codectypes.NewAnyWithValue(allowanceProto)
 	if err != nil {
 		panic("failed to pack allowance to any type")
 	}
@@ -91,13 +92,14 @@ func (g Grant) Validate() error {
 	if g.SubspaceID == 0 {
 		return fmt.Errorf("invalid subspace id: %d", g.SubspaceID)
 	}
+
 	_, err := sdk.AccAddressFromBech32(g.Granter)
 	if err != nil {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid granter address")
 	}
 
-	grantee, ok := g.Grantee.GetCachedValue().(Grantee)
-	if !ok {
+	grantee, isGrantee := g.Grantee.GetCachedValue().(Grantee)
+	if !isGrantee {
 		return fmt.Errorf("invalid grantee type: %T", grantee)
 	}
 
@@ -106,7 +108,7 @@ func (g Grant) Validate() error {
 		return err
 	}
 
-	if u, ok := grantee.(*UserGrantee); ok {
+	if u, isUserGrantee := grantee.(*UserGrantee); isUserGrantee {
 		if u.User == g.Granter {
 			return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "cannot self-grant fee authorization")
 		}
@@ -116,13 +118,14 @@ func (g Grant) Validate() error {
 	if err != nil {
 		return err
 	}
+
 	return f.ValidateBasic()
 }
 
 // GetUnpackedAllowance returns unpacked allowance
 func (u Grant) GetUnpackedAllowance() (feegranttypes.FeeAllowanceI, error) {
-	allowance, ok := u.Allowance.GetCachedValue().(feegranttypes.FeeAllowanceI)
-	if !ok {
+	allowance, isAllowance := u.Allowance.GetCachedValue().(feegranttypes.FeeAllowanceI)
+	if !isAllowance {
 		return nil, fmt.Errorf("failed to unpack allowance")
 	}
 
@@ -136,6 +139,7 @@ func (u Grant) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 	if err != nil {
 		return err
 	}
+
 	var allowance feegranttypes.FeeAllowanceI
 	return unpacker.UnpackAny(u.Allowance, &allowance)
 }

@@ -12,7 +12,8 @@ import (
 func (k Keeper) SaveGrant(ctx sdk.Context, grant types.Grant) {
 	store := ctx.KVStore(k.storeKey)
 	store.Set(getGrantKey(grant), k.cdc.MustMarshal(&grant))
-	if grantee, ok := grant.Grantee.GetCachedValue().(*types.UserGrantee); ok {
+
+	if grantee, isUserGrantee := grant.Grantee.GetCachedValue().(*types.UserGrantee); isUserGrantee {
 		k.createAccountIfNotExists(ctx, grantee.User)
 	}
 }
@@ -22,8 +23,10 @@ func getGrantKey(grant types.Grant) []byte {
 	switch grantee := grant.Grantee.GetCachedValue().(type) {
 	case *types.UserGrantee:
 		return types.UserAllowanceKey(grant.SubspaceID, grantee.User)
+
 	case *types.GroupGrantee:
 		return types.GroupAllowanceKey(grant.SubspaceID, grantee.GroupID)
+
 	default:
 		panic(fmt.Errorf("unsupported grantee type: %T", grantee))
 	}
@@ -43,14 +46,13 @@ func (k Keeper) DeleteUserGrant(ctx sdk.Context, subspaceID uint64, grantee stri
 
 // GetUserGrant returns the grant associated to the given user from the provided subspace.
 // If there is no grant associated with the info the function will return false.
-func (k Keeper) GetUserGrant(ctx sdk.Context, subspaceID uint64, grantee string) (types.Grant, bool) {
+func (k Keeper) GetUserGrant(ctx sdk.Context, subspaceID uint64, grantee string) (grant types.Grant, found bool) {
 	if !k.HasUserGrant(ctx, subspaceID, grantee) {
 		return types.Grant{}, false
 	}
 
 	store := ctx.KVStore(k.storeKey)
 	bz := store.Get(types.UserAllowanceKey(subspaceID, grantee))
-	var grant types.Grant
 	k.cdc.MustUnmarshal(bz, &grant)
 	return grant, true
 }
@@ -121,6 +123,7 @@ func (k Keeper) UseUserGrantedFees(ctx sdk.Context, subspaceID uint64, grantee s
 			allowance,
 		))
 	}
+
 	return true
 }
 
@@ -155,5 +158,6 @@ func (k Keeper) UseGroupGrantedFees(ctx sdk.Context, subspaceID uint64, grantee 
 		used = true
 		return true
 	})
+
 	return used
 }
