@@ -36,14 +36,6 @@ func (s *IntegrationTestSuite) TestCmdQueryUserAllowances() {
 			shouldErr: true,
 		},
 		{
-			name: "invalid grantee returns error",
-			args: []string{
-				"1",
-				"grantee",
-			},
-			shouldErr: true,
-		},
-		{
 			name: "valid query without grantee is returned correctly",
 			args: []string{
 				"1",

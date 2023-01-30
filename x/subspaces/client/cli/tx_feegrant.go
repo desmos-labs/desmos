@@ -53,22 +53,27 @@ func GetCmdGrantAllowance() *cobra.Command {
 			if err != nil {
 				return err
 			}
+
 			subspaceID, err := types.ParseSubspaceID(args[0])
 			if err != nil {
 				return err
 			}
+
 			grantee, err := getGranteeFromFlags(cmd.Flags())
 			if err != nil {
 				return err
 			}
+
 			allowance, err := getAllowanceFromFlags(cmd.Flags())
 			if err != nil {
 				return err
 			}
+
 			msg := types.NewMsgGrantAllowance(subspaceID, clientCtx.FromAddress.String(), grantee, allowance)
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}
+
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
@@ -96,14 +101,17 @@ func GetCmdRevokeAllowance() *cobra.Command {
 			if err != nil {
 				return err
 			}
+
 			subspaceID, err := types.ParseSubspaceID(args[0])
 			if err != nil {
 				return err
 			}
+
 			grantee, err := getGranteeFromFlags(cmd.Flags())
 			if err != nil {
 				return err
 			}
+
 			msg := types.NewMsgRevokeAllowance(subspaceID, clientCtx.FromAddress.String(), grantee)
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
@@ -112,9 +120,11 @@ func GetCmdRevokeAllowance() *cobra.Command {
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
+
 	cmd.Flags().String(FlagUserGrantee, "", "Address of the user being the allowance grantee")
 	cmd.Flags().Uint32(FlagGroupGrantee, 0, "Id of group being the allowance grantee")
 	flags.AddTxFlagsToCmd(cmd)
+
 	return cmd
 }
 
@@ -150,32 +160,40 @@ func getAllowanceFromFlags(flags *pflag.FlagSet) (feegrant.FeeAllowanceI, error)
 	if err != nil {
 		return nil, err
 	}
+
 	// if `FlagSpendLimit` isn't set, limit will be nil
 	limit, err := sdk.ParseCoinsNormalized(spendLimit)
 	if err != nil {
 		return nil, err
 	}
+
 	expired, err := flags.GetString(feegrantcli.FlagExpiration)
 	if err != nil {
 		return nil, err
 	}
+
 	periodClock, err := flags.GetInt64(feegrantcli.FlagPeriod)
 	if err != nil {
 		return nil, err
 	}
+
 	periodLimit, err := flags.GetString(feegrantcli.FlagPeriodLimit)
 	if err != nil {
 		return nil, err
 	}
+
 	allowedMsgs, err := flags.GetStringSlice(feegrantcli.FlagAllowedMsgs)
 	if err != nil {
 		return nil, err
 	}
 
+	// Build basic allowance
 	var allowance feegrant.FeeAllowanceI
 	basic := feegrant.BasicAllowance{
 		SpendLimit: limit,
 	}
+
+	// Add expiration to allowance if expiration is set
 	var expiresAtTime time.Time
 	if expired != "" {
 		expiresAtTime, err = time.Parse(time.RFC3339, expired)
@@ -185,22 +203,27 @@ func getAllowanceFromFlags(flags *pflag.FlagSet) (feegrant.FeeAllowanceI, error)
 		basic.Expiration = &expiresAtTime
 	}
 	allowance = &basic
-	// Check any of period or periodLimit flags set, If set consider it as periodic fee allowance
+
+	// Check any of period or periodLimit flags set, consider it as periodic fee allowance if set
 	if periodClock > 0 || periodLimit != "" {
 		periodLimit, err := sdk.ParseCoinsNormalized(periodLimit)
 		if err != nil {
 			return nil, err
 		}
+
 		if periodClock <= 0 {
 			return nil, fmt.Errorf("period clock was not set")
 		}
+
 		if periodLimit == nil {
 			return nil, fmt.Errorf("period limit was not set")
 		}
+
 		periodReset := getPeriodReset(periodClock)
 		if basic.Expiration != nil && periodReset.Sub(expiresAtTime) > 0 {
 			return nil, fmt.Errorf("period (%d) cannot reset after expiration (%v)", periodClock, expired)
 		}
+
 		periodAllowance := &feegrant.PeriodicAllowance{
 			Basic:            basic,
 			Period:           getPeriod(periodClock),
@@ -208,8 +231,11 @@ func getAllowanceFromFlags(flags *pflag.FlagSet) (feegrant.FeeAllowanceI, error)
 			PeriodSpendLimit: periodLimit,
 			PeriodCanSpend:   periodLimit,
 		}
+
 		allowance = periodAllowance
 	}
+
+	// Check if allowedMsgs flags set, consider it as allowed msg allowance if set
 	if len(allowedMsgs) > 0 {
 		filteredAllowance, err := feegrant.NewAllowedMsgAllowance(allowance, allowedMsgs)
 		if err != nil {
@@ -217,6 +243,7 @@ func getAllowanceFromFlags(flags *pflag.FlagSet) (feegrant.FeeAllowanceI, error)
 		}
 		allowance = filteredAllowance
 	}
+
 	return allowance, nil
 }
 

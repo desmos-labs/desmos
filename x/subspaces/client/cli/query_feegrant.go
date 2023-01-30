@@ -8,7 +8,6 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
 
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
@@ -48,12 +47,9 @@ func GetCmdQueryUserAllowances() *cobra.Command {
 			}
 			queryClient := types.NewQueryClient(clientCtx)
 
-			var subspaceID uint64
-			if len(args) > 0 {
-				subspaceID, err = types.ParseSubspaceID(args[0])
-				if err != nil {
-					return err
-				}
+			subspaceID, err := types.ParseSubspaceID(args[0])
+			if err != nil {
+				return err
 			}
 
 			pageReq, err := client.ReadPageRequest(cmd.Flags())
@@ -64,10 +60,6 @@ func GetCmdQueryUserAllowances() *cobra.Command {
 			var grantee string
 			if len(args) > 1 {
 				grantee = args[1]
-				_, err := sdk.AccAddressFromBech32(grantee)
-				if err != nil {
-					return err
-				}
 			}
 
 			res, err := queryClient.UserAllowances(
@@ -109,7 +101,7 @@ func GetCmdQueryGroupAllowances() *cobra.Command {
 			}
 
 			var groupID uint32
-			if len(args) > 1 && args[1] != "" {
+			if len(args) > 1 {
 				groupID, err = types.ParseGroupID(args[1])
 				if err != nil {
 					return err
