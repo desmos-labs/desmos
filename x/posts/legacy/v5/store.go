@@ -34,52 +34,54 @@ func migratePollAttachments(store sdk.KVStore, cdc codec.BinaryCodec) error {
 			return err
 		}
 
-		// Check if the attachment is a poll
-		if poll, isPoll := attachment.Content.GetCachedValue().(*v4.Poll); isPoll {
-			err = migratePoll(attachment, poll, store, cdc)
+		var attachmentContent types.AttachmentContent
+		switch content := attachment.Content.GetCachedValue().(type) {
+		case *v4.Media:
+			attachmentContent = migrateMedia(content)
+		case *v4.Poll:
+			v5Poll, err := migratePoll(content, cdc)
 			if err != nil {
 				return err
 			}
+			attachmentContent = v5Poll
 		}
+
+		// Store the new attachment - This will override the old store key
+		v5Attachment := types.NewAttachment(attachment.SubspaceID, attachment.PostID, attachment.ID, attachmentContent)
+		store.Set(
+			types.AttachmentStoreKey(v5Attachment.SubspaceID, v5Attachment.PostID, v5Attachment.ID),
+			cdc.MustMarshal(&v5Attachment),
+		)
 	}
 
 	return nil
 }
 
-// migratePoll migrates the given attachment, containing the provided poll, into v5 format
-func migratePoll(attachment v4.Attachment, poll *v4.Poll, store sdk.KVStore, cdc codec.BinaryCodec) error {
+// migrateMedia migrates the given media to the new format
+func migrateMedia(media *v4.Media) *types.Media {
+	return types.NewMedia(media.Uri, media.MimeType)
+}
+
+// migratePoll migrates the given poll to the new format
+func migratePoll(poll *v4.Poll, cdc codec.BinaryCodec) (*types.Poll, error) {
 	// Get the new provided answers
 	providedAnswers := make([]types.Poll_ProvidedAnswer, len(poll.ProvidedAnswers))
 	for i, answer := range poll.ProvidedAnswers {
 		attachmentContents, err := migrateProvidedAnswerAttachments(answer.Attachments, cdc)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		providedAnswers[i] = types.NewProvidedAnswer(answer.Text, attachmentContents)
 	}
 
-	// Build the new attachment
-	v5Attachment := types.NewAttachment(
-		attachment.SubspaceID,
-		attachment.PostID,
-		attachment.ID,
-		types.NewPoll(
-			poll.Question,
-			providedAnswers,
-			poll.EndDate,
-			poll.AllowsMultipleAnswers,
-			poll.AllowsAnswerEdits,
-			migratePollFinalTallyResults(poll.FinalTallyResults),
-		),
-	)
-
-	// Store the new attachment - This will override the old store key
-	store.Set(
-		types.AttachmentStoreKey(v5Attachment.SubspaceID, v5Attachment.PostID, v5Attachment.ID),
-		cdc.MustMarshal(&v5Attachment),
-	)
-
-	return nil
+	return types.NewPoll(
+		poll.Question,
+		providedAnswers,
+		poll.EndDate,
+		poll.AllowsMultipleAnswers,
+		poll.AllowsAnswerEdits,
+		migratePollFinalTallyResults(poll.FinalTallyResults),
+	), nil
 }
 
 // migrateProvidedAnswerAttachments migrates the given attachments slide

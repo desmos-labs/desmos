@@ -34,6 +34,24 @@ func TestMigrateStore(t *testing.T) {
 	}{
 		{
 			name: "media attachments are still valid even without migration",
+			store: func(ctx sdk.Context) {
+				media := v4.NewAttachment(1, 1, 1, v4.NewMedia("https://example.com/image.png", "image/png"))
+
+				store := ctx.KVStore(keys[types.StoreKey])
+				store.Set(types.AttachmentStoreKey(1, 1, 1), cdc.MustMarshal(&media))
+			},
+			shouldErr: false,
+			check: func(ctx sdk.Context) {
+				store := ctx.KVStore(keys[types.StoreKey])
+
+				var stored types.Attachment
+				err := cdc.Unmarshal(store.Get(types.AttachmentStoreKey(1, 1, 1)), &stored)
+				require.NoError(t, err)
+				require.Equal(t, types.NewAttachment(1, 1, 1, types.NewMedia(
+					"https://example.com/image.png",
+					"image/png",
+				)), stored)
+			},
 		},
 		{
 			name: "poll provided answers attachments are migrated properly",

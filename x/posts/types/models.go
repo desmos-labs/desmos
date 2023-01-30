@@ -628,7 +628,7 @@ func (a Poll_ProvidedAnswer) Validate() error {
 			return fmt.Errorf("cannot have a poll as an attachment of a poll's provided answer")
 		}
 
-		if containsDuplicated(attachments, attachment) {
+		if containsDuplicatedAttachments(attachments, attachment) {
 			return fmt.Errorf("duplicated attachment")
 		}
 
@@ -641,8 +641,8 @@ func (a Poll_ProvidedAnswer) Validate() error {
 	return nil
 }
 
-// containsDuplicated tells whether the given attachments array contains a duplicate content
-func containsDuplicated(attachments []AttachmentContent, content AttachmentContent) bool {
+// containsDuplicatedAttachments tells whether the given attachments array contains a duplicate content
+func containsDuplicatedAttachments(attachments []AttachmentContent, content AttachmentContent) bool {
 	var found = 0
 	for _, attachment := range attachments {
 		if attachment.Equal(content) {
