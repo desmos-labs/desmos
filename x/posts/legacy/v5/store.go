@@ -17,11 +17,11 @@ func MigrateStore(ctx sdk.Context, storeKey sdk.StoreKey, cdc codec.BinaryCodec)
 	store := ctx.KVStore(storeKey)
 
 	// Migrate the poll attachments
-	return migratePollAttachments(store, cdc)
+	return migrateAttachments(store, cdc)
 }
 
-// migratePollAttachments migrates all the poll attachments to v5
-func migratePollAttachments(store sdk.KVStore, cdc codec.BinaryCodec) error {
+// migrateAttachments migrates all the attachments to v5
+func migrateAttachments(store sdk.KVStore, cdc codec.BinaryCodec) error {
 	attachmentsStore := prefix.NewStore(store, types.AttachmentPrefix)
 	attachmentsIterator := attachmentsStore.Iterator(nil, nil)
 	defer attachmentsIterator.Close()
