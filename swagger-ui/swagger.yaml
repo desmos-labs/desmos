@@ -16706,7 +16706,7 @@ definitions:
           type: string
         title: Permissions that will be granted to all the users part of this group
     title: UserGroup represents a group of users
-  desmos.posts.v2.Attachment:
+  desmos.posts.v3.Attachment:
     type: object
     properties:
       subspace_id:
@@ -16886,7 +16886,7 @@ definitions:
               }
         title: Content of the attachment
     title: Attachment contains the data of a single post attachment
-  desmos.posts.v2.Entities:
+  desmos.posts.v3.Entities:
     type: object
     properties:
       hashtags:
@@ -16947,7 +16947,7 @@ definitions:
           title: Url contains the details of a generic URL
         title: Links present inside the post text
     title: Contains the details of entities parsed out of the post text
-  desmos.posts.v2.Params:
+  desmos.posts.v3.Params:
     type: object
     properties:
       max_text_length:
@@ -16955,7 +16955,7 @@ definitions:
         format: int64
         title: Maximum length of the post text
     title: Params contains the parameters for the posts module
-  desmos.posts.v2.Post:
+  desmos.posts.v3.Post:
     type: object
     properties:
       subspace_id:
@@ -17113,7 +17113,7 @@ definitions:
         format: date-time
         title: (optional) Last edited time of the post
     title: Post contains all the information about a single post
-  desmos.posts.v2.PostReference:
+  desmos.posts.v3.PostReference:
     type: object
     properties:
       type:
@@ -17143,7 +17143,7 @@ definitions:
 
           with the type set to TYPE_QUOTE
     title: PostReference contains the details of a post reference
-  desmos.posts.v2.PostReferenceType:
+  desmos.posts.v3.PostReferenceType:
     type: string
     enum:
       - POST_REFERENCE_TYPE_UNSPECIFIED
@@ -17157,7 +17157,7 @@ definitions:
        - POST_REFERENCE_TYPE_QUOTE: This reference represents a quote of the specified post
        - POST_REFERENCE_TYPE_REPOST: This reference represents a repost of the specified post
     title: PostReferenceType represents the different types of references
-  desmos.posts.v2.QueryParamsResponse:
+  desmos.posts.v3.QueryParamsResponse:
     type: object
     properties:
       params:
@@ -17169,7 +17169,7 @@ definitions:
             title: Maximum length of the post text
         title: Params contains the parameters for the posts module
     title: QueryParamsResponse is the response type for the Query/Params RPC method
-  desmos.posts.v2.QueryPollAnswersResponse:
+  desmos.posts.v3.QueryPollAnswersResponse:
     type: object
     properties:
       answers:
@@ -17231,7 +17231,7 @@ definitions:
       RPC
 
       method
-  desmos.posts.v2.QueryPostAttachmentsResponse:
+  desmos.posts.v3.QueryPostAttachmentsResponse:
     type: object
     properties:
       attachments:
@@ -17454,7 +17454,7 @@ definitions:
     title: |-
       QueryPostAttachmentsResponse is the response type for the
       Query/PostAttachments RPC method
-  desmos.posts.v2.QueryPostResponse:
+  desmos.posts.v3.QueryPostResponse:
     type: object
     properties:
       post:
@@ -17622,7 +17622,7 @@ definitions:
             title: (optional) Last edited time of the post
         title: Post contains all the information about a single post
     title: QueryPostResponse is the response type for the Query/Post RPC method
-  desmos.posts.v2.QuerySectionPostsResponse:
+  desmos.posts.v3.QuerySectionPostsResponse:
     type: object
     properties:
       posts:
@@ -17825,7 +17825,7 @@ definitions:
       RPC
 
       method
-  desmos.posts.v2.QuerySubspacePostsResponse:
+  desmos.posts.v3.QuerySubspacePostsResponse:
     type: object
     properties:
       posts:
@@ -18028,7 +18028,7 @@ definitions:
       Query/SubspacePosts
 
       RPC method
-  desmos.posts.v2.ReplySetting:
+  desmos.posts.v3.ReplySetting:
     type: string
     enum:
       - REPLY_SETTING_UNSPECIFIED
@@ -18044,7 +18044,7 @@ definitions:
        - REPLY_SETTING_MUTUAL: Only the author mutual followers will be able to reply to this post
        - REPLY_SETTING_MENTIONS: Only people mentioned inside this post will be able to reply
     title: ReplySetting contains the possible reply settings that a post can have
-  desmos.posts.v2.TextTag:
+  desmos.posts.v3.TextTag:
     type: object
     properties:
       start:
@@ -18059,7 +18059,7 @@ definitions:
         type: string
         title: 'Tag reference (user address, hashtag value, etc)'
     title: TextTag represents a tag within the post text
-  desmos.posts.v2.Url:
+  desmos.posts.v3.Url:
     type: object
     properties:
       start:
@@ -18077,7 +18077,7 @@ definitions:
         type: string
         title: (optional) Display value of the URL
     title: Url contains the details of a generic URL
-  desmos.posts.v2.UserAnswer:
+  desmos.posts.v3.UserAnswer:
     type: object
     properties:
       subspace_id:
