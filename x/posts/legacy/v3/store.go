@@ -4,11 +4,12 @@ import (
 	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/codec"
-	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	v2 "github.com/desmos-labs/desmos/v4/x/posts/legacy/v2"
+	v4 "github.com/desmos-labs/desmos/v4/x/posts/legacy/v4"
 	"github.com/desmos-labs/desmos/v4/x/posts/types"
 )
 
@@ -62,7 +63,7 @@ func migratePosts(store sdk.KVStore, cdc codec.BinaryCodec) error {
 
 	// Convert the posts
 	for _, v2Post := range v2Posts {
-		v3Post := types.NewPost(
+		v3Post := v4.NewPost(
 			v2Post.SubspaceID,
 			v2Post.SectionID,
 			v2Post.ID,
@@ -86,12 +87,12 @@ func migratePosts(store sdk.KVStore, cdc codec.BinaryCodec) error {
 }
 
 // migrateEntities migrates the given entities from v2 to v3
-func migrateEntities(v2Entities *v2.Entities) *types.Entities {
+func migrateEntities(v2Entities *v2.Entities) *v4.Entities {
 	if v2Entities == nil {
 		return nil
 	}
 
-	return types.NewEntities(
+	return v4.NewEntities(
 		migrateTags(v2Entities.Hashtags),
 		migrateTags(v2Entities.Mentions),
 		migrateUrls(v2Entities.Urls),
@@ -99,40 +100,40 @@ func migrateEntities(v2Entities *v2.Entities) *types.Entities {
 }
 
 // migrateTags migrates the given tags from v2 to v3
-func migrateTags(v2Tags []v2.Tag) []types.TextTag {
+func migrateTags(v2Tags []v2.Tag) []v4.TextTag {
 	if v2Tags == nil {
 		return nil
 	}
 
-	v3Tags := make([]types.TextTag, len(v2Tags))
+	v3Tags := make([]v4.TextTag, len(v2Tags))
 	for i, v2Tag := range v2Tags {
-		v3Tags[i] = types.NewTextTag(v2Tag.Start, v2Tag.End, v2Tag.Tag)
+		v3Tags[i] = v4.NewTextTag(v2Tag.Start, v2Tag.End, v2Tag.Tag)
 	}
 	return v3Tags
 }
 
 // migrateUrls migrates the given urls from v2 to v3
-func migrateUrls(v2Urls []v2.Url) []types.Url {
+func migrateUrls(v2Urls []v2.Url) []v4.Url {
 	if v2Urls == nil {
 		return nil
 	}
 
-	v3Urls := make([]types.Url, len(v2Urls))
+	v3Urls := make([]v4.Url, len(v2Urls))
 	for i, v2Url := range v2Urls {
-		v3Urls[i] = types.NewURL(v2Url.Start, v2Url.End, v2Url.Url, v2Url.DisplayUrl)
+		v3Urls[i] = v4.NewURL(v2Url.Start, v2Url.End, v2Url.Url, v2Url.DisplayUrl)
 	}
 	return v3Urls
 }
 
 // migratePostReferences migrates the given references from v2 to v3
-func migratePostReferences(v2References []v2.PostReference) []types.PostReference {
+func migratePostReferences(v2References []v2.PostReference) []v4.PostReference {
 	if v2References == nil {
 		return nil
 	}
 
-	v3References := make([]types.PostReference, len(v2References))
+	v3References := make([]v4.PostReference, len(v2References))
 	for i, v2Reference := range v2References {
-		v3References[i] = types.NewPostReference(
+		v3References[i] = v4.NewPostReference(
 			migratePostReferenceType(v2Reference.Type),
 			v2Reference.PostID,
 			v2Reference.Position,
@@ -142,34 +143,34 @@ func migratePostReferences(v2References []v2.PostReference) []types.PostReferenc
 }
 
 // migratePostReferenceType migrates the given post reference type from v2 to v3
-func migratePostReferenceType(v2Type v2.PostReferenceType) types.PostReferenceType {
+func migratePostReferenceType(v2Type v2.PostReferenceType) v4.PostReferenceType {
 	switch v2Type {
 	case v2.POST_REFERENCE_TYPE_UNSPECIFIED:
-		return types.POST_REFERENCE_TYPE_UNSPECIFIED
+		return v4.POST_REFERENCE_TYPE_UNSPECIFIED
 	case v2.POST_REFERENCE_TYPE_REPLY:
-		return types.POST_REFERENCE_TYPE_REPLY
+		return v4.POST_REFERENCE_TYPE_REPLY
 	case v2.POST_REFERENCE_TYPE_QUOTE:
-		return types.POST_REFERENCE_TYPE_QUOTE
+		return v4.POST_REFERENCE_TYPE_QUOTE
 	case v2.POST_REFERENCE_TYPE_REPOST:
-		return types.POST_REFERENCE_TYPE_REPOST
+		return v4.POST_REFERENCE_TYPE_REPOST
 	default:
 		panic(fmt.Errorf("invalid post reference type: %s", v2Type))
 	}
 }
 
 // migrateReplySettings migrates the given reply setting from v2 to v3
-func migrateReplySettings(settings v2.ReplySetting) types.ReplySetting {
+func migrateReplySettings(settings v2.ReplySetting) v4.ReplySetting {
 	switch settings {
 	case v2.REPLY_SETTING_UNSPECIFIED:
-		return types.REPLY_SETTING_UNSPECIFIED
+		return v4.REPLY_SETTING_UNSPECIFIED
 	case v2.REPLY_SETTING_EVERYONE:
-		return types.REPLY_SETTING_EVERYONE
+		return v4.REPLY_SETTING_EVERYONE
 	case v2.REPLY_SETTING_FOLLOWERS:
-		return types.REPLY_SETTING_FOLLOWERS
+		return v4.REPLY_SETTING_FOLLOWERS
 	case v2.REPLY_SETTING_MUTUAL:
-		return types.REPLY_SETTING_MUTUAL
+		return v4.REPLY_SETTING_MUTUAL
 	case v2.REPLY_SETTING_MENTIONS:
-		return types.REPLY_SETTING_MENTIONS
+		return v4.REPLY_SETTING_MENTIONS
 	default:
 		panic(fmt.Errorf("invalid reply settings value: %s", settings))
 	}
@@ -208,10 +209,10 @@ func migrateAttachments(store sdk.KVStore, cdc codec.BinaryCodec) error {
 }
 
 // convertAttachments converts the given attachments from v2 to v3
-func convertAttachments(v2Attachment []v2.Attachment) []types.Attachment {
-	v3Attachments := make([]types.Attachment, len(v2Attachment))
+func convertAttachments(v2Attachment []v2.Attachment) []v4.Attachment {
+	v3Attachments := make([]v4.Attachment, len(v2Attachment))
 	for i, attachment := range v2Attachment {
-		v3Attachments[i] = types.NewAttachment(
+		v3Attachments[i] = v4.NewAttachment(
 			attachment.SubspaceID,
 			attachment.PostID,
 			attachment.ID,
@@ -222,13 +223,13 @@ func convertAttachments(v2Attachment []v2.Attachment) []types.Attachment {
 }
 
 // convertAttachmentContent converts the given attachment content from v2 to v3
-func convertAttachmentContent(contentAny *cdctypes.Any) types.AttachmentContent {
+func convertAttachmentContent(contentAny *codectypes.Any) v4.AttachmentContent {
 	switch content := contentAny.GetCachedValue().(v2.AttachmentContent).(type) {
 	case *v2.Media:
-		return types.NewMedia(content.Uri, content.MimeType)
+		return v4.NewMedia(content.Uri, content.MimeType)
 
 	case *v2.Poll:
-		return types.NewPoll(content.Question,
+		return v4.NewPoll(content.Question,
 			convertProvidedAnswers(content.ProvidedAnswers),
 			content.EndDate,
 			content.AllowsMultipleAnswers,
@@ -242,23 +243,23 @@ func convertAttachmentContent(contentAny *cdctypes.Any) types.AttachmentContent 
 }
 
 // convertTallyResults converts the given poll tally results from v2 to v3
-func convertTallyResults(v2Results *v2.PollTallyResults) *types.PollTallyResults {
+func convertTallyResults(v2Results *v2.PollTallyResults) *v4.PollTallyResults {
 	if v2Results == nil {
 		return nil
 	}
 
-	v3Results := make([]types.PollTallyResults_AnswerResult, len(v2Results.Results))
+	v3Results := make([]v4.PollTallyResults_AnswerResult, len(v2Results.Results))
 	for i, result := range v2Results.Results {
-		v3Results[i] = types.NewAnswerResult(result.AnswerIndex, result.Votes)
+		v3Results[i] = v4.NewAnswerResult(result.AnswerIndex, result.Votes)
 	}
-	return types.NewPollTallyResults(v3Results)
+	return v4.NewPollTallyResults(v3Results)
 }
 
 // convertProvidedAnswers converts the given poll provided answers from v2 to v3
-func convertProvidedAnswers(v2Answers []v2.Poll_ProvidedAnswer) []types.Poll_ProvidedAnswer {
-	v3Answers := make([]types.Poll_ProvidedAnswer, len(v2Answers))
+func convertProvidedAnswers(v2Answers []v2.Poll_ProvidedAnswer) []v4.Poll_ProvidedAnswer {
+	v3Answers := make([]v4.Poll_ProvidedAnswer, len(v2Answers))
 	for i, answer := range v2Answers {
-		v3Answers[i] = types.NewProvidedAnswer(answer.Text, convertAttachments(answer.Attachments))
+		v3Answers[i] = v4.NewProvidedAnswer(answer.Text, convertAttachments(answer.Attachments))
 	}
 	return v3Answers
 }
@@ -284,7 +285,7 @@ func migrateUserAnswers(store sdk.KVStore, cdc codec.BinaryCodec) error {
 
 	// Convert the answers
 	for _, v2Answer := range v2Answers {
-		v3Answer := types.NewUserAnswer(
+		v3Answer := v4.NewUserAnswer(
 			v2Answer.SubspaceID,
 			v2Answer.PostID,
 			v2Answer.PollID,

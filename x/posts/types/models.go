@@ -387,11 +387,6 @@ func ParseAttachmentID(value string) (uint32, error) {
 // Attachments represents a slice of Attachment objects
 type Attachments []Attachment
 
-// NewAttachments returns a new Attachments instance
-func NewAttachments(attachments ...Attachment) Attachments {
-	return Attachments(attachments)
-}
-
 // Validate implements fmt.Validators fmt.Validator
 func (a Attachments) Validate() error {
 	ids := map[uint32]bool{}
@@ -459,17 +454,23 @@ type AttachmentContent interface {
 	proto.Message
 	isAttachmentContent()
 	Validate() error
+	Equal(other interface{}) bool
 }
 
 // PackAttachments packs the given AttachmentContent instances as Any instances
 func PackAttachments(attachments []AttachmentContent) ([]*codectypes.Any, error) {
+	if attachments == nil {
+		// Avoid allocating a new array
+		return nil, nil
+	}
+
 	attachmentAnys := make([]*codectypes.Any, len(attachments))
 	for i := range attachments {
-		any, err := codectypes.NewAnyWithValue(attachments[i])
+		attachmentAny, err := codectypes.NewAnyWithValue(attachments[i])
 		if err != nil {
 			return nil, err
 		}
-		attachmentAnys[i] = any
+		attachmentAnys[i] = attachmentAny
 	}
 	return attachmentAnys, nil
 }
@@ -583,13 +584,29 @@ func IsPoll(attachment Attachment) bool {
 	return ok
 }
 
+// UnpackInterfaces implements codectypes.UnpackInterfacesMessage
+func (a *Poll) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
+	for _, answer := range a.ProvidedAnswers {
+		err := answer.UnpackInterfaces(unpacker)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewProvidedAnswer returns a new Poll_ProvidedAnswer instance
-func NewProvidedAnswer(text string, attachments []Attachment) Poll_ProvidedAnswer {
+func NewProvidedAnswer(text string, attachments []AttachmentContent) Poll_ProvidedAnswer {
+	attachmentAnys, err := PackAttachments(attachments)
+	if err != nil {
+		panic(err)
+	}
+
 	return Poll_ProvidedAnswer{
 		Text:        text,
-		Attachments: attachments,
+		Attachments: attachmentAnys,
 	}
 }
 
@@ -599,7 +616,52 @@ func (a Poll_ProvidedAnswer) Validate() error {
 		return fmt.Errorf("invalid text: %s", a.Text)
 	}
 
-	return Attachments(a.Attachments).Validate()
+	// Unpack the attachments
+	attachments := make([]AttachmentContent, len(a.Attachments))
+	for i, attachmentAny := range a.Attachments {
+		attachments[i] = attachmentAny.GetCachedValue().(AttachmentContent)
+	}
+
+	// Validate the attachments
+	for _, attachment := range attachments {
+		if _, isPoll := attachment.(*Poll); isPoll {
+			return fmt.Errorf("cannot have a poll as an attachment of a poll's provided answer")
+		}
+
+		if containsDuplicatedAttachments(attachments, attachment) {
+			return fmt.Errorf("duplicated attachment")
+		}
+
+		err := attachment.Validate()
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// containsDuplicatedAttachments tells whether the given attachments array contains a duplicate content
+func containsDuplicatedAttachments(attachments []AttachmentContent, content AttachmentContent) bool {
+	var found = 0
+	for _, attachment := range attachments {
+		if attachment.Equal(content) {
+			found++
+		}
+	}
+	return found > 1
+}
+
+// UnpackInterfaces implements codectypes.UnpackInterfacesMessage
+func (a *Poll_ProvidedAnswer) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
+	for _, attachment := range a.Attachments {
+		var content AttachmentContent
+		err := unpacker.UnpackAny(attachment, &content)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // --------------------------------------------------------------------------------------------------------------------

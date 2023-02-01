@@ -26,7 +26,7 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 
 func RegisterInterfaces(registry types.InterfaceRegistry) {
 	registry.RegisterInterface(
-		"desmos.posts.v2.AttachmentContent",
+		"desmos.posts.v3.AttachmentContent",
 		(*AttachmentContent)(nil),
 		&Poll{},
 		&Media{},

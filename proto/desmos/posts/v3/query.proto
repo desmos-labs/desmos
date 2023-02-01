@@ -1,11 +1,11 @@
 syntax = "proto3";
-package desmos.posts.v2;
+package desmos.posts.v3;
 
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 
-import "desmos/posts/v2/models.proto";
+import "desmos/posts/v3/models.proto";
 
 option go_package = "github.com/desmos-labs/desmos/v4/x/posts/types";
 
