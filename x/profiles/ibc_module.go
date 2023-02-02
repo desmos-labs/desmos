@@ -85,12 +85,12 @@ func (am IBCModule) OnChanOpenInit(
 	version string,
 ) (string, error) {
 	if err := ValidateProfilesChannelParams(ctx, am.keeper, order, portID, channelID); err != nil {
-		return version, err
+		return "", err
 	}
 
 	// Claim channel capability passed back by IBC module
 	if err := am.keeper.ClaimCapability(ctx, channelCap, host.ChannelCapabilityPath(portID, channelID)); err != nil {
-		return version, err
+		return "", err
 	}
 
 	return version, nil
