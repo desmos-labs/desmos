@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/desmos-labs/desmos/v4/x/reactions"
 	reactionstypes "github.com/desmos-labs/desmos/v4/x/reactions/types"
@@ -90,6 +89,7 @@ import (
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tmos "github.com/tendermint/tendermint/libs/os"
+	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	dbm "github.com/tendermint/tm-db"
 
 	"github.com/cosmos/cosmos-sdk/x/capability"
@@ -171,36 +171,6 @@ const (
 	CoinType           = 852
 	FullFundraiserPath = "44'/852'/0'/0/0"
 )
-
-var (
-	// If EnabledSpecificProposals is "", and this is "true", then enable all x/wasm proposals.
-	// If EnabledSpecificProposals is "", and this is not "true", then disable all x/wasm proposals.
-
-	ProposalsEnabled = "false"
-
-	// If set to non-empty string it must be comma-separated list of values that are all a subset
-	// of "EnableAllProposals" (takes precedence over ProposalsEnabled)
-	// https://github.com/CosmWasm/wasmd/blob/02a54d33ff2c064f3539ae12d75d027d9c665f05/x/wasm/internal/types/proposal.go#L28-L34
-
-	EnableSpecificProposals = ""
-)
-
-// GetEnabledProposals parses the ProposalsEnabled / EnableSpecificProposals values to
-// produce a list of enabled proposals to pass into desmos app.
-func GetEnabledProposals() []wasm.ProposalType {
-	if EnableSpecificProposals == "" {
-		if ProposalsEnabled == "true" {
-			return wasm.EnableAllProposals
-		}
-		return wasm.DisableAllProposals
-	}
-	chunks := strings.Split(EnableSpecificProposals, ",")
-	proposals, err := wasm.ConvertToProposals(chunks)
-	if err != nil {
-		panic(err)
-	}
-	return proposals
-}
 
 // GetWasmOpts parses appOpts and add wasm opt to the given options array.
 // if telemetry is enabled, the wasmVM cache metrics are activated.
@@ -377,7 +347,7 @@ func init() {
 func NewDesmosApp(
 	logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest bool, skipUpgradeHeights map[int64]bool,
 	homePath string, invCheckPeriod uint, encodingConfig simappparams.EncodingConfig,
-	appOpts servertypes.AppOptions, baseAppOptions ...func(*baseapp.BaseApp),
+	appOpts servertypes.AppOptions, wasmEnabledProposals []wasm.ProposalType, baseAppOptions ...func(*baseapp.BaseApp),
 ) *DesmosApp {
 
 	// TODO: Remove cdc in favor of appCodec once all modules are migrated.
@@ -523,14 +493,6 @@ func NewDesmosApp(
 		&app.IBCKeeper.PortKeeper,
 		scopedProfilesKeeper,
 	)
-	profilesModule := profiles.NewAppModule(
-		appCodec,
-		legacyAmino,
-		app.ProfileKeeper,
-		app.AccountKeeper,
-		app.BankKeeper,
-		app.FeesKeeper,
-	)
 
 	// Create posts keeper and module
 	postsKeeper := postskeeper.NewKeeper(
@@ -602,7 +564,6 @@ func NewDesmosApp(
 		panic("error while reading wasm config: " + err.Error())
 	}
 
-	supportedFeatures := "iterator,staking,stargate"
 	wasmOpts := GetWasmOpts(
 		appOpts,
 		app.appCodec,
@@ -614,9 +575,10 @@ func NewDesmosApp(
 		app.ReactionsKeeper,
 	)
 
+	supportedFeatures := "iterator,staking,stargate,cosmwasm_1_1"
 	// The last arguments can contain custom message handlers, and custom query handlers,
 	// if we want to allow any custom callbacks
-	app.WasmKeeper = wasmkeeper.NewKeeper(
+	app.WasmKeeper = wasm.NewKeeper(
 		appCodec,
 		keys[wasm.StoreKey],
 		app.GetSubspace(wasm.ModuleName),
@@ -637,9 +599,8 @@ func NewDesmosApp(
 	)
 
 	// The gov proposal types can be individually enabled
-	enabledWasmProposals := GetEnabledProposals()
-	if len(enabledWasmProposals) != 0 {
-		govRouter.AddRoute(wasm.RouterKey, wasm.NewWasmProposalHandler(app.WasmKeeper, enabledWasmProposals))
+	if len(wasmEnabledProposals) != 0 {
+		govRouter.AddRoute(wasm.RouterKey, wasm.NewWasmProposalHandler(app.WasmKeeper, wasmEnabledProposals))
 	}
 
 	app.GovKeeper = govkeeper.NewKeeper(
@@ -688,7 +649,6 @@ func NewDesmosApp(
 		evidence.NewAppModule(app.EvidenceKeeper),
 		params.NewAppModule(app.ParamsKeeper),
 		authzmodule.NewAppModule(appCodec, app.AuthzKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
-		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
 
 		// IBC modules
 		ibc.NewAppModule(app.IBCKeeper),
@@ -697,12 +657,14 @@ func NewDesmosApp(
 		// Custom modules
 		fees.NewAppModule(app.appCodec, app.FeesKeeper),
 		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AuthzKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
-		profilesModule,
+		profiles.NewAppModule(appCodec, legacyAmino, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv4.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		posts.NewAppModule(appCodec, app.PostsKeeper, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		reports.NewAppModule(appCodec, app.ReportsKeeper, app.SubspacesKeeper, app.PostsKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		reactions.NewAppModule(appCodec, app.ReactionsKeeper, app.SubspacesKeeper, app.PostsKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		supply.NewAppModule(appCodec, legacyAmino, app.SupplyKeeper),
+
+		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -727,7 +689,6 @@ func NewDesmosApp(
 		feegrant.ModuleName,
 		paramstypes.ModuleName,
 		vestingtypes.ModuleName,
-		wasm.ModuleName,
 
 		// IBC modules
 		ibchost.ModuleName,
@@ -742,6 +703,8 @@ func NewDesmosApp(
 		reportstypes.ModuleName,
 		reactionstypes.ModuleName,
 		supplytypes.ModuleName,
+
+		wasm.ModuleName,
 	)
 	app.mm.SetOrderEndBlockers(
 		crisistypes.ModuleName,
@@ -760,7 +723,6 @@ func NewDesmosApp(
 		paramstypes.ModuleName,
 		upgradetypes.ModuleName,
 		vestingtypes.ModuleName,
-		wasm.ModuleName,
 
 		// IBC modules
 		ibchost.ModuleName,
@@ -775,6 +737,8 @@ func NewDesmosApp(
 		reportstypes.ModuleName,
 		reactionstypes.ModuleName,
 		supplytypes.ModuleName,
+
+		wasm.ModuleName,
 	)
 
 	// NOTE: The genutils module must occur after staking so that pools are
@@ -783,6 +747,8 @@ func NewDesmosApp(
 	// NOTE: Capability module must occur first so that it can initialize any capabilities
 	// so that other modules that want to create or claim capabilities afterwards in InitChain
 	// can do so safely.
+	// NOTE: wasm module should be at the end as it can call other module functionality direct or via message dispatching during
+	// genesis phase. For example bank transfer, auth account check, staking, ...
 	app.mm.SetOrderInitGenesis(
 		capabilitytypes.ModuleName,
 		authtypes.ModuleName,
@@ -799,7 +765,6 @@ func NewDesmosApp(
 		paramstypes.ModuleName,
 		upgradetypes.ModuleName,
 		vestingtypes.ModuleName,
-		wasm.ModuleName,
 
 		// IBC modules
 		ibchost.ModuleName,
@@ -814,6 +779,9 @@ func NewDesmosApp(
 		reportstypes.ModuleName,
 		reactionstypes.ModuleName,
 		supplytypes.ModuleName,
+
+		// wasm module should be at the end of app modules
+		wasm.ModuleName,
 
 		crisistypes.ModuleName,
 	)
@@ -837,7 +805,6 @@ func NewDesmosApp(
 		paramstypes.ModuleName,
 		upgradetypes.ModuleName,
 		vestingtypes.ModuleName,
-		wasm.ModuleName,
 
 		// IBC modules
 		ibchost.ModuleName,
@@ -853,6 +820,7 @@ func NewDesmosApp(
 		reactionstypes.ModuleName,
 		supplytypes.ModuleName,
 
+		wasm.ModuleName,
 		crisistypes.ModuleName,
 	)
 
@@ -886,19 +854,21 @@ func NewDesmosApp(
 		// TODO: Re-enable this once the sim tests are fixed
 		// authzmodule.NewAppModule(appCodec, app.AuthzKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
 
+		// IBC modules
 		ibc.NewAppModule(app.IBCKeeper),
 		ibctransfer.NewAppModule(app.TransferKeeper),
-		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
 
 		// Custom modules
 		fees.NewAppModule(appCodec, app.FeesKeeper),
 		supply.NewAppModule(appCodec, legacyAmino, app.SupplyKeeper),
 		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AuthzKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
-		profilesModule,
+		profiles.NewAppModule(appCodec, legacyAmino, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv4.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		posts.NewAppModule(appCodec, app.PostsKeeper, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		reports.NewAppModule(appCodec, app.ReportsKeeper, app.SubspacesKeeper, app.PostsKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		reactions.NewAppModule(appCodec, app.ReactionsKeeper, app.SubspacesKeeper, app.PostsKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
+
+		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
 	)
 
 	app.sm.RegisterStoreDecoders()
@@ -944,16 +914,22 @@ func NewDesmosApp(
 		}
 	}
 
-	if loadLatest {
-		if err := app.LoadLatestVersion(); err != nil {
-			tmos.Exit(err.Error())
-		}
-	}
-
 	app.ScopedIBCKeeper = scopedIBCKeeper
 	app.ScopedIBCTransferKeeper = scopedIBCTransferKeeper
 	app.ScopedProfilesKeeper = scopedProfilesKeeper
 	app.ScopedWasmKeeper = scopedWasmKeeper
+
+	if loadLatest {
+		if err := app.LoadLatestVersion(); err != nil {
+			tmos.Exit(err.Error())
+		}
+		ctx := app.BaseApp.NewUncachedContext(true, tmproto.Header{})
+
+		// Initialize pinned codes in wasmvm as they are not persisted there
+		if err := app.WasmKeeper.InitializePinnedCodes(ctx); err != nil {
+			tmos.Exit(fmt.Sprintf("failed initialize pinned codes %s", err))
+		}
+	}
 
 	return app
 }

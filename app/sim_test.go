@@ -34,6 +34,7 @@ import (
 
 	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
 
+	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmsim "github.com/CosmWasm/wasmd/x/wasm/simulation"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -136,7 +137,7 @@ func TestFullAppSimulation(t *testing.T) {
 
 	app := NewDesmosApp(
 		logger, db, nil, true, map[int64]bool{},
-		t.TempDir(), simapp.FlagPeriodValue, MakeTestEncodingConfig(), simapp.EmptyAppOptions{}, fauxMerkleModeOpt,
+		t.TempDir(), simapp.FlagPeriodValue, MakeTestEncodingConfig(), simapp.EmptyAppOptions{}, wasm.EnableAllProposals, fauxMerkleModeOpt,
 	)
 	require.Equal(t, appName, app.Name())
 
@@ -177,7 +178,7 @@ func TestAppImportExport(t *testing.T) {
 
 	app := NewDesmosApp(
 		logger, db, nil, true, map[int64]bool{}, t.TempDir(),
-		simapp.FlagPeriodValue, MakeTestEncodingConfig(), simapp.EmptyAppOptions{}, fauxMerkleModeOpt,
+		simapp.FlagPeriodValue, MakeTestEncodingConfig(), simapp.EmptyAppOptions{}, wasm.EnableAllProposals, fauxMerkleModeOpt,
 	)
 	require.Equal(t, appName, app.Name())
 
@@ -220,7 +221,7 @@ func TestAppImportExport(t *testing.T) {
 
 	newApp := NewDesmosApp(
 		log.NewNopLogger(), newDB, nil, true, map[int64]bool{},
-		t.TempDir(), simapp.FlagPeriodValue, MakeTestEncodingConfig(), simapp.EmptyAppOptions{}, fauxMerkleModeOpt,
+		t.TempDir(), simapp.FlagPeriodValue, MakeTestEncodingConfig(), simapp.EmptyAppOptions{}, wasm.EnableAllProposals, fauxMerkleModeOpt,
 	)
 	require.Equal(t, appName, newApp.Name())
 
@@ -261,6 +262,8 @@ func TestAppImportExport(t *testing.T) {
 		{app.keys[poststypes.StoreKey], newApp.keys[poststypes.StoreKey], [][]byte{}},
 		{app.keys[reportstypes.StoreKey], newApp.keys[reportstypes.StoreKey], [][]byte{}},
 		{app.keys[reactionstypes.StoreKey], newApp.keys[reactionstypes.StoreKey], [][]byte{}},
+
+		{app.keys[wasm.StoreKey], newApp.keys[wasm.StoreKey], [][]byte{}},
 	}
 
 	for _, skp := range storeKeysPrefixes {
@@ -289,7 +292,7 @@ func TestAppSimulationAfterImport(t *testing.T) {
 
 	app := NewDesmosApp(
 		logger, db, nil, true, map[int64]bool{}, t.TempDir(),
-		simapp.FlagPeriodValue, MakeTestEncodingConfig(), simapp.EmptyAppOptions{}, fauxMerkleModeOpt,
+		simapp.FlagPeriodValue, MakeTestEncodingConfig(), simapp.EmptyAppOptions{}, wasm.EnableAllProposals, fauxMerkleModeOpt,
 	)
 	require.Equal(t, appName, app.Name())
 
@@ -337,7 +340,7 @@ func TestAppSimulationAfterImport(t *testing.T) {
 
 	newApp := NewDesmosApp(
 		log.NewNopLogger(), newDB, nil, true, map[int64]bool{}, t.TempDir(),
-		simapp.FlagPeriodValue, MakeTestEncodingConfig(), simapp.EmptyAppOptions{}, fauxMerkleModeOpt,
+		simapp.FlagPeriodValue, MakeTestEncodingConfig(), simapp.EmptyAppOptions{}, wasm.EnableAllProposals, fauxMerkleModeOpt,
 	)
 	require.Equal(t, appName, newApp.Name())
 
@@ -390,7 +393,7 @@ func TestAppStateDeterminism(t *testing.T) {
 
 			app := NewDesmosApp(
 				logger, db, nil, true, map[int64]bool{}, t.TempDir(),
-				simapp.FlagPeriodValue, MakeTestEncodingConfig(), simapp.EmptyAppOptions{}, interBlockCacheOpt(),
+				simapp.FlagPeriodValue, MakeTestEncodingConfig(), simapp.EmptyAppOptions{}, wasm.EnableAllProposals, interBlockCacheOpt(),
 			)
 
 			fmt.Printf(
