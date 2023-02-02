@@ -3,7 +3,6 @@ package app
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"math/rand"
 	"os"
 	"path/filepath"
@@ -35,12 +34,12 @@ import (
 	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
-	wasmsim "github.com/CosmWasm/wasmd/x/wasm/simulation"
+	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
+
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
@@ -104,20 +103,6 @@ func SetupSimulation(dirPrefix, dbName string) (simtypes.Config, dbm.DB, string,
 				panic(err)
 			}
 		}
-	}
-	// set sim params to overwrite wasmd default reflect.wasm path
-	simParams := simtypes.AppParams{
-		wasmsim.OpReflectContractPath: json.RawMessage(`"../testutil/wasm/reflect.wasm"`),
-	}
-
-	bz, err := json.Marshal(simParams)
-	if err != nil {
-		return simtypes.Config{}, nil, "", nil, false, sdkerrors.Wrap(err, "marshal sim custom params")
-	}
-	config.ParamsFile = filepath.Join(dir, "sim-params.json")
-	err = ioutil.WriteFile(config.ParamsFile, bz, 0o600)
-	if err != nil {
-		return simtypes.Config{}, nil, "", nil, false, sdkerrors.Wrap(err, "write temp sim params")
 	}
 
 	return config, db, dir, logger, skip, err
@@ -265,6 +250,9 @@ func TestAppImportExport(t *testing.T) {
 
 		{app.keys[wasm.StoreKey], newApp.keys[wasm.StoreKey], [][]byte{}},
 	}
+
+	// delete persistent tx counter value
+	ctxA.KVStore(app.keys[wasm.StoreKey]).Delete(wasmtypes.TXCounterPrefix)
 
 	for _, skp := range storeKeysPrefixes {
 		storeA := ctxA.KVStore(skp.A)
