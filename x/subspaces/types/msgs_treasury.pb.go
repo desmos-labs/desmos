@@ -24,7 +24,8 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// MsgGrantTreasuryAuthorization grants an authorization on behalf of the treasury to a user
+// MsgGrantTreasuryAuthorization grants an authorization on behalf of the
+// treasury to a user
 type MsgGrantTreasuryAuthorization struct {
 	// Id of the subspace where the authorization should be granted
 	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
@@ -97,7 +98,8 @@ func (m *MsgGrantTreasuryAuthorization) GetGrant() authz.Grant {
 	return authz.Grant{}
 }
 
-// MsgGrantTreasuryAuthorizationResponse defines the Msg/MsgGrantTreasuryAuthorization response type
+// MsgGrantTreasuryAuthorizationResponse defines the
+// Msg/MsgGrantTreasuryAuthorization response type
 type MsgGrantTreasuryAuthorizationResponse struct {
 }
 
@@ -134,7 +136,8 @@ func (m *MsgGrantTreasuryAuthorizationResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgGrantTreasuryAuthorizationResponse proto.InternalMessageInfo
 
-// MsgRevokeTreasuryAuthorization revokes an existing treasury authorization from a user
+// MsgRevokeTreasuryAuthorization revokes an existing treasury authorization
+// from a user
 type MsgRevokeTreasuryAuthorization struct {
 	// Id of the subspace from which the authorization should be revoked
 	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
@@ -207,7 +210,8 @@ func (m *MsgRevokeTreasuryAuthorization) GetMsgTypeUrl() string {
 	return ""
 }
 
-// MsgRevokeTreasuryAuthorizationResponse defines the Msg/MsgRevokeTreasuryAuthorization response type
+// MsgRevokeTreasuryAuthorizationResponse defines the
+// Msg/MsgRevokeTreasuryAuthorization response type
 type MsgRevokeTreasuryAuthorizationResponse struct {
 }
 

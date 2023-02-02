@@ -1920,9 +1920,11 @@ type MsgClient interface {
 	RemoveUserFromUserGroup(ctx context.Context, in *MsgRemoveUserFromUserGroup, opts ...grpc.CallOption) (*MsgRemoveUserFromUserGroupResponse, error)
 	// SetUserPermissions allows to set the permissions for a specific user
 	SetUserPermissions(ctx context.Context, in *MsgSetUserPermissions, opts ...grpc.CallOption) (*MsgSetUserPermissionsResponse, error)
-	// GrantTreasuryAuthorization allows managers who have the permission to grant a treasury authorization to a user
+	// GrantTreasuryAuthorization allows managers who have the permission to grant
+	// a treasury authorization to a user
 	GrantTreasuryAuthorization(ctx context.Context, in *MsgGrantTreasuryAuthorization, opts ...grpc.CallOption) (*MsgGrantTreasuryAuthorizationResponse, error)
-	// RevokeTreasuryAuthorization allows managers who have the permission to revoke an existing treasury authorization
+	// RevokeTreasuryAuthorization allows managers who have the permission to
+	// revoke an existing treasury authorization
 	RevokeTreasuryAuthorization(ctx context.Context, in *MsgRevokeTreasuryAuthorization, opts ...grpc.CallOption) (*MsgRevokeTreasuryAuthorizationResponse, error)
 }
 
@@ -2120,9 +2122,11 @@ type MsgServer interface {
 	RemoveUserFromUserGroup(context.Context, *MsgRemoveUserFromUserGroup) (*MsgRemoveUserFromUserGroupResponse, error)
 	// SetUserPermissions allows to set the permissions for a specific user
 	SetUserPermissions(context.Context, *MsgSetUserPermissions) (*MsgSetUserPermissionsResponse, error)
-	// GrantTreasuryAuthorization allows managers who have the permission to grant a treasury authorization to a user
+	// GrantTreasuryAuthorization allows managers who have the permission to grant
+	// a treasury authorization to a user
 	GrantTreasuryAuthorization(context.Context, *MsgGrantTreasuryAuthorization) (*MsgGrantTreasuryAuthorizationResponse, error)
-	// RevokeTreasuryAuthorization allows managers who have the permission to revoke an existing treasury authorization
+	// RevokeTreasuryAuthorization allows managers who have the permission to
+	// revoke an existing treasury authorization
 	RevokeTreasuryAuthorization(context.Context, *MsgRevokeTreasuryAuthorization) (*MsgRevokeTreasuryAuthorizationResponse, error)
 }
 

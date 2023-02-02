@@ -46,7 +46,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/authz"
 	"github.com/cosmos/cosmos-sdk/x/feegrant"
 
-	ibcclient "github.com/cosmos/ibc-go/v3/modules/core/02-client"
+	ibcclient "github.com/cosmos/ibc-go/v4/modules/core/02-client"
 
 	nodeservice "github.com/cosmos/cosmos-sdk/client/grpc/node"
 	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
@@ -101,15 +101,16 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/mint"
 	mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
-	ibctransfer "github.com/cosmos/ibc-go/v3/modules/apps/transfer"
-	ibctransferkeeper "github.com/cosmos/ibc-go/v3/modules/apps/transfer/keeper"
-	ibctransfertypes "github.com/cosmos/ibc-go/v3/modules/apps/transfer/types"
-	ibc "github.com/cosmos/ibc-go/v3/modules/core"
-	ibcclientclient "github.com/cosmos/ibc-go/v3/modules/core/02-client/client"
-	ibcclienttypes "github.com/cosmos/ibc-go/v3/modules/core/02-client/types"
-	porttypes "github.com/cosmos/ibc-go/v3/modules/core/05-port/types"
-	ibchost "github.com/cosmos/ibc-go/v3/modules/core/24-host"
-	ibckeeper "github.com/cosmos/ibc-go/v3/modules/core/keeper"
+
+	ibctransfer "github.com/cosmos/ibc-go/v4/modules/apps/transfer"
+	ibctransferkeeper "github.com/cosmos/ibc-go/v4/modules/apps/transfer/keeper"
+	ibctransfertypes "github.com/cosmos/ibc-go/v4/modules/apps/transfer/types"
+	ibc "github.com/cosmos/ibc-go/v4/modules/core"
+	ibcclientclient "github.com/cosmos/ibc-go/v4/modules/core/02-client/client"
+	ibcclienttypes "github.com/cosmos/ibc-go/v4/modules/core/02-client/types"
+	porttypes "github.com/cosmos/ibc-go/v4/modules/core/05-port/types"
+	ibchost "github.com/cosmos/ibc-go/v4/modules/core/24-host"
+	ibckeeper "github.com/cosmos/ibc-go/v4/modules/core/keeper"
 
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
 	upgradeclient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
@@ -263,14 +264,16 @@ var (
 		params.AppModuleBasic{},
 		crisis.AppModuleBasic{},
 		slashing.AppModuleBasic{},
-		ibc.AppModuleBasic{},
 		feegrantmodule.AppModuleBasic{},
 		upgrade.AppModuleBasic{},
 		evidence.AppModuleBasic{},
-		ibctransfer.AppModuleBasic{},
 		authzmodule.AppModuleBasic{},
 		vesting.AppModuleBasic{},
 		wasm.AppModuleBasic{},
+
+		// IBC modules
+		ibc.AppModuleBasic{},
+		ibctransfer.AppModuleBasic{},
 
 		// Custom modules
 		profiles.AppModuleBasic{},
@@ -327,11 +330,13 @@ type DesmosApp struct {
 	UpgradeKeeper    upgradekeeper.Keeper
 	ParamsKeeper     paramskeeper.Keeper
 	AuthzKeeper      authzkeeper.Keeper
-	IBCKeeper        *ibckeeper.Keeper // IBC Keeper must be a pointer in the app, so we can SetRouter on it correctly
 	EvidenceKeeper   evidencekeeper.Keeper
-	TransferKeeper   ibctransferkeeper.Keeper
 	FeeGrantKeeper   feegrantkeeper.Keeper
 	WasmKeeper       wasm.Keeper
+
+	// IBC modules
+	TransferKeeper ibctransferkeeper.Keeper
+	IBCKeeper      *ibckeeper.Keeper // IBC Keeper must be a pointer in the app, so we can SetRouter on it correctly
 
 	// make scoped keepers public for test purposes
 	ScopedIBCKeeper         capabilitykeeper.ScopedKeeper
@@ -389,9 +394,12 @@ func NewDesmosApp(
 	keys := sdk.NewKVStoreKeys(
 		authtypes.StoreKey, banktypes.StoreKey, stakingtypes.StoreKey,
 		minttypes.StoreKey, distrtypes.StoreKey, slashingtypes.StoreKey,
-		govtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, upgradetypes.StoreKey, feegrant.StoreKey,
-		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey,
+		govtypes.StoreKey, paramstypes.StoreKey, upgradetypes.StoreKey,
+		feegrant.StoreKey, evidencetypes.StoreKey, capabilitytypes.StoreKey,
 		authzkeeper.StoreKey, wasm.StoreKey,
+
+		// IBC modules
+		ibchost.StoreKey, ibctransfertypes.StoreKey,
 
 		// Custom modules
 		profilestypes.StoreKey, relationshipstypes.StoreKey, subspacestypes.StoreKey,
@@ -462,7 +470,7 @@ func NewDesmosApp(
 		stakingtypes.NewMultiStakingHooks(app.DistrKeeper.Hooks(), app.SlashingKeeper.Hooks()),
 	)
 
-	// Create IBC Keeper
+	// Create IBC keeper
 	app.IBCKeeper = ibckeeper.NewKeeper(
 		appCodec, keys[ibchost.StoreKey], app.GetSubspace(ibchost.ModuleName), app.StakingKeeper, app.UpgradeKeeper, scopedIBCKeeper,
 	)
@@ -477,7 +485,7 @@ func NewDesmosApp(
 		AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(app.UpgradeKeeper)).
 		AddRoute(ibcclienttypes.RouterKey, ibcclient.NewClientProposalHandler(app.IBCKeeper.ClientKeeper))
 
-	// Create Transfer Keepers
+	// Create IBC transfer keeper
 	app.TransferKeeper = ibctransferkeeper.NewKeeper(
 		appCodec,
 		keys[ibctransfertypes.StoreKey],
@@ -489,8 +497,6 @@ func NewDesmosApp(
 		app.BankKeeper,
 		scopedIBCTransferKeeper,
 	)
-	transferModule := ibctransfer.NewAppModule(app.TransferKeeper)
-	transferIBCModule := ibctransfer.NewIBCModule(app.TransferKeeper)
 
 	// Create fees keeper
 	app.FeesKeeper = feeskeeper.NewKeeper(app.appCodec, app.GetSubspace(feestypes.ModuleName))
@@ -525,7 +531,6 @@ func NewDesmosApp(
 		app.BankKeeper,
 		app.FeesKeeper,
 	)
-	profilesIBCModule := profiles.NewIBCModule(app.appCodec, app.ProfileKeeper)
 
 	// Create posts keeper and module
 	postsKeeper := postskeeper.NewKeeper(
@@ -579,11 +584,6 @@ func NewDesmosApp(
 	)
 
 	app.SupplyKeeper = supplykeeper.NewKeeper(app.appCodec, app.AccountKeeper, app.BankKeeper, app.DistrKeeper)
-
-	// Create static IBC router, add transfer route, then set and seal it
-	ibcRouter := porttypes.NewRouter()
-	ibcRouter.AddRoute(ibctransfertypes.ModuleName, transferIBCModule)
-	ibcRouter.AddRoute(profilestypes.ModuleName, profilesIBCModule)
 
 	// create evidence keeper with router
 	evidenceKeeper := evidencekeeper.NewKeeper(
@@ -647,8 +647,16 @@ func NewDesmosApp(
 		&stakingKeeper, govRouter,
 	)
 
-	// Add wasm module route to the ibc router, then set and seal it
-	ibcRouter.AddRoute(wasm.ModuleName, wasm.NewIBCHandler(app.WasmKeeper, app.IBCKeeper.ChannelKeeper))
+	// Create IBC modules
+	transferIBCModule := ibctransfer.NewIBCModule(app.TransferKeeper)
+	profilesIBCModule := profiles.NewIBCModule(app.appCodec, app.ProfileKeeper)
+	wasmIBCModule := wasm.NewIBCHandler(app.WasmKeeper, app.IBCKeeper.ChannelKeeper, app.IBCKeeper.ChannelKeeper)
+
+	// Create static IBC router, add routes, then set and seal it
+	ibcRouter := porttypes.NewRouter().
+		AddRoute(ibctransfertypes.ModuleName, transferIBCModule).
+		AddRoute(profilestypes.ModuleName, profilesIBCModule).
+		AddRoute(wasm.ModuleName, wasmIBCModule)
 	app.IBCKeeper.SetRouter(ibcRouter)
 
 	/****  Module Options ****/
@@ -678,11 +686,13 @@ func NewDesmosApp(
 		staking.NewAppModule(appCodec, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
 		upgrade.NewAppModule(app.UpgradeKeeper),
 		evidence.NewAppModule(app.EvidenceKeeper),
-		ibc.NewAppModule(app.IBCKeeper),
 		params.NewAppModule(app.ParamsKeeper),
 		authzmodule.NewAppModule(appCodec, app.AuthzKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
-		transferModule,
 		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
+
+		// IBC modules
+		ibc.NewAppModule(app.IBCKeeper),
+		ibctransfer.NewAppModule(app.TransferKeeper),
 
 		// Custom modules
 		fees.NewAppModule(app.appCodec, app.FeesKeeper),
@@ -717,10 +727,13 @@ func NewDesmosApp(
 		feegrant.ModuleName,
 		paramstypes.ModuleName,
 		vestingtypes.ModuleName,
-		ibchost.ModuleName,
-		ibctransfertypes.ModuleName,
 		wasm.ModuleName,
 
+		// IBC modules
+		ibchost.ModuleName,
+		ibctransfertypes.ModuleName,
+
+		// Custom modules
 		feestypes.ModuleName,
 		subspacestypes.ModuleName,
 		relationshipstypes.ModuleName,
@@ -747,10 +760,13 @@ func NewDesmosApp(
 		paramstypes.ModuleName,
 		upgradetypes.ModuleName,
 		vestingtypes.ModuleName,
-		ibchost.ModuleName,
-		ibctransfertypes.ModuleName,
 		wasm.ModuleName,
 
+		// IBC modules
+		ibchost.ModuleName,
+		ibctransfertypes.ModuleName,
+
+		// Custom modules
 		feestypes.ModuleName,
 		subspacestypes.ModuleName,
 		relationshipstypes.ModuleName,
@@ -783,9 +799,11 @@ func NewDesmosApp(
 		paramstypes.ModuleName,
 		upgradetypes.ModuleName,
 		vestingtypes.ModuleName,
+		wasm.ModuleName,
+
+		// IBC modules
 		ibchost.ModuleName,
 		ibctransfertypes.ModuleName,
-		wasm.ModuleName,
 
 		// Custom modules
 		feestypes.ModuleName,
@@ -813,15 +831,17 @@ func NewDesmosApp(
 		feegrant.ModuleName,
 		genutiltypes.ModuleName,
 		govtypes.ModuleName,
-		ibchost.ModuleName,
 		minttypes.ModuleName,
 		slashingtypes.ModuleName,
 		stakingtypes.ModuleName,
-		ibctransfertypes.ModuleName,
 		paramstypes.ModuleName,
 		upgradetypes.ModuleName,
 		vestingtypes.ModuleName,
 		wasm.ModuleName,
+
+		// IBC modules
+		ibchost.ModuleName,
+		ibctransfertypes.ModuleName,
 
 		// Custom modules
 		feestypes.ModuleName,
@@ -867,7 +887,7 @@ func NewDesmosApp(
 		// authzmodule.NewAppModule(appCodec, app.AuthzKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
 
 		ibc.NewAppModule(app.IBCKeeper),
-		transferModule,
+		ibctransfer.NewAppModule(app.TransferKeeper),
 		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
 
 		// Custom modules
@@ -1148,9 +1168,10 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(slashingtypes.ModuleName)
 	paramsKeeper.Subspace(govtypes.ModuleName).WithKeyTable(govtypes.ParamKeyTable())
 	paramsKeeper.Subspace(crisistypes.ModuleName)
+	paramsKeeper.Subspace(wasm.ModuleName)
+
 	paramsKeeper.Subspace(ibctransfertypes.ModuleName)
 	paramsKeeper.Subspace(ibchost.ModuleName)
-	paramsKeeper.Subspace(wasm.ModuleName)
 
 	paramsKeeper.Subspace(feestypes.ModuleName)
 	paramsKeeper.Subspace(subspacestypes.ModuleName)

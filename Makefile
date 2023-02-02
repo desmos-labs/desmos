@@ -376,7 +376,7 @@ GOGO_PROTO_URL   = https://raw.githubusercontent.com/regen-network/protobuf/cosm
 COSMOS_URL 		 = https://raw.githubusercontent.com/cosmos/cosmos-sdk/v0.45.4/proto/cosmos
 COSMOS_PROTO_URL = https://raw.githubusercontent.com/regen-network/cosmos-proto/master
 CONFIO_URL 		 = https://raw.githubusercontent.com/confio/ics23/v0.6.3
-IBC_URL 		 = https://raw.githubusercontent.com/cosmos/ibc-go/v3.1.0/proto/ibc
+IBC_URL 		 = https://raw.githubusercontent.com/cosmos/ibc-go/v4.3.0/proto/ibc
 ETHERMINT_URL 	 = https://raw.githubusercontent.com/evmos/ethermint/v0.17.1/proto/ethermint/
 
 TM_CRYPTO_TYPES     = third_party/proto/tendermint/crypto

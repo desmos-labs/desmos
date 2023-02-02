@@ -3,6 +3,7 @@ package keeper_test
 import (
 	"encoding/base64"
 	"encoding/hex"
+	"fmt"
 	"strings"
 	"time"
 
@@ -10,12 +11,12 @@ import (
 
 	"github.com/desmos-labs/desmos/v4/pkg/obi"
 
-	clienttypes "github.com/cosmos/ibc-go/v3/modules/core/02-client/types"
-	"github.com/cosmos/ibc-go/v3/modules/core/exported"
+	clienttypes "github.com/cosmos/ibc-go/v4/modules/core/02-client/types"
+	"github.com/cosmos/ibc-go/v4/modules/core/exported"
 
 	"github.com/desmos-labs/desmos/v4/testutil/ibctesting"
 
-	channeltypes "github.com/cosmos/ibc-go/v3/modules/core/04-channel/types"
+	channeltypes "github.com/cosmos/ibc-go/v4/modules/core/04-channel/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -650,7 +651,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnOracleRequestAcknowledgementPacket() 
 		{
 			name:      "non existing link returns no error",
 			data:      createRequestPacketData("client_id"),
-			ack:       channeltypes.NewErrorAcknowledgement("error"),
+			ack:       channeltypes.NewErrorAcknowledgement(fmt.Errorf("error")),
 			shouldErr: false,
 		},
 		{
@@ -677,7 +678,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnOracleRequestAcknowledgementPacket() 
 				suite.Require().NoError(err)
 			},
 			data:      createRequestPacketData("client_id"),
-			ack:       channeltypes.NewErrorAcknowledgement("error"),
+			ack:       channeltypes.NewErrorAcknowledgement(fmt.Errorf("error")),
 			shouldErr: false,
 			expLink: types.NewApplicationLink(
 				"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
@@ -689,7 +690,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnOracleRequestAcknowledgementPacket() 
 					types.NewOracleRequestCallData("twitter", "calldata"),
 					"client_id",
 				),
-				types.NewErrorResult("error"),
+				types.NewErrorResult(channeltypes.NewErrorAcknowledgement(fmt.Errorf("error")).Response.(*channeltypes.Acknowledgement_Error).Error),
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				time.Date(2020, 3, 1, 00, 00, 00, 000, time.UTC),
 			),

@@ -11,11 +11,11 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
-	channeltypes "github.com/cosmos/ibc-go/v3/modules/core/04-channel/types"
-	porttypes "github.com/cosmos/ibc-go/v3/modules/core/05-port/types"
-	host "github.com/cosmos/ibc-go/v3/modules/core/24-host"
+	channeltypes "github.com/cosmos/ibc-go/v4/modules/core/04-channel/types"
+	porttypes "github.com/cosmos/ibc-go/v4/modules/core/05-port/types"
+	host "github.com/cosmos/ibc-go/v4/modules/core/24-host"
 
-	ibcexported "github.com/cosmos/ibc-go/v3/modules/core/exported"
+	ibcexported "github.com/cosmos/ibc-go/v4/modules/core/exported"
 
 	"github.com/desmos-labs/desmos/v4/x/profiles/keeper"
 	"github.com/desmos-labs/desmos/v4/x/profiles/types"
@@ -83,17 +83,17 @@ func (am IBCModule) OnChanOpenInit(
 	channelCap *capabilitytypes.Capability,
 	counterparty channeltypes.Counterparty,
 	version string,
-) error {
+) (string, error) {
 	if err := ValidateProfilesChannelParams(ctx, am.keeper, order, portID, channelID); err != nil {
-		return err
+		return version, err
 	}
 
 	// Claim channel capability passed back by IBC module
 	if err := am.keeper.ClaimCapability(ctx, channelCap, host.ChannelCapabilityPath(portID, channelID)); err != nil {
-		return err
+		return version, err
 	}
 
-	return nil
+	return version, nil
 }
 
 // OnChanOpenTry implements the IBCModule interface
@@ -177,7 +177,7 @@ func (am IBCModule) OnRecvPacket(
 	// Try handling the chain link packet data
 	ack, err := am.HandlePacket(ctx, packet, handleOracleRequestPacketData, handleLinkChainAccountPacketData)
 	if err != nil {
-		ack = channeltypes.NewErrorAcknowledgement(err.Error())
+		ack = channeltypes.NewErrorAcknowledgement(err)
 	}
 
 	// NOTE: acknowledgement will be written synchronously during IBC handler execution.
@@ -221,7 +221,7 @@ func handleLinkChainAccountPacketData(
 
 	packetAck, err := am.keeper.OnRecvLinkChainAccountPacket(ctx, packetData)
 	if err != nil {
-		acknowledgement = channeltypes.NewErrorAcknowledgement(err.Error())
+		acknowledgement = channeltypes.NewErrorAcknowledgement(err)
 	} else {
 		// Encode packet acknowledgment
 		packetAckBytes, err := packetAck.Marshal()
@@ -264,7 +264,7 @@ func handleOracleRequestPacketData(
 
 	err = am.keeper.OnRecvApplicationLinkPacketData(ctx, data)
 	if err != nil {
-		acknowledgement = channeltypes.NewErrorAcknowledgement(err.Error())
+		acknowledgement = channeltypes.NewErrorAcknowledgement(err)
 	}
 
 	ctx.EventManager().EmitEvent(
@@ -302,7 +302,7 @@ func (am IBCModule) OnAcknowledgementPacket(
 	err = types.ModuleCdc.UnmarshalJSON(packet.GetData(), &data)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
-			"cannot unmarshal oracle request packet data: %s", err.Error())
+			"cannot unmarshal oracle request packet data: %s", err)
 	}
 
 	err = am.keeper.OnOracleRequestAcknowledgementPacket(ctx, data, ack)
@@ -351,7 +351,7 @@ func (am IBCModule) OnTimeoutPacket(
 	err := types.ModuleCdc.UnmarshalJSON(packet.GetData(), &data)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
-			"cannot unmarshal oracle request packet data: %s", err.Error())
+			"cannot unmarshal oracle request packet data: %s", err)
 	}
 
 	err = am.keeper.OnOracleRequestTimeoutPacket(ctx, data)
