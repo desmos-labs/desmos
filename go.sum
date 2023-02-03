@@ -294,8 +294,8 @@ github.com/desmos-labs/cosmos-sdk v0.45.11-desmos h1:bygLchg74SwtXMVOY73l/0tgcOi
 github.com/desmos-labs/cosmos-sdk v0.45.11-desmos/go.mod h1:45z8Q1Ah4iypFycu2Kl4kBPIsQKUiND8G2CUX+HTtPM=
 github.com/desmos-labs/ledger-desmos-go v0.11.1-desmos h1:UUCiTq70zNxGGrd0qQ0EThHLpRXTS8fjOFKtTPysAKc=
 github.com/desmos-labs/ledger-desmos-go v0.11.1-desmos/go.mod h1:J8//BsAGTo3OC/vDLjMRFLW6q0WAaXvHnVc7ZmE8iUY=
-github.com/desmos-labs/wasmd v0.23.1-0.20230202060518-edbdd2dcb064 h1:uywjFtuWTALuARfGo+doCNdrJuHa/2yDnR2OdQOYlng=
-github.com/desmos-labs/wasmd v0.23.1-0.20230202060518-edbdd2dcb064/go.mod h1:8anFdzPDyhvPaSs+eXYntYCAWoHcJOf99XA9uBf4xDk=
+github.com/desmos-labs/wasmd v0.30.0-desmos.1 h1:H3IATyvvWs1qdUZwjWMQrmSZh38mzc51XdRk9eUzII4=
+github.com/desmos-labs/wasmd v0.30.0-desmos.1/go.mod h1:8anFdzPDyhvPaSs+eXYntYCAWoHcJOf99XA9uBf4xDk=
 github.com/dgraph-io/badger/v2 v2.2007.2/go.mod h1:26P/7fbL4kUZVEVKLAKXkBXKOydDmM2p1e+NhhnBCAE=
 github.com/dgraph-io/badger/v2 v2.2007.4 h1:TRWBQg8UrlUhaFdco01nO2uXwzKS7zd+HVdwV/GHc4o=
 github.com/dgraph-io/badger/v2 v2.2007.4/go.mod h1:vSw/ax2qojzbN6eXHIx6KPKtCSHJN/Uz0X0VPruTIhk=
