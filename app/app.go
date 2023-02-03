@@ -188,6 +188,7 @@ const (
 // if telemetry is enabled, the wasmVM cache metrics are activated.
 func GetWasmOpts(
 	appOpts servertypes.AppOptions,
+	grpcQueryRouter *baseapp.GRPCQueryRouter,
 	cdc codec.Codec,
 	profilesKeeper profileskeeper.Keeper,
 	subspacesKeeper subspaceskeeper.Keeper,
@@ -203,6 +204,7 @@ func GetWasmOpts(
 
 	customQueryPlugin := NewDesmosCustomQueryPlugin(
 		cdc,
+		grpcQueryRouter,
 		profilesKeeper,
 		subspacesKeeper,
 		relationshipsKeeper,
@@ -619,6 +621,7 @@ func NewDesmosApp(
 
 	wasmOpts := GetWasmOpts(
 		appOpts,
+		app.GRPCQueryRouter(),
 		app.appCodec,
 		app.ProfileKeeper,
 		app.SubspacesKeeper,

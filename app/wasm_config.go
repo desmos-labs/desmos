@@ -3,20 +3,33 @@ package app
 import (
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
+	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	wasmdesmos "github.com/desmos-labs/desmos/v4/cosmwasm"
+
 	postskeeper "github.com/desmos-labs/desmos/v4/x/posts/keeper"
+	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
 	postswasm "github.com/desmos-labs/desmos/v4/x/posts/wasm"
+
 	profileskeeper "github.com/desmos-labs/desmos/v4/x/profiles/keeper"
+	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
 	profileswasm "github.com/desmos-labs/desmos/v4/x/profiles/wasm"
+
 	reactionskeeper "github.com/desmos-labs/desmos/v4/x/reactions/keeper"
+	reactionstypes "github.com/desmos-labs/desmos/v4/x/reactions/types"
 	reactionswasm "github.com/desmos-labs/desmos/v4/x/reactions/wasm"
+
 	relationshipskeeper "github.com/desmos-labs/desmos/v4/x/relationships/keeper"
+	relationshipstypes "github.com/desmos-labs/desmos/v4/x/relationships/types"
 	relationshipswasm "github.com/desmos-labs/desmos/v4/x/relationships/wasm"
+
 	reportskeeper "github.com/desmos-labs/desmos/v4/x/reports/keeper"
+	reportstypes "github.com/desmos-labs/desmos/v4/x/reports/types"
 	reportswasm "github.com/desmos-labs/desmos/v4/x/reports/wasm"
+
 	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
+	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 	subspaceswasm "github.com/desmos-labs/desmos/v4/x/subspaces/wasm"
 )
 
@@ -43,6 +56,7 @@ func NewDesmosWasmGasRegister() wasmkeeper.WasmGasRegister {
 // NewDesmosCustomQueryPlugin initialize the custom querier to handle desmos queries for contracts
 func NewDesmosCustomQueryPlugin(
 	cdc codec.Codec,
+	grpcQueryRouter *baseapp.GRPCQueryRouter,
 	profilesKeeper profileskeeper.Keeper,
 	subspacesKeeper subspaceskeeper.Keeper,
 	relationshipsKeeper relationshipskeeper.Keeper,
@@ -63,7 +77,59 @@ func NewDesmosCustomQueryPlugin(
 	querier := wasmdesmos.NewQuerier(queriers)
 
 	return wasm.QueryPlugins{
-		Custom: querier.QueryCustom,
+		Stargate: wasmkeeper.AcceptListStargateQuerier(GetStargateAcceptedQueries(), grpcQueryRouter, cdc),
+		Custom:   querier.QueryCustom,
+	}
+}
+
+// GetStargateAcceptedQueries returns the stargate accepted queries
+func GetStargateAcceptedQueries() wasmkeeper.AcceptedStargateQueries {
+	return wasmkeeper.AcceptedStargateQueries{
+		// Register x/profiles queries
+		"/desmos.profiles.v3.Query/Profile":                      &profilestypes.QueryProfileResponse{},
+		"/desmos.profiles.v3.Query/IncomingDTagTransferRequests": &profilestypes.QueryIncomingDTagTransferRequestsResponse{},
+		"/desmos.profiles.v3.Query/ChainLinks":                   &profilestypes.QueryChainLinksResponse{},
+		"/desmos.profiles.v3.Query/ChainLinkOwners":              &profilestypes.QueryChainLinkOwnersResponse{},
+		"/desmos.profiles.v3.Query/DefaultExternalAddresses":     &profilestypes.QueryDefaultExternalAddressesResponse{},
+		"/desmos.profiles.v3.Query/ApplicationLinks":             &profilestypes.QueryApplicationLinksResponse{},
+		"/desmos.profiles.v3.Query/ApplicationLinkByClientID":    &profilestypes.QueryApplicationLinkByClientIDResponse{},
+		"/desmos.profiles.v3.Query/ApplicationLinkOwners":        &profilestypes.QueryApplicationLinkOwnersResponse{},
+
+		// Register x/relationships queries
+		"/desmos.relationships.v1.Query/Relationships": &relationshipstypes.QueryRelationshipsResponse{},
+		"/desmos.relationships.v1.Query/Blocks":        &relationshipstypes.QueryBlocksResponse{},
+
+		// Register x/subspaces queries
+		"/desmos.subspaces.v3.Query/Subspaces":        &subspacestypes.QuerySubspacesResponse{},
+		"/desmos.subspaces.v3.Query/Subspace":         &subspacestypes.QuerySubspaceResponse{},
+		"/desmos.subspaces.v3.Query/Sections":         &subspacestypes.QuerySectionsResponse{},
+		"/desmos.subspaces.v3.Query/Section":          &subspacestypes.QuerySectionResponse{},
+		"/desmos.subspaces.v3.Query/UserGroups":       &subspacestypes.QueryUserGroupsResponse{},
+		"/desmos.subspaces.v3.Query/UserGroup":        &subspacestypes.QueryUserGroupResponse{},
+		"/desmos.subspaces.v3.Query/UserGroupMembers": &subspacestypes.QueryUserGroupMembersResponse{},
+		"/desmos.subspaces.v3.Query/UserPermissions":  &subspacestypes.QueryUserPermissionsResponse{},
+
+		// Register x/posts queries
+		"/desmos.posts.v3.Query/SubspacePosts":   &poststypes.QuerySubspacePostsResponse{},
+		"/desmos.posts.v3.Query/SectionPosts":    &poststypes.QuerySectionPostsResponse{},
+		"/desmos.posts.v3.Query/Post":            &poststypes.QueryPostResponse{},
+		"/desmos.posts.v3.Query/PostAttachments": &poststypes.QueryPostAttachmentsResponse{},
+		"/desmos.posts.v3.Query/PollAnswers":     &poststypes.QueryPollAnswersResponse{},
+		"/desmos.posts.v3.Query/Params":          &poststypes.QueryParamsResponse{},
+
+		// Register x/reports queries
+		"/desmos.reports.v1.Query/Reports": &reportstypes.QueryReportsResponse{},
+		"/desmos.reports.v1.Query/Report":  &reportstypes.QueryReportResponse{},
+		"/desmos.reports.v1.Query/Reasons": &reportstypes.QueryReasonsResponse{},
+		"/desmos.reports.v1.Query/Reason":  &reportstypes.QueryReasonResponse{},
+		"/desmos.reports.v1.Query/Params":  &reportstypes.QueryParamsResponse{},
+
+		// Register x/reactions queries
+		"/desmos.reactions.v1.Query/Reactions":           &reactionstypes.QueryReactionsResponse{},
+		"/desmos.reactions.v1.Query/Reaction":            &reactionstypes.QueryReactionResponse{},
+		"/desmos.reactions.v1.Query/RegisteredReactions": &reactionstypes.QueryRegisteredReactionsResponse{},
+		"/desmos.reactions.v1.Query/RegisteredReaction":  &reactionstypes.QueryRegisteredReactionResponse{},
+		"/desmos.reactions.v1.Query/ReactionsParams":     &reactionstypes.QueryReactionsParamsResponse{},
 	}
 }
 
