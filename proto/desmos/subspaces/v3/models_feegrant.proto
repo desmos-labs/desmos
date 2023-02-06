@@ -19,7 +19,7 @@ message Grant {
   ];
   // Address of the user that granted the allowance
   string granter = 2 [ (gogoproto.moretags) = "yaml:\"granter\"" ];
-  // Address of the user being granted the allowance
+  // Target to which the allowance has been granted
   google.protobuf.Any grantee = 3 [
     (cosmos_proto.accepts_interface) = "Grantee",
     (gogoproto.moretags) = "yaml:\"grantee\""
