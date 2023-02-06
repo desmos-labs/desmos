@@ -5735,7 +5735,7 @@ paths:
                               "@type": "type.googleapis.com/google.protobuf.Duration",
                               "value": "1.212s"
                             }
-                      title: Address of the user being granted the allowance
+                      title: Target to which the allowance has been granted
                     allowance:
                       type: object
                       properties:
@@ -6415,7 +6415,7 @@ paths:
                               "@type": "type.googleapis.com/google.protobuf.Duration",
                               "value": "1.212s"
                             }
-                      title: Address of the user being granted the allowance
+                      title: Target to which the allowance has been granted
                     allowance:
                       type: object
                       properties:
@@ -19069,7 +19069,7 @@ definitions:
                 "@type": "type.googleapis.com/google.protobuf.Duration",
                 "value": "1.212s"
               }
-        title: Address of the user being granted the allowance
+        title: Target to which the allowance has been granted
       allowance:
         type: object
         properties:
@@ -19481,7 +19481,7 @@ definitions:
                       "@type": "type.googleapis.com/google.protobuf.Duration",
                       "value": "1.212s"
                     }
-              title: Address of the user being granted the allowance
+              title: Target to which the allowance has been granted
             allowance:
               type: object
               properties:
@@ -20050,7 +20050,7 @@ definitions:
                       "@type": "type.googleapis.com/google.protobuf.Duration",
                       "value": "1.212s"
                     }
-              title: Address of the user being granted the allowance
+              title: Target to which the allowance has been granted
             allowance:
               type: object
               properties:
