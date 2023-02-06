@@ -31,7 +31,7 @@ type Grant struct {
 	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
 	// Address of the user that granted the allowance
 	Granter string `protobuf:"bytes,2,opt,name=granter,proto3" json:"granter,omitempty" yaml:"granter"`
-	// Address of the user being granted the allowance
+	// Target to which the allowance has been granted
 	Grantee *types.Any `protobuf:"bytes,3,opt,name=grantee,proto3" json:"grantee,omitempty" yaml:"grantee"`
 	// Allowance can be any allowance type implementing the FeeAllowanceI
 	// interface
