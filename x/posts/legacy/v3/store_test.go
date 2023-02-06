@@ -13,6 +13,7 @@ import (
 
 	v2 "github.com/desmos-labs/desmos/v4/x/posts/legacy/v2"
 	v3 "github.com/desmos-labs/desmos/v4/x/posts/legacy/v3"
+	v4 "github.com/desmos-labs/desmos/v4/x/posts/legacy/v4"
 
 	"github.com/desmos-labs/desmos/v4/app"
 	"github.com/desmos-labs/desmos/v4/testutil/storetesting"
@@ -72,10 +73,10 @@ func TestMigrateStore(t *testing.T) {
 			check: func(ctx sdk.Context) {
 				store := ctx.KVStore(keys[types.StoreKey])
 
-				var stored types.Post
+				var stored v4.Post
 				err := cdc.Unmarshal(store.Get(types.PostStoreKey(1, 1)), &stored)
 				require.NoError(t, err)
-				require.Equal(t, types.NewPost(
+				require.Equal(t, v4.NewPost(
 					1,
 					0,
 					1,
@@ -83,22 +84,22 @@ func TestMigrateStore(t *testing.T) {
 					"This is a post text that does not contain any useful information",
 					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 					1,
-					types.NewEntities(
-						[]types.TextTag{
-							types.NewTextTag(1, 3, "tag"),
+					v4.NewEntities(
+						[]v4.TextTag{
+							v4.NewTextTag(1, 3, "tag"),
 						},
-						[]types.TextTag{
-							types.NewTextTag(4, 6, "tag"),
+						[]v4.TextTag{
+							v4.NewTextTag(4, 6, "tag"),
 						},
-						[]types.Url{
-							types.NewURL(7, 9, "URL", "Display URL"),
+						[]v4.Url{
+							v4.NewURL(7, 9, "URL", "Display URL"),
 						},
 					),
 					nil,
-					[]types.PostReference{
-						types.NewPostReference(types.POST_REFERENCE_TYPE_QUOTE, 1, 0),
+					[]v4.PostReference{
+						v4.NewPostReference(v4.POST_REFERENCE_TYPE_QUOTE, 1, 0),
 					},
-					types.REPLY_SETTING_EVERYONE,
+					v4.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					&lastEditDate,
 				), stored)
@@ -126,14 +127,14 @@ func TestMigrateStore(t *testing.T) {
 			check: func(ctx sdk.Context) {
 				store := ctx.KVStore(keys[types.StoreKey])
 
-				var stored types.Attachment
+				var stored v4.Attachment
 				err := cdc.Unmarshal(store.Get(types.AttachmentStoreKey(1, 1, 1)), &stored)
 				require.NoError(t, err)
-				require.Equal(t, types.NewAttachment(
+				require.Equal(t, v4.NewAttachment(
 					1,
 					1,
 					1,
-					types.NewMedia(
+					v4.NewMedia(
 						"https://example.com?image=hello.png",
 						"image/png",
 					),
@@ -157,10 +158,10 @@ func TestMigrateStore(t *testing.T) {
 			check: func(ctx sdk.Context) {
 				store := ctx.KVStore(keys[types.StoreKey])
 
-				var stored types.UserAnswer
+				var stored v4.UserAnswer
 				err := cdc.Unmarshal(store.Get(types.PollAnswerStoreKey(1, 1, 1, "cosmos1xkahvzfyt4hsu265733ndwydv9pazqgfu586nw")), &stored)
 				require.NoError(t, err)
-				require.Equal(t, types.NewUserAnswer(
+				require.Equal(t, v4.NewUserAnswer(
 					1,
 					1,
 					1,
@@ -191,14 +192,14 @@ func TestMigrateStore(t *testing.T) {
 			check: func(ctx sdk.Context) {
 				store := ctx.KVStore(keys[types.StoreKey])
 
-				var stored types.Attachment
+				var stored v4.Attachment
 				err := cdc.Unmarshal(store.Get(types.AttachmentStoreKey(1, 1, 1)), &stored)
 				require.NoError(t, err)
-				require.Equal(t, types.NewAttachment(
+				require.Equal(t, v4.NewAttachment(
 					1,
 					1,
 					1,
-					types.NewMedia(
+					v4.NewMedia(
 						"https://example.com?image=hello.png",
 						"image/png",
 					),
@@ -222,10 +223,10 @@ func TestMigrateStore(t *testing.T) {
 			check: func(ctx sdk.Context) {
 				store := ctx.KVStore(keys[types.StoreKey])
 
-				var stored types.UserAnswer
+				var stored v4.UserAnswer
 				err := cdc.Unmarshal(store.Get(types.PollAnswerStoreKey(1, 1, 1, "cosmos1xkahvzfyt4hsu265733ndwydv9pazqgfu586nw")), &stored)
 				require.NoError(t, err)
-				require.Equal(t, types.NewUserAnswer(
+				require.Equal(t, v4.NewUserAnswer(
 					1,
 					1,
 					1,

@@ -21,7 +21,7 @@
       "url": "./tmp-swagger-gen/desmos/subspaces/v3/query.swagger.json"
     },
     {
-      "url": "./tmp-swagger-gen/desmos/posts/v2/query.swagger.json",
+      "url": "./tmp-swagger-gen/desmos/posts/v3/query.swagger.json",
       "operationIds": {
         "rename": {
           "Params": "PostsParams"
