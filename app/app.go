@@ -883,6 +883,7 @@ func NewDesmosApp(
 		ibchost.ModuleName,
 		ibctransfertypes.ModuleName,
 		ibcfeetypes.ModuleName,
+		icatypes.ModuleName,
 
 		// Custom modules
 		feestypes.ModuleName,
