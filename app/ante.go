@@ -4,8 +4,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
-	ibcante "github.com/cosmos/ibc-go/v3/modules/core/ante"
-	ibckeeper "github.com/cosmos/ibc-go/v3/modules/core/keeper"
+	ibcante "github.com/cosmos/ibc-go/v4/modules/core/ante"
+	ibckeeper "github.com/cosmos/ibc-go/v4/modules/core/keeper"
 
 	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
 	subspaceante "github.com/desmos-labs/desmos/v4/x/subspaces/ante"
