@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/CosmWasm/wasmd/x/wasm"
 	serverconfig "github.com/cosmos/cosmos-sdk/server/config"
 
 	"github.com/desmos-labs/desmos/v4/app/desmos/cmd/chainlink"
@@ -274,6 +275,7 @@ func newApp(logger log.Logger, db dbm.DB, traceStore io.Writer, appOpts serverty
 		cast.ToUint(appOpts.Get(server.FlagInvCheckPeriod)),
 		app.MakeTestEncodingConfig(), // Ideally, we would reuse the one created by NewRootCmd.
 		appOpts,
+		wasm.DisableAllProposals,
 		baseapp.SetPruning(pruningOpts),
 		baseapp.SetMinGasPrices(cast.ToString(appOpts.Get(server.FlagMinGasPrices))),
 		baseapp.SetHaltHeight(cast.ToUint64(appOpts.Get(server.FlagHaltHeight))),
@@ -306,6 +308,7 @@ func createDesmosappAndExport(
 			uint(1),
 			encCfg,
 			appOpts,
+			wasm.DisableAllProposals,
 		)
 		err := desmosApp.LoadHeight(height)
 		if err != nil {
@@ -318,6 +321,7 @@ func createDesmosappAndExport(
 			uint(1),
 			encCfg,
 			appOpts,
+			wasm.DisableAllProposals,
 		)
 	}
 
