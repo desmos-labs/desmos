@@ -666,10 +666,13 @@ func NewDesmosApp(
 	profilesIBCModule := ibcfee.NewIBCMiddleware(profiles.NewIBCModule(app.appCodec, app.ProfileKeeper), app.IBCFeeKeeper)
 	wasmIBCModule := ibcfee.NewIBCMiddleware(wasm.NewIBCHandler(app.WasmKeeper, app.IBCKeeper.ChannelKeeper, app.IBCFeeKeeper), app.IBCFeeKeeper)
 
-	// TODO: After available ICA auth module released, replace nil the module
+	// Since there is no public ICA auth module available at the moment, we use nil right now. For reference, see:
+	// https://ibc.cosmos.network/main/apps/interchain-accounts/integration.html#disabling-controller-chain-functionality
+	// TODO: Once a public ICA auth module is released, replace nil with the module
 	icaControllerIBCModule := ibcfee.NewIBCMiddleware(
 		icacontroller.NewIBCMiddleware(nil, app.ICAControllerKeeper),
-		app.IBCFeeKeeper)
+		app.IBCFeeKeeper,
+	)
 
 	icaHostIBCModule := ibcfee.NewIBCMiddleware(icahost.NewIBCModule(app.ICAHostKeeper), app.IBCFeeKeeper)
 
