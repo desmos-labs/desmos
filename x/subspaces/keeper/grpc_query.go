@@ -218,3 +218,80 @@ func (k Keeper) UserPermissions(ctx context.Context, request *types.QueryUserPer
 		Details:     details,
 	}, nil
 }
+
+// UserAllowances implements the Query/UserAllowances gRPC method
+func (k Keeper) UserAllowances(ctx context.Context, request *types.QueryUserAllowancesRequest) (*types.QueryUserAllowancesResponse, error) {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	store := sdkCtx.KVStore(k.storeKey)
+
+	if request.SubspaceId == 0 {
+		return nil, sdkerrors.ErrInvalidRequest.Wrapf("invalid subspace id %d", request.SubspaceId)
+	}
+
+	// Check if the subspace exists
+	if !k.HasSubspace(sdkCtx, request.SubspaceId) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", request.SubspaceId)
+	}
+
+	// Get grants prefix store
+	grantsPrefix := types.UserAllowanceKey(request.SubspaceId, request.Grantee)
+	grantsStore := prefix.NewStore(store, grantsPrefix)
+
+	var grants []types.Grant
+	pageRes, err := query.Paginate(grantsStore, request.Pagination, func(key []byte, value []byte) error {
+		var grant types.Grant
+		if err := k.cdc.Unmarshal(value, &grant); err != nil {
+			return status.Error(codes.Internal, err.Error())
+		}
+		grants = append(grants, grant)
+		return nil
+	})
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &types.QueryUserAllowancesResponse{
+		Grants:     grants,
+		Pagination: pageRes,
+	}, nil
+}
+
+// GroupAllowances implements the Query/GroupAllowances gRPC method
+func (k Keeper) GroupAllowances(ctx context.Context, request *types.QueryGroupAllowancesRequest) (*types.QueryGroupAllowancesResponse, error) {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	store := sdkCtx.KVStore(k.storeKey)
+
+	if request.SubspaceId == 0 {
+		return nil, sdkerrors.ErrInvalidRequest.Wrapf("invalid subspace id %d", request.SubspaceId)
+	}
+
+	// Check if the subspace exists
+	if !k.HasSubspace(sdkCtx, request.SubspaceId) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", request.SubspaceId)
+	}
+
+	// Get grants prefix store
+	grantsPrefix := types.GroupAllowanceKey(request.SubspaceId, request.GroupId)
+	if request.GroupId == 0 {
+		grantsPrefix = types.SubspaceGroupAllowancePrefix(request.SubspaceId)
+	}
+	grantsStore := prefix.NewStore(store, grantsPrefix)
+
+	var grants []types.Grant
+	pageRes, err := query.Paginate(grantsStore, request.Pagination, func(key []byte, value []byte) error {
+		var grant types.Grant
+		if err := k.cdc.Unmarshal(value, &grant); err != nil {
+			return status.Error(codes.Internal, err.Error())
+		}
+		grants = append(grants, grant)
+		return nil
+	})
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &types.QueryGroupAllowancesResponse{
+		Grants:     grants,
+		Pagination: pageRes,
+	}, nil
+}

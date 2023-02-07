@@ -67,6 +67,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 		nil,
 		nil,
 		nil,
+		nil,
 	)
 	subspacesDataBz, err := cfg.Codec.MarshalJSON(subspacesGenesis)
 	s.Require().NoError(err)

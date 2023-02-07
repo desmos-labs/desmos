@@ -4,11 +4,12 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/x/feegrant"
 
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
-func (suite *KeeperTestsuite) TestKeeper_SetSubspaceID() {
+func (suite *KeeperTestSuite) TestKeeper_SetSubspaceID() {
 	testCases := []struct {
 		name  string
 		id    uint64
@@ -45,7 +46,7 @@ func (suite *KeeperTestsuite) TestKeeper_SetSubspaceID() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_GetSubspaceID() {
+func (suite *KeeperTestSuite) TestKeeper_GetSubspaceID() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -88,7 +89,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetSubspaceID() {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-func (suite *KeeperTestsuite) TestKeeper_SaveSubspace() {
+func (suite *KeeperTestSuite) TestKeeper_SaveSubspace() {
 	testCases := []struct {
 		name     string
 		store    func(ctx sdk.Context)
@@ -180,7 +181,7 @@ func (suite *KeeperTestsuite) TestKeeper_SaveSubspace() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_HasSubspace() {
+func (suite *KeeperTestSuite) TestKeeper_HasSubspace() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -224,7 +225,7 @@ func (suite *KeeperTestsuite) TestKeeper_HasSubspace() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_GetSubspace() {
+func (suite *KeeperTestSuite) TestKeeper_GetSubspace() {
 	testCases := []struct {
 		name        string
 		store       func(ctx sdk.Context)
@@ -281,7 +282,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetSubspace() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_DeleteSubspace() {
+func (suite *KeeperTestSuite) TestKeeper_DeleteSubspace() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -324,6 +325,19 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteSubspace() {
 					"cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e",
 					types.NewPermissions(types.PermissionEditSubspace),
 				)
+
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					types.NewUserGrantee("cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e"),
+					&feegrant.BasicAllowance{},
+				))
+
+				suite.k.SaveGrant(ctx, types.NewGrant(1,
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					types.NewGroupGrantee(1),
+					&feegrant.BasicAllowance{},
+				))
 			},
 			subspaceID: 1,
 			check: func(ctx sdk.Context) {
@@ -346,6 +360,14 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteSubspace() {
 				// Make sure the permissions are deleted
 				permissions := suite.k.GetSubspaceUserPermissions(ctx, 1)
 				suite.Require().Empty(permissions)
+
+				// Make sure the user grants are deleted
+				userGrants := suite.k.GetSubspaceUserGrants(ctx, 1)
+				suite.Require().Empty(userGrants)
+
+				// Make sure the group grants are deleted
+				groupsGrants := suite.k.GetSubspaceUserGroupsGrants(ctx, 1)
+				suite.Require().Empty(groupsGrants)
 			},
 		},
 	}

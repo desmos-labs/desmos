@@ -3,6 +3,7 @@ package types
 // DONTCOVER
 
 import (
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 )
 
@@ -97,4 +98,44 @@ func NewPermissionDetailGroup(subspaceID uint64, sectionID uint32, groupID uint3
 			},
 		},
 	}
+}
+
+// NewQueryUserAllowancesRequest returns a new QueryUserAllowancesRequest instance
+func NewQueryUserAllowancesRequest(subspaceID uint64, grantee string, pagination *query.PageRequest) *QueryUserAllowancesRequest {
+	return &QueryUserAllowancesRequest{
+		SubspaceId: subspaceID,
+		Grantee:    grantee,
+		Pagination: pagination,
+	}
+}
+
+// UnpackInterfaces implements codectypes.UnpackInterfacesMessage
+func (r *QueryUserAllowancesResponse) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
+	for _, grant := range r.Grants {
+		err := grant.UnpackInterfaces(unpacker)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// NewQueryGroupAllowancesRequest returns a new QueryGroupAllowancesRequest instance
+func NewQueryGroupAllowancesRequest(subspaceID uint64, groupID uint32, pagination *query.PageRequest) *QueryGroupAllowancesRequest {
+	return &QueryGroupAllowancesRequest{
+		SubspaceId: subspaceID,
+		GroupId:    groupID,
+		Pagination: pagination,
+	}
+}
+
+// UnpackInterfaces implements codectypes.UnpackInterfacesMessage
+func (r *QueryGroupAllowancesResponse) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
+	for _, grant := range r.Grants {
+		err := grant.UnpackInterfaces(unpacker)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }

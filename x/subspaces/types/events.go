@@ -19,6 +19,8 @@ const (
 	EventTypeSetUserPermissions          = "set_user_permissions"
 	EventTypeGrantTreasuryAuthorization  = "grant_treasury_authorization"
 	EventTypeRevokeTreasuryAuthorization = "revoke_treasury_authorization"
+	EventTypeGrantAllowance              = "grant_allowance"
+	EventTypeRevokeAllowance             = "revoke_allowance"
 
 	AttributeValueCategory      = ModuleName
 	AttributeKeySubspaceID      = "subspace_id"
@@ -30,4 +32,6 @@ const (
 	AttributeKeyUser            = "user"
 	AttributeKeyGranter         = "granter"
 	AttributeKeyGrantee         = "grantee"
+	AttributeKeyUserGrantee     = "user_grantee"
+	AttributeKeyGroupGrantee    = "group_grantee"
 )

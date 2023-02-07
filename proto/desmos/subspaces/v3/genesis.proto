@@ -2,7 +2,9 @@ syntax = "proto3";
 package desmos.subspaces.v3;
 
 import "gogoproto/gogo.proto";
+
 import "desmos/subspaces/v3/models.proto";
+import "desmos/subspaces/v3/models_feegrant.proto";
 
 option go_package = "github.com/desmos-labs/desmos/v4/x/subspaces/types";
 
@@ -26,6 +28,8 @@ message GenesisState {
 
   repeated UserGroupMemberEntry user_groups_members = 7
       [ (gogoproto.nullable) = false ];
+
+  repeated Grant grants = 8 [ (gogoproto.nullable) = false ];
 }
 
 // SubspaceData contains the genesis data for a single subspace

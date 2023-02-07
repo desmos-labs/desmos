@@ -8,6 +8,7 @@ import (
 	"github.com/desmos-labs/desmos/v4/x/subspaces/simulation"
 
 	"github.com/cosmos/cosmos-sdk/types/kv"
+	"github.com/cosmos/cosmos-sdk/x/feegrant"
 	"github.com/stretchr/testify/require"
 
 	"github.com/desmos-labs/desmos/v4/app"
@@ -51,6 +52,20 @@ func TestDecodeStore(t *testing.T) {
 		types.NewPermissions(types.PermissionEverything),
 	)
 
+	userGrant := types.NewGrant(
+		1,
+		"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+		types.NewUserGrantee("cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e"),
+		&feegrant.BasicAllowance{},
+	)
+
+	groupGrant := types.NewGrant(
+		1,
+		"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+		types.NewGroupGrantee(1),
+		&feegrant.BasicAllowance{},
+	)
+
 	kvPairs := kv.Pairs{Pairs: []kv.Pair{
 		{
 			Key:   types.SubspaceIDKey,
@@ -85,6 +100,14 @@ func TestDecodeStore(t *testing.T) {
 			Value: cdc.MustMarshal(&section),
 		},
 		{
+			Key:   types.UserAllowanceKey(1, "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e"),
+			Value: cdc.MustMarshal(&userGrant),
+		},
+		{
+			Key:   types.GroupAllowanceKey(1, 1),
+			Value: cdc.MustMarshal(&groupGrant),
+		},
+		{
 			Key:   []byte("Unknown key"),
 			Value: nil,
 		},
@@ -108,6 +131,8 @@ func TestDecodeStore(t *testing.T) {
 			&permission, &permission)},
 		{"Section ID", fmt.Sprintf("SectionIDA: %d\nSectionIDB: %d\n", 1, 1)},
 		{"Section", fmt.Sprintf("SectionA: %s\nSectionB: %s\n", &section, &section)},
+		{"User grant", fmt.Sprintf("GrantA: %s\nGrantB: %s\n", &userGrant, &userGrant)},
+		{"Group grant", fmt.Sprintf("GrantA: %s\nGrantB: %s\n", &groupGrant, &groupGrant)},
 		{"other", ""},
 	}
 

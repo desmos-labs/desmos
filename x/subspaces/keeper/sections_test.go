@@ -8,7 +8,7 @@ import (
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
-func (suite *KeeperTestsuite) TestKeeper_SetNextSectionID() {
+func (suite *KeeperTestSuite) TestKeeper_SetNextSectionID() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -57,7 +57,7 @@ func (suite *KeeperTestsuite) TestKeeper_SetNextSectionID() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_HasNextSectionID() {
+func (suite *KeeperTestSuite) TestKeeper_HasNextSectionID() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -93,7 +93,7 @@ func (suite *KeeperTestsuite) TestKeeper_HasNextSectionID() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_GetNextSectionID() {
+func (suite *KeeperTestSuite) TestKeeper_GetNextSectionID() {
 	testCases := []struct {
 		name             string
 		store            func(ctx sdk.Context)
@@ -136,7 +136,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetNextSectionID() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_DeleteNextSectionID() {
+func (suite *KeeperTestSuite) TestKeeper_DeleteNextSectionID() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -182,7 +182,7 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteNextSectionID() {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-func (suite *KeeperTestsuite) TestKeeper_SaveSection() {
+func (suite *KeeperTestSuite) TestKeeper_SaveSection() {
 	testCases := []struct {
 		name    string
 		store   func(ctx sdk.Context)
@@ -258,7 +258,7 @@ func (suite *KeeperTestsuite) TestKeeper_SaveSection() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_IsSectionPathValid() {
+func (suite *KeeperTestSuite) TestKeeper_IsSectionPathValid() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -363,7 +363,7 @@ func (suite *KeeperTestsuite) TestKeeper_IsSectionPathValid() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_HasSection() {
+func (suite *KeeperTestSuite) TestKeeper_HasSection() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -408,7 +408,7 @@ func (suite *KeeperTestsuite) TestKeeper_HasSection() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_GetSection() {
+func (suite *KeeperTestSuite) TestKeeper_GetSection() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -463,7 +463,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetSection() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_DeleteSection() {
+func (suite *KeeperTestSuite) TestKeeper_DeleteSection() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)

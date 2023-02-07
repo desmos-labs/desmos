@@ -77,6 +77,17 @@ func TestMigrateStore(t *testing.T) {
 				), newSubspace)
 			},
 		},
+		{
+			name: "accounts of all the users inside groups are created properly",
+			store: func(ctx sdk.Context) {
+				store := ctx.KVStore(keys[types.StoreKey])
+				store.Set(types.GroupMemberStoreKey(1, 1, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm"), []byte{0x01})
+			},
+			check: func(ctx sdk.Context) {
+				userAcc := sdk.MustAccAddressFromBech32("cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
+				require.True(t, authKeeper.HasAccount(ctx, userAcc))
+			},
+		},
 	}
 
 	for _, tc := range testCases {

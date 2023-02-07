@@ -1,0 +1,54 @@
+syntax = "proto3";
+package desmos.subspaces.v3;
+
+import "gogoproto/gogo.proto";
+import "google/protobuf/any.proto";
+import "cosmos_proto/cosmos.proto";
+
+option go_package = "github.com/desmos-labs/desmos/v4/x/subspaces/types";
+
+// Grant represents a grant to a user or a group
+message Grant {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  // Id of the subspace inside which the user was granted the allowance
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+  // Address of the user that granted the allowance
+  string granter = 2 [ (gogoproto.moretags) = "yaml:\"granter\"" ];
+  // Target to which the allowance has been granted
+  google.protobuf.Any grantee = 3 [
+    (cosmos_proto.accepts_interface) = "Grantee",
+    (gogoproto.moretags) = "yaml:\"grantee\""
+  ];
+  // Allowance can be any allowance type implementing the FeeAllowanceI
+  // interface
+  google.protobuf.Any allowance = 4 [
+    (cosmos_proto.accepts_interface) = "FeeAllowanceI",
+    (gogoproto.moretags) = "yaml:\"allowance\""
+  ];
+}
+
+// UserGrantee contains the target of a grant about a user
+message UserGrantee {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+  option (cosmos_proto.implements_interface) = "Grantee";
+
+  string user = 1 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+}
+
+// GroupGrantee contains the target of a grant about a group
+message GroupGrantee {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+  option (cosmos_proto.implements_interface) = "Grantee";
+
+  uint32 group_id = 1 [
+    (gogoproto.customname) = "GroupID",
+    (gogoproto.moretags) = "yaml:\"group_id\""
+  ];
+}

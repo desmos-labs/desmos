@@ -2,8 +2,11 @@ syntax = "proto3";
 package desmos.subspaces.v3;
 
 import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+
 import "desmos/subspaces/v3/models.proto";
 import "desmos/subspaces/v3/msgs_treasury.proto";
+import "desmos/subspaces/v3/msgs_feegrant.proto";
 
 option go_package = "github.com/desmos-labs/desmos/v4/x/subspaces/types";
 
@@ -69,6 +72,14 @@ service Msg {
   // revoke an existing treasury authorization
   rpc RevokeTreasuryAuthorization(MsgRevokeTreasuryAuthorization)
       returns (MsgRevokeTreasuryAuthorizationResponse);
+
+  // GrantAllowance allows the granter to grant a fee allowance to the
+  // grantee
+  rpc GrantAllowance(MsgGrantAllowance) returns (MsgGrantAllowanceResponse);
+
+  // RevokeAllowance allows a granter to revoke any existing treasury allowance
+  // that has been granted to the grantee
+  rpc RevokeAllowance(MsgRevokeAllowance) returns (MsgRevokeAllowanceResponse);
 }
 
 // --------------------------------------------------------------------------------------------------------------------
