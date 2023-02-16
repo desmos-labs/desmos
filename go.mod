@@ -282,7 +282,7 @@ replace (
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.2.0
 
 	// Our wasmd branch is: https://github.com/desmos-labs/wasmd v0.30.x-desmos
-	github.com/CosmWasm/wasmd => github.com/desmos-labs/wasmd v0.30.0-desmos.1
+	github.com/CosmWasm/wasmd => github.com/desmos-labs/wasmd v0.23.1-0.20230202060518-edbdd2dcb064
 
 	// Fixes Dragonberry
 	github.com/confio/ics23/go => github.com/cosmos/cosmos-sdk/ics23/go v0.8.0
