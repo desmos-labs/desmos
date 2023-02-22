@@ -187,6 +187,10 @@ func randomUserGrants(r *rand.Rand, accounts []simtypes.Account, subspaces []typ
 		granter, _ := simtypes.RandomAcc(r, accounts)
 		grantee, _ := simtypes.RandomAcc(r, accounts)
 
+		if granter.Equals(grantee) {
+			continue
+		}
+
 		grant := types.NewGrant(subspace.ID, granter.Address.String(), types.NewUserGrantee(grantee.Address.String()), &feegrant.BasicAllowance{})
 		if !containsGrant(grants, grant) {
 			grants[i] = grant
