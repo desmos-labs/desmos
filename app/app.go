@@ -972,6 +972,7 @@ func NewDesmosApp(
 			FeesKeeper:        app.FeesKeeper,
 			TxCounterStoreKey: keys[wasm.StoreKey],
 			WasmConfig:        wasmConfig,
+			SubspacesKeeper:   app.SubspacesKeeper,
 		},
 	)
 	if err != nil {

@@ -150,7 +150,7 @@ service Msg {
     rpc RevokeAllowance(MsgRevokeUserAllowance) returns(MsgRevokeAllowanceResponse);
 }
 
-// MsgGrantAllowance adds permissions for the grantee to spend up allowance of fees from the granter inside the given subspace.
+// MsgGrantAllowance adds permissions for the grantee to spend up allowance of fees from the treasury inside the given subspace.
 message MsgGrantAllowance {
   // Id of the subspace where the granter grants the allowance to the grantee
   uint64 subspace_id = 1 [
@@ -161,7 +161,7 @@ message MsgGrantAllowance {
   // Address of the user granting an allowance of subspace treasury funds
   string granter = 2 [ (gogoproto.moretags) = "yaml:\"granter\"" ];
 
-  // Target being granted an allowance of subspace treasury funds
+  // Target being granted an allowance of subspace treasury funds.
   google.protobuf.Any grantee = 3 [
     (cosmos_proto.accepts_interface) = "Grantee",
     (gogoproto.moretags) = "yaml:\"grantee\""
@@ -177,7 +177,7 @@ message MsgGrantAllowance {
 // MsgGrantAllowanceResponse defines the Msg/GrantAllowanceResponse response type
 message MsgGrantAllowanceResponse {}
 
-// MsgRevokeUserAllowance removes any existing allowance from granter to the grantee inside the subspace.
+// MsgRevokeAllowance removes any existing allowance to the grantee inside the subspace.
 message MsgRevokeAllowance {
   // Id of the subspace inside which the allowance to be deleted is
   uint64 subspace_id = 1 [
@@ -205,33 +205,66 @@ In order to allow clients to easily query for allowances we will implement the f
 
 ```protobuf
 service Query {
-    // Allowances returns all the grants for the given target
-    rpc Allowances(QueryUserAllowancesRequest) returns (QueryAllowancesResponse) {
-        option (google.api.http).get = "/desmos/subspaces/v3/subspaces/{subspace_id}/allowances";
+    // UserAllowances returns all the grants for users.
+    rpc UserAllowances(QueryUserAllowancesRequest) returns (QueryAllowancesResponse) {
+        option (google.api.http).get = "/desmos/subspaces/v3/subspaces/{subspace_id}/allowances/users";
+    }
+    // GroupAllowances returns all the grants for groups.
+    rpc GroupAllowances(QueryGroupAllowancesRequest) returns(QueryGroupAllowancesResponse) {
+        option (google.api.http).get = "/desmos/subspaces/v3/subspaces/{subspace_id}/allowances/groups";
     }
 }
 
-// QueryUserAllowancesRequest is the request type for the Query/UserAllowances RPC method.
+// QueryUserAllowancesRequest is the request type for the Query/UserAllowances RPC method
 message QueryUserAllowancesRequest {
-    // the id of the subspace where the granter grants the allowance to the grantee.
-    uint64 subspace_id = 1;
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
 
-    // Target that was granted an allowance
-    google.protobuf.Any grantee = 3 [
-        (cosmos_proto.accepts_interface) = "Grantee",
-        (gogoproto.moretags) = "yaml:\"grantee\""
-    ];
+  // Id of the subspace for which to get the grant(s)
+  uint64 subspace_id = 1 [ (gogoproto.moretags) = "yaml:\"subspace_id\"" ];
 
-    // pagination defines an pagination for the request.
-    cosmos.base.query.v1beta1.PageRequest pagination = 3;
+  // (Optional) Address of the user that was granted an allowance
+  string grantee = 2 [ (gogoproto.moretags) = "yaml:\"grantee\"" ];
+
+  // pagination defines an pagination for the request
+  cosmos.base.query.v1beta1.PageRequest pagination = 3;
 }
 
-// QueryAllowancesResponse is the response type for the Query/Allowances RPC method.
-message QueryAllowancesResponse {
-    repeated Grant grants = 1;
+// QueryUserAllowancesResponse is the response type for the Query/UserAllowances RPC method
+message QueryUserAllowancesResponse {
+  repeated Grant grants = 1 [
+    (gogoproto.moretags) = "yaml:\"grants\"",
+    (gogoproto.nullable) = false
+  ];
 
-    // pagination defines an pagination for the response.
-    cosmos.base.query.v1beta1.PageResponse pagination = 2;
+  // pagination defines an pagination for the response
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QueryGroupAllowancesRequest is the request type for the Query/GroupAllowances RPC method
+message QueryGroupAllowancesRequest {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  // Id of the subspace for which to get the grant(s)
+  uint64 subspace_id = 1 [ (gogoproto.moretags) = "yaml:\"subspace_id\"" ];
+
+  // (optional) Id of the user group that was granted the allowance(s)
+  uint32 group_id = 2 [ (gogoproto.moretags) = "yaml:\"group_id\"" ];
+
+  // pagination defines an pagination for the request
+  cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+// QueryGroupAllowancesResponse is the response type for the Query/GroupAllowances RPC method
+message QueryGroupAllowancesResponse {
+  repeated Grant grants = 1 [
+    (gogoproto.moretags) = "yaml:\"grants\"",
+    (gogoproto.nullable) = false
+  ];
+
+  // pagination defines an pagination for the response
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 ```
 

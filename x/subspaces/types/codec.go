@@ -32,9 +32,23 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 
 	cdc.RegisterConcrete(&MsgGrantTreasuryAuthorization{}, "desmos/MsgGrantTreasuryAuthorization", nil)
 	cdc.RegisterConcrete(&MsgRevokeTreasuryAuthorization{}, "desmos/MsgRevokeTreasuryAuthorization", nil)
+
+	cdc.RegisterConcrete(&MsgGrantAllowance{}, "desmos/MsgGrantAllowance", nil)
+	cdc.RegisterConcrete(&MsgRevokeAllowance{}, "desmos/MsgRevokeAllowance", nil)
+
+	cdc.RegisterInterface((*Grantee)(nil), nil)
+	cdc.RegisterConcrete(&UserGrantee{}, "desmos/UserGrantee", nil)
+	cdc.RegisterConcrete(&GroupGrantee{}, "desmos/GroupGrantee", nil)
 }
 
 func RegisterInterfaces(registry types.InterfaceRegistry) {
+	registry.RegisterInterface(
+		"desmos.subspaces.v3.Grantee",
+		(*Grantee)(nil),
+		&UserGrantee{},
+		&GroupGrantee{},
+	)
+
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgCreateSubspace{},
 		&MsgEditSubspace{},
@@ -52,6 +66,8 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 		&MsgSetUserPermissions{},
 		&MsgGrantTreasuryAuthorization{},
 		&MsgRevokeTreasuryAuthorization{},
+		&MsgGrantAllowance{},
+		&MsgRevokeAllowance{},
 	)
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)

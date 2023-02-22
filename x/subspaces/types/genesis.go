@@ -3,6 +3,7 @@ package types
 import (
 	"fmt"
 
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -15,6 +16,7 @@ func NewGenesisState(
 	userPermissions []UserPermission,
 	userGroups []UserGroup,
 	userGroupMembers []UserGroupMemberEntry,
+	grants []Grant,
 ) *GenesisState {
 	return &GenesisState{
 		InitialSubspaceID: initialSubspaceID,
@@ -24,13 +26,26 @@ func NewGenesisState(
 		UserPermissions:   userPermissions,
 		UserGroups:        userGroups,
 		UserGroupsMembers: userGroupMembers,
+		Grants:            grants,
 	}
+}
+
+// UnpackInterfaces implements UnpackInterfacesMessage.UnpackInterfaces
+func (data GenesisState) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
+	for _, grant := range data.Grants {
+		err := grant.UnpackInterfaces(unpacker)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // DefaultGenesisState returns a default GenesisState
 func DefaultGenesisState() *GenesisState {
 	return NewGenesisState(
 		1,
+		nil,
 		nil,
 		nil,
 		nil,
@@ -113,6 +128,18 @@ func ValidateGenesis(data *GenesisState) error {
 		}
 
 		err := entry.Validate()
+		if err != nil {
+			return err
+		}
+	}
+
+	// Validate the user grants
+	for _, grant := range data.Grants {
+		if containsDuplicatedGrants(data.Grants, grant) {
+			return fmt.Errorf("duplicated user grant: subspace id %d, granter %s, grantee %s", grant.SubspaceID, grant.Granter, grant.Grantee.GetCachedValue())
+		}
+
+		err := grant.Validate()
 		if err != nil {
 			return err
 		}
@@ -248,4 +275,18 @@ func (entry UserGroupMemberEntry) Validate() error {
 	}
 
 	return nil
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// containsDuplicatedGrants tells whether the given grant slice contains two or more
+// grants for the same subspace
+func containsDuplicatedGrants(grants []Grant, grant Grant) bool {
+	var count = 0
+	for _, g := range grants {
+		if g.SubspaceID == grant.SubspaceID && g.Grantee.Equal(grant.Grantee) {
+			count++
+		}
+	}
+	return count > 1
 }

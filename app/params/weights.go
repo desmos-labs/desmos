@@ -34,6 +34,8 @@ const (
 	DefaultWeightMsgSetUserPermissions          int = 85
 	DefaultWeightMsgGrantTreasuryAuthorization  int = 20
 	DefaultWeightMsgRevokeTreasuryAuthorization int = 5
+	DefaultWeightMsgGrantAllowance              int = 20
+	DefaultWeightMsgRevokeAllowance             int = 5
 
 	DefaultWeightMsgCreatePost           int = 80
 	DefaultWeightMsgEditPost             int = 40

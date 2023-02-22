@@ -7,9 +7,10 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
+	"github.com/cosmos/cosmos-sdk/x/feegrant"
 )
 
-func (suite *KeeperTestsuite) TestQueryServer_Subspaces() {
+func (suite *KeeperTestSuite) TestQueryServer_Subspaces() {
 	testCases := []struct {
 		name         string
 		store        func(ctx sdk.Context)
@@ -83,7 +84,7 @@ func (suite *KeeperTestsuite) TestQueryServer_Subspaces() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestQueryServer_Subspace() {
+func (suite *KeeperTestSuite) TestQueryServer_Subspace() {
 	testCases := []struct {
 		name        string
 		store       func(ctx sdk.Context)
@@ -144,7 +145,7 @@ func (suite *KeeperTestsuite) TestQueryServer_Subspace() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestQueryServer_Sections() {
+func (suite *KeeperTestSuite) TestQueryServer_Sections() {
 	testCases := []struct {
 		name        string
 		store       func(ctx sdk.Context)
@@ -271,7 +272,7 @@ func (suite *KeeperTestsuite) TestQueryServer_Sections() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestQueryServer_Section() {
+func (suite *KeeperTestSuite) TestQueryServer_Section() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -352,7 +353,7 @@ func (suite *KeeperTestsuite) TestQueryServer_Section() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestQueryServer_UserGroups() {
+func (suite *KeeperTestSuite) TestQueryServer_UserGroups() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -499,7 +500,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserGroups() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestQueryServer_UserGroup() {
+func (suite *KeeperTestSuite) TestQueryServer_UserGroup() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -566,7 +567,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserGroup() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestQueryServer_UserGroupMembers() {
+func (suite *KeeperTestSuite) TestQueryServer_UserGroupMembers() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -649,7 +650,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserGroupMembers() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestQueryServer_UserPermissions() {
+func (suite *KeeperTestSuite) TestQueryServer_UserPermissions() {
 	testCases := []struct {
 		name        string
 		store       func(ctx sdk.Context)
@@ -769,6 +770,217 @@ func (suite *KeeperTestsuite) TestQueryServer_UserPermissions() {
 				suite.Require().NoError(err)
 				suite.Require().Equal(tc.expResponse.Permissions, res.Permissions)
 				suite.Require().Equal(tc.expResponse.Details, res.Details)
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestQueryServer_UserAllowances() {
+	testCases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		req       *types.QueryUserAllowancesRequest
+		shouldErr bool
+		expGrants []types.Grant
+	}{
+		{
+			name:      "invalid subspace id returns error",
+			req:       types.NewQueryUserAllowancesRequest(0, "", nil),
+			shouldErr: true,
+		},
+		{
+			name:      "not found subspace returns error",
+			req:       types.NewQueryUserAllowancesRequest(1, "", nil),
+			shouldErr: true,
+		},
+		{
+			name: "user grants query without grantee returns the correct data",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(1, "test", "test", "owner", "treasury", "creator", time.Now()))
+
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				))
+
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					types.NewUserGrantee("cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69"),
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				))
+			},
+			req:       types.NewQueryUserAllowancesRequest(1, "", nil),
+			shouldErr: false,
+			expGrants: []types.Grant{
+				types.NewGrant(
+					1,
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				),
+				types.NewGrant(
+					1,
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					types.NewUserGrantee("cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69"),
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				),
+			},
+		},
+		{
+			name: "valid query returns the correct data",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(1, "test", "test", "owner", "treasury", "creator", time.Now()))
+
+				suite.k.SaveGrant(ctx, types.NewGrant(1,
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				))
+
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					types.NewUserGrantee("cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69"),
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				))
+			},
+			req:       types.NewQueryUserAllowancesRequest(1, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5", nil),
+			shouldErr: false,
+			expGrants: []types.Grant{
+				types.NewGrant(
+					1,
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				),
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			res, err := suite.k.UserAllowances(sdk.WrapSDKContext(ctx), tc.req)
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(tc.expGrants, res.Grants)
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestQueryServer_GroupAllowances() {
+	testCases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		req       *types.QueryGroupAllowancesRequest
+		shouldErr bool
+		expGrants []types.Grant
+	}{
+		{
+			name:      "invalid subspace id returns error",
+			req:       types.NewQueryGroupAllowancesRequest(0, 1, nil),
+			shouldErr: true,
+		},
+		{
+			name:      "not found subspace returns error",
+			req:       types.NewQueryGroupAllowancesRequest(1, 1, nil),
+			shouldErr: true,
+		},
+		{
+			name: "group grants query without group id returns the correct data",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(1, "test", "test", "owner", "treasury", "creator", time.Now()))
+
+				suite.k.SaveUserGroup(ctx, types.NewUserGroup(1, 0, 1, "test", "tets", nil))
+				suite.k.SaveUserGroup(ctx, types.NewUserGroup(1, 0, 2, "test", "tets", nil))
+
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					types.NewGroupGrantee(1),
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				))
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					types.NewGroupGrantee(2),
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				))
+			},
+			req:       types.NewQueryGroupAllowancesRequest(1, 0, nil),
+			shouldErr: false,
+			expGrants: []types.Grant{
+				types.NewGrant(1,
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					types.NewGroupGrantee(1),
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				),
+				types.NewGrant(1,
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					types.NewGroupGrantee(2),
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				),
+			},
+		},
+		{
+			name: "valid group grants query returns the correct data",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(1, "test", "test", "owner", "treasury", "creator", time.Now()))
+
+				suite.k.SaveUserGroup(ctx, types.NewUserGroup(1, 0, 1, "test", "tets", nil))
+				suite.k.SaveUserGroup(ctx, types.NewUserGroup(1, 0, 2, "test", "tets", nil))
+
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					types.NewGroupGrantee(1),
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				))
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					types.NewGroupGrantee(2),
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				))
+			},
+			req:       types.NewQueryGroupAllowancesRequest(1, 1, nil),
+			shouldErr: false,
+			expGrants: []types.Grant{
+				types.NewGrant(
+					1,
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					types.NewGroupGrantee(1),
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				),
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			res, err := suite.k.GroupAllowances(sdk.WrapSDKContext(ctx), tc.req)
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(tc.expGrants, res.Grants)
 			}
 		})
 	}

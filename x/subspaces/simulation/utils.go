@@ -115,3 +115,8 @@ func GetAccount(address string, accs []simtypes.Account) *simtypes.Account {
 	}
 	return nil
 }
+
+// RandomGrant returns a random user grant from the slice given
+func RandomGrant(r *rand.Rand, grants []types.Grant) types.Grant {
+	return grants[r.Intn(len(grants))]
+}

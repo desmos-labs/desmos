@@ -38,6 +38,8 @@ const (
 	OpWeightMsgSetUserPermissions          = "op_weight_msg_set_user_permissions"
 	OpWeightMsgGrantTreasuryAuthorization  = "op_weight_msg_grant_treasury_authorization"
 	OpWeightMsgRevokeTreasuryAuthorization = "op_weight_msg_revoke_treasury_authorization"
+	OpWeightMsgGrantAllowance              = "op_weight_msg_grant_allowance"
+	OpWeightMsgRevokeAllowance             = "op_weight_msg_revoke_allowance"
 
 	DefaultGasValue = 200_000
 )
@@ -166,6 +168,20 @@ func WeightedOperations(
 		},
 	)
 
+	var weightMsgGrantUserAllowance int
+	appParams.GetOrGenerate(cdc, OpWeightMsgGrantAllowance, &weightMsgGrantUserAllowance, nil,
+		func(_ *rand.Rand) {
+			weightMsgGrantUserAllowance = params.DefaultWeightMsgGrantAllowance
+		},
+	)
+
+	var weightMsgRevokeAllowance int
+	appParams.GetOrGenerate(cdc, OpWeightMsgRevokeAllowance, &weightMsgRevokeAllowance, nil,
+		func(_ *rand.Rand) {
+			weightMsgRevokeAllowance = params.DefaultWeightMsgRevokeAllowance
+		},
+	)
+
 	return sim.WeightedOperations{
 		sim.NewWeightedOperation(
 			weightMsgCreateSubspace,
@@ -234,6 +250,14 @@ func WeightedOperations(
 		sim.NewWeightedOperation(
 			weightMsgRevokeTreasuryAuthorization,
 			SimulateMsgRevokeTreasuryAuthorization(k, ak, bk, fk, authzk),
+		),
+		sim.NewWeightedOperation(
+			weightMsgGrantUserAllowance,
+			SimulateMsgGrantAllowance(k, ak, bk, fk),
+		),
+		sim.NewWeightedOperation(
+			weightMsgRevokeAllowance,
+			SimulateMsgRevokeAllowance(k, ak, bk, fk),
 		),
 	}
 }

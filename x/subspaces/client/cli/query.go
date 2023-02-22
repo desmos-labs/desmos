@@ -29,6 +29,7 @@ func GetQueryCmd() *cobra.Command {
 		GetSectionsQueryCmd(),
 		GetGroupsQueryCmd(),
 		GetCmdQueryUserPermissions(),
+		GetAllowancesQueryCmd(),
 	)
 	return subspaceQueryCmd
 }

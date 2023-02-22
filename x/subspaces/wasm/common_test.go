@@ -7,6 +7,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/suite"
 	"github.com/tendermint/tendermint/libs/log"
@@ -90,6 +93,18 @@ func buildRevokeTreasuryAuthorizationRequest(cdc codec.Codec, msg sdk.Msg) json.
 	return bz
 }
 
+func buildGrantAllowanceRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
+	raw := json.RawMessage(cdc.MustMarshalJSON(msg))
+	bz, _ := json.Marshal(types.SubspacesMsg{GrantAllowance: &raw})
+	return bz
+}
+
+func buildRevokeAllowanceRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
+	raw := json.RawMessage(cdc.MustMarshalJSON(msg))
+	bz, _ := json.Marshal(types.SubspacesMsg{RevokeAllowance: &raw})
+	return bz
+}
+
 func buildSubspacesQueryRequest(cdc codec.Codec, query *types.QuerySubspacesRequest) json.RawMessage {
 	raw := json.RawMessage(cdc.MustMarshalJSON(query))
 	bz, _ := json.Marshal(types.SubspacesQuery{Subspaces: &raw})
@@ -126,7 +141,19 @@ func buildUserPermissionsQueryRequest(cdc codec.Codec, query *types.QueryUserPer
 	return bz
 }
 
-type Testsuite struct {
+func buildUserAllowancesQueryRequest(cdc codec.Codec, query *types.QueryUserAllowancesRequest) json.RawMessage {
+	raw := json.RawMessage(cdc.MustMarshalJSON(query))
+	bz, _ := json.Marshal(types.SubspacesQuery{UserAllowances: &raw})
+	return bz
+}
+
+func buildGroupAllowancesQueryRequest(cdc codec.Codec, query *types.QueryGroupAllowancesRequest) json.RawMessage {
+	raw := json.RawMessage(cdc.MustMarshalJSON(query))
+	bz, _ := json.Marshal(types.SubspacesQuery{GroupAllowances: &raw})
+	return bz
+}
+
+type TestSuite struct {
 	suite.Suite
 
 	cdc            codec.Codec
@@ -134,12 +161,14 @@ type Testsuite struct {
 	ctx            sdk.Context
 	k              keeper.Keeper
 	storeKey       sdk.StoreKey
+	ak             authkeeper.AccountKeeper
+	paramsKeeper   paramskeeper.Keeper
 }
 
-func (suite *Testsuite) SetupTest() {
+func (suite *TestSuite) SetupTest() {
 	// Define store keys
-	keys := sdk.NewMemoryStoreKeys(types.StoreKey, paramstypes.StoreKey)
-
+	keys := sdk.NewMemoryStoreKeys(types.StoreKey, paramstypes.StoreKey, authtypes.StoreKey)
+	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	suite.storeKey = keys[types.StoreKey]
 
 	// Create an in-memory db
@@ -147,6 +176,9 @@ func (suite *Testsuite) SetupTest() {
 	ms := store.NewCommitMultiStore(memDB)
 	for _, key := range keys {
 		ms.MountStoreWithDB(key, sdk.StoreTypeIAVL, memDB)
+	}
+	for _, tKey := range tKeys {
+		ms.MountStoreWithDB(tKey, sdk.StoreTypeTransient, memDB)
 	}
 
 	if err := ms.LoadLatestVersion(); err != nil {
@@ -157,9 +189,19 @@ func (suite *Testsuite) SetupTest() {
 	suite.cdc, suite.legacyAminoCdc = app.MakeCodecs()
 
 	// Define keeper
-	suite.k = keeper.NewKeeper(suite.cdc, suite.storeKey, nil, nil)
+	suite.paramsKeeper = paramskeeper.NewKeeper(
+		suite.cdc, suite.legacyAminoCdc, keys[paramstypes.StoreKey], tKeys[paramstypes.TStoreKey],
+	)
+	suite.ak = authkeeper.NewAccountKeeper(
+		suite.cdc,
+		keys[authtypes.StoreKey],
+		suite.paramsKeeper.Subspace(authtypes.ModuleName),
+		authtypes.ProtoBaseAccount,
+		app.GetMaccPerms(),
+	)
+	suite.k = keeper.NewKeeper(suite.cdc, suite.storeKey, suite.ak, nil)
 }
 
 func TestKeeperTestSuite(t *testing.T) {
-	suite.Run(t, new(Testsuite))
+	suite.Run(t, new(TestSuite))
 }

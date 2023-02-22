@@ -1,0 +1,6 @@
+type: feat
+module: x/subspaces
+pull_request: 1071
+description: Implemented ADR-017 subspace grant
+backward_compatible: false
+date: 2023-01-19T12:57:19.2567964Z

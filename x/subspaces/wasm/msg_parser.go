@@ -54,6 +54,10 @@ func (parser MsgsParser) ParseCustomMsgs(contractAddr sdk.AccAddress, data json.
 		return commons.HandleWasmMsg(parser.cdc, *msg.GrantTreasuryAuthorization, &types.MsgGrantTreasuryAuthorization{})
 	case msg.RevokeTreasuryAuthorization != nil:
 		return commons.HandleWasmMsg(parser.cdc, *msg.RevokeTreasuryAuthorization, &types.MsgRevokeTreasuryAuthorization{})
+	case msg.GrantAllowance != nil:
+		return commons.HandleWasmMsg(parser.cdc, *msg.GrantAllowance, &types.MsgGrantAllowance{})
+	case msg.RevokeAllowance != nil:
+		return commons.HandleWasmMsg(parser.cdc, *msg.RevokeAllowance, &types.MsgRevokeAllowance{})
 	default:
 		return nil, sdkerrors.Wrap(wasm.ErrInvalidMsg, "cosmwasm-subspaces-msg-parser: message not supported")
 	}
