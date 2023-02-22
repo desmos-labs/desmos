@@ -108,6 +108,8 @@ func GetStargateAcceptedQueries() wasmkeeper.AcceptedStargateQueries {
 		"/desmos.subspaces.v3.Query/UserGroup":        &subspacestypes.QueryUserGroupResponse{},
 		"/desmos.subspaces.v3.Query/UserGroupMembers": &subspacestypes.QueryUserGroupMembersResponse{},
 		"/desmos.subspaces.v3.Query/UserPermissions":  &subspacestypes.QueryUserPermissionsResponse{},
+		"/desmos.subspaces.v3.Query/UserAllowances":   &subspacestypes.QueryUserAllowancesResponse{},
+		"/desmos.subspaces.v3.Query/GroupAllowances":  &subspacestypes.QueryGroupAllowancesResponse{},
 
 		// Register x/posts queries
 		"/desmos.posts.v3.Query/SubspacePosts":   &poststypes.QuerySubspacePostsResponse{},
