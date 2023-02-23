@@ -284,10 +284,10 @@ test-cover:
 	@export VERSION=$(VERSION); bash -x contrib/test_cover.sh
 .PHONY: test-cover
 
+becnchstat_cmd=golang.org/x/perf/cmd/benchstat
 benchmark:
-	@go test -mod=readonly -bench=. -count=$(BENCH_COUNT) -run=^a  ./... >bench-$(REF_NAME).txt
-	@test -s $(GOPATH)/bin/benchstat || GO111MODULE=off GOFLAGS= GOBIN=$(GOPATH)/bin go install -u golang.org/x/perf/cmd/benchstat
-	@test -e bench-master.txt && benchstat bench-master.txt bench-$(REF_NAME).txt || benchstat bench-$(REF_NAME).txt
+	@go test -mod=readonly -bench=. -count=$(BENCH_COUNT) -run=^a  ./... > bench-$(REF_NAME).txt
+	@test -e bench-master.txt && go run $(becnchstat_cmd) bench-master.txt bench-$(REF_NAME).txt || go run $(becnchstat_cmd) bench-$(REF_NAME).txt
 .PHONY: benchmark
 
 test-mutation:
