@@ -23,7 +23,7 @@ func RandomizeGenState(simState *module.SimulationState) {
 	members := randomUserGroupsMembers(simState.Rand, simState.Accounts, groups)
 	acl := randomACL(simState.Rand, simState.Accounts, subspaces)
 	initialSubspaceID, subspacesData := getSubspacesDataEntries(subspaces, sections, groups)
-	grants := append(randomUserGrants(simState.Rand, simState.Accounts, subspaces), randomGroupGrants(simState.Rand, simState.Accounts, groups)...)
+	grants := append(randomUserGrants(simState.Rand, simState.Accounts, subspaces), randomGroupGrants(simState.Rand, groups)...)
 
 	// Create the genesis and sanitize it
 	subspacesGenesis := types.NewGenesisState(initialSubspaceID, subspacesData, subspaces, sections, acl, groups, members, grants)
@@ -180,14 +180,17 @@ func randomUserGrants(r *rand.Rand, accounts []simtypes.Account, subspaces []typ
 		return nil
 	}
 
-	grantsNumber := r.Intn(5)
+	grantsNumber := r.Intn(len(subspaces))
 	grants := make([]types.Grant, grantsNumber)
 	for i := 0; i < grantsNumber; {
 		subspace := RandomSubspace(r, subspaces)
-		granter, _ := simtypes.RandomAcc(r, accounts)
 		grantee, _ := simtypes.RandomAcc(r, accounts)
 
-		grant := types.NewGrant(subspace.ID, granter.Address.String(), types.NewUserGrantee(grantee.Address.String()), &feegrant.BasicAllowance{})
+		if subspace.Treasury == grantee.Address.String() {
+			continue
+		}
+
+		grant := types.NewGrant(subspace.ID, subspace.Treasury, types.NewUserGrantee(grantee.Address.String()), &feegrant.BasicAllowance{})
 		if !containsGrant(grants, grant) {
 			grants[i] = grant
 			i++
@@ -197,17 +200,23 @@ func randomUserGrants(r *rand.Rand, accounts []simtypes.Account, subspaces []typ
 }
 
 // randomGroupGrants returns randomly generated group grants
-func randomGroupGrants(r *rand.Rand, accounts []simtypes.Account, groups []types.UserGroup) []types.Grant {
+func randomGroupGrants(r *rand.Rand, groups []types.UserGroup) []types.Grant {
 	if len(groups) == 0 {
 		return nil
 	}
-	grantsNumber := r.Intn(5)
+
+	grantsNumber := r.Intn(len(groups))
 	grants := make([]types.Grant, grantsNumber)
 	for i := 0; i < grantsNumber; {
 		group := RandomGroup(r, groups)
-		granter, _ := simtypes.RandomAcc(r, accounts)
+		granter := types.GetTreasuryAddress(group.SubspaceID)
 
-		grant := types.NewGrant(group.SubspaceID, granter.Address.String(), types.NewGroupGrantee(group.ID), &feegrant.BasicAllowance{})
+		// Default group can not have any grant
+		if group.ID == 0 {
+			continue
+		}
+
+		grant := types.NewGrant(group.SubspaceID, granter.String(), types.NewGroupGrantee(group.ID), &feegrant.BasicAllowance{})
 		if !containsGrant(grants, grant) {
 			grants[i] = grant
 			i++
