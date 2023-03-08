@@ -45,8 +45,8 @@ var (
 // Permission represents a permission that can be set to a user or user group
 type Permission = string
 
-// newPermission returns a new Permission containing the given value
-func newPermission(permissionName string) Permission {
+// NewPermission returns a new Permission containing the given value
+func NewPermission(permissionName string) Permission {
 	permissionName = multipleSpacesRegex.ReplaceAllString(permissionName, " ")
 	permissionName = strings.ReplaceAll(permissionName, " ", "_")
 	return strings.ToUpper(permissionName)
@@ -69,7 +69,7 @@ func isPermissionRegistered(permission Permission) bool {
 
 // RegisterPermission registers the permissions with the given name and returns its value
 func RegisterPermission(permissionName string) Permission {
-	permission := newPermission(permissionName)
+	permission := NewPermission(permissionName)
 	if isPermissionRegistered(permission) {
 		panic(fmt.Errorf("permissions %s has already been registered", permission))
 	}

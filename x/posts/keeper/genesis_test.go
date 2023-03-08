@@ -4,6 +4,7 @@ import (
 	"time"
 
 	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
+	"github.com/golang/mock/gomock"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -13,34 +14,46 @@ import (
 func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 	testCases := []struct {
 		name       string
+		setup      func()
 		store      func(ctx sdk.Context)
 		expGenesis *types.GenesisState
 	}{
 		{
 			name: "subspaces data is exported properly",
+			setup: func() {
+				subspaces := []subspacestypes.Subspace{
+					subspacestypes.NewSubspace(
+						1,
+						"Test subspace",
+						"This is a test subspace",
+						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					),
+					subspacestypes.NewSubspace(
+						2,
+						"Another text subspace",
+						"This is another test subspace",
+						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					),
+				}
+
+				suite.sk.EXPECT().IterateSubspaces(gomock.Any(), gomock.Any()).
+					Do(func(ctx sdk.Context, fn func(subspace subspacestypes.Subspace) (stop bool)) {
+						for _, subspace := range subspaces {
+							fn(subspace)
+						}
+					})
+			},
 			store: func(ctx sdk.Context) {
 				suite.k.SetParams(ctx, types.Params{})
 
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
 				suite.k.SetNextPostID(ctx, 1, 1)
 
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					2,
-					"Another text subspace",
-					"This is another test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
 				suite.k.SetNextPostID(ctx, 2, 2)
 			},
 			expGenesis: types.NewGenesisState([]types.SubspaceDataEntry{
@@ -50,6 +63,9 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 		},
 		{
 			name: "posts are exported properly",
+			setup: func() {
+				suite.sk.EXPECT().IterateSubspaces(gomock.Any(), gomock.Any())
+			},
 			store: func(ctx sdk.Context) {
 				suite.k.SetParams(ctx, types.Params{})
 				suite.k.SetNextAttachmentID(ctx, 1, 1, 1)
@@ -127,6 +143,9 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 		},
 		{
 			name: "attachments are exported properly",
+			setup: func() {
+				suite.sk.EXPECT().IterateSubspaces(gomock.Any(), gomock.Any())
+			},
 			store: func(ctx sdk.Context) {
 				suite.k.SetParams(ctx, types.Params{})
 				suite.k.SaveAttachment(ctx, types.NewAttachment(1, 1, 1, types.NewMedia(
@@ -151,6 +170,9 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 		},
 		{
 			name: "active polls are exported properly",
+			setup: func() {
+				suite.sk.EXPECT().IterateSubspaces(gomock.Any(), gomock.Any())
+			},
 			store: func(ctx sdk.Context) {
 				suite.k.SetParams(ctx, types.Params{})
 				suite.k.SaveAttachment(ctx, types.NewAttachment(1, 1, 2, types.NewPoll(
@@ -201,6 +223,9 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 		},
 		{
 			name: "user answers are exported properly",
+			setup: func() {
+				suite.sk.EXPECT().IterateSubspaces(gomock.Any(), gomock.Any())
+			},
 			store: func(ctx sdk.Context) {
 				suite.k.SetParams(ctx, types.Params{})
 				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"))
@@ -213,6 +238,9 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 		},
 		{
 			name: "params are exported properly",
+			setup: func() {
+				suite.sk.EXPECT().IterateSubspaces(gomock.Any(), gomock.Any())
+			},
 			store: func(ctx sdk.Context) {
 				suite.k.SetParams(ctx, types.NewParams(20))
 			},
@@ -224,6 +252,9 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup()
+			}
 			if tc.store != nil {
 				tc.store(ctx)
 			}
@@ -237,22 +268,32 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 func (suite *KeeperTestsuite) TestKeeper_ImportGenesis() {
 	testCases := []struct {
 		name  string
+		setup func()
 		store func(ctx sdk.Context)
 		data  types.GenesisState
 		check func(ctx sdk.Context)
 	}{
 		{
 			name: "subspace data is imported properly",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+			setup: func() {
+				subspaces := []subspacestypes.Subspace{
+					subspacestypes.NewSubspace(
+						1,
+						"Test subspace",
+						"This is a test subspace",
+						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					),
+				}
+
+				suite.sk.EXPECT().IterateSubspaces(gomock.Any(), gomock.Any()).
+					Do(func(ctx sdk.Context, fn func(subspace subspacestypes.Subspace) (stop bool)) {
+						for _, subspace := range subspaces {
+							fn(subspace)
+						}
+					})
 			},
 			data: types.GenesisState{
 				SubspacesData: []types.SubspaceDataEntry{
@@ -267,16 +308,25 @@ func (suite *KeeperTestsuite) TestKeeper_ImportGenesis() {
 		},
 		{
 			name: "genesis post is imported correctly",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+			setup: func() {
+				subspaces := []subspacestypes.Subspace{
+					subspacestypes.NewSubspace(
+						1,
+						"Test subspace",
+						"This is a test subspace",
+						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					),
+				}
+
+				suite.sk.EXPECT().IterateSubspaces(gomock.Any(), gomock.Any()).
+					Do(func(ctx sdk.Context, fn func(subspace subspacestypes.Subspace) (stop bool)) {
+						for _, subspace := range subspaces {
+							fn(subspace)
+						}
+					})
 			},
 			data: types.GenesisState{
 				Posts: []types.Post{
@@ -319,16 +369,25 @@ func (suite *KeeperTestsuite) TestKeeper_ImportGenesis() {
 		},
 		{
 			name: "attachment id is imported correctly",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+			setup: func() {
+				subspaces := []subspacestypes.Subspace{
+					subspacestypes.NewSubspace(
+						1,
+						"Test subspace",
+						"This is a test subspace",
+						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					),
+				}
+
+				suite.sk.EXPECT().IterateSubspaces(gomock.Any(), gomock.Any()).
+					Do(func(ctx sdk.Context, fn func(subspace subspacestypes.Subspace) (stop bool)) {
+						for _, subspace := range subspaces {
+							fn(subspace)
+						}
+					})
 			},
 			data: types.GenesisState{
 				PostsData: []types.PostDataEntry{
@@ -343,17 +402,27 @@ func (suite *KeeperTestsuite) TestKeeper_ImportGenesis() {
 		},
 		{
 			name: "attachment is imported correctly",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+			setup: func() {
+				subspaces := []subspacestypes.Subspace{
+					subspacestypes.NewSubspace(
+						1,
+						"Test subspace",
+						"This is a test subspace",
+						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					),
+				}
 
+				suite.sk.EXPECT().IterateSubspaces(gomock.Any(), gomock.Any()).
+					Do(func(ctx sdk.Context, fn func(subspace subspacestypes.Subspace) (stop bool)) {
+						for _, subspace := range subspaces {
+							fn(subspace)
+						}
+					})
+			},
+			store: func(ctx sdk.Context) {
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					0,
@@ -389,17 +458,27 @@ func (suite *KeeperTestsuite) TestKeeper_ImportGenesis() {
 		},
 		{
 			name: "user answer is imported properly",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+			setup: func() {
+				subspaces := []subspacestypes.Subspace{
+					subspacestypes.NewSubspace(
+						1,
+						"Test subspace",
+						"This is a test subspace",
+						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					),
+				}
 
+				suite.sk.EXPECT().IterateSubspaces(gomock.Any(), gomock.Any()).
+					Do(func(ctx sdk.Context, fn func(subspace subspacestypes.Subspace) (stop bool)) {
+						for _, subspace := range subspaces {
+							fn(subspace)
+						}
+					})
+			},
+			store: func(ctx sdk.Context) {
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					0,
@@ -441,6 +520,9 @@ func (suite *KeeperTestsuite) TestKeeper_ImportGenesis() {
 		},
 		{
 			name: "active polls are imported properly",
+			setup: func() {
+				suite.sk.EXPECT().IterateSubspaces(gomock.Any(), gomock.Any())
+			},
 			data: types.GenesisState{
 				ActivePolls: []types.ActivePollData{
 					types.NewActivePollData(1, 1, 2, time.Date(2100, 1, 1, 12, 00, 00, 000, time.UTC)),
@@ -453,6 +535,9 @@ func (suite *KeeperTestsuite) TestKeeper_ImportGenesis() {
 		},
 		{
 			name: "params are imported properly",
+			setup: func() {
+				suite.sk.EXPECT().IterateSubspaces(gomock.Any(), gomock.Any())
+			},
 			data: types.GenesisState{
 				Params: types.NewParams(200),
 			},
@@ -467,6 +552,9 @@ func (suite *KeeperTestsuite) TestKeeper_ImportGenesis() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup()
+			}
 			if tc.store != nil {
 				tc.store(ctx)
 			}
