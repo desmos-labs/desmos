@@ -112,6 +112,8 @@ func (suite *KeeperTestSuite) SetupTest() {
 
 	// Mocks initializations
 	ctrl := gomock.NewController(suite.T())
+	defer ctrl.Finish()
+
 	suite.rk = testutil.NewMockRelationshipsKeeper(ctrl)
 	suite.channelKeeper = testutil.NewMockChannelKeeper(ctrl)
 	suite.portKeeper = testutil.NewMockPortKeeper(ctrl)
