@@ -8,7 +8,6 @@ import (
 	"github.com/desmos-labs/desmos/v4/x/posts/keeper"
 	"github.com/desmos-labs/desmos/v4/x/posts/testutil"
 	"github.com/desmos-labs/desmos/v4/x/posts/types"
-	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
@@ -41,7 +40,7 @@ type KeeperTestsuite struct {
 func (suite *KeeperTestsuite) SetupTest() {
 	// Define store keys
 	keys := sdk.NewMemoryStoreKeys(
-		paramstypes.StoreKey, types.StoreKey, subspacestypes.StoreKey,
+		paramstypes.StoreKey, types.StoreKey,
 	)
 	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	suite.storeKey = keys[types.StoreKey]
