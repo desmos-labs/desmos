@@ -88,7 +88,9 @@ func (k Keeper) DeleteAttachment(ctx sdk.Context, subspaceID uint64, postID uint
 
 		// Delete the poll user answers
 		for _, answer := range k.GetPollUserAnswers(ctx, attachment.SubspaceID, attachment.PostID, attachment.ID) {
-			k.DeleteUserAnswer(ctx, attachment.SubspaceID, attachment.PostID, attachment.ID, answer.User)
+			k.DeleteUserAnswer(ctx, attachment.SubspaceID, attachment.PostID, attachment.ID, answer.User, false)
 		}
 	}
+
+	k.AfterAttachmentDeleted(ctx, subspaceID, postID, attachmentID)
 }

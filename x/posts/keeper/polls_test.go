@@ -213,6 +213,82 @@ func (suite *KeeperTestsuite) TestKeeper_Tally() {
 	}
 }
 
+func (suite *KeeperTestsuite) TestKeeper_EndPoll() {
+	testCases := []struct {
+		name  string
+		store func(ctx sdk.Context)
+		poll  types.Attachment
+		check func(ctx sdk.Context)
+	}{
+		{
+			name: "updates the ended poll properly",
+			store: func(ctx sdk.Context) {
+				attachment := types.NewAttachment(1, 1, 1, types.NewPoll(
+					"What animal is best?",
+					[]types.Poll_ProvidedAnswer{
+						types.NewProvidedAnswer("Cat", nil),
+						types.NewProvidedAnswer("Dog", nil),
+						types.NewProvidedAnswer("No one of the above", nil),
+					},
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					true,
+					false,
+					nil,
+				))
+				suite.k.SaveAttachment(ctx, attachment)
+				suite.k.InsertActivePollQueue(ctx, attachment)
+
+				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{0, 1}, "cosmos1pmklwgqjqmgc4ynevmtset85uwm0uau90jdtfn"))
+				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1zmqjufkg44ngswgf4vmn7evp8k6h07erdyxefd"))
+			},
+			poll: types.NewAttachment(1, 1, 1, types.NewPoll(
+				"What animal is best?",
+				[]types.Poll_ProvidedAnswer{
+					types.NewProvidedAnswer("Cat", nil),
+					types.NewProvidedAnswer("Dog", nil),
+					types.NewProvidedAnswer("No one of the above", nil),
+				},
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				true,
+				false,
+				nil,
+			)),
+			check: func(ctx sdk.Context) {
+				poll, found := suite.k.GetPoll(ctx, 1, 1, 1)
+				suite.Require().True(found)
+				suite.Require().Equal(types.NewPollTallyResults([]types.PollTallyResults_AnswerResult{
+					types.NewAnswerResult(0, 1),
+					types.NewAnswerResult(1, 2),
+					types.NewAnswerResult(2, 0),
+				}), poll.FinalTallyResults)
+
+				store := ctx.KVStore(suite.storeKey)
+				endTime := time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC)
+				suite.Require().False(store.Has(types.ActivePollQueueKey(1, 1, 1, endTime)))
+
+				suite.Require().False(suite.k.HasUserAnswer(ctx, 1, 1, 1, "cosmos1pmklwgqjqmgc4ynevmtset85uwm0uau90jdtfn"))
+				suite.Require().False(suite.k.HasUserAnswer(ctx, 1, 1, 1, "cosmos1zmqjufkg44ngswgf4vmn7evp8k6h07erdyxefd"))
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			suite.k.EndPoll(ctx, tc.poll)
+
+			if tc.check != nil {
+				tc.check(ctx)
+			}
+		})
+	}
+}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 func (suite *KeeperTestsuite) TestKeeper_SaveUserAnswer() {
@@ -398,7 +474,7 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteUserAnswer() {
 				tc.store(ctx)
 			}
 
-			suite.k.DeleteUserAnswer(ctx, tc.subspaceID, tc.postID, tc.pollID, tc.user)
+			suite.k.DeleteUserAnswer(ctx, tc.subspaceID, tc.postID, tc.pollID, tc.user, false)
 			if tc.check != nil {
 				tc.check(ctx)
 			}

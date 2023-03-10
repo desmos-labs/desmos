@@ -3,6 +3,7 @@ package keeper
 import (
 	"time"
 
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/v4/x/posts/types"
@@ -49,7 +50,7 @@ func (k Keeper) Tally(ctx sdk.Context, subspaceID uint64, postID uint64, pollID 
 		}
 
 		// Delete the user answer
-		k.DeleteUserAnswer(ctx, answer.SubspaceID, answer.PostID, answer.PollID, answer.User)
+		k.DeleteUserAnswer(ctx, answer.SubspaceID, answer.PostID, answer.PollID, answer.User, true)
 
 		return false
 	})
@@ -60,6 +61,27 @@ func (k Keeper) Tally(ctx sdk.Context, subspaceID uint64, postID uint64, pollID 
 	}
 
 	return types.NewPollTallyResults(tallyResults)
+}
+
+// EndPoll tallies the poll then update it inside storage
+func (k Keeper) EndPoll(ctx sdk.Context, poll types.Attachment) {
+	// Compute the poll results
+	results := k.Tally(ctx, poll.SubspaceID, poll.PostID, poll.ID)
+
+	// Update the content with the results
+	content := poll.Content.GetCachedValue().(*types.Poll)
+	content.FinalTallyResults = results
+
+	contentAny, err := codectypes.NewAnyWithValue(content)
+	if err != nil {
+		panic(err)
+	}
+	poll.Content = contentAny
+
+	k.SaveAttachment(ctx, poll)
+	k.RemoveFromActivePollQueue(ctx, poll)
+
+	k.AfterPollVotingPeriodEnded(ctx, poll.SubspaceID, poll.PostID, poll.ID)
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -113,9 +135,15 @@ func (k Keeper) GetUserAnswer(ctx sdk.Context, subspaceID uint64, postID uint64,
 }
 
 // DeleteUserAnswer deletes the user answer from the provided poll
-func (k Keeper) DeleteUserAnswer(ctx sdk.Context, subspaceID uint64, postID uint64, pollID uint32, user string) {
+func (k Keeper) DeleteUserAnswer(ctx sdk.Context, subspaceID uint64, postID uint64, pollID uint32, user string, isTally bool) {
 	store := ctx.KVStore(k.storeKey)
+	if !k.HasUserAnswer(ctx, subspaceID, postID, pollID, user) {
+		return
+	}
+
 	store.Delete(types.PollAnswerStoreKey(subspaceID, postID, pollID, user))
 
-	k.AfterPollAnswerDeleted(ctx, subspaceID, postID, pollID, user)
+	if !isTally {
+		k.AfterPollAnswerDeleted(ctx, subspaceID, postID, pollID, user)
+	}
 }
