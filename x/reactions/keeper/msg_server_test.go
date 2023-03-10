@@ -323,7 +323,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddReaction() {
 						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 						"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
 						uint64(1)).
-					Return(true)
+					Return(false)
 
 				suite.sk.EXPECT().
 					HasPermission(gomock.Any(),
@@ -339,7 +339,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddReaction() {
 			msg: types.NewMsgAddReaction(
 				1,
 				1,
-				types.NewRegisteredReactionValue(1),
+				types.NewRegisteredReactionValue(0),
 				"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
 			),
 			shouldErr: true,
