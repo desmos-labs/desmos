@@ -225,14 +225,14 @@ func (suite *KeeperTestSuite) TestMsgServer_AddReaction() {
 					1,
 					1,
 					1,
-					types.NewRegisteredReactionValue(1),
+					types.NewFreeTextValue("test"),
 					"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
 				))
 			},
 			msg: types.NewMsgAddReaction(
 				1,
 				1,
-				types.NewRegisteredReactionValue(1),
+				types.NewFreeTextValue("test"),
 				"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
 			),
 			shouldErr: true,
@@ -662,6 +662,15 @@ func (suite *KeeperTestSuite) TestMsgServer_RemoveReaction() {
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 						nil,
 					), true)
+			},
+			store: func(ctx sdk.Context) {
+				suite.k.SaveReaction(ctx, types.NewReaction(
+					1,
+					1,
+					1,
+					types.NewRegisteredReactionValue(1),
+					"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
+				))
 			},
 			msg: types.NewMsgRemoveReaction(
 				1,
