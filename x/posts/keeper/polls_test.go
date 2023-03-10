@@ -8,7 +8,7 @@ import (
 	"github.com/desmos-labs/desmos/v4/x/posts/types"
 )
 
-func (suite *KeeperTestsuite) TestKeeper_HasPoll() {
+func (suite *KeeperTestSuite) TestKeeper_HasPoll() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -66,7 +66,7 @@ func (suite *KeeperTestsuite) TestKeeper_HasPoll() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_GetPoll() {
+func (suite *KeeperTestSuite) TestKeeper_GetPoll() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -147,7 +147,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetPoll() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_Tally() {
+func (suite *KeeperTestSuite) TestKeeper_Tally() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -213,7 +213,7 @@ func (suite *KeeperTestsuite) TestKeeper_Tally() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_EndPoll() {
+func (suite *KeeperTestSuite) TestKeeper_EndPoll() {
 	testCases := []struct {
 		name  string
 		store func(ctx sdk.Context)
@@ -291,7 +291,7 @@ func (suite *KeeperTestsuite) TestKeeper_EndPoll() {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-func (suite *KeeperTestsuite) TestKeeper_SaveUserAnswer() {
+func (suite *KeeperTestSuite) TestKeeper_SaveUserAnswer() {
 	testCases := []struct {
 		name   string
 		store  func(ctx sdk.Context)
@@ -337,7 +337,7 @@ func (suite *KeeperTestsuite) TestKeeper_SaveUserAnswer() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_HasUserAnswer() {
+func (suite *KeeperTestSuite) TestKeeper_HasUserAnswer() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -382,7 +382,7 @@ func (suite *KeeperTestsuite) TestKeeper_HasUserAnswer() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_GetUserAnswer() {
+func (suite *KeeperTestSuite) TestKeeper_GetUserAnswer() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -431,7 +431,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetUserAnswer() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_DeleteUserAnswer() {
+func (suite *KeeperTestSuite) TestKeeper_DeleteUserAnswer() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)

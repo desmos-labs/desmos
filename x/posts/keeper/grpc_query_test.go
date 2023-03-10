@@ -9,7 +9,7 @@ import (
 	"github.com/desmos-labs/desmos/v4/x/posts/types"
 )
 
-func (suite *KeeperTestsuite) TestQueryServer_SubspacePosts() {
+func (suite *KeeperTestSuite) TestQueryServer_SubspacePosts() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -168,7 +168,7 @@ func (suite *KeeperTestsuite) TestQueryServer_SubspacePosts() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestQueryServer_SectionPosts() {
+func (suite *KeeperTestSuite) TestQueryServer_SectionPosts() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -327,7 +327,7 @@ func (suite *KeeperTestsuite) TestQueryServer_SectionPosts() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestQueryServer_Post() {
+func (suite *KeeperTestSuite) TestQueryServer_Post() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -408,7 +408,7 @@ func (suite *KeeperTestsuite) TestQueryServer_Post() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestQueryServer_PostAttachments() {
+func (suite *KeeperTestSuite) TestQueryServer_PostAttachments() {
 	testCases := []struct {
 		name           string
 		store          func(ctx sdk.Context)
@@ -493,7 +493,7 @@ func (suite *KeeperTestsuite) TestQueryServer_PostAttachments() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestQueryServer_PollAnswers() {
+func (suite *KeeperTestSuite) TestQueryServer_PollAnswers() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -598,7 +598,7 @@ func (suite *KeeperTestsuite) TestQueryServer_PollAnswers() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestQueryServer_Params() {
+func (suite *KeeperTestSuite) TestQueryServer_Params() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)

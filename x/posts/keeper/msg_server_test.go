@@ -12,7 +12,7 @@ import (
 	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
-func (suite *KeeperTestsuite) TestMsgServer_CreatePost() {
+func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 	testCases := []struct {
 		name        string
 		setup       func()
@@ -620,7 +620,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreatePost() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestMsgServer_EditPost() {
+func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 	testCases := []struct {
 		name        string
 		store       func(ctx sdk.Context)
@@ -916,7 +916,7 @@ func (suite *KeeperTestsuite) TestMsgServer_EditPost() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestMsgServer_DeletePost() {
+func (suite *KeeperTestSuite) TestMsgServer_DeletePost() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -1163,7 +1163,7 @@ func (suite *KeeperTestsuite) TestMsgServer_DeletePost() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestMsgServer_AddPostAttachment() {
+func (suite *KeeperTestSuite) TestMsgServer_AddPostAttachment() {
 	testCases := []struct {
 		name        string
 		store       func(ctx sdk.Context)
@@ -1443,7 +1443,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AddPostAttachment() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestMsgServer_RemovePostAttachment() {
+func (suite *KeeperTestSuite) TestMsgServer_RemovePostAttachment() {
 	testCases := []struct {
 		name        string
 		store       func(ctx sdk.Context)
@@ -1810,7 +1810,7 @@ func (suite *KeeperTestsuite) TestMsgServer_RemovePostAttachment() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
+func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 	testCases := []struct {
 		name      string
 		setup     func()

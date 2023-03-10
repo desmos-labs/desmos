@@ -45,7 +45,7 @@ func (h *mockHooks) AfterPollVotingPeriodEnded(ctx sdk.Context, subspaceID uint6
 	h.CalledMap["AfterPollVotingPeriodEnded"] = true
 }
 
-func (suite *KeeperTestsuite) TestHooks_AfterPostSaved() {
+func (suite *KeeperTestSuite) TestHooks_AfterPostSaved() {
 	testCases := []struct {
 		name  string
 		store func(ctx sdk.Context)
@@ -100,7 +100,7 @@ func (suite *KeeperTestsuite) TestHooks_AfterPostSaved() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestHooks_AfterPostDeleted() {
+func (suite *KeeperTestSuite) TestHooks_AfterPostDeleted() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -149,7 +149,7 @@ func (suite *KeeperTestsuite) TestHooks_AfterPostDeleted() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestHooks_AfterAttachmentSaved() {
+func (suite *KeeperTestSuite) TestHooks_AfterAttachmentSaved() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -182,7 +182,7 @@ func (suite *KeeperTestsuite) TestHooks_AfterAttachmentSaved() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestHooks_AfterAttachmentDeleted() {
+func (suite *KeeperTestSuite) TestHooks_AfterAttachmentDeleted() {
 	testCases := []struct {
 		name         string
 		store        func(ctx sdk.Context)
@@ -221,7 +221,7 @@ func (suite *KeeperTestsuite) TestHooks_AfterAttachmentDeleted() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestHooks_AfterPollAnswerSaved() {
+func (suite *KeeperTestSuite) TestHooks_AfterPollAnswerSaved() {
 	testCases := []struct {
 		name   string
 		answer types.UserAnswer
@@ -247,7 +247,7 @@ func (suite *KeeperTestsuite) TestHooks_AfterPollAnswerSaved() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestHooks_AfterPollAnswerDeleted() {
+func (suite *KeeperTestSuite) TestHooks_AfterPollAnswerDeleted() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -287,7 +287,7 @@ func (suite *KeeperTestsuite) TestHooks_AfterPollAnswerDeleted() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestHooks_AfterPollVotingPeriodEnded() {
+func (suite *KeeperTestSuite) TestHooks_AfterPollVotingPeriodEnded() {
 	testCases := []struct {
 		name  string
 		store func(ctx sdk.Context)
