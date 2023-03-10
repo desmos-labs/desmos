@@ -1,32 +1,21 @@
 package keeper_test
 
 import (
-	"time"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
 	"github.com/desmos-labs/desmos/v4/x/reactions/types"
-	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
 func (suite *KeeperTestSuite) TestKeeper_AfterSubspaceSaved() {
 	testCases := []struct {
-		name     string
-		store    func(ctx sdk.Context)
-		subspace subspacestypes.Subspace
-		check    func(ctx sdk.Context)
+		name       string
+		store      func(ctx sdk.Context)
+		subspaceID uint64
+		check      func(ctx sdk.Context)
 	}{
 		{
-			name: "next registered reaction id is saved properly",
-			subspace: subspacestypes.NewSubspace(1,
-				"Test subspace",
-				"This is a test subspace",
-				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-			),
+			name:       "next registered reaction id is saved properly",
+			subspaceID: 1,
 			check: func(ctx sdk.Context) {
 				stored, err := suite.k.GetNextRegisteredReactionID(ctx, 1)
 				suite.Require().NoError(err)
@@ -36,24 +25,9 @@ func (suite *KeeperTestSuite) TestKeeper_AfterSubspaceSaved() {
 		{
 			name: "next registered reaction id not overridden",
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
 				suite.k.SetNextRegisteredReactionID(ctx, 1, 2)
 			},
-			subspace: subspacestypes.NewSubspace(1,
-				"Test subspace",
-				"This is a test subspace",
-				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-			),
+			subspaceID: 1,
 			check: func(ctx sdk.Context) {
 				stored, err := suite.k.GetNextRegisteredReactionID(ctx, 1)
 				suite.Require().NoError(err)
@@ -61,15 +35,8 @@ func (suite *KeeperTestSuite) TestKeeper_AfterSubspaceSaved() {
 			},
 		},
 		{
-			name: "reactions params are saved properly",
-			subspace: subspacestypes.NewSubspace(1,
-				"Test subspace",
-				"This is a test subspace",
-				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-			),
+			name:       "reactions params are saved properly",
+			subspaceID: 1,
 			check: func(ctx sdk.Context) {
 				stored, err := suite.k.GetSubspaceReactionsParams(ctx, 1)
 				suite.Require().NoError(err)
@@ -79,29 +46,13 @@ func (suite *KeeperTestSuite) TestKeeper_AfterSubspaceSaved() {
 		{
 			name: "reactions params are not overridden",
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
 				suite.k.SaveSubspaceReactionsParams(ctx, types.NewSubspaceReactionsParams(
 					1,
 					types.NewRegisteredReactionValueParams(true),
 					types.NewFreeTextValueParams(true, 1000, "[a-z]"),
 				))
 			},
-			subspace: subspacestypes.NewSubspace(1,
-				"Test subspace",
-				"This is a test subspace",
-				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-			),
+			subspaceID: 1,
 			check: func(ctx sdk.Context) {
 				stored, err := suite.k.GetSubspaceReactionsParams(ctx, 1)
 				suite.Require().NoError(err)
@@ -114,8 +65,6 @@ func (suite *KeeperTestSuite) TestKeeper_AfterSubspaceSaved() {
 		},
 	}
 
-	suite.sk.SetHooks(suite.k.Hooks())
-
 	for _, tc := range testCases {
 		tc := tc
 		suite.Run(tc.name, func() {
@@ -124,7 +73,7 @@ func (suite *KeeperTestSuite) TestKeeper_AfterSubspaceSaved() {
 				tc.store(ctx)
 			}
 
-			suite.sk.SaveSubspace(ctx, tc.subspace)
+			suite.k.Hooks().AfterSubspaceSaved(ctx, tc.subspaceID)
 			if tc.check != nil {
 				tc.check(ctx)
 			}
@@ -142,14 +91,6 @@ func (suite *KeeperTestSuite) TestKeeper_AfterSubspaceDeleted() {
 		{
 			name: "next registered reaction id is deleted properly",
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
 				suite.k.SetNextRegisteredReactionID(ctx, 1, 2)
 			},
 			subspaceID: 1,
@@ -160,15 +101,6 @@ func (suite *KeeperTestSuite) TestKeeper_AfterSubspaceDeleted() {
 		{
 			name: "registered reactions are deleted properly",
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
 				suite.k.SaveRegisteredReaction(ctx, types.NewRegisteredReaction(
 					1,
 					1,
@@ -192,15 +124,6 @@ func (suite *KeeperTestSuite) TestKeeper_AfterSubspaceDeleted() {
 		{
 			name: "reactions params are deleted properly",
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
 				suite.k.SaveSubspaceReactionsParams(ctx, types.NewSubspaceReactionsParams(
 					1,
 					types.NewRegisteredReactionValueParams(true),
@@ -214,8 +137,6 @@ func (suite *KeeperTestSuite) TestKeeper_AfterSubspaceDeleted() {
 		},
 	}
 
-	suite.sk.SetHooks(suite.k.Hooks())
-
 	for _, tc := range testCases {
 		tc := tc
 		suite.Run(tc.name, func() {
@@ -224,7 +145,7 @@ func (suite *KeeperTestSuite) TestKeeper_AfterSubspaceDeleted() {
 				tc.store(ctx)
 			}
 
-			suite.sk.DeleteSubspace(ctx, tc.subspaceID)
+			suite.k.Hooks().AfterSubspaceDeleted(ctx, tc.subspaceID)
 			if tc.check != nil {
 				tc.check(ctx)
 			}
@@ -234,28 +155,16 @@ func (suite *KeeperTestSuite) TestKeeper_AfterSubspaceDeleted() {
 
 func (suite *KeeperTestSuite) TestKeeper_AfterPostSaved() {
 	testCases := []struct {
-		name  string
-		store func(ctx sdk.Context)
-		post  poststypes.Post
-		check func(ctx sdk.Context)
+		name       string
+		store      func(ctx sdk.Context)
+		subspaceID uint64
+		postID     uint64
+		check      func(ctx sdk.Context)
 	}{
 		{
-			name: "next reaction id is set properly",
-			post: poststypes.NewPost(
-				1,
-				0,
-				1,
-				"External ID",
-				"This is a text",
-				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-				1,
-				nil,
-				nil,
-				nil,
-				poststypes.REPLY_SETTING_EVERYONE,
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				nil,
-			),
+			name:       "next reaction id is set properly",
+			subspaceID: 1,
+			postID:     1,
 			check: func(ctx sdk.Context) {
 				stored, err := suite.k.GetNextReactionID(ctx, 1, 1)
 				suite.Require().NoError(err)
@@ -265,38 +174,10 @@ func (suite *KeeperTestSuite) TestKeeper_AfterPostSaved() {
 		{
 			name: "next reaction id is not overridden",
 			store: func(ctx sdk.Context) {
-				suite.pk.SavePost(ctx, poststypes.NewPost(
-					1,
-					0,
-					1,
-					"External ID",
-					"This is a text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					1,
-					nil,
-					nil,
-					nil,
-					poststypes.REPLY_SETTING_EVERYONE,
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
 				suite.k.SetNextReactionID(ctx, 1, 1, 2)
 			},
-			post: poststypes.NewPost(
-				1,
-				0,
-				1,
-				"External ID",
-				"This is a text",
-				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-				1,
-				nil,
-				nil,
-				nil,
-				poststypes.REPLY_SETTING_EVERYONE,
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				nil,
-			),
+			subspaceID: 1,
+			postID:     1,
 			check: func(ctx sdk.Context) {
 				stored, err := suite.k.GetNextReactionID(ctx, 1, 1)
 				suite.Require().NoError(err)
@@ -304,8 +185,6 @@ func (suite *KeeperTestSuite) TestKeeper_AfterPostSaved() {
 			},
 		},
 	}
-
-	suite.pk.SetHooks(suite.k.Hooks())
 
 	for _, tc := range testCases {
 		tc := tc
@@ -315,7 +194,7 @@ func (suite *KeeperTestSuite) TestKeeper_AfterPostSaved() {
 				tc.store(ctx)
 			}
 
-			suite.pk.SavePost(ctx, tc.post)
+			suite.k.Hooks().AfterPostSaved(ctx, tc.subspaceID, tc.postID)
 			if tc.check != nil {
 				tc.check(ctx)
 			}
@@ -334,21 +213,6 @@ func (suite *KeeperTestSuite) TestKeeper_AfterPostDeleted() {
 		{
 			name: "next reaction id is deleted properly",
 			store: func(ctx sdk.Context) {
-				suite.pk.SavePost(ctx, poststypes.NewPost(
-					1,
-					0,
-					1,
-					"External ID",
-					"This is a text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					1,
-					nil,
-					nil,
-					nil,
-					poststypes.REPLY_SETTING_EVERYONE,
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
 				suite.k.SetNextReactionID(ctx, 1, 1, 1)
 			},
 			subspaceID: 1,
@@ -360,22 +224,6 @@ func (suite *KeeperTestSuite) TestKeeper_AfterPostDeleted() {
 		{
 			name: "reactions are deleted properly",
 			store: func(ctx sdk.Context) {
-				suite.pk.SavePost(ctx, poststypes.NewPost(
-					1,
-					0,
-					1,
-					"External ID",
-					"This is a text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					1,
-					nil,
-					nil,
-					nil,
-					poststypes.REPLY_SETTING_EVERYONE,
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
-
 				suite.k.SaveReaction(ctx, types.NewReaction(
 					1,
 					1,
@@ -401,8 +249,6 @@ func (suite *KeeperTestSuite) TestKeeper_AfterPostDeleted() {
 		},
 	}
 
-	suite.pk.SetHooks(suite.k.Hooks())
-
 	for _, tc := range testCases {
 		tc := tc
 		suite.Run(tc.name, func() {
@@ -411,7 +257,7 @@ func (suite *KeeperTestSuite) TestKeeper_AfterPostDeleted() {
 				tc.store(ctx)
 			}
 
-			suite.pk.DeletePost(ctx, tc.subspaceID, tc.postID)
+			suite.k.Hooks().AfterPostDeleted(ctx, tc.subspaceID, tc.postID)
 			if tc.check != nil {
 				tc.check(ctx)
 			}
