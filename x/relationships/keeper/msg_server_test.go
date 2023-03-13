@@ -1,11 +1,8 @@
 package keeper_test
 
 import (
-	"time"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
-
-	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
+	"github.com/golang/mock/gomock"
 
 	"github.com/desmos-labs/desmos/v4/x/relationships/keeper"
 	"github.com/desmos-labs/desmos/v4/x/relationships/types"
@@ -14,6 +11,7 @@ import (
 func (suite *KeeperTestSuite) TestMsgServer_CreateRelationship() {
 	testCases := []struct {
 		name      string
+		setup     func()
 		store     func(ctx sdk.Context)
 		msg       *types.MsgCreateRelationship
 		shouldErr bool
@@ -22,6 +20,9 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateRelationship() {
 	}{
 		{
 			name: "non existing subspace returns error",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(false)
+			},
 			msg: types.NewMsgCreateRelationship(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -31,16 +32,10 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateRelationship() {
 		},
 		{
 			name: "blocked user returns error",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
 				suite.k.SaveUserBlock(ctx, types.NewUserBlock(
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -57,6 +52,9 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateRelationship() {
 		},
 		{
 			name: "existing relationship returns error",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+			},
 			store: func(ctx sdk.Context) {
 				suite.k.SaveRelationship(ctx, types.NewRelationship(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -73,16 +71,8 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateRelationship() {
 		},
 		{
 			name: "non existing relationship is created correctly",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
 			},
 			msg: types.NewMsgCreateRelationship(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -119,6 +109,9 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateRelationship() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup()
+			}
 			if tc.store != nil {
 				tc.store(ctx)
 			}
@@ -143,6 +136,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateRelationship() {
 func (suite *KeeperTestSuite) TestMsgServer_DeleteRelationship() {
 	testCases := []struct {
 		name      string
+		setup     func()
 		store     func(ctx sdk.Context)
 		msg       *types.MsgDeleteRelationship
 		shouldErr bool
@@ -151,6 +145,9 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteRelationship() {
 	}{
 		{
 			name: "non existing subspace returns error",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(false)
+			},
 			msg: types.NewMsgDeleteRelationship(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -160,16 +157,8 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteRelationship() {
 		},
 		{
 			name: "non existing relationship returns error",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
 			},
 			msg: types.NewMsgDeleteRelationship(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -180,16 +169,10 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteRelationship() {
 		},
 		{
 			name: "existing relationship is deleted correctly",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
 				suite.k.SaveRelationship(ctx, types.NewRelationship(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -230,6 +213,9 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteRelationship() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup()
+			}
 			if tc.store != nil {
 				tc.store(ctx)
 			}
@@ -254,6 +240,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteRelationship() {
 func (suite *KeeperTestSuite) TestMsgServer_BlockUser() {
 	testCases := []struct {
 		name      string
+		setup     func()
 		store     func(ctx sdk.Context)
 		msg       *types.MsgBlockUser
 		shouldErr bool
@@ -262,6 +249,9 @@ func (suite *KeeperTestSuite) TestMsgServer_BlockUser() {
 	}{
 		{
 			name: "non existing subspace returns error",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(false)
+			},
 			msg: types.NewMsgBlockUser(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -272,16 +262,10 @@ func (suite *KeeperTestSuite) TestMsgServer_BlockUser() {
 		},
 		{
 			name: "existing block returns error",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
 				suite.k.SaveUserBlock(ctx, types.NewUserBlock(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -299,16 +283,8 @@ func (suite *KeeperTestSuite) TestMsgServer_BlockUser() {
 		},
 		{
 			name: "non existing block is stored correctly",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
 			},
 			msg: types.NewMsgBlockUser(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -346,6 +322,9 @@ func (suite *KeeperTestSuite) TestMsgServer_BlockUser() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup()
+			}
 			if tc.store != nil {
 				tc.store(ctx)
 			}
@@ -370,6 +349,7 @@ func (suite *KeeperTestSuite) TestMsgServer_BlockUser() {
 func (suite *KeeperTestSuite) TestMsgServer_UnblockUser() {
 	testCases := []struct {
 		name      string
+		setup     func()
 		store     func(ctx sdk.Context)
 		msg       *types.MsgUnblockUser
 		shouldErr bool
@@ -378,6 +358,9 @@ func (suite *KeeperTestSuite) TestMsgServer_UnblockUser() {
 	}{
 		{
 			name: "non existing subspace returns error",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(false)
+			},
 			msg: types.NewMsgUnblockUser(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"cosmos1cjf97gpzwmaf30",
@@ -387,16 +370,8 @@ func (suite *KeeperTestSuite) TestMsgServer_UnblockUser() {
 		},
 		{
 			name: "non existing block returns error",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
 			},
 			msg: types.NewMsgUnblockUser(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -407,16 +382,10 @@ func (suite *KeeperTestSuite) TestMsgServer_UnblockUser() {
 		},
 		{
 			name: "existing block is removed properly",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
 				suite.k.SaveUserBlock(ctx, types.NewUserBlock(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -459,6 +428,9 @@ func (suite *KeeperTestSuite) TestMsgServer_UnblockUser() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup()
+			}
 			if tc.store != nil {
 				tc.store(ctx)
 			}
