@@ -35,6 +35,8 @@ func TestAnteTestSuite(t *testing.T) {
 
 func (suite *AnteTestSuite) SetupTest() {
 	ctrl := gomock.NewController(suite.T())
+	defer ctrl.Finish()
+
 	suite.ctx = sdktestutil.DefaultContext(sdk.NewKVStoreKey("kv_test"), sdk.NewTransientStoreKey("transient_test"))
 	suite.bk = testutil.NewMockBankKeeper(ctrl)
 	suite.sk = testutil.NewMockSubspacesKeeper(ctrl)

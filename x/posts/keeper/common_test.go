@@ -8,8 +8,6 @@ import (
 	"github.com/desmos-labs/desmos/v4/x/posts/keeper"
 	"github.com/desmos-labs/desmos/v4/x/posts/testutil"
 	"github.com/desmos-labs/desmos/v4/x/posts/types"
-	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
-	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
@@ -35,14 +33,14 @@ type KeeperTestsuite struct {
 	k        keeper.Keeper
 
 	ak *testutil.MockProfilesKeeper
-	sk subspaceskeeper.Keeper
+	sk *testutil.MockSubspacesKeeper
 	rk *testutil.MockRelationshipsKeeper
 }
 
 func (suite *KeeperTestsuite) SetupTest() {
 	// Define store keys
 	keys := sdk.NewMemoryStoreKeys(
-		paramstypes.StoreKey, types.StoreKey, subspacestypes.StoreKey,
+		paramstypes.StoreKey, types.StoreKey,
 	)
 	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	suite.storeKey = keys[types.StoreKey]
@@ -66,10 +64,12 @@ func (suite *KeeperTestsuite) SetupTest() {
 
 	// Dependencies initializations
 	paramsKeeper := paramskeeper.NewKeeper(suite.cdc, suite.legacyAminoCdc, keys[paramstypes.StoreKey], tKeys[paramstypes.TStoreKey])
-	suite.sk = subspaceskeeper.NewKeeper(suite.cdc, keys[subspacestypes.StoreKey], nil, nil)
 
 	// Mocks initializations
 	ctrl := gomock.NewController(suite.T())
+	defer ctrl.Finish()
+
+	suite.sk = testutil.NewMockSubspacesKeeper(ctrl)
 	suite.rk = testutil.NewMockRelationshipsKeeper(ctrl)
 	suite.ak = testutil.NewMockProfilesKeeper(ctrl)
 	suite.k = keeper.NewKeeper(
