@@ -4,6 +4,7 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/golang/mock/gomock"
 
 	"github.com/desmos-labs/desmos/v4/x/posts/keeper"
 	"github.com/desmos-labs/desmos/v4/x/posts/types"
@@ -13,37 +14,57 @@ import (
 func (suite *KeeperTestSuite) TestValidSubspacesInvariant() {
 	testCases := []struct {
 		name      string
+		setup     func()
 		store     func(ctx sdk.Context)
 		expBroken bool
 	}{
 		{
 			name: "not found next post id breaks invariant",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+			setup: func() {
+				subspaces := []subspacestypes.Subspace{
+					subspacestypes.NewSubspace(
+						1,
+						"Test subspace",
+						"This is a test subspace",
+						"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+						"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+						"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					),
+				}
+
+				suite.sk.EXPECT().IterateSubspaces(gomock.Any(), gomock.Any()).
+					Do(func(ctx sdk.Context, fn func(subspace subspacestypes.Subspace) (stop bool)) {
+						for _, subspace := range subspaces {
+							fn(subspace)
+						}
+					})
 			},
 			expBroken: true,
 		},
 		{
 			name: "valid data does not break invariant",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+			setup: func() {
+				subspaces := []subspacestypes.Subspace{
+					subspacestypes.NewSubspace(
+						1,
+						"Test subspace",
+						"This is a test subspace",
+						"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+						"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+						"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					),
+				}
 
+				suite.sk.EXPECT().IterateSubspaces(gomock.Any(), gomock.Any()).
+					Do(func(ctx sdk.Context, fn func(subspace subspacestypes.Subspace) (stop bool)) {
+						for _, subspace := range subspaces {
+							fn(subspace)
+						}
+					})
+			},
+			store: func(ctx sdk.Context) {
 				suite.k.SetNextPostID(ctx, 1, 1)
 			},
 			expBroken: false,
@@ -54,6 +75,9 @@ func (suite *KeeperTestSuite) TestValidSubspacesInvariant() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup()
+			}
 			if tc.store != nil {
 				tc.store(ctx)
 			}
@@ -67,11 +91,42 @@ func (suite *KeeperTestSuite) TestValidSubspacesInvariant() {
 func (suite *KeeperTestSuite) TestValidPostsInvariant() {
 	testCases := []struct {
 		name      string
+		setup     func()
 		store     func(ctx sdk.Context)
 		expBroken bool
 	}{
 		{
 			name: "not found subspace breaks invariant",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(false)
+				suite.sk.EXPECT().HasSection(gomock.Any(), uint64(1), uint32(0)).Return(false)
+
+			},
+			store: func(ctx sdk.Context) {
+				suite.k.SavePost(ctx, types.NewPost(
+					1,
+					0,
+					1,
+					"External id",
+					"Text",
+					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+					0,
+					nil,
+					nil,
+					nil,
+					types.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				))
+			},
+			expBroken: true,
+		},
+		{
+			name: "not found section breaks invariant",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+				suite.sk.EXPECT().HasSection(gomock.Any(), uint64(1), uint32(0)).Return(false)
+			},
 			store: func(ctx sdk.Context) {
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
@@ -93,17 +148,11 @@ func (suite *KeeperTestSuite) TestValidPostsInvariant() {
 		},
 		{
 			name: "not found next post id breaks invariant",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+				suite.sk.EXPECT().HasSection(gomock.Any(), uint64(1), uint32(0)).Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					0,
@@ -124,16 +173,11 @@ func (suite *KeeperTestSuite) TestValidPostsInvariant() {
 		},
 		{
 			name: "invalid post id compared to next post id breaks invariant",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+				suite.sk.EXPECT().HasSection(gomock.Any(), uint64(1), uint32(0)).Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
 				suite.k.SetNextPostID(ctx, 1, 1)
 
 				suite.k.SavePost(ctx, types.NewPost(
@@ -156,16 +200,11 @@ func (suite *KeeperTestSuite) TestValidPostsInvariant() {
 		},
 		{
 			name: "not found next attachment id breaks invariant",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+				suite.sk.EXPECT().HasSection(gomock.Any(), uint64(1), uint32(0)).Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
 				suite.k.SetNextPostID(ctx, 1, 2)
 
 				suite.k.SavePost(ctx, types.NewPost(
@@ -189,16 +228,11 @@ func (suite *KeeperTestSuite) TestValidPostsInvariant() {
 		},
 		{
 			name: "invalid post breaks invariant",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+				suite.sk.EXPECT().HasSection(gomock.Any(), uint64(1), uint32(0)).Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
 				suite.k.SetNextPostID(ctx, 1, 2)
 
 				suite.k.SavePost(ctx, types.NewPost(
@@ -222,16 +256,11 @@ func (suite *KeeperTestSuite) TestValidPostsInvariant() {
 		},
 		{
 			name: "valid data does not break invariant",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+				suite.sk.EXPECT().HasSection(gomock.Any(), uint64(1), uint32(0)).Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
 				suite.k.SetNextPostID(ctx, 1, 2)
 
 				suite.k.SavePost(ctx, types.NewPost(
@@ -259,6 +288,9 @@ func (suite *KeeperTestSuite) TestValidPostsInvariant() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup()
+			}
 			if tc.store != nil {
 				tc.store(ctx)
 			}
@@ -272,11 +304,15 @@ func (suite *KeeperTestSuite) TestValidPostsInvariant() {
 func (suite *KeeperTestSuite) TestValidAttachmentsInvariant() {
 	testCases := []struct {
 		name      string
+		setup     func()
 		store     func(ctx sdk.Context)
 		expBroken bool
 	}{
 		{
 			name: "not found subspace breaks invariant",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(false)
+			},
 			store: func(ctx sdk.Context) {
 				suite.k.SaveAttachment(ctx, types.NewAttachment(1, 1, 1,
 					types.NewMedia("ftp://user:password@host:post/media.png", "media/png"),
@@ -286,17 +322,10 @@ func (suite *KeeperTestSuite) TestValidAttachmentsInvariant() {
 		},
 		{
 			name: "not found post breaks invariant",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
 				suite.k.SaveAttachment(ctx, types.NewAttachment(1, 1, 1,
 					types.NewMedia("ftp://user:password@host:post/media.png", "media/png"),
 				))
@@ -305,17 +334,10 @@ func (suite *KeeperTestSuite) TestValidAttachmentsInvariant() {
 		},
 		{
 			name: "not found next attachment id returns error",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					0,
@@ -340,17 +362,10 @@ func (suite *KeeperTestSuite) TestValidAttachmentsInvariant() {
 		},
 		{
 			name: "invalid attachment id compared to next attachment id returns error",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					0,
@@ -376,17 +391,10 @@ func (suite *KeeperTestSuite) TestValidAttachmentsInvariant() {
 		},
 		{
 			name: "invalid attachment breaks invariant",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					0,
@@ -412,17 +420,10 @@ func (suite *KeeperTestSuite) TestValidAttachmentsInvariant() {
 		},
 		{
 			name: "valid data returns no error",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					0,
@@ -452,6 +453,9 @@ func (suite *KeeperTestSuite) TestValidAttachmentsInvariant() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup()
+			}
 			if tc.store != nil {
 				tc.store(ctx)
 			}
@@ -465,11 +469,15 @@ func (suite *KeeperTestSuite) TestValidAttachmentsInvariant() {
 func (suite *KeeperTestSuite) TestValidUserAnswersInvariant() {
 	testCases := []struct {
 		name      string
+		setup     func()
 		store     func(ctx sdk.Context)
 		expBroken bool
 	}{
 		{
 			name: "not found subspace breaks invariant",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(false)
+			},
 			store: func(ctx sdk.Context) {
 				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"))
 			},
@@ -477,34 +485,20 @@ func (suite *KeeperTestSuite) TestValidUserAnswersInvariant() {
 		},
 		{
 			name: "not found post breaks invariant",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
 				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"))
 			},
 			expBroken: true,
 		},
 		{
 			name: "not found poll breaks invariant",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					0,
@@ -527,17 +521,10 @@ func (suite *KeeperTestSuite) TestValidUserAnswersInvariant() {
 		},
 		{
 			name: "invalid user answer breaks invariant",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					0,
@@ -572,17 +559,10 @@ func (suite *KeeperTestSuite) TestValidUserAnswersInvariant() {
 		},
 		{
 			name: "valid data does not break invariant",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					0,
@@ -621,6 +601,9 @@ func (suite *KeeperTestSuite) TestValidUserAnswersInvariant() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup()
+			}
 			if tc.store != nil {
 				tc.store(ctx)
 			}

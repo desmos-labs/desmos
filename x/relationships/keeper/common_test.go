@@ -3,16 +3,7 @@ package keeper_test
 import (
 	"testing"
 
-	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
-	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
-
-	profileskeeper "github.com/desmos-labs/desmos/v4/x/profiles/keeper"
-	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
-	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
-	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
-
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	"github.com/golang/mock/gomock"
 
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
@@ -25,10 +16,8 @@ import (
 
 	"github.com/desmos-labs/desmos/v4/app"
 
-	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
-	ibchost "github.com/cosmos/ibc-go/v4/modules/core/24-host"
-
 	"github.com/desmos-labs/desmos/v4/x/relationships/keeper"
+	"github.com/desmos-labs/desmos/v4/x/relationships/testutil"
 	"github.com/desmos-labs/desmos/v4/x/relationships/types"
 )
 
@@ -39,24 +28,16 @@ func TestKeeperTestSuite(t *testing.T) {
 type KeeperTestSuite struct {
 	suite.Suite
 
-	cdc            codec.Codec
-	legacyAminoCdc *codec.LegacyAmino
-	ctx            sdk.Context
-	storeKey       sdk.StoreKey
-	k              keeper.Keeper
-	pk             profileskeeper.Keeper
-	sk             subspaceskeeper.Keeper
+	cdc      codec.Codec
+	ctx      sdk.Context
+	storeKey sdk.StoreKey
+	k        keeper.Keeper
+	sk       *testutil.MockSubspacesKeeper
 }
 
 func (suite *KeeperTestSuite) SetupTest() {
 	// Define the store keys
-	keys := sdk.NewKVStoreKeys(
-		authtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, capabilitytypes.StoreKey,
-
-		types.StoreKey, profilestypes.StoreKey, subspacestypes.StoreKey,
-	)
-	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
-	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
+	keys := sdk.NewKVStoreKeys(types.StoreKey)
 
 	suite.storeKey = keys[types.StoreKey]
 
@@ -66,42 +47,19 @@ func (suite *KeeperTestSuite) SetupTest() {
 	for _, key := range keys {
 		ms.MountStoreWithDB(key, sdk.StoreTypeIAVL, memDB)
 	}
-	for _, tKey := range tKeys {
-		ms.MountStoreWithDB(tKey, sdk.StoreTypeTransient, memDB)
-	}
-	for _, memKey := range memKeys {
-		ms.MountStoreWithDB(memKey, sdk.StoreTypeMemory, nil)
-	}
 
 	if err := ms.LoadLatestVersion(); err != nil {
 		panic(err)
 	}
 
 	suite.ctx = sdk.NewContext(ms, tmproto.Header{ChainID: "test-chain-id"}, false, log.NewNopLogger())
-	suite.cdc, suite.legacyAminoCdc = app.MakeCodecs()
+	suite.cdc, _ = app.MakeCodecs()
 
-	paramsKeeper := paramskeeper.NewKeeper(
-		suite.cdc, suite.legacyAminoCdc, keys[paramstypes.StoreKey], tKeys[paramstypes.TStoreKey],
-	)
-	authKeeper := authkeeper.NewAccountKeeper(
-		suite.cdc,
-		keys[authtypes.StoreKey],
-		paramsKeeper.Subspace(authtypes.ModuleName),
-		authtypes.ProtoBaseAccount,
-		app.GetMaccPerms(),
-	)
+	// Mocks initializations
+	ctrl := gomock.NewController(suite.T())
+	defer ctrl.Finish()
 
-	suite.pk = profileskeeper.NewKeeper(
-		suite.cdc,
-		suite.legacyAminoCdc,
-		keys[profilestypes.StoreKey],
-		paramsKeeper.Subspace(profilestypes.DefaultParamsSpace),
-		authKeeper,
-		suite.k,
-		nil,
-		nil,
-		nil,
-	)
-	suite.sk = subspaceskeeper.NewKeeper(suite.cdc, keys[subspacestypes.StoreKey], nil, nil)
+	suite.sk = testutil.NewMockSubspacesKeeper(ctrl)
+
 	suite.k = keeper.NewKeeper(suite.cdc, suite.storeKey, suite.sk)
 }

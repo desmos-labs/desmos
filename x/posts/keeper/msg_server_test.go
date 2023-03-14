@@ -48,6 +48,8 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			name: "non existing subspace returns error",
 			setup: func() {
 				suite.ak.EXPECT().HasProfile(gomock.Any(), "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd").Return(true)
+
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(false)
 			},
 			msg: types.NewMsgCreatePost(
 				1,
@@ -81,66 +83,35 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			),
 			setup: func() {
 				suite.ak.EXPECT().HasProfile(gomock.Any(), "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd").Return(true)
-			},
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test",
-					"Testing subspace",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+				suite.sk.EXPECT().HasSection(gomock.Any(), uint64(1), uint32(1)).Return(false)
 			},
 			shouldErr: true,
 		},
 		{
-			name: "user without PermissionWrite returns error",
+			name: "user without permissions returns error",
 			setup: func() {
 				suite.ak.EXPECT().HasProfile(gomock.Any(), "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd").Return(true)
-			},
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test",
-					"Testing subspace",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-			},
-			msg: types.NewMsgCreatePost(
-				1,
-				0,
-				"External ID",
-				"This is a text",
-				0,
-				types.REPLY_SETTING_EVERYONE,
-				nil,
-				nil,
-				nil,
-				nil,
-				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-			),
-			shouldErr: true,
-		},
-		{
-			name: "user without PermissionComment returns error",
-			setup: func() {
-				suite.ak.EXPECT().HasProfile(gomock.Any(), "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd").Return(true)
-			},
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test",
-					"Testing subspace",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+				suite.sk.EXPECT().HasSection(gomock.Any(), uint64(1), uint32(0)).Return(true)
+
+				suite.sk.EXPECT().HasPermission(
+					gomock.Any(),
+					uint64(1),
+					uint32(0),
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					subspacestypes.NewPermission(types.PermissionWrite),
+				).Return(false)
+
+				suite.sk.EXPECT().HasPermission(
+					gomock.Any(),
+					uint64(1),
+					uint32(0),
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					subspacestypes.NewPermission(types.PermissionComment),
+				).Return(false)
 			},
 			msg: types.NewMsgCreatePost(
 				1,
@@ -161,25 +132,27 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			name: "invalid conversation id returns error",
 			setup: func() {
 				suite.ak.EXPECT().HasProfile(gomock.Any(), "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd").Return(true)
+
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+				suite.sk.EXPECT().HasSection(gomock.Any(), uint64(1), uint32(0)).Return(true)
+
+				suite.sk.EXPECT().HasPermission(
+					gomock.Any(),
+					uint64(1),
+					uint32(0),
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					subspacestypes.NewPermission(types.PermissionWrite),
+				).Return(true)
+
+				suite.sk.EXPECT().HasPermission(
+					gomock.Any(),
+					uint64(1),
+					uint32(0),
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					subspacestypes.NewPermission(types.PermissionComment),
+				).Return(false)
 			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test",
-					"Testing subspace",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.NewPermissions(types.PermissionWrite),
-				)
-
 				suite.k.SetParams(ctx, types.DefaultParams())
 			},
 			msg: types.NewMsgCreatePost(
@@ -201,25 +174,19 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			name: "invalid reference returns error",
 			setup: func() {
 				suite.ak.EXPECT().HasProfile(gomock.Any(), "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd").Return(true)
+
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+				suite.sk.EXPECT().HasSection(gomock.Any(), uint64(1), uint32(0)).Return(true)
+
+				suite.sk.EXPECT().HasPermission(
+					gomock.Any(),
+					uint64(1),
+					uint32(0),
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					subspacestypes.NewPermission(types.PermissionWrite),
+				).Return(true)
 			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test",
-					"Testing subspace",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.NewPermissions(types.PermissionWrite),
-				)
-
 				suite.k.SetParams(ctx, types.DefaultParams())
 			},
 			msg: types.NewMsgCreatePost(
@@ -245,24 +212,16 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			name: "initial post id not set returns error",
 			setup: func() {
 				suite.ak.EXPECT().HasProfile(gomock.Any(), "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd").Return(true)
-			},
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test",
-					"Testing subspace",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
 
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+				suite.sk.EXPECT().HasSection(gomock.Any(), uint64(1), uint32(0)).Return(true)
+				suite.sk.EXPECT().HasPermission(
+					gomock.Any(),
+					uint64(1),
+					uint32(0),
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.NewPermissions(types.PermissionWrite),
-				)
+					subspacestypes.NewPermission(types.PermissionWrite),
+				).Return(true)
 			},
 			msg: types.NewMsgCreatePost(
 				1,
@@ -286,25 +245,18 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			},
 			setup: func() {
 				suite.ak.EXPECT().HasProfile(gomock.Any(), "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd").Return(true)
+
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+				suite.sk.EXPECT().HasSection(gomock.Any(), uint64(1), uint32(0)).Return(true)
+				suite.sk.EXPECT().HasPermission(
+					gomock.Any(),
+					uint64(1),
+					uint32(0),
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					subspacestypes.NewPermission(types.PermissionWrite),
+				).Return(true)
 			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test",
-					"Testing subspace",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.NewPermissions(types.PermissionWrite),
-				)
-
 				suite.k.SetNextPostID(ctx, 1, 1)
 
 				// Set the max post length to 1 character
@@ -329,28 +281,21 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			name: "invalid attachment returns error",
 			setup: func() {
 				suite.ak.EXPECT().HasProfile(gomock.Any(), "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd").Return(true)
+
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+				suite.sk.EXPECT().HasSection(gomock.Any(), uint64(1), uint32(0)).Return(true)
+				suite.sk.EXPECT().HasPermission(
+					gomock.Any(),
+					uint64(1),
+					uint32(0),
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					subspacestypes.NewPermission(types.PermissionWrite),
+				).Return(true)
 			},
 			setupCtx: func(ctx sdk.Context) sdk.Context {
 				return ctx.WithBlockTime(time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC))
 			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test",
-					"Testing subspace",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.NewPermissions(types.PermissionWrite),
-				)
-
 				suite.k.SetNextPostID(ctx, 1, 1)
 
 				suite.k.SetParams(ctx, types.DefaultParams())
@@ -376,28 +321,22 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			name: "valid post is stored correctly with PermissionWrite",
 			setup: func() {
 				suite.ak.EXPECT().HasProfile(gomock.Any(), "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd").Return(true)
+
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+				suite.sk.EXPECT().HasSection(gomock.Any(), uint64(1), uint32(0)).Return(true)
+
+				suite.sk.EXPECT().HasPermission(
+					gomock.Any(),
+					uint64(1),
+					uint32(0),
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					subspacestypes.NewPermission(types.PermissionWrite),
+				).Return(true)
 			},
 			setupCtx: func(ctx sdk.Context) sdk.Context {
 				return ctx.WithBlockTime(time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC))
 			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test",
-					"Testing subspace",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.NewPermissions(types.PermissionWrite),
-				)
-
 				suite.k.SetNextPostID(ctx, 1, 1)
 
 				suite.k.SetParams(ctx, types.DefaultParams())
@@ -474,6 +413,26 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			name: "valid comment is stored correctly with PermissionComment",
 			setup: func() {
 				suite.ak.EXPECT().HasProfile(gomock.Any(), "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd").Return(true)
+
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+				suite.sk.EXPECT().HasSection(gomock.Any(), uint64(1), uint32(0)).Return(true)
+
+				suite.sk.EXPECT().HasPermission(
+					gomock.Any(),
+					uint64(1),
+					uint32(0),
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					subspacestypes.NewPermission(types.PermissionWrite),
+				).Return(false)
+
+				suite.sk.EXPECT().HasPermission(
+					gomock.Any(),
+					uint64(1),
+					uint32(0),
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					subspacestypes.NewPermission(types.PermissionComment),
+				).Return(true)
+
 				suite.rk.EXPECT().HasUserBlocked(gomock.Any(),
 					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
@@ -483,23 +442,6 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 				return ctx.WithBlockTime(time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC))
 			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test",
-					"Testing subspace",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.NewPermissions(types.PermissionComment),
-				)
-
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					0,
@@ -623,6 +565,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 	testCases := []struct {
 		name        string
+		setup       func()
 		store       func(ctx sdk.Context)
 		setupCtx    func(ctx sdk.Context) sdk.Context
 		msg         *types.MsgEditPost
@@ -633,6 +576,9 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 	}{
 		{
 			name: "non existing subspace returns error",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(false)
+			},
 			msg: types.NewMsgEditPost(
 				1,
 				1,
@@ -645,16 +591,8 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 		},
 		{
 			name: "not found post returns error",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test",
-					"Testing subspace",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
 			},
 			msg: types.NewMsgEditPost(
 				1,
@@ -668,17 +606,10 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 		},
 		{
 			name: "invalid editor returns error",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test",
-					"Testing subspace",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					0,
@@ -707,17 +638,18 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 		},
 		{
 			name: "user without permission returns error",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test",
-					"Testing subspace",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
 
+				suite.sk.EXPECT().HasPermission(
+					gomock.Any(),
+					uint64(1),
+					uint32(0),
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					subspacestypes.NewPermission(types.PermissionEditOwnContent),
+				).Return(false)
+			},
+			store: func(ctx sdk.Context) {
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					0,
@@ -746,27 +678,21 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 		},
 		{
 			name: "invalid update returns error",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+
+				suite.sk.EXPECT().HasPermission(
+					gomock.Any(),
+					uint64(1),
+					uint32(0),
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					subspacestypes.NewPermission(types.PermissionEditOwnContent),
+				).Return(true)
+			},
 			setupCtx: func(ctx sdk.Context) sdk.Context {
 				return ctx.WithBlockTime(time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC))
 			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test",
-					"Testing subspace",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.NewPermissions(types.PermissionEditOwnContent),
-				)
-
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					0,
@@ -798,27 +724,21 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 		},
 		{
 			name: "post is updated correctly",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+
+				suite.sk.EXPECT().HasPermission(
+					gomock.Any(),
+					uint64(1),
+					uint32(0),
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					subspacestypes.NewPermission(types.PermissionEditOwnContent),
+				).Return(true)
+			},
 			setupCtx: func(ctx sdk.Context) sdk.Context {
 				return ctx.WithBlockTime(time.Date(2021, 1, 1, 12, 00, 00, 000, time.UTC))
 			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test",
-					"Testing subspace",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.NewPermissions(types.PermissionEditOwnContent),
-				)
-
 				suite.k.SetParams(ctx, types.DefaultParams())
 
 				suite.k.SavePost(ctx, types.NewPost(
@@ -892,6 +812,9 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup()
+			}
 			if tc.setupCtx != nil {
 				ctx = tc.setupCtx(ctx)
 			}
@@ -919,6 +842,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 func (suite *KeeperTestSuite) TestMsgServer_DeletePost() {
 	testCases := []struct {
 		name      string
+		setup     func()
 		store     func(ctx sdk.Context)
 		setupCtx  func(ctx sdk.Context) sdk.Context
 		msg       *types.MsgDeletePost
@@ -927,46 +851,43 @@ func (suite *KeeperTestSuite) TestMsgServer_DeletePost() {
 		check     func(ctx sdk.Context)
 	}{
 		{
-			name:      "non existing subspace returns error",
+			name: "non existing subspace returns error",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(false)
+			},
 			msg:       types.NewMsgDeletePost(1, 1, "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"),
 			shouldErr: true,
 		},
 		{
 			name: "not found post returns error",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test",
-					"Testing subspace",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.NewPermissions(types.PermissionEditOwnContent),
-				)
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
 			},
 			msg:       types.NewMsgDeletePost(1, 1, "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"),
 			shouldErr: true,
 		},
 		{
 			name: "user without permission returns error",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test",
-					"Testing subspace",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
 
+				suite.sk.EXPECT().HasPermission(
+					gomock.Any(),
+					uint64(1),
+					uint32(0),
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					subspacestypes.NewPermission(types.PermissionModerateContent),
+				).Return(false)
+
+				suite.sk.EXPECT().HasPermission(
+					gomock.Any(),
+					uint64(1),
+					uint32(0),
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					subspacestypes.NewPermission(types.PermissionEditOwnContent),
+				).Return(false)
+			},
+			store: func(ctx sdk.Context) {
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					0,
@@ -988,24 +909,18 @@ func (suite *KeeperTestSuite) TestMsgServer_DeletePost() {
 		},
 		{
 			name: "author cannot delete other user post",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test",
-					"Testing subspace",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
 
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
+				suite.sk.EXPECT().HasPermission(
+					gomock.Any(),
+					uint64(1),
+					uint32(0),
 					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
-					subspacestypes.NewPermissions(types.PermissionEditOwnContent),
-				)
-
+					subspacestypes.NewPermission(types.PermissionModerateContent),
+				).Return(false)
+			},
+			store: func(ctx sdk.Context) {
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					0,
@@ -1027,24 +942,18 @@ func (suite *KeeperTestSuite) TestMsgServer_DeletePost() {
 		},
 		{
 			name: "moderator can delete post",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test",
-					"Testing subspace",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
 
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
+				suite.sk.EXPECT().HasPermission(
+					gomock.Any(),
+					uint64(1),
+					uint32(0),
 					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
-					subspacestypes.NewPermissions(types.PermissionModerateContent),
-				)
-
+					subspacestypes.NewPermission(types.PermissionModerateContent),
+				).Return(true)
+			},
+			store: func(ctx sdk.Context) {
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					0,
@@ -1082,24 +991,26 @@ func (suite *KeeperTestSuite) TestMsgServer_DeletePost() {
 		},
 		{
 			name: "author can delete post",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test",
-					"Testing subspace",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
 
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
+				suite.sk.EXPECT().HasPermission(
+					gomock.Any(),
+					uint64(1),
+					uint32(0),
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.NewPermissions(types.PermissionEditOwnContent),
-				)
+					subspacestypes.NewPermission(types.PermissionModerateContent),
+				).Return(false)
 
+				suite.sk.EXPECT().HasPermission(
+					gomock.Any(),
+					uint64(1),
+					uint32(0),
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					subspacestypes.NewPermission(types.PermissionEditOwnContent),
+				).Return(true)
+			},
+			store: func(ctx sdk.Context) {
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					0,
@@ -1140,6 +1051,9 @@ func (suite *KeeperTestSuite) TestMsgServer_DeletePost() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup()
+			}
 			if tc.setupCtx != nil {
 				ctx = tc.setupCtx(ctx)
 			}
@@ -1166,6 +1080,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeletePost() {
 func (suite *KeeperTestSuite) TestMsgServer_AddPostAttachment() {
 	testCases := []struct {
 		name        string
+		setup       func()
 		store       func(ctx sdk.Context)
 		setupCtx    func(ctx sdk.Context) sdk.Context
 		msg         *types.MsgAddPostAttachment
@@ -1176,6 +1091,9 @@ func (suite *KeeperTestSuite) TestMsgServer_AddPostAttachment() {
 	}{
 		{
 			name: "non existing subspace returns error",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(false)
+			},
 			msg: types.NewMsgAddPostAttachment(
 				1,
 				1,
@@ -1186,16 +1104,8 @@ func (suite *KeeperTestSuite) TestMsgServer_AddPostAttachment() {
 		},
 		{
 			name: "not found post returns error",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test",
-					"Testing subspace",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
 			},
 			msg: types.NewMsgAddPostAttachment(
 				1,
@@ -1207,17 +1117,10 @@ func (suite *KeeperTestSuite) TestMsgServer_AddPostAttachment() {
 		},
 		{
 			name: "invalid editor returns error",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test",
-					"Testing subspace",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
 				suite.k.SetParams(ctx, types.DefaultParams())
 
 				suite.k.SavePost(ctx, types.NewPost(
@@ -1246,17 +1149,18 @@ func (suite *KeeperTestSuite) TestMsgServer_AddPostAttachment() {
 		},
 		{
 			name: "user without permissions returns error",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test",
-					"Testing subspace",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
 
+				suite.sk.EXPECT().HasPermission(
+					gomock.Any(),
+					uint64(1),
+					uint32(0),
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					subspacestypes.NewPermission(types.PermissionEditOwnContent),
+				).Return(false)
+			},
+			store: func(ctx sdk.Context) {
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					0,
@@ -1283,17 +1187,18 @@ func (suite *KeeperTestSuite) TestMsgServer_AddPostAttachment() {
 		},
 		{
 			name: "invalid attachment returns error",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test",
-					"Testing subspace",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
 
+				suite.sk.EXPECT().HasPermission(
+					gomock.Any(),
+					uint64(1),
+					uint32(0),
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					subspacestypes.NewPermission(types.PermissionEditOwnContent),
+				).Return(true)
+			},
+			store: func(ctx sdk.Context) {
 				suite.k.SetParams(ctx, types.DefaultParams())
 
 				suite.k.SavePost(ctx, types.NewPost(
@@ -1311,13 +1216,6 @@ func (suite *KeeperTestSuite) TestMsgServer_AddPostAttachment() {
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
 				))
-
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.NewPermissions(types.PermissionEditOwnContent),
-				)
 			},
 			msg: types.NewMsgAddPostAttachment(
 				1,
@@ -1329,20 +1227,21 @@ func (suite *KeeperTestSuite) TestMsgServer_AddPostAttachment() {
 		},
 		{
 			name: "correct data is stored properly",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+
+				// suite.sk.EXPECT().HasPermission(
+				// 	gomock.Any(),
+				// 	uint64(1),
+				// 	uint32(0),
+				// 	"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+				// 	subspacestypes.NewPermission(types.PermissionEditOwnContent),
+				// ).Return(true)
+			},
 			setupCtx: func(ctx sdk.Context) sdk.Context {
 				return ctx.WithBlockTime(time.Date(2021, 1, 1, 12, 00, 00, 000, time.UTC))
 			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test",
-					"Testing subspace",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
 				suite.k.SetParams(ctx, types.DefaultParams())
 
 				suite.k.SavePost(ctx, types.NewPost(
@@ -1360,13 +1259,6 @@ func (suite *KeeperTestSuite) TestMsgServer_AddPostAttachment() {
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
 				))
-
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.NewPermissions(types.PermissionEditOwnContent),
-				)
 			},
 			msg: types.NewMsgAddPostAttachment(
 				1,
@@ -1419,6 +1311,9 @@ func (suite *KeeperTestSuite) TestMsgServer_AddPostAttachment() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup()
+			}
 			if tc.setupCtx != nil {
 				ctx = tc.setupCtx(ctx)
 			}
@@ -1446,6 +1341,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddPostAttachment() {
 func (suite *KeeperTestSuite) TestMsgServer_RemovePostAttachment() {
 	testCases := []struct {
 		name        string
+		setup       func()
 		store       func(ctx sdk.Context)
 		setupCtx    func(ctx sdk.Context) sdk.Context
 		msg         *types.MsgRemovePostAttachment
@@ -1456,26 +1352,8 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostAttachment() {
 	}{
 		{
 			name: "not found subspace returns error",
-			msg: types.NewMsgRemovePostAttachment(
-				1,
-				1,
-				1,
-				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-			),
-			shouldErr: true,
-		},
-		{
-			name: "not found post returns error",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test",
-					"Testing subspace",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(false)
 			},
 			msg: types.NewMsgRemovePostAttachment(
 				1,
@@ -1486,18 +1364,32 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostAttachment() {
 			shouldErr: true,
 		},
 		{
-			name: "user without permissions returns error",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test",
-					"Testing subspace",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+			name: "not found post returns error",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+			},
+			msg: types.NewMsgRemovePostAttachment(
+				1,
+				1,
+				1,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "user without PermissionModerateContent returns error",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
 
+				suite.sk.EXPECT().HasPermission(
+					gomock.Any(),
+					uint64(1),
+					uint32(0),
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					subspacestypes.NewPermission(types.PermissionModerateContent),
+				).Return(false)
+			},
+			store: func(ctx sdk.Context) {
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					0,
@@ -1523,25 +1415,73 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostAttachment() {
 			shouldErr: true,
 		},
 		{
-			name: "user with permissions cannot delete other author attachment",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test",
-					"Testing subspace",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+			name: "user without PermissionEditOwnContent returns error",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
 
-				suite.sk.SetUserPermissions(ctx,
+				suite.sk.EXPECT().HasPermission(
+					gomock.Any(),
+					uint64(1),
+					uint32(0),
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					subspacestypes.NewPermission(types.PermissionModerateContent),
+				).Return(false)
+
+				suite.sk.EXPECT().HasPermission(
+					gomock.Any(),
+					uint64(1),
+					uint32(0),
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					subspacestypes.NewPermission(types.PermissionEditOwnContent),
+				).Return(false)
+			},
+			store: func(ctx sdk.Context) {
+				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					0,
+					1,
+					"External ID",
+					"This is a text",
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.NewPermissions(types.PermissionEditOwnContent),
-				)
+					0,
+					nil,
+					nil,
+					nil,
+					types.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				))
+			},
+			msg: types.NewMsgRemovePostAttachment(
+				1,
+				1,
+				1,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "user with permissions cannot delete other author attachment",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
 
+				suite.sk.EXPECT().HasPermission(
+					gomock.Any(),
+					uint64(1),
+					uint32(0),
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					subspacestypes.NewPermission(types.PermissionModerateContent),
+				).Return(false)
+
+				suite.sk.EXPECT().HasPermission(
+					gomock.Any(),
+					uint64(1),
+					uint32(0),
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					subspacestypes.NewPermission(types.PermissionEditOwnContent),
+				).Return(true)
+			},
+			store: func(ctx sdk.Context) {
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					0,
@@ -1568,24 +1508,26 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostAttachment() {
 		},
 		{
 			name: "not found attachment returns error",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test",
-					"Testing subspace",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
 
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
+				suite.sk.EXPECT().HasPermission(
+					gomock.Any(),
+					uint64(1),
+					uint32(0),
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.NewPermissions(types.PermissionEditOwnContent),
-				)
+					subspacestypes.NewPermission(types.PermissionModerateContent),
+				).Return(false)
 
+				suite.sk.EXPECT().HasPermission(
+					gomock.Any(),
+					uint64(1),
+					uint32(0),
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					subspacestypes.NewPermission(types.PermissionEditOwnContent),
+				).Return(true)
+			},
+			store: func(ctx sdk.Context) {
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					0,
@@ -1612,27 +1554,21 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostAttachment() {
 		},
 		{
 			name: "moderator can delete attachment",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+
+				suite.sk.EXPECT().HasPermission(
+					gomock.Any(),
+					uint64(1),
+					uint32(0),
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
+					subspacestypes.NewPermission(types.PermissionModerateContent),
+				).Return(true)
+			},
 			setupCtx: func(ctx sdk.Context) sdk.Context {
 				return ctx.WithBlockTime(time.Date(2021, 1, 1, 12, 00, 00, 000, time.UTC))
 			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test",
-					"Testing subspace",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
-					subspacestypes.NewPermissions(types.PermissionModerateContent),
-				)
-
 				suite.k.SetParams(ctx, types.DefaultParams())
 
 				suite.k.SavePost(ctx, types.NewPost(
@@ -1697,27 +1633,29 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostAttachment() {
 		},
 		{
 			name: "author can delete attachment",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+
+				suite.sk.EXPECT().HasPermission(
+					gomock.Any(),
+					uint64(1),
+					uint32(0),
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					subspacestypes.NewPermission(types.PermissionModerateContent),
+				).Return(false)
+
+				suite.sk.EXPECT().HasPermission(
+					gomock.Any(),
+					uint64(1),
+					uint32(0),
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					subspacestypes.NewPermission(types.PermissionEditOwnContent),
+				).Return(true)
+			},
 			setupCtx: func(ctx sdk.Context) sdk.Context {
 				return ctx.WithBlockTime(time.Date(2021, 1, 1, 12, 00, 00, 000, time.UTC))
 			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test",
-					"Testing subspace",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.NewPermissions(types.PermissionEditOwnContent),
-				)
-
 				suite.k.SetParams(ctx, types.DefaultParams())
 
 				suite.k.SavePost(ctx, types.NewPost(
@@ -1786,6 +1724,9 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostAttachment() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup()
+			}
 			if tc.setupCtx != nil {
 				ctx = tc.setupCtx(ctx)
 			}
@@ -1839,31 +1780,8 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 			name: "not found subspace returns error",
 			setup: func() {
 				suite.ak.EXPECT().HasProfile(gomock.Any(), "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd").Return(true)
-			},
-			msg: types.NewMsgAnswerPoll(
-				1,
-				1,
-				1,
-				[]uint32{1, 2, 3},
-				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-			),
-			shouldErr: true,
-		},
-		{
-			name: "user without permission returns error",
-			setup: func() {
-				suite.ak.EXPECT().HasProfile(gomock.Any(), "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd").Return(true)
-			},
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test",
-					"Testing subspace",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(false)
 			},
 			msg: types.NewMsgAnswerPoll(
 				1,
@@ -1878,24 +1796,31 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 			name: "not found post returns error",
 			setup: func() {
 				suite.ak.EXPECT().HasProfile(gomock.Any(), "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd").Return(true)
-			},
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test",
-					"Testing subspace",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
 
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+			},
+			msg: types.NewMsgAnswerPoll(
+				1,
+				1,
+				1,
+				[]uint32{1, 2, 3},
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "user without permission returns error",
+			setup: func() {
+				suite.ak.EXPECT().HasProfile(gomock.Any(), "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd").Return(true)
+
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+				suite.sk.EXPECT().HasPermission(
+					gomock.Any(),
+					uint64(1),
+					uint32(0),
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.NewPermissions(types.PermissionInteractWithContent),
-				)
+					subspacestypes.NewPermission(types.PermissionInteractWithContent),
+				).Return(false)
 			},
 			msg: types.NewMsgAnswerPoll(
 				1,
@@ -1910,25 +1835,17 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 			name: "not found poll returns error",
 			setup: func() {
 				suite.ak.EXPECT().HasProfile(gomock.Any(), "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd").Return(true)
+
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+				suite.sk.EXPECT().HasPermission(
+					gomock.Any(),
+					uint64(1),
+					uint32(0),
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					subspacestypes.NewPermission(types.PermissionInteractWithContent),
+				).Return(true)
 			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test",
-					"Testing subspace",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.NewPermissions(types.PermissionInteractWithContent),
-				)
-
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					0,
@@ -1958,28 +1875,20 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 			name: "voting after end time returns error",
 			setup: func() {
 				suite.ak.EXPECT().HasProfile(gomock.Any(), "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd").Return(true)
+
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+				suite.sk.EXPECT().HasPermission(
+					gomock.Any(),
+					uint64(1),
+					uint32(0),
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					subspacestypes.NewPermission(types.PermissionInteractWithContent),
+				).Return(true)
 			},
 			setupCtx: func(ctx sdk.Context) sdk.Context {
 				return ctx.WithBlockTime(time.Date(2100, 1, 1, 00, 00, 00, 000, time.UTC))
 			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test",
-					"Testing subspace",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.NewPermissions(types.PermissionInteractWithContent),
-				)
-
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					0,
@@ -2034,28 +1943,20 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 			name: "already answered poll returns error if no answer edits are allowed",
 			setup: func() {
 				suite.ak.EXPECT().HasProfile(gomock.Any(), "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd").Return(true)
+
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+				suite.sk.EXPECT().HasPermission(
+					gomock.Any(),
+					uint64(1),
+					uint32(0),
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					subspacestypes.NewPermission(types.PermissionInteractWithContent),
+				).Return(true)
 			},
 			setupCtx: func(ctx sdk.Context) sdk.Context {
 				return ctx.WithBlockTime(time.Date(2010, 1, 1, 00, 00, 00, 000, time.UTC))
 			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test",
-					"Testing subspace",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.NewPermissions(types.PermissionInteractWithContent),
-				)
-
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					0,
@@ -2110,28 +2011,20 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 			name: "multiple answers return error if they are not allowed",
 			setup: func() {
 				suite.ak.EXPECT().HasProfile(gomock.Any(), "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd").Return(true)
+
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+				suite.sk.EXPECT().HasPermission(
+					gomock.Any(),
+					uint64(1),
+					uint32(0),
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					subspacestypes.NewPermission(types.PermissionInteractWithContent),
+				).Return(true)
 			},
 			setupCtx: func(ctx sdk.Context) sdk.Context {
 				return ctx.WithBlockTime(time.Date(2010, 1, 1, 00, 00, 00, 000, time.UTC))
 			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test",
-					"Testing subspace",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.NewPermissions(types.PermissionInteractWithContent),
-				)
-
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					0,
@@ -2178,28 +2071,20 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 			name: "invalid answer indexes return error",
 			setup: func() {
 				suite.ak.EXPECT().HasProfile(gomock.Any(), "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd").Return(true)
+
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+				suite.sk.EXPECT().HasPermission(
+					gomock.Any(),
+					uint64(1),
+					uint32(0),
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					subspacestypes.NewPermission(types.PermissionInteractWithContent),
+				).Return(true)
 			},
 			setupCtx: func(ctx sdk.Context) sdk.Context {
 				return ctx.WithBlockTime(time.Date(2010, 1, 1, 00, 00, 00, 000, time.UTC))
 			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test",
-					"Testing subspace",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.NewPermissions(types.PermissionInteractWithContent),
-				)
-
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					0,
@@ -2246,28 +2131,21 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 			name: "editing an answer works correctly",
 			setup: func() {
 				suite.ak.EXPECT().HasProfile(gomock.Any(), "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd").Return(true)
+
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+
+				suite.sk.EXPECT().HasPermission(
+					gomock.Any(),
+					uint64(1),
+					uint32(0),
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					subspacestypes.NewPermission(types.PermissionInteractWithContent),
+				).Return(true)
 			},
 			setupCtx: func(ctx sdk.Context) sdk.Context {
 				return ctx.WithBlockTime(time.Date(2010, 1, 1, 00, 00, 00, 000, time.UTC))
 			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test",
-					"Testing subspace",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.NewPermissions(types.PermissionInteractWithContent),
-				)
-
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					0,
@@ -2348,28 +2226,20 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 			name: "new answer is stored correctly",
 			setup: func() {
 				suite.ak.EXPECT().HasProfile(gomock.Any(), "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd").Return(true)
+
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+				suite.sk.EXPECT().HasPermission(
+					gomock.Any(),
+					uint64(1),
+					uint32(0),
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					subspacestypes.NewPermission(types.PermissionInteractWithContent),
+				).Return(true)
 			},
 			setupCtx: func(ctx sdk.Context) sdk.Context {
 				return ctx.WithBlockTime(time.Date(2010, 1, 1, 00, 00, 00, 000, time.UTC))
 			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test",
-					"Testing subspace",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.NewPermissions(types.PermissionInteractWithContent),
-				)
-
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					0,
