@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Go 🧰
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v4
         with:
           go-version: 1.19
 
@@ -47,7 +47,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Setup Go 🧰
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v4
         with:
           go-version: 1.19
 
@@ -111,7 +111,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Setup Go 🧰
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v4
         with:
           go-version: 1.19
 
@@ -218,7 +218,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Setup Go 🧰
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v4
         with:
           go-version: 1.19
 
@@ -306,7 +306,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Setup Go 🧰
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v4
         with:
           go-version: 1.19
 
