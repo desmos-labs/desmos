@@ -32,7 +32,7 @@ require (
 	golang.org/x/perf v0.0.0-20230221235046-aebcfb61e84c
 	google.golang.org/genproto v0.0.0-20221024183307-1bc688fe9f3e
 	google.golang.org/grpc v1.50.1
-	google.golang.org/protobuf v1.29.0
+	google.golang.org/protobuf v1.29.1
 	gopkg.in/yaml.v2 v2.4.0
 )
 
