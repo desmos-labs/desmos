@@ -27,7 +27,7 @@ func MigrateStore(ctx sdk.Context, storeKey sdk.StoreKey, cdc codec.BinaryCodec)
 		}
 		reactions = append(reactions, reaction)
 
-		if containsDuplicatedReaction(reactions, reaction) {
+		if contains(reactions, reaction) {
 			duplicatedReactions = append(duplicatedReactions, reaction)
 		}
 	}
@@ -40,7 +40,7 @@ func MigrateStore(ctx sdk.Context, storeKey sdk.StoreKey, cdc codec.BinaryCodec)
 	return nil
 }
 
-func containsDuplicatedReaction(reactions []types.Reaction, reaction types.Reaction) bool {
+func contains(reactions []types.Reaction, reaction types.Reaction) bool {
 	var count = 0
 	for _, r := range reactions {
 		if r.SubspaceID == reaction.SubspaceID &&
