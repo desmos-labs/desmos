@@ -53,7 +53,7 @@ message MsgCreateReport {
   // Target of the report
   google.protobuf.Any target = 5 [
     (gogoproto.moretags) = "yaml:\"target\"",
-    (cosmos_proto.accepts_interface) = "ReportTarget"
+    (cosmos_proto.accepts_interface) = "desmos.reports.v1.ReportTarget"
   ];
 }
 

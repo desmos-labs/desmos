@@ -7,9 +7,9 @@ import (
 	fmt "fmt"
 	github_com_cosmos_cosmos_sdk_types "github.com/cosmos/cosmos-sdk/types"
 	types "github.com/cosmos/cosmos-sdk/types"
-	_ "github.com/gogo/protobuf/gogoproto"
-	proto "github.com/gogo/protobuf/proto"
-	github_com_gogo_protobuf_types "github.com/gogo/protobuf/types"
+	_ "github.com/cosmos/gogoproto/gogoproto"
+	proto "github.com/cosmos/gogoproto/proto"
+	github_com_cosmos_gogoproto_types "github.com/cosmos/gogoproto/types"
 	_ "google.golang.org/protobuf/types/known/durationpb"
 	io "io"
 	math "math"
@@ -632,7 +632,7 @@ func (m *AppLinksParams) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	n6, err6 := github_com_gogo_protobuf_types.StdDurationMarshalTo(m.ValidityDuration, dAtA[i-github_com_gogo_protobuf_types.SizeOfStdDuration(m.ValidityDuration):])
+	n6, err6 := github_com_cosmos_gogoproto_types.StdDurationMarshalTo(m.ValidityDuration, dAtA[i-github_com_cosmos_gogoproto_types.SizeOfStdDuration(m.ValidityDuration):])
 	if err6 != nil {
 		return 0, err6
 	}
@@ -750,7 +750,7 @@ func (m *AppLinksParams) Size() (n int) {
 	}
 	var l int
 	_ = l
-	l = github_com_gogo_protobuf_types.SizeOfStdDuration(m.ValidityDuration)
+	l = github_com_cosmos_gogoproto_types.SizeOfStdDuration(m.ValidityDuration)
 	n += 1 + l + sovModelsParams(uint64(l))
 	return n
 }
@@ -1560,7 +1560,7 @@ func (m *AppLinksParams) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if err := github_com_gogo_protobuf_types.StdDurationUnmarshal(&m.ValidityDuration, dAtA[iNdEx:postIndex]); err != nil {
+			if err := github_com_cosmos_gogoproto_types.StdDurationUnmarshal(&m.ValidityDuration, dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex

@@ -64,7 +64,7 @@ message MsgCreatePost {
 
   // Attachments of the post
   repeated google.protobuf.Any attachments = 7 [
-    (cosmos_proto.accepts_interface) = "AttachmentContent",
+    (cosmos_proto.accepts_interface) = "desmos.posts.v3.AttachmentContent",
     (gogoproto.moretags) = "yaml:\"attachments\""
   ];
 
@@ -182,7 +182,7 @@ message MsgAddPostAttachment {
 
   // Content of the attachment
   google.protobuf.Any content = 3 [
-    (cosmos_proto.accepts_interface) = "AttachmentContent",
+    (cosmos_proto.accepts_interface) = "desmos.posts.v3.AttachmentContent",
     (gogoproto.moretags) = "yaml:\"content\""
   ];
 

@@ -32,7 +32,7 @@ paths:
                       properties:
                         application:
                           type: string
-                          title: 'The application name (eg. Twitter, GitHub, etc)'
+                          title: The application name (eg. Twitter, GitHub, etc)
                         username:
                           type: string
                           title: >-
@@ -141,9 +141,10 @@ paths:
                   next_key:
                     type: string
                     format: byte
-                    title: |-
+                    description: |-
                       next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
                   total:
                     type: string
                     format: uint64
@@ -168,7 +169,7 @@ paths:
 
               to get the application links for a specific user
         default:
-          description: An unexpected error response
+          description: An unexpected error response.
           schema:
             type: object
             properties:
@@ -281,7 +282,7 @@ paths:
                           foo = any.unpack(Foo.class);
                         }
 
-                     Example 3: Pack and unpack a message in Python.
+                    Example 3: Pack and unpack a message in Python.
 
                         foo = Foo(...)
                         any = Any()
@@ -291,13 +292,16 @@ paths:
                           any.Unpack(foo)
                           ...
 
-                     Example 4: Pack and unpack a message in Go
+                    Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := ptypes.MarshalAny(foo)
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
                          ...
                          foo := &pb.Foo{}
-                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         if err := any.UnmarshalTo(foo); err != nil {
                            ...
                          }
 
@@ -319,7 +323,6 @@ paths:
 
                     JSON
 
-                    ====
 
                     The JSON representation of an `Any` value uses the regular
 
@@ -430,7 +433,6 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
@@ -441,10 +443,9 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
       tags:
         - Query
-  '/desmos/profiles/v3/app-links/clients/{client_id}':
+  /desmos/profiles/v3/app-links/clients/{client_id}:
     get:
       summary: |-
         ApplicationLinkByClientID queries a single application link for a given
@@ -468,7 +469,7 @@ paths:
                     properties:
                       application:
                         type: string
-                        title: 'The application name (eg. Twitter, GitHub, etc)'
+                        title: The application name (eg. Twitter, GitHub, etc)
                       username:
                         type: string
                         title: >-
@@ -576,7 +577,7 @@ paths:
 
               request allowing to get an application link using a client id
         default:
-          description: An unexpected error response
+          description: An unexpected error response.
           schema:
             type: object
             properties:
@@ -689,7 +690,7 @@ paths:
                           foo = any.unpack(Foo.class);
                         }
 
-                     Example 3: Pack and unpack a message in Python.
+                    Example 3: Pack and unpack a message in Python.
 
                         foo = Foo(...)
                         any = Any()
@@ -699,13 +700,16 @@ paths:
                           any.Unpack(foo)
                           ...
 
-                     Example 4: Pack and unpack a message in Go
+                    Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := ptypes.MarshalAny(foo)
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
                          ...
                          foo := &pb.Foo{}
-                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         if err := any.UnmarshalTo(foo); err != nil {
                            ...
                          }
 
@@ -727,7 +731,6 @@ paths:
 
                     JSON
 
-                    ====
 
                     The JSON representation of an `Any` value uses the regular
 
@@ -810,9 +813,10 @@ paths:
                   next_key:
                     type: string
                     format: byte
-                    title: |-
+                    description: |-
                       next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
                   total:
                     type: string
                     format: uint64
@@ -837,7 +841,7 @@ paths:
 
               allowing to get application link owners.
         default:
-          description: An unexpected error response
+          description: An unexpected error response.
           schema:
             type: object
             properties:
@@ -950,7 +954,7 @@ paths:
                           foo = any.unpack(Foo.class);
                         }
 
-                     Example 3: Pack and unpack a message in Python.
+                    Example 3: Pack and unpack a message in Python.
 
                         foo = Foo(...)
                         any = Any()
@@ -960,13 +964,16 @@ paths:
                           any.Unpack(foo)
                           ...
 
-                     Example 4: Pack and unpack a message in Go
+                    Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := ptypes.MarshalAny(foo)
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
                          ...
                          foo := &pb.Foo{}
-                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         if err := any.UnmarshalTo(foo); err != nil {
                            ...
                          }
 
@@ -988,7 +995,6 @@ paths:
 
                     JSON
 
-                    ====
 
                     The JSON representation of an `Any` value uses the regular
 
@@ -1088,7 +1094,6 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
@@ -1099,7 +1104,6 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
       tags:
         - Query
   /desmos/profiles/v3/chain-links:
@@ -1222,7 +1226,7 @@ paths:
                               foo = any.unpack(Foo.class);
                             }
 
-                         Example 3: Pack and unpack a message in Python.
+                        Example 3: Pack and unpack a message in Python.
 
                             foo = Foo(...)
                             any = Any()
@@ -1232,13 +1236,16 @@ paths:
                               any.Unpack(foo)
                               ...
 
-                         Example 4: Pack and unpack a message in Go
+                        Example 4: Pack and unpack a message in Go
 
                              foo := &pb.Foo{...}
-                             any, err := ptypes.MarshalAny(foo)
+                             any, err := anypb.New(foo)
+                             if err != nil {
+                               ...
+                             }
                              ...
                              foo := &pb.Foo{}
-                             if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                             if err := any.UnmarshalTo(foo); err != nil {
                                ...
                              }
 
@@ -1260,7 +1267,6 @@ paths:
 
                         JSON
 
-                        ====
 
                         The JSON representation of an `Any` value uses the
                         regular
@@ -1411,7 +1417,7 @@ paths:
                                   foo = any.unpack(Foo.class);
                                 }
 
-                             Example 3: Pack and unpack a message in Python.
+                            Example 3: Pack and unpack a message in Python.
 
                                 foo = Foo(...)
                                 any = Any()
@@ -1421,13 +1427,16 @@ paths:
                                   any.Unpack(foo)
                                   ...
 
-                             Example 4: Pack and unpack a message in Go
+                            Example 4: Pack and unpack a message in Go
 
                                  foo := &pb.Foo{...}
-                                 any, err := ptypes.MarshalAny(foo)
+                                 any, err := anypb.New(foo)
+                                 if err != nil {
+                                   ...
+                                 }
                                  ...
                                  foo := &pb.Foo{}
-                                 if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                                 if err := any.UnmarshalTo(foo); err != nil {
                                    ...
                                  }
 
@@ -1449,7 +1458,6 @@ paths:
 
                             JSON
 
-                            ====
 
                             The JSON representation of an `Any` value uses the
                             regular
@@ -1594,7 +1602,7 @@ paths:
                                   foo = any.unpack(Foo.class);
                                 }
 
-                             Example 3: Pack and unpack a message in Python.
+                            Example 3: Pack and unpack a message in Python.
 
                                 foo = Foo(...)
                                 any = Any()
@@ -1604,13 +1612,16 @@ paths:
                                   any.Unpack(foo)
                                   ...
 
-                             Example 4: Pack and unpack a message in Go
+                            Example 4: Pack and unpack a message in Go
 
                                  foo := &pb.Foo{...}
-                                 any, err := ptypes.MarshalAny(foo)
+                                 any, err := anypb.New(foo)
+                                 if err != nil {
+                                   ...
+                                 }
                                  ...
                                  foo := &pb.Foo{}
-                                 if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                                 if err := any.UnmarshalTo(foo); err != nil {
                                    ...
                                  }
 
@@ -1632,7 +1643,6 @@ paths:
 
                             JSON
 
-                            ====
 
                             The JSON representation of an `Any` value uses the
                             regular
@@ -1710,9 +1720,10 @@ paths:
                   next_key:
                     type: string
                     format: byte
-                    title: |-
+                    description: |-
                       next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
                   total:
                     type: string
                     format: uint64
@@ -1735,7 +1746,7 @@ paths:
               QueryChainLinksResponse is the response type for the
               Query/ChainLinks RPC method.
         default:
-          description: An unexpected error response
+          description: An unexpected error response.
           schema:
             type: object
             properties:
@@ -1848,7 +1859,7 @@ paths:
                           foo = any.unpack(Foo.class);
                         }
 
-                     Example 3: Pack and unpack a message in Python.
+                    Example 3: Pack and unpack a message in Python.
 
                         foo = Foo(...)
                         any = Any()
@@ -1858,13 +1869,16 @@ paths:
                           any.Unpack(foo)
                           ...
 
-                     Example 4: Pack and unpack a message in Go
+                    Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := ptypes.MarshalAny(foo)
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
                          ...
                          foo := &pb.Foo{}
-                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         if err := any.UnmarshalTo(foo); err != nil {
                            ...
                          }
 
@@ -1886,7 +1900,6 @@ paths:
 
                     JSON
 
-                    ====
 
                     The JSON representation of an `Any` value uses the regular
 
@@ -1997,7 +2010,6 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
@@ -2008,7 +2020,6 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
       tags:
         - Query
   /desmos/profiles/v3/chain-links/owners:
@@ -2047,9 +2058,10 @@ paths:
                   next_key:
                     type: string
                     format: byte
-                    title: |-
+                    description: |-
                       next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
                   total:
                     type: string
                     format: uint64
@@ -2074,7 +2086,7 @@ paths:
 
               allowing to get chain link owners.
         default:
-          description: An unexpected error response
+          description: An unexpected error response.
           schema:
             type: object
             properties:
@@ -2187,7 +2199,7 @@ paths:
                           foo = any.unpack(Foo.class);
                         }
 
-                     Example 3: Pack and unpack a message in Python.
+                    Example 3: Pack and unpack a message in Python.
 
                         foo = Foo(...)
                         any = Any()
@@ -2197,13 +2209,16 @@ paths:
                           any.Unpack(foo)
                           ...
 
-                     Example 4: Pack and unpack a message in Go
+                    Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := ptypes.MarshalAny(foo)
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
                          ...
                          foo := &pb.Foo{}
-                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         if err := any.UnmarshalTo(foo); err != nil {
                            ...
                          }
 
@@ -2225,7 +2240,6 @@ paths:
 
                     JSON
 
-                    ====
 
                     The JSON representation of an `Any` value uses the regular
 
@@ -2327,7 +2341,6 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
@@ -2338,7 +2351,6 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
       tags:
         - Query
   /desmos/profiles/v3/default-external-addresses:
@@ -2461,7 +2473,7 @@ paths:
                               foo = any.unpack(Foo.class);
                             }
 
-                         Example 3: Pack and unpack a message in Python.
+                        Example 3: Pack and unpack a message in Python.
 
                             foo = Foo(...)
                             any = Any()
@@ -2471,13 +2483,16 @@ paths:
                               any.Unpack(foo)
                               ...
 
-                         Example 4: Pack and unpack a message in Go
+                        Example 4: Pack and unpack a message in Go
 
                              foo := &pb.Foo{...}
-                             any, err := ptypes.MarshalAny(foo)
+                             any, err := anypb.New(foo)
+                             if err != nil {
+                               ...
+                             }
                              ...
                              foo := &pb.Foo{}
-                             if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                             if err := any.UnmarshalTo(foo); err != nil {
                                ...
                              }
 
@@ -2499,7 +2514,6 @@ paths:
 
                         JSON
 
-                        ====
 
                         The JSON representation of an `Any` value uses the
                         regular
@@ -2650,7 +2664,7 @@ paths:
                                   foo = any.unpack(Foo.class);
                                 }
 
-                             Example 3: Pack and unpack a message in Python.
+                            Example 3: Pack and unpack a message in Python.
 
                                 foo = Foo(...)
                                 any = Any()
@@ -2660,13 +2674,16 @@ paths:
                                   any.Unpack(foo)
                                   ...
 
-                             Example 4: Pack and unpack a message in Go
+                            Example 4: Pack and unpack a message in Go
 
                                  foo := &pb.Foo{...}
-                                 any, err := ptypes.MarshalAny(foo)
+                                 any, err := anypb.New(foo)
+                                 if err != nil {
+                                   ...
+                                 }
                                  ...
                                  foo := &pb.Foo{}
-                                 if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                                 if err := any.UnmarshalTo(foo); err != nil {
                                    ...
                                  }
 
@@ -2688,7 +2705,6 @@ paths:
 
                             JSON
 
-                            ====
 
                             The JSON representation of an `Any` value uses the
                             regular
@@ -2833,7 +2849,7 @@ paths:
                                   foo = any.unpack(Foo.class);
                                 }
 
-                             Example 3: Pack and unpack a message in Python.
+                            Example 3: Pack and unpack a message in Python.
 
                                 foo = Foo(...)
                                 any = Any()
@@ -2843,13 +2859,16 @@ paths:
                                   any.Unpack(foo)
                                   ...
 
-                             Example 4: Pack and unpack a message in Go
+                            Example 4: Pack and unpack a message in Go
 
                                  foo := &pb.Foo{...}
-                                 any, err := ptypes.MarshalAny(foo)
+                                 any, err := anypb.New(foo)
+                                 if err != nil {
+                                   ...
+                                 }
                                  ...
                                  foo := &pb.Foo{}
-                                 if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                                 if err := any.UnmarshalTo(foo); err != nil {
                                    ...
                                  }
 
@@ -2871,7 +2890,6 @@ paths:
 
                             JSON
 
-                            ====
 
                             The JSON representation of an `Any` value uses the
                             regular
@@ -2953,9 +2971,10 @@ paths:
                   next_key:
                     type: string
                     format: byte
-                    title: |-
+                    description: |-
                       next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
                   total:
                     type: string
                     format: uint64
@@ -2978,7 +2997,7 @@ paths:
               QueryDefaultExternalAddressesResponse is the response type for
               Query/DefaultExternalAddresses RPC method
         default:
-          description: An unexpected error response
+          description: An unexpected error response.
           schema:
             type: object
             properties:
@@ -3091,7 +3110,7 @@ paths:
                           foo = any.unpack(Foo.class);
                         }
 
-                     Example 3: Pack and unpack a message in Python.
+                    Example 3: Pack and unpack a message in Python.
 
                         foo = Foo(...)
                         any = Any()
@@ -3101,13 +3120,16 @@ paths:
                           any.Unpack(foo)
                           ...
 
-                     Example 4: Pack and unpack a message in Go
+                    Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := ptypes.MarshalAny(foo)
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
                          ...
                          foo := &pb.Foo{}
-                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         if err := any.UnmarshalTo(foo); err != nil {
                            ...
                          }
 
@@ -3129,7 +3151,6 @@ paths:
 
                     JSON
 
-                    ====
 
                     The JSON representation of an `Any` value uses the regular
 
@@ -3223,7 +3244,6 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
@@ -3234,7 +3254,6 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
       tags:
         - Query
   /desmos/profiles/v3/dtag-transfer-requests:
@@ -3289,9 +3308,10 @@ paths:
                   next_key:
                     type: string
                     format: byte
-                    title: |-
+                    description: |-
                       next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
                   total:
                     type: string
                     format: uint64
@@ -3317,7 +3337,7 @@ paths:
 
               Query/IncomingDTagTransferRequests RPC method.
         default:
-          description: An unexpected error response
+          description: An unexpected error response.
           schema:
             type: object
             properties:
@@ -3430,7 +3450,7 @@ paths:
                           foo = any.unpack(Foo.class);
                         }
 
-                     Example 3: Pack and unpack a message in Python.
+                    Example 3: Pack and unpack a message in Python.
 
                         foo = Foo(...)
                         any = Any()
@@ -3440,13 +3460,16 @@ paths:
                           any.Unpack(foo)
                           ...
 
-                     Example 4: Pack and unpack a message in Go
+                    Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := ptypes.MarshalAny(foo)
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
                          ...
                          foo := &pb.Foo{}
-                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         if err := any.UnmarshalTo(foo); err != nil {
                            ...
                          }
 
@@ -3468,7 +3491,6 @@ paths:
 
                     JSON
 
-                    ====
 
                     The JSON representation of an `Any` value uses the regular
 
@@ -3561,7 +3583,6 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
@@ -3572,7 +3593,6 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
       tags:
         - Query
   /desmos/profiles/v3/params:
@@ -3705,7 +3725,7 @@ paths:
               QueryParamsResponse is the response type for the Query/Params RPC
               method.
         default:
-          description: An unexpected error response
+          description: An unexpected error response.
           schema:
             type: object
             properties:
@@ -3818,7 +3838,7 @@ paths:
                           foo = any.unpack(Foo.class);
                         }
 
-                     Example 3: Pack and unpack a message in Python.
+                    Example 3: Pack and unpack a message in Python.
 
                         foo = Foo(...)
                         any = Any()
@@ -3828,13 +3848,16 @@ paths:
                           any.Unpack(foo)
                           ...
 
-                     Example 4: Pack and unpack a message in Go
+                    Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := ptypes.MarshalAny(foo)
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
                          ...
                          foo := &pb.Foo{}
-                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         if err := any.UnmarshalTo(foo); err != nil {
                            ...
                          }
 
@@ -3856,7 +3879,6 @@ paths:
 
                     JSON
 
-                    ====
 
                     The JSON representation of an `Any` value uses the regular
 
@@ -3895,7 +3917,7 @@ paths:
                         }
       tags:
         - Query
-  '/desmos/profiles/v3/profiles/{user}':
+  /desmos/profiles/v3/profiles/{user}:
     get:
       summary: >-
         Profile queries the profile of a specific user given their DTag or
@@ -4010,7 +4032,7 @@ paths:
                         foo = any.unpack(Foo.class);
                       }
 
-                   Example 3: Pack and unpack a message in Python.
+                  Example 3: Pack and unpack a message in Python.
 
                       foo = Foo(...)
                       any = Any()
@@ -4020,13 +4042,16 @@ paths:
                         any.Unpack(foo)
                         ...
 
-                   Example 4: Pack and unpack a message in Go
+                  Example 4: Pack and unpack a message in Go
 
                        foo := &pb.Foo{...}
-                       any, err := ptypes.MarshalAny(foo)
+                       any, err := anypb.New(foo)
+                       if err != nil {
+                         ...
+                       }
                        ...
                        foo := &pb.Foo{}
-                       if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                       if err := any.UnmarshalTo(foo); err != nil {
                          ...
                        }
 
@@ -4048,7 +4073,6 @@ paths:
 
                   JSON
 
-                  ====
 
                   The JSON representation of an `Any` value uses the regular
 
@@ -4086,7 +4110,7 @@ paths:
               QueryProfileResponse is the response type for the Query/Profile
               RPC method.
         default:
-          description: An unexpected error response
+          description: An unexpected error response.
           schema:
             type: object
             properties:
@@ -4199,7 +4223,7 @@ paths:
                           foo = any.unpack(Foo.class);
                         }
 
-                     Example 3: Pack and unpack a message in Python.
+                    Example 3: Pack and unpack a message in Python.
 
                         foo = Foo(...)
                         any = Any()
@@ -4209,13 +4233,16 @@ paths:
                           any.Unpack(foo)
                           ...
 
-                     Example 4: Pack and unpack a message in Go
+                    Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := ptypes.MarshalAny(foo)
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
                          ...
                          foo := &pb.Foo{}
-                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         if err := any.UnmarshalTo(foo); err != nil {
                            ...
                          }
 
@@ -4237,7 +4264,6 @@ paths:
 
                     JSON
 
-                    ====
 
                     The JSON representation of an `Any` value uses the regular
 
@@ -4331,9 +4357,10 @@ paths:
                   next_key:
                     type: string
                     format: byte
-                    title: |-
+                    description: |-
                       next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
                   total:
                     type: string
                     format: uint64
@@ -4356,7 +4383,7 @@ paths:
               QueryBlocksResponse is the response type for the Query/Blocks RPC
               method.
         default:
-          description: An unexpected error response
+          description: An unexpected error response.
           schema:
             type: object
             properties:
@@ -4469,7 +4496,7 @@ paths:
                           foo = any.unpack(Foo.class);
                         }
 
-                     Example 3: Pack and unpack a message in Python.
+                    Example 3: Pack and unpack a message in Python.
 
                         foo = Foo(...)
                         any = Any()
@@ -4479,13 +4506,16 @@ paths:
                           any.Unpack(foo)
                           ...
 
-                     Example 4: Pack and unpack a message in Go
+                    Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := ptypes.MarshalAny(foo)
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
                          ...
                          foo := &pb.Foo{}
-                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         if err := any.UnmarshalTo(foo); err != nil {
                            ...
                          }
 
@@ -4507,7 +4537,6 @@ paths:
 
                     JSON
 
-                    ====
 
                     The JSON representation of an `Any` value uses the regular
 
@@ -4611,7 +4640,6 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
@@ -4622,7 +4650,6 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
       tags:
         - Query
   /desmos/relationships/v1/relationships:
@@ -4669,9 +4696,10 @@ paths:
                   next_key:
                     type: string
                     format: byte
-                    title: |-
+                    description: |-
                       next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
                   total:
                     type: string
                     format: uint64
@@ -4694,7 +4722,7 @@ paths:
               QueryRelationshipsResponse is the response type for the
               Query/Relationships RPC method.
         default:
-          description: An unexpected error response
+          description: An unexpected error response.
           schema:
             type: object
             properties:
@@ -4807,7 +4835,7 @@ paths:
                           foo = any.unpack(Foo.class);
                         }
 
-                     Example 3: Pack and unpack a message in Python.
+                    Example 3: Pack and unpack a message in Python.
 
                         foo = Foo(...)
                         any = Any()
@@ -4817,13 +4845,16 @@ paths:
                           any.Unpack(foo)
                           ...
 
-                     Example 4: Pack and unpack a message in Go
+                    Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := ptypes.MarshalAny(foo)
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
                          ...
                          foo := &pb.Foo{}
-                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         if err := any.UnmarshalTo(foo); err != nil {
                            ...
                          }
 
@@ -4845,7 +4876,6 @@ paths:
 
                     JSON
 
-                    ====
 
                     The JSON representation of an `Any` value uses the regular
 
@@ -4949,7 +4979,6 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
@@ -4960,7 +4989,6 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
       tags:
         - Query
   /desmos/subspaces/v3/subspaces:
@@ -5013,9 +5041,10 @@ paths:
                   next_key:
                     type: string
                     format: byte
-                    title: |-
+                    description: |-
                       next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
                   total:
                     type: string
                     format: uint64
@@ -5040,7 +5069,7 @@ paths:
 
               method
         default:
-          description: An unexpected error response
+          description: An unexpected error response.
           schema:
             type: object
             properties:
@@ -5153,7 +5182,7 @@ paths:
                           foo = any.unpack(Foo.class);
                         }
 
-                     Example 3: Pack and unpack a message in Python.
+                    Example 3: Pack and unpack a message in Python.
 
                         foo = Foo(...)
                         any = Any()
@@ -5163,13 +5192,16 @@ paths:
                           any.Unpack(foo)
                           ...
 
-                     Example 4: Pack and unpack a message in Go
+                    Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := ptypes.MarshalAny(foo)
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
                          ...
                          foo := &pb.Foo{}
-                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         if err := any.UnmarshalTo(foo); err != nil {
                            ...
                          }
 
@@ -5191,7 +5223,6 @@ paths:
 
                     JSON
 
-                    ====
 
                     The JSON representation of an `Any` value uses the regular
 
@@ -5275,7 +5306,6 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
@@ -5286,10 +5316,9 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
       tags:
         - Query
-  '/desmos/subspaces/v3/subspaces/{subspace_id}':
+  /desmos/subspaces/v3/subspaces/{subspace_id}:
     get:
       summary: >-
         Subspace queries all the information about the subspace with the given
@@ -5337,7 +5366,7 @@ paths:
               QuerySubspaceResponse is the response type for the Query/Subspace
               method
         default:
-          description: An unexpected error response
+          description: An unexpected error response.
           schema:
             type: object
             properties:
@@ -5450,7 +5479,7 @@ paths:
                           foo = any.unpack(Foo.class);
                         }
 
-                     Example 3: Pack and unpack a message in Python.
+                    Example 3: Pack and unpack a message in Python.
 
                         foo = Foo(...)
                         any = Any()
@@ -5460,13 +5489,16 @@ paths:
                           any.Unpack(foo)
                           ...
 
-                     Example 4: Pack and unpack a message in Go
+                    Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := ptypes.MarshalAny(foo)
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
                          ...
                          foo := &pb.Foo{}
-                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         if err := any.UnmarshalTo(foo); err != nil {
                            ...
                          }
 
@@ -5488,7 +5520,6 @@ paths:
 
                     JSON
 
-                    ====
 
                     The JSON representation of an `Any` value uses the regular
 
@@ -5534,7 +5565,7 @@ paths:
           format: uint64
       tags:
         - Query
-  '/desmos/subspaces/v3/subspaces/{subspace_id}/allowances/groups':
+  /desmos/subspaces/v3/subspaces/{subspace_id}/allowances/groups:
     get:
       summary: GroupAllowances returns all the grants for groups.
       operationId: GroupAllowances
@@ -5658,7 +5689,7 @@ paths:
                               foo = any.unpack(Foo.class);
                             }
 
-                         Example 3: Pack and unpack a message in Python.
+                        Example 3: Pack and unpack a message in Python.
 
                             foo = Foo(...)
                             any = Any()
@@ -5668,13 +5699,16 @@ paths:
                               any.Unpack(foo)
                               ...
 
-                         Example 4: Pack and unpack a message in Go
+                        Example 4: Pack and unpack a message in Go
 
                              foo := &pb.Foo{...}
-                             any, err := ptypes.MarshalAny(foo)
+                             any, err := anypb.New(foo)
+                             if err != nil {
+                               ...
+                             }
                              ...
                              foo := &pb.Foo{}
-                             if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                             if err := any.UnmarshalTo(foo); err != nil {
                                ...
                              }
 
@@ -5696,7 +5730,6 @@ paths:
 
                         JSON
 
-                        ====
 
                         The JSON representation of an `Any` value uses the
                         regular
@@ -5836,7 +5869,7 @@ paths:
                               foo = any.unpack(Foo.class);
                             }
 
-                         Example 3: Pack and unpack a message in Python.
+                        Example 3: Pack and unpack a message in Python.
 
                             foo = Foo(...)
                             any = Any()
@@ -5846,13 +5879,16 @@ paths:
                               any.Unpack(foo)
                               ...
 
-                         Example 4: Pack and unpack a message in Go
+                        Example 4: Pack and unpack a message in Go
 
                              foo := &pb.Foo{...}
-                             any, err := ptypes.MarshalAny(foo)
+                             any, err := anypb.New(foo)
+                             if err != nil {
+                               ...
+                             }
                              ...
                              foo := &pb.Foo{}
-                             if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                             if err := any.UnmarshalTo(foo); err != nil {
                                ...
                              }
 
@@ -5874,7 +5910,6 @@ paths:
 
                         JSON
 
-                        ====
 
                         The JSON representation of an `Any` value uses the
                         regular
@@ -5925,9 +5960,10 @@ paths:
                   next_key:
                     type: string
                     format: byte
-                    title: |-
+                    description: |-
                       next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
                   total:
                     type: string
                     format: uint64
@@ -5951,7 +5987,7 @@ paths:
               QueryGroupAllowancesResponse is the response type for the
               Query/GroupAllowances RPC method
         default:
-          description: An unexpected error response
+          description: An unexpected error response.
           schema:
             type: object
             properties:
@@ -6064,7 +6100,7 @@ paths:
                           foo = any.unpack(Foo.class);
                         }
 
-                     Example 3: Pack and unpack a message in Python.
+                    Example 3: Pack and unpack a message in Python.
 
                         foo = Foo(...)
                         any = Any()
@@ -6074,13 +6110,16 @@ paths:
                           any.Unpack(foo)
                           ...
 
-                     Example 4: Pack and unpack a message in Go
+                    Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := ptypes.MarshalAny(foo)
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
                          ...
                          foo := &pb.Foo{}
-                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         if err := any.UnmarshalTo(foo); err != nil {
                            ...
                          }
 
@@ -6102,7 +6141,6 @@ paths:
 
                     JSON
 
-                    ====
 
                     The JSON representation of an `Any` value uses the regular
 
@@ -6200,7 +6238,6 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
@@ -6211,10 +6248,9 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
       tags:
         - Query
-  '/desmos/subspaces/v3/subspaces/{subspace_id}/allowances/users':
+  /desmos/subspaces/v3/subspaces/{subspace_id}/allowances/users:
     get:
       summary: UserAllowances returns all the grants for users.
       operationId: UserAllowances
@@ -6338,7 +6374,7 @@ paths:
                               foo = any.unpack(Foo.class);
                             }
 
-                         Example 3: Pack and unpack a message in Python.
+                        Example 3: Pack and unpack a message in Python.
 
                             foo = Foo(...)
                             any = Any()
@@ -6348,13 +6384,16 @@ paths:
                               any.Unpack(foo)
                               ...
 
-                         Example 4: Pack and unpack a message in Go
+                        Example 4: Pack and unpack a message in Go
 
                              foo := &pb.Foo{...}
-                             any, err := ptypes.MarshalAny(foo)
+                             any, err := anypb.New(foo)
+                             if err != nil {
+                               ...
+                             }
                              ...
                              foo := &pb.Foo{}
-                             if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                             if err := any.UnmarshalTo(foo); err != nil {
                                ...
                              }
 
@@ -6376,7 +6415,6 @@ paths:
 
                         JSON
 
-                        ====
 
                         The JSON representation of an `Any` value uses the
                         regular
@@ -6516,7 +6554,7 @@ paths:
                               foo = any.unpack(Foo.class);
                             }
 
-                         Example 3: Pack and unpack a message in Python.
+                        Example 3: Pack and unpack a message in Python.
 
                             foo = Foo(...)
                             any = Any()
@@ -6526,13 +6564,16 @@ paths:
                               any.Unpack(foo)
                               ...
 
-                         Example 4: Pack and unpack a message in Go
+                        Example 4: Pack and unpack a message in Go
 
                              foo := &pb.Foo{...}
-                             any, err := ptypes.MarshalAny(foo)
+                             any, err := anypb.New(foo)
+                             if err != nil {
+                               ...
+                             }
                              ...
                              foo := &pb.Foo{}
-                             if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                             if err := any.UnmarshalTo(foo); err != nil {
                                ...
                              }
 
@@ -6554,7 +6595,6 @@ paths:
 
                         JSON
 
-                        ====
 
                         The JSON representation of an `Any` value uses the
                         regular
@@ -6605,9 +6645,10 @@ paths:
                   next_key:
                     type: string
                     format: byte
-                    title: |-
+                    description: |-
                       next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
                   total:
                     type: string
                     format: uint64
@@ -6633,7 +6674,7 @@ paths:
 
               RPC method
         default:
-          description: An unexpected error response
+          description: An unexpected error response.
           schema:
             type: object
             properties:
@@ -6746,7 +6787,7 @@ paths:
                           foo = any.unpack(Foo.class);
                         }
 
-                     Example 3: Pack and unpack a message in Python.
+                    Example 3: Pack and unpack a message in Python.
 
                         foo = Foo(...)
                         any = Any()
@@ -6756,13 +6797,16 @@ paths:
                           any.Unpack(foo)
                           ...
 
-                     Example 4: Pack and unpack a message in Go
+                    Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := ptypes.MarshalAny(foo)
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
                          ...
                          foo := &pb.Foo{}
-                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         if err := any.UnmarshalTo(foo); err != nil {
                            ...
                          }
 
@@ -6784,7 +6828,6 @@ paths:
 
                     JSON
 
-                    ====
 
                     The JSON representation of an `Any` value uses the regular
 
@@ -6879,7 +6922,6 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
@@ -6890,10 +6932,9 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
       tags:
         - Query
-  '/desmos/subspaces/v3/subspaces/{subspace_id}/groups':
+  /desmos/subspaces/v3/subspaces/{subspace_id}/groups:
     get:
       summary: >-
         UserGroups queries all the groups that are present inside the subspace
@@ -6946,9 +6987,10 @@ paths:
                   next_key:
                     type: string
                     format: byte
-                    title: |-
+                    description: |-
                       next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
                   total:
                     type: string
                     format: uint64
@@ -6973,7 +7015,7 @@ paths:
 
               method
         default:
-          description: An unexpected error response
+          description: An unexpected error response.
           schema:
             type: object
             properties:
@@ -7086,7 +7128,7 @@ paths:
                           foo = any.unpack(Foo.class);
                         }
 
-                     Example 3: Pack and unpack a message in Python.
+                    Example 3: Pack and unpack a message in Python.
 
                         foo = Foo(...)
                         any = Any()
@@ -7096,13 +7138,16 @@ paths:
                           any.Unpack(foo)
                           ...
 
-                     Example 4: Pack and unpack a message in Go
+                    Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := ptypes.MarshalAny(foo)
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
                          ...
                          foo := &pb.Foo{}
-                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         if err := any.UnmarshalTo(foo); err != nil {
                            ...
                          }
 
@@ -7124,7 +7169,6 @@ paths:
 
                     JSON
 
-                    ====
 
                     The JSON representation of an `Any` value uses the regular
 
@@ -7220,7 +7264,6 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
@@ -7231,10 +7274,9 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
       tags:
         - Query
-  '/desmos/subspaces/v3/subspaces/{subspace_id}/groups/{group_id}':
+  /desmos/subspaces/v3/subspaces/{subspace_id}/groups/{group_id}:
     get:
       summary: |-
         UserGroup queries the user group having the given id inside the specific
@@ -7283,7 +7325,7 @@ paths:
 
               method
         default:
-          description: An unexpected error response
+          description: An unexpected error response.
           schema:
             type: object
             properties:
@@ -7396,7 +7438,7 @@ paths:
                           foo = any.unpack(Foo.class);
                         }
 
-                     Example 3: Pack and unpack a message in Python.
+                    Example 3: Pack and unpack a message in Python.
 
                         foo = Foo(...)
                         any = Any()
@@ -7406,13 +7448,16 @@ paths:
                           any.Unpack(foo)
                           ...
 
-                     Example 4: Pack and unpack a message in Go
+                    Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := ptypes.MarshalAny(foo)
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
                          ...
                          foo := &pb.Foo{}
-                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         if err := any.UnmarshalTo(foo); err != nil {
                            ...
                          }
 
@@ -7434,7 +7479,6 @@ paths:
 
                     JSON
 
-                    ====
 
                     The JSON representation of an `Any` value uses the regular
 
@@ -7486,7 +7530,7 @@ paths:
           format: int64
       tags:
         - Query
-  '/desmos/subspaces/v3/subspaces/{subspace_id}/groups/{group_id}/members':
+  /desmos/subspaces/v3/subspaces/{subspace_id}/groups/{group_id}/members:
     get:
       summary: UserGroupMembers queries all the members of a given user group
       operationId: UserGroupMembers
@@ -7506,9 +7550,10 @@ paths:
                   next_key:
                     type: string
                     format: byte
-                    title: |-
+                    description: |-
                       next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
                   total:
                     type: string
                     format: uint64
@@ -7531,7 +7576,7 @@ paths:
               QueryUserGroupMembersResponse is the response type for the
               Query/UserGroupMembers RPC method
         default:
-          description: An unexpected error response
+          description: An unexpected error response.
           schema:
             type: object
             properties:
@@ -7644,7 +7689,7 @@ paths:
                           foo = any.unpack(Foo.class);
                         }
 
-                     Example 3: Pack and unpack a message in Python.
+                    Example 3: Pack and unpack a message in Python.
 
                         foo = Foo(...)
                         any = Any()
@@ -7654,13 +7699,16 @@ paths:
                           any.Unpack(foo)
                           ...
 
-                     Example 4: Pack and unpack a message in Go
+                    Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := ptypes.MarshalAny(foo)
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
                          ...
                          foo := &pb.Foo{}
-                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         if err := any.UnmarshalTo(foo); err != nil {
                            ...
                          }
 
@@ -7682,7 +7730,6 @@ paths:
 
                     JSON
 
-                    ====
 
                     The JSON representation of an `Any` value uses the regular
 
@@ -7778,7 +7825,6 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
@@ -7789,10 +7835,9 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
       tags:
         - Query
-  '/desmos/subspaces/v3/subspaces/{subspace_id}/permissions/{user}':
+  /desmos/subspaces/v3/subspaces/{subspace_id}/permissions/{user}:
     get:
       summary: UserPermissions queries the permissions for the given user
       operationId: UserPermissions
@@ -7849,7 +7894,7 @@ paths:
               QueryUserPermissionsRequest is the response type for the
               Query/UserPermissions method
         default:
-          description: An unexpected error response
+          description: An unexpected error response.
           schema:
             type: object
             properties:
@@ -7962,7 +8007,7 @@ paths:
                           foo = any.unpack(Foo.class);
                         }
 
-                     Example 3: Pack and unpack a message in Python.
+                    Example 3: Pack and unpack a message in Python.
 
                         foo = Foo(...)
                         any = Any()
@@ -7972,13 +8017,16 @@ paths:
                           any.Unpack(foo)
                           ...
 
-                     Example 4: Pack and unpack a message in Go
+                    Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := ptypes.MarshalAny(foo)
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
                          ...
                          foo := &pb.Foo{}
-                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         if err := any.UnmarshalTo(foo); err != nil {
                            ...
                          }
 
@@ -8000,7 +8048,6 @@ paths:
 
                     JSON
 
-                    ====
 
                     The JSON representation of an `Any` value uses the regular
 
@@ -8057,7 +8104,7 @@ paths:
           format: int64
       tags:
         - Query
-  '/desmos/subspaces/v3/{subspace_id}/sections':
+  /desmos/subspaces/v3/{subspace_id}/sections:
     get:
       summary: Sections allows to query for the sections of a specific subspace
       operationId: Sections
@@ -8097,9 +8144,10 @@ paths:
                   next_key:
                     type: string
                     format: byte
-                    title: |-
+                    description: |-
                       next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
                   total:
                     type: string
                     format: uint64
@@ -8122,7 +8170,7 @@ paths:
               QuerySectionsResponse is the response type for Query/Sections RPC
               method
         default:
-          description: An unexpected error response
+          description: An unexpected error response.
           schema:
             type: object
             properties:
@@ -8235,7 +8283,7 @@ paths:
                           foo = any.unpack(Foo.class);
                         }
 
-                     Example 3: Pack and unpack a message in Python.
+                    Example 3: Pack and unpack a message in Python.
 
                         foo = Foo(...)
                         any = Any()
@@ -8245,13 +8293,16 @@ paths:
                           any.Unpack(foo)
                           ...
 
-                     Example 4: Pack and unpack a message in Go
+                    Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := ptypes.MarshalAny(foo)
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
                          ...
                          foo := &pb.Foo{}
-                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         if err := any.UnmarshalTo(foo); err != nil {
                            ...
                          }
 
@@ -8273,7 +8324,6 @@ paths:
 
                     JSON
 
-                    ====
 
                     The JSON representation of an `Any` value uses the regular
 
@@ -8363,7 +8413,6 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
@@ -8374,10 +8423,9 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
       tags:
         - Query
-  '/desmos/subspaces/v3/{subspace_id}/sections/{section_id}':
+  /desmos/subspaces/v3/{subspace_id}/sections/{section_id}:
     get:
       summary: Section queries all the information about the section with the given id
       operationId: Section
@@ -8413,7 +8461,7 @@ paths:
               QuerySectionResponse is the response type for Query/Section RPC
               method
         default:
-          description: An unexpected error response
+          description: An unexpected error response.
           schema:
             type: object
             properties:
@@ -8526,7 +8574,7 @@ paths:
                           foo = any.unpack(Foo.class);
                         }
 
-                     Example 3: Pack and unpack a message in Python.
+                    Example 3: Pack and unpack a message in Python.
 
                         foo = Foo(...)
                         any = Any()
@@ -8536,13 +8584,16 @@ paths:
                           any.Unpack(foo)
                           ...
 
-                     Example 4: Pack and unpack a message in Go
+                    Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := ptypes.MarshalAny(foo)
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
                          ...
                          foo := &pb.Foo{}
-                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         if err := any.UnmarshalTo(foo); err != nil {
                            ...
                          }
 
@@ -8564,7 +8615,6 @@ paths:
 
                     JSON
 
-                    ====
 
                     The JSON representation of an `Any` value uses the regular
 
@@ -8638,7 +8688,7 @@ paths:
               QueryParamsResponse is the response type for the Query/Params RPC
               method
         default:
-          description: An unexpected error response
+          description: An unexpected error response.
           schema:
             type: object
             properties:
@@ -8751,7 +8801,7 @@ paths:
                           foo = any.unpack(Foo.class);
                         }
 
-                     Example 3: Pack and unpack a message in Python.
+                    Example 3: Pack and unpack a message in Python.
 
                         foo = Foo(...)
                         any = Any()
@@ -8761,13 +8811,16 @@ paths:
                           any.Unpack(foo)
                           ...
 
-                     Example 4: Pack and unpack a message in Go
+                    Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := ptypes.MarshalAny(foo)
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
                          ...
                          foo := &pb.Foo{}
-                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         if err := any.UnmarshalTo(foo); err != nil {
                            ...
                          }
 
@@ -8789,7 +8842,6 @@ paths:
 
                     JSON
 
-                    ====
 
                     The JSON representation of an `Any` value uses the regular
 
@@ -8828,7 +8880,7 @@ paths:
                         }
       tags:
         - Query
-  '/desmos/posts/v2/subspaces/{subspace_id}/posts':
+  /desmos/posts/v2/subspaces/{subspace_id}/posts:
     get:
       summary: SubspacePosts queries all the posts inside a given subspace
       operationId: SubspacePosts
@@ -8946,7 +8998,7 @@ paths:
                       type: array
                       items:
                         type: string
-                      title: 'Tags related to this post, useful for categorization'
+                      title: Tags related to this post, useful for categorization
                     author:
                       type: string
                       title: Author of the post
@@ -9021,9 +9073,10 @@ paths:
                   next_key:
                     type: string
                     format: byte
-                    title: |-
+                    description: |-
                       next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
                   total:
                     type: string
                     format: uint64
@@ -9048,7 +9101,7 @@ paths:
 
               RPC method
         default:
-          description: An unexpected error response
+          description: An unexpected error response.
           schema:
             type: object
             properties:
@@ -9161,7 +9214,7 @@ paths:
                           foo = any.unpack(Foo.class);
                         }
 
-                     Example 3: Pack and unpack a message in Python.
+                    Example 3: Pack and unpack a message in Python.
 
                         foo = Foo(...)
                         any = Any()
@@ -9171,13 +9224,16 @@ paths:
                           any.Unpack(foo)
                           ...
 
-                     Example 4: Pack and unpack a message in Go
+                    Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := ptypes.MarshalAny(foo)
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
                          ...
                          foo := &pb.Foo{}
-                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         if err := any.UnmarshalTo(foo); err != nil {
                            ...
                          }
 
@@ -9199,7 +9255,6 @@ paths:
 
                     JSON
 
-                    ====
 
                     The JSON representation of an `Any` value uses the regular
 
@@ -9289,7 +9344,6 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
@@ -9300,10 +9354,9 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
       tags:
         - Query
-  '/desmos/posts/v2/subspaces/{subspace_id}/posts/{post_id}':
+  /desmos/posts/v2/subspaces/{subspace_id}/posts/{post_id}:
     get:
       summary: Post queries for a single post inside a given subspace
       operationId: Post
@@ -9357,7 +9410,7 @@ paths:
                                 the tag ends
                             tag:
                               type: string
-                              title: 'Tag reference (user address, hashtag value, etc)'
+                              title: Tag reference (user address, hashtag value, etc)
                           title: TextTag represents a tag within the post text
                         title: Hashtags represent inside the post text
                       mentions:
@@ -9379,7 +9432,7 @@ paths:
                                 the tag ends
                             tag:
                               type: string
-                              title: 'Tag reference (user address, hashtag value, etc)'
+                              title: Tag reference (user address, hashtag value, etc)
                           title: TextTag represents a tag within the post text
                         title: Mentions present inside the post text
                       urls:
@@ -9413,7 +9466,7 @@ paths:
                     type: array
                     items:
                       type: string
-                    title: 'Tags related to this post, useful for categorization'
+                    title: Tags related to this post, useful for categorization
                   author:
                     type: string
                     title: Author of the post
@@ -9486,7 +9539,7 @@ paths:
               QueryPostResponse is the response type for the Query/Post RPC
               method
         default:
-          description: An unexpected error response
+          description: An unexpected error response.
           schema:
             type: object
             properties:
@@ -9599,7 +9652,7 @@ paths:
                           foo = any.unpack(Foo.class);
                         }
 
-                     Example 3: Pack and unpack a message in Python.
+                    Example 3: Pack and unpack a message in Python.
 
                         foo = Foo(...)
                         any = Any()
@@ -9609,13 +9662,16 @@ paths:
                           any.Unpack(foo)
                           ...
 
-                     Example 4: Pack and unpack a message in Go
+                    Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := ptypes.MarshalAny(foo)
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
                          ...
                          foo := &pb.Foo{}
-                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         if err := any.UnmarshalTo(foo); err != nil {
                            ...
                          }
 
@@ -9637,7 +9693,6 @@ paths:
 
                     JSON
 
-                    ====
 
                     The JSON representation of an `Any` value uses the regular
 
@@ -9689,7 +9744,7 @@ paths:
           format: uint64
       tags:
         - Query
-  '/desmos/posts/v2/subspaces/{subspace_id}/posts/{post_id}/attachments':
+  /desmos/posts/v2/subspaces/{subspace_id}/posts/{post_id}/attachments:
     get:
       summary: PostAttachments queries the attachments of the post having the given id
       operationId: PostAttachments
@@ -9822,7 +9877,7 @@ paths:
                               foo = any.unpack(Foo.class);
                             }
 
-                         Example 3: Pack and unpack a message in Python.
+                        Example 3: Pack and unpack a message in Python.
 
                             foo = Foo(...)
                             any = Any()
@@ -9832,13 +9887,16 @@ paths:
                               any.Unpack(foo)
                               ...
 
-                         Example 4: Pack and unpack a message in Go
+                        Example 4: Pack and unpack a message in Go
 
                              foo := &pb.Foo{...}
-                             any, err := ptypes.MarshalAny(foo)
+                             any, err := anypb.New(foo)
+                             if err != nil {
+                               ...
+                             }
                              ...
                              foo := &pb.Foo{}
-                             if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                             if err := any.UnmarshalTo(foo); err != nil {
                                ...
                              }
 
@@ -9860,7 +9918,6 @@ paths:
 
                         JSON
 
-                        ====
 
                         The JSON representation of an `Any` value uses the
                         regular
@@ -9907,9 +9964,10 @@ paths:
                   next_key:
                     type: string
                     format: byte
-                    title: |-
+                    description: |-
                       next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
                   total:
                     type: string
                     format: uint64
@@ -9932,7 +9990,7 @@ paths:
               QueryPostAttachmentsResponse is the response type for the
               Query/PostAttachments RPC method
         default:
-          description: An unexpected error response
+          description: An unexpected error response.
           schema:
             type: object
             properties:
@@ -10045,7 +10103,7 @@ paths:
                           foo = any.unpack(Foo.class);
                         }
 
-                     Example 3: Pack and unpack a message in Python.
+                    Example 3: Pack and unpack a message in Python.
 
                         foo = Foo(...)
                         any = Any()
@@ -10055,13 +10113,16 @@ paths:
                           any.Unpack(foo)
                           ...
 
-                     Example 4: Pack and unpack a message in Go
+                    Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := ptypes.MarshalAny(foo)
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
                          ...
                          foo := &pb.Foo{}
-                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         if err := any.UnmarshalTo(foo); err != nil {
                            ...
                          }
 
@@ -10083,7 +10144,6 @@ paths:
 
                     JSON
 
-                    ====
 
                     The JSON representation of an `Any` value uses the regular
 
@@ -10179,7 +10239,6 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
@@ -10190,10 +10249,9 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
       tags:
         - Query
-  '/desmos/posts/v2/subspaces/{subspace_id}/posts/{post_id}/polls/{poll_id}/answers':
+  /desmos/posts/v2/subspaces/{subspace_id}/posts/{post_id}/polls/{poll_id}/answers:
     get:
       summary: PollAnswers queries the answers for the poll having the given id
       operationId: PollAnswers
@@ -10238,9 +10296,10 @@ paths:
                   next_key:
                     type: string
                     format: byte
-                    title: |-
+                    description: |-
                       next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
                   total:
                     type: string
                     format: uint64
@@ -10265,7 +10324,7 @@ paths:
 
               method
         default:
-          description: An unexpected error response
+          description: An unexpected error response.
           schema:
             type: object
             properties:
@@ -10378,7 +10437,7 @@ paths:
                           foo = any.unpack(Foo.class);
                         }
 
-                     Example 3: Pack and unpack a message in Python.
+                    Example 3: Pack and unpack a message in Python.
 
                         foo = Foo(...)
                         any = Any()
@@ -10388,13 +10447,16 @@ paths:
                           any.Unpack(foo)
                           ...
 
-                     Example 4: Pack and unpack a message in Go
+                    Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := ptypes.MarshalAny(foo)
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
                          ...
                          foo := &pb.Foo{}
-                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         if err := any.UnmarshalTo(foo); err != nil {
                            ...
                          }
 
@@ -10416,7 +10478,6 @@ paths:
 
                     JSON
 
-                    ====
 
                     The JSON representation of an `Any` value uses the regular
 
@@ -10523,7 +10584,6 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
@@ -10534,10 +10594,9 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
       tags:
         - Query
-  '/desmos/posts/v2/subspaces/{subspace_id}/sections/{section_id}/posts':
+  /desmos/posts/v2/subspaces/{subspace_id}/sections/{section_id}/posts:
     get:
       summary: SectionPosts queries all the posts inside a given section
       operationId: SectionPosts
@@ -10655,7 +10714,7 @@ paths:
                       type: array
                       items:
                         type: string
-                      title: 'Tags related to this post, useful for categorization'
+                      title: Tags related to this post, useful for categorization
                     author:
                       type: string
                       title: Author of the post
@@ -10730,9 +10789,10 @@ paths:
                   next_key:
                     type: string
                     format: byte
-                    title: |-
+                    description: |-
                       next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
                   total:
                     type: string
                     format: uint64
@@ -10757,7 +10817,7 @@ paths:
 
               method
         default:
-          description: An unexpected error response
+          description: An unexpected error response.
           schema:
             type: object
             properties:
@@ -10870,7 +10930,7 @@ paths:
                           foo = any.unpack(Foo.class);
                         }
 
-                     Example 3: Pack and unpack a message in Python.
+                    Example 3: Pack and unpack a message in Python.
 
                         foo = Foo(...)
                         any = Any()
@@ -10880,13 +10940,16 @@ paths:
                           any.Unpack(foo)
                           ...
 
-                     Example 4: Pack and unpack a message in Go
+                    Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := ptypes.MarshalAny(foo)
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
                          ...
                          foo := &pb.Foo{}
-                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         if err := any.UnmarshalTo(foo); err != nil {
                            ...
                          }
 
@@ -10908,7 +10971,6 @@ paths:
 
                     JSON
 
-                    ====
 
                     The JSON representation of an `Any` value uses the regular
 
@@ -11004,7 +11066,6 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
@@ -11015,10 +11076,9 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
       tags:
         - Query
-  '/desmos/reactions/v1/subspaces/{subspace_id}/params':
+  /desmos/reactions/v1/subspaces/{subspace_id}/params:
     get:
       summary: ReactionsParams allows to query the reaction params of a subspace
       operationId: ReactionsParams
@@ -11041,7 +11101,6 @@ paths:
                     properties:
                       enabled:
                         type: boolean
-                        format: boolean
                         title: >-
                           Whether RegisteredReactionValue reactions should be
                           enabled
@@ -11051,7 +11110,6 @@ paths:
                     properties:
                       enabled:
                         type: boolean
-                        format: boolean
                         title: Whether FreeTextValue reactions should be enabled
                       max_length:
                         type: integer
@@ -11075,7 +11133,7 @@ paths:
               QueryReactionsParamsResponse is the response type for the
               Query/ReactionsParam RPC method
         default:
-          description: An unexpected error response
+          description: An unexpected error response.
           schema:
             type: object
             properties:
@@ -11188,7 +11246,7 @@ paths:
                           foo = any.unpack(Foo.class);
                         }
 
-                     Example 3: Pack and unpack a message in Python.
+                    Example 3: Pack and unpack a message in Python.
 
                         foo = Foo(...)
                         any = Any()
@@ -11198,13 +11256,16 @@ paths:
                           any.Unpack(foo)
                           ...
 
-                     Example 4: Pack and unpack a message in Go
+                    Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := ptypes.MarshalAny(foo)
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
                          ...
                          foo := &pb.Foo{}
-                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         if err := any.UnmarshalTo(foo); err != nil {
                            ...
                          }
 
@@ -11226,7 +11287,6 @@ paths:
 
                     JSON
 
-                    ====
 
                     The JSON representation of an `Any` value uses the regular
 
@@ -11272,7 +11332,7 @@ paths:
           format: uint64
       tags:
         - Query
-  '/desmos/reactions/v1/subspaces/{subspace_id}/posts/{post_id}/reactions':
+  /desmos/reactions/v1/subspaces/{subspace_id}/posts/{post_id}/reactions:
     get:
       summary: Reactions allows to query the reactions for a given post
       operationId: Reactions
@@ -11401,7 +11461,7 @@ paths:
                               foo = any.unpack(Foo.class);
                             }
 
-                         Example 3: Pack and unpack a message in Python.
+                        Example 3: Pack and unpack a message in Python.
 
                             foo = Foo(...)
                             any = Any()
@@ -11411,13 +11471,16 @@ paths:
                               any.Unpack(foo)
                               ...
 
-                         Example 4: Pack and unpack a message in Go
+                        Example 4: Pack and unpack a message in Go
 
                              foo := &pb.Foo{...}
-                             any, err := ptypes.MarshalAny(foo)
+                             any, err := anypb.New(foo)
+                             if err != nil {
+                               ...
+                             }
                              ...
                              foo := &pb.Foo{}
-                             if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                             if err := any.UnmarshalTo(foo); err != nil {
                                ...
                              }
 
@@ -11439,7 +11502,6 @@ paths:
 
                         JSON
 
-                        ====
 
                         The JSON representation of an `Any` value uses the
                         regular
@@ -11488,9 +11550,10 @@ paths:
                   next_key:
                     type: string
                     format: byte
-                    title: |-
+                    description: |-
                       next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
                   total:
                     type: string
                     format: uint64
@@ -11515,7 +11578,7 @@ paths:
 
               method
         default:
-          description: An unexpected error response
+          description: An unexpected error response.
           schema:
             type: object
             properties:
@@ -11628,7 +11691,7 @@ paths:
                           foo = any.unpack(Foo.class);
                         }
 
-                     Example 3: Pack and unpack a message in Python.
+                    Example 3: Pack and unpack a message in Python.
 
                         foo = Foo(...)
                         any = Any()
@@ -11638,13 +11701,16 @@ paths:
                           any.Unpack(foo)
                           ...
 
-                     Example 4: Pack and unpack a message in Go
+                    Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := ptypes.MarshalAny(foo)
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
                          ...
                          foo := &pb.Foo{}
-                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         if err := any.UnmarshalTo(foo); err != nil {
                            ...
                          }
 
@@ -11666,7 +11732,6 @@ paths:
 
                     JSON
 
-                    ====
 
                     The JSON representation of an `Any` value uses the regular
 
@@ -11769,7 +11834,6 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
@@ -11780,10 +11844,9 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
       tags:
         - Query
-  '/desmos/reactions/v1/subspaces/{subspace_id}/posts/{post_id}/reactions/{reaction_id}':
+  /desmos/reactions/v1/subspaces/{subspace_id}/posts/{post_id}/reactions/{reaction_id}:
     get:
       summary: Reaction allows to query the reaction with the given id
       operationId: Reaction
@@ -11908,7 +11971,7 @@ paths:
                             foo = any.unpack(Foo.class);
                           }
 
-                       Example 3: Pack and unpack a message in Python.
+                      Example 3: Pack and unpack a message in Python.
 
                           foo = Foo(...)
                           any = Any()
@@ -11918,13 +11981,16 @@ paths:
                             any.Unpack(foo)
                             ...
 
-                       Example 4: Pack and unpack a message in Go
+                      Example 4: Pack and unpack a message in Go
 
                            foo := &pb.Foo{...}
-                           any, err := ptypes.MarshalAny(foo)
+                           any, err := anypb.New(foo)
+                           if err != nil {
+                             ...
+                           }
                            ...
                            foo := &pb.Foo{}
-                           if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                           if err := any.UnmarshalTo(foo); err != nil {
                              ...
                            }
 
@@ -11946,7 +12012,6 @@ paths:
 
                       JSON
 
-                      ====
 
                       The JSON representation of an `Any` value uses the regular
 
@@ -11993,7 +12058,7 @@ paths:
 
               method
         default:
-          description: An unexpected error response
+          description: An unexpected error response.
           schema:
             type: object
             properties:
@@ -12106,7 +12171,7 @@ paths:
                           foo = any.unpack(Foo.class);
                         }
 
-                     Example 3: Pack and unpack a message in Python.
+                    Example 3: Pack and unpack a message in Python.
 
                         foo = Foo(...)
                         any = Any()
@@ -12116,13 +12181,16 @@ paths:
                           any.Unpack(foo)
                           ...
 
-                     Example 4: Pack and unpack a message in Go
+                    Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := ptypes.MarshalAny(foo)
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
                          ...
                          foo := &pb.Foo{}
-                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         if err := any.UnmarshalTo(foo); err != nil {
                            ...
                          }
 
@@ -12144,7 +12212,6 @@ paths:
 
                     JSON
 
-                    ====
 
                     The JSON representation of an `Any` value uses the regular
 
@@ -12202,7 +12269,7 @@ paths:
           format: int64
       tags:
         - Query
-  '/desmos/reactions/v1/subspaces/{subspace_id}/registered-reactions':
+  /desmos/reactions/v1/subspaces/{subspace_id}/registered-reactions:
     get:
       summary: >-
         RegisteredReactions allows to query the registered reaction of a
@@ -12246,9 +12313,10 @@ paths:
                   next_key:
                     type: string
                     format: byte
-                    title: |-
+                    description: |-
                       next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
                   total:
                     type: string
                     format: uint64
@@ -12271,7 +12339,7 @@ paths:
               QueryRegisteredReactionsResponse is the response type for the
               Query/RegisteredReactions RPC method
         default:
-          description: An unexpected error response
+          description: An unexpected error response.
           schema:
             type: object
             properties:
@@ -12384,7 +12452,7 @@ paths:
                           foo = any.unpack(Foo.class);
                         }
 
-                     Example 3: Pack and unpack a message in Python.
+                    Example 3: Pack and unpack a message in Python.
 
                         foo = Foo(...)
                         any = Any()
@@ -12394,13 +12462,16 @@ paths:
                           any.Unpack(foo)
                           ...
 
-                     Example 4: Pack and unpack a message in Go
+                    Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := ptypes.MarshalAny(foo)
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
                          ...
                          foo := &pb.Foo{}
-                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         if err := any.UnmarshalTo(foo); err != nil {
                            ...
                          }
 
@@ -12422,7 +12493,6 @@ paths:
 
                     JSON
 
-                    ====
 
                     The JSON representation of an `Any` value uses the regular
 
@@ -12512,7 +12582,6 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
@@ -12523,10 +12592,9 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
       tags:
         - Query
-  '/desmos/reactions/v1/subspaces/{subspace_id}/registered-reactions/{reaction_id}':
+  /desmos/reactions/v1/subspaces/{subspace_id}/registered-reactions/{reaction_id}:
     get:
       summary: RegisteredReaction allows to query the registered reaction of a subspace
       operationId: RegisteredReaction
@@ -12564,7 +12632,7 @@ paths:
               QueryRegisteredReactionResponse is the response type for the
               Query/RegisteredReaction RPC method
         default:
-          description: An unexpected error response
+          description: An unexpected error response.
           schema:
             type: object
             properties:
@@ -12677,7 +12745,7 @@ paths:
                           foo = any.unpack(Foo.class);
                         }
 
-                     Example 3: Pack and unpack a message in Python.
+                    Example 3: Pack and unpack a message in Python.
 
                         foo = Foo(...)
                         any = Any()
@@ -12687,13 +12755,16 @@ paths:
                           any.Unpack(foo)
                           ...
 
-                     Example 4: Pack and unpack a message in Go
+                    Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := ptypes.MarshalAny(foo)
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
                          ...
                          foo := &pb.Foo{}
-                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         if err := any.UnmarshalTo(foo); err != nil {
                            ...
                          }
 
@@ -12715,7 +12786,6 @@ paths:
 
                     JSON
 
-                    ====
 
                     The JSON representation of an `Any` value uses the regular
 
@@ -12812,7 +12882,7 @@ paths:
               QueryParamsResponse is the response type for Query/Params RPC
               method
         default:
-          description: An unexpected error response
+          description: An unexpected error response.
           schema:
             type: object
             properties:
@@ -12925,7 +12995,7 @@ paths:
                           foo = any.unpack(Foo.class);
                         }
 
-                     Example 3: Pack and unpack a message in Python.
+                    Example 3: Pack and unpack a message in Python.
 
                         foo = Foo(...)
                         any = Any()
@@ -12935,13 +13005,16 @@ paths:
                           any.Unpack(foo)
                           ...
 
-                     Example 4: Pack and unpack a message in Go
+                    Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := ptypes.MarshalAny(foo)
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
                          ...
                          foo := &pb.Foo{}
-                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         if err := any.UnmarshalTo(foo); err != nil {
                            ...
                          }
 
@@ -12963,7 +13036,6 @@ paths:
 
                     JSON
 
-                    ====
 
                     The JSON representation of an `Any` value uses the regular
 
@@ -13002,7 +13074,7 @@ paths:
                         }
       tags:
         - Query
-  '/desmos/reports/v1/subspaces/{subspace_id}/reasons':
+  /desmos/reports/v1/subspaces/{subspace_id}/reasons:
     get:
       summary: Reasons allows to query the supported reporting reasons for a subspace
       operationId: Reasons
@@ -13040,9 +13112,10 @@ paths:
                   next_key:
                     type: string
                     format: byte
-                    title: |-
+                    description: |-
                       next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
                   total:
                     type: string
                     format: uint64
@@ -13065,7 +13138,7 @@ paths:
               QueryReasonsResponse is the response type for Query/Reasons RPC
               method
         default:
-          description: An unexpected error response
+          description: An unexpected error response.
           schema:
             type: object
             properties:
@@ -13178,7 +13251,7 @@ paths:
                           foo = any.unpack(Foo.class);
                         }
 
-                     Example 3: Pack and unpack a message in Python.
+                    Example 3: Pack and unpack a message in Python.
 
                         foo = Foo(...)
                         any = Any()
@@ -13188,13 +13261,16 @@ paths:
                           any.Unpack(foo)
                           ...
 
-                     Example 4: Pack and unpack a message in Go
+                    Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := ptypes.MarshalAny(foo)
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
                          ...
                          foo := &pb.Foo{}
-                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         if err := any.UnmarshalTo(foo); err != nil {
                            ...
                          }
 
@@ -13216,7 +13292,6 @@ paths:
 
                     JSON
 
-                    ====
 
                     The JSON representation of an `Any` value uses the regular
 
@@ -13306,7 +13381,6 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
@@ -13317,10 +13391,9 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
       tags:
         - Query
-  '/desmos/reports/v1/subspaces/{subspace_id}/reasons/{reason_id}':
+  /desmos/reports/v1/subspaces/{subspace_id}/reasons/{reason_id}:
     get:
       summary: Reason allows to query the reason having the given id
       operationId: Reason
@@ -13354,7 +13427,7 @@ paths:
               QueryReasonResponse is the response type for Query/Reason RPC
               method
         default:
-          description: An unexpected error response
+          description: An unexpected error response.
           schema:
             type: object
             properties:
@@ -13467,7 +13540,7 @@ paths:
                           foo = any.unpack(Foo.class);
                         }
 
-                     Example 3: Pack and unpack a message in Python.
+                    Example 3: Pack and unpack a message in Python.
 
                         foo = Foo(...)
                         any = Any()
@@ -13477,13 +13550,16 @@ paths:
                           any.Unpack(foo)
                           ...
 
-                     Example 4: Pack and unpack a message in Go
+                    Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := ptypes.MarshalAny(foo)
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
                          ...
                          foo := &pb.Foo{}
-                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         if err := any.UnmarshalTo(foo); err != nil {
                            ...
                          }
 
@@ -13505,7 +13581,6 @@ paths:
 
                     JSON
 
-                    ====
 
                     The JSON representation of an `Any` value uses the regular
 
@@ -13557,7 +13632,7 @@ paths:
           format: int64
       tags:
         - Query
-  '/desmos/reports/v1/subspaces/{subspace_id}/reports':
+  /desmos/reports/v1/subspaces/{subspace_id}/reports:
     get:
       summary: Reports allows to query the reports for a specific target
       operationId: Reports
@@ -13692,7 +13767,7 @@ paths:
                               foo = any.unpack(Foo.class);
                             }
 
-                         Example 3: Pack and unpack a message in Python.
+                        Example 3: Pack and unpack a message in Python.
 
                             foo = Foo(...)
                             any = Any()
@@ -13702,13 +13777,16 @@ paths:
                               any.Unpack(foo)
                               ...
 
-                         Example 4: Pack and unpack a message in Go
+                        Example 4: Pack and unpack a message in Go
 
                              foo := &pb.Foo{...}
-                             any, err := ptypes.MarshalAny(foo)
+                             any, err := anypb.New(foo)
+                             if err != nil {
+                               ...
+                             }
                              ...
                              foo := &pb.Foo{}
-                             if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                             if err := any.UnmarshalTo(foo); err != nil {
                                ...
                              }
 
@@ -13730,7 +13808,6 @@ paths:
 
                         JSON
 
-                        ====
 
                         The JSON representation of an `Any` value uses the
                         regular
@@ -13781,9 +13858,10 @@ paths:
                   next_key:
                     type: string
                     format: byte
-                    title: |-
+                    description: |-
                       next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
                   total:
                     type: string
                     format: uint64
@@ -13806,7 +13884,7 @@ paths:
               QueryReportsResponse is the response type for Query/Reports RPC
               method
         default:
-          description: An unexpected error response
+          description: An unexpected error response.
           schema:
             type: object
             properties:
@@ -13919,7 +13997,7 @@ paths:
                           foo = any.unpack(Foo.class);
                         }
 
-                     Example 3: Pack and unpack a message in Python.
+                    Example 3: Pack and unpack a message in Python.
 
                         foo = Foo(...)
                         any = Any()
@@ -13929,13 +14007,16 @@ paths:
                           any.Unpack(foo)
                           ...
 
-                     Example 4: Pack and unpack a message in Go
+                    Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := ptypes.MarshalAny(foo)
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
                          ...
                          foo := &pb.Foo{}
-                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         if err := any.UnmarshalTo(foo); err != nil {
                            ...
                          }
 
@@ -13957,7 +14038,6 @@ paths:
 
                     JSON
 
-                    ====
 
                     The JSON representation of an `Any` value uses the regular
 
@@ -14114,7 +14194,6 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
@@ -14125,10 +14204,9 @@ paths:
           in: query
           required: false
           type: boolean
-          format: boolean
       tags:
         - Query
-  '/desmos/reports/v1/subspaces/{subspace_id}/reports/{report_id}':
+  /desmos/reports/v1/subspaces/{subspace_id}/reports/{report_id}:
     get:
       summary: Report allows to query the report having the given id
       operationId: Report
@@ -14261,7 +14339,7 @@ paths:
                             foo = any.unpack(Foo.class);
                           }
 
-                       Example 3: Pack and unpack a message in Python.
+                      Example 3: Pack and unpack a message in Python.
 
                           foo = Foo(...)
                           any = Any()
@@ -14271,13 +14349,16 @@ paths:
                             any.Unpack(foo)
                             ...
 
-                       Example 4: Pack and unpack a message in Go
+                      Example 4: Pack and unpack a message in Go
 
                            foo := &pb.Foo{...}
-                           any, err := ptypes.MarshalAny(foo)
+                           any, err := anypb.New(foo)
+                           if err != nil {
+                             ...
+                           }
                            ...
                            foo := &pb.Foo{}
-                           if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                           if err := any.UnmarshalTo(foo); err != nil {
                              ...
                            }
 
@@ -14299,7 +14380,6 @@ paths:
 
                       JSON
 
-                      ====
 
                       The JSON representation of an `Any` value uses the regular
 
@@ -14346,7 +14426,7 @@ paths:
               QueryReportResponse is the response type for Query/Report RPC
               method
         default:
-          description: An unexpected error response
+          description: An unexpected error response.
           schema:
             type: object
             properties:
@@ -14459,7 +14539,7 @@ paths:
                           foo = any.unpack(Foo.class);
                         }
 
-                     Example 3: Pack and unpack a message in Python.
+                    Example 3: Pack and unpack a message in Python.
 
                         foo = Foo(...)
                         any = Any()
@@ -14469,13 +14549,16 @@ paths:
                           any.Unpack(foo)
                           ...
 
-                     Example 4: Pack and unpack a message in Go
+                    Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := ptypes.MarshalAny(foo)
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
                          ...
                          foo := &pb.Foo{}
-                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         if err := any.UnmarshalTo(foo); err != nil {
                            ...
                          }
 
@@ -14497,7 +14580,6 @@ paths:
 
                     JSON
 
-                    ====
 
                     The JSON representation of an `Any` value uses the regular
 
@@ -14595,7 +14677,7 @@ paths:
                 title: Params contains the parameters for the fees module
             title: QueryParamsResponse is the response type for the Query/Params RPC
         default:
-          description: An unexpected error response
+          description: An unexpected error response.
           schema:
             type: object
             properties:
@@ -14618,7 +14700,7 @@ paths:
                       format: byte
       tags:
         - Query
-  '/desmos/supply/v1/circulating/{denom}':
+  /desmos/supply/v1/circulating/{denom}:
     get:
       summary: >-
         Circulating queries the amount of tokens circulating in the market of
@@ -14640,7 +14722,7 @@ paths:
 
               method
         default:
-          description: An unexpected error response
+          description: An unexpected error response.
           schema:
             type: object
             properties:
@@ -14753,7 +14835,7 @@ paths:
                           foo = any.unpack(Foo.class);
                         }
 
-                     Example 3: Pack and unpack a message in Python.
+                    Example 3: Pack and unpack a message in Python.
 
                         foo = Foo(...)
                         any = Any()
@@ -14763,13 +14845,16 @@ paths:
                           any.Unpack(foo)
                           ...
 
-                     Example 4: Pack and unpack a message in Go
+                    Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := ptypes.MarshalAny(foo)
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
                          ...
                          foo := &pb.Foo{}
-                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         if err := any.UnmarshalTo(foo); err != nil {
                            ...
                          }
 
@@ -14791,7 +14876,6 @@ paths:
 
                     JSON
 
-                    ====
 
                     The JSON representation of an `Any` value uses the regular
 
@@ -14846,7 +14930,7 @@ paths:
           format: uint64
       tags:
         - Query
-  '/desmos/supply/v1/total/{denom}':
+  /desmos/supply/v1/total/{denom}:
     get:
       summary: Total queries the total supply of the given denom
       operationId: Total
@@ -14862,7 +14946,7 @@ paths:
               QueryTotalResponse is the response type for the Query/Total RPC
               method
         default:
-          description: An unexpected error response
+          description: An unexpected error response.
           schema:
             type: object
             properties:
@@ -14975,7 +15059,7 @@ paths:
                           foo = any.unpack(Foo.class);
                         }
 
-                     Example 3: Pack and unpack a message in Python.
+                    Example 3: Pack and unpack a message in Python.
 
                         foo = Foo(...)
                         any = Any()
@@ -14985,13 +15069,16 @@ paths:
                           any.Unpack(foo)
                           ...
 
-                     Example 4: Pack and unpack a message in Go
+                    Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := ptypes.MarshalAny(foo)
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
                          ...
                          foo := &pb.Foo{}
-                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         if err := any.UnmarshalTo(foo); err != nil {
                            ...
                          }
 
@@ -15013,7 +15100,6 @@ paths:
 
                     JSON
 
-                    ====
 
                     The JSON representation of an `Any` value uses the regular
 
@@ -15096,7 +15182,6 @@ definitions:
           If left empty it will default to a value to be set by each app.
       count_total:
         type: boolean
-        format: boolean
         description: >-
           count_total is set to true  to indicate that the result set should
           include
@@ -15109,7 +15194,6 @@ definitions:
           is set.
       reverse:
         type: boolean
-        format: boolean
         description: >-
           reverse is set to true if results are to be returned in the descending
           order.
@@ -15130,9 +15214,10 @@ definitions:
       next_key:
         type: string
         format: byte
-        title: |-
+        description: |-
           next_key is the key to be passed to PageRequest.key to
-          query the next page most efficiently
+          query the next page most efficiently. It will be empty if
+          there are no more results.
       total:
         type: string
         format: uint64
@@ -15178,10 +15263,10 @@ definitions:
         properties:
           application:
             type: string
-            title: 'The application name (eg. Twitter, GitHub, etc)'
+            title: The application name (eg. Twitter, GitHub, etc)
           username:
             type: string
-            title: 'Username on the application (eg. Twitter tag, GitHub profile, etc)'
+            title: Username on the application (eg. Twitter tag, GitHub profile, etc)
       state:
         title: State of the link
         type: string
@@ -15395,7 +15480,7 @@ definitions:
                 foo = any.unpack(Foo.class);
               }
 
-           Example 3: Pack and unpack a message in Python.
+          Example 3: Pack and unpack a message in Python.
 
               foo = Foo(...)
               any = Any()
@@ -15405,13 +15490,16 @@ definitions:
                 any.Unpack(foo)
                 ...
 
-           Example 4: Pack and unpack a message in Go
+          Example 4: Pack and unpack a message in Go
 
                foo := &pb.Foo{...}
-               any, err := ptypes.MarshalAny(foo)
+               any, err := anypb.New(foo)
+               if err != nil {
+                 ...
+               }
                ...
                foo := &pb.Foo{}
-               if err := ptypes.UnmarshalAny(any, foo); err != nil {
+               if err := any.UnmarshalTo(foo); err != nil {
                  ...
                }
 
@@ -15429,7 +15517,6 @@ definitions:
 
           JSON
 
-          ====
 
           The JSON representation of an `Any` value uses the regular
 
@@ -15567,7 +15654,7 @@ definitions:
                     foo = any.unpack(Foo.class);
                   }
 
-               Example 3: Pack and unpack a message in Python.
+              Example 3: Pack and unpack a message in Python.
 
                   foo = Foo(...)
                   any = Any()
@@ -15577,13 +15664,16 @@ definitions:
                     any.Unpack(foo)
                     ...
 
-               Example 4: Pack and unpack a message in Go
+              Example 4: Pack and unpack a message in Go
 
                    foo := &pb.Foo{...}
-                   any, err := ptypes.MarshalAny(foo)
+                   any, err := anypb.New(foo)
+                   if err != nil {
+                     ...
+                   }
                    ...
                    foo := &pb.Foo{}
-                   if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                   if err := any.UnmarshalTo(foo); err != nil {
                      ...
                    }
 
@@ -15602,7 +15692,6 @@ definitions:
 
               JSON
 
-              ====
 
               The JSON representation of an `Any` value uses the regular
 
@@ -15737,7 +15826,7 @@ definitions:
                     foo = any.unpack(Foo.class);
                   }
 
-               Example 3: Pack and unpack a message in Python.
+              Example 3: Pack and unpack a message in Python.
 
                   foo = Foo(...)
                   any = Any()
@@ -15747,13 +15836,16 @@ definitions:
                     any.Unpack(foo)
                     ...
 
-               Example 4: Pack and unpack a message in Go
+              Example 4: Pack and unpack a message in Go
 
                    foo := &pb.Foo{...}
-                   any, err := ptypes.MarshalAny(foo)
+                   any, err := anypb.New(foo)
+                   if err != nil {
+                     ...
+                   }
                    ...
                    foo := &pb.Foo{}
-                   if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                   if err := any.UnmarshalTo(foo); err != nil {
                      ...
                    }
 
@@ -15772,7 +15864,6 @@ definitions:
 
               JSON
 
-              ====
 
               The JSON representation of an `Any` value uses the regular
 
@@ -15869,10 +15960,10 @@ definitions:
     properties:
       application:
         type: string
-        title: 'The application name (eg. Twitter, GitHub, etc)'
+        title: The application name (eg. Twitter, GitHub, etc)
       username:
         type: string
-        title: 'Username on the application (eg. Twitter tag, GitHub profile, etc)'
+        title: Username on the application (eg. Twitter tag, GitHub profile, etc)
     title: |-
       Data contains the data associated to a specific user of a
       generic centralized application
@@ -16204,7 +16295,7 @@ definitions:
                 foo = any.unpack(Foo.class);
               }
 
-           Example 3: Pack and unpack a message in Python.
+          Example 3: Pack and unpack a message in Python.
 
               foo = Foo(...)
               any = Any()
@@ -16214,13 +16305,16 @@ definitions:
                 any.Unpack(foo)
                 ...
 
-           Example 4: Pack and unpack a message in Go
+          Example 4: Pack and unpack a message in Go
 
                foo := &pb.Foo{...}
-               any, err := ptypes.MarshalAny(foo)
+               any, err := anypb.New(foo)
+               if err != nil {
+                 ...
+               }
                ...
                foo := &pb.Foo{}
-               if err := ptypes.UnmarshalAny(any, foo); err != nil {
+               if err := any.UnmarshalTo(foo); err != nil {
                  ...
                }
 
@@ -16238,7 +16332,6 @@ definitions:
 
           JSON
 
-          ====
 
           The JSON representation of an `Any` value uses the regular
 
@@ -16368,7 +16461,7 @@ definitions:
                 foo = any.unpack(Foo.class);
               }
 
-           Example 3: Pack and unpack a message in Python.
+          Example 3: Pack and unpack a message in Python.
 
               foo = Foo(...)
               any = Any()
@@ -16378,13 +16471,16 @@ definitions:
                 any.Unpack(foo)
                 ...
 
-           Example 4: Pack and unpack a message in Go
+          Example 4: Pack and unpack a message in Go
 
                foo := &pb.Foo{...}
-               any, err := ptypes.MarshalAny(foo)
+               any, err := anypb.New(foo)
+               if err != nil {
+                 ...
+               }
                ...
                foo := &pb.Foo{}
-               if err := ptypes.UnmarshalAny(any, foo); err != nil {
+               if err := any.UnmarshalTo(foo); err != nil {
                  ...
                }
 
@@ -16402,7 +16498,6 @@ definitions:
 
           JSON
 
-          ====
 
           The JSON representation of an `Any` value uses the regular
 
@@ -16460,7 +16555,7 @@ definitions:
             properties:
               application:
                 type: string
-                title: 'The application name (eg. Twitter, GitHub, etc)'
+                title: The application name (eg. Twitter, GitHub, etc)
               username:
                 type: string
                 title: >-
@@ -16582,9 +16677,10 @@ definitions:
           next_key:
             type: string
             format: byte
-            title: |-
+            description: |-
               next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently
+              query the next page most efficiently. It will be empty if
+              there are no more results.
           total:
             type: string
             format: uint64
@@ -16635,7 +16731,7 @@ definitions:
               properties:
                 application:
                   type: string
-                  title: 'The application name (eg. Twitter, GitHub, etc)'
+                  title: The application name (eg. Twitter, GitHub, etc)
                 username:
                   type: string
                   title: >-
@@ -16738,9 +16834,10 @@ definitions:
           next_key:
             type: string
             format: byte
-            title: |-
+            description: |-
               next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently
+              query the next page most efficiently. It will be empty if
+              there are no more results.
           total:
             type: string
             format: uint64
@@ -16785,9 +16882,10 @@ definitions:
           next_key:
             type: string
             format: byte
-            title: |-
+            description: |-
               next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently
+              query the next page most efficiently. It will be empty if
+              there are no more results.
           total:
             type: string
             format: uint64
@@ -16927,7 +17025,7 @@ definitions:
                       foo = any.unpack(Foo.class);
                     }
 
-                 Example 3: Pack and unpack a message in Python.
+                Example 3: Pack and unpack a message in Python.
 
                     foo = Foo(...)
                     any = Any()
@@ -16937,13 +17035,16 @@ definitions:
                       any.Unpack(foo)
                       ...
 
-                 Example 4: Pack and unpack a message in Go
+                Example 4: Pack and unpack a message in Go
 
                      foo := &pb.Foo{...}
-                     any, err := ptypes.MarshalAny(foo)
+                     any, err := anypb.New(foo)
+                     if err != nil {
+                       ...
+                     }
                      ...
                      foo := &pb.Foo{}
-                     if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                     if err := any.UnmarshalTo(foo); err != nil {
                        ...
                      }
 
@@ -16964,7 +17065,6 @@ definitions:
 
                 JSON
 
-                ====
 
                 The JSON representation of an `Any` value uses the regular
 
@@ -17106,7 +17206,7 @@ definitions:
                           foo = any.unpack(Foo.class);
                         }
 
-                     Example 3: Pack and unpack a message in Python.
+                    Example 3: Pack and unpack a message in Python.
 
                         foo = Foo(...)
                         any = Any()
@@ -17116,13 +17216,16 @@ definitions:
                           any.Unpack(foo)
                           ...
 
-                     Example 4: Pack and unpack a message in Go
+                    Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := ptypes.MarshalAny(foo)
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
                          ...
                          foo := &pb.Foo{}
-                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         if err := any.UnmarshalTo(foo); err != nil {
                            ...
                          }
 
@@ -17144,7 +17247,6 @@ definitions:
 
                     JSON
 
-                    ====
 
                     The JSON representation of an `Any` value uses the regular
 
@@ -17286,7 +17388,7 @@ definitions:
                           foo = any.unpack(Foo.class);
                         }
 
-                     Example 3: Pack and unpack a message in Python.
+                    Example 3: Pack and unpack a message in Python.
 
                         foo = Foo(...)
                         any = Any()
@@ -17296,13 +17398,16 @@ definitions:
                           any.Unpack(foo)
                           ...
 
-                     Example 4: Pack and unpack a message in Go
+                    Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := ptypes.MarshalAny(foo)
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
                          ...
                          foo := &pb.Foo{}
-                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         if err := any.UnmarshalTo(foo); err != nil {
                            ...
                          }
 
@@ -17324,7 +17429,6 @@ definitions:
 
                     JSON
 
-                    ====
 
                     The JSON representation of an `Any` value uses the regular
 
@@ -17398,9 +17502,10 @@ definitions:
           next_key:
             type: string
             format: byte
-            title: |-
+            description: |-
               next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently
+              query the next page most efficiently. It will be empty if
+              there are no more results.
           total:
             type: string
             format: uint64
@@ -17530,7 +17635,7 @@ definitions:
                       foo = any.unpack(Foo.class);
                     }
 
-                 Example 3: Pack and unpack a message in Python.
+                Example 3: Pack and unpack a message in Python.
 
                     foo = Foo(...)
                     any = Any()
@@ -17540,13 +17645,16 @@ definitions:
                       any.Unpack(foo)
                       ...
 
-                 Example 4: Pack and unpack a message in Go
+                Example 4: Pack and unpack a message in Go
 
                      foo := &pb.Foo{...}
-                     any, err := ptypes.MarshalAny(foo)
+                     any, err := anypb.New(foo)
+                     if err != nil {
+                       ...
+                     }
                      ...
                      foo := &pb.Foo{}
-                     if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                     if err := any.UnmarshalTo(foo); err != nil {
                        ...
                      }
 
@@ -17567,7 +17675,6 @@ definitions:
 
                 JSON
 
-                ====
 
                 The JSON representation of an `Any` value uses the regular
 
@@ -17709,7 +17816,7 @@ definitions:
                           foo = any.unpack(Foo.class);
                         }
 
-                     Example 3: Pack and unpack a message in Python.
+                    Example 3: Pack and unpack a message in Python.
 
                         foo = Foo(...)
                         any = Any()
@@ -17719,13 +17826,16 @@ definitions:
                           any.Unpack(foo)
                           ...
 
-                     Example 4: Pack and unpack a message in Go
+                    Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := ptypes.MarshalAny(foo)
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
                          ...
                          foo := &pb.Foo{}
-                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         if err := any.UnmarshalTo(foo); err != nil {
                            ...
                          }
 
@@ -17747,7 +17857,6 @@ definitions:
 
                     JSON
 
-                    ====
 
                     The JSON representation of an `Any` value uses the regular
 
@@ -17889,7 +17998,7 @@ definitions:
                           foo = any.unpack(Foo.class);
                         }
 
-                     Example 3: Pack and unpack a message in Python.
+                    Example 3: Pack and unpack a message in Python.
 
                         foo = Foo(...)
                         any = Any()
@@ -17899,13 +18008,16 @@ definitions:
                           any.Unpack(foo)
                           ...
 
-                     Example 4: Pack and unpack a message in Go
+                    Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := ptypes.MarshalAny(foo)
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
                          ...
                          foo := &pb.Foo{}
-                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         if err := any.UnmarshalTo(foo); err != nil {
                            ...
                          }
 
@@ -17927,7 +18039,6 @@ definitions:
 
                     JSON
 
-                    ====
 
                     The JSON representation of an `Any` value uses the regular
 
@@ -18005,9 +18116,10 @@ definitions:
           next_key:
             type: string
             format: byte
-            title: |-
+            description: |-
               next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently
+              query the next page most efficiently. It will be empty if
+              there are no more results.
           total:
             type: string
             format: uint64
@@ -18068,9 +18180,10 @@ definitions:
           next_key:
             type: string
             format: byte
-            title: |-
+            description: |-
               next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently
+              query the next page most efficiently. It will be empty if
+              there are no more results.
           total:
             type: string
             format: uint64
@@ -18300,7 +18413,7 @@ definitions:
                 foo = any.unpack(Foo.class);
               }
 
-           Example 3: Pack and unpack a message in Python.
+          Example 3: Pack and unpack a message in Python.
 
               foo = Foo(...)
               any = Any()
@@ -18310,13 +18423,16 @@ definitions:
                 any.Unpack(foo)
                 ...
 
-           Example 4: Pack and unpack a message in Go
+          Example 4: Pack and unpack a message in Go
 
                foo := &pb.Foo{...}
-               any, err := ptypes.MarshalAny(foo)
+               any, err := anypb.New(foo)
+               if err != nil {
+                 ...
+               }
                ...
                foo := &pb.Foo{}
-               if err := ptypes.UnmarshalAny(any, foo); err != nil {
+               if err := any.UnmarshalTo(foo); err != nil {
                  ...
                }
 
@@ -18334,7 +18450,6 @@ definitions:
 
           JSON
 
-          ====
 
           The JSON representation of an `Any` value uses the regular
 
@@ -18500,7 +18615,7 @@ definitions:
             foo = any.unpack(Foo.class);
           }
 
-       Example 3: Pack and unpack a message in Python.
+      Example 3: Pack and unpack a message in Python.
 
           foo = Foo(...)
           any = Any()
@@ -18510,13 +18625,16 @@ definitions:
             any.Unpack(foo)
             ...
 
-       Example 4: Pack and unpack a message in Go
+      Example 4: Pack and unpack a message in Go
 
            foo := &pb.Foo{...}
-           any, err := ptypes.MarshalAny(foo)
+           any, err := anypb.New(foo)
+           if err != nil {
+             ...
+           }
            ...
            foo := &pb.Foo{}
-           if err := ptypes.UnmarshalAny(any, foo); err != nil {
+           if err := any.UnmarshalTo(foo); err != nil {
              ...
            }
 
@@ -18534,7 +18652,6 @@ definitions:
 
       JSON
 
-      ====
 
       The JSON representation of an `Any` value uses the regular
 
@@ -18674,7 +18791,7 @@ definitions:
                   foo = any.unpack(Foo.class);
                 }
 
-             Example 3: Pack and unpack a message in Python.
+            Example 3: Pack and unpack a message in Python.
 
                 foo = Foo(...)
                 any = Any()
@@ -18684,13 +18801,16 @@ definitions:
                   any.Unpack(foo)
                   ...
 
-             Example 4: Pack and unpack a message in Go
+            Example 4: Pack and unpack a message in Go
 
                  foo := &pb.Foo{...}
-                 any, err := ptypes.MarshalAny(foo)
+                 any, err := anypb.New(foo)
+                 if err != nil {
+                   ...
+                 }
                  ...
                  foo := &pb.Foo{}
-                 if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                 if err := any.UnmarshalTo(foo); err != nil {
                    ...
                  }
 
@@ -18708,7 +18828,6 @@ definitions:
 
             JSON
 
-            ====
 
             The JSON representation of an `Any` value uses the regular
 
@@ -18778,9 +18897,10 @@ definitions:
           next_key:
             type: string
             format: byte
-            title: |-
+            description: |-
               next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently
+              query the next page most efficiently. It will be empty if
+              there are no more results.
           total:
             type: string
             format: uint64
@@ -18833,9 +18953,10 @@ definitions:
           next_key:
             type: string
             format: byte
-            title: |-
+            description: |-
               next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently
+              query the next page most efficiently. It will be empty if
+              there are no more results.
           total:
             type: string
             format: uint64
@@ -19003,7 +19124,7 @@ definitions:
                 foo = any.unpack(Foo.class);
               }
 
-           Example 3: Pack and unpack a message in Python.
+          Example 3: Pack and unpack a message in Python.
 
               foo = Foo(...)
               any = Any()
@@ -19013,13 +19134,16 @@ definitions:
                 any.Unpack(foo)
                 ...
 
-           Example 4: Pack and unpack a message in Go
+          Example 4: Pack and unpack a message in Go
 
                foo := &pb.Foo{...}
-               any, err := ptypes.MarshalAny(foo)
+               any, err := anypb.New(foo)
+               if err != nil {
+                 ...
+               }
                ...
                foo := &pb.Foo{}
-               if err := ptypes.UnmarshalAny(any, foo); err != nil {
+               if err := any.UnmarshalTo(foo); err != nil {
                  ...
                }
 
@@ -19037,7 +19161,6 @@ definitions:
 
           JSON
 
-          ====
 
           The JSON representation of an `Any` value uses the regular
 
@@ -19163,7 +19286,7 @@ definitions:
                 foo = any.unpack(Foo.class);
               }
 
-           Example 3: Pack and unpack a message in Python.
+          Example 3: Pack and unpack a message in Python.
 
               foo = Foo(...)
               any = Any()
@@ -19173,13 +19296,16 @@ definitions:
                 any.Unpack(foo)
                 ...
 
-           Example 4: Pack and unpack a message in Go
+          Example 4: Pack and unpack a message in Go
 
                foo := &pb.Foo{...}
-               any, err := ptypes.MarshalAny(foo)
+               any, err := anypb.New(foo)
+               if err != nil {
+                 ...
+               }
                ...
                foo := &pb.Foo{}
-               if err := ptypes.UnmarshalAny(any, foo); err != nil {
+               if err := any.UnmarshalTo(foo); err != nil {
                  ...
                }
 
@@ -19197,7 +19323,6 @@ definitions:
 
           JSON
 
-          ====
 
           The JSON representation of an `Any` value uses the regular
 
@@ -19411,7 +19536,7 @@ definitions:
                       foo = any.unpack(Foo.class);
                     }
 
-                 Example 3: Pack and unpack a message in Python.
+                Example 3: Pack and unpack a message in Python.
 
                     foo = Foo(...)
                     any = Any()
@@ -19421,13 +19546,16 @@ definitions:
                       any.Unpack(foo)
                       ...
 
-                 Example 4: Pack and unpack a message in Go
+                Example 4: Pack and unpack a message in Go
 
                      foo := &pb.Foo{...}
-                     any, err := ptypes.MarshalAny(foo)
+                     any, err := anypb.New(foo)
+                     if err != nil {
+                       ...
+                     }
                      ...
                      foo := &pb.Foo{}
-                     if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                     if err := any.UnmarshalTo(foo); err != nil {
                        ...
                      }
 
@@ -19448,7 +19576,6 @@ definitions:
 
                 JSON
 
-                ====
 
                 The JSON representation of an `Any` value uses the regular
 
@@ -19581,7 +19708,7 @@ definitions:
                       foo = any.unpack(Foo.class);
                     }
 
-                 Example 3: Pack and unpack a message in Python.
+                Example 3: Pack and unpack a message in Python.
 
                     foo = Foo(...)
                     any = Any()
@@ -19591,13 +19718,16 @@ definitions:
                       any.Unpack(foo)
                       ...
 
-                 Example 4: Pack and unpack a message in Go
+                Example 4: Pack and unpack a message in Go
 
                      foo := &pb.Foo{...}
-                     any, err := ptypes.MarshalAny(foo)
+                     any, err := anypb.New(foo)
+                     if err != nil {
+                       ...
+                     }
                      ...
                      foo := &pb.Foo{}
-                     if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                     if err := any.UnmarshalTo(foo); err != nil {
                        ...
                      }
 
@@ -19618,7 +19748,6 @@ definitions:
 
                 JSON
 
-                ====
 
                 The JSON representation of an `Any` value uses the regular
 
@@ -19663,9 +19792,10 @@ definitions:
           next_key:
             type: string
             format: byte
-            title: |-
+            description: |-
               next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently
+              query the next page most efficiently. It will be empty if
+              there are no more results.
           total:
             type: string
             format: uint64
@@ -19745,9 +19875,10 @@ definitions:
           next_key:
             type: string
             format: byte
-            title: |-
+            description: |-
               next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently
+              query the next page most efficiently. It will be empty if
+              there are no more results.
           total:
             type: string
             format: uint64
@@ -19842,9 +19973,10 @@ definitions:
           next_key:
             type: string
             format: byte
-            title: |-
+            description: |-
               next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently
+              query the next page most efficiently. It will be empty if
+              there are no more results.
           total:
             type: string
             format: uint64
@@ -19980,7 +20112,7 @@ definitions:
                       foo = any.unpack(Foo.class);
                     }
 
-                 Example 3: Pack and unpack a message in Python.
+                Example 3: Pack and unpack a message in Python.
 
                     foo = Foo(...)
                     any = Any()
@@ -19990,13 +20122,16 @@ definitions:
                       any.Unpack(foo)
                       ...
 
-                 Example 4: Pack and unpack a message in Go
+                Example 4: Pack and unpack a message in Go
 
                      foo := &pb.Foo{...}
-                     any, err := ptypes.MarshalAny(foo)
+                     any, err := anypb.New(foo)
+                     if err != nil {
+                       ...
+                     }
                      ...
                      foo := &pb.Foo{}
-                     if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                     if err := any.UnmarshalTo(foo); err != nil {
                        ...
                      }
 
@@ -20017,7 +20152,6 @@ definitions:
 
                 JSON
 
-                ====
 
                 The JSON representation of an `Any` value uses the regular
 
@@ -20150,7 +20284,7 @@ definitions:
                       foo = any.unpack(Foo.class);
                     }
 
-                 Example 3: Pack and unpack a message in Python.
+                Example 3: Pack and unpack a message in Python.
 
                     foo = Foo(...)
                     any = Any()
@@ -20160,13 +20294,16 @@ definitions:
                       any.Unpack(foo)
                       ...
 
-                 Example 4: Pack and unpack a message in Go
+                Example 4: Pack and unpack a message in Go
 
                      foo := &pb.Foo{...}
-                     any, err := ptypes.MarshalAny(foo)
+                     any, err := anypb.New(foo)
+                     if err != nil {
+                       ...
+                     }
                      ...
                      foo := &pb.Foo{}
-                     if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                     if err := any.UnmarshalTo(foo); err != nil {
                        ...
                      }
 
@@ -20187,7 +20324,6 @@ definitions:
 
                 JSON
 
-                ====
 
                 The JSON representation of an `Any` value uses the regular
 
@@ -20232,9 +20368,10 @@ definitions:
           next_key:
             type: string
             format: byte
-            title: |-
+            description: |-
               next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently
+              query the next page most efficiently. It will be empty if
+              there are no more results.
           total:
             type: string
             format: uint64
@@ -20270,9 +20407,10 @@ definitions:
           next_key:
             type: string
             format: byte
-            title: |-
+            description: |-
               next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently
+              query the next page most efficiently. It will be empty if
+              there are no more results.
           total:
             type: string
             format: uint64
@@ -20367,9 +20505,10 @@ definitions:
           next_key:
             type: string
             format: byte
-            title: |-
+            description: |-
               next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently
+              query the next page most efficiently. It will be empty if
+              there are no more results.
           total:
             type: string
             format: uint64
@@ -20630,7 +20769,7 @@ definitions:
                 foo = any.unpack(Foo.class);
               }
 
-           Example 3: Pack and unpack a message in Python.
+          Example 3: Pack and unpack a message in Python.
 
               foo = Foo(...)
               any = Any()
@@ -20640,13 +20779,16 @@ definitions:
                 any.Unpack(foo)
                 ...
 
-           Example 4: Pack and unpack a message in Go
+          Example 4: Pack and unpack a message in Go
 
                foo := &pb.Foo{...}
-               any, err := ptypes.MarshalAny(foo)
+               any, err := anypb.New(foo)
+               if err != nil {
+                 ...
+               }
                ...
                foo := &pb.Foo{}
-               if err := ptypes.UnmarshalAny(any, foo); err != nil {
+               if err := any.UnmarshalTo(foo); err != nil {
                  ...
                }
 
@@ -20664,7 +20806,6 @@ definitions:
 
           JSON
 
-          ====
 
           The JSON representation of an `Any` value uses the regular
 
@@ -20716,7 +20857,7 @@ definitions:
               title: Index of the character inside the text at which the tag ends
             tag:
               type: string
-              title: 'Tag reference (user address, hashtag value, etc)'
+              title: Tag reference (user address, hashtag value, etc)
           title: TextTag represents a tag within the post text
         title: Hashtags represent inside the post text
       mentions:
@@ -20734,7 +20875,7 @@ definitions:
               title: Index of the character inside the text at which the tag ends
             tag:
               type: string
-              title: 'Tag reference (user address, hashtag value, etc)'
+              title: Tag reference (user address, hashtag value, etc)
           title: TextTag represents a tag within the post text
         title: Mentions present inside the post text
       urls:
@@ -20809,7 +20950,7 @@ definitions:
                   title: Index of the character inside the text at which the tag ends
                 tag:
                   type: string
-                  title: 'Tag reference (user address, hashtag value, etc)'
+                  title: Tag reference (user address, hashtag value, etc)
               title: TextTag represents a tag within the post text
             title: Hashtags represent inside the post text
           mentions:
@@ -20829,7 +20970,7 @@ definitions:
                   title: Index of the character inside the text at which the tag ends
                 tag:
                   type: string
-                  title: 'Tag reference (user address, hashtag value, etc)'
+                  title: Tag reference (user address, hashtag value, etc)
               title: TextTag represents a tag within the post text
             title: Mentions present inside the post text
           urls:
@@ -20859,7 +21000,7 @@ definitions:
         type: array
         items:
           type: string
-        title: 'Tags related to this post, useful for categorization'
+        title: Tags related to this post, useful for categorization
       author:
         type: string
         title: Author of the post
@@ -20899,7 +21040,7 @@ definitions:
 
                 with the type set to TYPE_QUOTE
           title: PostReference contains the details of a post reference
-        title: 'A list this posts references (either as a reply, repost or quote)'
+        title: A list this posts references (either as a reply, repost or quote)
       reply_settings:
         title: Reply settings of this post
         type: string
@@ -21019,9 +21160,10 @@ definitions:
           next_key:
             type: string
             format: byte
-            title: |-
+            description: |-
               next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently
+              query the next page most efficiently. It will be empty if
+              there are no more results.
           total:
             type: string
             format: uint64
@@ -21166,7 +21308,7 @@ definitions:
                       foo = any.unpack(Foo.class);
                     }
 
-                 Example 3: Pack and unpack a message in Python.
+                Example 3: Pack and unpack a message in Python.
 
                     foo = Foo(...)
                     any = Any()
@@ -21176,13 +21318,16 @@ definitions:
                       any.Unpack(foo)
                       ...
 
-                 Example 4: Pack and unpack a message in Go
+                Example 4: Pack and unpack a message in Go
 
                      foo := &pb.Foo{...}
-                     any, err := ptypes.MarshalAny(foo)
+                     any, err := anypb.New(foo)
+                     if err != nil {
+                       ...
+                     }
                      ...
                      foo := &pb.Foo{}
-                     if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                     if err := any.UnmarshalTo(foo); err != nil {
                        ...
                      }
 
@@ -21203,7 +21348,6 @@ definitions:
 
                 JSON
 
-                ====
 
                 The JSON representation of an `Any` value uses the regular
 
@@ -21244,9 +21388,10 @@ definitions:
           next_key:
             type: string
             format: byte
-            title: |-
+            description: |-
               next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently
+              query the next page most efficiently. It will be empty if
+              there are no more results.
           total:
             type: string
             format: uint64
@@ -21313,7 +21458,7 @@ definitions:
                         ends
                     tag:
                       type: string
-                      title: 'Tag reference (user address, hashtag value, etc)'
+                      title: Tag reference (user address, hashtag value, etc)
                   title: TextTag represents a tag within the post text
                 title: Hashtags represent inside the post text
               mentions:
@@ -21335,7 +21480,7 @@ definitions:
                         ends
                     tag:
                       type: string
-                      title: 'Tag reference (user address, hashtag value, etc)'
+                      title: Tag reference (user address, hashtag value, etc)
                   title: TextTag represents a tag within the post text
                 title: Mentions present inside the post text
               urls:
@@ -21367,7 +21512,7 @@ definitions:
             type: array
             items:
               type: string
-            title: 'Tags related to this post, useful for categorization'
+            title: Tags related to this post, useful for categorization
           author:
             type: string
             title: Author of the post
@@ -21407,7 +21552,7 @@ definitions:
 
                     with the type set to TYPE_QUOTE
               title: PostReference contains the details of a post reference
-            title: 'A list this posts references (either as a reply, repost or quote)'
+            title: A list this posts references (either as a reply, repost or quote)
           reply_settings:
             title: Reply settings of this post
             type: string
@@ -21483,7 +21628,7 @@ definitions:
                           tag ends
                       tag:
                         type: string
-                        title: 'Tag reference (user address, hashtag value, etc)'
+                        title: Tag reference (user address, hashtag value, etc)
                     title: TextTag represents a tag within the post text
                   title: Hashtags represent inside the post text
                 mentions:
@@ -21505,7 +21650,7 @@ definitions:
                           tag ends
                       tag:
                         type: string
-                        title: 'Tag reference (user address, hashtag value, etc)'
+                        title: Tag reference (user address, hashtag value, etc)
                     title: TextTag represents a tag within the post text
                   title: Mentions present inside the post text
                 urls:
@@ -21539,7 +21684,7 @@ definitions:
               type: array
               items:
                 type: string
-              title: 'Tags related to this post, useful for categorization'
+              title: Tags related to this post, useful for categorization
             author:
               type: string
               title: Author of the post
@@ -21613,9 +21758,10 @@ definitions:
           next_key:
             type: string
             format: byte
-            title: |-
+            description: |-
               next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently
+              query the next page most efficiently. It will be empty if
+              there are no more results.
           total:
             type: string
             format: uint64
@@ -21686,7 +21832,7 @@ definitions:
                           tag ends
                       tag:
                         type: string
-                        title: 'Tag reference (user address, hashtag value, etc)'
+                        title: Tag reference (user address, hashtag value, etc)
                     title: TextTag represents a tag within the post text
                   title: Hashtags represent inside the post text
                 mentions:
@@ -21708,7 +21854,7 @@ definitions:
                           tag ends
                       tag:
                         type: string
-                        title: 'Tag reference (user address, hashtag value, etc)'
+                        title: Tag reference (user address, hashtag value, etc)
                     title: TextTag represents a tag within the post text
                   title: Mentions present inside the post text
                 urls:
@@ -21742,7 +21888,7 @@ definitions:
               type: array
               items:
                 type: string
-              title: 'Tags related to this post, useful for categorization'
+              title: Tags related to this post, useful for categorization
             author:
               type: string
               title: Author of the post
@@ -21816,9 +21962,10 @@ definitions:
           next_key:
             type: string
             format: byte
-            title: |-
+            description: |-
               next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently
+              query the next page most efficiently. It will be empty if
+              there are no more results.
           total:
             type: string
             format: uint64
@@ -21869,7 +22016,7 @@ definitions:
         title: Index of the character inside the text at which the tag ends
       tag:
         type: string
-        title: 'Tag reference (user address, hashtag value, etc)'
+        title: Tag reference (user address, hashtag value, etc)
     title: TextTag represents a tag within the post text
   desmos.posts.v3.Url:
     type: object
@@ -21921,7 +22068,6 @@ definitions:
     properties:
       enabled:
         type: boolean
-        format: boolean
         title: Whether FreeTextValue reactions should be enabled
       max_length:
         type: integer
@@ -22048,7 +22194,7 @@ definitions:
                     foo = any.unpack(Foo.class);
                   }
 
-               Example 3: Pack and unpack a message in Python.
+              Example 3: Pack and unpack a message in Python.
 
                   foo = Foo(...)
                   any = Any()
@@ -22058,13 +22204,16 @@ definitions:
                     any.Unpack(foo)
                     ...
 
-               Example 4: Pack and unpack a message in Go
+              Example 4: Pack and unpack a message in Go
 
                    foo := &pb.Foo{...}
-                   any, err := ptypes.MarshalAny(foo)
+                   any, err := anypb.New(foo)
+                   if err != nil {
+                     ...
+                   }
                    ...
                    foo := &pb.Foo{}
-                   if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                   if err := any.UnmarshalTo(foo); err != nil {
                      ...
                    }
 
@@ -22083,7 +22232,6 @@ definitions:
 
               JSON
 
-              ====
 
               The JSON representation of an `Any` value uses the regular
 
@@ -22139,7 +22287,6 @@ definitions:
             properties:
               enabled:
                 type: boolean
-                format: boolean
                 title: Whether RegisteredReactionValue reactions should be enabled
           free_text:
             title: Params related to FreeTextValue reactions
@@ -22147,7 +22294,6 @@ definitions:
             properties:
               enabled:
                 type: boolean
-                format: boolean
                 title: Whether FreeTextValue reactions should be enabled
               max_length:
                 type: integer
@@ -22287,7 +22433,7 @@ definitions:
                       foo = any.unpack(Foo.class);
                     }
 
-                 Example 3: Pack and unpack a message in Python.
+                Example 3: Pack and unpack a message in Python.
 
                     foo = Foo(...)
                     any = Any()
@@ -22297,13 +22443,16 @@ definitions:
                       any.Unpack(foo)
                       ...
 
-                 Example 4: Pack and unpack a message in Go
+                Example 4: Pack and unpack a message in Go
 
                      foo := &pb.Foo{...}
-                     any, err := ptypes.MarshalAny(foo)
+                     any, err := anypb.New(foo)
+                     if err != nil {
+                       ...
+                     }
                      ...
                      foo := &pb.Foo{}
-                     if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                     if err := any.UnmarshalTo(foo); err != nil {
                        ...
                      }
 
@@ -22324,7 +22473,6 @@ definitions:
 
                 JSON
 
-                ====
 
                 The JSON representation of an `Any` value uses the regular
 
@@ -22367,9 +22515,10 @@ definitions:
           next_key:
             type: string
             format: byte
-            title: |-
+            description: |-
               next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently
+              query the next page most efficiently. It will be empty if
+              there are no more results.
           total:
             type: string
             format: uint64
@@ -22450,9 +22599,10 @@ definitions:
           next_key:
             type: string
             format: byte
-            title: |-
+            description: |-
               next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently
+              query the next page most efficiently. It will be empty if
+              there are no more results.
           total:
             type: string
             format: uint64
@@ -22580,7 +22730,7 @@ definitions:
                 foo = any.unpack(Foo.class);
               }
 
-           Example 3: Pack and unpack a message in Python.
+          Example 3: Pack and unpack a message in Python.
 
               foo = Foo(...)
               any = Any()
@@ -22590,13 +22740,16 @@ definitions:
                 any.Unpack(foo)
                 ...
 
-           Example 4: Pack and unpack a message in Go
+          Example 4: Pack and unpack a message in Go
 
                foo := &pb.Foo{...}
-               any, err := ptypes.MarshalAny(foo)
+               any, err := anypb.New(foo)
+               if err != nil {
+                 ...
+               }
                ...
                foo := &pb.Foo{}
-               if err := ptypes.UnmarshalAny(any, foo); err != nil {
+               if err := any.UnmarshalTo(foo); err != nil {
                  ...
                }
 
@@ -22614,7 +22767,6 @@ definitions:
 
           JSON
 
-          ====
 
           The JSON representation of an `Any` value uses the regular
 
@@ -22675,7 +22827,6 @@ definitions:
     properties:
       enabled:
         type: boolean
-        format: boolean
         title: Whether RegisteredReactionValue reactions should be enabled
     title: >-
       RegisteredReactionValueParams contains the params for
@@ -22695,7 +22846,6 @@ definitions:
         properties:
           enabled:
             type: boolean
-            format: boolean
             title: Whether RegisteredReactionValue reactions should be enabled
       free_text:
         title: Params related to FreeTextValue reactions
@@ -22703,7 +22853,6 @@ definitions:
         properties:
           enabled:
             type: boolean
-            format: boolean
             title: Whether FreeTextValue reactions should be enabled
           max_length:
             type: integer
@@ -22838,9 +22987,10 @@ definitions:
           next_key:
             type: string
             format: byte
-            title: |-
+            description: |-
               next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently
+              query the next page most efficiently. It will be empty if
+              there are no more results.
           total:
             type: string
             format: uint64
@@ -22981,7 +23131,7 @@ definitions:
                     foo = any.unpack(Foo.class);
                   }
 
-               Example 3: Pack and unpack a message in Python.
+              Example 3: Pack and unpack a message in Python.
 
                   foo = Foo(...)
                   any = Any()
@@ -22991,13 +23141,16 @@ definitions:
                     any.Unpack(foo)
                     ...
 
-               Example 4: Pack and unpack a message in Go
+              Example 4: Pack and unpack a message in Go
 
                    foo := &pb.Foo{...}
-                   any, err := ptypes.MarshalAny(foo)
+                   any, err := anypb.New(foo)
+                   if err != nil {
+                     ...
+                   }
                    ...
                    foo := &pb.Foo{}
-                   if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                   if err := any.UnmarshalTo(foo); err != nil {
                      ...
                    }
 
@@ -23016,7 +23169,6 @@ definitions:
 
               JSON
 
-              ====
 
               The JSON representation of an `Any` value uses the regular
 
@@ -23183,7 +23335,7 @@ definitions:
                       foo = any.unpack(Foo.class);
                     }
 
-                 Example 3: Pack and unpack a message in Python.
+                Example 3: Pack and unpack a message in Python.
 
                     foo = Foo(...)
                     any = Any()
@@ -23193,13 +23345,16 @@ definitions:
                       any.Unpack(foo)
                       ...
 
-                 Example 4: Pack and unpack a message in Go
+                Example 4: Pack and unpack a message in Go
 
                      foo := &pb.Foo{...}
-                     any, err := ptypes.MarshalAny(foo)
+                     any, err := anypb.New(foo)
+                     if err != nil {
+                       ...
+                     }
                      ...
                      foo := &pb.Foo{}
-                     if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                     if err := any.UnmarshalTo(foo); err != nil {
                        ...
                      }
 
@@ -23220,7 +23375,6 @@ definitions:
 
                 JSON
 
-                ====
 
                 The JSON representation of an `Any` value uses the regular
 
@@ -23265,9 +23419,10 @@ definitions:
           next_key:
             type: string
             format: byte
-            title: |-
+            description: |-
               next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently
+              query the next page most efficiently. It will be empty if
+              there are no more results.
           total:
             type: string
             format: uint64
@@ -23421,7 +23576,7 @@ definitions:
                 foo = any.unpack(Foo.class);
               }
 
-           Example 3: Pack and unpack a message in Python.
+          Example 3: Pack and unpack a message in Python.
 
               foo = Foo(...)
               any = Any()
@@ -23431,13 +23586,16 @@ definitions:
                 any.Unpack(foo)
                 ...
 
-           Example 4: Pack and unpack a message in Go
+          Example 4: Pack and unpack a message in Go
 
                foo := &pb.Foo{...}
-               any, err := ptypes.MarshalAny(foo)
+               any, err := anypb.New(foo)
+               if err != nil {
+                 ...
+               }
                ...
                foo := &pb.Foo{}
-               if err := ptypes.UnmarshalAny(any, foo); err != nil {
+               if err := any.UnmarshalTo(foo); err != nil {
                  ...
                }
 
@@ -23455,7 +23613,6 @@ definitions:
 
           JSON
 
-          ====
 
           The JSON representation of an `Any` value uses the regular
 

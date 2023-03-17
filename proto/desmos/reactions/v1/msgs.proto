@@ -52,7 +52,7 @@ message MsgAddReaction {
   // Value of the reaction
   google.protobuf.Any value = 3 [
     (gogoproto.moretags) = "yaml:\"value\"",
-    (cosmos_proto.accepts_interface) = "ReactionValue"
+    (cosmos_proto.accepts_interface) = "desmos.reactions.v1.ReactionValue"
   ];
 
   // User reacting to the post

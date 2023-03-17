@@ -21,12 +21,12 @@ message MsgGrantAllowance {
   string granter = 2 [ (gogoproto.moretags) = "yaml:\"granter\"" ];
   // Target being granted the allowance
   google.protobuf.Any grantee = 3 [
-    (cosmos_proto.accepts_interface) = "Grantee",
+    (cosmos_proto.accepts_interface) = "desmos.subspaces.v3.Grantee",
     (gogoproto.moretags) = "yaml:\"grantee\""
   ];
   // Allowance can be any allowance type that implements AllowanceI
   google.protobuf.Any allowance = 4 [
-    (cosmos_proto.accepts_interface) = "AllowanceI",
+    (cosmos_proto.accepts_interface) = "cosmos.feegrant.v1beta1.AllowanceI",
     (gogoproto.moretags) = "yaml:\"allowance\""
   ];
 }
@@ -51,7 +51,7 @@ message MsgRevokeAllowance {
 
   // Target being revoked the allowance
   google.protobuf.Any grantee = 3 [
-    (cosmos_proto.accepts_interface) = "Grantee",
+    (cosmos_proto.accepts_interface) = "desmos.subspaces.v3.Grantee",
     (gogoproto.moretags) = "yaml:\"grantee\""
   ];
 }

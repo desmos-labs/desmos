@@ -5,9 +5,9 @@ package types
 
 import (
 	fmt "fmt"
-	_ "github.com/gogo/protobuf/gogoproto"
-	proto "github.com/gogo/protobuf/proto"
-	github_com_gogo_protobuf_types "github.com/gogo/protobuf/types"
+	_ "github.com/cosmos/gogoproto/gogoproto"
+	proto "github.com/cosmos/gogoproto/proto"
+	github_com_cosmos_gogoproto_types "github.com/cosmos/gogoproto/types"
 	_ "google.golang.org/protobuf/types/known/timestamppb"
 	io "io"
 	math "math"
@@ -724,7 +724,7 @@ func (m *ActivePollData) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	n2, err2 := github_com_gogo_protobuf_types.StdTimeMarshalTo(m.EndDate, dAtA[i-github_com_gogo_protobuf_types.SizeOfStdTime(m.EndDate):])
+	n2, err2 := github_com_cosmos_gogoproto_types.StdTimeMarshalTo(m.EndDate, dAtA[i-github_com_cosmos_gogoproto_types.SizeOfStdTime(m.EndDate):])
 	if err2 != nil {
 		return 0, err2
 	}
@@ -856,7 +856,7 @@ func (m *ActivePollData) Size() (n int) {
 	if m.PollID != 0 {
 		n += 1 + sovGenesis(uint64(m.PollID))
 	}
-	l = github_com_gogo_protobuf_types.SizeOfStdTime(m.EndDate)
+	l = github_com_cosmos_gogoproto_types.SizeOfStdTime(m.EndDate)
 	n += 1 + l + sovGenesis(uint64(l))
 	return n
 }
@@ -1464,7 +1464,7 @@ func (m *ActivePollData) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if err := github_com_gogo_protobuf_types.StdTimeUnmarshal(&m.EndDate, dAtA[iNdEx:postIndex]); err != nil {
+			if err := github_com_cosmos_gogoproto_types.StdTimeUnmarshal(&m.EndDate, dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex

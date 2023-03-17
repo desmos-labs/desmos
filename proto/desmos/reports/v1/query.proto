@@ -51,7 +51,7 @@ message QueryReportsRequest {
   // (optional) Target to query the reports for
   google.protobuf.Any target = 2 [
     (gogoproto.moretags) = "yaml:\"target\"",
-    (cosmos_proto.accepts_interface) = "ReportTarget"
+    (cosmos_proto.accepts_interface) = "desmos.reports.v1.ReportTarget"
   ];
 
   // (optional) User that reported the target.

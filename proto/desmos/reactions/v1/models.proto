@@ -32,7 +32,7 @@ message Reaction {
   // Value of the reaction.
   google.protobuf.Any value = 4 [
     (gogoproto.moretags) = "yaml:\"value\"",
-    (cosmos_proto.accepts_interface) = "ReactionValue"
+    (cosmos_proto.accepts_interface) = "desmos.reactions.v1.ReactionValue"
   ];
 
   // Author of the reaction
@@ -44,7 +44,7 @@ message Reaction {
 message RegisteredReactionValue {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
-  option (cosmos_proto.implements_interface) = "ReactionValue";
+  option (cosmos_proto.implements_interface) = "desmos.reactions.v1.ReactionValue";
 
   // Id of the registered reaction
   uint32 registered_reaction_id = 1 [
@@ -58,7 +58,7 @@ message RegisteredReactionValue {
 message FreeTextValue {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
-  option (cosmos_proto.implements_interface) = "ReactionValue";
+  option (cosmos_proto.implements_interface) = "desmos.reactions.v1.ReactionValue";
 
   string text = 1 [ (gogoproto.moretags) = "yaml:\"text\"" ];
 }

@@ -3,7 +3,7 @@
 PACKAGES_NOSIMULATION=$(shell go list ./... | grep -v '/simulation')
 PACKAGES_SIMTEST=$(shell go list ./... | grep '/simulation')
 VERSION := $(shell echo $(shell git describe --always) | sed 's/^v//')
-TENDERMINT_VERSION := $(shell go list -m github.com/tendermint/tendermint | sed 's:.* ::')
+TENDERMINT_VERSION := $(shell go list -m github.com/cometbft/cometbft | sed 's:.* ::')
 COMMIT := $(shell git log -1 --format='%H')
 LEDGER_ENABLED ?= true
 BINDIR ?= $(GOPATH)/bin
@@ -179,6 +179,16 @@ distclean: clean tools-clean
 ###                              Documentation                              ###
 ###############################################################################
 
+update-swagger-docs: statik
+	$(BINDIR)/statik -src=client/docs/swagger-ui -dest=client/docs -f -m
+	@if [ -n "$(git status --porcelain)" ]; then \
+		echo "\033[91mSwagger docs are out of sync!!!\033[0m";\
+		exit 1;\
+	else \
+		echo "\033[92mSwagger docs are in sync\033[0m";\
+	fi
+.PHONY: update-swagger-docs
+
 build-docs:
 	@cd docs && DOCS_DOMAIN=docs.desmos.network bash ./build-all.sh
 
@@ -333,121 +343,52 @@ update-deps-types:
 ###                                Protobuf                                 ###
 ###############################################################################
 
-containerProtoVer=v0.2
-containerProtoImage=tendermintdev/sdk-proto-gen:$(containerProtoVer)
-containerProtoGen=cosmos-sdk-proto-gen-$(containerProtoVer)
-containerProtoGenSwagger=cosmos-sdk-proto-gen-swagger-$(containerProtoVer)
-containerProtoFmt=cosmos-sdk-proto-fmt-$(containerProtoVer)
+protoVer=0.11.6
+protoImageName=ghcr.io/cosmos/proto-builder:$(protoVer)
+protoImage=$(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace $(protoImageName)
 
 proto-all: proto-format proto-lint proto-gen
 
 proto-gen:
 	@echo "Generating Protobuf files"
-	$(DOCKER) run --rm --name $(containerProtoGen) \
-		-v $(CURDIR):/workspace \
-		--workdir /workspace \
-		$(containerProtoImage) sh ./scripts/protocgen.sh
-
-# This generates the SDK's custom wrapper for google.protobuf.Any. It should only be run manually when needed
-proto-gen-any:
-	@echo "Generating Protobuf Any"
-	$(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace $(containerProtoImage) sh ./scripts/protocgen-any.sh
+	@$(protoImage) sh ./scripts/protocgen.sh
 
 proto-swagger-gen:
 	@echo "Generating Protobuf Swagger"
-	$(DOCKER) run --rm --name $(containerProtoGenSwagger) -v $(CURDIR):/workspace --workdir /workspace $(containerProtoImage) sh ./scripts/protoc-swagger-gen.sh
+	@$(protoImage) sh ./scripts/protoc-swagger-gen.sh
+	$(MAKE) update-swagger-docs
 
 proto-format:
-	@echo "Formatting Protobuf files"
-	$(DOCKER) run --rm --name $(containerProtoFmt) \
-		--user $(shell id -u):$(shell id -g) \
-		-v $(CURDIR):/workspace \
-		--workdir /workspace \
-		tendermintdev/docker-build-proto find ./ -not -path "./third_party/*" -name *.proto -exec clang-format -i {} \;
+	@$(protoImage) find ./ -name "*.proto" -exec clang-format -i {} \;
 
 proto-lint:
-	@$(DOCKER_BUF) lint --error-format=json
+	@$(protoImage) buf lint --error-format=json
 
 proto-check-breaking:
-	@$(DOCKER_BUF) breaking --against $(HTTPS_GIT)#branch=master
+	@$(protoImage) buf breaking --against $(HTTPS_GIT)#branch=main
 
-TM_URL           = https://raw.githubusercontent.com/tendermint/tendermint/v0.34.19/proto/tendermint
-GOGO_PROTO_URL   = https://raw.githubusercontent.com/regen-network/protobuf/cosmos
-COSMOS_URL 		 = https://raw.githubusercontent.com/cosmos/cosmos-sdk/v0.45.4/proto/cosmos
-COSMOS_PROTO_URL = https://raw.githubusercontent.com/regen-network/cosmos-proto/master
-CONFIO_URL 		 = https://raw.githubusercontent.com/confio/ics23/v0.6.3
+TM_URL           = https://raw.githubusercontent.com/cometbft/cometbft/v0.37.0/proto/tendermint
+GOGO_PROTO_URL   = https://raw.githubusercontent.com/cosmos/gogoproto/v1.4.6
+COSMOS_URL 		 = https://raw.githubusercontent.com/cosmos/cosmos-sdk/v0.47.0/proto/cosmos/cosmos_proto
 IBC_URL 		 = https://raw.githubusercontent.com/cosmos/ibc-go/v4.3.0/proto/ibc
 ETHERMINT_URL 	 = https://raw.githubusercontent.com/evmos/ethermint/v0.17.1/proto/ethermint/
+AMINO_URL 		 = https://raw.githubusercontent.com/cosmos/cosmos-sdk/v0.47.0/proto/amino
 
-TM_CRYPTO_TYPES     = third_party/proto/tendermint/crypto
-TM_ABCI_TYPES       = third_party/proto/tendermint/abci
-TM_TYPES     		= third_party/proto/tendermint/types
-TM_VERSION 			= third_party/proto/tendermint/version
-TM_LIBS				= third_party/proto/tendermint/libs/bits
-IBC_TYPES		 	= third_party/proto/ibc
+TM_CRYPTO_TYPES     = proto/tendermint/crypto
+TM_ABCI_TYPES       = proto/tendermint/abci
+TM_TYPES     		= proto/tendermint/types
+TM_VERSION 			= proto/tendermint/version
+TM_LIBS				= proto/tendermint/libs/bits
+IBC_TYPES		 	= proto/ibc
 
-GOGO_PROTO_TYPES    = third_party/proto/gogoproto
-COSMOS_TYPES 		= third_party/proto/cosmos
-COSMOS_PROTO_TYPES  = third_party/proto/cosmos_proto
-CONFIO_TYPES        = third_party/proto/confio
-ETHERMINT_TYPES 	= third_party/proto/ethermint
+GOGO_PROTO_TYPES    = proto/gogoproto
+COSMOS_TYPES 		= proto/cosmos
+COSMOS_PROTO_TYPES  = proto/cosmos_proto
+ETHERMINT_TYPES 	= proto/ethermint
+AMINO_TYPES 		= proto/amino
 
 proto-update-deps:
-	@mkdir -p $(COSMOS_TYPES)/base/query/v1beta1
-	@curl -sSL $(COSMOS_URL)/base/query/v1beta1/pagination.proto > $(COSMOS_TYPES)/base/query/v1beta1/pagination.proto
-
-	@mkdir -p $(COSMOS_TYPES)/upgrade/v1beta1
-	@curl -sSL $(COSMOS_URL)/upgrade/v1beta1/upgrade.proto > $(COSMOS_TYPES)/upgrade/v1beta1/upgrade.proto
-
-	@mkdir -p $(GOGO_PROTO_TYPES)
-	@curl -sSL $(GOGO_PROTO_URL)/gogoproto/gogo.proto > $(GOGO_PROTO_TYPES)/gogo.proto
-
-	@mkdir -p $(COSMOS_PROTO_TYPES)
-	@curl -sSL $(COSMOS_PROTO_URL)/cosmos.proto > $(COSMOS_PROTO_TYPES)/cosmos.proto
-
-	@mkdir -p $(IBC_TYPES)/core/client/v1
-	@curl -sSL $(IBC_URL)/core/client/v1/client.proto > $(IBC_TYPES)/core/client/v1/client.proto
-
-	@mkdir -p $(ETHERMINT_TYPES)/crypto/v1/ethsecp256k1
-	@curl -sSL $(ETHERMINT_URL)crypto/v1/ethsecp256k1/keys.proto > $(ETHERMINT_TYPES)/crypto/v1/ethsecp256k1/keys.proto
-
-	@mkdir -p $(COSMOS_TYPES)/tx/signing/v1beta1
-	@curl -sSL $(COSMOS_URL)/tx/signing/v1beta1/signing.proto > $(COSMOS_TYPES)/tx/signing/v1beta1/signing.proto
-
-	@mkdir -p $(COSMOS_TYPES)/crypto/multisig/v1beta1
-	@curl -sSL $(COSMOS_URL)/crypto/multisig/v1beta1/multisig.proto > $(COSMOS_TYPES)/crypto/multisig/v1beta1/multisig.proto
-
-	@mkdir -p $(COSMOS_TYPES)/authz/v1beta1
-	@curl -sSL $(COSMOS_URL)/authz/v1beta1/authz.proto > $(COSMOS_TYPES)/authz/v1beta1/authz.proto
-
-## Importing of tendermint protobuf definitions currently requires the
-## use of `sed` in order to build properly with cosmos-sdk's proto file layout
-## (which is the standard Buf.build FILE_LAYOUT)
-## Issue link: https://github.com/tendermint/tendermint/issues/5021
-	@mkdir -p $(TM_ABCI_TYPES)
-	@curl -sSL $(TM_URL)/abci/types.proto > $(TM_ABCI_TYPES)/types.proto
-
-	@mkdir -p $(TM_VERSION)
-	@curl -sSL $(TM_URL)/version/types.proto > $(TM_VERSION)/types.proto
-
-	@mkdir -p $(TM_TYPES)
-	@curl -sSL $(TM_URL)/types/types.proto > $(TM_TYPES)/types.proto
-	@curl -sSL $(TM_URL)/types/evidence.proto > $(TM_TYPES)/evidence.proto
-	@curl -sSL $(TM_URL)/types/params.proto > $(TM_TYPES)/params.proto
-	@curl -sSL $(TM_URL)/types/validator.proto > $(TM_TYPES)/validator.proto
-
-	@mkdir -p $(TM_CRYPTO_TYPES)
-	@curl -sSL $(TM_URL)/crypto/proof.proto > $(TM_CRYPTO_TYPES)/proof.proto
-	@curl -sSL $(TM_URL)/crypto/keys.proto > $(TM_CRYPTO_TYPES)/keys.proto
-
-	@mkdir -p $(TM_LIBS)
-	@curl -sSL $(TM_URL)/libs/bits/types.proto > $(TM_LIBS)/types.proto
-
-	@mkdir -p $(CONFIO_TYPES)
-	@curl -sSL $(CONFIO_URL)/proofs.proto > $(CONFIO_TYPES)/proofs.proto
-## insert go package option into proofs.proto file
-## Issue link: https://github.com/confio/ics23/issues/32
-	@sed -i '4ioption go_package = "github.com/confio/ics23/go";' $(CONFIO_TYPES)/proofs.proto
+	$(DOCKER) run --rm -v $(CURDIR)/proto:/workspace --workdir /workspace $(protoImageName) buf mod update
 
 .PHONY: proto-all proto-gen proto-lint proto-check-breaking proto-update-deps
 

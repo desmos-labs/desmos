@@ -18,7 +18,7 @@ message Profile {
 
   // Account represents the base Cosmos account associated with this profile
   google.protobuf.Any account = 1
-      [ (cosmos_proto.accepts_interface) = "AccountI" ];
+      [ (cosmos_proto.accepts_interface) = "cosmos.auth.v1beta1.AccountI" ];
 
   // DTag represents the unique tag of this profile
   string dtag = 2 [

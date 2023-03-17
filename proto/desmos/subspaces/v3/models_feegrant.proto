@@ -21,13 +21,13 @@ message Grant {
   string granter = 2 [ (gogoproto.moretags) = "yaml:\"granter\"" ];
   // Target to which the allowance has been granted
   google.protobuf.Any grantee = 3 [
-    (cosmos_proto.accepts_interface) = "Grantee",
+    (cosmos_proto.accepts_interface) = "desmos.subspaces.v3.Grantee",
     (gogoproto.moretags) = "yaml:\"grantee\""
   ];
   // Allowance can be any allowance type implementing the FeeAllowanceI
   // interface
   google.protobuf.Any allowance = 4 [
-    (cosmos_proto.accepts_interface) = "FeeAllowanceI",
+    (cosmos_proto.accepts_interface) = "cosmos.feegrant.v1beta1.FeeAllowanceI",
     (gogoproto.moretags) = "yaml:\"allowance\""
   ];
 }
@@ -36,7 +36,7 @@ message Grant {
 message UserGrantee {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
-  option (cosmos_proto.implements_interface) = "Grantee";
+  option (cosmos_proto.implements_interface) = "desmos.subspaces.v3.Grantee";
 
   string user = 1 [ (gogoproto.moretags) = "yaml:\"user\"" ];
 }
@@ -45,7 +45,7 @@ message UserGrantee {
 message GroupGrantee {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
-  option (cosmos_proto.implements_interface) = "Grantee";
+  option (cosmos_proto.implements_interface) = "desmos.subspaces.v3.Grantee";
 
   uint32 group_id = 1 [
     (gogoproto.customname) = "GroupID",

@@ -14,7 +14,7 @@ message MsgLinkChainAccount {
   // linked
   google.protobuf.Any chain_address = 1 [
     (gogoproto.moretags) = "yaml:\"source_address\"",
-    (cosmos_proto.accepts_interface) = "AddressData"
+    (cosmos_proto.accepts_interface) = "desmos.profiles.v3.AddressData"
   ];
 
   // Proof contains the proof of ownership of the external chain address

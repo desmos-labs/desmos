@@ -212,7 +212,7 @@ message Attachment {
 
   // Content of the attachment
   google.protobuf.Any content = 4 [
-    (cosmos_proto.accepts_interface) = "AttachmentContent",
+    (cosmos_proto.accepts_interface) = "desmos.posts.v2.AttachmentContent",
     (gogoproto.moretags) = "yaml:\"content\""
   ];
 }
@@ -221,7 +221,7 @@ message Attachment {
 message Media {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
-  option (cosmos_proto.implements_interface) = "AttachmentContent";
+  option (cosmos_proto.implements_interface) = "desmos.posts.v2.AttachmentContent";
 
   string uri = 2 [ (gogoproto.moretags) = "yaml:\"uri\"" ];
   string mime_type = 3 [ (gogoproto.moretags) = "yaml:\"mime_type\"" ];
@@ -231,7 +231,7 @@ message Media {
 message Poll {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
-  option (cosmos_proto.implements_interface) = "AttachmentContent";
+  option (cosmos_proto.implements_interface) = "desmos.posts.v2.AttachmentContent";
 
   // Question of the poll
   string question = 1 [ (gogoproto.moretags) = "yaml:\"question\"" ];
