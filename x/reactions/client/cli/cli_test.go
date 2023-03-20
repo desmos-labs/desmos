@@ -12,11 +12,11 @@ import (
 	"github.com/desmos-labs/desmos/v4/app"
 	cliutils "github.com/desmos-labs/desmos/v4/x/reactions/client/utils"
 
+	tmcli "github.com/cometbft/cometbft/libs/cli"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/gogo/protobuf/proto"
-	tmcli "github.com/tendermint/tendermint/libs/cli"
 
 	"github.com/desmos-labs/desmos/v4/x/reactions/client/cli"
 

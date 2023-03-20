@@ -15,17 +15,17 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
 	"github.com/desmos-labs/desmos/v4/app"
 	"github.com/desmos-labs/desmos/v4/testutil/ibctesting"
 
+	"github.com/cometbft/cometbft/libs/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/suite"
-	"github.com/tendermint/tendermint/libs/log"
 	db "github.com/tendermint/tm-db"
 
 	"github.com/desmos-labs/desmos/v4/x/profiles/keeper"

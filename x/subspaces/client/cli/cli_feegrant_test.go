@@ -7,13 +7,13 @@ import (
 	"fmt"
 	"time"
 
+	tmcli "github.com/cometbft/cometbft/libs/cli"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/feegrant"
 	feegrantcli "github.com/cosmos/cosmos-sdk/x/feegrant/client/cli"
 	"github.com/gogo/protobuf/proto"
-	tmcli "github.com/tendermint/tendermint/libs/cli"
 
 	"github.com/desmos-labs/desmos/v4/x/subspaces/client/cli"
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"

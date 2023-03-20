@@ -15,9 +15,9 @@ import (
 	profileskeeper "github.com/desmos-labs/desmos/v4/x/profiles/keeper"
 	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
 
+	"github.com/cometbft/cometbft/libs/log"
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/stretchr/testify/suite"
-	"github.com/tendermint/tendermint/libs/log"
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	db "github.com/tendermint/tm-db"
 
 	relationshipskeeper "github.com/desmos-labs/desmos/v4/x/relationships/keeper"
