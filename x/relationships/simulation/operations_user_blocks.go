@@ -17,7 +17,6 @@ import (
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/v4/x/relationships/keeper"
@@ -37,12 +36,7 @@ func SimulateMsgBlockUser(
 		}
 
 		msg := types.NewMsgBlockUser(acc.Address.String(), blocked, "", subspaceID)
-		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{acc.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx)
 	}
 }
 
@@ -102,12 +96,7 @@ func SimulateMsgUnblockUser(
 		}
 
 		msg := types.NewMsgUnblockUser(acc.Address.String(), blocked, subspaceID)
-		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{acc.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx)
 	}
 }
 

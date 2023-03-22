@@ -6,7 +6,6 @@ import (
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
-	"github.com/cosmos/cosmos-sdk/simapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -20,13 +19,14 @@ import (
 	"github.com/cosmos/go-bip39"
 	"github.com/stretchr/testify/suite"
 
+	"github.com/desmos-labs/desmos/v4/app"
 	"github.com/desmos-labs/desmos/v4/x/supply/keeper"
 )
 
 type KeeperTestSuite struct {
 	suite.Suite
 
-	app         *simapp.SimApp
+	app         *app.DesmosApp
 	ctx         sdk.Context
 	cdc         codec.Codec
 	legacyAmino *codec.LegacyAmino
@@ -39,10 +39,10 @@ type KeeperTestSuite struct {
 }
 
 func (suite *KeeperTestSuite) SetupTest() {
-	suite.app = simapp.Setup(false)
+	suite.app = app.Setup(false)
 
-	maccPerms := simapp.GetMaccPerms()
-	encodingConfig := simapp.MakeTestEncodingConfig()
+	maccPerms := app.GetMaccPerms()
+	encodingConfig := app.MakeTestEncodingConfig()
 
 	suite.cdc = encodingConfig.Marshaler
 	suite.legacyAmino = encodingConfig.Amino

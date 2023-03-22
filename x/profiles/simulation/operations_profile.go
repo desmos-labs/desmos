@@ -14,7 +14,6 @@ import (
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 
 	"github.com/desmos-labs/desmos/v4/x/profiles/keeper"
 	"github.com/desmos-labs/desmos/v4/x/profiles/types"
@@ -44,12 +43,7 @@ func SimulateMsgSaveProfile(
 			data.Pictures.Cover,
 			acc.Address.String(),
 		)
-		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{acc.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "save profile"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "save profile", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx)
 	}
 }
 
@@ -113,12 +107,7 @@ func SimulateMsgDeleteProfile(
 
 		msg := types.NewMsgDeleteProfile(acc.Address.String())
 
-		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{acc.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "delete profile"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "delete profile", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx)
 	}
 }
 

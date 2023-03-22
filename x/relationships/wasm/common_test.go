@@ -12,7 +12,7 @@ import (
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	ibchost "github.com/cosmos/ibc-go/v4/modules/core/24-host"
+	ibchost "github.com/cosmos/ibc-go/v7/modules/core/24-host"
 	"github.com/stretchr/testify/suite"
 	db "github.com/tendermint/tm-db"
 

@@ -367,26 +367,6 @@ proto-lint:
 proto-check-breaking:
 	@$(protoImage) buf breaking --against $(HTTPS_GIT)#branch=main
 
-TM_URL           = https://raw.githubusercontent.com/cometbft/cometbft/v0.37.0/proto/tendermint
-GOGO_PROTO_URL   = https://raw.githubusercontent.com/cosmos/gogoproto/v1.4.6
-COSMOS_URL 		 = https://raw.githubusercontent.com/cosmos/cosmos-sdk/v0.47.0/proto/cosmos/cosmos_proto
-IBC_URL 		 = https://raw.githubusercontent.com/cosmos/ibc-go/v4.3.0/proto/ibc
-ETHERMINT_URL 	 = https://raw.githubusercontent.com/evmos/ethermint/v0.17.1/proto/ethermint/
-AMINO_URL 		 = https://raw.githubusercontent.com/cosmos/cosmos-sdk/v0.47.0/proto/amino
-
-TM_CRYPTO_TYPES     = proto/tendermint/crypto
-TM_ABCI_TYPES       = proto/tendermint/abci
-TM_TYPES     		= proto/tendermint/types
-TM_VERSION 			= proto/tendermint/version
-TM_LIBS				= proto/tendermint/libs/bits
-IBC_TYPES		 	= proto/ibc
-
-GOGO_PROTO_TYPES    = proto/gogoproto
-COSMOS_TYPES 		= proto/cosmos
-COSMOS_PROTO_TYPES  = proto/cosmos_proto
-ETHERMINT_TYPES 	= proto/ethermint
-AMINO_TYPES 		= proto/amino
-
 proto-update-deps:
 	$(DOCKER) run --rm -v $(CURDIR)/proto:/workspace --workdir /workspace $(protoImageName) buf mod update
 

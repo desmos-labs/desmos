@@ -4,57 +4,50 @@ import (
 	"math/rand"
 
 	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
+	"github.com/desmos-labs/desmos/v4/x/fees/types"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
-	"github.com/cosmos/cosmos-sdk/simapp/helpers"
-	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+	"github.com/cosmos/cosmos-sdk/x/simulation"
 )
 
 // SendMsg sends a transaction with the specified message.
 func SendMsg(
 	r *rand.Rand, app *baseapp.BaseApp, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
-	msg sdk.Msg, ctx sdk.Context, chainID string, gasValue uint64, privkeys []cryptotypes.PrivKey,
-) error {
+	msg sdk.Msg, ctx sdk.Context,
+) (simulation.OperationInput, error) {
 	addr := msg.GetSigners()[0]
 	account := ak.GetAccount(ctx, addr)
 	coins := bk.SpendableCoins(ctx, account.GetAddress())
 
 	fees, sendTx, err := computeFees(r, ctx, fk, msg, coins)
 	if err != nil {
-		return err
+		return simulation.OperationInput{}, err
 	}
 
 	if !sendTx {
-		return nil
+		return simulation.OperationInput{}, nil
 	}
 
-	txGen := simappparams.MakeTestEncodingConfig().TxConfig
-	tx, err := helpers.GenTx(
-		txGen,
-		[]sdk.Msg{msg},
-		fees,
-		gasValue,
-		chainID,
-		[]uint64{account.GetAccountNumber()},
-		[]uint64{account.GetSequence()},
-		privkeys...,
-	)
-	if err != nil {
-		return err
-	}
-
-	_, _, err = app.Deliver(txGen.TxEncoder(), tx)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	txGen := app.MakeTestEncodingConfig().TxConfig
+	return simulation.OperationInput{
+		R:               r,
+		App:             app,
+		TxGen:           txConfig,
+		Cdc:             nil,
+		Msg:             msg,
+		MsgType:         msg.Type(),
+		Context:         ctx,
+		SimAccount:      simAccount,
+		AccountKeeper:   ak,
+		Bankkeeper:      bk,
+		ModuleName:      types.ModuleName,
+		CoinsSpentInMsg: fees,
+	}, nil
 }
 
 // computeFees computes the fees that should be used to send a transaction with the given message,

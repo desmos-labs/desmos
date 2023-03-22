@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
@@ -49,12 +48,7 @@ func SimulateMsgCreatePost(
 			data.ReferencedPosts,
 			author.Address.String(),
 		)
-		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{author.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "create post"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "create post", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx)
 	}
 }
 
@@ -126,12 +120,7 @@ func SimulateMsgEditPost(
 		}
 
 		msg := types.NewMsgEditPost(subspaceID, postID, data.Text, data.Entities, data.Tags, editor.Address.String())
-		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{editor.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "edit post"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "edit post", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx)
 	}
 }
 
@@ -200,12 +189,7 @@ func SimulateMsgDeletePost(
 		}
 
 		msg := types.NewMsgDeletePost(subspaceID, postID, editor.Address.String())
-		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{editor.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "delete post"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "delete post", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx)
 	}
 }
 

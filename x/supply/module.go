@@ -17,7 +17,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/desmos-labs/desmos/v4/x/supply/client/cli"
-	"github.com/desmos-labs/desmos/v4/x/supply/client/rest"
 	"github.com/desmos-labs/desmos/v4/x/supply/keeper"
 	"github.com/desmos-labs/desmos/v4/x/supply/types"
 )
@@ -60,7 +59,6 @@ func (AppModuleBasic) ValidateGenesis(_ codec.JSONCodec, _ client.TxEncodingConf
 
 // RegisterRESTRoutes registers the REST routes for the supply module.
 func (AppModuleBasic) RegisterRESTRoutes(clientCtx client.Context, rtr *mux.Router) {
-	rest.RegisterHandlers(clientCtx, rtr)
 }
 
 // RegisterGRPCGatewayRoutes registers the gRPC Gateway routes for the supply module.

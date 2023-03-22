@@ -8,7 +8,6 @@ import (
 	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
@@ -37,12 +36,7 @@ func SimulateMsgAddPostAttachment(
 		}
 
 		msg := types.NewMsgAddPostAttachment(subspaceID, postID, content, editor.Address.String())
-		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{editor.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "add post attachment"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "add post attachment", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx)
 	}
 }
 
@@ -99,12 +93,7 @@ func SimulateMsgRemovePostAttachment(
 		}
 
 		msg := types.NewMsgRemovePostAttachment(subspaceID, postID, attachmentID, editor.Address.String())
-		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{editor.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "remove post attachment"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "remove post attachment", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx)
 	}
 }
 

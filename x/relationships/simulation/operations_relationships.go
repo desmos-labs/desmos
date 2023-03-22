@@ -21,7 +21,6 @@ import (
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -39,12 +38,7 @@ func SimulateMsgCreateRelationship(
 		}
 
 		msg := types.NewMsgCreateRelationship(relationship.Creator, relationship.Counterparty, relationship.SubspaceID)
-		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{acc.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreateRelationship"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "MsgCreateRelationship", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx)
 	}
 }
 
@@ -111,12 +105,7 @@ func SimulateMsgDeleteRelationship(
 		}
 
 		msg := types.NewMsgDeleteRelationship(acc.Address.String(), counterparty, subspace)
-		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{acc.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgDeleteRelationship"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "MsgDeleteRelationship", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx)
 	}
 }
 

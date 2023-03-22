@@ -9,8 +9,6 @@ import (
 	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
 	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
 
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
-
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -48,12 +46,7 @@ func SimulateMsgLinkChainAccount(
 		)
 
 		// Send the message
-		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgLinkChainAccount"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx)
 	}
 }
 
@@ -104,11 +97,7 @@ func SimulateMsgUnlinkChainAccount(
 		msg := types.NewMsgUnlinkChainAccount(link.User, link.ChainConfig.Name, link.GetAddressData().GetValue())
 
 		// Send the message
-		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgUnlinkChainAccount"), nil, err
-		}
-		return simtypes.NewOperationMsg(msg, true, "", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx)
 	}
 }
 
@@ -163,11 +152,7 @@ func SimulateMsgSetDefaultExternalAddress(
 		msg := types.NewMsgSetDefaultExternalAddress(link.ChainConfig.Name, link.GetAddressData().GetValue(), link.User)
 
 		// Send the message
-		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgSetDefaultExternalAddress"), nil, err
-		}
-		return simtypes.NewOperationMsg(msg, true, "", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx)
 	}
 }
 
