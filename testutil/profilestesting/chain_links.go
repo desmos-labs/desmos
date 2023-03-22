@@ -4,7 +4,6 @@ import (
 	"encoding/hex"
 	"time"
 
-	_ "github.com/btcsuite/btcd"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
