@@ -20,7 +20,6 @@ import (
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 
 	"github.com/desmos-labs/desmos/v4/app"
-	"github.com/desmos-labs/desmos/v4/testutil/ibctesting"
 
 	db "github.com/cometbft/cometbft-db"
 	"github.com/cometbft/cometbft/libs/log"
@@ -55,9 +54,9 @@ type KeeperTestSuite struct {
 	scopedKeeper  *testutil.MockScopedKeeper
 
 	// Used for IBC testing
-	coordinator *ibctesting.Coordinator
-	chainA      *ibctesting.TestChain
-	chainB      *ibctesting.TestChain
+	// coordinator *ibctesting.Coordinator
+	// chainA      *ibctesting.TestChain
+	// chainB      *ibctesting.TestChain
 }
 
 // TestProfile represents a test profile
@@ -134,14 +133,14 @@ func (suite *KeeperTestSuite) SetupTest() {
 	)
 
 	// Set the IBC data
-	suite.SetupIBCTest()
+	//suite.SetupIBCTest()
 }
 
-func (suite *KeeperTestSuite) SetupIBCTest() {
-	suite.coordinator = ibctesting.NewCoordinator(suite.T(), 2)
-	suite.chainA = suite.coordinator.GetChain(ibctesting.GetChainID(1))
-	suite.chainB = suite.coordinator.GetChain(ibctesting.GetChainID(2))
-}
+// func (suite *KeeperTestSuite) SetupIBCTest() {
+// 	suite.coordinator = ibctesting.NewCoordinator(suite.T(), 2)
+// 	suite.chainA = suite.coordinator.GetChain(ibctesting.GetChainID(1))
+// 	suite.chainB = suite.coordinator.GetChain(ibctesting.GetChainID(2))
+// }
 
 func (suite *KeeperTestSuite) GetRandomProfile() TestProfile {
 	// Read entropy seed straight from tmcrypto.Rand and convert to mnemonic
