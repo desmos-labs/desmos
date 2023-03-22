@@ -15,6 +15,7 @@ import (
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+	"github.com/cosmos/cosmos-sdk/x/simulation"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -32,11 +33,16 @@ func SimulateMsgBlockUser(
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 		acc, blocked, subspaceID, skip := randomUserBlocksFields(r, ctx, accs, k, sk)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgBlockUser"), nil, nil
 		}
 
 		msg := types.NewMsgBlockUser(acc.Address.String(), blocked, "", subspaceID)
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx)
+		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, acc)
+		if err != nil {
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgBlockUser"), nil, err
+		}
+
+		return simulation.GenAndDeliverTxWithRandFees(txCtx)
 	}
 }
 
@@ -92,11 +98,16 @@ func SimulateMsgUnblockUser(
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 		acc, blocked, subspaceID, skip := randomUnblockUserFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgUnblockUser"), nil, nil
 		}
 
 		msg := types.NewMsgUnblockUser(acc.Address.String(), blocked, subspaceID)
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx)
+		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, acc)
+		if err != nil {
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgUnblockUser"), nil, err
+		}
+
+		return simulation.GenAndDeliverTxWithRandFees(txCtx)
 	}
 }
 

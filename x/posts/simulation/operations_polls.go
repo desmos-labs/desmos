@@ -11,6 +11,7 @@ import (
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+	"github.com/cosmos/cosmos-sdk/x/simulation"
 
 	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
 	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
@@ -36,7 +37,12 @@ func SimulateMsgAnswerPoll(
 		}
 
 		msg := types.NewMsgAnswerPoll(answer.SubspaceID, answer.PostID, answer.PollID, answer.AnswersIndexes, user.Address.String())
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx)
+		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, user)
+		if err != nil {
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "answer poll"), nil, err
+		}
+
+		return simulation.GenAndDeliverTxWithRandFees(txCtx)
 	}
 }
 

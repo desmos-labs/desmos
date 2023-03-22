@@ -10,11 +10,11 @@ import (
 	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+	"github.com/cosmos/cosmos-sdk/x/simulation"
 
 	"github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
@@ -39,12 +39,12 @@ func SimulateMsgSetUserPermissions(
 		msg := types.NewMsgSetUserPermissions(subspaceID, 0, user, permissions, creator.Address.String())
 
 		// Send the message
-		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{creator.PrivKey})
+		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, creator)
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgSetUserPermissions"), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, "MsgSetUserPermissions", nil), nil, nil
+		return simulation.GenAndDeliverTxWithRandFees(txCtx)
 	}
 }
 

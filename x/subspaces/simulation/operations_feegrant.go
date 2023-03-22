@@ -4,12 +4,12 @@ import (
 	"math/rand"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	"github.com/cosmos/cosmos-sdk/x/feegrant"
+	"github.com/cosmos/cosmos-sdk/x/simulation"
 
 	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
 	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
@@ -37,11 +37,11 @@ func SimulateMsgGrantAllowance(
 		msg := types.NewMsgGrantAllowance(subspaceID, granter, grantee, &feegrant.BasicAllowance{})
 
 		// Send the message
-		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
+		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgGrantAllowance"), nil, err
 		}
-		return simtypes.NewOperationMsg(msg, true, "MsgGrantAllowance", nil), nil, nil
+		return simulation.GenAndDeliverTxWithRandFees(txCtx)
 	}
 }
 
@@ -135,11 +135,11 @@ func SimulateMsgRevokeAllowance(
 		msg := types.NewMsgRevokeAllowance(subspaceID, granter, grantee)
 
 		// Send the message
-		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
+		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRevokeAllowance"), nil, err
 		}
-		return simtypes.NewOperationMsg(msg, true, "MsgRevokeAllowance", nil), nil, nil
+		return simulation.GenAndDeliverTxWithRandFees(txCtx)
 	}
 }
 

@@ -13,11 +13,11 @@ import (
 	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+	"github.com/cosmos/cosmos-sdk/x/simulation"
 
 	"github.com/desmos-labs/desmos/v4/x/reactions/types"
 )
@@ -46,12 +46,12 @@ func SimulateMsgSetReactionsParams(
 		)
 
 		// Send the message
-		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
+		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgSetReactionsParams"), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, "MsgSetReactionsParams", nil), nil, nil
+		return simulation.GenAndDeliverTxWithRandFees(txCtx)
 	}
 }
 

@@ -12,6 +12,7 @@ import (
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+	"github.com/cosmos/cosmos-sdk/x/simulation"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -46,7 +47,12 @@ func SimulateMsgLinkChainAccount(
 		)
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx)
+		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
+		if err != nil {
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgLinkChainAccount"), nil, err
+		}
+
+		return simulation.GenAndDeliverTxWithRandFees(txCtx)
 	}
 }
 
@@ -90,14 +96,19 @@ func SimulateMsgUnlinkChainAccount(
 		// Get the data
 		link, signer, skip := randomUnlinkChainAccountFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgUnlinkChainAccount"), nil, nil
 		}
 
 		// Build the message
 		msg := types.NewMsgUnlinkChainAccount(link.User, link.ChainConfig.Name, link.GetAddressData().GetValue())
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx)
+		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
+		if err != nil {
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgUnlinkChainAccount"), nil, err
+		}
+
+		return simulation.GenAndDeliverTxWithRandFees(txCtx)
 	}
 }
 
@@ -145,14 +156,19 @@ func SimulateMsgSetDefaultExternalAddress(
 		// Get the data
 		link, signer, skip := randomSetDefaultExternalAddressFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgSetDefaultExternalAddress"), nil, nil
 		}
 
 		// Build the message
 		msg := types.NewMsgSetDefaultExternalAddress(link.ChainConfig.Name, link.GetAddressData().GetValue(), link.User)
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx)
+		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
+		if err != nil {
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgSetDefaultExternalAddress"), nil, err
+		}
+
+		return simulation.GenAndDeliverTxWithRandFees(txCtx)
 	}
 }
 

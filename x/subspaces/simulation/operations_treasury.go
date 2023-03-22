@@ -4,7 +4,6 @@ import (
 	"math/rand"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
@@ -12,6 +11,7 @@ import (
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	"github.com/cosmos/cosmos-sdk/x/simulation"
 
 	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
 	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
@@ -40,12 +40,12 @@ func SimulateMsgGrantTreasuryAuthorization(
 		msg := types.NewMsgGrantTreasuryAuthorization(subspaceID, granter.Address.String(), grantee, authz.NewGenericAuthorization(sdk.MsgTypeURL(&banktypes.MsgSend{})), ctx.BlockTime().AddDate(1, 0, 0))
 
 		// Send the message
-		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{granter.PrivKey})
+		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, granter)
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgGrantTreasuryAuthorization"), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, "MsgGrantTreasuryAuthorization", nil), nil, nil
+		return simulation.GenAndDeliverTxWithRandFees(txCtx)
 	}
 }
 
@@ -107,12 +107,12 @@ func SimulateMsgRevokeTreasuryAuthorization(
 		msg := types.NewMsgRevokeTreasuryAuthorization(subspaceID, granter.Address.String(), grantee, msgTypeUrl)
 
 		// Send the message
-		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{granter.PrivKey})
+		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, granter)
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRevokeTreasuryAuthorization"), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, "MsgRevokeTreasuryAuthorization", nil), nil, nil
+		return simulation.GenAndDeliverTxWithRandFees(txCtx)
 	}
 }
 

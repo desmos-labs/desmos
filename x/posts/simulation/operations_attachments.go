@@ -12,6 +12,7 @@ import (
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+	"github.com/cosmos/cosmos-sdk/x/simulation"
 
 	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
 	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
@@ -36,7 +37,12 @@ func SimulateMsgAddPostAttachment(
 		}
 
 		msg := types.NewMsgAddPostAttachment(subspaceID, postID, content, editor.Address.String())
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx)
+		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, editor)
+		if err != nil {
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "add post attachment"), nil, err
+		}
+
+		return simulation.GenAndDeliverTxWithRandFees(txCtx)
 	}
 }
 
@@ -93,7 +99,12 @@ func SimulateMsgRemovePostAttachment(
 		}
 
 		msg := types.NewMsgRemovePostAttachment(subspaceID, postID, attachmentID, editor.Address.String())
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx)
+		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, editor)
+		if err != nil {
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "remove post attachment"), nil, err
+		}
+
+		return simulation.GenAndDeliverTxWithRandFees(txCtx)
 	}
 }
 

@@ -3,6 +3,7 @@ package simtesting
 import (
 	"math/rand"
 
+	"github.com/desmos-labs/desmos/v4/app/params"
 	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
 	"github.com/desmos-labs/desmos/v4/x/fees/types"
 
@@ -18,7 +19,11 @@ import (
 // SendMsg sends a transaction with the specified message.
 func SendMsg(
 	r *rand.Rand, app *baseapp.BaseApp, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
-	msg sdk.Msg, ctx sdk.Context,
+	msg interface {
+		sdk.Msg
+		Type() string
+	}, ctx sdk.Context,
+	simAccount simtypes.Account,
 ) (simulation.OperationInput, error) {
 	addr := msg.GetSigners()[0]
 	account := ak.GetAccount(ctx, addr)
@@ -33,11 +38,11 @@ func SendMsg(
 		return simulation.OperationInput{}, nil
 	}
 
-	txGen := app.MakeTestEncodingConfig().TxConfig
+	txGen := params.MakeEncodingConfig().TxConfig
 	return simulation.OperationInput{
 		R:               r,
 		App:             app,
-		TxGen:           txConfig,
+		TxGen:           txGen,
 		Cdc:             nil,
 		Msg:             msg,
 		MsgType:         msg.Type(),
