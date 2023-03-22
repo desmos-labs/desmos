@@ -14,7 +14,7 @@ import (
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	ibchost "github.com/cosmos/ibc-go/v7/modules/core/24-host"
+	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
 	"github.com/stretchr/testify/suite"
 
 	"github.com/desmos-labs/desmos/v4/app"
@@ -85,7 +85,7 @@ type TestSuite struct {
 func (suite *TestSuite) SetupTest() {
 	// Define the store keys
 	keys := sdk.NewKVStoreKeys(
-		authtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, capabilitytypes.StoreKey,
+		authtypes.StoreKey, paramstypes.StoreKey, ibcexported.StoreKey, capabilitytypes.StoreKey,
 
 		types.StoreKey, profilestypes.StoreKey, subspacestypes.StoreKey,
 	)

@@ -2,7 +2,6 @@ package wasm_test
 
 import (
 	"encoding/json"
-	"path/filepath"
 	"testing"
 
 	db "github.com/cometbft/cometbft-db"
@@ -14,17 +13,14 @@ import (
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
-	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
-	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
-	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
+	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
 
-	ibchost "github.com/cosmos/ibc-go/v7/modules/core/24-host"
 	ibckeeper "github.com/cosmos/ibc-go/v7/modules/core/keeper"
 	"github.com/stretchr/testify/suite"
 
@@ -182,7 +178,7 @@ func (suite *TestSuite) SetupTest() {
 	// Define the store keys
 	keys := sdk.NewKVStoreKeys(
 		types.StoreKey, relationshipstypes.StoreKey, subspacestypes.StoreKey,
-		authtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, capabilitytypes.StoreKey,
+		authtypes.StoreKey, paramstypes.StoreKey, ibcexported.StoreKey, capabilitytypes.StoreKey,
 	)
 	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -222,37 +218,13 @@ func (suite *TestSuite) SetupTest() {
 	)
 
 	suite.capabilityKeeper = capabilitykeeper.NewKeeper(suite.cdc, keys[capabilitytypes.StoreKey], memKeys[capabilitytypes.MemStoreKey])
-	homeDir := filepath.Join(suite.T().TempDir(), "x_upgrade_keeper_test")
-	suite.upgradeKeeper = upgradekeeper.NewKeeper(
-		nil,
-		keys[upgradetypes.StoreKey],
-		suite.cdc,
-		homeDir,
-		nil,
-	)
 
-	suite.bankKeeper = bankkeeper.NewBaseKeeper(
-		suite.cdc,
-		keys[banktypes.StoreKey],
-		suite.ak,
-		suite.paramsKeeper.Subspace(banktypes.ModuleName),
-		nil,
-	)
-
-	suite.stakingKeeper = stakingkeeper.NewKeeper(
-		suite.cdc,
-		keys[stakingtypes.StoreKey],
-		suite.ak,
-		suite.bankKeeper,
-		suite.paramsKeeper.Subspace(stakingtypes.ModuleName),
-	)
-
-	scopedIBCKeeper := suite.capabilityKeeper.ScopeToModule(ibchost.ModuleName)
+	scopedIBCKeeper := suite.capabilityKeeper.ScopeToModule(ibcexported.ModuleName)
 	scopedProfilesKeeper := suite.capabilityKeeper.ScopeToModule(types.ModuleName)
 	suite.IBCKeeper = ibckeeper.NewKeeper(
 		suite.cdc,
-		keys[ibchost.StoreKey],
-		suite.paramsKeeper.Subspace(ibchost.ModuleName),
+		keys[ibcexported.StoreKey],
+		suite.paramsKeeper.Subspace(ibcexported.ModuleName),
 		suite.stakingKeeper,
 		suite.upgradeKeeper,
 		scopedIBCKeeper,
