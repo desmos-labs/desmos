@@ -137,7 +137,7 @@ func (h HexAddress) VerifyPubKey(key cryptotypes.PubKey) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	pubKey, err := btcec.ParsePubKey(key.Bytes(), btcec.S256())
+	pubKey, err := btcec.ParsePubKey(key.Bytes())
 	if err != nil {
 		return false, err
 	}
