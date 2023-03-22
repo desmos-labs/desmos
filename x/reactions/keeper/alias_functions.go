@@ -172,7 +172,7 @@ func (k Keeper) IteratePostReactions(ctx sdk.Context, subspaceID uint64, postID 
 func (k Keeper) HasReacted(ctx sdk.Context, subspaceID uint64, postID uint64, user string, value types.ReactionValue) bool {
 	found := false
 	k.IteratePostReactions(ctx, subspaceID, postID, func(reaction types.Reaction) (stop bool) {
-		if reaction.Author == user && reaction.Value.GetCachedValue().(types.ReactionValue) == value {
+		if reaction.Author == user && reaction.Value.GetCachedValue().(types.ReactionValue).Equal(value) {
 			found = true
 		}
 		return found

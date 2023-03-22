@@ -213,6 +213,17 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateReaction() {
 			shouldErr: true,
 		},
 		{
+			name: "RegisteredReactionValue - no subspaces reaction params returns error",
+			reaction: types.NewReaction(
+				1,
+				1,
+				1,
+				types.NewRegisteredReactionValue(1),
+				"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
+			),
+			shouldErr: true,
+		},
+		{
 			name: "RegisteredReactionValue - not enabled reactions returns error",
 			store: func(ctx sdk.Context) {
 				suite.k.SaveSubspaceReactionsParams(ctx, types.NewSubspaceReactionsParams(
@@ -271,6 +282,17 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateReaction() {
 				"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
 			),
 			shouldErr: false,
+		},
+		{
+			name: "FreeTextValue - no subspaces reaction params returns error",
+			reaction: types.NewReaction(
+				1,
+				1,
+				1,
+				types.NewFreeTextValue("Wow!"),
+				"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
+			),
+			shouldErr: true,
 		},
 		{
 			name: "FreeTextValue - not enabled reactions returns error",

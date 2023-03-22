@@ -32,7 +32,7 @@ import (
 	"github.com/desmos-labs/desmos/v4/app"
 )
 
-type KeeperTestsuite struct {
+type KeeperTestSuite struct {
 	suite.Suite
 
 	cdc            codec.Codec
@@ -47,7 +47,7 @@ type KeeperTestsuite struct {
 	rk relationshipskeeper.Keeper
 }
 
-func (suite *KeeperTestsuite) SetupTest() {
+func (suite *KeeperTestSuite) SetupTest() {
 	// Define store keys
 	keys := sdk.NewMemoryStoreKeys(
 		paramstypes.StoreKey, authtypes.StoreKey,
@@ -91,5 +91,5 @@ func (suite *KeeperTestsuite) SetupTest() {
 }
 
 func TestKeeperTestSuite(t *testing.T) {
-	suite.Run(t, new(KeeperTestsuite))
+	suite.Run(t, new(KeeperTestSuite))
 }

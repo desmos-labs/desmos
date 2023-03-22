@@ -102,7 +102,7 @@ func (suite *KeeperTestSuite) TestKeeper_HasReacted() {
 			expResult:  false,
 		},
 		{
-			name: "correct data returns true",
+			name: "correct data returns true -- registered reaction value",
 			store: func(ctx sdk.Context) {
 				suite.k.SaveReaction(ctx, types.NewReaction(
 					1,
@@ -116,7 +116,24 @@ func (suite *KeeperTestSuite) TestKeeper_HasReacted() {
 			postID:     1,
 			user:       "cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
 			value:      types.NewRegisteredReactionValue(1),
-			expResult:  false,
+			expResult:  true,
+		},
+		{
+			name: "correct data returns true -- free text value",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveReaction(ctx, types.NewReaction(
+					1,
+					1,
+					1,
+					types.NewFreeTextValue("test"),
+					"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
+				))
+			},
+			subspaceID: 1,
+			postID:     1,
+			user:       "cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
+			value:      types.NewFreeTextValue("test"),
+			expResult:  true,
 		},
 	}
 

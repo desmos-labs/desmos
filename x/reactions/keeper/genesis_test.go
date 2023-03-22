@@ -4,6 +4,7 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/golang/mock/gomock"
 
 	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
 	"github.com/desmos-labs/desmos/v4/x/reactions/types"
@@ -13,20 +14,37 @@ import (
 func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 	testCases := []struct {
 		name       string
+		setup      func()
 		store      func(ctx sdk.Context)
 		expGenesis *types.GenesisState
 	}{
 		{
 			name: "subspaces data entries are exported properly",
+			setup: func() {
+				subspaces := []subspacestypes.Subspace{
+					subspacestypes.NewSubspace(
+						1,
+						"Test subspace",
+						"This is a test subspace",
+						"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+						"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+						"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					),
+				}
+
+				suite.sk.EXPECT().
+					IterateSubspaces(gomock.Any(), gomock.Any()).
+					Do(func(ctx sdk.Context, fn func(subspace subspacestypes.Subspace) (stop bool)) {
+						for _, subspace := range subspaces {
+							fn(subspace)
+						}
+					})
+
+				suite.pk.EXPECT().
+					IteratePosts(gomock.Any(), gomock.Any())
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
 				suite.k.SetNextRegisteredReactionID(ctx, 1, 2)
 			},
 			expGenesis: types.NewGenesisState([]types.SubspaceDataEntry{
@@ -35,6 +53,13 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 		},
 		{
 			name: "registered reactions are exported properly",
+			setup: func() {
+				suite.sk.EXPECT().
+					IterateSubspaces(gomock.Any(), gomock.Any())
+
+				suite.pk.EXPECT().
+					IteratePosts(gomock.Any(), gomock.Any())
+			},
 			store: func(ctx sdk.Context) {
 				suite.k.SaveRegisteredReaction(ctx, types.NewRegisteredReaction(
 					1,
@@ -54,22 +79,36 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 		},
 		{
 			name: "post data entries are exported properly",
+			setup: func() {
+				suite.sk.EXPECT().
+					IterateSubspaces(gomock.Any(), gomock.Any())
+
+				posts := []poststypes.Post{
+					poststypes.NewPost(
+						1,
+						0,
+						1,
+						"External ID",
+						"This is a text",
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+						1,
+						nil,
+						nil,
+						nil,
+						poststypes.REPLY_SETTING_EVERYONE,
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						nil,
+					),
+				}
+				suite.pk.EXPECT().
+					IteratePosts(gomock.Any(), gomock.Any()).
+					Do(func(ctx sdk.Context, fn func(post poststypes.Post) (stop bool)) {
+						for _, post := range posts {
+							fn(post)
+						}
+					})
+			},
 			store: func(ctx sdk.Context) {
-				suite.pk.SavePost(ctx, poststypes.NewPost(
-					1,
-					0,
-					1,
-					"External ID",
-					"This is a text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					1,
-					nil,
-					nil,
-					nil,
-					poststypes.REPLY_SETTING_EVERYONE,
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
 				suite.k.SetNextReactionID(ctx, 1, 1, 2)
 			},
 			expGenesis: types.NewGenesisState(nil, nil, []types.PostDataEntry{
@@ -78,6 +117,13 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 		},
 		{
 			name: "reactions are exported properly",
+			setup: func() {
+				suite.sk.EXPECT().
+					IterateSubspaces(gomock.Any(), gomock.Any())
+
+				suite.pk.EXPECT().
+					IteratePosts(gomock.Any(), gomock.Any())
+			},
 			store: func(ctx sdk.Context) {
 				suite.k.SaveReaction(ctx, types.NewReaction(
 					1,
@@ -99,6 +145,13 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 		},
 		{
 			name: "reactions params are exported properly",
+			setup: func() {
+				suite.sk.EXPECT().
+					IterateSubspaces(gomock.Any(), gomock.Any())
+
+				suite.pk.EXPECT().
+					IteratePosts(gomock.Any(), gomock.Any())
+			},
 			store: func(ctx sdk.Context) {
 				suite.k.SaveSubspaceReactionsParams(ctx, types.NewSubspaceReactionsParams(
 					1,
@@ -120,6 +173,9 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup()
+			}
 			if tc.store != nil {
 				tc.store(ctx)
 			}

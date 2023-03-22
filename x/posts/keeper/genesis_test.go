@@ -10,7 +10,7 @@ import (
 	"github.com/desmos-labs/desmos/v4/x/posts/types"
 )
 
-func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
+func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -234,7 +234,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_ImportGenesis() {
+func (suite *KeeperTestSuite) TestKeeper_ImportGenesis() {
 	testCases := []struct {
 		name  string
 		store func(ctx sdk.Context)

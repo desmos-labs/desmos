@@ -10,7 +10,7 @@ import (
 	"github.com/desmos-labs/desmos/v4/x/posts/types"
 )
 
-func (suite *KeeperTestsuite) TestKeeper_SetNextPostID() {
+func (suite *KeeperTestSuite) TestKeeper_SetNextPostID() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -60,7 +60,7 @@ func (suite *KeeperTestsuite) TestKeeper_SetNextPostID() {
 
 }
 
-func (suite *KeeperTestsuite) TestKeeper_GetNextPostID() {
+func (suite *KeeperTestSuite) TestKeeper_GetNextPostID() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -103,7 +103,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetNextPostID() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_DeleteNextPostID() {
+func (suite *KeeperTestSuite) TestKeeper_DeleteNextPostID() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -150,7 +150,7 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteNextPostID() {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-func (suite *KeeperTestsuite) TestKeeper_ValidatePostReference() {
+func (suite *KeeperTestSuite) TestKeeper_ValidatePostReference() {
 	testCases := []struct {
 		name        string
 		store       func(ctx sdk.Context)
@@ -241,7 +241,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePostReference() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_ValidatePostReply() {
+func (suite *KeeperTestSuite) TestKeeper_ValidatePostReply() {
 	testCases := []struct {
 		name        string
 		store       func(ctx sdk.Context)
@@ -447,7 +447,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePostReply() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_ValidatePost() {
+func (suite *KeeperTestSuite) TestKeeper_ValidatePost() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -613,7 +613,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePost() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_SavePost() {
+func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 	testCases := []struct {
 		name  string
 		store func(ctx sdk.Context)
@@ -809,7 +809,7 @@ func (suite *KeeperTestsuite) TestKeeper_SavePost() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_HasPost() {
+func (suite *KeeperTestSuite) TestKeeper_HasPost() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -862,7 +862,7 @@ func (suite *KeeperTestsuite) TestKeeper_HasPost() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_GetPost() {
+func (suite *KeeperTestSuite) TestKeeper_GetPost() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -957,7 +957,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetPost() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_DeletePost() {
+func (suite *KeeperTestSuite) TestKeeper_DeletePost() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
