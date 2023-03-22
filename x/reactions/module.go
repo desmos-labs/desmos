@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"math/rand"
 
 	"github.com/desmos-labs/desmos/v4/x/reactions/client/cli"
 
@@ -25,7 +24,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/gorilla/mux"
+
 	"github.com/spf13/cobra"
 
 	"github.com/desmos-labs/desmos/v4/x/reactions/keeper"
@@ -72,9 +71,6 @@ func (AppModuleBasic) ValidateGenesis(cdc codec.JSONCodec, _ client.TxEncodingCo
 	}
 	return types.ValidateGenesis(&data)
 }
-
-// RegisterRESTRoutes registers the REST routes for the reactions module.
-func (AppModuleBasic) RegisterRESTRoutes(_ client.Context, _ *mux.Router) {}
 
 // RegisterGRPCGatewayRoutes registers the gRPC Gateway routes for the reactions module.
 func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *runtime.ServeMux) {
@@ -148,19 +144,9 @@ func (am AppModule) RegisterInvariants(ir sdk.InvariantRegistry) {
 	keeper.RegisterInvariants(ir, am.keeper)
 }
 
-// Deprecated: Route returns the module's message router and handler.
-func (am AppModule) Route() sdk.Route {
-	return sdk.Route{}
-}
-
 // QuerierRoute returns the reactions module's querier route name.
 func (am AppModule) QuerierRoute() string {
 	return types.RouterKey
-}
-
-// LegacyQuerierHandler returns the reactions module sdk.Querier.
-func (am AppModule) LegacyQuerierHandler(legacyQuerierCdc *codec.LegacyAmino) sdk.Querier {
-	return nil
 }
 
 // InitGenesis performs genesis initialization for the reactions module.
@@ -206,11 +192,6 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 
 // ProposalContents doesn't return any content functions for governance proposals.
 func (AppModule) ProposalContents(_ module.SimulationState) []simtypes.WeightedProposalContent {
-	return nil
-}
-
-// RandomizedParams creates randomized profile param changes for the simulator.
-func (AppModule) RandomizedParams(_ *rand.Rand) []simtypes.ParamChange {
 	return nil
 }
 

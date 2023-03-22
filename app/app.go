@@ -10,6 +10,7 @@ import (
 
 	"github.com/desmos-labs/desmos/v4/x/reactions"
 	reactionstypes "github.com/desmos-labs/desmos/v4/x/reactions/types"
+	"github.com/gorilla/mux"
 
 	postskeeper "github.com/desmos-labs/desmos/v4/x/posts/keeper"
 	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
@@ -67,7 +68,7 @@ import (
 	authtx "github.com/cosmos/cosmos-sdk/x/auth/tx"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
-	"github.com/gorilla/mux"
+
 	"github.com/rakyll/statik/fs"
 
 	dbm "github.com/cometbft/cometbft-db"

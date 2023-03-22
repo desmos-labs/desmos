@@ -22,7 +22,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/gorilla/mux"
+
 	"github.com/spf13/cobra"
 
 	"github.com/desmos-labs/desmos/v4/x/profiles/client/cli"
@@ -71,9 +71,6 @@ func (AppModuleBasic) ValidateGenesis(cdc codec.JSONCodec, _ client.TxEncodingCo
 	}
 	return types.ValidateGenesis(&data)
 }
-
-// RegisterRESTRoutes registers the REST routes for the profiles module.
-func (AppModuleBasic) RegisterRESTRoutes(_ client.Context, _ *mux.Router) {}
 
 // RegisterGRPCGatewayRoutes registers the gRPC Gateway routes for the profiles module.
 func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *runtime.ServeMux) {
@@ -160,19 +157,9 @@ func (am AppModule) RegisterInvariants(ir sdk.InvariantRegistry) {
 	keeper.RegisterInvariants(ir, am.keeper)
 }
 
-// Deprecated: Route returns the module's message router and handler.
-func (am AppModule) Route() sdk.Route {
-	return sdk.Route{}
-}
-
 // QuerierRoute returns the profiles module's querier route name.
 func (am AppModule) QuerierRoute() string {
 	return types.RouterKey
-}
-
-// LegacyQuerierHandler returns the profiles module sdk.Querier.
-func (am AppModule) LegacyQuerierHandler(legacyQuerierCdc *codec.LegacyAmino) sdk.Querier {
-	return nil
 }
 
 // InitGenesis performs genesis initialization for the profiles module.
@@ -223,7 +210,7 @@ func (AppModule) ProposalContents(_ module.SimulationState) []simtypes.WeightedP
 }
 
 // RandomizedParams creates randomized profile param changes for the simulator.
-func (AppModule) RandomizedParams(r *rand.Rand) []simtypes.ParamChange {
+func (AppModule) RandomizedParams(r *rand.Rand) []simtypes.LegacyParamChange {
 	return simulation.ParamChanges(r)
 }
 
