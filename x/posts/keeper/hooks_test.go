@@ -280,7 +280,7 @@ func (suite *KeeperTestSuite) TestHooks_AfterPollAnswerDeleted() {
 			hooks := newMockHooks()
 			suite.k.SetHooks(types.NewMultiPostsHooks(hooks))
 
-			suite.k.DeleteUserAnswer(ctx, tc.subspaceID, tc.postID, tc.pollID, tc.user, false)
+			suite.k.DeleteUserAnswer(ctx, tc.subspaceID, tc.postID, tc.pollID, tc.user)
 
 			suite.Require().True(hooks.CalledMap["AfterPollAnswerDeleted"])
 		})

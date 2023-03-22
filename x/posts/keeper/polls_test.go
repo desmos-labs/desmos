@@ -474,7 +474,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteUserAnswer() {
 				tc.store(ctx)
 			}
 
-			suite.k.DeleteUserAnswer(ctx, tc.subspaceID, tc.postID, tc.pollID, tc.user, false)
+			suite.k.DeleteUserAnswer(ctx, tc.subspaceID, tc.postID, tc.pollID, tc.user)
 			if tc.check != nil {
 				tc.check(ctx)
 			}

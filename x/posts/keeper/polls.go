@@ -50,7 +50,7 @@ func (k Keeper) Tally(ctx sdk.Context, subspaceID uint64, postID uint64, pollID 
 		}
 
 		// Delete the user answer
-		k.DeleteUserAnswer(ctx, answer.SubspaceID, answer.PostID, answer.PollID, answer.User, true)
+		k.deleteUserAnswer(ctx, answer.SubspaceID, answer.PostID, answer.PollID, answer.User)
 
 		return false
 	})
@@ -134,16 +134,19 @@ func (k Keeper) GetUserAnswer(ctx sdk.Context, subspaceID uint64, postID uint64,
 	return answer, true
 }
 
-// DeleteUserAnswer deletes the user answer from the provided poll
-func (k Keeper) DeleteUserAnswer(ctx sdk.Context, subspaceID uint64, postID uint64, pollID uint32, user string, isTally bool) {
+// deleteUserAnswer deletes the user answer from the provided poll
+func (k Keeper) deleteUserAnswer(ctx sdk.Context, subspaceID uint64, postID uint64, pollID uint32, user string) {
 	store := ctx.KVStore(k.storeKey)
 	if !k.HasUserAnswer(ctx, subspaceID, postID, pollID, user) {
 		return
 	}
 
 	store.Delete(types.PollAnswerStoreKey(subspaceID, postID, pollID, user))
+}
 
-	if !isTally {
-		k.AfterPollAnswerDeleted(ctx, subspaceID, postID, pollID, user)
-	}
+// DeleteUserAnswer deletes the user answer from the provided poll then calls poll answer deleted hooks
+func (k Keeper) DeleteUserAnswer(ctx sdk.Context, subspaceID uint64, postID uint64, pollID uint32, user string) {
+	k.deleteUserAnswer(ctx, subspaceID, postID, pollID, user)
+
+	k.AfterPollAnswerDeleted(ctx, subspaceID, postID, pollID, user)
 }
