@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/store"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
@@ -15,10 +16,10 @@ import (
 	profileskeeper "github.com/desmos-labs/desmos/v4/x/profiles/keeper"
 	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
 
+	db "github.com/cometbft/cometbft-db"
 	"github.com/cometbft/cometbft/libs/log"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/stretchr/testify/suite"
-	db "github.com/tendermint/tm-db"
 
 	relationshipskeeper "github.com/desmos-labs/desmos/v4/x/relationships/keeper"
 	relationshipstypes "github.com/desmos-labs/desmos/v4/x/relationships/types"
@@ -104,7 +105,7 @@ type TestSuite struct {
 	legacyAminoCdc *codec.LegacyAmino
 	ctx            sdk.Context
 
-	storeKey sdk.StoreKey
+	storeKey storetypes.StoreKey
 	k        keeper.Keeper
 
 	ak profileskeeper.Keeper
@@ -130,10 +131,10 @@ func (suite *TestSuite) SetupTest() {
 	memDB := db.NewMemDB()
 	ms := store.NewCommitMultiStore(memDB)
 	for _, key := range keys {
-		ms.MountStoreWithDB(key, sdk.StoreTypeIAVL, memDB)
+		ms.MountStoreWithDB(key, storetypes.StoreTypeIAVL, memDB)
 	}
 	for _, tKey := range tKeys {
-		ms.MountStoreWithDB(tKey, sdk.StoreTypeTransient, memDB)
+		ms.MountStoreWithDB(tKey, storetypes.StoreTypeTransient, memDB)
 	}
 
 	if err := ms.LoadLatestVersion(); err != nil {

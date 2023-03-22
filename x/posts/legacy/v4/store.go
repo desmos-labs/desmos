@@ -3,6 +3,7 @@ package v4
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/v4/x/posts/types"
@@ -11,7 +12,7 @@ import (
 // MigrateStore performs the migration from version 3 to version 4 of the store.
 // To do this, it iterates over all the polls, and removes from the store the user answers for
 // polls that are already ended (and thus should have not accepted new answers).
-func MigrateStore(ctx sdk.Context, storeKey sdk.StoreKey, cdc codec.BinaryCodec) error {
+func MigrateStore(ctx sdk.Context, storeKey storetypes.StoreKey, cdc codec.BinaryCodec) error {
 	store := ctx.KVStore(storeKey)
 	return removeInvalidPollAnswers(store, cdc)
 }

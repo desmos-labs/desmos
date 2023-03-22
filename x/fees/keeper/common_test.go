@@ -3,6 +3,7 @@ package keeper_test
 import (
 	"testing"
 
+	db "github.com/cometbft/cometbft-db"
 	"github.com/cometbft/cometbft/libs/log"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -10,7 +11,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	"github.com/stretchr/testify/suite"
-	db "github.com/tendermint/tm-db"
 
 	"github.com/desmos-labs/desmos/v4/app"
 	"github.com/desmos-labs/desmos/v4/x/fees/keeper"
@@ -39,8 +39,8 @@ func (suite *KeeperTestSuite) SetupTest() {
 	// create an in-memory db
 	memDB := db.NewMemDB()
 	ms := store.NewCommitMultiStore(memDB)
-	ms.MountStoreWithDB(paramsKey, sdk.StoreTypeIAVL, memDB)
-	ms.MountStoreWithDB(paramsTKey, sdk.StoreTypeTransient, memDB)
+	ms.MountStoreWithDB(paramsKey, storetypes.StoreTypeIAVL, memDB)
+	ms.MountStoreWithDB(paramsTKey, storetypes.StoreTypeTransient, memDB)
 	if err := ms.LoadLatestVersion(); err != nil {
 		panic(err)
 	}

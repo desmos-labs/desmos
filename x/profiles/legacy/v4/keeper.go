@@ -3,17 +3,18 @@ package v4
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	v4types "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v4/types"
 )
 
 type Keeper struct {
-	storeKey sdk.StoreKey
+	storeKey storetypes.StoreKey
 	cdc      codec.BinaryCodec
 }
 
-func NewKeeper(storeKey sdk.StoreKey, cdc codec.BinaryCodec) Keeper {
+func NewKeeper(storeKey storetypes.StoreKey, cdc codec.BinaryCodec) Keeper {
 	return Keeper{
 		storeKey: storeKey,
 		cdc:      cdc,

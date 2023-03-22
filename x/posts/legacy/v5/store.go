@@ -3,6 +3,7 @@ package v5
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	v4 "github.com/desmos-labs/desmos/v4/x/posts/legacy/v4"
@@ -13,7 +14,7 @@ import (
 // To do this, it iterates over all the post attachments, and converts them to
 // the new storing format (AttachmentContent instead of Attachment).
 // It also removes all the Polls that have been saved as a Poll_ProvidedAnswer's attachment.
-func MigrateStore(ctx sdk.Context, storeKey sdk.StoreKey, cdc codec.BinaryCodec) error {
+func MigrateStore(ctx sdk.Context, storeKey storetypes.StoreKey, cdc codec.BinaryCodec) error {
 	store := ctx.KVStore(storeKey)
 
 	// Migrate the poll attachments

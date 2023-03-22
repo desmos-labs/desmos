@@ -1,6 +1,7 @@
 package app
 
 import (
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
@@ -23,7 +24,7 @@ type HandlerOptions struct {
 	IBCkeeper         *ibckeeper.Keeper
 	FeesKeeper        feeskeeper.Keeper
 	SubspacesKeeper   subspaceskeeper.Keeper
-	TxCounterStoreKey sdk.StoreKey
+	TxCounterStoreKey storetypes.StoreKey
 	WasmConfig        wasmTypes.WasmConfig
 }
 

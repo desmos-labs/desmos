@@ -3,13 +3,14 @@ package keeper
 import (
 	"github.com/cometbft/cometbft/libs/log"
 	"github.com/cosmos/cosmos-sdk/codec"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
 type Keeper struct {
-	storeKey sdk.StoreKey
+	storeKey storetypes.StoreKey
 	cdc      codec.BinaryCodec
 	hooks    types.SubspacesHooks
 
@@ -18,7 +19,7 @@ type Keeper struct {
 }
 
 // NewKeeper creates new instances of the subspaces keeper
-func NewKeeper(cdc codec.BinaryCodec, storeKey sdk.StoreKey, ak types.AccountKeeper, authzKeeper types.AuthzKeeper) Keeper {
+func NewKeeper(cdc codec.BinaryCodec, storeKey storetypes.StoreKey, ak types.AccountKeeper, authzKeeper types.AuthzKeeper) Keeper {
 	return Keeper{
 		storeKey: storeKey,
 		cdc:      cdc,

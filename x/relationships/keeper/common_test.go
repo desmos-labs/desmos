@@ -7,12 +7,13 @@ import (
 
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 
+	db "github.com/cometbft/cometbft-db"
 	"github.com/cometbft/cometbft/libs/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/suite"
-	db "github.com/tendermint/tm-db"
 
 	"github.com/desmos-labs/desmos/v4/app"
 
@@ -30,7 +31,7 @@ type KeeperTestSuite struct {
 
 	cdc      codec.Codec
 	ctx      sdk.Context
-	storeKey sdk.StoreKey
+	storeKey storetypes.StoreKey
 	k        keeper.Keeper
 	sk       *testutil.MockSubspacesKeeper
 }
@@ -45,7 +46,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 	memDB := db.NewMemDB()
 	ms := store.NewCommitMultiStore(memDB)
 	for _, key := range keys {
-		ms.MountStoreWithDB(key, sdk.StoreTypeIAVL, memDB)
+		ms.MountStoreWithDB(key, storetypes.StoreTypeIAVL, memDB)
 	}
 
 	if err := ms.LoadLatestVersion(); err != nil {
