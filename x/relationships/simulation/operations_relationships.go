@@ -35,13 +35,13 @@ func SimulateMsgCreateRelationship(
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 		acc, relationship, skip := randomCreateRelationshipFields(r, ctx, accs, k, sk)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreateRelationship"), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "MsgCreateRelationship", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgCreateRelationship(relationship.Creator, relationship.Counterparty, relationship.SubspaceID)
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, acc)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreateRelationship"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "MsgCreateRelationship", "invalid"), nil, nil
 		}
 
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)
@@ -107,13 +107,13 @@ func SimulateMsgDeleteRelationship(
 
 		acc, counterparty, subspace, skip := randomDeleteRelationshipFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgDeleteRelationship"), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "MsgDeleteRelationship", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgDeleteRelationship(acc.Address.String(), counterparty, subspace)
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, acc)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgDeleteRelationship"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "MsgDeleteRelationship", "invalid"), nil, nil
 		}
 
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)

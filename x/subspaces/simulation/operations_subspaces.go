@@ -32,7 +32,7 @@ func SimulateMsgCreateSubspace(
 		// Get the data
 		subspace, creator, skip := randomSubspaceCreateFields(r, accs)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreateSubspace"), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "MsgCreateSubspace", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -46,7 +46,7 @@ func SimulateMsgCreateSubspace(
 		// Send the message
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, creator)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreateSubspace"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "MsgCreateSubspace", "invalid"), nil, nil
 		}
 
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)
@@ -86,7 +86,7 @@ func SimulateMsgEditSubspace(
 		// Get the data
 		subspaceID, update, editor, skip := randomEditSubspaceFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgEditSubspace"), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "MsgEditSubspace", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -101,7 +101,7 @@ func SimulateMsgEditSubspace(
 		// Send the data
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, editor)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgEditSubspace"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "MsgEditSubspace", "invalid"), nil, nil
 		}
 
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)
@@ -168,7 +168,7 @@ func SimulateMsgDeleteSubspace(
 		// Get the data
 		subspaceID, editor, skip := randomDeleteSubspaceFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgDeleteSubspace"), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "MsgDeleteSubspace", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -177,7 +177,7 @@ func SimulateMsgDeleteSubspace(
 		// Send the data
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, editor)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgDeleteSubspace"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "MsgDeleteSubspace", "invalid"), nil, nil
 		}
 
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)

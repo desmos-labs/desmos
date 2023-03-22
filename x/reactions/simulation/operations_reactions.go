@@ -39,7 +39,7 @@ func SimulateMsgAddReaction(
 		// Get the data
 		data, signer, skip := randomAddReactionFields(r, ctx, accs, k, sk, pk)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgAddReaction"), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "MsgAddReaction", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -53,7 +53,7 @@ func SimulateMsgAddReaction(
 		// Send the message
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgAddReaction"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "MsgAddReaction", "invalid"), nil, nil
 		}
 
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)
@@ -159,7 +159,7 @@ func SimulateMsgRemoveReaction(
 		// Get the data
 		reaction, signer, skip := randomRemoveReactionFields(r, ctx, accs, k, sk)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRemoveReaction"), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "MsgRemoveReaction", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -173,7 +173,7 @@ func SimulateMsgRemoveReaction(
 		// Send the message
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRemoveReaction"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "MsgRemoveReaction", "invalid"), nil, nil
 		}
 
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)

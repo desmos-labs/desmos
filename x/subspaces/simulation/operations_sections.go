@@ -32,7 +32,7 @@ func SimulateMsgCreateSection(
 		// Get the data
 		subspaceID, update, parentID, creator, skip := randomCreateSectionFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreateSection"), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "MsgCreateSection", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -47,7 +47,7 @@ func SimulateMsgCreateSection(
 		// Send the message
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, creator)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreateSection"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "MsgCreateSection", "invalid"), nil, nil
 		}
 
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)
@@ -106,7 +106,7 @@ func SimulateMsgEditSection(
 		// Get the data
 		subspaceID, sectionID, update, creator, skip := randomEditSectionFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgEditSection"), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "MsgEditSection", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -121,7 +121,7 @@ func SimulateMsgEditSection(
 		// Send the message
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, creator)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgEditSection"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "MsgEditSection", "invalid"), nil, nil
 		}
 
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)
@@ -180,7 +180,7 @@ func SimulateMsgMoveSection(
 		// Get the data
 		subspaceID, sectionID, newParentID, creator, skip := randomMoveSectionFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgMoveSection"), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "MsgMoveSection", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -194,7 +194,7 @@ func SimulateMsgMoveSection(
 		// Send the message
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, creator)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgMoveSection"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "MsgMoveSection", "invalid"), nil, nil
 		}
 
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)
@@ -256,7 +256,7 @@ func SimulateMsgDeleteSection(
 		// Get the data
 		subspaceID, sectionID, creator, skip := randomDeleteFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgDeleteSection"), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "MsgDeleteSection", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -269,7 +269,7 @@ func SimulateMsgDeleteSection(
 		// Send the message
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, creator)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgDeleteSection"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "MsgDeleteSection", "invalid"), nil, nil
 		}
 
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)

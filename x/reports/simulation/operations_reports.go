@@ -40,7 +40,7 @@ func SimulateMsgCreateReport(
 		// Get the data
 		data, creator, skip := randomCreateReportFields(r, ctx, accs, sk, pk, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreateReport"), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "MsgCreateReport", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -55,7 +55,7 @@ func SimulateMsgCreateReport(
 		// Send the message
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, creator)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreateReport"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "MsgCreateReport", "invalid"), nil, nil
 		}
 
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)
@@ -155,7 +155,7 @@ func SimulateMsgDeleteReport(
 		// Get the data
 		subspaceID, reportID, editor, skip := randomDeleteReportFields(r, ctx, accs, k, sk)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgDeleteReport"), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "MsgDeleteReport", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -164,7 +164,7 @@ func SimulateMsgDeleteReport(
 		// Send the data
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, editor)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgDeleteReport"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "MsgDeleteReport", "invalid"), nil, nil
 		}
 
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)

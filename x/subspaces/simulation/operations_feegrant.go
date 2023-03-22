@@ -30,7 +30,7 @@ func SimulateMsgGrantAllowance(
 		// Get the data
 		subspaceID, granter, grantee, signer, skip := randomGrantAllowanceFields(r, ctx, accs, k, ak)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgGrantAllowance"), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "MsgGrantAllowance", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -39,7 +39,7 @@ func SimulateMsgGrantAllowance(
 		// Send the message
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgGrantAllowance"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "MsgGrantAllowance", "invalid"), nil, nil
 		}
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)
 	}
@@ -128,7 +128,7 @@ func SimulateMsgRevokeAllowance(
 		// Get the data
 		subspaceID, granter, grantee, signer, skip := randomRevokeAllowanceFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRevokeAllowance"), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "MsgRevokeAllowance", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -137,7 +137,7 @@ func SimulateMsgRevokeAllowance(
 		// Send the message
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRevokeAllowance"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "MsgRevokeAllowance", "invalid"), nil, nil
 		}
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)
 	}

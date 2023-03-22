@@ -36,7 +36,7 @@ func SimulateMsgSupportStandardReason(
 		// Get the data
 		subspaceID, standardReasonID, signer, skip := randomSupportStandardReasonFields(r, ctx, accs, sk, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgSupportStandardReason"), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "MsgSupportStandardReason", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -45,7 +45,7 @@ func SimulateMsgSupportStandardReason(
 		// Send the message
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgSupportStandardReason"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "MsgSupportStandardReason", "invalid"), nil, nil
 		}
 
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)
@@ -111,7 +111,7 @@ func SimulateMsgAddReason(
 		// Get the data
 		data, signer, skip := randomAddReasonFields(r, ctx, accs, sk)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgAddReason"), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "MsgAddReason", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -120,7 +120,7 @@ func SimulateMsgAddReason(
 		// Send the message
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgAddReason"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "MsgAddReason", "invalid"), nil, nil
 		}
 
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)
@@ -185,7 +185,7 @@ func SimulateMsgRemoveReason(
 		// Get the data
 		subspaceID, reasonID, signer, skip := randomRemoveReason(r, ctx, accs, k, sk)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRemoveReason"), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "MsgRemoveReason", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -194,7 +194,7 @@ func SimulateMsgRemoveReason(
 		// Send the message
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRemoveReason"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "MsgRemoveReason", "invalid"), nil, nil
 		}
 
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)

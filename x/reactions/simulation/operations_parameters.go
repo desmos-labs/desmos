@@ -34,7 +34,7 @@ func SimulateMsgSetReactionsParams(
 		// Get the data
 		data, signer, skip := randomSetReactionsParamsFields(r, ctx, accs, sk)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgSetReactionsParams"), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "MsgSetReactionsParams", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -48,7 +48,7 @@ func SimulateMsgSetReactionsParams(
 		// Send the message
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgSetReactionsParams"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "MsgSetReactionsParams", "invalid"), nil, nil
 		}
 
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)

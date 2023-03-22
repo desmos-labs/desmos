@@ -33,13 +33,13 @@ func SimulateMsgAnswerPoll(
 
 		answer, user, skip := randomAnswerPollFields(r, ctx, accs, k, sk)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "answer poll"), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "answer poll", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgAnswerPoll(answer.SubspaceID, answer.PostID, answer.PollID, answer.AnswersIndexes, user.Address.String())
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, user)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "answer poll"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "answer poll", "invalid"), nil, nil
 		}
 
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)

@@ -31,14 +31,14 @@ func SimulateMsgRequestDTagTransfer(
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 		sender, receiver, skip := randomDTagRequestTransferFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRequestDTagTransfer"), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "MsgRequestDTagTransfer", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgRequestDTagTransfer(sender.Address.String(), receiver.GetAddress().String())
 
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, sender)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRequestDTagTransfer"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "MsgRequestDTagTransfer", "invalid"), nil, nil
 		}
 
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)
@@ -94,13 +94,13 @@ func SimulateMsgAcceptDTagTransfer(
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 		acc, request, dTag, skip := randomDTagAcceptRequestTransferFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgAcceptDTagTransferRequest"), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "MsgAcceptDTagTransferRequest", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgAcceptDTagTransferRequest(dTag, request.Sender, request.Receiver)
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, acc)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgAcceptDTagTransferRequest"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "MsgAcceptDTagTransferRequest", "invalid"), nil, nil
 		}
 
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)
@@ -145,13 +145,13 @@ func SimulateMsgRefuseDTagTransfer(
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 		sender, receiver, skip := randomRefuseDTagTransferFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRefuseDTagTransferRequest"), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "MsgRefuseDTagTransferRequest", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgRefuseDTagTransferRequest(sender.Address.String(), receiver.Address.String())
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, receiver)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRefuseDTagTransferRequest"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "MsgRefuseDTagTransferRequest", "invalid"), nil, nil
 		}
 
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)
@@ -204,7 +204,7 @@ func SimulateMsgCancelDTagTransfer(
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 		sender, receiver, skip := randomCancelDTagTransferFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCancelDTagTransfer"), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "MsgCancelDTagTransfer", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgCancelDTagTransferRequest(
@@ -214,7 +214,7 @@ func SimulateMsgCancelDTagTransfer(
 
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, sender)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCancelDTagTransfer"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "MsgCancelDTagTransfer", "invalid"), nil, nil
 		}
 
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)

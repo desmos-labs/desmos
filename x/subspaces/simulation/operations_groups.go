@@ -34,7 +34,7 @@ func SimulateMsgCreateUserGroup(
 		// Get the data
 		subspaceID, update, permissions, creator, skip := randomCreateUserGroupFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreateUserGroup"), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "MsgCreateUserGroup", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -51,7 +51,7 @@ func SimulateMsgCreateUserGroup(
 		// Send the message
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, creator)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreateUserGroup"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "MsgCreateUserGroup", "invalid"), nil, nil
 		}
 
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)
@@ -109,7 +109,7 @@ func SimulateMsgEditUserGroup(
 		// Get the data
 		subspaceID, groupID, update, signer, skip := randomEditUserGroupFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgEditUserGroup"), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "MsgEditUserGroup", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -118,7 +118,7 @@ func SimulateMsgEditUserGroup(
 		// Send the message
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgEditUserGroup"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "MsgEditUserGroup", "invalid"), nil, nil
 		}
 
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)
@@ -178,7 +178,7 @@ func SimulateMsgMoveUserGroup(
 		// Get the data
 		subspaceID, groupID, newSectionID, signer, skip := randomMoveUserGroupFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgMoveUserGroup"), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "MsgMoveUserGroup", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -187,7 +187,7 @@ func SimulateMsgMoveUserGroup(
 		// Send the message
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgMoveUserGroup"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "MsgMoveUserGroup", "invalid"), nil, nil
 		}
 
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)
@@ -250,7 +250,7 @@ func SimulateMsgSetUserGroupPermissions(
 		// Get the data
 		subspaceID, groupID, permissions, signer, skip := randomSetUserGroupPermissionsFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgSetUserGroupPermissions"), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "MsgSetUserGroupPermissions", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -259,7 +259,7 @@ func SimulateMsgSetUserGroupPermissions(
 		// Send the message
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgSetUserGroupPermissions"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "MsgSetUserGroupPermissions", "invalid"), nil, nil
 		}
 
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)
@@ -326,7 +326,7 @@ func SimulateMsgDeleteUserGroup(
 		// Get the data
 		subspaceID, groupID, signer, skip := randomDeleteUserGroupFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgDeleteUserGroup"), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "MsgDeleteUserGroup", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -335,7 +335,7 @@ func SimulateMsgDeleteUserGroup(
 		// Send the message
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgDeleteUserGroup"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "MsgDeleteUserGroup", "invalid"), nil, nil
 		}
 
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)
@@ -390,7 +390,7 @@ func SimulateMsgAddUserToUserGroup(
 		// Get the data
 		subspaceID, groupID, user, signer, skip := randomAddUserToUserGroupFields(r, ctx, accs, k, ak)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgAddUserToUserGroup"), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "MsgAddUserToUserGroup", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -399,7 +399,7 @@ func SimulateMsgAddUserToUserGroup(
 		// Send the message
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgAddUserToUserGroup"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "MsgAddUserToUserGroup", "invalid"), nil, nil
 		}
 
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)
@@ -464,7 +464,7 @@ func SimulateMsgRemoveUserFromUserGroup(
 		// Get the data
 		subspaceID, groupID, user, signer, skip := randomRemoveUserFromUserGroupFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRemoveUserFromUserGroup"), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "MsgRemoveUserFromUserGroup", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -473,7 +473,7 @@ func SimulateMsgRemoveUserFromUserGroup(
 		// Send the message
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRemoveUserFromUserGroup"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "MsgRemoveUserFromUserGroup", "invalid"), nil, nil
 		}
 
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)

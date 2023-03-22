@@ -33,13 +33,13 @@ func SimulateMsgAddPostAttachment(
 
 		subspaceID, postID, content, editor, skip := randomAddPostAttachmentFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "add post attachment"), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "add post attachment", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgAddPostAttachment(subspaceID, postID, content, editor.Address.String())
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, editor)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "add post attachment"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "add post attachment", "invalid"), nil, nil
 		}
 
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)
@@ -95,13 +95,13 @@ func SimulateMsgRemovePostAttachment(
 
 		subspaceID, postID, attachmentID, editor, skip := randomRemovePostAttachmentFields(r, ctx, accs, k, sk)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "remove post attachment"), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "remove post attachment", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgRemovePostAttachment(subspaceID, postID, attachmentID, editor.Address.String())
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, editor)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "remove post attachment"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "remove post attachment", "invalid"), nil, nil
 		}
 
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)

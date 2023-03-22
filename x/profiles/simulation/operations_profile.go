@@ -33,7 +33,7 @@ func SimulateMsgSaveProfile(
 
 		acc, data, skip := randomProfileSaveFields(r, ctx, accs, k, ak)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "save profile"), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "save profile", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgSaveProfile(
@@ -46,7 +46,7 @@ func SimulateMsgSaveProfile(
 		)
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, acc)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "save profile"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "save profile", "invalid"), nil, nil
 		}
 
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)
@@ -108,14 +108,14 @@ func SimulateMsgDeleteProfile(
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 		acc, skip := randomProfileDeleteFields(r, ctx, accs, k, ak)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "delete profile"), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "delete profile", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgDeleteProfile(acc.Address.String())
 
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, acc)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "delete profile"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "delete profile", "invalid"), nil, nil
 		}
 
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)

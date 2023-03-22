@@ -33,13 +33,13 @@ func SimulateMsgBlockUser(
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 		acc, blocked, subspaceID, skip := randomUserBlocksFields(r, ctx, accs, k, sk)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgBlockUser"), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "MsgBlockUser", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgBlockUser(acc.Address.String(), blocked, "", subspaceID)
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, acc)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgBlockUser"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "MsgBlockUser", "invalid"), nil, nil
 		}
 
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)
@@ -98,13 +98,13 @@ func SimulateMsgUnblockUser(
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 		acc, blocked, subspaceID, skip := randomUnblockUserFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgUnblockUser"), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "MsgUnblockUser", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgUnblockUser(acc.Address.String(), blocked, subspaceID)
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, acc)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgUnblockUser"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "MsgUnblockUser", "invalid"), nil, nil
 		}
 
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)

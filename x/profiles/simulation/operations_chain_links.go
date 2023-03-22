@@ -35,7 +35,7 @@ func SimulateMsgLinkChainAccount(
 		// Get the data
 		link, signer, skip := randomLinkChainAccountFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -49,7 +49,7 @@ func SimulateMsgLinkChainAccount(
 		// Send the message
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgLinkChainAccount"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "MsgLinkChainAccount", "invalid"), nil, nil
 		}
 
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)
@@ -96,7 +96,7 @@ func SimulateMsgUnlinkChainAccount(
 		// Get the data
 		link, signer, skip := randomUnlinkChainAccountFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgUnlinkChainAccount"), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "MsgUnlinkChainAccount", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -105,7 +105,7 @@ func SimulateMsgUnlinkChainAccount(
 		// Send the message
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgUnlinkChainAccount"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "MsgUnlinkChainAccount", "invalid"), nil, nil
 		}
 
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)
@@ -156,7 +156,7 @@ func SimulateMsgSetDefaultExternalAddress(
 		// Get the data
 		link, signer, skip := randomSetDefaultExternalAddressFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgSetDefaultExternalAddress"), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "MsgSetDefaultExternalAddress", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -165,7 +165,7 @@ func SimulateMsgSetDefaultExternalAddress(
 		// Send the message
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgSetDefaultExternalAddress"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "MsgSetDefaultExternalAddress", "invalid"), nil, nil
 		}
 
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)

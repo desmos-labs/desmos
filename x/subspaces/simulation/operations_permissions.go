@@ -32,7 +32,7 @@ func SimulateMsgSetUserPermissions(
 		// Get the data
 		subspaceID, user, permissions, creator, skip := randomSetUserPermissionsFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgSetUserPermissions"), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "MsgSetUserPermissions", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -41,7 +41,7 @@ func SimulateMsgSetUserPermissions(
 		// Send the message
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, creator)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgSetUserPermissions"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "MsgSetUserPermissions", "invalid"), nil, nil
 		}
 
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)

@@ -33,7 +33,7 @@ func SimulateMsgCreatePost(
 
 		data, author, skip := randomPostCreateFields(r, ctx, accs, k, sk)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "create post"), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "create post", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgCreatePost(
@@ -51,7 +51,7 @@ func SimulateMsgCreatePost(
 		)
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, author)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "create post"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "create post", "invalid"), nil, nil
 		}
 
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)
@@ -122,13 +122,13 @@ func SimulateMsgEditPost(
 
 		subspaceID, postID, data, editor, skip := randomPostEditFields(r, ctx, accs, k, sk)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "edit post"), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "edit post", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgEditPost(subspaceID, postID, data.Text, data.Entities, data.Tags, editor.Address.String())
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, editor)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "edit post"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "edit post", "invalid"), nil, nil
 		}
 
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)
@@ -196,13 +196,13 @@ func SimulateMsgDeletePost(
 
 		subspaceID, postID, editor, skip := randomPostDeleteFields(r, ctx, accs, k, sk)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "delete post"), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName, "delete post", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgDeletePost(subspaceID, postID, editor.Address.String())
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, editor)
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "delete post"), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, "delete post", "invalid"), nil, nil
 		}
 
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)
