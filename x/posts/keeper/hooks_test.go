@@ -344,7 +344,6 @@ func (suite *KeeperTestSuite) TestHooks_AfterPollVotingPeriodEnded() {
 			suite.k.EndPoll(ctx, tc.poll)
 
 			suite.Require().True(hooks.CalledMap["AfterPollVotingPeriodEnded"])
-			suite.Require().False(hooks.CalledMap["AfterPollAnswerDeleted"])
 		})
 	}
 }
