@@ -79,6 +79,7 @@ func (r *Reaction) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 type ReactionValue interface {
 	proto.Message
 
+	Equal(other interface{}) bool
 	isReactionValue()
 	Validate() error
 }

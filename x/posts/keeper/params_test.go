@@ -6,7 +6,7 @@ import (
 	"github.com/desmos-labs/desmos/v4/x/posts/types"
 )
 
-func (suite *KeeperTestsuite) TestKeeper_SetParams() {
+func (suite *KeeperTestSuite) TestKeeper_SetParams() {
 	testCases := []struct {
 		name   string
 		store  func(ctx sdk.Context)
@@ -50,7 +50,7 @@ func (suite *KeeperTestsuite) TestKeeper_SetParams() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_GetParams() {
+func (suite *KeeperTestSuite) TestKeeper_GetParams() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)

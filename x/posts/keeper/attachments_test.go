@@ -8,7 +8,7 @@ import (
 	"github.com/desmos-labs/desmos/v4/x/posts/types"
 )
 
-func (suite *KeeperTestsuite) TestKeeper_SetNextAttachmentID() {
+func (suite *KeeperTestSuite) TestKeeper_SetNextAttachmentID() {
 	testCases := []struct {
 		name         string
 		store        func(ctx sdk.Context)
@@ -60,7 +60,7 @@ func (suite *KeeperTestsuite) TestKeeper_SetNextAttachmentID() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_HasNextAttachmentID() {
+func (suite *KeeperTestSuite) TestKeeper_HasNextAttachmentID() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -99,7 +99,7 @@ func (suite *KeeperTestsuite) TestKeeper_HasNextAttachmentID() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_GetNextAttachmentID() {
+func (suite *KeeperTestSuite) TestKeeper_GetNextAttachmentID() {
 	testCases := []struct {
 		name            string
 		store           func(ctx sdk.Context)
@@ -145,7 +145,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetNextAttachmentID() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_DeleteNextAttachmentID() {
+func (suite *KeeperTestSuite) TestKeeper_DeleteNextAttachmentID() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -195,7 +195,7 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteNextAttachmentID() {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-func (suite *KeeperTestsuite) TestKeeper_SaveAttachment() {
+func (suite *KeeperTestSuite) TestKeeper_SaveAttachment() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -276,7 +276,7 @@ func (suite *KeeperTestsuite) TestKeeper_SaveAttachment() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_HasAttachment() {
+func (suite *KeeperTestSuite) TestKeeper_HasAttachment() {
 	testCases := []struct {
 		name         string
 		store        func(ctx sdk.Context)
@@ -321,7 +321,7 @@ func (suite *KeeperTestsuite) TestKeeper_HasAttachment() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_GetAttachment() {
+func (suite *KeeperTestSuite) TestKeeper_GetAttachment() {
 	testCases := []struct {
 		name          string
 		store         func(ctx sdk.Context)
@@ -373,7 +373,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetAttachment() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_DeleteAttachment() {
+func (suite *KeeperTestSuite) TestKeeper_DeleteAttachment() {
 	testCases := []struct {
 		name         string
 		store        func(ctx sdk.Context)

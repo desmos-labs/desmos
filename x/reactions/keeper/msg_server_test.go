@@ -3,20 +3,19 @@ package keeper_test
 import (
 	"time"
 
-	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
+	"github.com/golang/mock/gomock"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
 	"github.com/desmos-labs/desmos/v4/x/reactions/keeper"
 	"github.com/desmos-labs/desmos/v4/x/reactions/types"
-	relationshipstypes "github.com/desmos-labs/desmos/v4/x/relationships/types"
-	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
 func (suite *KeeperTestSuite) TestMsgServer_AddReaction() {
 	testCases := []struct {
 		name        string
+		setup       func()
 		store       func(ctx sdk.Context)
 		msg         *types.MsgAddReaction
 		shouldErr   bool
@@ -26,6 +25,11 @@ func (suite *KeeperTestSuite) TestMsgServer_AddReaction() {
 	}{
 		{
 			name: "user without profile returns error",
+			setup: func() {
+				suite.ak.EXPECT().
+					HasProfile(gomock.Any(), "cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f").
+					Return(false)
+			},
 			msg: types.NewMsgAddReaction(
 				1,
 				1,
@@ -36,9 +40,14 @@ func (suite *KeeperTestSuite) TestMsgServer_AddReaction() {
 		},
 		{
 			name: "non existing subspace returns error",
-			store: func(ctx sdk.Context) {
-				err := suite.ak.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f"))
-				suite.Require().NoError(err)
+			setup: func() {
+				suite.ak.EXPECT().
+					HasProfile(gomock.Any(), "cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f").
+					Return(true)
+
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(false)
 			},
 			msg: types.NewMsgAddReaction(
 				1,
@@ -50,19 +59,18 @@ func (suite *KeeperTestSuite) TestMsgServer_AddReaction() {
 		},
 		{
 			name: "non existing post returns error",
-			store: func(ctx sdk.Context) {
-				err := suite.ak.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f"))
-				suite.Require().NoError(err)
+			setup: func() {
+				suite.ak.EXPECT().
+					HasProfile(gomock.Any(), "cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f").
+					Return(true)
 
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+
+				suite.pk.EXPECT().
+					GetPost(gomock.Any(), uint64(1), uint64(1)).
+					Return(poststypes.Post{}, false)
 			},
 			msg: types.NewMsgAddReaction(
 				1,
@@ -74,42 +82,39 @@ func (suite *KeeperTestSuite) TestMsgServer_AddReaction() {
 		},
 		{
 			name: "blocked user returns error",
-			store: func(ctx sdk.Context) {
-				err := suite.ak.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f"))
-				suite.Require().NoError(err)
+			setup: func() {
+				suite.ak.EXPECT().
+					HasProfile(gomock.Any(), "cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f").
+					Return(true)
 
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
 
-				suite.pk.SavePost(ctx, poststypes.NewPost(
-					1,
-					0,
-					1,
-					"External ID",
-					"This is a text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					1,
-					nil,
-					nil,
-					nil,
-					poststypes.REPLY_SETTING_EVERYONE,
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
+				suite.pk.EXPECT().
+					GetPost(gomock.Any(), uint64(1), uint64(1)).
+					Return(poststypes.NewPost(
+						1,
+						0,
+						1,
+						"External ID",
+						"This is a text",
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+						1,
+						nil,
+						nil,
+						nil,
+						poststypes.REPLY_SETTING_EVERYONE,
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						nil,
+					), true)
 
-				suite.rk.SaveUserBlock(ctx, relationshipstypes.NewUserBlock(
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
-					"",
-					1,
-				))
+				suite.rk.EXPECT().
+					HasUserBlocked(gomock.Any(),
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+						"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
+						uint64(1)).
+					Return(true)
 			},
 			msg: types.NewMsgAddReaction(
 				1,
@@ -121,35 +126,47 @@ func (suite *KeeperTestSuite) TestMsgServer_AddReaction() {
 		},
 		{
 			name: "no permission returns error",
-			store: func(ctx sdk.Context) {
-				err := suite.ak.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f"))
-				suite.Require().NoError(err)
+			setup: func() {
+				suite.ak.EXPECT().
+					HasProfile(gomock.Any(), "cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f").
+					Return(true)
 
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
 
-				suite.pk.SavePost(ctx, poststypes.NewPost(
-					1,
-					0,
-					1,
-					"External ID",
-					"This is a text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					1,
-					nil,
-					nil,
-					nil,
-					poststypes.REPLY_SETTING_EVERYONE,
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
+				suite.pk.EXPECT().
+					GetPost(gomock.Any(), uint64(1), uint64(1)).
+					Return(poststypes.NewPost(
+						1,
+						0,
+						1,
+						"External ID",
+						"This is a text",
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+						1,
+						nil,
+						nil,
+						nil,
+						poststypes.REPLY_SETTING_EVERYONE,
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						nil,
+					), true)
+
+				suite.rk.EXPECT().
+					HasUserBlocked(gomock.Any(),
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+						"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
+						uint64(1)).
+					Return(false)
+
+				suite.sk.EXPECT().
+					HasPermission(gomock.Any(),
+						uint64(1),
+						uint32(0),
+						"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
+						types.PermissionsReact).
+					Return(false)
 			},
 			msg: types.NewMsgAddReaction(
 				1,
@@ -161,97 +178,108 @@ func (suite *KeeperTestSuite) TestMsgServer_AddReaction() {
 		},
 		{
 			name: "already existing reaction returns error",
+			setup: func() {
+				suite.ak.EXPECT().
+					HasProfile(gomock.Any(), "cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f").
+					Return(true)
+
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+
+				suite.pk.EXPECT().
+					GetPost(gomock.Any(), uint64(1), uint64(1)).
+					Return(poststypes.NewPost(
+						1,
+						0,
+						1,
+						"External ID",
+						"This is a text",
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+						1,
+						nil,
+						nil,
+						nil,
+						poststypes.REPLY_SETTING_EVERYONE,
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						nil,
+					), true)
+
+				suite.rk.EXPECT().
+					HasUserBlocked(gomock.Any(),
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+						"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
+						uint64(1)).
+					Return(false)
+
+				suite.sk.EXPECT().
+					HasPermission(gomock.Any(),
+						uint64(1),
+						uint32(0),
+						"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
+						types.PermissionsReact).
+					Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				err := suite.ak.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f"))
-				suite.Require().NoError(err)
-
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
-				suite.pk.SavePost(ctx, poststypes.NewPost(
-					1,
-					0,
-					1,
-					"External ID",
-					"This is a text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					1,
-					nil,
-					nil,
-					nil,
-					poststypes.REPLY_SETTING_EVERYONE,
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
-
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
-					subspacestypes.NewPermissions(types.PermissionsReact),
-				)
-
 				suite.k.SaveReaction(ctx, types.NewReaction(
 					1,
 					1,
 					1,
-					types.NewRegisteredReactionValue(1),
+					types.NewFreeTextValue("test"),
 					"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
 				))
 			},
 			msg: types.NewMsgAddReaction(
 				1,
 				1,
-				types.NewRegisteredReactionValue(1),
+				types.NewFreeTextValue("test"),
 				"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
 			),
 			shouldErr: true,
 		},
 		{
 			name: "not set next reaction id returns error",
-			store: func(ctx sdk.Context) {
-				err := suite.ak.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f"))
-				suite.Require().NoError(err)
+			setup: func() {
+				suite.ak.EXPECT().
+					HasProfile(gomock.Any(), "cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f").
+					Return(true)
 
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
 
-				suite.pk.SavePost(ctx, poststypes.NewPost(
-					1,
-					0,
-					1,
-					"External ID",
-					"This is a text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					1,
-					nil,
-					nil,
-					nil,
-					poststypes.REPLY_SETTING_EVERYONE,
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
+				suite.pk.EXPECT().
+					GetPost(gomock.Any(), uint64(1), uint64(1)).
+					Return(poststypes.NewPost(
+						1,
+						0,
+						1,
+						"External ID",
+						"This is a text",
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+						1,
+						nil,
+						nil,
+						nil,
+						poststypes.REPLY_SETTING_EVERYONE,
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						nil,
+					), true)
 
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
-					subspacestypes.NewPermissions(types.PermissionsReact),
-				)
+				suite.rk.EXPECT().
+					HasUserBlocked(gomock.Any(),
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+						"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
+						uint64(1)).
+					Return(false)
+
+				suite.sk.EXPECT().
+					HasPermission(gomock.Any(),
+						uint64(1),
+						uint32(0),
+						"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
+						types.PermissionsReact).
+					Return(true)
 			},
 			msg: types.NewMsgAddReaction(
 				1,
@@ -263,92 +291,104 @@ func (suite *KeeperTestSuite) TestMsgServer_AddReaction() {
 		},
 		{
 			name: "invalid reaction value returns error",
+			setup: func() {
+				suite.ak.EXPECT().
+					HasProfile(gomock.Any(), "cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f").
+					Return(true)
+
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+
+				suite.pk.EXPECT().
+					GetPost(gomock.Any(), uint64(1), uint64(1)).
+					Return(poststypes.NewPost(
+						1,
+						0,
+						1,
+						"External ID",
+						"This is a text",
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+						1,
+						nil,
+						nil,
+						nil,
+						poststypes.REPLY_SETTING_EVERYONE,
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						nil,
+					), true)
+
+				suite.rk.EXPECT().
+					HasUserBlocked(gomock.Any(),
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+						"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
+						uint64(1)).
+					Return(false)
+
+				suite.sk.EXPECT().
+					HasPermission(gomock.Any(),
+						uint64(1),
+						uint32(0),
+						"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
+						types.PermissionsReact).
+					Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				err := suite.ak.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f"))
-				suite.Require().NoError(err)
-
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
-				suite.pk.SavePost(ctx, poststypes.NewPost(
-					1,
-					0,
-					1,
-					"External ID",
-					"This is a text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					1,
-					nil,
-					nil,
-					nil,
-					poststypes.REPLY_SETTING_EVERYONE,
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
-
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
-					subspacestypes.NewPermissions(types.PermissionsReact),
-				)
-
 				suite.k.SetNextReactionID(ctx, 1, 1, 1)
 			},
 			msg: types.NewMsgAddReaction(
 				1,
 				1,
-				types.NewRegisteredReactionValue(1),
+				types.NewRegisteredReactionValue(0),
 				"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
 			),
 			shouldErr: true,
 		},
 		{
 			name: "valid request works properly - registered reaction value",
+			setup: func() {
+				suite.ak.EXPECT().
+					HasProfile(gomock.Any(), "cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f").
+					Return(true)
+
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+
+				suite.pk.EXPECT().
+					GetPost(gomock.Any(), uint64(1), uint64(1)).
+					Return(poststypes.NewPost(
+						1,
+						0,
+						1,
+						"External ID",
+						"This is a text",
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+						1,
+						nil,
+						nil,
+						nil,
+						poststypes.REPLY_SETTING_EVERYONE,
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						nil,
+					), true)
+
+				suite.rk.EXPECT().
+					HasUserBlocked(gomock.Any(),
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+						"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
+						uint64(1)).
+					Return(false)
+
+				suite.sk.EXPECT().
+					HasPermission(gomock.Any(),
+						uint64(1),
+						uint32(0),
+						"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
+						types.PermissionsReact).
+					Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				err := suite.ak.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f"))
-				suite.Require().NoError(err)
-
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
-				suite.pk.SavePost(ctx, poststypes.NewPost(
-					1,
-					0,
-					1,
-					"External ID",
-					"This is a text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					1,
-					nil,
-					nil,
-					nil,
-					poststypes.REPLY_SETTING_EVERYONE,
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
-
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
-					subspacestypes.NewPermissions(types.PermissionsReact),
-				)
-
 				suite.k.SaveSubspaceReactionsParams(ctx, types.DefaultReactionsParams(1))
 				suite.k.SaveRegisteredReaction(ctx, types.NewRegisteredReaction(
 					1,
@@ -403,43 +443,49 @@ func (suite *KeeperTestSuite) TestMsgServer_AddReaction() {
 		},
 		{
 			name: "valid request works properly - free text reaction value",
+			setup: func() {
+				suite.ak.EXPECT().
+					HasProfile(gomock.Any(), "cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f").
+					Return(true)
+
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+
+				suite.pk.EXPECT().
+					GetPost(gomock.Any(), uint64(1), uint64(1)).
+					Return(poststypes.NewPost(
+						1,
+						0,
+						1,
+						"External ID",
+						"This is a text",
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+						1,
+						nil,
+						nil,
+						nil,
+						poststypes.REPLY_SETTING_EVERYONE,
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						nil,
+					), true)
+
+				suite.rk.EXPECT().
+					HasUserBlocked(gomock.Any(),
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+						"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
+						uint64(1)).
+					Return(false)
+
+				suite.sk.EXPECT().
+					HasPermission(gomock.Any(),
+						uint64(1),
+						uint32(0),
+						"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
+						types.PermissionsReact).
+					Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				err := suite.ak.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f"))
-				suite.Require().NoError(err)
-
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
-				suite.pk.SavePost(ctx, poststypes.NewPost(
-					1,
-					0,
-					1,
-					"External ID",
-					"This is a text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					1,
-					nil,
-					nil,
-					nil,
-					poststypes.REPLY_SETTING_EVERYONE,
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
-
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
-					subspacestypes.NewPermissions(types.PermissionsReact),
-				)
-
 				suite.k.SaveSubspaceReactionsParams(ctx, types.DefaultReactionsParams(1))
 				suite.k.SetNextReactionID(ctx, 1, 1, 1)
 			},
@@ -492,6 +538,9 @@ func (suite *KeeperTestSuite) TestMsgServer_AddReaction() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup()
+			}
 			if tc.store != nil {
 				tc.store(ctx)
 			}
@@ -515,6 +564,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddReaction() {
 func (suite *KeeperTestSuite) TestMsgServer_RemoveReaction() {
 	testCases := []struct {
 		name      string
+		setup     func()
 		store     func(ctx sdk.Context)
 		msg       *types.MsgRemoveReaction
 		shouldErr bool
@@ -523,6 +573,11 @@ func (suite *KeeperTestSuite) TestMsgServer_RemoveReaction() {
 	}{
 		{
 			name: "non existing subspace returns error",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(false)
+			},
 			msg: types.NewMsgRemoveReaction(
 				1,
 				1,
@@ -533,16 +588,14 @@ func (suite *KeeperTestSuite) TestMsgServer_RemoveReaction() {
 		},
 		{
 			name: "non existing post returns error",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+
+				suite.pk.EXPECT().
+					GetPost(gomock.Any(), uint64(1), uint64(1)).
+					Return(poststypes.Post{}, false)
 			},
 			msg: types.NewMsgRemoveReaction(
 				1,
@@ -554,39 +607,28 @@ func (suite *KeeperTestSuite) TestMsgServer_RemoveReaction() {
 		},
 		{
 			name: "non existing reaction returns error",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
 
-				suite.pk.SavePost(ctx, poststypes.NewPost(
-					1,
-					0,
-					1,
-					"External ID",
-					"This is a text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					1,
-					nil,
-					nil,
-					nil,
-					poststypes.REPLY_SETTING_EVERYONE,
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
-
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
-					subspacestypes.NewPermissions(types.PermissionsReact),
-				)
+				suite.pk.EXPECT().
+					GetPost(gomock.Any(), uint64(1), uint64(1)).
+					Return(poststypes.NewPost(
+						1,
+						0,
+						1,
+						"External ID",
+						"This is a text",
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+						1,
+						nil,
+						nil,
+						nil,
+						poststypes.REPLY_SETTING_EVERYONE,
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						nil,
+					), true)
 			},
 			msg: types.NewMsgRemoveReaction(
 				1,
@@ -598,39 +640,37 @@ func (suite *KeeperTestSuite) TestMsgServer_RemoveReaction() {
 		},
 		{
 			name: "different user and reaction author return error",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+
+				suite.pk.EXPECT().
+					GetPost(gomock.Any(), uint64(1), uint64(1)).
+					Return(poststypes.NewPost(
+						1,
+						0,
+						1,
+						"External ID",
+						"This is a text",
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+						1,
+						nil,
+						nil,
+						nil,
+						poststypes.REPLY_SETTING_EVERYONE,
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						nil,
+					), true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
+				suite.k.SaveReaction(ctx, types.NewReaction(
 					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
-				suite.pk.SavePost(ctx, poststypes.NewPost(
 					1,
-					0,
 					1,
-					"External ID",
-					"This is a text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					1,
-					nil,
-					nil,
-					nil,
-					poststypes.REPLY_SETTING_EVERYONE,
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
-
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
+					types.NewRegisteredReactionValue(1),
 					"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
-					subspacestypes.NewPermissions(types.PermissionsReact),
-				)
+				))
 			},
 			msg: types.NewMsgRemoveReaction(
 				1,
@@ -642,33 +682,38 @@ func (suite *KeeperTestSuite) TestMsgServer_RemoveReaction() {
 		},
 		{
 			name: "no permission returns error",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+
+				suite.pk.EXPECT().
+					GetPost(gomock.Any(), uint64(1), uint64(1)).
+					Return(poststypes.NewPost(
+						1,
+						0,
+						1,
+						"External ID",
+						"This is a text",
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+						1,
+						nil,
+						nil,
+						nil,
+						poststypes.REPLY_SETTING_EVERYONE,
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						nil,
+					), true)
+
+				suite.sk.EXPECT().
+					HasPermission(gomock.Any(),
+						uint64(1),
+						uint32(0),
+						"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
+						types.PermissionsReact).
+					Return(false)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
-				suite.pk.SavePost(ctx, poststypes.NewPost(
-					1,
-					0,
-					1,
-					"External ID",
-					"This is a text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					1,
-					nil,
-					nil,
-					nil,
-					poststypes.REPLY_SETTING_EVERYONE,
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
-
 				suite.k.SaveReaction(ctx, types.NewReaction(
 					1,
 					1,
@@ -687,40 +732,38 @@ func (suite *KeeperTestSuite) TestMsgServer_RemoveReaction() {
 		},
 		{
 			name: "valid request works properly",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+
+				suite.pk.EXPECT().
+					GetPost(gomock.Any(), uint64(1), uint64(1)).
+					Return(poststypes.NewPost(
+						1,
+						0,
+						1,
+						"External ID",
+						"This is a text",
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+						1,
+						nil,
+						nil,
+						nil,
+						poststypes.REPLY_SETTING_EVERYONE,
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						nil,
+					), true)
+
+				suite.sk.EXPECT().
+					HasPermission(gomock.Any(),
+						uint64(1),
+						uint32(0),
+						"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
+						types.PermissionsReact).
+					Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
-				suite.pk.SavePost(ctx, poststypes.NewPost(
-					1,
-					0,
-					1,
-					"External ID",
-					"This is a text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					1,
-					nil,
-					nil,
-					nil,
-					poststypes.REPLY_SETTING_EVERYONE,
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
-
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
-					subspacestypes.NewPermissions(types.PermissionsReact),
-				)
-
 				suite.k.SaveReaction(ctx, types.NewReaction(
 					1,
 					1,
@@ -761,6 +804,9 @@ func (suite *KeeperTestSuite) TestMsgServer_RemoveReaction() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup()
+			}
 			if tc.store != nil {
 				tc.store(ctx)
 			}
@@ -783,6 +829,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RemoveReaction() {
 func (suite *KeeperTestSuite) TestMsgServer_AddRegisteredReaction() {
 	testCases := []struct {
 		name        string
+		setup       func()
 		store       func(ctx sdk.Context)
 		msg         *types.MsgAddRegisteredReaction
 		shouldErr   bool
@@ -792,6 +839,11 @@ func (suite *KeeperTestSuite) TestMsgServer_AddRegisteredReaction() {
 	}{
 		{
 			name: "non existing subspace returns error",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(false)
+			},
 			msg: types.NewMsgAddRegisteredReaction(
 				1,
 				":hello:",
@@ -802,16 +854,18 @@ func (suite *KeeperTestSuite) TestMsgServer_AddRegisteredReaction() {
 		},
 		{
 			name: "no permission returns error",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+
+				suite.sk.EXPECT().
+					HasPermission(gomock.Any(),
+						uint64(1),
+						uint32(0),
+						"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
+						types.PermissionManageRegisteredReactions).
+					Return(false)
 			},
 			msg: types.NewMsgAddRegisteredReaction(
 				1,
@@ -823,23 +877,18 @@ func (suite *KeeperTestSuite) TestMsgServer_AddRegisteredReaction() {
 		},
 		{
 			name: "not set next registered reaction id returns error",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
 
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
-					subspacestypes.NewPermissions(types.PermissionManageRegisteredReactions),
-				)
+				suite.sk.EXPECT().
+					HasPermission(gomock.Any(),
+						uint64(1),
+						uint32(0),
+						"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
+						types.PermissionManageRegisteredReactions).
+					Return(true)
 			},
 			msg: types.NewMsgAddRegisteredReaction(
 				1,
@@ -851,24 +900,20 @@ func (suite *KeeperTestSuite) TestMsgServer_AddRegisteredReaction() {
 		},
 		{
 			name: "invalid registered reaction data returns error",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+
+				suite.sk.EXPECT().
+					HasPermission(gomock.Any(),
+						uint64(1),
+						uint32(0),
+						"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
+						types.PermissionManageRegisteredReactions).
+					Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
-					subspacestypes.NewPermissions(types.PermissionManageRegisteredReactions),
-				)
-
 				suite.k.SetNextRegisteredReactionID(ctx, 1, 1)
 			},
 			msg: types.NewMsgAddRegisteredReaction(
@@ -881,24 +926,20 @@ func (suite *KeeperTestSuite) TestMsgServer_AddRegisteredReaction() {
 		},
 		{
 			name: "valid request works properly",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+
+				suite.sk.EXPECT().
+					HasPermission(gomock.Any(),
+						uint64(1),
+						uint32(0),
+						"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
+						types.PermissionManageRegisteredReactions).
+					Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
-					subspacestypes.NewPermissions(types.PermissionManageRegisteredReactions),
-				)
-
 				suite.k.SetNextRegisteredReactionID(ctx, 1, 1)
 			},
 			msg: types.NewMsgAddRegisteredReaction(
@@ -947,6 +988,9 @@ func (suite *KeeperTestSuite) TestMsgServer_AddRegisteredReaction() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup()
+			}
 			if tc.store != nil {
 				tc.store(ctx)
 			}
@@ -970,6 +1014,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddRegisteredReaction() {
 func (suite *KeeperTestSuite) TestMsgServer_EditRegisteredReaction() {
 	testCases := []struct {
 		name      string
+		setup     func()
 		store     func(ctx sdk.Context)
 		msg       *types.MsgEditRegisteredReaction
 		shouldErr bool
@@ -978,6 +1023,11 @@ func (suite *KeeperTestSuite) TestMsgServer_EditRegisteredReaction() {
 	}{
 		{
 			name: "non existing subspace returns error",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(false)
+			},
 			msg: types.NewMsgEditRegisteredReaction(
 				1,
 				1,
@@ -989,16 +1039,10 @@ func (suite *KeeperTestSuite) TestMsgServer_EditRegisteredReaction() {
 		},
 		{
 			name: "non existing registered reaction returns error",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
 			},
 			msg: types.NewMsgEditRegisteredReaction(
 				1,
@@ -1011,17 +1055,20 @@ func (suite *KeeperTestSuite) TestMsgServer_EditRegisteredReaction() {
 		},
 		{
 			name: "no permission returns error",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
 
+				suite.sk.EXPECT().
+					HasPermission(gomock.Any(),
+						uint64(1),
+						uint32(0),
+						"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
+						types.PermissionManageRegisteredReactions).
+					Return(false)
+			},
+			store: func(ctx sdk.Context) {
 				suite.k.SaveRegisteredReaction(ctx, types.NewRegisteredReaction(
 					1,
 					1,
@@ -1040,24 +1087,20 @@ func (suite *KeeperTestSuite) TestMsgServer_EditRegisteredReaction() {
 		},
 		{
 			name: "invalid update returns error",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+
+				suite.sk.EXPECT().
+					HasPermission(gomock.Any(),
+						uint64(1),
+						uint32(0),
+						"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
+						types.PermissionManageRegisteredReactions).
+					Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
-					subspacestypes.NewPermissions(types.PermissionManageRegisteredReactions),
-				)
-
 				suite.k.SaveRegisteredReaction(ctx, types.NewRegisteredReaction(
 					1,
 					1,
@@ -1076,24 +1119,20 @@ func (suite *KeeperTestSuite) TestMsgServer_EditRegisteredReaction() {
 		},
 		{
 			name: "valid request works properly",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+
+				suite.sk.EXPECT().
+					HasPermission(gomock.Any(),
+						uint64(1),
+						uint32(0),
+						"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
+						types.PermissionManageRegisteredReactions).
+					Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
-					subspacestypes.NewPermissions(types.PermissionManageRegisteredReactions),
-				)
-
 				suite.k.SaveRegisteredReaction(ctx, types.NewRegisteredReaction(
 					1,
 					1,
@@ -1140,6 +1179,9 @@ func (suite *KeeperTestSuite) TestMsgServer_EditRegisteredReaction() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup()
+			}
 			if tc.store != nil {
 				tc.store(ctx)
 			}
@@ -1162,6 +1204,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditRegisteredReaction() {
 func (suite *KeeperTestSuite) TestMsgServer_RemoveRegisteredReaction() {
 	testCases := []struct {
 		name      string
+		setup     func()
 		store     func(ctx sdk.Context)
 		msg       *types.MsgRemoveRegisteredReaction
 		shouldErr bool
@@ -1170,6 +1213,11 @@ func (suite *KeeperTestSuite) TestMsgServer_RemoveRegisteredReaction() {
 	}{
 		{
 			name: "non existing subspace returns error",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(false)
+			},
 			msg: types.NewMsgRemoveRegisteredReaction(
 				1,
 				1,
@@ -1179,16 +1227,10 @@ func (suite *KeeperTestSuite) TestMsgServer_RemoveRegisteredReaction() {
 		},
 		{
 			name: "non existing registered reaction returns error",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
 			},
 			msg: types.NewMsgRemoveRegisteredReaction(
 				1,
@@ -1199,17 +1241,20 @@ func (suite *KeeperTestSuite) TestMsgServer_RemoveRegisteredReaction() {
 		},
 		{
 			name: "no permission returns error",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
 
+				suite.sk.EXPECT().
+					HasPermission(gomock.Any(),
+						uint64(1),
+						uint32(0),
+						"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
+						types.PermissionManageRegisteredReactions).
+					Return(false)
+			},
+			store: func(ctx sdk.Context) {
 				suite.k.SaveRegisteredReaction(ctx, types.NewRegisteredReaction(
 					1,
 					1,
@@ -1226,24 +1271,20 @@ func (suite *KeeperTestSuite) TestMsgServer_RemoveRegisteredReaction() {
 		},
 		{
 			name: "valid request works properly",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+
+				suite.sk.EXPECT().
+					HasPermission(gomock.Any(),
+						uint64(1),
+						uint32(0),
+						"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
+						types.PermissionManageRegisteredReactions).
+					Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
-					subspacestypes.NewPermissions(types.PermissionManageRegisteredReactions),
-				)
-
 				suite.k.SaveRegisteredReaction(ctx, types.NewRegisteredReaction(
 					1,
 					1,
@@ -1281,6 +1322,9 @@ func (suite *KeeperTestSuite) TestMsgServer_RemoveRegisteredReaction() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup()
+			}
 			if tc.store != nil {
 				tc.store(ctx)
 			}
@@ -1303,6 +1347,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RemoveRegisteredReaction() {
 func (suite *KeeperTestSuite) TestMsgServer_SetReactionsParams() {
 	testCases := []struct {
 		name      string
+		setup     func()
 		store     func(ctx sdk.Context)
 		msg       *types.MsgSetReactionsParams
 		shouldErr bool
@@ -1311,6 +1356,11 @@ func (suite *KeeperTestSuite) TestMsgServer_SetReactionsParams() {
 	}{
 		{
 			name: "non existing subspace returns error",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(false)
+			},
 			msg: types.NewMsgSetReactionsParams(
 				1,
 				types.NewRegisteredReactionValueParams(true),
@@ -1321,16 +1371,18 @@ func (suite *KeeperTestSuite) TestMsgServer_SetReactionsParams() {
 		},
 		{
 			name: "no permission returns error",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+
+				suite.sk.EXPECT().
+					HasPermission(gomock.Any(),
+						uint64(1),
+						uint32(0),
+						"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
+						types.PermissionManageReactionParams).
+					Return(false)
 			},
 			msg: types.NewMsgSetReactionsParams(
 				1,
@@ -1342,23 +1394,18 @@ func (suite *KeeperTestSuite) TestMsgServer_SetReactionsParams() {
 		},
 		{
 			name: "invalid params return error",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
 
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
-					subspacestypes.NewPermissions(types.PermissionManageReactionParams),
-				)
+				suite.sk.EXPECT().
+					HasPermission(gomock.Any(),
+						uint64(1),
+						uint32(0),
+						"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
+						types.PermissionManageReactionParams).
+					Return(true)
 			},
 			msg: types.NewMsgSetReactionsParams(
 				1,
@@ -1370,23 +1417,18 @@ func (suite *KeeperTestSuite) TestMsgServer_SetReactionsParams() {
 		},
 		{
 			name: "valid request works properly",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
 
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
-					subspacestypes.NewPermissions(types.PermissionManageReactionParams),
-				)
+				suite.sk.EXPECT().
+					HasPermission(gomock.Any(),
+						uint64(1),
+						uint32(0),
+						"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
+						types.PermissionManageReactionParams).
+					Return(true)
 			},
 			msg: types.NewMsgSetReactionsParams(
 				1,
@@ -1424,6 +1466,9 @@ func (suite *KeeperTestSuite) TestMsgServer_SetReactionsParams() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup()
+			}
 			if tc.store != nil {
 				tc.store(ctx)
 			}

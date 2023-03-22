@@ -11,7 +11,7 @@ import (
 	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
-func (suite *KeeperTestsuite) TestValidSubspacesInvariant() {
+func (suite *KeeperTestSuite) TestValidSubspacesInvariant() {
 	testCases := []struct {
 		name      string
 		setup     func()
@@ -88,7 +88,7 @@ func (suite *KeeperTestsuite) TestValidSubspacesInvariant() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestValidPostsInvariant() {
+func (suite *KeeperTestSuite) TestValidPostsInvariant() {
 	testCases := []struct {
 		name      string
 		setup     func()
@@ -301,7 +301,7 @@ func (suite *KeeperTestsuite) TestValidPostsInvariant() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestValidAttachmentsInvariant() {
+func (suite *KeeperTestSuite) TestValidAttachmentsInvariant() {
 	testCases := []struct {
 		name      string
 		setup     func()
@@ -466,7 +466,7 @@ func (suite *KeeperTestsuite) TestValidAttachmentsInvariant() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestValidUserAnswersInvariant() {
+func (suite *KeeperTestSuite) TestValidUserAnswersInvariant() {
 	testCases := []struct {
 		name      string
 		setup     func()
@@ -614,7 +614,7 @@ func (suite *KeeperTestsuite) TestValidUserAnswersInvariant() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestValidActivePollsInvariant() {
+func (suite *KeeperTestSuite) TestValidActivePollsInvariant() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
