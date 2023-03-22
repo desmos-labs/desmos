@@ -37,9 +37,10 @@ func TestMigrateStore(t *testing.T) {
 	authKeeper := authkeeper.NewAccountKeeper(
 		cdc,
 		keys[authtypes.StoreKey],
-		paramsKeeper.Subspace(authtypes.ModuleName),
 		authtypes.ProtoBaseAccount,
 		app.GetMaccPerms(),
+		"cosmos",
+		authtypes.NewModuleAddress("gov").String(),
 	)
 
 	testCases := []struct {

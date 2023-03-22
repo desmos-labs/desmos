@@ -120,9 +120,10 @@ func (suite *TestSuite) SetupTest() {
 	authKeeper := authkeeper.NewAccountKeeper(
 		suite.cdc,
 		keys[authtypes.StoreKey],
-		paramsKeeper.Subspace(authtypes.ModuleName),
 		authtypes.ProtoBaseAccount,
 		app.GetMaccPerms(),
+		"cosmos",
+		authtypes.NewModuleAddress("gov").String(),
 	)
 
 	suite.pk = profileskeeper.NewKeeper(
