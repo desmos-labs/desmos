@@ -17,6 +17,6 @@ type AccountKeeper interface {
 }
 
 type AuthzKeeper interface {
-	SaveGrant(ctx sdk.Context, grantee, granter sdk.AccAddress, authorization authztypes.Authorization, expiration time.Time) error
+	SaveGrant(ctx sdk.Context, grantee, granter sdk.AccAddress, authorization authztypes.Authorization, expiration *time.Time) error
 	DeleteGrant(ctx sdk.Context, grantee sdk.AccAddress, granter sdk.AccAddress, msgType string) error
 }

@@ -23,8 +23,8 @@ var (
 	_ codectypes.UnpackInterfacesMessage = &MsgGrantTreasuryAuthorization{}
 )
 
-func NewMsgGrantTreasuryAuthorization(subspaceID uint64, granter string, grantee string, authorization authz.Authorization, expiration time.Time) *MsgGrantTreasuryAuthorization {
-	grant, err := authz.NewGrant(authorization, expiration)
+func NewMsgGrantTreasuryAuthorization(subspaceID uint64, granter string, grantee string, authorization authz.Authorization, expiration *time.Time) *MsgGrantTreasuryAuthorization {
+	grant, err := authz.NewGrant(time.Time{}, authorization, expiration)
 	if err != nil {
 		panic("failed to pack authorization to grant")
 	}

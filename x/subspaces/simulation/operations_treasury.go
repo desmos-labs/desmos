@@ -37,7 +37,8 @@ func SimulateMsgGrantTreasuryAuthorization(
 		}
 
 		// Build the message
-		msg := types.NewMsgGrantTreasuryAuthorization(subspaceID, granter.Address.String(), grantee, authz.NewGenericAuthorization(sdk.MsgTypeURL(&banktypes.MsgSend{})), ctx.BlockTime().AddDate(1, 0, 0))
+		expiration := ctx.BlockTime().AddDate(1, 0, 0)
+		msg := types.NewMsgGrantTreasuryAuthorization(subspaceID, granter.Address.String(), grantee, authz.NewGenericAuthorization(sdk.MsgTypeURL(&banktypes.MsgSend{})), &expiration)
 
 		// Send the message
 		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, granter)
@@ -135,7 +136,12 @@ func randomRevokeTreasuryAuthorizationFields(
 	var grantees []string
 	authzk.IterateGrants(ctx, func(granterAddr sdk.AccAddress, granteeAddr sdk.AccAddress, grant authz.Grant) bool {
 		if granterAddr.String() == subspace.Treasury {
-			authorizations = append(authorizations, grant.GetAuthorization())
+			authorization, err := grant.GetAuthorization()
+			if err != nil {
+				panic(err)
+			}
+
+			authorizations = append(authorizations, authorization)
 			grantees = append(grantees, granteeAddr.String())
 		}
 		return false

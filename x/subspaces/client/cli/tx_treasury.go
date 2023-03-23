@@ -99,7 +99,8 @@ Examples:
 				return fmt.Errorf("invalid authorization type, %s", args[2])
 			}
 
-			msg := types.NewMsgGrantTreasuryAuthorization(subspaceID, clientCtx.GetFromAddress().String(), args[1], authorization, time.Unix(exp, 0))
+			expiration := time.Unix(exp, 0)
+			msg := types.NewMsgGrantTreasuryAuthorization(subspaceID, clientCtx.GetFromAddress().String(), args[1], authorization, &expiration)
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}
@@ -134,7 +135,8 @@ func getSendAuthorization(flags *pflag.FlagSet) (*banktypes.SendAuthorization, e
 		return nil, fmt.Errorf("spend-limit should be greater than zero")
 	}
 
-	return banktypes.NewSendAuthorization(spendLimit), nil
+	// TODO: fix nil to allowed users
+	return banktypes.NewSendAuthorization(spendLimit, nil), nil
 }
 
 // getStakeAuthorization returns a generic authorization from the given command flags

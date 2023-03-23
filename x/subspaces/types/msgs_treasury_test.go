@@ -2,7 +2,6 @@ package types_test
 
 import (
 	"testing"
-	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
@@ -11,12 +10,14 @@ import (
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
+var expiration = &expiration
+
 var msgGrantTreasuryAuthorization = types.NewMsgGrantTreasuryAuthorization(
 	1,
 	"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez",
 	"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 	&banktypes.SendAuthorization{SpendLimit: sdk.NewCoins(sdk.NewInt64Coin("steak", 100))},
-	time.Date(2023, 1, 11, 0, 0, 0, 0, time.UTC),
+	&expiration,
 )
 
 func TestMsgGrantTreasuryAuthorization_Route(t *testing.T) {
@@ -40,7 +41,7 @@ func TestMsgGrantTreasuryAuthorization_ValidateBasic(t *testing.T) {
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 				&banktypes.SendAuthorization{SpendLimit: sdk.NewCoins(sdk.NewInt64Coin("steak", 100))},
-				time.Date(2023, 1, 11, 0, 0, 0, 0, time.UTC),
+				&expiration,
 			),
 			shouldErr: true,
 		},
@@ -51,7 +52,7 @@ func TestMsgGrantTreasuryAuthorization_ValidateBasic(t *testing.T) {
 				"",
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 				&banktypes.SendAuthorization{SpendLimit: sdk.NewCoins(sdk.NewInt64Coin("steak", 100))},
-				time.Date(2023, 1, 11, 0, 0, 0, 0, time.UTC),
+				&expiration,
 			),
 			shouldErr: true,
 		},
@@ -62,7 +63,7 @@ func TestMsgGrantTreasuryAuthorization_ValidateBasic(t *testing.T) {
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 				"",
 				&banktypes.SendAuthorization{SpendLimit: sdk.NewCoins(sdk.NewInt64Coin("steak", 100))},
-				time.Date(2023, 1, 11, 0, 0, 0, 0, time.UTC),
+				&expiration,
 			),
 			shouldErr: true,
 		},
@@ -73,7 +74,7 @@ func TestMsgGrantTreasuryAuthorization_ValidateBasic(t *testing.T) {
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 				&banktypes.SendAuthorization{SpendLimit: nil},
-				time.Date(2023, 1, 11, 0, 0, 0, 0, time.UTC),
+				&expiration,
 			),
 			shouldErr: true,
 		},

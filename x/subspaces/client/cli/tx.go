@@ -874,7 +874,8 @@ If you want to grant the same authorization inside multiple subspaces, simply sp
 			}
 
 			authorization := subspacesauthz.NewGenericSubspaceAuthorization(subspacesIDs, msgType)
-			msg, err := authz.NewMsgGrant(clientCtx.GetFromAddress(), grantee, authorization, time.Unix(exp, 0))
+			expiration := time.Unix(exp, 0)
+			msg, err := authz.NewMsgGrant(clientCtx.GetFromAddress(), grantee, authorization, &expiration)
 			if err != nil {
 				return err
 			}

@@ -18,6 +18,10 @@ type AccountKeeper interface {
 // BankKeeper represents the expected keeper used to interact with x/bank
 type BankKeeper interface {
 	SendCoinsFromAccountToModule(ctx sdk.Context, senderAddr sdk.AccAddress, recipientModule string, amt sdk.Coins) error
+
+	// Required by auth AnteHandler
+	IsSendEnabledCoins(ctx sdk.Context, coins ...sdk.Coin) error
+	SendCoins(ctx sdk.Context, from, to sdk.AccAddress, amt sdk.Coins) error
 }
 
 // SubspacesKeeper represents the expected keeper used to interact with x/subspaces
