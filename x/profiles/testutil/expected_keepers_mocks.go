@@ -9,8 +9,9 @@ import (
 
 	types "github.com/cosmos/cosmos-sdk/types"
 	types0 "github.com/cosmos/cosmos-sdk/x/capability/types"
-	types1 "github.com/cosmos/ibc-go/v7/modules/core/03-connection/types"
-	types2 "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
+	types1 "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
+	types2 "github.com/cosmos/ibc-go/v7/modules/core/03-connection/types"
+	types3 "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
 	exported "github.com/cosmos/ibc-go/v7/modules/core/exported"
 	gomock "github.com/golang/mock/gomock"
 )
@@ -75,25 +76,11 @@ func (m *MockChannelKeeper) EXPECT() *MockChannelKeeperMockRecorder {
 	return m.recorder
 }
 
-// ChanCloseInit mocks base method.
-func (m *MockChannelKeeper) ChanCloseInit(ctx types.Context, portID, channelID string, chanCap *types0.Capability) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ChanCloseInit", ctx, portID, channelID, chanCap)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// ChanCloseInit indicates an expected call of ChanCloseInit.
-func (mr *MockChannelKeeperMockRecorder) ChanCloseInit(ctx, portID, channelID, chanCap interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ChanCloseInit", reflect.TypeOf((*MockChannelKeeper)(nil).ChanCloseInit), ctx, portID, channelID, chanCap)
-}
-
 // GetChannel mocks base method.
-func (m *MockChannelKeeper) GetChannel(ctx types.Context, srcPort, srcChan string) (types2.Channel, bool) {
+func (m *MockChannelKeeper) GetChannel(ctx types.Context, srcPort, srcChan string) (types3.Channel, bool) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetChannel", ctx, srcPort, srcChan)
-	ret0, _ := ret[0].(types2.Channel)
+	ret0, _ := ret[0].(types3.Channel)
 	ret1, _ := ret[1].(bool)
 	return ret0, ret1
 }
@@ -104,33 +91,19 @@ func (mr *MockChannelKeeperMockRecorder) GetChannel(ctx, srcPort, srcChan interf
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetChannel", reflect.TypeOf((*MockChannelKeeper)(nil).GetChannel), ctx, srcPort, srcChan)
 }
 
-// GetNextSequenceSend mocks base method.
-func (m *MockChannelKeeper) GetNextSequenceSend(ctx types.Context, portID, channelID string) (uint64, bool) {
+// SendPacket mocks base method.
+func (m *MockChannelKeeper) SendPacket(ctx types.Context, channelCap *types0.Capability, sourcePort, sourceChannel string, timeoutHeight types1.Height, timeoutTimestamp uint64, data []byte) (uint64, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetNextSequenceSend", ctx, portID, channelID)
+	ret := m.ctrl.Call(m, "SendPacket", ctx, channelCap, sourcePort, sourceChannel, timeoutHeight, timeoutTimestamp, data)
 	ret0, _ := ret[0].(uint64)
-	ret1, _ := ret[1].(bool)
+	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetNextSequenceSend indicates an expected call of GetNextSequenceSend.
-func (mr *MockChannelKeeperMockRecorder) GetNextSequenceSend(ctx, portID, channelID interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNextSequenceSend", reflect.TypeOf((*MockChannelKeeper)(nil).GetNextSequenceSend), ctx, portID, channelID)
-}
-
-// SendPacket mocks base method.
-func (m *MockChannelKeeper) SendPacket(ctx types.Context, channelCap *types0.Capability, packet exported.PacketI) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SendPacket", ctx, channelCap, packet)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
 // SendPacket indicates an expected call of SendPacket.
-func (mr *MockChannelKeeperMockRecorder) SendPacket(ctx, channelCap, packet interface{}) *gomock.Call {
+func (mr *MockChannelKeeperMockRecorder) SendPacket(ctx, channelCap, sourcePort, sourceChannel, timeoutHeight, timeoutTimestamp, data interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendPacket", reflect.TypeOf((*MockChannelKeeper)(nil).SendPacket), ctx, channelCap, packet)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendPacket", reflect.TypeOf((*MockChannelKeeper)(nil).SendPacket), ctx, channelCap, sourcePort, sourceChannel, timeoutHeight, timeoutTimestamp, data)
 }
 
 // MockClientKeeper is a mock of ClientKeeper interface.
@@ -195,10 +168,10 @@ func (m *MockConnectionKeeper) EXPECT() *MockConnectionKeeperMockRecorder {
 }
 
 // GetConnection mocks base method.
-func (m *MockConnectionKeeper) GetConnection(ctx types.Context, connectionID string) (types1.ConnectionEnd, bool) {
+func (m *MockConnectionKeeper) GetConnection(ctx types.Context, connectionID string) (types2.ConnectionEnd, bool) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetConnection", ctx, connectionID)
-	ret0, _ := ret[0].(types1.ConnectionEnd)
+	ret0, _ := ret[0].(types2.ConnectionEnd)
 	ret1, _ := ret[1].(bool)
 	return ret0, ret1
 }

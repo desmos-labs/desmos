@@ -2,9 +2,7 @@ package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
-	channeltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
 	host "github.com/cosmos/ibc-go/v7/modules/core/24-host"
 
 	"github.com/desmos-labs/desmos/v4/x/profiles/types"
@@ -12,16 +10,6 @@ import (
 
 // DONTCOVER
 // No need to cover this simple methods
-
-// ChanCloseInit defines a wrapper function for the channel Keeper's function
-func (k Keeper) ChanCloseInit(ctx sdk.Context, portID, channelID string) error {
-	capName := host.ChannelCapabilityPath(portID, channelID)
-	chanCap, ok := k.scopedKeeper.GetCapability(ctx, capName)
-	if !ok {
-		return sdkerrors.Wrapf(channeltypes.ErrChannelCapabilityNotFound, "could not retrieve channel capability at: %s", capName)
-	}
-	return k.channelKeeper.ChanCloseInit(ctx, portID, channelID, chanCap)
-}
 
 // IsBound checks if the module is already bound to the desired port
 func (k Keeper) IsBound(ctx sdk.Context, portID string) bool {
