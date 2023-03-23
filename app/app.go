@@ -49,6 +49,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/authz"
 	"github.com/cosmos/cosmos-sdk/x/feegrant"
 
+	"github.com/cosmos/cosmos-sdk/x/consensus"
+	consensusparamkeeper "github.com/cosmos/cosmos-sdk/x/consensus/keeper"
+	consensusparamtypes "github.com/cosmos/cosmos-sdk/x/consensus/types"
+
 	ibcclient "github.com/cosmos/ibc-go/v7/modules/core/02-client"
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -60,7 +64,6 @@ import (
 	"github.com/spf13/cast"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/rpc"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/server/api"
 	"github.com/cosmos/cosmos-sdk/server/config"
@@ -85,7 +88,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/bank"
 	"github.com/cosmos/cosmos-sdk/x/crisis"
 	distr "github.com/cosmos/cosmos-sdk/x/distribution"
-	distrclient "github.com/cosmos/cosmos-sdk/x/distribution/client/cli"
 	"github.com/cosmos/cosmos-sdk/x/evidence"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	"github.com/cosmos/cosmos-sdk/x/gov"
@@ -161,6 +163,7 @@ import (
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	evidencetypes "github.com/cosmos/cosmos-sdk/x/evidence/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	govv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
@@ -176,6 +179,7 @@ import (
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmclient "github.com/CosmWasm/wasmd/x/wasm/client"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
+	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 )
 
 const (
@@ -240,12 +244,11 @@ var (
 			append(
 				wasmclient.ProposalHandlers,
 				paramsclient.ProposalHandler,
-				distrclient.ProposalHandler,
-				upgradeclient.ProposalHandler,
-				upgradeclient.CancelProposalHandler,
+				upgradeclient.LegacyProposalHandler,
+				upgradeclient.LegacyCancelProposalHandler,
 				ibcclientclient.UpdateClientProposalHandler,
 				ibcclientclient.UpgradeProposalHandler,
-			)...,
+			),
 		),
 		params.AppModuleBasic{},
 		crisis.AppModuleBasic{},
@@ -255,6 +258,8 @@ var (
 		evidence.AppModuleBasic{},
 		authzmodule.AppModuleBasic{},
 		vesting.AppModuleBasic{},
+		consensus.AppModuleBasic{},
+
 		wasm.AppModuleBasic{},
 
 		// IBC modules
@@ -289,7 +294,10 @@ var (
 	}
 )
 
-var _ runtime.AppI = (*DesmosApp)(nil)
+var (
+	_ runtime.AppI            = (*DesmosApp)(nil)
+	_ servertypes.Application = (*DesmosApp)(nil)
+)
 
 // DesmosApp extends an ABCI application, but with most of its parameters exported.
 // They are exported for convenience in creating helper functions, as object
@@ -306,21 +314,23 @@ type DesmosApp struct {
 	memKeys map[string]*storetypes.MemoryStoreKey
 
 	// Keepers
-	AccountKeeper    authkeeper.AccountKeeper
-	BankKeeper       bankkeeper.Keeper
-	CapabilityKeeper *capabilitykeeper.Keeper
-	StakingKeeper    stakingkeeper.Keeper
-	SlashingKeeper   slashingkeeper.Keeper
-	MintKeeper       mintkeeper.Keeper
-	DistrKeeper      distrkeeper.Keeper
-	GovKeeper        govkeeper.Keeper
-	CrisisKeeper     crisiskeeper.Keeper
-	UpgradeKeeper    upgradekeeper.Keeper
-	ParamsKeeper     paramskeeper.Keeper
-	AuthzKeeper      authzkeeper.Keeper
-	EvidenceKeeper   evidencekeeper.Keeper
-	FeeGrantKeeper   feegrantkeeper.Keeper
-	WasmKeeper       wasm.Keeper
+	AccountKeeper         authkeeper.AccountKeeper
+	BankKeeper            bankkeeper.Keeper
+	CapabilityKeeper      *capabilitykeeper.Keeper
+	StakingKeeper         *stakingkeeper.Keeper
+	SlashingKeeper        slashingkeeper.Keeper
+	MintKeeper            mintkeeper.Keeper
+	DistrKeeper           distrkeeper.Keeper
+	GovKeeper             govkeeper.Keeper
+	CrisisKeeper          *crisiskeeper.Keeper
+	UpgradeKeeper         *upgradekeeper.Keeper
+	ParamsKeeper          paramskeeper.Keeper
+	AuthzKeeper           authzkeeper.Keeper
+	EvidenceKeeper        evidencekeeper.Keeper
+	FeeGrantKeeper        feegrantkeeper.Keeper
+	ConsensusParamsKeeper consensusparamkeeper.Keeper
+
+	WasmKeeper wasm.Keeper
 
 	// IBC modules
 	TransferKeeper      ibctransferkeeper.Keeper
@@ -368,26 +378,29 @@ func init() {
 
 // NewDesmosApp is a constructor function for DesmosApp
 func NewDesmosApp(
-	logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest bool, skipUpgradeHeights map[int64]bool,
-	appOpts servertypes.AppOptions, wasmEnabledProposals []wasm.ProposalType, baseAppOptions ...func(*baseapp.BaseApp),
+	logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest bool,
+	appOpts servertypes.AppOptions, wasmEnabledProposals []wasm.ProposalType,
+	baseAppOptions ...func(*baseapp.BaseApp),
 ) *DesmosApp {
 
 	encodingConfig := MakeTestEncodingConfig()
 
 	appCodec, legacyAmino := encodingConfig.Marshaler, encodingConfig.Amino
 	interfaceRegistry := encodingConfig.InterfaceRegistry
+	txConfig := encodingConfig.TxConfig
 
 	// BaseApp handles interactions with Tendermint through the ABCI protocol
-	bApp := baseapp.NewBaseApp(appName, logger, db, encodingConfig.TxConfig.TxDecoder(), baseAppOptions...)
+	bApp := baseapp.NewBaseApp(appName, logger, db, txConfig.TxDecoder(), baseAppOptions...)
 	bApp.SetCommitMultiStoreTracer(traceStore)
 	bApp.SetVersion(version.Version)
 	bApp.SetInterfaceRegistry(interfaceRegistry)
+	bApp.SetTxEncoder(txConfig.TxEncoder())
 
 	keys := sdk.NewKVStoreKeys(
 		authtypes.StoreKey, banktypes.StoreKey, stakingtypes.StoreKey,
 		minttypes.StoreKey, distrtypes.StoreKey, slashingtypes.StoreKey,
-		govtypes.StoreKey, paramstypes.StoreKey, upgradetypes.StoreKey,
-		feegrant.StoreKey, evidencetypes.StoreKey, capabilitytypes.StoreKey,
+		govtypes.StoreKey, paramstypes.StoreKey, consensusparamtypes.StoreKey,
+		upgradetypes.StoreKey, feegrant.StoreKey, evidencetypes.StoreKey, capabilitytypes.StoreKey,
 		authzkeeper.StoreKey, wasm.StoreKey,
 
 		// IBC modules
@@ -416,7 +429,8 @@ func NewDesmosApp(
 	app.ParamsKeeper = initParamsKeeper(appCodec, legacyAmino, keys[paramstypes.StoreKey], tkeys[paramstypes.TStoreKey])
 
 	// set the BaseApp's parameter store
-	bApp.SetParamStore(app.ParamsKeeper.Subspace(baseapp.Paramspace).WithKeyTable(paramskeeper.ConsensusParamsKeyTable()))
+	app.ConsensusParamsKeeper = consensusparamkeeper.NewKeeper(appCodec, keys[consensusparamtypes.StoreKey], authtypes.NewModuleAddress(govtypes.ModuleName).String())
+	bApp.SetParamStore(&app.ConsensusParamsKeeper)
 
 	// add capability keeper and ScopeToModule for ibc module
 	app.CapabilityKeeper = capabilitykeeper.NewKeeper(appCodec, keys[capabilitytypes.StoreKey], memKeys[capabilitytypes.MemStoreKey])
@@ -431,41 +445,61 @@ func NewDesmosApp(
 	app.CapabilityKeeper.Seal()
 
 	// add keepers
-	app.AccountKeeper = authkeeper.NewAccountKeeper(
-		appCodec, keys[authtypes.StoreKey], app.GetSubspace(authtypes.ModuleName), authtypes.ProtoBaseAccount, maccPerms,
-	)
+	app.AccountKeeper = authkeeper.NewAccountKeeper(appCodec, keys[authtypes.StoreKey], authtypes.ProtoBaseAccount, maccPerms, sdk.Bech32MainPrefix, authtypes.NewModuleAddress(govtypes.ModuleName).String())
+
 	app.BankKeeper = bankkeeper.NewBaseKeeper(
-		appCodec, keys[banktypes.StoreKey], app.AccountKeeper, app.GetSubspace(banktypes.ModuleName), app.ModuleAccountAddrs(),
+		appCodec,
+		keys[banktypes.StoreKey],
+		app.AccountKeeper,
+		BlockedAddresses(),
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
-	stakingKeeper := stakingkeeper.NewKeeper(
-		appCodec, keys[stakingtypes.StoreKey], app.AccountKeeper, app.BankKeeper, app.GetSubspace(stakingtypes.ModuleName),
+
+	app.StakingKeeper = stakingkeeper.NewKeeper(
+		appCodec, keys[stakingtypes.StoreKey], app.AccountKeeper, app.BankKeeper, authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
+
 	app.MintKeeper = mintkeeper.NewKeeper(
-		appCodec, keys[minttypes.StoreKey], app.GetSubspace(minttypes.ModuleName), &stakingKeeper,
+		appCodec, keys[minttypes.StoreKey], app.StakingKeeper,
 		app.AccountKeeper, app.BankKeeper, authtypes.FeeCollectorName,
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
+
 	app.DistrKeeper = distrkeeper.NewKeeper(
-		appCodec, keys[distrtypes.StoreKey], app.GetSubspace(distrtypes.ModuleName), app.AccountKeeper, app.BankKeeper,
-		&stakingKeeper, authtypes.FeeCollectorName, app.ModuleAccountAddrs(),
+		appCodec, keys[distrtypes.StoreKey], app.AccountKeeper, app.BankKeeper,
+		app.StakingKeeper, authtypes.FeeCollectorName, authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
+
 	app.SlashingKeeper = slashingkeeper.NewKeeper(
-		appCodec, keys[slashingtypes.StoreKey], &stakingKeeper, app.GetSubspace(slashingtypes.ModuleName),
+		appCodec, legacyAmino, keys[slashingtypes.StoreKey], app.StakingKeeper, authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 
 	invCheckPeriod := cast.ToUint(appOpts.Get(server.FlagInvCheckPeriod))
 	app.CrisisKeeper = crisiskeeper.NewKeeper(
-		app.GetSubspace(crisistypes.ModuleName), invCheckPeriod, app.BankKeeper, authtypes.FeeCollectorName,
+		appCodec, keys[crisistypes.StoreKey], invCheckPeriod,
+		app.BankKeeper, authtypes.FeeCollectorName, authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 
 	app.FeeGrantKeeper = feegrantkeeper.NewKeeper(appCodec, keys[feegrant.StoreKey], app.AccountKeeper)
 
-	homePath := cast.ToString(appOpts.Get(flags.FlagHome))
-	app.UpgradeKeeper = upgradekeeper.NewKeeper(skipUpgradeHeights, keys[upgradetypes.StoreKey], appCodec, homePath, app.BaseApp)
-
 	// register the staking hooks
 	// NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks
-	app.StakingKeeper = *stakingKeeper.SetHooks(
+	app.StakingKeeper.SetHooks(
 		stakingtypes.NewMultiStakingHooks(app.DistrKeeper.Hooks(), app.SlashingKeeper.Hooks()),
+	)
+
+	app.AuthzKeeper = authzkeeper.NewKeeper(keys[authzkeeper.StoreKey], appCodec, app.BaseApp.MsgServiceRouter(), app.AccountKeeper)
+
+	// get skipUpgradeHeights from the app options
+	skipUpgradeHeights := map[int64]bool{}
+	for _, h := range cast.ToIntSlice(appOpts.Get(server.FlagUnsafeSkipUpgrades)) {
+		skipUpgradeHeights[int64(h)] = true
+	}
+	homePath := cast.ToString(appOpts.Get(flags.FlagHome))
+	// set the governance module account as the authority for conducting upgrades
+	app.UpgradeKeeper = upgradekeeper.NewKeeper(
+		skipUpgradeHeights, keys[upgradetypes.StoreKey], appCodec,
+		homePath, app.BaseApp, authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 
 	// Create IBC keeper
@@ -473,18 +507,25 @@ func NewDesmosApp(
 		appCodec, keys[ibcexported.StoreKey], app.GetSubspace(ibcexported.ModuleName), app.StakingKeeper, app.UpgradeKeeper, scopedIBCKeeper,
 	)
 
-	app.AuthzKeeper = authzkeeper.NewKeeper(keys[authzkeeper.StoreKey], appCodec, app.BaseApp.MsgServiceRouter())
-
-	// register the proposal types
-	govRouter := govtypes.NewRouter()
-	govRouter.AddRoute(govtypes.RouterKey, govtypes.ProposalHandler).
-		AddRoute(paramproposal.RouterKey, params.NewParamChangeProposalHandler(app.ParamsKeeper)).
-		AddRoute(distrtypes.RouterKey, distr.NewCommunityPoolSpendProposalHandler(app.DistrKeeper)).
+	// Register the proposal types
+	// Deprecated: Avoid adding new handlers, instead use the new proposal flow
+	// by granting the governance module the right to execute the message.
+	// See: https://docs.cosmos.network/main/modules/gov#proposal-messages
+	govRouter := govv1beta1.NewRouter()
+	govRouter.AddRoute(govtypes.RouterKey, govv1beta1.ProposalHandler).
+		AddRoute(paramproposal.RouterKey, params.NewParamChangeProposalHandler(app.ParamsKeeper)). // This should be removed. It is still in place to avoid failures of modules that have not yet been upgraded.
 		AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(app.UpgradeKeeper)).
 		AddRoute(ibcclienttypes.RouterKey, ibcclient.NewClientProposalHandler(app.IBCKeeper.ClientKeeper))
 
+	// create evidence keeper with router
+	evidenceKeeper := evidencekeeper.NewKeeper(
+		appCodec, keys[evidencetypes.StoreKey], app.StakingKeeper, app.SlashingKeeper,
+	)
+	// If evidence needs to be handled for the app, set routes in router here and seal
+	app.EvidenceKeeper = *evidenceKeeper
+
 	app.IBCFeeKeeper = ibcfeekeeper.NewKeeper(
-		appCodec, keys[ibcfeetypes.StoreKey], app.GetSubspace(ibcfeetypes.ModuleName),
+		appCodec, keys[ibcfeetypes.StoreKey],
 		app.IBCKeeper.ChannelKeeper, // may be replaced with IBC middleware
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper, app.AccountKeeper, app.BankKeeper,
@@ -508,6 +549,7 @@ func NewDesmosApp(
 		appCodec,
 		keys[icahosttypes.StoreKey],
 		app.GetSubspace(icahosttypes.SubModuleName),
+		app.IBCFeeKeeper, // use ics29 fee as ics4Wrapper in middleware stack
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper,
 		app.AccountKeeper,
@@ -604,13 +646,6 @@ func NewDesmosApp(
 
 	app.SupplyKeeper = supplykeeper.NewKeeper(app.appCodec, app.AccountKeeper, app.BankKeeper, app.DistrKeeper)
 
-	// create evidence keeper with router
-	evidenceKeeper := evidencekeeper.NewKeeper(
-		appCodec, keys[evidencetypes.StoreKey], &app.StakingKeeper, app.SlashingKeeper,
-	)
-	// If evidence needs to be handled for the app, set routes in router here and seal
-	app.EvidenceKeeper = *evidenceKeeper
-
 	// ------ CosmWasm setup ------
 
 	// var wasmRouter = bApp.Router()
@@ -633,17 +668,17 @@ func NewDesmosApp(
 		app.ReactionsKeeper,
 	)
 
-	supportedFeatures := "iterator,staking,stargate,cosmwasm_1_1"
 	// The last arguments can contain custom message handlers, and custom query handlers,
 	// if we want to allow any custom callbacks
-	app.WasmKeeper = wasmkeeper.NewKeeper(
+	// See https://github.com/CosmWasm/cosmwasm/blob/main/docs/CAPABILITIES-BUILT-IN.md
+	availableCapabilities := "iterator,staking,stargate,cosmwasm_1_1,cosmwasm_1_2"
+	app.WasmKeeper = wasm.NewKeeper(
 		appCodec,
 		keys[wasm.StoreKey],
-		app.GetSubspace(wasm.ModuleName),
 		app.AccountKeeper,
 		app.BankKeeper,
 		app.StakingKeeper,
-		app.DistrKeeper,
+		distrkeeper.NewQuerier(app.DistrKeeper),
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper,
 		scopedWasmKeeper,
@@ -652,7 +687,8 @@ func NewDesmosApp(
 		app.GRPCQueryRouter(),
 		wasmDir,
 		wasmConfig,
-		supportedFeatures,
+		availableCapabilities,
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 		wasmOpts...,
 	)
 
@@ -661,21 +697,42 @@ func NewDesmosApp(
 		govRouter.AddRoute(wasm.RouterKey, wasm.NewWasmProposalHandler(app.WasmKeeper, wasmEnabledProposals))
 	}
 
-	app.GovKeeper = govkeeper.NewKeeper(
-		appCodec, keys[govtypes.StoreKey], app.GetSubspace(govtypes.ModuleName), app.AccountKeeper, app.BankKeeper,
-		&stakingKeeper, govRouter,
+	govConfig := govtypes.DefaultConfig()
+	/*
+		Example of setting gov params:
+		govConfig.MaxMetadataLen = 10000
+	*/
+	govKeeper := govkeeper.NewKeeper(
+		appCodec,
+		keys[govtypes.StoreKey],
+		app.AccountKeeper,
+		app.BankKeeper,
+		app.StakingKeeper,
+		app.MsgServiceRouter(),
+		govConfig,
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
+
+	app.GovKeeper = *govKeeper.SetHooks(
+		govtypes.NewMultiGovHooks(
+		// register the governance hooks
+		),
+	)
+
+	// Set legacy router for backwards compatibility with gov v1beta1
+	govKeeper.SetLegacyRouter(govRouter)
 
 	// Create IBC modules with ibcfee middleware
 	transferIBCModule := ibcfee.NewIBCMiddleware(ibctransfer.NewIBCModule(app.TransferKeeper), app.IBCFeeKeeper)
 	profilesIBCModule := ibcfee.NewIBCMiddleware(profiles.NewIBCModule(app.appCodec, app.ProfileKeeper), app.IBCFeeKeeper)
 	wasmIBCModule := ibcfee.NewIBCMiddleware(wasm.NewIBCHandler(app.WasmKeeper, app.IBCKeeper.ChannelKeeper, app.IBCFeeKeeper), app.IBCFeeKeeper)
 
-	// Since there is no public ICA auth module available at the moment, we use nil right now. For reference, see:
-	// https://ibc.cosmos.network/main/apps/interchain-accounts/integration.html#disabling-controller-chain-functionality
+	// integration point for custom authentication modules
+	// see https://medium.com/the-interchain-foundation/ibc-go-v6-changes-to-interchain-accounts-and-how-it-impacts-your-chain-806c185300d7
 	// TODO: Once a public ICA auth module is released, replace nil with the module
+	var noAuthzModule porttypes.IBCModule
 	icaControllerIBCModule := ibcfee.NewIBCMiddleware(
-		icacontroller.NewIBCMiddleware(nil, app.ICAControllerKeeper),
+		icacontroller.NewIBCMiddleware(noAuthzModule, app.ICAControllerKeeper),
 		app.IBCFeeKeeper,
 	)
 
@@ -705,21 +762,22 @@ func NewDesmosApp(
 			app.AccountKeeper, app.StakingKeeper, app.BaseApp.DeliverTx,
 			encodingConfig.TxConfig,
 		),
-		auth.NewAppModule(appCodec, app.AccountKeeper, authsims.RandomGenesisAccounts),
+		auth.NewAppModule(appCodec, app.AccountKeeper, authsims.RandomGenesisAccounts, app.GetSubspace(authtypes.ModuleName)),
 		vesting.NewAppModule(app.AccountKeeper, app.BankKeeper),
-		bank.NewAppModule(appCodec, app.BankKeeper, app.AccountKeeper),
-		capability.NewAppModule(appCodec, *app.CapabilityKeeper),
-		crisis.NewAppModule(&app.CrisisKeeper, skipGenesisInvariants),
+		bank.NewAppModule(appCodec, app.BankKeeper, app.AccountKeeper, app.GetSubspace(banktypes.ModuleName)),
+		capability.NewAppModule(appCodec, *app.CapabilityKeeper, false),
+		crisis.NewAppModule(app.CrisisKeeper, skipGenesisInvariants, app.GetSubspace(crisistypes.ModuleName)),
 		feegrantmodule.NewAppModule(appCodec, app.AccountKeeper, app.BankKeeper, app.FeeGrantKeeper, app.interfaceRegistry),
-		gov.NewAppModule(appCodec, app.GovKeeper, app.AccountKeeper, app.BankKeeper),
-		mint.NewAppModule(appCodec, app.MintKeeper, app.AccountKeeper),
-		slashing.NewAppModule(appCodec, app.SlashingKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
-		distr.NewAppModule(appCodec, app.DistrKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
-		staking.NewAppModule(appCodec, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
+		gov.NewAppModule(appCodec, &app.GovKeeper, app.AccountKeeper, app.BankKeeper, app.GetSubspace(govtypes.ModuleName)),
+		mint.NewAppModule(appCodec, app.MintKeeper, app.AccountKeeper, nil, app.GetSubspace(minttypes.ModuleName)),
+		slashing.NewAppModule(appCodec, app.SlashingKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper, app.GetSubspace(slashingtypes.ModuleName)),
+		distr.NewAppModule(appCodec, app.DistrKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper, app.GetSubspace(distrtypes.ModuleName)),
+		staking.NewAppModule(appCodec, app.StakingKeeper, app.AccountKeeper, app.BankKeeper, app.GetSubspace(stakingtypes.ModuleName)),
 		upgrade.NewAppModule(app.UpgradeKeeper),
 		evidence.NewAppModule(app.EvidenceKeeper),
 		params.NewAppModule(app.ParamsKeeper),
 		authzmodule.NewAppModule(appCodec, app.AuthzKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
+		consensus.NewAppModule(appCodec, app.ConsensusParamsKeeper),
 
 		// IBC modules
 		ibc.NewAppModule(app.IBCKeeper),
@@ -737,7 +795,7 @@ func NewDesmosApp(
 		reactions.NewAppModule(appCodec, app.ReactionsKeeper, app.SubspacesKeeper, app.PostsKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		supply.NewAppModule(appCodec, legacyAmino, app.SupplyKeeper),
 
-		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
+		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper, app.MsgServiceRouter(), app.GetSubspace(wasmtypes.ModuleName)),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -762,6 +820,7 @@ func NewDesmosApp(
 		feegrant.ModuleName,
 		paramstypes.ModuleName,
 		vestingtypes.ModuleName,
+		consensusparamtypes.ModuleName,
 
 		// IBC modules
 		ibcexported.ModuleName,
@@ -798,6 +857,7 @@ func NewDesmosApp(
 		paramstypes.ModuleName,
 		upgradetypes.ModuleName,
 		vestingtypes.ModuleName,
+		consensusparamtypes.ModuleName,
 
 		// IBC modules
 		ibcexported.ModuleName,
@@ -842,6 +902,7 @@ func NewDesmosApp(
 		paramstypes.ModuleName,
 		upgradetypes.ModuleName,
 		vestingtypes.ModuleName,
+		consensusparamtypes.ModuleName,
 
 		// IBC modules
 		ibcexported.ModuleName,
@@ -883,6 +944,7 @@ func NewDesmosApp(
 		paramstypes.ModuleName,
 		upgradetypes.ModuleName,
 		vestingtypes.ModuleName,
+		consensusparamtypes.ModuleName,
 
 		// IBC modules
 		ibcexported.ModuleName,
@@ -904,8 +966,7 @@ func NewDesmosApp(
 		crisistypes.ModuleName,
 	)
 
-	app.mm.RegisterInvariants(&app.CrisisKeeper)
-	app.mm.RegisterRoutes(app.Router(), app.QueryRouter(), encodingConfig.Amino)
+	app.mm.RegisterInvariants(app.CrisisKeeper)
 	app.configurator = module.NewConfigurator(app.appCodec, app.MsgServiceRouter(), app.GRPCQueryRouter())
 	app.mm.RegisterServices(app.configurator)
 
@@ -916,41 +977,12 @@ func NewDesmosApp(
 
 	// create the simulation manager and define the order of the modules for deterministic simulations
 	//
-	// NOTE: this is not required by apps that don't use the simulator for fuzz testing
+	// NOTE: this is not required apps that don't use the simulator for fuzz testing
 	// transactions
-	app.sm = module.NewSimulationManager(
-		auth.NewAppModule(appCodec, app.AccountKeeper, authsims.RandomGenesisAccounts),
-		bank.NewAppModule(appCodec, app.BankKeeper, app.AccountKeeper),
-		capability.NewAppModule(appCodec, *app.CapabilityKeeper),
-		feegrantmodule.NewAppModule(appCodec, app.AccountKeeper, app.BankKeeper, app.FeeGrantKeeper, app.interfaceRegistry),
-		gov.NewAppModule(appCodec, app.GovKeeper, app.AccountKeeper, app.BankKeeper),
-		mint.NewAppModule(appCodec, app.MintKeeper, app.AccountKeeper),
-		staking.NewAppModule(appCodec, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
-		distr.NewAppModule(appCodec, app.DistrKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
-		slashing.NewAppModule(appCodec, app.SlashingKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
-		params.NewAppModule(app.ParamsKeeper),
-		evidence.NewAppModule(app.EvidenceKeeper),
-
-		// TODO: Re-enable this once the sim tests are fixed
-		// authzmodule.NewAppModule(appCodec, app.AuthzKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
-
-		// IBC modules
-		ibc.NewAppModule(app.IBCKeeper),
-		ibctransfer.NewAppModule(app.TransferKeeper),
-
-		// Custom modules
-		fees.NewAppModule(appCodec, app.FeesKeeper),
-		supply.NewAppModule(appCodec, legacyAmino, app.SupplyKeeper),
-		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AuthzKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
-		profiles.NewAppModule(appCodec, legacyAmino, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
-		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv4.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
-		posts.NewAppModule(appCodec, app.PostsKeeper, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
-		reports.NewAppModule(appCodec, app.ReportsKeeper, app.SubspacesKeeper, app.PostsKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
-		reactions.NewAppModule(appCodec, app.ReactionsKeeper, app.SubspacesKeeper, app.PostsKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
-
-		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
-	)
-
+	overrideModules := map[string]module.AppModuleSimulation{
+		authtypes.ModuleName: auth.NewAppModule(app.appCodec, app.AccountKeeper, authsims.RandomGenesisAccounts, app.GetSubspace(authtypes.ModuleName)),
+	}
+	app.sm = module.NewSimulationManagerFromAppModules(app.mm.Modules, overrideModules)
 	app.sm.RegisterStoreDecoders()
 
 	// Initialize stores
@@ -1001,6 +1033,30 @@ func NewDesmosApp(
 	app.ScopedWasmKeeper = scopedWasmKeeper
 	app.ScopedICAHostKeeper = scopedICAHostKeeper
 	app.ScopedICAControllerKeeper = scopedICAControllerKeeper
+
+	// In v0.46, the SDK introduces _postHandlers_. PostHandlers are like
+	// antehandlers, but are run _after_ the `runMsgs` execution. They are also
+	// defined as a chain, and have the same signature as antehandlers.
+	//
+	// In baseapp, postHandlers are run in the same store branch as `runMsgs`,
+	// meaning that both `runMsgs` and `postHandler` state will be committed if
+	// both are successful, and both will be reverted if any of the two fails.
+	//
+	// The SDK exposes a default postHandlers chain, which comprises of only
+	// one decorator: the Transaction Tips decorator. However, some chains do
+	// not need it by default, so feel free to comment the next line if you do
+	// not need tips.
+	// To read more about tips:
+	// https://docs.cosmos.network/main/core/tips.html
+	//
+	// Please note that changing any of the anteHandler or postHandler chain is
+	// likely to be a state-machine breaking change, which needs a coordinated
+	// upgrade.
+	postHandler, err := NewPostHandler()
+	if err != nil {
+		panic(err)
+	}
+	app.SetPostHandler(postHandler)
 
 	if loadLatest {
 		if err := app.LoadLatestVersion(); err != nil {
@@ -1064,17 +1120,20 @@ func (app *DesmosApp) LoadHeight(height int64) error {
 	return app.LoadVersion(height)
 }
 
-// ModuleAccountAddrs returns all the app's module account addresses.
-func (app *DesmosApp) ModuleAccountAddrs() map[string]bool {
+// BlockedAddresses returns all the app's blocked account addresses.
+func BlockedAddresses() map[string]bool {
 	modAccAddrs := make(map[string]bool)
-	for acc := range maccPerms {
+	for acc := range GetMaccPerms() {
 		modAccAddrs[authtypes.NewModuleAddress(acc).String()] = true
 	}
+
+	// allow the following addresses to receive funds
+	delete(modAccAddrs, authtypes.NewModuleAddress(govtypes.ModuleName).String())
 
 	return modAccAddrs
 }
 
-// LegacyAmino returns SimApp's amino codec.
+// LegacyAmino returns DesmosApp's amino codec.
 //
 // NOTE: This is solely to be used for testing purposes as it may be desirable
 // for modules to register their own custom testing types.
@@ -1082,7 +1141,7 @@ func (app *DesmosApp) LegacyAmino() *codec.LegacyAmino {
 	return app.legacyAmino
 }
 
-// AppCodec returns SimApp's app codec.
+// AppCodec returns DesmosApp's app codec.
 //
 // NOTE: This is solely to be used for testing purposes as it may be desirable
 // for modules to register their own custom testing types.
@@ -1090,9 +1149,14 @@ func (app *DesmosApp) AppCodec() codec.Codec {
 	return app.appCodec
 }
 
-// InterfaceRegistry returns SimApp's InterfaceRegistry
+// InterfaceRegistry returns DesmosApp's InterfaceRegistry
 func (app *DesmosApp) InterfaceRegistry() types.InterfaceRegistry {
 	return app.interfaceRegistry
+}
+
+// DefaultGenesis returns a default genesis from the registered AppModuleBasic's.
+func (app *DesmosApp) DefaultGenesis() map[string]json.RawMessage {
+	return ModuleBasics.DefaultGenesis(app.appCodec)
 }
 
 // GetKey returns the KVStoreKey for the provided store key.
@@ -1133,12 +1197,15 @@ func (app *DesmosApp) SimulationManager() *module.SimulationManager {
 // API server.
 func (app *DesmosApp) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APIConfig) {
 	clientCtx := apiSvr.ClientCtx
-	rpc.RegisterRoutes(clientCtx, apiSvr.Router)
 
 	// Register new tx routes from grpc-gateway.
 	authtx.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
+
 	// Register new tendermint queries routes from grpc-gateway.
 	tmservice.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
+
+	// Register node gRPC service for grpc-gateway.
+	nodeservice.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
 
 	// Register grpc-gateway routes for all modules.
 	ModuleBasics.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
@@ -1155,7 +1222,7 @@ func (app *DesmosApp) RegisterTxService(clientCtx client.Context) {
 }
 
 func (app *DesmosApp) RegisterTendermintService(clientCtx client.Context) {
-	tmservice.RegisterTendermintService(app.BaseApp.GRPCQueryRouter(), clientCtx, app.interfaceRegistry)
+	tmservice.RegisterTendermintService(clientCtx, app.BaseApp.GRPCQueryRouter(), app.interfaceRegistry, app.Query)
 }
 
 func (app *DesmosApp) RegisterNodeService(clientCtx client.Context) {
@@ -1223,7 +1290,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(minttypes.ModuleName)
 	paramsKeeper.Subspace(distrtypes.ModuleName)
 	paramsKeeper.Subspace(slashingtypes.ModuleName)
-	paramsKeeper.Subspace(govtypes.ModuleName).WithKeyTable(govtypes.ParamKeyTable())
+	paramsKeeper.Subspace(govtypes.ModuleName)
 	paramsKeeper.Subspace(crisistypes.ModuleName)
 	paramsKeeper.Subspace(wasm.ModuleName)
 

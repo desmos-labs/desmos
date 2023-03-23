@@ -48,8 +48,7 @@ func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 		ante.NewSetUpContextDecorator(),
 		wasmkeeper.NewLimitSimulationGasDecorator(options.WasmConfig.SimulationGasLimit),
 		wasmkeeper.NewCountTXDecorator(options.TxCounterStoreKey),
-		ante.NewRejectExtensionOptionsDecorator(),
-		ante.NewMempoolFeeDecorator(),
+		ante.NewExtensionOptionsDecorator(options.ExtensionOptionChecker),
 		feeskeeper.NewMinFeeDecorator(options.FeesKeeper),
 		ante.NewValidateBasicDecorator(),
 		ante.NewTxTimeoutHeightDecorator(),
@@ -63,6 +62,6 @@ func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 		ante.NewSigGasConsumeDecorator(options.AccountKeeper, sigGasConsumer),
 		ante.NewSigVerificationDecorator(options.AccountKeeper, options.SignModeHandler),
 		ante.NewIncrementSequenceDecorator(options.AccountKeeper),
-		ibcante.NewAnteDecorator(options.IBCkeeper),
+		ibcante.NewRedundantRelayDecorator(options.IBCkeeper),
 	), nil
 }
