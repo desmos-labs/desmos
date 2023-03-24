@@ -2,6 +2,7 @@ package types_test
 
 import (
 	"testing"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
@@ -10,7 +11,7 @@ import (
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
-var expiration = &expiration
+var expiration = time.Date(2023, 1, 11, 0, 0, 0, 0, time.UTC)
 
 var msgGrantTreasuryAuthorization = types.NewMsgGrantTreasuryAuthorization(
 	1,

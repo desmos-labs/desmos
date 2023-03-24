@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	authsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
@@ -29,7 +30,7 @@ func NewAccountChainLinkJSONBuilder(getter getter.MultiSignatureAccountReference
 }
 
 // BuildChainLinkJSON implements ChainLinkJSONBuilder
-func (b *AccountChainLinkJSONBuilder) BuildChainLinkJSON(chain types.Chain) (utils.ChainLinkJSON, error) {
+func (b *AccountChainLinkJSONBuilder) BuildChainLinkJSON(_ codec.Codec, chain types.Chain) (utils.ChainLinkJSON, error) {
 	txFilePath, err := b.getter.GetMultiSignedTxFilePath()
 	if err != nil {
 		return utils.ChainLinkJSON{}, err

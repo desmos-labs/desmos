@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/desmos-labs/desmos/v4/app/desmos/cmd/chainlink/builder"
 	chainlinktypes "github.com/desmos-labs/desmos/v4/app/desmos/cmd/chainlink/getter"
 
@@ -51,7 +52,12 @@ Providing an invalid transaction (either with an account-number or sequence not 
 				return err
 			}
 
-			chainLinkJSON, err := provider(owner, isSingleSignatureAccount).BuildChainLinkJSON(chain)
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			chainLinkJSON, err := provider(owner, isSingleSignatureAccount).BuildChainLinkJSON(clientCtx.Codec, chain)
 			if err != nil {
 				return err
 			}
