@@ -2,6 +2,7 @@ package wasm_test
 
 import (
 	"encoding/json"
+	"path/filepath"
 	"testing"
 
 	db "github.com/cometbft/cometbft-db"
@@ -13,12 +14,15 @@ import (
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
+	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
 
 	ibckeeper "github.com/cosmos/ibc-go/v7/modules/core/keeper"
@@ -164,8 +168,8 @@ type TestSuite struct {
 	sk               subspaceskeeper.Keeper
 	paramsKeeper     paramskeeper.Keeper
 	bankKeeper       bankkeeper.Keeper
-	stakingKeeper    stakingkeeper.Keeper
-	upgradeKeeper    upgradekeeper.Keeper
+	stakingKeeper    *stakingkeeper.Keeper
+	upgradeKeeper    *upgradekeeper.Keeper
 	IBCKeeper        *ibckeeper.Keeper
 	capabilityKeeper *capabilitykeeper.Keeper
 }
@@ -209,6 +213,14 @@ func (suite *TestSuite) SetupTest() {
 		suite.cdc, suite.legacyAminoCdc, keys[paramstypes.StoreKey], tKeys[paramstypes.TStoreKey],
 	)
 
+	suite.bankKeeper = bankkeeper.NewBaseKeeper(
+		suite.cdc,
+		keys[banktypes.StoreKey],
+		suite.ak,
+		nil,
+		authtypes.NewModuleAddress("gov").String(),
+	)
+
 	suite.ak = authkeeper.NewAccountKeeper(
 		suite.cdc,
 		keys[authtypes.StoreKey],
@@ -219,6 +231,24 @@ func (suite *TestSuite) SetupTest() {
 	)
 
 	suite.capabilityKeeper = capabilitykeeper.NewKeeper(suite.cdc, keys[capabilitytypes.StoreKey], memKeys[capabilitytypes.MemStoreKey])
+
+	homeDir := filepath.Join(suite.T().TempDir(), "x_upgrade_keeper_test")
+	suite.upgradeKeeper = upgradekeeper.NewKeeper(
+		nil,
+		keys[upgradetypes.StoreKey],
+		suite.cdc,
+		homeDir,
+		nil,
+		authtypes.NewModuleAddress("gov").String(),
+	)
+
+	suite.stakingKeeper = stakingkeeper.NewKeeper(
+		suite.cdc,
+		keys[stakingtypes.StoreKey],
+		suite.ak,
+		suite.bankKeeper,
+		authtypes.NewModuleAddress("gov").String(),
+	)
 
 	scopedIBCKeeper := suite.capabilityKeeper.ScopeToModule(ibcexported.ModuleName)
 	scopedProfilesKeeper := suite.capabilityKeeper.ScopeToModule(types.ModuleName)

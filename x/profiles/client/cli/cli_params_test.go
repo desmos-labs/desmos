@@ -46,7 +46,7 @@ func (s *IntegrationTestSuite) TestCmdQueryParams() {
 				s.Require().NoError(err)
 
 				var response types.QueryParamsResponse
-				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(tc.expectedOutput, response)
 			}
 		})

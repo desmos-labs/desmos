@@ -75,17 +75,24 @@ func (b *AccountChainLinkJSONBuilder) BuildChainLinkJSON(_ codec.Codec, chain ty
 		return utils.ChainLinkJSON{}, fmt.Errorf("invalid number of signatures")
 	}
 
+	addr, err := sdk.Bech32ifyAddressBytes(chain.Prefix, sigs[0].PubKey.Address().Bytes())
+	if err != nil {
+		return utils.ChainLinkJSON{}, err
+	}
+
 	// Re-create the bytes that have been signed in order to produce the signature
-	signingData := authsigning.SignerData{AccountNumber: 0, Sequence: 0, ChainID: signedChainID}
+	signingData := authsigning.SignerData{
+		AccountNumber: 0, 
+		Sequence: 0, 
+		ChainID: signedChainID, 
+		Address: addr,
+		PubKey: sigs[0].PubKey,
+	}
 	value, err := txCfg.SignModeHandler().GetSignBytes(signMode, signingData, parsedTx)
 	if err != nil {
 		return utils.ChainLinkJSON{}, err
 	}
 
-	addr, err := sdk.Bech32ifyAddressBytes(chain.Prefix, sigs[0].PubKey.Address().Bytes())
-	if err != nil {
-		return utils.ChainLinkJSON{}, err
-	}
 
 	sigData, err := profilestypes.CosmosSignatureDataToSignature(sigs[0].Data)
 	if err != nil {

@@ -49,8 +49,11 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	s.Require().NoError(cfg.Codec.UnmarshalJSON(genesisState[stakingtypes.ModuleName], &stakingData))
 
 	s.cfg = cfg
-	s.network = network.New(s.T(), cfg)
-	_, err := s.network.WaitForHeight(1)
+	
+	var err error
+	s.network, err = network.New(s.T(), s.T().TempDir(), cfg)
+	s.Require().NoError(err)
+	_, err = s.network.WaitForHeight(1)
 	s.Require().NoError(err)
 }
 
@@ -111,7 +114,7 @@ func (s *IntegrationTestSuite) TestCmdQueryTotalSupply() {
 				s.Require().NoError(err)
 
 				var response types.QueryTotalResponse
-				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(tc.expectedOutput.TotalSupply, response.TotalSupply)
 			}
 		})
@@ -170,7 +173,7 @@ func (s *IntegrationTestSuite) TestCmdQueryCirculatingSupply() {
 				s.Require().NoError(err)
 
 				var response types.QueryCirculatingResponse
-				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(tc.expectedOutput.CirculatingSupply, response.CirculatingSupply)
 			}
 		})

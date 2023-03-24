@@ -40,7 +40,7 @@ func (suite *CreateJSONChainLinkTestSuite) SetupSuite() {
 	encodingConfig := app.MakeTestEncodingConfig()
 	suite.Codec = encodingConfig.Marshaler
 	suite.LegacyAmino = encodingConfig.Amino
-	suite.ClientCtx = client.Context{}.WithOutput(os.Stdout).WithTxConfig(encodingConfig.TxConfig)
+	suite.ClientCtx = client.Context{}.WithOutput(os.Stdout).WithTxConfig(encodingConfig.TxConfig).WithCodec(suite.Codec)
 	suite.Owner = "desmos1n8345tvzkg3jumkm859r2qz0v6xsc3henzddcj"
 }
 
