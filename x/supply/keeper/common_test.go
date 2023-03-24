@@ -3,9 +3,14 @@ package keeper_test
 import (
 	"testing"
 
+	db "github.com/cometbft/cometbft-db"
+	"github.com/cometbft/cometbft/libs/log"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
+	"github.com/cosmos/cosmos-sdk/store"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -26,7 +31,6 @@ import (
 type KeeperTestSuite struct {
 	suite.Suite
 
-	app         *app.DesmosApp
 	ctx         sdk.Context
 	cdc         codec.Codec
 	legacyAmino *codec.LegacyAmino
@@ -35,67 +39,77 @@ type KeeperTestSuite struct {
 	ak authkeeper.AccountKeeper
 	bk bankkeeper.Keeper
 	dk distributionkeeper.Keeper
-	sk stakingkeeper.Keeper
+	sk *stakingkeeper.Keeper
 }
 
 func (suite *KeeperTestSuite) SetupTest() {
-	suite.app = app.Setup(false)
-
 	maccPerms := app.GetMaccPerms()
-	encodingConfig := app.MakeTestEncodingConfig()
 
-	suite.cdc = encodingConfig.Marshaler
-	suite.legacyAmino = encodingConfig.Amino
-	suite.ctx = suite.app.NewContext(false, tmproto.Header{})
+	// Define store keys
+	keys := sdk.NewMemoryStoreKeys(authtypes.StoreKey, banktypes.StoreKey, distributiontypes.StoreKey, stakingtypes.StoreKey)
+
+	// Create an in-memory db
+	memDB := db.NewMemDB()
+	ms := store.NewCommitMultiStore(memDB)
+	for _, key := range keys {
+		ms.MountStoreWithDB(key, storetypes.StoreTypeIAVL, memDB)
+	}
+
+	if err := ms.LoadLatestVersion(); err != nil {
+		panic(err)
+	}
+
+	suite.ctx = sdk.NewContext(ms, tmproto.Header{ChainID: "test-chain"}, false, log.NewNopLogger())
+	suite.cdc, suite.legacyAmino = app.MakeCodecs()
 
 	maccPerms[authtypes.Burner] = []string{authtypes.Burner}
 	maccPerms[authtypes.Minter] = []string{authtypes.Minter}
 	maccPerms[banktypes.ModuleName] = []string{authtypes.Burner, authtypes.Minter, authtypes.Staking}
 
-	suite.app.AccountKeeper = authkeeper.NewAccountKeeper(
+	// Dependencies initialization
+	suite.ak = authkeeper.NewAccountKeeper(
 		suite.cdc,
-		suite.app.GetKey(authtypes.StoreKey),
-		suite.app.GetSubspace(authtypes.ModuleName),
+		keys[authtypes.StoreKey],
 		authtypes.ProtoBaseAccount,
 		maccPerms,
+		"cosmos",
+		authtypes.NewModuleAddress("gov").String(),
 	)
-	suite.app.AccountKeeper.SetParams(suite.ctx, authtypes.DefaultParams())
-
-	suite.app.BankKeeper = bankkeeper.NewBaseKeeper(
-		suite.cdc,
-		suite.app.GetKey(banktypes.StoreKey),
-		suite.app.AccountKeeper,
-		suite.app.GetSubspace(banktypes.ModuleName),
-		nil,
-	)
-	suite.app.BankKeeper.SetParams(suite.ctx, banktypes.DefaultParams())
 
 	moduleAcc := authtypes.NewEmptyModuleAccount(banktypes.ModuleName, authtypes.Burner,
 		authtypes.Minter, authtypes.Staking)
 
-	suite.app.AccountKeeper.SetModuleAccount(suite.ctx, moduleAcc)
+	suite.ak.SetModuleAccount(suite.ctx, moduleAcc)
 
-	suite.app.StakingKeeper = stakingkeeper.NewKeeper(
+	suite.bk = bankkeeper.NewBaseKeeper(
 		suite.cdc,
-		suite.app.GetKey(stakingtypes.StoreKey),
-		suite.app.AccountKeeper,
-		suite.app.BankKeeper,
-		suite.app.GetSubspace(stakingtypes.ModuleName),
-	)
-
-	suite.app.DistrKeeper = distributionkeeper.NewKeeper(
-		suite.cdc,
-		suite.app.GetKey(distributiontypes.StoreKey),
-		suite.app.GetSubspace(distributiontypes.ModuleName),
-		suite.app.AccountKeeper,
-		suite.app.BankKeeper,
-		suite.app.StakingKeeper,
-		"",
+		keys[banktypes.StoreKey],
+		suite.ak,
 		nil,
+		authtypes.NewModuleAddress("gov").String(),
 	)
+
+	suite.sk = stakingkeeper.NewKeeper(
+		suite.cdc,
+		keys[stakingtypes.StoreKey],
+		suite.ak,
+		suite.bk,
+		authtypes.NewModuleAddress("gov").String(),
+	)
+
+	suite.dk = distributionkeeper.NewKeeper(
+		suite.cdc,
+		keys[distributiontypes.StoreKey],
+		suite.ak,
+		suite.bk,
+		suite.sk,
+		authtypes.FeeCollectorName,
+		authtypes.NewModuleAddress("gov").String(),
+	)
+	suite.dk.SetFeePool(suite.ctx, distributiontypes.InitialFeePool())
 
 	// Define keeper
-	suite.k = keeper.NewKeeper(suite.cdc, suite.app.AccountKeeper, suite.app.BankKeeper, suite.app.DistrKeeper)
+	suite.k = keeper.NewKeeper(suite.cdc, suite.ak, suite.bk, suite.dk)
 }
 
 func TestKeeperTestSuite(t *testing.T) {
@@ -106,10 +120,10 @@ func TestKeeperTestSuite(t *testing.T) {
 // account and communityPoolSupply to the community pool.
 // If totalSupply < vestedSupply + communityPoolSupply the function returns error.
 func (suite *KeeperTestSuite) setupSupply(ctx sdk.Context, totalSupply sdk.Coins, vestedSupply sdk.Coins, communityPoolSupply sdk.Coins) {
-	moduleAcc := suite.app.AccountKeeper.GetModuleAccount(ctx, banktypes.ModuleName)
+	moduleAcc := suite.ak.GetModuleAccount(ctx, banktypes.ModuleName)
 
 	// Mint supply coins
-	suite.Require().NoError(suite.app.BankKeeper.MintCoins(ctx, moduleAcc.GetName(), totalSupply))
+	suite.Require().NoError(suite.bk.MintCoins(ctx, moduleAcc.GetName(), totalSupply))
 
 	// Create a vesting account
 	vestingAccount := vestingtypes.NewContinuousVestingAccount(
@@ -118,10 +132,10 @@ func (suite *KeeperTestSuite) setupSupply(ctx sdk.Context, totalSupply sdk.Coins
 		0,
 		12324125423,
 	)
-	suite.app.AccountKeeper.SetAccount(ctx, vestingAccount)
+	suite.ak.SetAccount(ctx, vestingAccount)
 
 	// Send supply coins to the vesting account
-	suite.Require().NoError(suite.app.BankKeeper.SendCoinsFromModuleToAccount(
+	suite.Require().NoError(suite.bk.SendCoinsFromModuleToAccount(
 		ctx,
 		banktypes.ModuleName,
 		vestingAccount.GetAddress(),
@@ -129,7 +143,7 @@ func (suite *KeeperTestSuite) setupSupply(ctx sdk.Context, totalSupply sdk.Coins
 	))
 
 	// Fund community pool
-	suite.Require().NoError(suite.app.DistrKeeper.FundCommunityPool(
+	suite.Require().NoError(suite.dk.FundCommunityPool(
 		ctx,
 		communityPoolSupply,
 		moduleAcc.GetAddress(),
