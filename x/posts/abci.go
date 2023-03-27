@@ -3,7 +3,6 @@ package posts
 import (
 	"fmt"
 
-	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/v4/x/posts/keeper"
@@ -14,21 +13,7 @@ import (
 func EndBlocker(ctx sdk.Context, keeper keeper.Keeper) {
 	// Iterate over all the active polls that have been ended by the current block time
 	keeper.IterateActivePollsQueue(ctx, ctx.BlockTime(), func(poll types.Attachment) (stop bool) {
-		// Compute the poll results
-		results := keeper.Tally(ctx, poll.SubspaceID, poll.PostID, poll.ID)
-
-		// Update the content with the results
-		content := poll.Content.GetCachedValue().(*types.Poll)
-		content.FinalTallyResults = results
-
-		contentAny, err := codectypes.NewAnyWithValue(content)
-		if err != nil {
-			panic(err)
-		}
-		poll.Content = contentAny
-
-		keeper.SaveAttachment(ctx, poll)
-		keeper.RemoveFromActivePollQueue(ctx, poll)
+		keeper.EndPoll(ctx, poll)
 
 		// Emit an event
 		ctx.EventManager().EmitEvent(
@@ -39,9 +24,6 @@ func EndBlocker(ctx sdk.Context, keeper keeper.Keeper) {
 				sdk.NewAttribute(types.AttributeKeyPollID, fmt.Sprintf("%d", poll.ID)),
 			),
 		)
-
-		// When poll ends
-		keeper.AfterPollVotingPeriodEnded(ctx, poll.SubspaceID, poll.PostID, poll.ID)
 
 		return false
 	})

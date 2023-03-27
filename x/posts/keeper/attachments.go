@@ -91,4 +91,6 @@ func (k Keeper) DeleteAttachment(ctx sdk.Context, subspaceID uint64, postID uint
 			k.DeleteUserAnswer(ctx, attachment.SubspaceID, attachment.PostID, attachment.ID, answer.User)
 		}
 	}
+
+	k.AfterAttachmentDeleted(ctx, subspaceID, postID, attachmentID)
 }

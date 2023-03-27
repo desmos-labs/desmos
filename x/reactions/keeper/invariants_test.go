@@ -4,8 +4,8 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/golang/mock/gomock"
 
-	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
 	"github.com/desmos-labs/desmos/v4/x/reactions/keeper"
 	"github.com/desmos-labs/desmos/v4/x/reactions/types"
 	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
@@ -14,52 +14,84 @@ import (
 func (suite *KeeperTestSuite) TestValidSubspacesInvariant() {
 	testCases := []struct {
 		name      string
+		setup     func()
 		store     func(ctx sdk.Context)
 		expBroken bool
 	}{
 		{
 			name: "non existing next registered reaction id breaks invariant",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+			setup: func() {
+				subspaces := []subspacestypes.Subspace{
+					subspacestypes.NewSubspace(
+						1,
+						"Test subspace",
+						"This is a test subspace",
+						"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+						"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+						"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					),
+				}
+
+				suite.sk.EXPECT().
+					IterateSubspaces(gomock.Any(), gomock.Any()).
+					Do(func(ctx sdk.Context, fn func(subspace subspacestypes.Subspace) (stop bool)) {
+						for _, subspace := range subspaces {
+							fn(subspace)
+						}
+					})
 			},
 			expBroken: true,
 		},
 		{
 			name: "non existing reactions params break invariant",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-				suite.k.SetNextRegisteredReactionID(ctx, 1, 1)
+			setup: func() {
+				subspaces := []subspacestypes.Subspace{
+					subspacestypes.NewSubspace(
+						1,
+						"Test subspace",
+						"This is a test subspace",
+						"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+						"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+						"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					),
+				}
+
+				suite.sk.EXPECT().
+					IterateSubspaces(gomock.Any(), gomock.Any()).
+					Do(func(ctx sdk.Context, fn func(subspace subspacestypes.Subspace) (stop bool)) {
+						for _, subspace := range subspaces {
+							fn(subspace)
+						}
+					})
 			},
 			expBroken: true,
 		},
 		{
 			name: "valid data does not break invairiant",
+			setup: func() {
+				subspaces := []subspacestypes.Subspace{
+					subspacestypes.NewSubspace(
+						1,
+						"Test subspace",
+						"This is a test subspace",
+						"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+						"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+						"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					),
+				}
+
+				suite.sk.EXPECT().
+					IterateSubspaces(gomock.Any(), gomock.Any()).
+					Do(func(ctx sdk.Context, fn func(subspace subspacestypes.Subspace) (stop bool)) {
+						for _, subspace := range subspaces {
+							fn(subspace)
+						}
+					})
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
 				suite.k.SetNextRegisteredReactionID(ctx, 1, 1)
 				suite.k.SaveSubspaceReactionsParams(ctx, types.DefaultReactionsParams(1))
 			},
@@ -71,6 +103,9 @@ func (suite *KeeperTestSuite) TestValidSubspacesInvariant() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup()
+			}
 			if tc.store != nil {
 				tc.store(ctx)
 			}
@@ -84,11 +119,17 @@ func (suite *KeeperTestSuite) TestValidSubspacesInvariant() {
 func (suite *KeeperTestSuite) TestValidRegisteredReactionsInvariant() {
 	testCases := []struct {
 		name      string
+		setup     func()
 		store     func(ctx sdk.Context)
 		expBroken bool
 	}{
 		{
 			name: "non existing subspace breaks invariant",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(false)
+			},
 			store: func(ctx sdk.Context) {
 				suite.k.SaveRegisteredReaction(ctx, types.NewRegisteredReaction(
 					1,
@@ -101,17 +142,12 @@ func (suite *KeeperTestSuite) TestValidRegisteredReactionsInvariant() {
 		},
 		{
 			name: "non existing next registered reaction id breaks invariant",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
 				suite.k.SaveRegisteredReaction(ctx, types.NewRegisteredReaction(
 					1,
 					1,
@@ -123,16 +159,12 @@ func (suite *KeeperTestSuite) TestValidRegisteredReactionsInvariant() {
 		},
 		{
 			name: "invalid next registered reaction id breaks invariant",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
 				suite.k.SetNextRegisteredReactionID(ctx, 1, 1)
 
 				suite.k.SaveRegisteredReaction(ctx, types.NewRegisteredReaction(
@@ -146,16 +178,12 @@ func (suite *KeeperTestSuite) TestValidRegisteredReactionsInvariant() {
 		},
 		{
 			name: "invalid registered reaction breaks invariant",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
 				suite.k.SetNextRegisteredReactionID(ctx, 1, 2)
 
 				suite.k.SaveRegisteredReaction(ctx, types.NewRegisteredReaction(
@@ -169,16 +197,12 @@ func (suite *KeeperTestSuite) TestValidRegisteredReactionsInvariant() {
 		},
 		{
 			name: "valid data does not break invariant",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
 				suite.k.SetNextRegisteredReactionID(ctx, 1, 2)
 
 				suite.k.SaveRegisteredReaction(ctx, types.NewRegisteredReaction(
@@ -196,6 +220,9 @@ func (suite *KeeperTestSuite) TestValidRegisteredReactionsInvariant() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup()
+			}
 			if tc.store != nil {
 				tc.store(ctx)
 			}
@@ -209,11 +236,21 @@ func (suite *KeeperTestSuite) TestValidRegisteredReactionsInvariant() {
 func (suite *KeeperTestSuite) TestValidReactionsInvariant() {
 	testCases := []struct {
 		name      string
+		setup     func()
 		store     func(ctx sdk.Context)
 		expBroken bool
 	}{
 		{
 			name: "non existing subspace breaks invariant",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(false)
+
+				suite.pk.EXPECT().
+					HasPost(gomock.Any(), uint64(1), uint64(1)).
+					Return(true)
+			},
 			store: func(ctx sdk.Context) {
 				suite.k.SaveReaction(ctx, types.NewReaction(
 					1,
@@ -227,17 +264,16 @@ func (suite *KeeperTestSuite) TestValidReactionsInvariant() {
 		},
 		{
 			name: "non existing post breaks invariant",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
 
+				suite.pk.EXPECT().
+					HasPost(gomock.Any(), uint64(1), uint64(1)).
+					Return(false)
+			},
+			store: func(ctx sdk.Context) {
 				suite.k.SaveReaction(ctx, types.NewReaction(
 					1,
 					1,
@@ -250,33 +286,16 @@ func (suite *KeeperTestSuite) TestValidReactionsInvariant() {
 		},
 		{
 			name: "non existing next reaction id breaks invariant",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+
+				suite.pk.EXPECT().
+					HasPost(gomock.Any(), uint64(1), uint64(1)).
+					Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
-				suite.pk.SavePost(ctx, poststypes.NewPost(
-					1,
-					0,
-					1,
-					"External ID",
-					"This is a text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					1,
-					nil,
-					nil,
-					nil,
-					poststypes.REPLY_SETTING_EVERYONE,
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
-
 				suite.k.SaveReaction(ctx, types.NewReaction(
 					1,
 					1,
@@ -289,33 +308,16 @@ func (suite *KeeperTestSuite) TestValidReactionsInvariant() {
 		},
 		{
 			name: "invalid next reaction id breaks invariant",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+
+				suite.pk.EXPECT().
+					HasPost(gomock.Any(), uint64(1), uint64(1)).
+					Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
-				suite.pk.SavePost(ctx, poststypes.NewPost(
-					1,
-					0,
-					1,
-					"External ID",
-					"This is a text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					1,
-					nil,
-					nil,
-					nil,
-					poststypes.REPLY_SETTING_EVERYONE,
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
-
 				suite.k.SetNextReactionID(ctx, 1, 1, 1)
 
 				suite.k.SaveReaction(ctx, types.NewReaction(
@@ -330,33 +332,16 @@ func (suite *KeeperTestSuite) TestValidReactionsInvariant() {
 		},
 		{
 			name: "invalid registered reaction breaks invariant",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(false)
+
+				suite.pk.EXPECT().
+					HasPost(gomock.Any(), uint64(1), uint64(1)).
+					Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
-				suite.pk.SavePost(ctx, poststypes.NewPost(
-					1,
-					0,
-					1,
-					"External ID",
-					"This is a text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					1,
-					nil,
-					nil,
-					nil,
-					poststypes.REPLY_SETTING_EVERYONE,
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
-
 				suite.k.SetNextReactionID(ctx, 1, 1, 2)
 
 				suite.k.SaveReaction(ctx, types.NewReaction(
@@ -371,33 +356,16 @@ func (suite *KeeperTestSuite) TestValidReactionsInvariant() {
 		},
 		{
 			name: "valid data does not break invariant",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+
+				suite.pk.EXPECT().
+					HasPost(gomock.Any(), uint64(1), uint64(1)).
+					Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
-				suite.pk.SavePost(ctx, poststypes.NewPost(
-					1,
-					0,
-					1,
-					"External ID",
-					"This is a text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					1,
-					nil,
-					nil,
-					nil,
-					poststypes.REPLY_SETTING_EVERYONE,
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
-
 				suite.k.SetNextReactionID(ctx, 1, 1, 2)
 
 				suite.k.SaveReaction(ctx, types.NewReaction(
@@ -416,6 +384,9 @@ func (suite *KeeperTestSuite) TestValidReactionsInvariant() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup()
+			}
 			if tc.store != nil {
 				tc.store(ctx)
 			}
@@ -429,11 +400,17 @@ func (suite *KeeperTestSuite) TestValidReactionsInvariant() {
 func (suite *KeeperTestSuite) TestValidReactionsParamsInvariant() {
 	testCases := []struct {
 		name      string
+		setup     func()
 		store     func(ctx sdk.Context)
 		expBroken bool
 	}{
 		{
 			name: "non existing subspace breaks invariant",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(false)
+			},
 			store: func(ctx sdk.Context) {
 				suite.k.SaveSubspaceReactionsParams(ctx, types.NewSubspaceReactionsParams(
 					1,
@@ -445,17 +422,12 @@ func (suite *KeeperTestSuite) TestValidReactionsParamsInvariant() {
 		},
 		{
 			name: "invalid params break invariant",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
 				suite.k.SaveSubspaceReactionsParams(ctx, types.NewSubspaceReactionsParams(
 					1,
 					types.NewRegisteredReactionValueParams(true),
@@ -466,17 +438,12 @@ func (suite *KeeperTestSuite) TestValidReactionsParamsInvariant() {
 		},
 		{
 			name: "valid data does not break invariant",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
 				suite.k.SaveSubspaceReactionsParams(ctx, types.NewSubspaceReactionsParams(
 					1,
 					types.NewRegisteredReactionValueParams(true),
@@ -491,6 +458,9 @@ func (suite *KeeperTestSuite) TestValidReactionsParamsInvariant() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup()
+			}
 			if tc.store != nil {
 				tc.store(ctx)
 			}

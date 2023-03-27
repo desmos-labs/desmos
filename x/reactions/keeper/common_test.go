@@ -33,9 +33,8 @@ import (
 
 	"github.com/desmos-labs/desmos/v4/app"
 
-	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
-
 	"github.com/desmos-labs/desmos/v4/x/reactions/keeper"
+	"github.com/desmos-labs/desmos/v4/x/reactions/testutil"
 	"github.com/desmos-labs/desmos/v4/x/reactions/types"
 )
 
@@ -51,23 +50,16 @@ type KeeperTestSuite struct {
 	ctx            sdk.Context
 	storeKey       storetypes.StoreKey
 
-	ak profileskeeper.Keeper
-	rk relationshipskeeper.Keeper
-	pk postskeeper.Keeper
-	sk subspaceskeeper.Keeper
+	ak *testutil.MockProfilesKeeper
+	rk *testutil.MockRelationshipsKeeper
+	pk *testutil.MockPostsKeeper
+	sk *testutil.MockSubspacesKeeper
 	k  keeper.Keeper
 }
 
 func (suite *KeeperTestSuite) SetupTest() {
 	// Define the store keys
-	keys := sdk.NewMemoryStoreKeys(
-		paramstypes.StoreKey, authtypes.StoreKey,
-		profilestypes.StoreKey, relationshipstypes.StoreKey,
-		subspacestypes.StoreKey, poststypes.StoreKey,
-		types.StoreKey,
-	)
-	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
-	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
+	keys := sdk.NewMemoryStoreKeys(types.StoreKey)
 
 	suite.storeKey = keys[types.StoreKey]
 
@@ -78,10 +70,10 @@ func (suite *KeeperTestSuite) SetupTest() {
 		ms.MountStoreWithDB(key, storetypes.StoreTypeIAVL, memDB)
 	}
 	for _, tKey := range tKeys {
-		ms.MountStoreWithDB(tKey, storetypes.StoreTypeTransient, memDB)
+		ms.MountStoreWithDB(tKey, sdk.StoreTypeTransient, memDB)
 	}
 	for _, memKey := range memKeys {
-		ms.MountStoreWithDB(memKey, storetypes.StoreTypeMemory, nil)
+		ms.MountStoreWithDB(memKey, sdk.StoreTypeMemory, nil)
 	}
 
 	if err := ms.LoadLatestVersion(); err != nil {
@@ -89,23 +81,16 @@ func (suite *KeeperTestSuite) SetupTest() {
 	}
 
 	suite.ctx = sdk.NewContext(ms, tmproto.Header{ChainID: "test-chain-id"}, false, log.NewNopLogger())
-	suite.cdc, suite.legacyAminoCdc = app.MakeCodecs()
+	suite.cdc, _ = app.MakeCodecs()
 
-	paramsKeeper := paramskeeper.NewKeeper(
-		suite.cdc, suite.legacyAminoCdc, keys[paramstypes.StoreKey], tKeys[paramstypes.TStoreKey],
-	)
+	// Mocks initializations
+	ctrl := gomock.NewController(suite.T())
+	defer ctrl.Finish()
 
-	authKeeper := authkeeper.NewAccountKeeper(suite.cdc, keys[authtypes.StoreKey], authtypes.ProtoBaseAccount, app.GetMaccPerms(), "cosmos", authtypes.NewModuleAddress("gov").String())
-	suite.ak = profileskeeper.NewKeeper(suite.cdc, suite.legacyAminoCdc, keys[profilestypes.StoreKey], paramsKeeper.Subspace(profilestypes.DefaultParamsSpace), authKeeper, suite.rk, nil, nil, nil)
-	suite.rk = relationshipskeeper.NewKeeper(suite.cdc, keys[relationshipstypes.StoreKey], suite.sk)
-	suite.sk = subspaceskeeper.NewKeeper(suite.cdc, keys[subspacestypes.StoreKey], nil, nil)
-	suite.pk = postskeeper.NewKeeper(
-		suite.cdc,
-		keys[poststypes.StoreKey],
-		paramsKeeper.Subspace(poststypes.DefaultParamsSpace),
-		suite.pk,
-		suite.sk,
-		suite.rk,
-	)
+	suite.ak = testutil.NewMockProfilesKeeper(ctrl)
+	suite.rk = testutil.NewMockRelationshipsKeeper(ctrl)
+	suite.pk = testutil.NewMockPostsKeeper(ctrl)
+	suite.sk = testutil.NewMockSubspacesKeeper(ctrl)
+
 	suite.k = keeper.NewKeeper(suite.cdc, keys[types.StoreKey], suite.ak, suite.sk, suite.rk, suite.pk)
 }
