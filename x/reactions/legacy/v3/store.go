@@ -3,13 +3,14 @@ package v3
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/v4/x/reactions/types"
 )
 
 // MigrateStore performs in-place store migrations from v2 to v3
 // It removes all the duplicated reactions.
-func MigrateStore(ctx sdk.Context, storeKey sdk.StoreKey, cdc codec.BinaryCodec) error {
+func MigrateStore(ctx sdk.Context, storeKey storetypes.StoreKey, cdc codec.BinaryCodec) error {
 	store := ctx.KVStore(storeKey)
 	reactionsStore := prefix.NewStore(store, types.ReactionPrefix)
 

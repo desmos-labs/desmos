@@ -3,25 +3,8 @@ package keeper_test
 import (
 	"testing"
 
-	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-
-	profileskeeper "github.com/desmos-labs/desmos/v4/x/profiles/keeper"
-	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
-
-	postskeeper "github.com/desmos-labs/desmos/v4/x/posts/keeper"
-	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
-	relationshipskeeper "github.com/desmos-labs/desmos/v4/x/relationships/keeper"
-	relationshipstypes "github.com/desmos-labs/desmos/v4/x/relationships/types"
-
-	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
-
-	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
-	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
-
-	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
-
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
+	"github.com/golang/mock/gomock"
 
 	db "github.com/cometbft/cometbft-db"
 	"github.com/cometbft/cometbft/libs/log"
@@ -68,12 +51,6 @@ func (suite *KeeperTestSuite) SetupTest() {
 	ms := store.NewCommitMultiStore(memDB)
 	for _, key := range keys {
 		ms.MountStoreWithDB(key, storetypes.StoreTypeIAVL, memDB)
-	}
-	for _, tKey := range tKeys {
-		ms.MountStoreWithDB(tKey, sdk.StoreTypeTransient, memDB)
-	}
-	for _, memKey := range memKeys {
-		ms.MountStoreWithDB(memKey, sdk.StoreTypeMemory, nil)
 	}
 
 	if err := ms.LoadLatestVersion(); err != nil {
