@@ -118,6 +118,7 @@ import (
 	porttypes "github.com/cosmos/ibc-go/v7/modules/core/05-port/types"
 	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
 	ibckeeper "github.com/cosmos/ibc-go/v7/modules/core/keeper"
+	ibctm "github.com/cosmos/ibc-go/v7/modules/light-clients/07-tendermint"
 
 	ica "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts"
 	icacontroller "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/controller"
@@ -264,6 +265,7 @@ var (
 
 		// IBC modules
 		ibc.AppModuleBasic{},
+		ibctm.AppModuleBasic{},
 		ibctransfer.AppModuleBasic{},
 		ibcfee.AppModuleBasic{},
 		ica.AppModuleBasic{},
@@ -306,6 +308,7 @@ type DesmosApp struct {
 	*baseapp.BaseApp
 	legacyAmino       *codec.LegacyAmino
 	appCodec          codec.Codec
+	txConfig          client.TxConfig
 	interfaceRegistry types.InterfaceRegistry
 
 	// sdk keys to access the substores
@@ -383,7 +386,7 @@ func NewDesmosApp(
 	baseAppOptions ...func(*baseapp.BaseApp),
 ) *DesmosApp {
 
-	encodingConfig := MakeTestEncodingConfig()
+	encodingConfig := MakeEncodingConfig()
 
 	appCodec, legacyAmino := encodingConfig.Marshaler, encodingConfig.Amino
 	interfaceRegistry := encodingConfig.InterfaceRegistry
@@ -420,6 +423,7 @@ func NewDesmosApp(
 		BaseApp:           bApp,
 		legacyAmino:       legacyAmino,
 		appCodec:          appCodec,
+		txConfig:          txConfig,
 		interfaceRegistry: interfaceRegistry,
 		keys:              keys,
 		tkeys:             tkeys,
@@ -1088,7 +1092,7 @@ func SetupConfig(config *sdk.Config) {
 // DesmosApp. It is useful for tests and clients who do not want to construct the
 // full DesmosApp
 func MakeCodecs() (codec.Codec, *codec.LegacyAmino) {
-	cfg := MakeTestEncodingConfig()
+	cfg := MakeEncodingConfig()
 	return cfg.Marshaler, cfg.Amino
 }
 
@@ -1152,6 +1156,11 @@ func (app *DesmosApp) AppCodec() codec.Codec {
 // InterfaceRegistry returns DesmosApp's InterfaceRegistry
 func (app *DesmosApp) InterfaceRegistry() types.InterfaceRegistry {
 	return app.interfaceRegistry
+}
+
+// TxConfig returns DesmosApp's TxConfig
+func (app *DesmosApp) TxConfig() client.TxConfig {
+	return app.txConfig
 }
 
 // DefaultGenesis returns a default genesis from the registered AppModuleBasic's.

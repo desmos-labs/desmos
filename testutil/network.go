@@ -38,7 +38,7 @@ func NewAppConstructor() network.AppConstructor {
 // DefaultConfig returns a sane default configuration suitable for nearly all
 // testing requirements.
 func DefaultConfig() network.Config {
-	encCfg := app.MakeTestEncodingConfig()
+	encCfg := app.MakeEncodingConfig()
 
 	return network.Config{
 		Codec:             encCfg.Marshaler,

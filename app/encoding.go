@@ -5,8 +5,8 @@ import (
 	"github.com/desmos-labs/desmos/v4/app/params"
 )
 
-// MakeTestEncodingConfig creates an EncodingConfig for testing
-func MakeTestEncodingConfig() params.EncodingConfig {
+// MakeEncodingConfig creates an EncodingConfig for testing
+func MakeEncodingConfig() params.EncodingConfig {
 	encodingConfig := params.MakeEncodingConfig()
 	std.RegisterLegacyAminoCodec(encodingConfig.Amino)
 	std.RegisterInterfaces(encodingConfig.InterfaceRegistry)

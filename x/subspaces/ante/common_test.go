@@ -43,7 +43,7 @@ func (suite *AnteTestSuite) SetupTest() {
 	suite.ak = testutil.NewMockAccountKeeper(ctrl)
 	suite.authDeductFeeDecorator = testutil.NewMockAuthDeductFeeDecorator(ctrl)
 
-	encodingConfig := app.MakeTestEncodingConfig()
+	encodingConfig := app.MakeEncodingConfig()
 	suite.clientCtx = client.Context{}.WithTxConfig(encodingConfig.TxConfig)
 
 	suite.ante = ante.NewDeductFeeDecorator(suite.authDeductFeeDecorator, suite.ak, suite.bk, suite.sk)

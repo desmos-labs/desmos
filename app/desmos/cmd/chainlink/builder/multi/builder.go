@@ -41,7 +41,7 @@ func (b *AccountChainLinkJSONBuilder) BuildChainLinkJSON(_ codec.Codec, chain ty
 		return utils.ChainLinkJSON{}, err
 	}
 
-	encodingConfig := app.MakeTestEncodingConfig()
+	encodingConfig := app.MakeEncodingConfig()
 	txCfg := encodingConfig.TxConfig
 
 	// Read the transaction file
@@ -82,17 +82,16 @@ func (b *AccountChainLinkJSONBuilder) BuildChainLinkJSON(_ codec.Codec, chain ty
 
 	// Re-create the bytes that have been signed in order to produce the signature
 	signingData := authsigning.SignerData{
-		AccountNumber: 0, 
-		Sequence: 0, 
-		ChainID: signedChainID, 
-		Address: addr,
-		PubKey: sigs[0].PubKey,
+		AccountNumber: 0,
+		Sequence:      0,
+		ChainID:       signedChainID,
+		Address:       addr,
+		PubKey:        sigs[0].PubKey,
 	}
 	value, err := txCfg.SignModeHandler().GetSignBytes(signMode, signingData, parsedTx)
 	if err != nil {
 		return utils.ChainLinkJSON{}, err
 	}
-
 
 	sigData, err := profilestypes.CosmosSignatureDataToSignature(sigs[0].Data)
 	if err != nil {
