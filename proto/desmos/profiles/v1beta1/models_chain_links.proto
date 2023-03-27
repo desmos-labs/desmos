@@ -76,7 +76,8 @@ message Bech32Address {
   option (gogoproto.goproto_getters) = false;
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
-  option (cosmos_proto.implements_interface) = "desmos.profiles.v1beta1.AddressData";
+  option (cosmos_proto.implements_interface) =
+      "desmos.profiles.v1beta1.AddressData";
 
   // Value represents the Bech-32 encoded address value
   string value = 1 [ (gogoproto.moretags) = "yaml:\"value\"" ];
@@ -90,7 +91,8 @@ message Base58Address {
   option (gogoproto.goproto_getters) = false;
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
-  option (cosmos_proto.implements_interface) = "desmos.profiles.v1beta1.AddressData";
+  option (cosmos_proto.implements_interface) =
+      "desmos.profiles.v1beta1.AddressData";
 
   // Value contains the Base58-encoded address
   string value = 1 [ (gogoproto.moretags) = "yaml:\"value\"" ];
@@ -102,7 +104,8 @@ message HexAddress {
   option (gogoproto.goproto_getters) = false;
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
-  option (cosmos_proto.implements_interface) = "desmos.profiles.v1beta1.AddressData";
+  option (cosmos_proto.implements_interface) =
+      "desmos.profiles.v1beta1.AddressData";
 
   // Value represents the hex address value
   string value = 1 [ (gogoproto.moretags) = "yaml:\"value\"" ];

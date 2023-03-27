@@ -3,7 +3,6 @@ package desmos.reactions.v1;
 
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
-import "cosmos_proto/cosmos.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 
 import "desmos/reactions/v1/models.proto";
