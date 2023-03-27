@@ -3,10 +3,10 @@ package wasm
 import (
 	"encoding/json"
 
+	errors "cosmossdk.io/errors"
 	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/desmos-labs/desmos/v4/cosmwasm"
 	"github.com/desmos-labs/desmos/v4/x/commons"
@@ -29,7 +29,7 @@ func (parser MsgsParser) ParseCustomMsgs(contractAddr sdk.AccAddress, data json.
 	var msg types.ProfilesMsg
 	err := json.Unmarshal(data, &msg)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(err, "failed to parse x/profiles message from contract %s", contractAddr.String())
+		return nil, errors.Wrapf(err, "failed to parse x/profiles message from contract %s", contractAddr.String())
 	}
 	switch {
 	case msg.SaveProfile != nil:
@@ -55,6 +55,6 @@ func (parser MsgsParser) ParseCustomMsgs(contractAddr sdk.AccAddress, data json.
 	case msg.UnlinkApplication != nil:
 		return commons.HandleWasmMsg(parser.cdc, *msg.UnlinkApplication, &types.MsgUnlinkApplication{})
 	default:
-		return nil, sdkerrors.Wrap(wasm.ErrInvalidMsg, "cosmwasm-profiles-msg-parser: message not supported")
+		return nil, errors.Wrap(wasm.ErrInvalidMsg, "cosmwasm-profiles-msg-parser: message not supported")
 	}
 }

@@ -1,8 +1,8 @@
 package keeper
 
 import (
+	errors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
@@ -18,7 +18,7 @@ func (k Keeper) GetSubspaceID(ctx sdk.Context) (subspaceID uint64, err error) {
 	store := ctx.KVStore(k.storeKey)
 	bz := store.Get(types.SubspaceIDKey)
 	if bz == nil {
-		return 0, sdkerrors.Wrap(types.ErrInvalidGenesis, "initial subspace ID hasn't been set")
+		return 0, errors.Wrap(types.ErrInvalidGenesis, "initial subspace ID hasn't been set")
 	}
 
 	subspaceID = types.GetSubspaceIDFromBytes(bz)

@@ -6,6 +6,7 @@ import (
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
+	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 
 	v5types "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v5/types"
 
@@ -15,8 +16,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-
-	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 
 	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )

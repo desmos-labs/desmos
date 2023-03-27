@@ -200,11 +200,6 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 	simulation.RandomizeGenState(simState)
 }
 
-// ProposalContents doesn't return any content functions for governance proposals.
-func (AppModule) ProposalContents(_ module.SimulationState) []simtypes.WeightedProposalContent {
-	return nil
-}
-
 // RandomizedParams creates randomized posts param changes for the simulator.
 func (AppModule) RandomizedParams(r *rand.Rand) []simtypes.LegacyParamChange {
 	return simulation.ParamChanges(r)

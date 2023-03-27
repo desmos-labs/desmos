@@ -1,6 +1,7 @@
 package keeper
 
 import (
+	errors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -19,7 +20,7 @@ func (mfd MinFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool,
 	// All transactions must be of type feeTx
 	feeTx, ok := tx.(sdk.FeeTx)
 	if !ok {
-		return newCtx, sdkerrors.Wrap(sdkerrors.ErrTxDecode, "Tx must be a FeeTx")
+		return newCtx, errors.Wrap(sdkerrors.ErrTxDecode, "Tx must be a FeeTx")
 	}
 
 	// Skip block with height 0 since this handler will be called before the fee params are initialized,

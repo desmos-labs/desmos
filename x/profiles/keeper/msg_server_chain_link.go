@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	errors "cosmossdk.io/errors"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -52,7 +53,7 @@ func (k msgServer) UnlinkChainAccount(goCtx context.Context, msg *types.MsgUnlin
 	// Get the chain link
 	link, found := k.GetChainLink(ctx, msg.Owner, msg.ChainName, msg.Target)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrNotFound, "chain link not found")
+		return nil, errors.Wrap(sdkerrors.ErrNotFound, "chain link not found")
 	}
 
 	// Delete the link
@@ -83,7 +84,7 @@ func (k msgServer) SetDefaultExternalAddress(goCtx context.Context, msg *types.M
 	// Get the chain link
 	_, found := k.GetChainLink(ctx, msg.Signer, msg.ChainName, msg.Target)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrNotFound, "chain link not found")
+		return nil, errors.Wrap(sdkerrors.ErrNotFound, "chain link not found")
 	}
 
 	k.SaveDefaultExternalAddress(ctx, msg.Signer, msg.ChainName, msg.Target)

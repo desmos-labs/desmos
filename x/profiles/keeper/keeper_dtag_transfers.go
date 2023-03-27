@@ -1,6 +1,7 @@
 package keeper
 
 import (
+	errors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
@@ -13,13 +14,13 @@ import (
 func (k Keeper) SaveDTagTransferRequest(ctx sdk.Context, request types.DTagTransferRequest) error {
 	// Check the recipient to make sure they have a profile
 	if !k.HasProfile(ctx, request.Receiver) {
-		return sdkerrors.Wrap(types.ErrProfileNotFound, "request receiver does not have a profile")
+		return errors.Wrap(types.ErrProfileNotFound, "request receiver does not have a profile")
 	}
 
 	store := ctx.KVStore(k.storeKey)
 	key := types.DTagTransferRequestStoreKey(request.Sender, request.Receiver)
 	if store.Has(key) {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest,
 			"the transfer request from %s to %s has already been created",
 			request.Sender, request.Receiver)
 	}

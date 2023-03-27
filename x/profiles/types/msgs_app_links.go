@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 	"strings"
 
+	errors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	clienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
@@ -43,26 +44,26 @@ func (MsgLinkApplication) Type() string {
 func (msg MsgLinkApplication) ValidateBasic() error {
 	err := msg.LinkData.Validate()
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		return errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	if _, err := hex.DecodeString(msg.CallData); err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid call data: must be hex encoded")
+		return errors.Wrap(sdkerrors.ErrInvalidRequest, "invalid call data: must be hex encoded")
 	}
 
 	err = host.ChannelIdentifierValidator(msg.SourceChannel)
 	if err != nil {
-		return sdkerrors.Wrap(err, "invalid source channel ID")
+		return errors.Wrap(err, "invalid source channel ID")
 	}
 
 	err = host.PortIdentifierValidator(msg.SourcePort)
 	if err != nil {
-		return sdkerrors.Wrap(err, "invalid source port ID")
+		return errors.Wrap(err, "invalid source port ID")
 	}
 
 	_, err = sdk.AccAddressFromBech32(msg.Sender)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "string could not be parsed as address: %v", err)
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "string could not be parsed as address: %v", err)
 	}
 
 	return nil
@@ -109,17 +110,17 @@ func (MsgUnlinkApplication) Type() string {
 // NOTE: timeout height or timestamp values can be 0 to disable the timeout.
 func (msg MsgUnlinkApplication) ValidateBasic() error {
 	if len(strings.TrimSpace(msg.Application)) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "application cannot be empty or blank")
+		return errors.Wrap(sdkerrors.ErrInvalidRequest, "application cannot be empty or blank")
 	}
 
 	if len(strings.TrimSpace(msg.Username)) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "username cannot be empty or blank")
+		return errors.Wrap(sdkerrors.ErrInvalidRequest, "username cannot be empty or blank")
 	}
 
 	// NOTE: sender format must be validated as it is required by the GetSigners function.
 	_, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "string could not be parsed as address: %v", err)
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "string could not be parsed as address: %v", err)
 	}
 
 	return nil

@@ -1,6 +1,7 @@
 package keeper
 
 import (
+	errors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
@@ -24,7 +25,7 @@ func (k Keeper) GetNextPostID(ctx sdk.Context, subspaceID uint64) (postID uint64
 	store := ctx.KVStore(k.storeKey)
 	bz := store.Get(types.NextPostIDStoreKey(subspaceID))
 	if bz == nil {
-		return 0, sdkerrors.Wrapf(types.ErrInvalidGenesis, "initial post ID hasn't been set for subspace %d", subspaceID)
+		return 0, errors.Wrapf(types.ErrInvalidGenesis, "initial post ID hasn't been set for subspace %d", subspaceID)
 	}
 
 	postID = types.GetPostIDFromBytes(bz)
@@ -45,12 +46,12 @@ func (k Keeper) ValidatePostReference(ctx sdk.Context, postAuthor string, subspa
 	// Make sure the referenced post exists
 	referencedPost, found := k.GetPost(ctx, subspaceID, referenceID)
 	if !found {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %d does not exist", referenceID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %d does not exist", referenceID)
 	}
 
 	// Make sure the original author has not blocked the post author
 	if k.HasUserBlocked(ctx, referencedPost.Author, postAuthor, subspaceID) {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "author of post %d has blocked you", referenceID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "author of post %d has blocked you", referenceID)
 	}
 
 	return nil
@@ -61,26 +62,26 @@ func (k Keeper) ValidatePostReference(ctx sdk.Context, postAuthor string, subspa
 func (k Keeper) ValidatePostReply(ctx sdk.Context, postAuthor string, subspaceID uint64, referenceID uint64) error {
 	replyPost, found := k.GetPost(ctx, subspaceID, referenceID)
 	if !found {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %d does not exist", referenceID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %d does not exist", referenceID)
 	}
 
 	switch replyPost.ReplySettings {
 	case types.REPLY_SETTING_FOLLOWERS:
 		// We need to make sure that a relationship between post author -> original author exists
 		if !k.HasRelationship(ctx, postAuthor, replyPost.Author, subspaceID) {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "only followers of the author can reply to this post")
+			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "only followers of the author can reply to this post")
 		}
 
 	case types.REPLY_SETTING_MUTUAL:
 		// We need to make sure that both relationships exist (post author -> original author and original author -> post author)
 		if !k.HasRelationship(ctx, postAuthor, replyPost.Author, subspaceID) || !k.HasRelationship(ctx, replyPost.Author, postAuthor, subspaceID) {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "only mutual connections of the author can reply to this post")
+			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "only mutual connections of the author can reply to this post")
 		}
 
 	case types.REPLY_SETTING_MENTIONS:
 		// We need to check each mention of the original post
 		if !replyPost.IsUserMentioned(postAuthor) {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "only mentioned users can reply to this post")
+			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "only mentioned users can reply to this post")
 		}
 	}
 
@@ -116,12 +117,12 @@ func (k Keeper) ValidatePost(ctx sdk.Context, post types.Post) error {
 
 	// Check the post text length to make sure it's not exceeding the max length
 	if uint32(len(post.Text)) > params.MaxTextLength {
-		return sdkerrors.Wrapf(types.ErrInvalidPost, "text exceed max length allowed")
+		return errors.Wrapf(types.ErrInvalidPost, "text exceed max length allowed")
 	}
 
 	err := post.Validate()
 	if err != nil {
-		return sdkerrors.Wrapf(types.ErrInvalidPost, err.Error())
+		return errors.Wrapf(types.ErrInvalidPost, err.Error())
 	}
 
 	return nil

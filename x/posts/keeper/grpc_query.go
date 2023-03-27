@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	errors "cosmossdk.io/errors"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -19,7 +20,7 @@ var _ types.QueryServer = &Keeper{}
 // SubspacePosts implements the QuerySubspacePosts gRPC method
 func (k Keeper) SubspacePosts(ctx context.Context, request *types.QuerySubspacePostsRequest) (*types.QuerySubspacePostsResponse, error) {
 	if request.SubspaceId == 0 {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id")
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id")
 	}
 
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
@@ -51,7 +52,7 @@ func (k Keeper) SubspacePosts(ctx context.Context, request *types.QuerySubspaceP
 // SectionPosts implements the QuerySectionPosts gRPC method
 func (k Keeper) SectionPosts(ctx context.Context, request *types.QuerySectionPostsRequest) (*types.QuerySectionPostsResponse, error) {
 	if request.SubspaceId == 0 {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id")
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id")
 	}
 
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
@@ -85,17 +86,17 @@ func (k Keeper) SectionPosts(ctx context.Context, request *types.QuerySectionPos
 // Post implements the QueryPost gRPC method
 func (k Keeper) Post(ctx context.Context, request *types.QueryPostRequest) (*types.QueryPostResponse, error) {
 	if request.SubspaceId == 0 {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id")
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id")
 	}
 	if request.PostId == 0 {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id")
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id")
 	}
 
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 
 	post, found := k.GetPost(sdkCtx, request.SubspaceId, request.PostId)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrNotFound, "post with id %d not found", request.PostId)
+		return nil, errors.Wrapf(sdkerrors.ErrNotFound, "post with id %d not found", request.PostId)
 	}
 
 	return &types.QueryPostResponse{
@@ -106,10 +107,10 @@ func (k Keeper) Post(ctx context.Context, request *types.QueryPostRequest) (*typ
 // PostAttachments implements the QueryPostAttachments gRPC method
 func (k Keeper) PostAttachments(ctx context.Context, request *types.QueryPostAttachmentsRequest) (*types.QueryPostAttachmentsResponse, error) {
 	if request.SubspaceId == 0 {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id")
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id")
 	}
 	if request.PostId == 0 {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id")
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id")
 	}
 
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
@@ -141,13 +142,13 @@ func (k Keeper) PostAttachments(ctx context.Context, request *types.QueryPostAtt
 // PollAnswers implements the QueryPollAnswers gRPC method
 func (k Keeper) PollAnswers(ctx context.Context, request *types.QueryPollAnswersRequest) (*types.QueryPollAnswersResponse, error) {
 	if request.SubspaceId == 0 {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id")
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id")
 	}
 	if request.PostId == 0 {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id")
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id")
 	}
 	if request.PollId == 0 {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid poll id")
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid poll id")
 	}
 
 	sdkCtx := sdk.UnwrapSDKContext(ctx)

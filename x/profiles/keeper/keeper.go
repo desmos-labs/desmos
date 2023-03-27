@@ -6,6 +6,7 @@ import (
 
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 
+	errors "cosmossdk.io/errors"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
@@ -126,7 +127,7 @@ func (k Keeper) storeProfileWithoutDTagCheck(ctx sdk.Context, profile *types.Pro
 func (k Keeper) SaveProfile(ctx sdk.Context, profile *types.Profile) error {
 	addr := k.GetAddressFromDTag(ctx, profile.DTag)
 	if addr != "" && addr != profile.GetAddress().String() {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest,
 			"a profile with DTag %s has already been created", profile.DTag)
 	}
 	return k.storeProfileWithoutDTagCheck(ctx, profile)
@@ -168,7 +169,7 @@ func (k Keeper) RemoveProfile(ctx sdk.Context, address string) error {
 	}
 
 	if !found {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest,
 			"no profile associated with the following address found: %s", address)
 	}
 

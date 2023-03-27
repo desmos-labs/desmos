@@ -1,8 +1,8 @@
 package keeper
 
 import (
+	errors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/desmos-labs/desmos/v4/x/reports/types"
 )
@@ -24,7 +24,7 @@ func (k Keeper) GetNextReasonID(ctx sdk.Context, subspaceID uint64) (reasonID ui
 	store := ctx.KVStore(k.storeKey)
 	bz := store.Get(types.NextReasonIDStoreKey(subspaceID))
 	if bz == nil {
-		return 0, sdkerrors.Wrapf(types.ErrInvalidGenesis, "initial reason id not set for subspace %d", subspaceID)
+		return 0, errors.Wrapf(types.ErrInvalidGenesis, "initial reason id not set for subspace %d", subspaceID)
 	}
 
 	reasonID = types.GetReasonIDFromBytes(bz)

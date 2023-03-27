@@ -139,11 +139,6 @@ func (am AppModule) EndBlock(_ sdk.Context, _ abci.RequestEndBlock) []abci.Valid
 // GenerateGenesisState creates a randomized GenState of the supply module.
 func (AppModule) GenerateGenesisState(_ *module.SimulationState) {}
 
-// ProposalContents doesn't return any content functions for governance proposals.
-func (AppModule) ProposalContents(_ module.SimulationState) []simtypes.WeightedProposalContent {
-	return nil
-}
-
 // RegisterStoreDecoder registers a decoder for supply module's types
 func (am AppModule) RegisterStoreDecoder(_ sdk.StoreDecoderRegistry) {}
 

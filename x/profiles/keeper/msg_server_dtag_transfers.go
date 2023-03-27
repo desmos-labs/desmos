@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 
+	errors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -16,7 +17,7 @@ func (k msgServer) RequestDTagTransfer(goCtx context.Context, msg *types.MsgRequ
 
 	// Check if the request's receiver has blocked the sender before
 	if k.IsUserBlocked(ctx, msg.Receiver, msg.Sender) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "the user with address %s has blocked you", msg.Receiver)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "the user with address %s has blocked you", msg.Receiver)
 	}
 
 	profile, found, err := k.GetProfile(ctx, msg.Receiver)
@@ -25,12 +26,12 @@ func (k msgServer) RequestDTagTransfer(goCtx context.Context, msg *types.MsgRequ
 	}
 
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the request recipient does not have a profile")
+		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, "the request recipient does not have a profile")
 	}
 
 	dTagToTrade := profile.DTag
 	if len(dTagToTrade) == 0 {
-		return nil, sdkerrors.Wrapf(
+		return nil, errors.Wrapf(
 			sdkerrors.ErrInvalidRequest,
 			"the user with address %s doesn't have a profile yet so their DTag cannot be transferred",
 			msg.Receiver,
@@ -67,7 +68,7 @@ func (k msgServer) CancelDTagTransferRequest(goCtx context.Context, msg *types.M
 
 	// Check if the request exists
 	if !k.HasDTagTransferRequest(ctx, msg.Sender, msg.Receiver) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "request from %s to %s not found", msg.Sender, msg.Receiver)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "request from %s to %s not found", msg.Sender, msg.Receiver)
 	}
 
 	// Delete the request
@@ -100,7 +101,7 @@ func (k msgServer) AcceptDTagTransferRequest(goCtx context.Context, msg *types.M
 	}
 
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "no request made from %s", msg.Sender)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "no request made from %s", msg.Sender)
 	}
 
 	// Get the current owner profile
@@ -110,21 +111,21 @@ func (k msgServer) AcceptDTagTransferRequest(goCtx context.Context, msg *types.M
 	}
 
 	if !exist {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "profile of %s doesn't exist", msg.Receiver)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "profile of %s doesn't exist", msg.Receiver)
 	}
 
 	// Get the DTag to trade and make sure its correct
 	dTagWanted := request.DTagToTrade
 	dTagToTrade := currentOwnerProfile.DTag
 	if dTagWanted != dTagToTrade {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the owner's DTag is different from the one to be exchanged")
+		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, "the owner's DTag is different from the one to be exchanged")
 	}
 
 	// Change the DTag and validate the profile
 	currentOwnerProfile.DTag = msg.NewDTag
 	err = k.ValidateProfile(ctx, currentOwnerProfile)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	// Check for an existent profile of the receiving user
@@ -167,7 +168,7 @@ func (k msgServer) AcceptDTagTransferRequest(goCtx context.Context, msg *types.M
 	// Validate the receiver profile
 	err = k.ValidateProfile(ctx, receiverProfile)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	// Save the receiver profile
@@ -204,7 +205,7 @@ func (k msgServer) RefuseDTagTransferRequest(goCtx context.Context, msg *types.M
 
 	// Check if the request exists
 	if !k.HasDTagTransferRequest(ctx, msg.Sender, msg.Receiver) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "request from %s to %s not found", msg.Sender, msg.Receiver)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "request from %s to %s not found", msg.Sender, msg.Receiver)
 	}
 
 	// Delete the request

@@ -6,6 +6,7 @@ import (
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 
+	errors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -66,7 +67,7 @@ func (msg MsgCreatePost) Type() string { return ActionCreatePost }
 // ValidateBasic implements sdk.Msg
 func (msg MsgCreatePost) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.Author)
@@ -81,7 +82,7 @@ func (msg MsgCreatePost) ValidateBasic() error {
 	if msg.Entities != nil {
 		err := msg.Entities.Validate()
 		if err != nil {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid entities: %s", err)
+			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid entities: %s", err)
 		}
 	}
 
@@ -94,7 +95,7 @@ func (msg MsgCreatePost) ValidateBasic() error {
 	for _, attachment := range msg.Attachments {
 		err = attachment.GetCachedValue().(AttachmentContent).Validate()
 		if err != nil {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid attachment: %s", err)
+			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid attachment: %s", err)
 		}
 	}
 
@@ -162,17 +163,17 @@ func (msg MsgEditPost) Type() string { return ActionEditPost }
 // ValidateBasic implements sdk.Msg
 func (msg MsgEditPost) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
 	if msg.PostID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id: %d", msg.PostID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id: %d", msg.PostID)
 	}
 
 	if msg.Entities != nil {
 		err := msg.Entities.Validate()
 		if err != nil {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid entities: %s", err)
+			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid entities: %s", err)
 		}
 	}
 
@@ -232,15 +233,15 @@ func (msg MsgAddPostAttachment) Type() string { return ActionAddPostAttachment }
 // ValidateBasic implements sdk.Msg
 func (msg MsgAddPostAttachment) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
 	if msg.PostID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id: %d", msg.PostID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id: %d", msg.PostID)
 	}
 
 	if msg.Content == nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid attachment content")
+		return errors.Wrap(sdkerrors.ErrInvalidRequest, "invalid attachment content")
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.Editor)
@@ -289,15 +290,15 @@ func (msg MsgRemovePostAttachment) Type() string { return ActionRemovePostAttach
 // ValidateBasic implements sdk.Msg
 func (msg MsgRemovePostAttachment) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
 	if msg.PostID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id: %d", msg.PostID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id: %d", msg.PostID)
 	}
 
 	if msg.AttachmentID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid attachment id: %d", msg.AttachmentID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid attachment id: %d", msg.AttachmentID)
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.Editor)
@@ -339,11 +340,11 @@ func (msg MsgDeletePost) Type() string { return ActionDeletePost }
 // ValidateBasic implements sdk.Msg
 func (msg MsgDeletePost) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
 	if msg.PostID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id: %d", msg.PostID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id: %d", msg.PostID)
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.Signer)
@@ -393,26 +394,26 @@ func (msg MsgAnswerPoll) Type() string { return ActionAnswerPoll }
 // ValidateBasic implements sdk.Msg
 func (msg MsgAnswerPoll) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
 	if msg.PostID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id: %d", msg.PostID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id: %d", msg.PostID)
 	}
 
 	if msg.PollID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid poll id: %d", msg.PollID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid poll id: %d", msg.PollID)
 	}
 
 	if len(msg.AnswersIndexes) == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "at least one answer is required")
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "at least one answer is required")
 	}
 
 	// Check duplicated answers
 	answers := map[uint32]bool{}
 	for _, answer := range msg.AnswersIndexes {
 		if _, ok := answers[answer]; ok {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicated answer index: %d", answer)
+			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicated answer index: %d", answer)
 		}
 		answers[answer] = true
 	}

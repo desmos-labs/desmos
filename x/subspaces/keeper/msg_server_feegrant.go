@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	errors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
@@ -15,10 +16,10 @@ func (k msgServer) GrantAllowance(goCtx context.Context, msg *types.MsgGrantAllo
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 	if !k.HasPermission(ctx, msg.SubspaceID, types.RootSectionID, msg.Granter, types.PermissionManageAllowances) {
-		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage allowances in this subspace")
+		return nil, errors.Wrap(types.ErrPermissionDenied, "you cannot manage allowances in this subspace")
 	}
 
 	events := sdk.Events{
@@ -33,7 +34,7 @@ func (k msgServer) GrantAllowance(goCtx context.Context, msg *types.MsgGrantAllo
 	switch grantee := msg.Grantee.GetCachedValue().(type) {
 	case *types.UserGrantee:
 		if k.HasUserGrant(ctx, msg.SubspaceID, grantee.User) {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "fee allowance already exists")
+			return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, "fee allowance already exists")
 		}
 		events = events.AppendEvent(sdk.NewEvent(
 			types.EventTypeGrantAllowance,
@@ -44,10 +45,10 @@ func (k msgServer) GrantAllowance(goCtx context.Context, msg *types.MsgGrantAllo
 
 	case *types.GroupGrantee:
 		if !k.HasUserGroup(ctx, msg.SubspaceID, grantee.GroupID) {
-			return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "group with id %d not found", grantee.GroupID)
+			return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "group with id %d not found", grantee.GroupID)
 		}
 		if k.HasGroupGrant(ctx, msg.SubspaceID, grantee.GroupID) {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "fee allowance already exists")
+			return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, "fee allowance already exists")
 		}
 		events = events.AppendEvent(sdk.NewEvent(
 			types.EventTypeGrantAllowance,
@@ -80,10 +81,10 @@ func (k msgServer) RevokeAllowance(goCtx context.Context, msg *types.MsgRevokeAl
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 	if !k.HasPermission(ctx, msg.SubspaceID, types.RootSectionID, msg.Granter, types.PermissionManageAllowances) {
-		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage allowances in this subspace")
+		return nil, errors.Wrap(types.ErrPermissionDenied, "you cannot manage allowances in this subspace")
 	}
 
 	events := sdk.Events{
@@ -98,7 +99,7 @@ func (k msgServer) RevokeAllowance(goCtx context.Context, msg *types.MsgRevokeAl
 	switch grantee := msg.Grantee.GetCachedValue().(type) {
 	case *types.UserGrantee:
 		if !k.HasUserGrant(ctx, msg.SubspaceID, grantee.User) {
-			return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "fee allowance does not exist")
+			return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "fee allowance does not exist")
 		}
 		k.DeleteUserGrant(ctx, msg.SubspaceID, grantee.User)
 		events = events.AppendEvent(sdk.NewEvent(
@@ -110,7 +111,7 @@ func (k msgServer) RevokeAllowance(goCtx context.Context, msg *types.MsgRevokeAl
 
 	case *types.GroupGrantee:
 		if !k.HasGroupGrant(ctx, msg.SubspaceID, grantee.GroupID) {
-			return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "fee allowance does not exist")
+			return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "fee allowance does not exist")
 		}
 		k.DeleteGroupGrant(ctx, msg.SubspaceID, grantee.GroupID)
 		events = events.AppendEvent(sdk.NewEvent(

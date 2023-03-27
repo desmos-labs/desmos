@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	errors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -64,17 +65,17 @@ func (msg MsgCreateSubspace) Type() string { return ActionCreateSubspace }
 // ValidateBasic implements sdk.Msg
 func (msg MsgCreateSubspace) ValidateBasic() error {
 	if strings.TrimSpace(msg.Name) == "" {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "subspace name cannot be empty or blank")
+		return errors.Wrap(sdkerrors.ErrInvalidRequest, "subspace name cannot be empty or blank")
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.Owner)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address")
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address")
 	}
 
 	_, err = sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address")
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address")
 	}
 
 	return nil
@@ -119,12 +120,12 @@ func (msg MsgEditSubspace) Type() string { return ActionEditSubspace }
 // ValidateBasic implements sdk.Msg
 func (msg MsgEditSubspace) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address")
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address")
 	}
 
 	return nil
@@ -160,12 +161,12 @@ func (msg MsgDeleteSubspace) Type() string { return ActionDeleteSubspace }
 // ValidateBasic implements sdk.Msg
 func (msg MsgDeleteSubspace) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address")
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address")
 	}
 
 	return nil
@@ -210,16 +211,16 @@ func (msg MsgCreateSection) Type() string { return ActionCreateSection }
 // ValidateBasic implements sdk.Msg
 func (msg MsgCreateSection) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
 	if strings.TrimSpace(msg.Name) == "" {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid section name: %s", msg.Name)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid section name: %s", msg.Name)
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address")
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address")
 	}
 
 	return nil
@@ -264,16 +265,16 @@ func (msg MsgEditSection) Type() string { return ActionEditSection }
 // ValidateBasic implements sdk.Msg
 func (msg MsgEditSection) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
 	if strings.TrimSpace(msg.Name) == "" {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid section name: %s", msg.Name)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid section name: %s", msg.Name)
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.Editor)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid editor address")
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid editor address")
 	}
 
 	return nil
@@ -316,16 +317,16 @@ func (msg MsgMoveSection) Type() string { return ActionMoveSection }
 // ValidateBasic implements sdk.Msg
 func (msg MsgMoveSection) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
 	if msg.SectionID == RootSectionID {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid section id: %d", msg.SectionID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid section id: %d", msg.SectionID)
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address")
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address")
 	}
 
 	return nil
@@ -362,16 +363,16 @@ func (msg MsgDeleteSection) Type() string { return ActionDeleteSection }
 // ValidateBasic implements sdk.Msg
 func (msg MsgDeleteSection) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
 	if msg.SectionID == RootSectionID {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid section id: %d", msg.SectionID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid section id: %d", msg.SectionID)
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address")
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address")
 	}
 
 	return nil
@@ -420,27 +421,27 @@ func (msg MsgCreateUserGroup) Type() string { return ActionCreateUserGroup }
 // ValidateBasic implements sdk.Msg
 func (msg MsgCreateUserGroup) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
 	if strings.TrimSpace(msg.Name) == "" {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid group name: %s", msg.Name)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid group name: %s", msg.Name)
 	}
 
 	if !ArePermissionsValid(msg.DefaultPermissions) {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid permissions: %s", msg.DefaultPermissions)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid permissions: %s", msg.DefaultPermissions)
 	}
 
 	for _, member := range msg.InitialMembers {
 		_, err := sdk.AccAddressFromBech32(member)
 		if err != nil {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid member address: %s", member)
+			return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid member address: %s", member)
 		}
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address")
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address")
 	}
 
 	return nil
@@ -485,12 +486,12 @@ func (msg MsgEditUserGroup) Type() string { return ActionEditUserGroup }
 // ValidateBasic implements sdk.Msg
 func (msg MsgEditUserGroup) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address")
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address")
 	}
 
 	return nil
@@ -533,12 +534,12 @@ func (msg MsgMoveUserGroup) Type() string { return ActionMoveUserGroup }
 // ValidateBasic implements sdk.Msg
 func (msg MsgMoveUserGroup) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address")
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address")
 	}
 
 	return nil
@@ -581,16 +582,16 @@ func (msg MsgSetUserGroupPermissions) Type() string { return ActionSetUserGroupP
 // ValidateBasic implements sdk.Msg
 func (msg MsgSetUserGroupPermissions) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
 	if !ArePermissionsValid(msg.Permissions) {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid permissions: %s", msg.Permissions)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid permissions: %s", msg.Permissions)
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address")
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address")
 	}
 
 	return nil
@@ -627,16 +628,16 @@ func (msg MsgDeleteUserGroup) Type() string { return ActionDeleteUserGroup }
 // ValidateBasic implements sdk.Msg
 func (msg MsgDeleteUserGroup) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
 	if msg.GroupID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid group id: %d", msg.GroupID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid group id: %d", msg.GroupID)
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address")
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address")
 	}
 
 	return nil
@@ -679,21 +680,21 @@ func (msg MsgAddUserToUserGroup) Type() string { return ActionAddUserToUserGroup
 // ValidateBasic implements sdk.Msg
 func (msg MsgAddUserToUserGroup) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
 	if msg.GroupID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid group id: %d", msg.GroupID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid group id: %d", msg.GroupID)
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.User)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address")
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address")
 	}
 
 	_, err = sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address")
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address")
 	}
 
 	return nil
@@ -736,21 +737,21 @@ func (msg MsgRemoveUserFromUserGroup) Type() string { return ActionRemoveUserFro
 // ValidateBasic implements sdk.Msg
 func (msg MsgRemoveUserFromUserGroup) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
 	if msg.GroupID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid group id: %d", msg.GroupID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid group id: %d", msg.GroupID)
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.User)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address")
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address")
 	}
 
 	_, err = sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address")
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address")
 	}
 
 	return nil
@@ -795,17 +796,17 @@ func (msg MsgSetUserPermissions) Type() string { return ActionSetUserPermissions
 // ValidateBasic implements sdk.Msg
 func (msg MsgSetUserPermissions) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.User)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address")
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address")
 	}
 
 	_, err = sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address")
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address")
 	}
 
 	if !ArePermissionsValid(msg.Permissions) {
@@ -813,7 +814,7 @@ func (msg MsgSetUserPermissions) ValidateBasic() error {
 	}
 
 	if msg.User == msg.Signer {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "cannot set the permissions for yourself")
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "cannot set the permissions for yourself")
 	}
 
 	return nil

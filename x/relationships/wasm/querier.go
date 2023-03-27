@@ -3,6 +3,7 @@ package wasm
 import (
 	"encoding/json"
 
+	errors "cosmossdk.io/errors"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -30,7 +31,7 @@ func (querier RelationshipsWasmQuerier) QueryCustom(ctx sdk.Context, data json.R
 	var query types.RelationshipsQuery
 	err := json.Unmarshal(data, &query)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 	switch {
 	case query.Relationships != nil:
@@ -46,15 +47,15 @@ func (querier RelationshipsWasmQuerier) handleRelationshipsRequest(ctx sdk.Conte
 	var req types.QueryRelationshipsRequest
 	err = querier.cdc.UnmarshalJSON(request, &req)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 	res, err := querier.relationshipsKeeper.Relationships(sdk.WrapSDKContext(ctx), &req)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 	bz, err = querier.cdc.MarshalJSON(res)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 	}
 	return bz, nil
 }
@@ -63,15 +64,15 @@ func (querier RelationshipsWasmQuerier) handleBlocksRequest(ctx sdk.Context, req
 	var req types.QueryBlocksRequest
 	err = querier.cdc.UnmarshalJSON(request, &req)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 	res, err := querier.relationshipsKeeper.Blocks(sdk.WrapSDKContext(ctx), &req)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 	bz, err = querier.cdc.MarshalJSON(res)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 	}
 	return bz, nil
 }

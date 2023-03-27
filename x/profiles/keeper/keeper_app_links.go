@@ -3,8 +3,8 @@ package keeper
 import (
 	"time"
 
+	errors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
@@ -19,7 +19,7 @@ import (
 // SaveApplicationLink stores the given connection replacing any existing one for the same user and application
 func (k Keeper) SaveApplicationLink(ctx sdk.Context, link types.ApplicationLink) error {
 	if !k.HasProfile(ctx, link.User) {
-		return sdkerrors.Wrapf(types.ErrProfileNotFound, "a profile is required to link an application")
+		return errors.Wrapf(types.ErrProfileNotFound, "a profile is required to link an application")
 	}
 
 	// Store the data
@@ -89,7 +89,7 @@ func (k Keeper) GetApplicationLinkByClientID(ctx sdk.Context, clientID string) (
 	var link types.ApplicationLink
 	err := k.cdc.Unmarshal(store.Get(applicationLinkKey), &link)
 	if err != nil {
-		return types.ApplicationLink{}, true, sdkerrors.Wrap(err, "error while reading application link")
+		return types.ApplicationLink{}, true, errors.Wrap(err, "error while reading application link")
 	}
 
 	return link, true, nil

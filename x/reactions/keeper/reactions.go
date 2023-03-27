@@ -3,6 +3,7 @@ package keeper
 import (
 	"regexp"
 
+	errors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
@@ -26,7 +27,7 @@ func (k Keeper) GetNextReactionID(ctx sdk.Context, subspaceID uint64, postID uin
 	store := ctx.KVStore(k.storeKey)
 	bz := store.Get(types.NextReactionIDStoreKey(subspaceID, postID))
 	if bz == nil {
-		return 0, sdkerrors.Wrapf(types.ErrInvalidGenesis, "initial reaction id not set for post %d inside subspace %d", postID, subspaceID)
+		return 0, errors.Wrapf(types.ErrInvalidGenesis, "initial reaction id not set for post %d inside subspace %d", postID, subspaceID)
 	}
 
 	reactionID = types.GetReactionIDFromBytes(bz)
@@ -51,12 +52,12 @@ func (k Keeper) validateRegisteredReactionValue(ctx sdk.Context, reaction types.
 
 	// Make sure registered reactions are enabled
 	if !params.Enabled {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "registered reactions are not enabled inside this subspace")
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "registered reactions are not enabled inside this subspace")
 	}
 
 	// Make sure the registered reaction exists
 	if !k.HasRegisteredReaction(ctx, reaction.SubspaceID, value.RegisteredReactionID) {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "registered reaction with id %d not found", value.RegisteredReactionID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "registered reaction with id %d not found", value.RegisteredReactionID)
 	}
 
 	return nil
@@ -72,23 +73,23 @@ func (k Keeper) validateFreeTextValue(ctx sdk.Context, reaction types.Reaction, 
 
 	// Make sure the free text reactions are enabled
 	if !params.Enabled {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "free text reactions are not enabled inside this subspace")
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "free text reactions are not enabled inside this subspace")
 	}
 
 	// Make sure the value respected the max length
 	if uint32(len(value.Text)) > params.MaxLength {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "value exceed max length allowed")
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "value exceed max length allowed")
 	}
 
 	// Make sure the value matches the regex
 	if params.RegEx != "" {
 		regEx, err := regexp.Compile(params.RegEx)
 		if err != nil {
-			return sdkerrors.Wrapf(sdkerrors.ErrLogic, "invalid free text regex")
+			return errors.Wrapf(sdkerrors.ErrLogic, "invalid free text regex")
 		}
 
 		if !regEx.MatchString(value.Text) {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "value does not respect required regex")
+			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "value does not respect required regex")
 		}
 	}
 
@@ -100,7 +101,7 @@ func (k Keeper) ValidateReaction(ctx sdk.Context, reaction types.Reaction) (err 
 	// Validate the reaction
 	err = reaction.Validate()
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	// Validate the value

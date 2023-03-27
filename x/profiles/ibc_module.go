@@ -8,6 +8,7 @@ import (
 
 	oracletypes "github.com/desmos-labs/desmos/v4/x/oracle/types"
 
+	errors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
@@ -56,16 +57,16 @@ func ValidateProfilesChannelParams(
 		return err
 	}
 	if channelSequence > uint64(math.MaxUint32) {
-		return sdkerrors.Wrapf(types.ErrMaxProfilesChannels, "channel sequence %d is greater than max allowed profiles channels %d", channelSequence, uint64(math.MaxUint32))
+		return errors.Wrapf(types.ErrMaxProfilesChannels, "channel sequence %d is greater than max allowed profiles channels %d", channelSequence, uint64(math.MaxUint32))
 	}
 	if order != channeltypes.UNORDERED {
-		return sdkerrors.Wrapf(channeltypes.ErrInvalidChannelOrdering, "expected %s channel, got %s ", channeltypes.UNORDERED, order)
+		return errors.Wrapf(channeltypes.ErrInvalidChannelOrdering, "expected %s channel, got %s ", channeltypes.UNORDERED, order)
 	}
 
 	// Require portID is the portID profiles module is bound to
 	boundPort := keeper.GetPort(ctx)
 	if boundPort != portID {
-		return sdkerrors.Wrapf(porttypes.ErrInvalidPort, "invalid port: %s, expected %s", portID, boundPort)
+		return errors.Wrapf(porttypes.ErrInvalidPort, "invalid port: %s, expected %s", portID, boundPort)
 	}
 
 	return nil
@@ -154,7 +155,7 @@ func (am IBCModule) OnChanCloseInit(
 	channelID string,
 ) error {
 	// Disallow user-initiated channel closing for channels
-	return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "user cannot close channel")
+	return errors.Wrap(sdkerrors.ErrInvalidRequest, "user cannot close channel")
 }
 
 // OnChanCloseConfirm implements the IBCModule interface
@@ -204,7 +205,7 @@ func (am IBCModule) HandlePacket(
 			return ack, err
 		}
 	}
-	return channeltypes.Acknowledgement{}, sdkerrors.Wrapf(types.ErrInvalidPacketData, "%T", packet)
+	return channeltypes.Acknowledgement{}, errors.Wrapf(types.ErrInvalidPacketData, "%T", packet)
 }
 
 // handleLinkChainAccountPacketData tries handling athe given packet by deserializing the inner data
@@ -226,7 +227,7 @@ func handleLinkChainAccountPacketData(
 		// Encode packet acknowledgment
 		packetAckBytes, err := packetAck.Marshal()
 		if err != nil {
-			return true, channeltypes.Acknowledgement{}, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+			return true, channeltypes.Acknowledgement{}, errors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 		}
 		acknowledgement = channeltypes.NewResultAcknowledgement(packetAckBytes)
 	}
@@ -294,14 +295,14 @@ func (am IBCModule) OnAcknowledgementPacket(
 	var ack channeltypes.Acknowledgement
 	err := types.ModuleCdc.UnmarshalJSON(acknowledgement, &ack)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
+		return errors.Wrapf(sdkerrors.ErrUnknownRequest,
 			"cannot unmarshal oracle packet acknowledgement: %v", err)
 	}
 
 	var data oracletypes.OracleRequestPacketData
 	err = types.ModuleCdc.UnmarshalJSON(packet.GetData(), &data)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
+		return errors.Wrapf(sdkerrors.ErrUnknownRequest,
 			"cannot unmarshal oracle request packet data: %s", err)
 	}
 
@@ -350,7 +351,7 @@ func (am IBCModule) OnTimeoutPacket(
 	var data oracletypes.OracleRequestPacketData
 	err := types.ModuleCdc.UnmarshalJSON(packet.GetData(), &data)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
+		return errors.Wrapf(sdkerrors.ErrUnknownRequest,
 			"cannot unmarshal oracle request packet data: %s", err)
 	}
 

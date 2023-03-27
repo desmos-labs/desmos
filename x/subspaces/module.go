@@ -203,11 +203,6 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 	simulation.RandomizeGenState(simState)
 }
 
-// ProposalContents doesn't return any content functions for governance proposals.
-func (AppModule) ProposalContents(_ module.SimulationState) []simtypes.WeightedProposalContent {
-	return nil
-}
-
 // RegisterStoreDecoder performs a no-op.
 func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
 	sdr[types.ModuleName] = simulation.NewDecodeStore(am.cdc)

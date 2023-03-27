@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"strings"
 
+	"cosmossdk.io/math"
+
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -97,7 +99,7 @@ func (params Params) Validate() error {
 // ___________________________________________________________________________________________________________________
 
 // NewNicknameParams creates a new NicknameParams obj
-func NewNicknameParams(minLen, maxLen sdk.Int) NicknameParams {
+func NewNicknameParams(minLen, maxLen math.Int) NicknameParams {
 	return NicknameParams{
 		MinLength: minLen,
 		MaxLength: maxLen,
@@ -135,7 +137,7 @@ func ValidateNicknameParams(i interface{}) error {
 // ___________________________________________________________________________________________________________________
 
 // NewDTagParams creates a new DTagParams obj
-func NewDTagParams(regEx string, minLen, maxLen sdk.Int) DTagParams {
+func NewDTagParams(regEx string, minLen, maxLen math.Int) DTagParams {
 	return DTagParams{
 		RegEx:     regEx,
 		MinLength: minLen,
@@ -176,7 +178,7 @@ func ValidateDTagParams(i interface{}) error {
 // ___________________________________________________________________________________________________________________
 
 // NewBioParams creates a new BioParams obj
-func NewBioParams(maxLength sdk.Int) BioParams {
+func NewBioParams(maxLength math.Int) BioParams {
 	return BioParams{
 		MaxLength: maxLength,
 	}

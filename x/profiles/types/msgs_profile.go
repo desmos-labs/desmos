@@ -3,6 +3,7 @@ package types
 import (
 	"fmt"
 
+	errors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -33,7 +34,7 @@ func (msg MsgSaveProfile) Type() string { return ActionSaveProfile }
 func (msg MsgSaveProfile) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid creator: %s", msg.Creator))
+		return errors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid creator: %s", msg.Creator))
 	}
 
 	return nil
@@ -69,7 +70,7 @@ func (msg MsgDeleteProfile) Type() string { return ActionDeleteProfile }
 func (msg MsgDeleteProfile) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid creator: %s", msg.Creator))
+		return errors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid creator: %s", msg.Creator))
 	}
 
 	return nil

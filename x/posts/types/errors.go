@@ -1,10 +1,8 @@
 package types
 
-import (
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-)
+import errors "cosmossdk.io/errors"
 
 var (
-	ErrInvalidGenesis = sdkerrors.Register(ModuleName, 1, "invalid genesis state")
-	ErrInvalidPost    = sdkerrors.Register(ModuleName, 2, "invalid post")
+	ErrInvalidGenesis = errors.Register(ModuleName, 1, "invalid genesis state")
+	ErrInvalidPost    = errors.Register(ModuleName, 2, "invalid post")
 )

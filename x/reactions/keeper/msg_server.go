@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	errors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
@@ -28,38 +29,38 @@ func (k msgServer) AddReaction(goCtx context.Context, msg *types.MsgAddReaction)
 
 	// Check if the user has a profile
 	if !k.HasProfile(ctx, msg.User) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "you cannot add a reaction without a profile")
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "you cannot add a reaction without a profile")
 	}
 
 	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 
 	// Check if the post exists
 	post, found := k.GetPost(ctx, msg.SubspaceID, msg.PostID)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %d not found inside subspace %d", msg.PostID, msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %d not found inside subspace %d", msg.PostID, msg.SubspaceID)
 	}
 
 	// Make sure the post author has not blocked the user
 	if k.HasUserBlocked(ctx, post.Author, msg.User, msg.SubspaceID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "the post author has blocked you on this subspace")
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "the post author has blocked you on this subspace")
 	}
 
 	// Check the permission to react
 	if !k.HasPermission(ctx, post.SubspaceID, post.SectionID, msg.User, types.PermissionsReact) {
-		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot add reactions inside this subspace")
+		return nil, errors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot add reactions inside this subspace")
 	}
 
 	value, ok := msg.Value.GetCachedValue().(types.ReactionValue)
 	if !ok {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid reaction value: %s", msg.Value)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid reaction value: %s", msg.Value)
 	}
 
 	// Make sure the reaction does not exist already
 	if k.HasReacted(ctx, msg.SubspaceID, msg.PostID, msg.User, value) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "you have already reacted with the same value to this post")
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "you have already reacted with the same value to this post")
 	}
 
 	// Get the next reaction id
@@ -114,29 +115,29 @@ func (k msgServer) RemoveReaction(goCtx context.Context, msg *types.MsgRemoveRea
 
 	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 
 	// Check if the post exists
 	post, found := k.GetPost(ctx, msg.SubspaceID, msg.PostID)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %d not found inside subspace %d", msg.PostID, msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %d not found inside subspace %d", msg.PostID, msg.SubspaceID)
 	}
 
 	// Check if the reaction exists
 	reaction, found := k.GetReaction(ctx, msg.SubspaceID, msg.PostID, msg.ReactionID)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "reaction does not exist")
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "reaction does not exist")
 	}
 
 	// Make sure the user matches the author
 	if reaction.Author != msg.User {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "you are not the author of this reaction")
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "you are not the author of this reaction")
 	}
 
 	// Check the permission to remove reaction
 	if !k.HasPermission(ctx, post.SubspaceID, post.SectionID, msg.User, types.PermissionsReact) {
-		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot remove reactions inside this subspace")
+		return nil, errors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot remove reactions inside this subspace")
 	}
 
 	// Remove the reaction
@@ -166,12 +167,12 @@ func (k msgServer) AddRegisteredReaction(goCtx context.Context, msg *types.MsgAd
 
 	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 
 	// Check the permission to manage the registered reactions
 	if !k.HasPermission(ctx, msg.SubspaceID, subspacestypes.RootSectionID, msg.User, types.PermissionManageRegisteredReactions) {
-		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot manage the registered reactions inside this subspace")
+		return nil, errors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot manage the registered reactions inside this subspace")
 	}
 
 	// Get the next reaction id
@@ -189,7 +190,7 @@ func (k msgServer) AddRegisteredReaction(goCtx context.Context, msg *types.MsgAd
 	)
 	err = reaction.Validate()
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	// Store the registered reaction
@@ -223,25 +224,25 @@ func (k msgServer) EditRegisteredReaction(goCtx context.Context, msg *types.MsgE
 
 	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 
 	// Check if the registered reaction exists
 	reaction, found := k.GetRegisteredReaction(ctx, msg.SubspaceID, msg.RegisteredReactionID)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "registered reaction with id %d not found", msg.RegisteredReactionID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "registered reaction with id %d not found", msg.RegisteredReactionID)
 	}
 
 	// Check the permission to manage the registered reactions
 	if !k.HasPermission(ctx, msg.SubspaceID, subspacestypes.RootSectionID, msg.User, types.PermissionManageRegisteredReactions) {
-		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot manage the registered reactions inside this subspace")
+		return nil, errors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot manage the registered reactions inside this subspace")
 	}
 
 	// Update the reaction and validate it
 	updated := reaction.Update(types.NewRegisteredReactionUpdate(msg.ShorthandCode, msg.DisplayValue))
 	err := updated.Validate()
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	// Save the reaction
@@ -270,17 +271,17 @@ func (k msgServer) RemoveRegisteredReaction(goCtx context.Context, msg *types.Ms
 
 	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 
 	// Check if the registered reaction exists
 	if !k.HasRegisteredReaction(ctx, msg.SubspaceID, msg.RegisteredReactionID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "registered reaction with id %d not found", msg.RegisteredReactionID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "registered reaction with id %d not found", msg.RegisteredReactionID)
 	}
 
 	// Check the permission to manage the registered reactions
 	if !k.HasPermission(ctx, msg.SubspaceID, subspacestypes.RootSectionID, msg.User, types.PermissionManageRegisteredReactions) {
-		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot manage the registered reactions inside this subspace")
+		return nil, errors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot manage the registered reactions inside this subspace")
 	}
 
 	// Delete the registered reaction
@@ -309,19 +310,19 @@ func (k msgServer) SetReactionsParams(goCtx context.Context, msg *types.MsgSetRe
 
 	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 
 	// Check the permission to manage the reaction params
 	if !k.HasPermission(ctx, msg.SubspaceID, subspacestypes.RootSectionID, msg.User, types.PermissionManageReactionParams) {
-		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot manage the reactions params inside this subspace")
+		return nil, errors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot manage the reactions params inside this subspace")
 	}
 
 	// Create and validate the params
 	params := types.NewSubspaceReactionsParams(msg.SubspaceID, msg.RegisteredReaction, msg.FreeText)
 	err := params.Validate()
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	// Store the params
