@@ -92,6 +92,8 @@ func (h Hooks) AfterPostDeleted(ctx sdk.Context, subspaceID uint64, postID uint6
 		h.k.DeleteReaction(ctx, reaction.SubspaceID, reaction.PostID, reaction.ID)
 		return false
 	})
+
+	h.k.Logger(ctx).Info("call after post deleted hook", "subspace_id", subspaceID, "post_id", postID)
 }
 
 // AfterAttachmentSaved implements poststypes.PostsHooks
