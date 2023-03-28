@@ -3,7 +3,7 @@ module github.com/desmos-labs/desmos/v4
 go 1.19
 
 require (
-	github.com/CosmWasm/wasmd v0.30.0
+	github.com/CosmWasm/wasmd v0.40.0-rc.0
 	github.com/armon/go-metrics v0.4.1
 	github.com/btcsuite/btcd/btcec/v2 v2.3.2
 	github.com/cosmos/cosmos-proto v1.0.0-beta.2
@@ -320,10 +320,10 @@ replace (
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.2.0
 
 	// Our wasmd branch is: https://github.com/desmos-labs/wasmd v0.30.x-desmos
-	github.com/CosmWasm/wasmd => github.com/desmos-labs/wasmd v0.23.1-0.20230322055654-b7cbef6798e6
+	github.com/CosmWasm/wasmd => github.com/desmos-labs/wasmd v0.40.0-desmos-rc.0
 
 	// Our cosmos-sdk branch is: https://github.com/desmos-labs/cosmos-sdk v0.47.x-desmos
-	github.com/cosmos/cosmos-sdk => github.com/desmos-labs/cosmos-sdk v0.43.0-alpha1.0.20230314133540-9acdbb94da5a
+	github.com/cosmos/cosmos-sdk => github.com/desmos-labs/cosmos-sdk v0.47.0-desmos
 
 	// Replace the Cosmos Ledger app with the Desmos fork
 	github.com/cosmos/ledger-cosmos-go => github.com/desmos-labs/ledger-desmos-go v0.11.2-0.20230324071009-828beadf3908

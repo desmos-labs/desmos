@@ -454,12 +454,12 @@ github.com/denis-tingaikin/go-header v0.4.3 h1:tEaZKAlqql6SKCY++utLmkPLd6K8IBM20
 github.com/denis-tingaikin/go-header v0.4.3/go.mod h1:0wOCWuN71D5qIgE2nz9KrKmuYBAC2Mra5RassOIQ2/c=
 github.com/desertbit/timer v0.0.0-20180107155436-c41aec40b27f h1:U5y3Y5UE0w7amNe7Z5G/twsBW0KEalRQXZzf8ufSh9I=
 github.com/desertbit/timer v0.0.0-20180107155436-c41aec40b27f/go.mod h1:xH/i4TFMt8koVQZ6WFms69WAsDWr2XsYL3Hkl7jkoLE=
-github.com/desmos-labs/cosmos-sdk v0.43.0-alpha1.0.20230314133540-9acdbb94da5a h1:e2YtooagRH01GfDCdzNXH2+G3MphM98I3/KCX6JXNCg=
-github.com/desmos-labs/cosmos-sdk v0.43.0-alpha1.0.20230314133540-9acdbb94da5a/go.mod h1:FTtZbqiHCZ2vun9WrPq6qLQafNKkAuIhLAxzLjr2TiI=
+github.com/desmos-labs/cosmos-sdk v0.47.0-desmos h1:SOOl2wea/2c62DzphJppIqRsgdSBy8P0QdXJ6rhAPvw=
+github.com/desmos-labs/cosmos-sdk v0.47.0-desmos/go.mod h1:FTtZbqiHCZ2vun9WrPq6qLQafNKkAuIhLAxzLjr2TiI=
 github.com/desmos-labs/ledger-desmos-go v0.11.2-0.20230324071009-828beadf3908 h1:51aMg7RnVxsYSynZG8Lr7ulT7/aozj73kFIh+DcVEas=
 github.com/desmos-labs/ledger-desmos-go v0.11.2-0.20230324071009-828beadf3908/go.mod h1:dhO6kj+Y+AHIOgAe4L9HL/6NDdyyth4q238I9yFpD2g=
-github.com/desmos-labs/wasmd v0.23.1-0.20230322055654-b7cbef6798e6 h1:PS8WCVHYIu/+puzzOQpn3nQVgM6fjhn7gpJRxD8Ov0U=
-github.com/desmos-labs/wasmd v0.23.1-0.20230322055654-b7cbef6798e6/go.mod h1:9MispMuIWmjs6HlgRx+XPLfOD0y1k7iQx5KIE2cNGTc=
+github.com/desmos-labs/wasmd v0.40.0-desmos-rc.0 h1:i/c4IkTTWw+2vUinC+6YKSleBygFqudNFAkBdZ6RZL0=
+github.com/desmos-labs/wasmd v0.40.0-desmos-rc.0/go.mod h1:9MispMuIWmjs6HlgRx+XPLfOD0y1k7iQx5KIE2cNGTc=
 github.com/dgraph-io/badger/v2 v2.2007.4 h1:TRWBQg8UrlUhaFdco01nO2uXwzKS7zd+HVdwV/GHc4o=
 github.com/dgraph-io/badger/v2 v2.2007.4/go.mod h1:vSw/ax2qojzbN6eXHIx6KPKtCSHJN/Uz0X0VPruTIhk=
 github.com/dgraph-io/ristretto v0.0.3-0.20200630154024-f66de99634de/go.mod h1:KPxhHT9ZxKefz+PCeOGsrHpl1qZ7i70dGTu2u+Ahh6E=
