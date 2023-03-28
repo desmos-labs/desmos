@@ -16,7 +16,6 @@ import (
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
-	"github.com/cosmos/cosmos-sdk/x/simulation"
 
 	"github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
@@ -49,12 +48,7 @@ func SimulateMsgCreateUserGroup(
 		)
 
 		// Send the message
-		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, creator)
-		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgCreateUserGroup", "invalid"), nil, nil
-		}
-
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
+		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, creator)
 	}
 }
 
@@ -116,12 +110,7 @@ func SimulateMsgEditUserGroup(
 		msg := types.NewMsgEditUserGroup(subspaceID, groupID, update.Name, update.Description, signer.Address.String())
 
 		// Send the message
-		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
-		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgEditUserGroup", "invalid"), nil, nil
-		}
-
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
+		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, signer)
 	}
 }
 
@@ -185,12 +174,7 @@ func SimulateMsgMoveUserGroup(
 		msg := types.NewMsgMoveUserGroup(subspaceID, groupID, newSectionID, signer.Address.String())
 
 		// Send the message
-		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
-		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgMoveUserGroup", "invalid"), nil, nil
-		}
-
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
+		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, signer)
 	}
 }
 
@@ -257,12 +241,7 @@ func SimulateMsgSetUserGroupPermissions(
 		msg := types.NewMsgSetUserGroupPermissions(subspaceID, groupID, permissions, signer.Address.String())
 
 		// Send the message
-		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
-		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgSetUserGroupPermissions", "invalid"), nil, nil
-		}
-
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
+		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, signer)
 	}
 }
 
@@ -333,12 +312,7 @@ func SimulateMsgDeleteUserGroup(
 		msg := types.NewMsgDeleteUserGroup(subspaceID, groupID, signer.Address.String())
 
 		// Send the message
-		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
-		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgDeleteUserGroup", "invalid"), nil, nil
-		}
-
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
+		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, signer)
 	}
 }
 
@@ -397,12 +371,7 @@ func SimulateMsgAddUserToUserGroup(
 		msg := types.NewMsgAddUserToUserGroup(subspaceID, groupID, user, signer.Address.String())
 
 		// Send the message
-		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
-		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgAddUserToUserGroup", "invalid"), nil, nil
-		}
-
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
+		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, signer)
 	}
 }
 
@@ -471,12 +440,7 @@ func SimulateMsgRemoveUserFromUserGroup(
 		msg := types.NewMsgRemoveUserFromUserGroup(subspaceID, groupID, user, signer.Address.String())
 
 		// Send the message
-		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
-		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgRemoveUserFromUserGroup", "invalid"), nil, nil
-		}
-
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
+		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, signer)
 	}
 }
 

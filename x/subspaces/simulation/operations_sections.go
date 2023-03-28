@@ -14,7 +14,6 @@ import (
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
-	"github.com/cosmos/cosmos-sdk/x/simulation"
 
 	"github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
@@ -45,12 +44,7 @@ func SimulateMsgCreateSection(
 		)
 
 		// Send the message
-		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, creator)
-		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgCreateSection", "invalid"), nil, nil
-		}
-
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
+		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, creator)
 	}
 }
 
@@ -119,12 +113,7 @@ func SimulateMsgEditSection(
 		)
 
 		// Send the message
-		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, creator)
-		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgEditSection", "invalid"), nil, nil
-		}
-
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
+		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, creator)
 	}
 }
 
@@ -192,12 +181,7 @@ func SimulateMsgMoveSection(
 		)
 
 		// Send the message
-		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, creator)
-		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgMoveSection", "invalid"), nil, nil
-		}
-
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
+		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, creator)
 	}
 }
 
@@ -228,6 +212,18 @@ func randomMoveSectionFields(
 	// Get a random new parent
 	parent := RandomSection(r, sections)
 	newParentID = parent.ID
+	if newParentID == sectionID {
+		// Skip because we can't move the section to itself
+		skip = true
+		return
+	}
+
+	section.ParentID = newParentID
+	if parent.ParentID == sectionID {
+		// Skip because the new section path is invalid
+		skip = true
+		return
+	}
 
 	// Get a signer
 	signers := k.GetUsersWithRootPermissions(ctx, subspace.ID, types.NewPermissions(types.PermissionManageSections))
@@ -267,12 +263,7 @@ func SimulateMsgDeleteSection(
 		)
 
 		// Send the message
-		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, creator)
-		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgDeleteSection", "invalid"), nil, nil
-		}
-
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
+		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, creator)
 	}
 }
 

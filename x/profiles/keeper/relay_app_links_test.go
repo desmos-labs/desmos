@@ -158,7 +158,7 @@ func (suite *KeeperTestSuite) TestKeeper_StartProfileConnection() {
 				tc.storeChainA(suite.chainA.GetContext())
 			}
 
-			err = suite.chainA.App.ProfileKeeper.StartProfileConnection(
+			err = suite.chainA.App.ProfilesKeeper.StartProfileConnection(
 				suite.chainA.GetContext(), applicationData, callData, suite.chainA.Account.GetAddress(),
 				channelA.PortID, channelA.ID,
 				clienttypes.NewHeight(0, 110), 0,
@@ -167,7 +167,7 @@ func (suite *KeeperTestSuite) TestKeeper_StartProfileConnection() {
 			if tc.expPass {
 				suite.Require().NoError(err)
 
-				links := suite.chainA.App.ProfileKeeper.GetApplicationLinks(suite.chainA.GetContext())
+				links := suite.chainA.App.ProfilesKeeper.GetApplicationLinks(suite.chainA.GetContext())
 				suite.Require().Len(links, 1)
 
 				suite.Require().Equal(suite.chainA.Account.GetAddress().String(), links[0].User)

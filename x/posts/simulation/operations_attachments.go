@@ -12,7 +12,6 @@ import (
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
-	"github.com/cosmos/cosmos-sdk/x/simulation"
 
 	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
 	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
@@ -37,12 +36,7 @@ func SimulateMsgAddPostAttachment(
 		}
 
 		msg := types.NewMsgAddPostAttachment(subspaceID, postID, content, editor.Address.String())
-		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, editor)
-		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, "add post attachment", "invalid"), nil, nil
-		}
-
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
+		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, editor)
 	}
 }
 
@@ -74,10 +68,16 @@ func randomAddPostAttachmentFields(
 		skip = true
 		return
 	}
+	if !k.HasPermission(ctx, subspaceID, post.SectionID, acc.Address.String(), types.PermissionEditOwnContent) {
+		// Skip because the author does not have permission
+		skip = true
+		return
+	}
+
 	editor = *acc
 
 	// Generate a random attachment content
-	content = GenerateRandomAttachmentContent(r)
+	content = GenerateRandomAttachmentContent(r, ctx.BlockTime())
 
 	return subspaceID, postID, content, editor, false
 }
@@ -99,12 +99,8 @@ func SimulateMsgRemovePostAttachment(
 		}
 
 		msg := types.NewMsgRemovePostAttachment(subspaceID, postID, attachmentID, editor.Address.String())
-		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, editor)
-		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, "remove post attachment", "invalid"), nil, nil
-		}
 
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
+		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, editor)
 	}
 }
 

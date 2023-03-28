@@ -21,14 +21,13 @@ import (
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
-	"github.com/cosmos/cosmos-sdk/x/simulation"
 
 	"github.com/desmos-labs/desmos/v4/x/reactions/types"
 )
 
 // SimulateMsgAddReaction tests and runs a single MsgAddReaction
 func SimulateMsgAddReaction(
-	k keeper.Keeper, sk subspaceskeeper.Keeper, pk postskeeper.Keeper,
+	k keeper.Keeper, profilesKeeper types.ProfilesKeeper, sk subspaceskeeper.Keeper, pk postskeeper.Keeper,
 	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
 ) simtypes.Operation {
 	return func(
@@ -37,7 +36,7 @@ func SimulateMsgAddReaction(
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 
 		// Get the data
-		data, signer, skip := randomAddReactionFields(r, ctx, accs, k, sk, pk)
+		data, signer, skip := randomAddReactionFields(r, ctx, accs, k, profilesKeeper, sk, pk)
 		if skip {
 			return simtypes.NoOpMsg(types.ModuleName, "MsgAddReaction", "skip"), nil, nil
 		}
@@ -51,19 +50,14 @@ func SimulateMsgAddReaction(
 		)
 
 		// Send the message
-		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
-		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgAddReaction", "invalid"), nil, nil
-		}
-
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
+		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, signer)
 	}
 }
 
 // randomAddReactionFields returns the data used to build a random MsgAddReaction
 func randomAddReactionFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account,
-	k keeper.Keeper, sk subspaceskeeper.Keeper, pk postskeeper.Keeper,
+	k keeper.Keeper, profilesKeeper types.ProfilesKeeper, sk subspaceskeeper.Keeper, pk postskeeper.Keeper,
 ) (reaction types.Reaction, user simtypes.Account, skip bool) {
 	// Get the user
 	if len(accs) == 0 {
@@ -71,7 +65,6 @@ func randomAddReactionFields(
 		skip = true
 		return
 	}
-	user, _ = simtypes.RandomAcc(r, accs)
 
 	// Get a subspace id
 	subspaces := sk.GetAllSubspaces(ctx)
@@ -137,6 +130,12 @@ func randomAddReactionFields(
 		skip = true
 		return
 	}
+	if !profilesKeeper.HasProfile(ctx, acc.Address.String()) {
+		// Skip because user has no profile
+		skip = true
+		return
+	}
+
 	user = *acc
 
 	// Generate a random reaction
@@ -171,12 +170,7 @@ func SimulateMsgRemoveReaction(
 		)
 
 		// Send the message
-		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
-		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgRemoveReaction", "invalid"), nil, nil
-		}
-
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
+		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, signer)
 	}
 }
 

@@ -11,7 +11,6 @@ import (
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	"github.com/cosmos/cosmos-sdk/x/simulation"
 
 	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
 	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
@@ -41,12 +40,7 @@ func SimulateMsgGrantTreasuryAuthorization(
 		msg := types.NewMsgGrantTreasuryAuthorization(subspaceID, granter.Address.String(), grantee, authz.NewGenericAuthorization(sdk.MsgTypeURL(&banktypes.MsgSend{})), &expiration)
 
 		// Send the message
-		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, granter)
-		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgGrantTreasuryAuthorization", "invalid"), nil, nil
-		}
-
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
+		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, granter)
 	}
 }
 
@@ -108,12 +102,7 @@ func SimulateMsgRevokeTreasuryAuthorization(
 		msg := types.NewMsgRevokeTreasuryAuthorization(subspaceID, granter.Address.String(), grantee, msgTypeUrl)
 
 		// Send the message
-		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, granter)
-		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgRevokeTreasuryAuthorization", "invalid"), nil, nil
-		}
-
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
+		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, granter)
 	}
 }
 

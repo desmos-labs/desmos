@@ -17,7 +17,6 @@ import (
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
-	"github.com/cosmos/cosmos-sdk/x/simulation"
 
 	"github.com/desmos-labs/desmos/v4/x/reactions/types"
 )
@@ -46,12 +45,7 @@ func SimulateMsgSetReactionsParams(
 		)
 
 		// Send the message
-		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
-		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgSetReactionsParams", "invalid"), nil, nil
-		}
-
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
+		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, signer)
 	}
 }
 

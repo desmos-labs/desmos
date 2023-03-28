@@ -11,7 +11,6 @@ import (
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
-	"github.com/cosmos/cosmos-sdk/x/simulation"
 
 	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
 	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
@@ -49,12 +48,7 @@ func SimulateMsgCreatePost(
 			data.ReferencedPosts,
 			author.Address.String(),
 		)
-		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, author)
-		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, "create post", "invalid"), nil, nil
-		}
-
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
+		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, author)
 	}
 }
 
@@ -126,12 +120,7 @@ func SimulateMsgEditPost(
 		}
 
 		msg := types.NewMsgEditPost(subspaceID, postID, data.Text, data.Entities, data.Tags, editor.Address.String())
-		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, editor)
-		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, "edit post", "invalid"), nil, nil
-		}
-
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
+		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, editor)
 	}
 }
 
@@ -200,12 +189,7 @@ func SimulateMsgDeletePost(
 		}
 
 		msg := types.NewMsgDeletePost(subspaceID, postID, editor.Address.String())
-		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, editor)
-		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, "delete post", "invalid"), nil, nil
-		}
-
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
+		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, editor)
 	}
 }
 

@@ -12,7 +12,6 @@ import (
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
-	"github.com/cosmos/cosmos-sdk/x/simulation"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -36,12 +35,7 @@ func SimulateMsgRequestDTagTransfer(
 
 		msg := types.NewMsgRequestDTagTransfer(sender.Address.String(), receiver.GetAddress().String())
 
-		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, sender)
-		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgRequestDTagTransfer", "invalid"), nil, nil
-		}
-
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
+		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, sender)
 	}
 }
 
@@ -98,12 +92,7 @@ func SimulateMsgAcceptDTagTransfer(
 		}
 
 		msg := types.NewMsgAcceptDTagTransferRequest(dTag, request.Sender, request.Receiver)
-		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, acc)
-		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgAcceptDTagTransferRequest", "invalid"), nil, nil
-		}
-
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
+		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, acc)
 	}
 }
 
@@ -149,12 +138,7 @@ func SimulateMsgRefuseDTagTransfer(
 		}
 
 		msg := types.NewMsgRefuseDTagTransferRequest(sender.Address.String(), receiver.Address.String())
-		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, receiver)
-		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgRefuseDTagTransferRequest", "invalid"), nil, nil
-		}
-
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
+		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, receiver)
 	}
 }
 
@@ -212,12 +196,7 @@ func SimulateMsgCancelDTagTransfer(
 			receiver.Address.String(),
 		)
 
-		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, sender)
-		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgCancelDTagTransfer", "invalid"), nil, nil
-		}
-
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
+		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, sender)
 	}
 }
 

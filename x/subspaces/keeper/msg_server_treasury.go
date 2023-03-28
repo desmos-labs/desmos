@@ -31,6 +31,7 @@ func (k msgServer) GrantTreasuryAuthorization(goCtx context.Context, msg *types.
 	if err != nil {
 		return nil, sdkerrors.ErrInvalidAddress.Wrapf("invalid grantee address: %s", msg.Grantee)
 	}
+	k.createAccountIfNotExists(ctx, grantee.String())
 
 	authorization, err := msg.Grant.GetAuthorization()
 	if err != nil {

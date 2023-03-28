@@ -26,7 +26,7 @@ type HandlerOptions struct {
 	FeesKeeper        feeskeeper.Keeper
 	SubspacesKeeper   subspaceskeeper.Keeper
 	TxCounterStoreKey storetypes.StoreKey
-	WasmConfig        wasmTypes.WasmConfig
+	WasmConfig        *wasmTypes.WasmConfig
 }
 
 func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
@@ -38,6 +38,12 @@ func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 	}
 	if options.SignModeHandler == nil {
 		return nil, errors.Wrap(sdkerrors.ErrLogic, "sign mode handler is required for ante builder")
+	}
+	if options.WasmConfig == nil {
+		return nil, errors.Wrap(sdkerrors.ErrLogic, "wasm config is required for ante builder")
+	}
+	if options.TxCounterStoreKey == nil {
+		return nil, errors.Wrap(sdkerrors.ErrLogic, "tx counter key is required for ante builder")
 	}
 
 	var sigGasConsumer = options.SigGasConsumer

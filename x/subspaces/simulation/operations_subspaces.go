@@ -14,7 +14,6 @@ import (
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
-	"github.com/cosmos/cosmos-sdk/x/simulation"
 
 	"github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
@@ -44,12 +43,7 @@ func SimulateMsgCreateSubspace(
 		)
 
 		// Send the message
-		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, creator)
-		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgCreateSubspace", "invalid"), nil, nil
-		}
-
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
+		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, creator)
 	}
 }
 
@@ -99,12 +93,7 @@ func SimulateMsgEditSubspace(
 		)
 
 		// Send the data
-		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, editor)
-		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgEditSubspace", "invalid"), nil, nil
-		}
-
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
+		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, editor)
 	}
 }
 
@@ -175,12 +164,7 @@ func SimulateMsgDeleteSubspace(
 		msg := types.NewMsgDeleteSubspace(subspaceID, editor.Address.String())
 
 		// Send the data
-		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, editor)
-		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgDeleteSubspace", "invalid"), nil, nil
-		}
-
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
+		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, editor)
 	}
 }
 

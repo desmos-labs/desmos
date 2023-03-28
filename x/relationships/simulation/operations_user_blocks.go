@@ -15,7 +15,6 @@ import (
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
-	"github.com/cosmos/cosmos-sdk/x/simulation"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -37,12 +36,7 @@ func SimulateMsgBlockUser(
 		}
 
 		msg := types.NewMsgBlockUser(acc.Address.String(), blocked, "", subspaceID)
-		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, acc)
-		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgBlockUser", "invalid"), nil, nil
-		}
-
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
+		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, acc)
 	}
 }
 
@@ -102,12 +96,7 @@ func SimulateMsgUnblockUser(
 		}
 
 		msg := types.NewMsgUnblockUser(acc.Address.String(), blocked, subspaceID)
-		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, acc)
-		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgUnblockUser", "invalid"), nil, nil
-		}
-
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
+		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, acc)
 	}
 }
 

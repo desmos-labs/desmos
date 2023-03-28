@@ -19,7 +19,6 @@ import (
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
-	"github.com/cosmos/cosmos-sdk/x/simulation"
 
 	"github.com/desmos-labs/desmos/v4/x/reactions/types"
 )
@@ -48,12 +47,7 @@ func SimulateMsgAddRegisteredReaction(
 		)
 
 		// Send the message
-		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
-		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgAddRegisteredReaction", "invalid"), nil, nil
-		}
-
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
+		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, signer)
 	}
 }
 
@@ -127,12 +121,7 @@ func SimulateMsgEditRegisteredReaction(
 		)
 
 		// Send the message
-		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
-		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgEditRegisteredReaction", "invalid"), nil, nil
-		}
-
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
+		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, signer)
 	}
 }
 
@@ -214,12 +203,7 @@ func SimulateMsgRemoveRegisteredReaction(
 		)
 
 		// Send the message
-		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
-		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgRemoveRegisteredReaction", "invalid"), nil, nil
-		}
-
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
+		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, signer)
 	}
 }
 

@@ -5,7 +5,6 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
@@ -18,7 +17,7 @@ func (k Keeper) createAccountIfNotExists(ctx sdk.Context, user string) {
 	}
 	if !k.ak.HasAccount(ctx, addr) {
 		defer telemetry.IncrCounter(1, "new", "account")
-		k.ak.SetAccount(ctx, authtypes.NewBaseAccountWithAddress(addr))
+		k.ak.SetAccount(ctx, k.ak.NewAccountWithAddress(ctx, addr))
 	}
 }
 

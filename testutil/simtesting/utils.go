@@ -3,46 +3,48 @@ package simtesting
 import (
 	"math/rand"
 
-	"github.com/desmos-labs/desmos/v4/app/params"
 	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
 	"github.com/desmos-labs/desmos/v4/x/fees/types"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
+	"github.com/cosmos/cosmos-sdk/codec"
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	"github.com/cosmos/cosmos-sdk/x/auth/tx"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 )
 
 // SendMsg sends a transaction with the specified message.
 func SendMsg(
-	r *rand.Rand, app *baseapp.BaseApp, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	r *rand.Rand, app *baseapp.BaseApp, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper, route string,
 	msg interface {
 		sdk.Msg
 		Type() string
 	}, ctx sdk.Context,
 	simAccount simtypes.Account,
-) (simulation.OperationInput, error) {
+) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 	addr := msg.GetSigners()[0]
 	account := ak.GetAccount(ctx, addr)
 	coins := bk.SpendableCoins(ctx, account.GetAddress())
 
 	fees, sendTx, err := computeFees(r, ctx, fk, msg, coins)
 	if err != nil {
-		return simulation.OperationInput{}, err
+		return simtypes.NoOpMsg(route, msg.Type(), "invalid fees"), nil, err
 	}
-
 	if !sendTx {
-		return simulation.OperationInput{}, nil
+		return simtypes.NoOpMsg(route, msg.Type(), "skip because insufficient fees"), nil, nil
 	}
 
-	txGen := params.MakeEncodingConfig().TxConfig
-	return simulation.OperationInput{
+	interfaceRegistry := codectypes.NewInterfaceRegistry()
+	txConfig := tx.NewTxConfig(codec.NewProtoCodec(interfaceRegistry), tx.DefaultSignModes)
+	txCtx := simulation.OperationInput{
 		R:               r,
 		App:             app,
-		TxGen:           txGen,
+		TxGen:           txConfig,
 		Cdc:             nil,
 		Msg:             msg,
 		MsgType:         msg.Type(),
@@ -52,7 +54,8 @@ func SendMsg(
 		Bankkeeper:      bk,
 		ModuleName:      types.ModuleName,
 		CoinsSpentInMsg: fees,
-	}, nil
+	}
+	return simulation.GenAndDeliverTxWithRandFees(txCtx)
 }
 
 // computeFees computes the fees that should be used to send a transaction with the given message,

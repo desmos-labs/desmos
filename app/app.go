@@ -44,6 +44,9 @@ import (
 	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
 	feestypes "github.com/desmos-labs/desmos/v4/x/fees/types"
 
+	autocliv1 "cosmossdk.io/api/cosmos/autocli/v1"
+	reflectionv1 "cosmossdk.io/api/cosmos/reflection/v1"
+
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 	"github.com/cosmos/cosmos-sdk/x/authz"
@@ -65,11 +68,9 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec/types"
+	runtimeservices "github.com/cosmos/cosmos-sdk/runtime/services"
 	"github.com/cosmos/cosmos-sdk/server/api"
 	"github.com/cosmos/cosmos-sdk/server/config"
-	"github.com/cosmos/cosmos-sdk/testutil/testdata"
-	authtx "github.com/cosmos/cosmos-sdk/x/auth/tx"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 
 	"github.com/rakyll/statik/fs"
@@ -81,6 +82,7 @@ import (
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/store/streaming"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/auth"
@@ -173,7 +175,8 @@ import (
 	paramproposal "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 
 	authsims "github.com/cosmos/cosmos-sdk/x/auth/simulation"
-
+	authtx "github.com/cosmos/cosmos-sdk/x/auth/tx"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 	authzmodule "github.com/cosmos/cosmos-sdk/x/authz/module"
 
@@ -235,7 +238,7 @@ var (
 	// ModuleBasics is in charge of setting up basic module elements
 	ModuleBasics = module.NewBasicManager(
 		auth.AppModuleBasic{},
-		genutil.AppModuleBasic{},
+		genutil.NewAppModuleBasic(genutiltypes.DefaultMessageValidator),
 		bank.AppModuleBasic{},
 		capability.AppModuleBasic{},
 		staking.AppModuleBasic{},
@@ -353,7 +356,7 @@ type DesmosApp struct {
 	// Custom modules
 	FeesKeeper          feeskeeper.Keeper
 	SubspacesKeeper     subspaceskeeper.Keeper
-	ProfileKeeper       profileskeeper.Keeper
+	ProfilesKeeper      profileskeeper.Keeper
 	RelationshipsKeeper relationshipskeeper.Keeper
 	PostsKeeper         postskeeper.Keeper
 	ReportsKeeper       reportskeeper.Keeper
@@ -417,6 +420,12 @@ func NewDesmosApp(
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
+
+	// load state streaming if enabled
+	if _, _, err := streaming.LoadStreamingServices(bApp, appOpts, appCodec, logger, keys); err != nil {
+		logger.Error("failed to load state streaming", "err", err)
+		os.Exit(1)
+	}
 
 	// Here you initialize your application with the store keys it requires
 	var app = &DesmosApp{
@@ -585,7 +594,7 @@ func NewDesmosApp(
 	)
 
 	// Create profiles keeper and module
-	app.ProfileKeeper = profileskeeper.NewKeeper(
+	app.ProfilesKeeper = profileskeeper.NewKeeper(
 		app.appCodec,
 		app.legacyAmino,
 		keys[profilestypes.StoreKey],
@@ -602,7 +611,7 @@ func NewDesmosApp(
 		app.appCodec,
 		keys[poststypes.StoreKey],
 		app.GetSubspace(poststypes.ModuleName),
-		app.ProfileKeeper,
+		app.ProfilesKeeper,
 		&subspacesKeeper,
 		app.RelationshipsKeeper,
 	)
@@ -612,7 +621,7 @@ func NewDesmosApp(
 		app.appCodec,
 		keys[reportstypes.StoreKey],
 		app.GetSubspace(reportstypes.ModuleName),
-		app.ProfileKeeper,
+		app.ProfilesKeeper,
 		&subspacesKeeper,
 		app.RelationshipsKeeper,
 		&postsKeeper,
@@ -622,7 +631,7 @@ func NewDesmosApp(
 	app.ReactionsKeeper = reactionskeeper.NewKeeper(
 		app.appCodec,
 		keys[reactionstypes.StoreKey],
-		app.ProfileKeeper,
+		app.ProfilesKeeper,
 		&subspacesKeeper,
 		app.RelationshipsKeeper,
 		&postsKeeper,
@@ -664,7 +673,7 @@ func NewDesmosApp(
 		appOpts,
 		app.GRPCQueryRouter(),
 		app.appCodec,
-		app.ProfileKeeper,
+		app.ProfilesKeeper,
 		app.SubspacesKeeper,
 		app.RelationshipsKeeper,
 		app.PostsKeeper,
@@ -724,11 +733,11 @@ func NewDesmosApp(
 	)
 
 	// Set legacy router for backwards compatibility with gov v1beta1
-	govKeeper.SetLegacyRouter(govRouter)
+	app.GovKeeper.SetLegacyRouter(govRouter)
 
 	// Create IBC modules with ibcfee middleware
 	transferIBCModule := ibcfee.NewIBCMiddleware(ibctransfer.NewIBCModule(app.TransferKeeper), app.IBCFeeKeeper)
-	profilesIBCModule := ibcfee.NewIBCMiddleware(profiles.NewIBCModule(app.appCodec, app.ProfileKeeper), app.IBCFeeKeeper)
+	profilesIBCModule := ibcfee.NewIBCMiddleware(profiles.NewIBCModule(app.appCodec, app.ProfilesKeeper), app.IBCFeeKeeper)
 	wasmIBCModule := ibcfee.NewIBCMiddleware(wasm.NewIBCHandler(app.WasmKeeper, app.IBCKeeper.ChannelKeeper, app.IBCFeeKeeper), app.IBCFeeKeeper)
 
 	// integration point for custom authentication modules
@@ -792,11 +801,11 @@ func NewDesmosApp(
 		// Custom modules
 		fees.NewAppModule(app.appCodec, app.FeesKeeper),
 		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AuthzKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
-		profiles.NewAppModule(appCodec, legacyAmino, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
+		profiles.NewAppModule(appCodec, legacyAmino, app.ProfilesKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv4.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		posts.NewAppModule(appCodec, app.PostsKeeper, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		reports.NewAppModule(appCodec, app.ReportsKeeper, app.SubspacesKeeper, app.PostsKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
-		reactions.NewAppModule(appCodec, app.ReactionsKeeper, app.SubspacesKeeper, app.PostsKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
+		reactions.NewAppModule(appCodec, app.ReactionsKeeper, app.ProfilesKeeper, app.SubspacesKeeper, app.PostsKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		supply.NewAppModule(appCodec, legacyAmino, app.SupplyKeeper),
 
 		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper, app.MsgServiceRouter(), app.GetSubspace(wasmtypes.ModuleName)),
@@ -976,8 +985,13 @@ func NewDesmosApp(
 
 	app.registerUpgradeHandlers()
 
-	// add test gRPC service for testing gRPC queries in isolation
-	testdata.RegisterQueryServer(app.GRPCQueryRouter(), testdata.QueryImpl{})
+	autocliv1.RegisterQueryServer(app.GRPCQueryRouter(), runtimeservices.NewAutoCLIQueryService(app.mm.Modules))
+
+	reflectionSvc, err := runtimeservices.NewReflectionService()
+	if err != nil {
+		panic(err)
+	}
+	reflectionv1.RegisterReflectionServiceServer(app.GRPCQueryRouter(), reflectionSvc)
 
 	// create the simulation manager and define the order of the modules for deterministic simulations
 	//
@@ -987,6 +1001,7 @@ func NewDesmosApp(
 		authtypes.ModuleName: auth.NewAppModule(app.appCodec, app.AccountKeeper, authsims.RandomGenesisAccounts, app.GetSubspace(authtypes.ModuleName)),
 	}
 	app.sm = module.NewSimulationManagerFromAppModules(app.mm.Modules, overrideModules)
+
 	app.sm.RegisterStoreDecoders()
 
 	// Initialize stores
@@ -1009,7 +1024,7 @@ func NewDesmosApp(
 			IBCkeeper:         app.IBCKeeper,
 			FeesKeeper:        app.FeesKeeper,
 			TxCounterStoreKey: keys[wasm.StoreKey],
-			WasmConfig:        wasmConfig,
+			WasmConfig:        &wasmConfig,
 			SubspacesKeeper:   app.SubspacesKeeper,
 		},
 	)

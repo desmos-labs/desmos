@@ -76,15 +76,15 @@ func GenerateRandomAttachment(r *rand.Rand, post types.Post, id uint32) types.At
 		post.SubspaceID,
 		post.ID,
 		id,
-		GenerateRandomAttachmentContent(r),
+		GenerateRandomAttachmentContent(r, time.Now()),
 	)
 }
 
 // GenerateRandomAttachmentContent returns a randomly generated attachment content
-func GenerateRandomAttachmentContent(r *rand.Rand) types.AttachmentContent {
+func GenerateRandomAttachmentContent(r *rand.Rand, currentTime time.Time) types.AttachmentContent {
 	// 50% of being a poll
 	if r.Intn(101) < 50 {
-		return GenerateRandomPoll(r)
+		return GenerateRandomPoll(r, currentTime)
 	}
 
 	return GenerateRandomMedia(r)
@@ -99,7 +99,7 @@ func GenerateRandomMedia(r *rand.Rand) *types.Media {
 }
 
 // GenerateRandomPoll returns a randomly generated poll content
-func GenerateRandomPoll(r *rand.Rand) *types.Poll {
+func GenerateRandomPoll(r *rand.Rand, currentTime time.Time) *types.Poll {
 	answersNumber := r.Intn(5) + 2 // At least 2 answers are required to make sense
 	answers := make([]types.Poll_ProvidedAnswer, answersNumber)
 	for index := 0; index < answersNumber; index++ {
@@ -115,7 +115,7 @@ func GenerateRandomPoll(r *rand.Rand) *types.Poll {
 	return types.NewPoll(
 		GenerateRandomText(r, 30),
 		answers,
-		time.Now().Add(30*24*time.Hour),
+		currentTime.Add(30*24*time.Hour),
 		acceptsMultipleAnswers,
 		allowAnswerEdits,
 		nil,

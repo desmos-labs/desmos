@@ -12,7 +12,6 @@ import (
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
-	"github.com/cosmos/cosmos-sdk/x/simulation"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -47,12 +46,7 @@ func SimulateMsgLinkChainAccount(
 		)
 
 		// Send the message
-		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
-		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgLinkChainAccount", "invalid"), nil, nil
-		}
-
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
+		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, signer)
 	}
 }
 
@@ -68,6 +62,11 @@ func randomLinkChainAccountFields(
 
 	// Get random signer
 	signer, _ = simtypes.RandomAcc(r, accs)
+	if !k.HasProfile(ctx, signer.Address.String()) {
+		// Skip because signer has no profile
+		skip = true
+		return
+	}
 
 	chainAccount := profilestesting.GetChainLinkAccount("cosmos", "cosmos")
 	link = chainAccount.GetBech32ChainLink(signer.Address.String(), time.Now())
@@ -103,12 +102,7 @@ func SimulateMsgUnlinkChainAccount(
 		msg := types.NewMsgUnlinkChainAccount(link.User, link.ChainConfig.Name, link.GetAddressData().GetValue())
 
 		// Send the message
-		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
-		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgUnlinkChainAccount", "invalid"), nil, nil
-		}
-
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
+		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, signer)
 	}
 }
 
@@ -163,12 +157,7 @@ func SimulateMsgSetDefaultExternalAddress(
 		msg := types.NewMsgSetDefaultExternalAddress(link.ChainConfig.Name, link.GetAddressData().GetValue(), link.User)
 
 		// Send the message
-		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
-		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgSetDefaultExternalAddress", "invalid"), nil, nil
-		}
-
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
+		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, signer)
 	}
 }
 

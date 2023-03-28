@@ -21,7 +21,6 @@ import (
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
-	"github.com/cosmos/cosmos-sdk/x/simulation"
 
 	"github.com/desmos-labs/desmos/v4/x/reports/keeper"
 	"github.com/desmos-labs/desmos/v4/x/reports/types"
@@ -53,12 +52,7 @@ func SimulateMsgCreateReport(
 		)
 
 		// Send the message
-		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, creator)
-		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgCreateReport", "invalid"), nil, nil
-		}
-
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
+		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, creator)
 	}
 }
 
@@ -126,6 +120,12 @@ func randomCreateReportFields(
 		return
 	}
 
+	if k.HasReported(ctx, subspaceID, creator.Address.String(), data) {
+		// Skip because the creator has already reported
+		skip = true
+		return
+	}
+
 	// Get the report target
 	report = types.NewReport(
 		subspaceID,
@@ -162,12 +162,7 @@ func SimulateMsgDeleteReport(
 		msg := types.NewMsgDeleteReport(subspaceID, reportID, editor.Address.String())
 
 		// Send the data
-		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, editor)
-		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgDeleteReport", "invalid"), nil, nil
-		}
-
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
+		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, editor)
 	}
 }
 

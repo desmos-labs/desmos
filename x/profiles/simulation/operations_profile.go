@@ -12,7 +12,6 @@ import (
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
-	"github.com/cosmos/cosmos-sdk/x/simulation"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 
@@ -44,12 +43,7 @@ func SimulateMsgSaveProfile(
 			data.Pictures.Cover,
 			acc.Address.String(),
 		)
-		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, acc)
-		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, "save profile", "invalid"), nil, nil
-		}
-
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
+		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, acc)
 	}
 }
 
@@ -113,12 +107,7 @@ func SimulateMsgDeleteProfile(
 
 		msg := types.NewMsgDeleteProfile(acc.Address.String())
 
-		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, acc)
-		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, "delete profile", "invalid"), nil, nil
-		}
-
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
+		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, acc)
 	}
 }
 

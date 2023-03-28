@@ -36,7 +36,7 @@ func setup(chainID string, withGenesis bool, invCheckPeriod uint) (*simapp.Desmo
 
 	app := simapp.NewDesmosApp(log.NewNopLogger(), db, nil, true, appOptions, wasm.DisableAllProposals, baseapp.SetChainID(chainID))
 	if withGenesis {
-		return app, simapp.NewDefaultGenesisState()
+		return app, simapp.NewDefaultGenesisState(app.AppCodec())
 	}
 	return app, simapp.GenesisState{}
 }

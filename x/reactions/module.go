@@ -101,8 +101,10 @@ type AppModule struct {
 	ak     authkeeper.AccountKeeper
 	bk     bankkeeper.Keeper
 	fk     feeskeeper.Keeper
-	sk     subspaceskeeper.Keeper
-	pk     postskeeper.Keeper
+
+	profilesKeeper types.ProfilesKeeper
+	sk             subspaceskeeper.Keeper
+	pk             postskeeper.Keeper
 }
 
 // RegisterServices registers module services.
@@ -125,7 +127,7 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 // NewAppModule creates a new AppModule Object
 func NewAppModule(
 	cdc codec.Codec,
-	k keeper.Keeper, sk subspaceskeeper.Keeper, pk postskeeper.Keeper,
+	k keeper.Keeper, profilesKeeper types.ProfilesKeeper, sk subspaceskeeper.Keeper, pk postskeeper.Keeper,
 	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
 ) AppModule {
 	return AppModule{
@@ -134,6 +136,8 @@ func NewAppModule(
 		ak:             ak,
 		bk:             bk,
 		fk:             fk,
+
+		profilesKeeper: profilesKeeper,
 		sk:             sk,
 		pk:             pk,
 	}
@@ -202,5 +206,5 @@ func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
 
 // WeightedOperations returns the all the reactions module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
-	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.sk, am.pk, am.ak, am.bk, am.fk)
+	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.profilesKeeper, am.sk, am.pk, am.ak, am.bk, am.fk)
 }

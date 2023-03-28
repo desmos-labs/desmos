@@ -9,7 +9,6 @@ import (
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	"github.com/cosmos/cosmos-sdk/x/feegrant"
-	"github.com/cosmos/cosmos-sdk/x/simulation"
 
 	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
 	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
@@ -37,11 +36,7 @@ func SimulateMsgGrantAllowance(
 		msg := types.NewMsgGrantAllowance(subspaceID, granter, grantee, &feegrant.BasicAllowance{})
 
 		// Send the message
-		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
-		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgGrantAllowance", "invalid"), nil, nil
-		}
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
+		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, signer)
 	}
 }
 
@@ -77,10 +72,15 @@ func randomGrantAllowanceFields(
 			skip = true
 			return
 		}
+		if granteeAddr == granter {
+			// Skip because granting to itself is not allowed
+			skip = true
+			return
+		}
 
 		grantee = types.NewUserGrantee(granteeAddr)
 	} else {
-		groups := k.GetAllUserGroups(ctx)
+		groups := k.GetSubspaceUserGroups(ctx, subspaceID)
 		if len(groups) == 0 {
 			// Skip because there are no groups
 			skip = true
@@ -89,7 +89,7 @@ func randomGrantAllowanceFields(
 
 		group := RandomGroup(r, groups)
 		if group.ID == 0 {
-			// Skip because we cannot grant the group with ID 0
+			// Skip because we cannot grant the default group
 			skip = true
 			return
 		}
@@ -135,11 +135,7 @@ func SimulateMsgRevokeAllowance(
 		msg := types.NewMsgRevokeAllowance(subspaceID, granter, grantee)
 
 		// Send the message
-		txCtx, err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
-		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgRevokeAllowance", "invalid"), nil, nil
-		}
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
+		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, signer)
 	}
 }
 
