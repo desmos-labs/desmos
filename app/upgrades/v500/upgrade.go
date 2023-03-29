@@ -77,7 +77,7 @@ func (u *Upgrade) Handler() upgradetypes.UpgradeHandler {
 			case banktypes.ModuleName:
 				keyTable = banktypes.ParamKeyTable() //nolint:staticcheck
 			case stakingtypes.ModuleName:
-				keyTable = stakingtypes.ParamKeyTable() //nolint:staticcheck
+				keyTable = stakingtypes.ParamKeyTable()
 			case minttypes.ModuleName:
 				keyTable = minttypes.ParamKeyTable() //nolint:staticcheck
 			case distrtypes.ModuleName:
