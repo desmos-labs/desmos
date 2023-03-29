@@ -2,23 +2,7 @@ package types
 
 import (
 	"fmt"
-
-	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 )
-
-const (
-	DefaultParamspace = ModuleName
-)
-
-var (
-	DefaultMinFees  []MinFee
-	MinFeesStoreKey = []byte("MinFees")
-)
-
-// ParamKeyTable Key declaration for parameters
-func ParamKeyTable() paramstypes.KeyTable {
-	return paramstypes.NewKeyTable().RegisterParamSet(&Params{})
-}
 
 // NewParams create a new params object with the given data
 func NewParams(minFees []MinFee) Params {
@@ -31,12 +15,6 @@ func NewParams(minFees []MinFee) Params {
 func DefaultParams() Params {
 	return Params{
 		MinFees: DefaultMinFees,
-	}
-}
-
-func (params *Params) ParamSetPairs() paramstypes.ParamSetPairs {
-	return paramstypes.ParamSetPairs{
-		paramstypes.NewParamSetPair(MinFeesStoreKey, &params.MinFees, ValidateMinFeesParam),
 	}
 }
 
