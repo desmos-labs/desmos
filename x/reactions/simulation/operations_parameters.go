@@ -33,7 +33,7 @@ func SimulateMsgSetReactionsParams(
 		// Get the data
 		data, signer, skip := randomSetReactionsParamsFields(r, ctx, accs, sk)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgSetReactionsParams", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgSetReactionsParams", "skip"), nil, nil
 		}
 
 		// Build the message

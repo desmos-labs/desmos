@@ -32,7 +32,7 @@ func SimulateMsgCreatePost(
 
 		data, author, skip := randomPostCreateFields(r, ctx, accs, k, sk)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "create post", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "create post", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgCreatePost(
@@ -116,7 +116,7 @@ func SimulateMsgEditPost(
 
 		subspaceID, postID, data, editor, skip := randomPostEditFields(r, ctx, accs, k, sk)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "edit post", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "edit post", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgEditPost(subspaceID, postID, data.Text, data.Entities, data.Tags, editor.Address.String())
@@ -185,7 +185,7 @@ func SimulateMsgDeletePost(
 
 		subspaceID, postID, editor, skip := randomPostDeleteFields(r, ctx, accs, k, sk)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "delete post", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "delete post", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgDeletePost(subspaceID, postID, editor.Address.String())

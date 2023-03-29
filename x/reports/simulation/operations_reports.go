@@ -39,7 +39,7 @@ func SimulateMsgCreateReport(
 		// Get the data
 		data, creator, skip := randomCreateReportFields(r, ctx, accs, sk, pk, k)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgCreateReport", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgCreateReport", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -155,7 +155,7 @@ func SimulateMsgDeleteReport(
 		// Get the data
 		subspaceID, reportID, editor, skip := randomDeleteReportFields(r, ctx, accs, k, sk)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgDeleteReport", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgDeleteReport", "skip"), nil, nil
 		}
 
 		// Build the message

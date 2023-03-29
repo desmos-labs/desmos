@@ -35,7 +35,7 @@ func SimulateMsgSupportStandardReason(
 		// Get the data
 		subspaceID, standardReasonID, signer, skip := randomSupportStandardReasonFields(r, ctx, accs, sk, k)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgSupportStandardReason", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgSupportStandardReason", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -105,7 +105,7 @@ func SimulateMsgAddReason(
 		// Get the data
 		data, signer, skip := randomAddReasonFields(r, ctx, accs, sk)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgAddReason", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgAddReason", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -174,7 +174,7 @@ func SimulateMsgRemoveReason(
 		// Get the data
 		subspaceID, reasonID, signer, skip := randomRemoveReason(r, ctx, accs, k, sk)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgRemoveReason", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgRemoveReason", "skip"), nil, nil
 		}
 
 		// Build the message

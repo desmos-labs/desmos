@@ -32,7 +32,7 @@ func SimulateMsgGrantTreasuryAuthorization(
 		// Get the data
 		subspaceID, grantee, granter, skip := randomGrantTreasuryAuthorizationFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgGrantTreasuryAuthorization", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgGrantTreasuryAuthorization", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -95,7 +95,7 @@ func SimulateMsgRevokeTreasuryAuthorization(
 		// Get the data
 		subspaceID, grantee, granter, msgTypeUrl, skip := randomRevokeTreasuryAuthorizationFields(r, ctx, accs, k, authzk)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgRevokeTreasuryAuthorization", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgRevokeTreasuryAuthorization", "skip"), nil, nil
 		}
 
 		// Build the message

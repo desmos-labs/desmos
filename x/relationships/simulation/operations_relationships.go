@@ -34,7 +34,7 @@ func SimulateMsgCreateRelationship(
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 		acc, relationship, skip := randomCreateRelationshipFields(r, ctx, accs, k, sk)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgCreateRelationship", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgCreateRelationship", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgCreateRelationship(relationship.Creator, relationship.Counterparty, relationship.SubspaceID)
@@ -101,7 +101,7 @@ func SimulateMsgDeleteRelationship(
 
 		acc, counterparty, subspace, skip := randomDeleteRelationshipFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgDeleteRelationship", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgDeleteRelationship", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgDeleteRelationship(acc.Address.String(), counterparty, subspace)

@@ -32,7 +32,7 @@ func SimulateMsgSaveProfile(
 
 		acc, data, skip := randomProfileSaveFields(r, ctx, accs, k, ak)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "save profile", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "save profile", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgSaveProfile(
@@ -102,7 +102,7 @@ func SimulateMsgDeleteProfile(
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 		acc, skip := randomProfileDeleteFields(r, ctx, accs, k, ak)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "delete profile", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "delete profile", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgDeleteProfile(acc.Address.String())

@@ -38,7 +38,7 @@ func SimulateMsgAddReaction(
 		// Get the data
 		data, signer, skip := randomAddReactionFields(r, ctx, accs, k, profilesKeeper, sk, pk)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgAddReaction", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgAddReaction", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -158,7 +158,7 @@ func SimulateMsgRemoveReaction(
 		// Get the data
 		reaction, signer, skip := randomRemoveReactionFields(r, ctx, accs, k, sk)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgRemoveReaction", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgRemoveReaction", "skip"), nil, nil
 		}
 
 		// Build the message

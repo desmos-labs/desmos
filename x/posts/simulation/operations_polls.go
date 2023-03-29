@@ -32,7 +32,7 @@ func SimulateMsgAnswerPoll(
 
 		answer, user, skip := randomAnswerPollFields(r, ctx, accs, k, sk)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "answer poll", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "answer poll", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgAnswerPoll(answer.SubspaceID, answer.PostID, answer.PollID, answer.AnswersIndexes, user.Address.String())

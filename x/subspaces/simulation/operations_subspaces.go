@@ -31,7 +31,7 @@ func SimulateMsgCreateSubspace(
 		// Get the data
 		subspace, creator, skip := randomSubspaceCreateFields(r, accs)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgCreateSubspace", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgCreateSubspace", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -80,7 +80,7 @@ func SimulateMsgEditSubspace(
 		// Get the data
 		subspaceID, update, editor, skip := randomEditSubspaceFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgEditSubspace", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgEditSubspace", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -157,7 +157,7 @@ func SimulateMsgDeleteSubspace(
 		// Get the data
 		subspaceID, editor, skip := randomDeleteSubspaceFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgDeleteSubspace", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgDeleteSubspace", "skip"), nil, nil
 		}
 
 		// Build the message

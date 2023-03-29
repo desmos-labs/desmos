@@ -32,7 +32,7 @@ func SimulateMsgAddPostAttachment(
 
 		subspaceID, postID, content, editor, skip := randomAddPostAttachmentFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "add post attachment", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "add post attachment", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgAddPostAttachment(subspaceID, postID, content, editor.Address.String())
@@ -95,7 +95,7 @@ func SimulateMsgRemovePostAttachment(
 
 		subspaceID, postID, attachmentID, editor, skip := randomRemovePostAttachmentFields(r, ctx, accs, k, sk)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "remove post attachment", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "remove post attachment", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgRemovePostAttachment(subspaceID, postID, attachmentID, editor.Address.String())

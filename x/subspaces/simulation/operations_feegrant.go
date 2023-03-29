@@ -29,7 +29,7 @@ func SimulateMsgGrantAllowance(
 		// Get the data
 		subspaceID, granter, grantee, signer, skip := randomGrantAllowanceFields(r, ctx, accs, k, ak)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgGrantAllowance", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgGrantAllowance", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -128,7 +128,7 @@ func SimulateMsgRevokeAllowance(
 		// Get the data
 		subspaceID, granter, grantee, signer, skip := randomRevokeAllowanceFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgRevokeAllowance", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgRevokeAllowance", "skip"), nil, nil
 		}
 
 		// Build the message

@@ -34,7 +34,7 @@ func SimulateMsgLinkChainAccount(
 		// Get the data
 		link, signer, skip := randomLinkChainAccountFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -95,7 +95,7 @@ func SimulateMsgUnlinkChainAccount(
 		// Get the data
 		link, signer, skip := randomUnlinkChainAccountFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgUnlinkChainAccount", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgUnlinkChainAccount", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -150,7 +150,7 @@ func SimulateMsgSetDefaultExternalAddress(
 		// Get the data
 		link, signer, skip := randomSetDefaultExternalAddressFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgSetDefaultExternalAddress", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgSetDefaultExternalAddress", "skip"), nil, nil
 		}
 
 		// Build the message

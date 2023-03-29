@@ -33,7 +33,7 @@ func SimulateMsgCreateUserGroup(
 		// Get the data
 		subspaceID, update, permissions, creator, skip := randomCreateUserGroupFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgCreateUserGroup", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgCreateUserGroup", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -103,7 +103,7 @@ func SimulateMsgEditUserGroup(
 		// Get the data
 		subspaceID, groupID, update, signer, skip := randomEditUserGroupFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgEditUserGroup", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgEditUserGroup", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -167,7 +167,7 @@ func SimulateMsgMoveUserGroup(
 		// Get the data
 		subspaceID, groupID, newSectionID, signer, skip := randomMoveUserGroupFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgMoveUserGroup", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgMoveUserGroup", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -234,7 +234,7 @@ func SimulateMsgSetUserGroupPermissions(
 		// Get the data
 		subspaceID, groupID, permissions, signer, skip := randomSetUserGroupPermissionsFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgSetUserGroupPermissions", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgSetUserGroupPermissions", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -305,7 +305,7 @@ func SimulateMsgDeleteUserGroup(
 		// Get the data
 		subspaceID, groupID, signer, skip := randomDeleteUserGroupFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgDeleteUserGroup", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgDeleteUserGroup", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -364,7 +364,7 @@ func SimulateMsgAddUserToUserGroup(
 		// Get the data
 		subspaceID, groupID, user, signer, skip := randomAddUserToUserGroupFields(r, ctx, accs, k, ak)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgAddUserToUserGroup", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgAddUserToUserGroup", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -433,7 +433,7 @@ func SimulateMsgRemoveUserFromUserGroup(
 		// Get the data
 		subspaceID, groupID, user, signer, skip := randomRemoveUserFromUserGroupFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgRemoveUserFromUserGroup", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgRemoveUserFromUserGroup", "skip"), nil, nil
 		}
 
 		// Build the message

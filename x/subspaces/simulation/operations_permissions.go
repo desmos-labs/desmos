@@ -31,7 +31,7 @@ func SimulateMsgSetUserPermissions(
 		// Get the data
 		subspaceID, user, permissions, creator, skip := randomSetUserPermissionsFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgSetUserPermissions", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgSetUserPermissions", "skip"), nil, nil
 		}
 
 		// Build the message

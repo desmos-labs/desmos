@@ -30,7 +30,7 @@ func SimulateMsgRequestDTagTransfer(
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 		sender, receiver, skip := randomDTagRequestTransferFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgRequestDTagTransfer", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgRequestDTagTransfer", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgRequestDTagTransfer(sender.Address.String(), receiver.GetAddress().String())
@@ -88,7 +88,7 @@ func SimulateMsgAcceptDTagTransfer(
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 		acc, request, dTag, skip := randomDTagAcceptRequestTransferFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgAcceptDTagTransferRequest", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgAcceptDTagTransferRequest", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgAcceptDTagTransferRequest(dTag, request.Sender, request.Receiver)
@@ -134,7 +134,7 @@ func SimulateMsgRefuseDTagTransfer(
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 		sender, receiver, skip := randomRefuseDTagTransferFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgRefuseDTagTransferRequest", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgRefuseDTagTransferRequest", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgRefuseDTagTransferRequest(sender.Address.String(), receiver.Address.String())
@@ -188,7 +188,7 @@ func SimulateMsgCancelDTagTransfer(
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 		sender, receiver, skip := randomCancelDTagTransferFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgCancelDTagTransfer", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgCancelDTagTransfer", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgCancelDTagTransferRequest(

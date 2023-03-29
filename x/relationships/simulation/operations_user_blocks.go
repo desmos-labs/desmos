@@ -32,7 +32,7 @@ func SimulateMsgBlockUser(
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 		acc, blocked, subspaceID, skip := randomUserBlocksFields(r, ctx, accs, k, sk)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgBlockUser", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgBlockUser", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgBlockUser(acc.Address.String(), blocked, "", subspaceID)
@@ -92,7 +92,7 @@ func SimulateMsgUnblockUser(
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 		acc, blocked, subspaceID, skip := randomUnblockUserFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgUnblockUser", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgUnblockUser", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgUnblockUser(acc.Address.String(), blocked, subspaceID)

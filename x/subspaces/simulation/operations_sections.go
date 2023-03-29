@@ -31,7 +31,7 @@ func SimulateMsgCreateSection(
 		// Get the data
 		subspaceID, update, parentID, creator, skip := randomCreateSectionFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgCreateSection", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgCreateSection", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -100,7 +100,7 @@ func SimulateMsgEditSection(
 		// Get the data
 		subspaceID, sectionID, update, creator, skip := randomEditSectionFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgEditSection", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgEditSection", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -169,7 +169,7 @@ func SimulateMsgMoveSection(
 		// Get the data
 		subspaceID, sectionID, newParentID, creator, skip := randomMoveSectionFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgMoveSection", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgMoveSection", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -252,7 +252,7 @@ func SimulateMsgDeleteSection(
 		// Get the data
 		subspaceID, sectionID, creator, skip := randomDeleteFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.ModuleName, "MsgDeleteSection", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgDeleteSection", "skip"), nil, nil
 		}
 
 		// Build the message
