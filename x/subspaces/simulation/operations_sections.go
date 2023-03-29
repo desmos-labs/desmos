@@ -44,7 +44,7 @@ func SimulateMsgCreateSection(
 		)
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, creator)
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, creator)
 	}
 }
 
@@ -113,7 +113,7 @@ func SimulateMsgEditSection(
 		)
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, creator)
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, creator)
 	}
 }
 
@@ -181,7 +181,7 @@ func SimulateMsgMoveSection(
 		)
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, creator)
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, creator)
 	}
 }
 
@@ -263,7 +263,7 @@ func SimulateMsgDeleteSection(
 		)
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, creator)
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, creator)
 	}
 }
 

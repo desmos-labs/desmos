@@ -36,7 +36,7 @@ func SimulateMsgBlockUser(
 		}
 
 		msg := types.NewMsgBlockUser(acc.Address.String(), blocked, "", subspaceID)
-		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, acc)
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, acc)
 	}
 }
 
@@ -96,7 +96,7 @@ func SimulateMsgUnblockUser(
 		}
 
 		msg := types.NewMsgUnblockUser(acc.Address.String(), blocked, subspaceID)
-		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, acc)
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, acc)
 	}
 }
 

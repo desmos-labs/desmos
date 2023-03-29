@@ -35,7 +35,7 @@ func SimulateMsgRequestDTagTransfer(
 
 		msg := types.NewMsgRequestDTagTransfer(sender.Address.String(), receiver.GetAddress().String())
 
-		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, sender)
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, sender)
 	}
 }
 
@@ -92,7 +92,7 @@ func SimulateMsgAcceptDTagTransfer(
 		}
 
 		msg := types.NewMsgAcceptDTagTransferRequest(dTag, request.Sender, request.Receiver)
-		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, acc)
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, acc)
 	}
 }
 
@@ -138,7 +138,7 @@ func SimulateMsgRefuseDTagTransfer(
 		}
 
 		msg := types.NewMsgRefuseDTagTransferRequest(sender.Address.String(), receiver.Address.String())
-		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, receiver)
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, receiver)
 	}
 }
 
@@ -196,7 +196,7 @@ func SimulateMsgCancelDTagTransfer(
 			receiver.Address.String(),
 		)
 
-		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, sender)
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, sender)
 	}
 }
 

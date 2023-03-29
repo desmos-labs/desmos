@@ -48,7 +48,7 @@ func SimulateMsgCreatePost(
 			data.ReferencedPosts,
 			author.Address.String(),
 		)
-		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, author)
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, author)
 	}
 }
 
@@ -120,7 +120,7 @@ func SimulateMsgEditPost(
 		}
 
 		msg := types.NewMsgEditPost(subspaceID, postID, data.Text, data.Entities, data.Tags, editor.Address.String())
-		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, editor)
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, editor)
 	}
 }
 
@@ -189,7 +189,7 @@ func SimulateMsgDeletePost(
 		}
 
 		msg := types.NewMsgDeletePost(subspaceID, postID, editor.Address.String())
-		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, editor)
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, editor)
 	}
 }
 

@@ -38,7 +38,7 @@ func SimulateMsgCreateRelationship(
 		}
 
 		msg := types.NewMsgCreateRelationship(relationship.Creator, relationship.Counterparty, relationship.SubspaceID)
-		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, acc)
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, acc)
 	}
 }
 
@@ -105,7 +105,7 @@ func SimulateMsgDeleteRelationship(
 		}
 
 		msg := types.NewMsgDeleteRelationship(acc.Address.String(), counterparty, subspace)
-		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, acc)
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, acc)
 	}
 }
 

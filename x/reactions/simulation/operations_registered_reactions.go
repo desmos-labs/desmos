@@ -47,7 +47,7 @@ func SimulateMsgAddRegisteredReaction(
 		)
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, signer)
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 	}
 }
 
@@ -121,7 +121,7 @@ func SimulateMsgEditRegisteredReaction(
 		)
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, signer)
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 	}
 }
 
@@ -203,7 +203,7 @@ func SimulateMsgRemoveRegisteredReaction(
 		)
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, signer)
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 	}
 }
 

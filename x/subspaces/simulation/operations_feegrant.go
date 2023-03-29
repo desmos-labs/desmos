@@ -36,7 +36,7 @@ func SimulateMsgGrantAllowance(
 		msg := types.NewMsgGrantAllowance(subspaceID, granter, grantee, &feegrant.BasicAllowance{})
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, signer)
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 	}
 }
 
@@ -135,7 +135,7 @@ func SimulateMsgRevokeAllowance(
 		msg := types.NewMsgRevokeAllowance(subspaceID, granter, grantee)
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, signer)
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 	}
 }
 

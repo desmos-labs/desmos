@@ -40,7 +40,7 @@ func SimulateMsgGrantTreasuryAuthorization(
 		msg := types.NewMsgGrantTreasuryAuthorization(subspaceID, granter.Address.String(), grantee, authz.NewGenericAuthorization(sdk.MsgTypeURL(&banktypes.MsgSend{})), &expiration)
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, granter)
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, granter)
 	}
 }
 
@@ -102,7 +102,7 @@ func SimulateMsgRevokeTreasuryAuthorization(
 		msg := types.NewMsgRevokeTreasuryAuthorization(subspaceID, granter.Address.String(), grantee, msgTypeUrl)
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, granter)
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, granter)
 	}
 }
 

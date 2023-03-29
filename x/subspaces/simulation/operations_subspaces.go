@@ -43,7 +43,7 @@ func SimulateMsgCreateSubspace(
 		)
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, creator)
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, creator)
 	}
 }
 
@@ -93,7 +93,7 @@ func SimulateMsgEditSubspace(
 		)
 
 		// Send the data
-		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, editor)
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, editor)
 	}
 }
 
@@ -164,7 +164,7 @@ func SimulateMsgDeleteSubspace(
 		msg := types.NewMsgDeleteSubspace(subspaceID, editor.Address.String())
 
 		// Send the data
-		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, editor)
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, editor)
 	}
 }
 

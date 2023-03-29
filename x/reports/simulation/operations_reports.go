@@ -52,7 +52,7 @@ func SimulateMsgCreateReport(
 		)
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, creator)
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, creator)
 	}
 }
 
@@ -162,7 +162,7 @@ func SimulateMsgDeleteReport(
 		msg := types.NewMsgDeleteReport(subspaceID, reportID, editor.Address.String())
 
 		// Send the data
-		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, editor)
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, editor)
 	}
 }
 

@@ -38,7 +38,7 @@ func SimulateMsgSetUserPermissions(
 		msg := types.NewMsgSetUserPermissions(subspaceID, 0, user, permissions, creator.Address.String())
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, creator)
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, creator)
 	}
 }
 

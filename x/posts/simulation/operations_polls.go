@@ -37,7 +37,7 @@ func SimulateMsgAnswerPoll(
 
 		msg := types.NewMsgAnswerPoll(answer.SubspaceID, answer.PostID, answer.PollID, answer.AnswersIndexes, user.Address.String())
 
-		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, user)
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, user)
 	}
 }
 

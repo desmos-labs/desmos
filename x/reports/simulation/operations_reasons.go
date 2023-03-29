@@ -42,7 +42,7 @@ func SimulateMsgSupportStandardReason(
 		msg := types.NewMsgSupportStandardReason(subspaceID, standardReasonID, signer.Address.String())
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, signer)
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 	}
 }
 
@@ -112,7 +112,7 @@ func SimulateMsgAddReason(
 		msg := types.NewMsgAddReason(data.SubspaceID, data.Title, data.Description, signer.Address.String())
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, signer)
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 	}
 }
 
@@ -181,7 +181,7 @@ func SimulateMsgRemoveReason(
 		msg := types.NewMsgRemoveReason(subspaceID, reasonID, signer.Address.String())
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, types.RouterKey, msg, ctx, signer)
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 	}
 }
 

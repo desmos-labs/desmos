@@ -20,9 +20,10 @@ import (
 
 // SendMsg sends a transaction with the specified message.
 func SendMsg(
-	r *rand.Rand, app *baseapp.BaseApp, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper, route string,
+	r *rand.Rand, app *baseapp.BaseApp, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
 	msg interface {
 		sdk.Msg
+		Route() string
 		Type() string
 	}, ctx sdk.Context,
 	simAccount simtypes.Account,
@@ -33,10 +34,10 @@ func SendMsg(
 
 	fees, sendTx, err := computeFees(r, ctx, fk, msg, coins)
 	if err != nil {
-		return simtypes.NoOpMsg(route, msg.Type(), "invalid fees"), nil, err
+		return simtypes.NoOpMsg(msg.Route(), msg.Type(), "invalid fees"), nil, err
 	}
 	if !sendTx {
-		return simtypes.NoOpMsg(route, msg.Type(), "skip because insufficient fees"), nil, nil
+		return simtypes.NoOpMsg(msg.Route(), msg.Type(), "skip because insufficient fees"), nil, nil
 	}
 
 	interfaceRegistry := codectypes.NewInterfaceRegistry()
