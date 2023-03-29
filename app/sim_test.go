@@ -279,8 +279,12 @@ func TestAppSimulationAfterImport(t *testing.T) {
 		require.NoError(t, os.RemoveAll(dir))
 	}()
 
+	appOptions := make(simtestutil.AppOptionsMap, 0)
+	appOptions[flags.FlagHome] = dir
+	appOptions[server.FlagInvCheckPeriod] = simcli.FlagPeriodValue
+
 	app := NewDesmosApp(
-		logger, db, nil, true, simtestutil.EmptyAppOptions{}, wasm.EnableAllProposals, fauxMerkleModeOpt, baseapp.SetChainID(SimAppChainID),
+		logger, db, nil, true, appOptions, wasm.EnableAllProposals, fauxMerkleModeOpt, baseapp.SetChainID(SimAppChainID),
 	)
 	require.Equal(t, appName, app.Name())
 
@@ -327,11 +331,12 @@ func TestAppSimulationAfterImport(t *testing.T) {
 	}()
 
 	newApp := NewDesmosApp(
-		log.NewNopLogger(), newDB, nil, true, simtestutil.EmptyAppOptions{}, wasm.EnableAllProposals, fauxMerkleModeOpt, baseapp.SetChainID(SimAppChainID),
+		log.NewNopLogger(), newDB, nil, true, appOptions, wasm.EnableAllProposals, fauxMerkleModeOpt, baseapp.SetChainID(SimAppChainID),
 	)
 	require.Equal(t, appName, newApp.Name())
 
 	newApp.InitChain(abci.RequestInitChain{
+		ChainId:       SimAppChainID,
 		AppStateBytes: exported.AppState,
 	})
 

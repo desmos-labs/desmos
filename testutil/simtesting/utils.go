@@ -53,9 +53,9 @@ func SendMsg(
 		AccountKeeper:   ak,
 		Bankkeeper:      bk,
 		ModuleName:      types.ModuleName,
-		CoinsSpentInMsg: fees,
+		CoinsSpentInMsg: coins,
 	}
-	return simulation.GenAndDeliverTxWithRandFees(txCtx)
+	return simulation.GenAndDeliverTx(txCtx, fees)
 }
 
 // computeFees computes the fees that should be used to send a transaction with the given message,
