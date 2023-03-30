@@ -85,7 +85,7 @@ func (h Hooks) AfterPostSaved(ctx sdk.Context, subspaceID uint64, postID uint64)
 // AfterPostDeleted implements poststypes.PostsHooks
 func (h Hooks) AfterPostDeleted(ctx sdk.Context, subspaceID uint64, postID uint64) {
 	// Delete the next reaction id key
-	h.k.DeleteNextReactionID(ctx, postID, subspaceID)
+	h.k.DeleteNextReactionID(ctx, subspaceID, postID)
 
 	// Delete all the reactions related to this post
 	h.k.IteratePostReactions(ctx, subspaceID, postID, func(reaction types.Reaction) (stop bool) {
