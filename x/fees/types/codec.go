@@ -11,7 +11,8 @@ import (
 
 // RegisterLegacyAminoCodec registers the account types and interface
 func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
-	cdc.RegisterConcrete(&MsgUpdateParams{}, "desmos/MsgUpdateParams", nil)
+	cdc.RegisterConcrete(&Params{}, "desmos/x/fees/Params", nil)
+	cdc.RegisterConcrete(&MsgUpdateParams{}, "desmos/x/fees/MsgUpdateParams", nil)
 }
 
 func RegisterInterfaces(registry types.InterfaceRegistry) {
@@ -25,13 +26,13 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 var (
 	amino = codec.NewLegacyAmino()
 
-	// AminoCdc references the global x/reactions module codec. Note, the codec should
+	// AminoCodec references the global x/reactions module codec. Note, the codec should
 	// ONLY be used in certain instances of tests and for JSON encoding as Amino is
 	// still used for that purpose.
 	//
 	// The actual codec used for serialization should be provided to x/reactions and
 	// defined at the application level.
-	AminoCdc = codec.NewAminoCodec(amino)
+	AminoCodec = codec.NewAminoCodec(amino)
 )
 
 func init() {

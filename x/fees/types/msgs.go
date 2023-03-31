@@ -45,5 +45,5 @@ func (msg MsgUpdateParams) GetSigners() []sdk.AccAddress {
 
 // GetSigners implements legacytx.LegacyMsg
 func (msg MsgUpdateParams) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
 }

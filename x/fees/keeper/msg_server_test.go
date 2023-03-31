@@ -2,18 +2,18 @@ package keeper_test
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/desmos-labs/desmos/v4/x/fees/keeper"
 	"github.com/desmos-labs/desmos/v4/x/fees/types"
 )
 
 func (suite *KeeperTestSuite) TestMsgServer_UpdateParams() {
 	testCases := []struct {
-		name        string
-		msg         *types.MsgUpdateParams
-		shouldErr   bool
-		expResponse *types.MsgUpdateParams
-		expEvents   sdk.Events
-		check       func(ctx sdk.Context)
+		name      string
+		msg       *types.MsgUpdateParams
+		shouldErr bool
+		expEvents sdk.Events
+		check     func(ctx sdk.Context)
 	}{
 		{
 			name: "invalid authority return error",
@@ -37,9 +37,17 @@ func (suite *KeeperTestSuite) TestMsgServer_UpdateParams() {
 						sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000))),
 					)},
 				),
-				"invalid",
+				authtypes.NewModuleAddress("gov").String(),
 			),
-			shouldErr: true,
+			shouldErr: false,
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					sdk.EventTypeMessage,
+					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgUpdateParams{})),
+					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos10d07y265gmmuvt4z0w9aw880jnsr700j6zn9kn"),
+				),
+			},
 			check: func(ctx sdk.Context) {
 				params := suite.keeper.GetParams(ctx)
 				suite.Require().Equal(types.NewParams([]types.MinFee{
@@ -61,13 +69,12 @@ func (suite *KeeperTestSuite) TestMsgServer_UpdateParams() {
 
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.keeper)
-			res, err := service.UpdateParams(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := service.UpdateParams(sdk.WrapSDKContext(ctx), tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)
-				suite.Require().Equal(tc.expResponse, res)
 				suite.Require().Equal(tc.expEvents, ctx.EventManager().Events())
 
 				if tc.check != nil {

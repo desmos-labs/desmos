@@ -79,7 +79,7 @@ func TestMsgUpdateParams_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgUpdateParams_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgUpdateParams","value":{"authority":"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd","params":{"min_fees":[{"amount":[{"amount":"10000","denom":"stake"}],"message_type":"/test.v1beta1.MsgTest"}]}}}`
+	expected := `{"type":"desmos/x/fees/MsgUpdateParams","value":{"authority":"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd","params":{"min_fees":[{"amount":[{"amount":"10000","denom":"stake"}],"message_type":"/test.v1beta1.MsgTest"}]}}}`
 	require.Equal(t, expected, string(msgUpdateParams.GetSignBytes()))
 }
 
