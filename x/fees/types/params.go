@@ -4,6 +4,8 @@ import (
 	"fmt"
 )
 
+var DefaultMinFees []MinFee
+
 // NewParams create a new params object with the given data
 func NewParams(minFees []MinFee) Params {
 	return Params{

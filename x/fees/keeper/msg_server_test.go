@@ -20,7 +20,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UpdateParams() {
 			msg: types.NewMsgUpdateParams(
 				types.NewParams([]types.MinFee{
 					types.NewMinFee(
-						"test.v1beta1.MsgTest",
+						"/test.v1beta1.MsgTest",
 						sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000))),
 					)},
 				),
@@ -44,7 +44,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UpdateParams() {
 				params := suite.keeper.GetParams(ctx)
 				suite.Require().Equal(types.NewParams([]types.MinFee{
 					types.NewMinFee(
-						"test.v1beta1.MsgTest",
+						"/test.v1beta1.MsgTest",
 						sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000))),
 					)},
 				), params)
