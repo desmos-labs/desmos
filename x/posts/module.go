@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"math/rand"
 
 	v2 "github.com/desmos-labs/desmos/v4/x/posts/legacy/v2"
 	v4 "github.com/desmos-labs/desmos/v4/x/posts/legacy/v4"
@@ -209,9 +208,9 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 	simulation.RandomizeGenState(simState)
 }
 
-// RandomizedParams creates randomized posts param changes for the simulator.
-func (AppModule) RandomizedParams(r *rand.Rand) []simtypes.LegacyParamChange {
-	return simulation.ParamChanges(r)
+// ProposalMsgs returns msgs used for governance proposals for simulations.
+func (AppModule) ProposalMsgs(simState module.SimulationState) []simtypes.WeightedProposalMsg {
+	return simulation.ProposalMsgs()
 }
 
 // RegisterStoreDecoder performs a no-op.
