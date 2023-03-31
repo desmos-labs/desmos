@@ -606,6 +606,7 @@ func NewDesmosApp(
 		app.ProfilesKeeper,
 		&subspacesKeeper,
 		app.RelationshipsKeeper,
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 
 	// Create reports keeper

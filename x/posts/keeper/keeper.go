@@ -20,12 +20,16 @@ type Keeper struct {
 	ak types.ProfilesKeeper
 	sk types.SubspacesKeeper
 	rk types.RelationshipsKeeper
+
+	// the address capable of executing a MsgUpdateParams message. Typically, this
+	// should be the x/gov module account.
+	authority string
 }
 
 // NewKeeper creates a new instance of the Posts Keeper.
 func NewKeeper(
 	cdc codec.BinaryCodec, storeKey storetypes.StoreKey, paramsSubspace paramstypes.Subspace,
-	ak types.ProfilesKeeper, sk types.SubspacesKeeper, rk types.RelationshipsKeeper,
+	ak types.ProfilesKeeper, sk types.SubspacesKeeper, rk types.RelationshipsKeeper, authority string,
 ) Keeper {
 	if !paramsSubspace.HasKeyTable() {
 		paramsSubspace = paramsSubspace.WithKeyTable(types.ParamKeyTable())
@@ -39,6 +43,8 @@ func NewKeeper(
 		ak: ak,
 		sk: sk,
 		rk: rk,
+
+		authority: authority,
 	}
 }
 

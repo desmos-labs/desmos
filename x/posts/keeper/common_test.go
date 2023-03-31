@@ -17,6 +17,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/store"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/suite"
@@ -81,6 +82,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 		suite.ak,
 		suite.sk,
 		suite.rk,
+		authtypes.NewModuleAddress("gov").String(),
 	)
 }
 

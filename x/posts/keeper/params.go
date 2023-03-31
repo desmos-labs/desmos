@@ -6,13 +6,20 @@ import (
 	"github.com/desmos-labs/desmos/v4/x/posts/types"
 )
 
-// SetParams sets params on the store
+// SetParams sets module parameters
 func (k Keeper) SetParams(ctx sdk.Context, params types.Params) {
-	k.paramsSubspace.SetParamSet(ctx, &params)
+	store := ctx.KVStore(k.storeKey)
+	bz := k.cdc.MustMarshal(&params)
+	store.Set(types.ParamsKey, bz)
 }
 
-// GetParams returns the params from the store
+// GetParams returns the module parameters
 func (k Keeper) GetParams(ctx sdk.Context) (p types.Params) {
-	k.paramsSubspace.GetParamSet(ctx, &p)
+	store := ctx.KVStore(k.storeKey)
+	bz := store.Get(types.ParamsKey)
+	if bz == nil {
+		return p
+	}
+	k.cdc.MustUnmarshal(bz, &p)
 	return p
 }

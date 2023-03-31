@@ -45,7 +45,7 @@ func TestEndBlocker(t *testing.T) {
 	cdc, legacyAmino := app.MakeCodecs()
 	pk := paramskeeper.NewKeeper(cdc, legacyAmino, keys[paramstypes.StoreKey], tKeys[paramstypes.TStoreKey])
 
-	keeper := postskeeper.NewKeeper(cdc, keys[poststypes.StoreKey], pk.Subspace(types.DefaultParamsSpace), nil, nil, nil)
+	keeper := postskeeper.NewKeeper(cdc, keys[poststypes.StoreKey], pk.Subspace(types.DefaultParamsSpace), nil, nil, nil, "authority")
 
 	testCases := []struct {
 		name     string

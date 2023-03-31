@@ -164,6 +164,7 @@ func (suite *Testsuite) SetupTest() {
 		suite.pk,
 		suite.sk,
 		suite.rk,
+		authtypes.NewModuleAddress("gov").String(),
 	)
 	suite.k = keeper.NewKeeper(suite.cdc, keys[types.StoreKey], suite.ak, suite.sk, suite.rk, suite.pk)
 }
