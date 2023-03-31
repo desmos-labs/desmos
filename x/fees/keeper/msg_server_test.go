@@ -33,7 +33,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UpdateParams() {
 			msg: types.NewMsgUpdateParams(
 				types.NewParams([]types.MinFee{
 					types.NewMinFee(
-						"test.v1beta1.MsgTest",
+						"/test.v1beta1.MsgTest",
 						sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000))),
 					)},
 				),
