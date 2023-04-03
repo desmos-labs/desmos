@@ -344,7 +344,7 @@ update-deps-types:
 ###############################################################################
 protoVer=0.11.6
 protoImageName=ghcr.io/cosmos/proto-builder:$(protoVer)
-protoImage=$(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace $(protoImageName)
+protoImage=$(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace --user $(id -u):$(id -g) $(protoImageName)
 
 proto-all: proto-format proto-lint proto-gen
 
