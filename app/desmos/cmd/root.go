@@ -255,14 +255,11 @@ func txCommand() *cobra.Command {
 }
 
 func newApp(logger log.Logger, db dbm.DB, traceStore io.Writer, appOpts servertypes.AppOptions) servertypes.Application {
-
-	baseappOptions := server.DefaultBaseappOptions(appOpts)
-
 	return app.NewDesmosApp(
 		logger, db, traceStore, true,
 		appOpts,
 		wasm.DisableAllProposals,
-		baseappOptions...,
+		server.DefaultBaseappOptions(appOpts)...,
 	)
 }
 

@@ -121,7 +121,6 @@ func (u *Upgrade) Handler() upgradetypes.UpgradeHandler {
 		baseAppLegacySS := u.paramsKeeper.Subspace(baseapp.Paramspace).WithKeyTable(paramstypes.ConsensusParamsKeyTable())
 		baseapp.MigrateParams(ctx, baseAppLegacySS, &u.consensusParamsKeeper)
 
-		// Do nothing here as we don't have anything particular in this update
 		return u.mm.RunMigrations(ctx, u.configurator, fromVM)
 	}
 }
