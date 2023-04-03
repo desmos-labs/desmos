@@ -33,7 +33,7 @@ jobs:
         uses: endbug/add-and-commit@v9
         with:
           add: "client/docs"
-          message: "Updated Swagger definition"
+          message: "docs: update Swagger definition"
           push: true
 
       - name: Deploy 🚀
