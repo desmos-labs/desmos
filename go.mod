@@ -319,7 +319,7 @@ require (
 replace (
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.2.0
 
-	// Our wasmd branch is: https://github.com/desmos-labs/wasmd v0.30.x-desmos
+	// Our wasmd branch is: https://github.com/desmos-labs/wasmd v0.40.x-desmos
 	github.com/CosmWasm/wasmd => github.com/desmos-labs/wasmd v0.40.0-desmos-rc.0
 
 	// Our cosmos-sdk branch is: https://github.com/desmos-labs/cosmos-sdk v0.47.x-desmos
