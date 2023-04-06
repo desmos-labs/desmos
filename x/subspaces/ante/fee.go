@@ -20,15 +20,22 @@ type DeductFeeDecorator struct {
 	ak                     AccountKeeper
 	bk                     BankKeeper
 	sk                     SubspacesKeeper
+
+	txFeeChecker ante.TxFeeChecker
 }
 
 // NewDeductFeeDecorator returns a new DeductFeeDecorator instance
-func NewDeductFeeDecorator(authDeductFeeDecorator AuthDeductFeeDecorator, ak AccountKeeper, bk BankKeeper, sk SubspacesKeeper) DeductFeeDecorator {
+func NewDeductFeeDecorator(authDeductFeeDecorator AuthDeductFeeDecorator, ak AccountKeeper, bk BankKeeper, sk SubspacesKeeper, txFeeChecker ante.TxFeeChecker) DeductFeeDecorator {
+	if txFeeChecker == nil {
+		txFeeChecker = ante.CheckTxFeeWithValidatorMinGasPrices
+	}
+
 	return DeductFeeDecorator{
 		authDeductFeeDecorator: authDeductFeeDecorator,
 		ak:                     ak,
 		bk:                     bk,
 		sk:                     sk,
+		txFeeChecker:           txFeeChecker,
 	}
 }
 
@@ -44,13 +51,27 @@ func (dfd DeductFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bo
 		return ctx, errors.Wrap(sdkerrors.ErrTxDecode, "Tx must be a FeeTx")
 	}
 
-	newCtx, success, err := dfd.tryHandleSubspaceTx(ctx, feeTx, subspaceID)
+	if !simulate && ctx.BlockHeight() > 0 && feeTx.GetGas() == 0 {
+		return ctx, sdkerrors.Wrap(sdkerrors.ErrInvalidGasLimit, "must provide positive gas")
+	}
+
+	fees := feeTx.GetFee()
+	var priority int64
+	if !simulate {
+		fees, priority, err = dfd.txFeeChecker(ctx, tx)
+		if err != nil {
+			return ctx, err
+		}
+	}
+
+	newCtx, success, err := dfd.tryHandleSubspaceTx(ctx, feeTx, subspaceID, fees)
 	if err != nil {
 		return newCtx, err
 	}
 
-	// Move to next ante if the process was  successful
+	// Move to next ante if the process was successful
 	if success {
+		newCtx = newCtx.WithPriority(priority)
 		return next(newCtx, tx, simulate)
 	}
 
@@ -79,8 +100,7 @@ func GetTxSubspaceID(tx sdk.Tx) (uint64, bool) {
 
 // tryHandleSubspaceTx handles the fee deduction for a single-subspace transaction,
 // and returns if the process succeeded or not
-func (dfd DeductFeeDecorator) tryHandleSubspaceTx(ctx sdk.Context, tx sdk.FeeTx, subspaceID uint64) (newCtx sdk.Context, success bool, err error) {
-	fees := tx.GetFee()
+func (dfd DeductFeeDecorator) tryHandleSubspaceTx(ctx sdk.Context, tx sdk.FeeTx, subspaceID uint64, fees sdk.Coins) (newCtx sdk.Context, success bool, err error) {
 	feePayer := tx.FeePayer()
 	feeGranter := tx.FeeGranter()
 	deductFeesFrom := feePayer
