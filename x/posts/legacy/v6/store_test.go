@@ -3,8 +3,9 @@ package v6_test
 import (
 	"testing"
 
-	"github.com/CosmWasm/wasmd/x/wasm/exported"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
+
 	"github.com/desmos-labs/desmos/v4/app"
 	"github.com/desmos-labs/desmos/v4/testutil/storetesting"
 	"github.com/stretchr/testify/require"
@@ -21,7 +22,7 @@ func newMockSubspace(ps types.Params) mockSubspace {
 	return mockSubspace{ps: ps}
 }
 
-func (ms mockSubspace) GetParamSet(ctx sdk.Context, ps exported.ParamSet) {
+func (ms mockSubspace) GetParamSet(ctx sdk.Context, ps paramstypes.ParamSet) {
 	*ps.(*types.Params) = ms.ps
 }
 
