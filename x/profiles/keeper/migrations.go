@@ -57,7 +57,7 @@ func (m Migrator) Migrate8to9(ctx sdk.Context) error {
 	return v8.MigrateStore(ctx, m.keeper.storeKey, m.keeper.cdc, m.keeper.legacyAmino)
 }
 
-// Migrate4to5 migrates from version 9 to 10.
+// Migrate9to10 migrates from version 9 to 10.
 func (m Migrator) Migrate9to10(ctx sdk.Context) error {
 	return v9.MigrateStore(ctx, m.keeper.storeKey, m.legacySubspace, m.keeper.cdc)
 }
