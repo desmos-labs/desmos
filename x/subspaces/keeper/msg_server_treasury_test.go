@@ -10,7 +10,7 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 )
 
-var expiration = time.Date(2023, 1, 11, 0, 0, 0, 0, time.UTC)
+var expiration = time.Date(2100, 1, 11, 0, 0, 0, 0, time.UTC)
 
 func (suite *KeeperTestSuite) TestMsgServer_GrantTreasuryAuthorization() {
 	blockTime := time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC)

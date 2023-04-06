@@ -113,6 +113,7 @@ Examples:
 	cmd.Flags().StringSlice(authzcli.FlagAllowedValidators, []string{}, "Allowed validators addresses separated by ,")
 	cmd.Flags().StringSlice(authzcli.FlagDenyValidators, []string{}, "Deny validators addresses separated by ,")
 	cmd.Flags().Int64(authzcli.FlagExpiration, time.Now().AddDate(1, 0, 0).Unix(), "The Unix timestamp. Default is one year.")
+	cmd.Flags().StringSlice(authzcli.FlagAllowList, []string{}, "Allowed addresses grantee is allowed to send funds separated by ,")
 
 	flags.AddTxFlagsToCmd(cmd)
 
@@ -135,8 +136,12 @@ func getSendAuthorization(flags *pflag.FlagSet) (*banktypes.SendAuthorization, e
 		return nil, fmt.Errorf("spend-limit should be greater than zero")
 	}
 
-	// TODO: fix nil to allowed users
-	return banktypes.NewSendAuthorization(spendLimit, nil), nil
+	allowed, err := getAllowedListFromFlags(flags)
+	if err != nil {
+		return nil, err
+	}
+
+	return banktypes.NewSendAuthorization(spendLimit, allowed), nil
 }
 
 // getStakeAuthorization returns a generic authorization from the given command flags
@@ -207,6 +212,24 @@ func getValidatorAddressesFromFlags(flags *pflag.FlagSet, typ string) ([]sdk.Val
 		validatorAddrs[i] = addr
 	}
 	return validatorAddrs, nil
+}
+
+// getAllowedListFromFlags returns addresses who will have send authorization from flags.
+func getAllowedListFromFlags(flags *pflag.FlagSet) ([]sdk.AccAddress, error) {
+	allowList, err := flags.GetStringSlice(authzcli.FlagAllowList)
+	if err != nil {
+		return nil, err
+	}
+
+	addrs := make([]sdk.AccAddress, len(allowList))
+	for i, addr := range allowList {
+		accAddr, err := sdk.AccAddressFromBech32(addr)
+		if err != nil {
+			return nil, err
+		}
+		addrs[i] = accAddr
+	}
+	return addrs, nil
 }
 
 // -------------------------------------------------------------------------------------------------------------------
