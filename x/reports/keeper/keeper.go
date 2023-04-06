@@ -5,16 +5,14 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
 	"github.com/desmos-labs/desmos/v4/x/reports/types"
 )
 
 type Keeper struct {
-	storeKey       storetypes.StoreKey
-	cdc            codec.BinaryCodec
-	paramsSubspace paramstypes.Subspace
-	hooks          types.ReportsHooks
+	storeKey storetypes.StoreKey
+	cdc      codec.BinaryCodec
+	hooks    types.ReportsHooks
 
 	ak types.ProfilesKeeper
 	sk types.SubspacesKeeper
@@ -28,17 +26,12 @@ type Keeper struct {
 
 // NewKeeper creates a new instance of the Posts Keeper.
 func NewKeeper(
-	cdc codec.BinaryCodec, storeKey storetypes.StoreKey, paramsSubspace paramstypes.Subspace,
-	ak types.ProfilesKeeper, sk types.SubspacesKeeper, rk types.RelationshipsKeeper, pk types.PostsKeeper, authority string,
+	cdc codec.BinaryCodec, storeKey storetypes.StoreKey, ak types.ProfilesKeeper,
+	sk types.SubspacesKeeper, rk types.RelationshipsKeeper, pk types.PostsKeeper, authority string,
 ) Keeper {
-	if !paramsSubspace.HasKeyTable() {
-		paramsSubspace = paramsSubspace.WithKeyTable(types.ParamKeyTable())
-	}
-
 	return Keeper{
-		storeKey:       storeKey,
-		cdc:            cdc,
-		paramsSubspace: paramsSubspace,
+		storeKey: storeKey,
+		cdc:      cdc,
 
 		ak: ak,
 		sk: sk,

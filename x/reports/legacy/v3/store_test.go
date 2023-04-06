@@ -26,6 +26,10 @@ func (ms mockSubspace) GetParamSet(ctx sdk.Context, ps paramstypes.ParamSet) {
 	*ps.(*types.Params) = ms.ps
 }
 
+func (ms mockSubspace) SetParamSet(ctx sdk.Context, ps paramstypes.ParamSet) {
+	panic("unimplemented")
+}
+
 func TestMigrate(t *testing.T) {
 	cdc, _ := app.MakeCodecs()
 

@@ -612,7 +612,6 @@ func NewDesmosApp(
 	app.ReportsKeeper = reportskeeper.NewKeeper(
 		app.appCodec,
 		keys[reportstypes.StoreKey],
-		app.GetSubspace(reportstypes.ModuleName),
 		app.ProfilesKeeper,
 		&subspacesKeeper,
 		app.RelationshipsKeeper,
