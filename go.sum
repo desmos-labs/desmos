@@ -454,10 +454,10 @@ github.com/denis-tingaikin/go-header v0.4.3 h1:tEaZKAlqql6SKCY++utLmkPLd6K8IBM20
 github.com/denis-tingaikin/go-header v0.4.3/go.mod h1:0wOCWuN71D5qIgE2nz9KrKmuYBAC2Mra5RassOIQ2/c=
 github.com/desertbit/timer v0.0.0-20180107155436-c41aec40b27f h1:U5y3Y5UE0w7amNe7Z5G/twsBW0KEalRQXZzf8ufSh9I=
 github.com/desertbit/timer v0.0.0-20180107155436-c41aec40b27f/go.mod h1:xH/i4TFMt8koVQZ6WFms69WAsDWr2XsYL3Hkl7jkoLE=
-github.com/desmos-labs/cosmos-sdk v0.47.0-desmos h1:SOOl2wea/2c62DzphJppIqRsgdSBy8P0QdXJ6rhAPvw=
-github.com/desmos-labs/cosmos-sdk v0.47.0-desmos/go.mod h1:FTtZbqiHCZ2vun9WrPq6qLQafNKkAuIhLAxzLjr2TiI=
-github.com/desmos-labs/ledger-desmos-go v0.11.2-0.20230324071009-828beadf3908 h1:51aMg7RnVxsYSynZG8Lr7ulT7/aozj73kFIh+DcVEas=
-github.com/desmos-labs/ledger-desmos-go v0.11.2-0.20230324071009-828beadf3908/go.mod h1:dhO6kj+Y+AHIOgAe4L9HL/6NDdyyth4q238I9yFpD2g=
+github.com/desmos-labs/cosmos-sdk v0.47.1-desmos h1:AFwsoJzH4TFNTDaL6g4VrcakBYdiABk+GF44nG5vWE0=
+github.com/desmos-labs/cosmos-sdk v0.47.1-desmos/go.mod h1:14tO5KQaTrl2q3OxBnDRfue7TRN9zkXS0cLutrSqkOo=
+github.com/desmos-labs/ledger-desmos-go v0.12.1-desmos h1:uYU67f1pZ7Jht/q9cn5sTdeto0J+lRUHIJgmedDGEVM=
+github.com/desmos-labs/ledger-desmos-go v0.12.1-desmos/go.mod h1:dhO6kj+Y+AHIOgAe4L9HL/6NDdyyth4q238I9yFpD2g=
 github.com/desmos-labs/wasmd v0.40.0-desmos-rc.0 h1:i/c4IkTTWw+2vUinC+6YKSleBygFqudNFAkBdZ6RZL0=
 github.com/desmos-labs/wasmd v0.40.0-desmos-rc.0/go.mod h1:9MispMuIWmjs6HlgRx+XPLfOD0y1k7iQx5KIE2cNGTc=
 github.com/dgraph-io/badger/v2 v2.2007.4 h1:TRWBQg8UrlUhaFdco01nO2uXwzKS7zd+HVdwV/GHc4o=
@@ -1505,8 +1505,8 @@ golang.org/x/exp v0.0.0-20200207192155-f17229e696bd/go.mod h1:J/WKrq2StrnmMY6+EH
 golang.org/x/exp v0.0.0-20200224162631-6cc2880d07d6/go.mod h1:3jZMyOhIsHpP37uCMkUooju7aAi5cS1Q23tOzKc+0MU=
 golang.org/x/exp v0.0.0-20200331195152-e8c3332aa8e5/go.mod h1:4M0jN8W1tt0AVLNr8HDosyJCDCDuyL9N9+3m7wDWgKw=
 golang.org/x/exp v0.0.0-20220426173459-3bcf042a4bf5/go.mod h1:lgLbSvA5ygNOMpwM/9anMpWVlVJ7Z+cHWq/eFuinpGE=
-golang.org/x/exp v0.0.0-20230310171629-522b1b587ee0 h1:LGJsf5LRplCck6jUCH3dBL2dmycNruWNF5xugkSlfXw=
-golang.org/x/exp v0.0.0-20230310171629-522b1b587ee0/go.mod h1:CxIveKay+FTh1D0yPZemJVgC/95VzuuOLq5Qi4xnoYc=
+golang.org/x/exp v0.0.0-20230321023759-10a507213a29 h1:ooxPy7fPvB4kwsA2h+iBNHkAbp/4JxTSwCmvdjEYmug=
+golang.org/x/exp v0.0.0-20230321023759-10a507213a29/go.mod h1:CxIveKay+FTh1D0yPZemJVgC/95VzuuOLq5Qi4xnoYc=
 golang.org/x/exp/typeparams v0.0.0-20220428152302-39d4317da171/go.mod h1:AbB0pIl9nAr9wVwH+Z2ZpaocVmF5I4GyWCDIsVjR0bk=
 golang.org/x/exp/typeparams v0.0.0-20230203172020-98cc5a0785f9/go.mod h1:AbB0pIl9nAr9wVwH+Z2ZpaocVmF5I4GyWCDIsVjR0bk=
 golang.org/x/exp/typeparams v0.0.0-20230224173230-c95f2b4c22f2 h1:J74nGeMgeFnYQJN59eFwh06jX/V8g0lB7LWpjSLxtgU=
