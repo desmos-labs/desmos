@@ -153,7 +153,6 @@ func (suite *TestSuite) SetupTest() {
 	suite.k = keeper.NewKeeper(
 		suite.cdc,
 		suite.storeKey,
-		paramsKeeper.Subspace(types.DefaultParamsSpace),
 		suite.ak,
 		suite.sk,
 		suite.rk,

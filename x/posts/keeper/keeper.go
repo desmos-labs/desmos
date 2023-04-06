@@ -28,17 +28,12 @@ type Keeper struct {
 
 // NewKeeper creates a new instance of the Posts Keeper.
 func NewKeeper(
-	cdc codec.BinaryCodec, storeKey storetypes.StoreKey, paramsSubspace paramstypes.Subspace,
+	cdc codec.BinaryCodec, storeKey storetypes.StoreKey,
 	ak types.ProfilesKeeper, sk types.SubspacesKeeper, rk types.RelationshipsKeeper, authority string,
 ) Keeper {
-	if !paramsSubspace.HasKeyTable() {
-		paramsSubspace = paramsSubspace.WithKeyTable(types.ParamKeyTable())
-	}
-
 	return Keeper{
-		storeKey:       storeKey,
-		cdc:            cdc,
-		paramsSubspace: paramsSubspace,
+		storeKey: storeKey,
+		cdc:      cdc,
 
 		ak: ak,
 		sk: sk,

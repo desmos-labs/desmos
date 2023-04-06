@@ -12,5 +12,6 @@ import (
 //
 // NOTE: This is used solely for migration of x/params managed parameters.
 type ParamsSubspace interface {
+	SetParamSet(ctx sdk.Context, ps paramstypes.ParamSet)
 	GetParamSet(ctx sdk.Context, ps paramstypes.ParamSet)
 }
