@@ -47,7 +47,10 @@ The printed JSON object can be safely used as the verification proof when connec
 			}
 
 			// Build a tx factory
-			txFactory := tx.NewFactoryCLI(clientCtx, cmd.Flags())
+			txFactory, err := tx.NewFactoryCLI(clientCtx, cmd.Flags())
+			if err != nil {
+				return err
+			}
 
 			// Get the value of the "from" flag
 			from, _ := cmd.Flags().GetString(flags.FlagFrom)
