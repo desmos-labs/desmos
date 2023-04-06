@@ -147,6 +147,7 @@ func (suite *Testsuite) SetupTest() {
 		suite.sk,
 		suite.rk,
 		suite.pk,
+		authtypes.NewModuleAddress("gov").String(),
 	)
 }
 

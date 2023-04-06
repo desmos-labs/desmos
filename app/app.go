@@ -617,6 +617,7 @@ func NewDesmosApp(
 		&subspacesKeeper,
 		app.RelationshipsKeeper,
 		&postsKeeper,
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 
 	// Create reactions keeper

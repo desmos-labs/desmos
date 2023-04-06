@@ -9,7 +9,7 @@ import (
 	"github.com/desmos-labs/desmos/v4/x/reports/types"
 )
 
-func (suite *KeeperTestsuite) TestQueryServer_Reports() {
+func (suite *KeeperTestSuite) TestQueryServer_Reports() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -259,7 +259,7 @@ func (suite *KeeperTestsuite) TestQueryServer_Reports() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestQueryServer_Report() {
+func (suite *KeeperTestSuite) TestQueryServer_Report() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -328,7 +328,7 @@ func (suite *KeeperTestsuite) TestQueryServer_Report() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestQueryServer_Reasons() {
+func (suite *KeeperTestSuite) TestQueryServer_Reasons() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -422,7 +422,7 @@ func (suite *KeeperTestsuite) TestQueryServer_Reasons() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestQueryServer_Reason() {
+func (suite *KeeperTestSuite) TestQueryServer_Reason() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -485,7 +485,7 @@ func (suite *KeeperTestsuite) TestQueryServer_Reason() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestQueryServer_Params() {
+func (suite *KeeperTestSuite) TestQueryServer_Params() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)

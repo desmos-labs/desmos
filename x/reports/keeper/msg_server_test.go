@@ -8,13 +8,14 @@ import (
 	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	"github.com/desmos-labs/desmos/v4/x/reports/keeper"
 	"github.com/desmos-labs/desmos/v4/x/reports/types"
 	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
-func (suite *KeeperTestsuite) TestMsgServer_CreateReport() {
+func (suite *KeeperTestSuite) TestMsgServer_CreateReport() {
 	testCases := []struct {
 		name        string
 		setupCtx    func(ctx sdk.Context) sdk.Context
@@ -398,7 +399,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateReport() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestMsgServer_DeleteReport() {
+func (suite *KeeperTestSuite) TestMsgServer_DeleteReport() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -616,7 +617,7 @@ func (suite *KeeperTestsuite) TestMsgServer_DeleteReport() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestMsgServer_SupportStandardReason() {
+func (suite *KeeperTestSuite) TestMsgServer_SupportStandardReason() {
 	testCases := []struct {
 		name        string
 		store       func(ctx sdk.Context)
@@ -793,7 +794,7 @@ func (suite *KeeperTestsuite) TestMsgServer_SupportStandardReason() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestMsgServer_AddReason() {
+func (suite *KeeperTestSuite) TestMsgServer_AddReason() {
 	testCases := []struct {
 		name        string
 		store       func(ctx sdk.Context)
@@ -964,7 +965,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AddReason() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestMsgServer_RemoveReason() {
+func (suite *KeeperTestSuite) TestMsgServer_RemoveReason() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -1092,6 +1093,69 @@ func (suite *KeeperTestsuite) TestMsgServer_RemoveReason() {
 			} else {
 				suite.Require().NoError(err)
 				suite.Require().Equal(tc.expEvents, ctx.EventManager().Events())
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestMsgServer_UpdateParams() {
+	testCases := []struct {
+		name      string
+		msg       *types.MsgUpdateParams
+		shouldErr bool
+		expEvents sdk.Events
+		check     func(ctx sdk.Context)
+	}{
+		{
+			name: "invalid authority return error",
+			msg: types.NewMsgUpdateParams(
+				types.DefaultParams(),
+				"invalid",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "set params properly",
+			msg: types.NewMsgUpdateParams(
+				types.DefaultParams(),
+				authtypes.NewModuleAddress("gov").String(),
+			),
+			shouldErr: false,
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					sdk.EventTypeMessage,
+					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgUpdateParams{})),
+					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos10d07y265gmmuvt4z0w9aw880jnsr700j6zn9kn"),
+				),
+			},
+			check: func(ctx sdk.Context) {
+				params := suite.k.GetParams(ctx)
+				suite.Require().Equal(types.DefaultParams(), params)
+			},
+		},
+	}
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+
+			// Reset any event that might have been emitted during the setup
+			ctx = ctx.WithEventManager(sdk.NewEventManager())
+
+			// Run the message
+			service := keeper.NewMsgServerImpl(suite.k)
+			_, err := service.UpdateParams(sdk.WrapSDKContext(ctx), tc.msg)
+
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(tc.expEvents, ctx.EventManager().Events())
+
+				if tc.check != nil {
+					tc.check(ctx)
+				}
 			}
 		})
 	}

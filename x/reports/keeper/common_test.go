@@ -32,7 +32,7 @@ import (
 	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
-type KeeperTestsuite struct {
+type KeeperTestSuite struct {
 	suite.Suite
 
 	cdc            codec.Codec
@@ -48,7 +48,7 @@ type KeeperTestsuite struct {
 	pk postskeeper.Keeper
 }
 
-func (suite *KeeperTestsuite) SetupTest() {
+func (suite *KeeperTestSuite) SetupTest() {
 	// Define store keys
 	keys := sdk.NewMemoryStoreKeys(
 		paramstypes.StoreKey, authtypes.StoreKey,
@@ -92,9 +92,10 @@ func (suite *KeeperTestsuite) SetupTest() {
 		suite.sk,
 		suite.rk,
 		suite.pk,
+		authtypes.NewModuleAddress("gov").String(),
 	)
 }
 
 func TestKeeperTestSuite(t *testing.T) {
-	suite.Run(t, new(KeeperTestsuite))
+	suite.Run(t, new(KeeperTestSuite))
 }

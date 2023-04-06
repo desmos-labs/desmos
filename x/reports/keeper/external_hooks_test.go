@@ -11,7 +11,7 @@ import (
 	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
-func (suite *KeeperTestsuite) TestKeeper_AfterSubspaceSaved() {
+func (suite *KeeperTestSuite) TestKeeper_AfterSubspaceSaved() {
 	testCases := []struct {
 		name     string
 		store    func(ctx sdk.Context)
@@ -94,7 +94,7 @@ func (suite *KeeperTestsuite) TestKeeper_AfterSubspaceSaved() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_AfterSubspaceDeleted() {
+func (suite *KeeperTestSuite) TestKeeper_AfterSubspaceDeleted() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -157,7 +157,7 @@ func (suite *KeeperTestsuite) TestKeeper_AfterSubspaceDeleted() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_AfterPostDeleted() {
+func (suite *KeeperTestSuite) TestKeeper_AfterPostDeleted() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
