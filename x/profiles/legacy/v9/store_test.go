@@ -1,0 +1,74 @@
+package v9_test
+
+import (
+	"testing"
+
+	"github.com/CosmWasm/wasmd/x/wasm/exported"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/desmos-labs/desmos/v4/app"
+	"github.com/desmos-labs/desmos/v4/testutil/storetesting"
+	"github.com/stretchr/testify/require"
+
+	v9 "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v9"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
+)
+
+type mockSubspace struct {
+	ps types.Params
+}
+
+func newMockSubspace(ps types.Params) mockSubspace {
+	return mockSubspace{ps: ps}
+}
+
+func (ms mockSubspace) GetParamSet(ctx sdk.Context, ps exported.ParamSet) {
+	*ps.(*types.Params) = ms.ps
+}
+
+func TestMigrate(t *testing.T) {
+	cdc, _ := app.MakeCodecs()
+
+	keys := sdk.NewKVStoreKeys(types.StoreKey)
+
+	testCases := []struct {
+		name          string
+		setupSubspace func() mockSubspace
+		shouldErr     bool
+		check         func(ctx sdk.Context)
+	}{
+		{
+			name: "params migrates properly",
+			setupSubspace: func() mockSubspace {
+				return newMockSubspace(types.DefaultParams())
+			},
+			shouldErr: false,
+			check: func(ctx sdk.Context) {
+				store := ctx.KVStore(keys[types.StoreKey])
+
+				var params types.Params
+				bz := store.Get(types.ParamsKey)
+				require.NoError(t, cdc.Unmarshal(bz, &params))
+				require.Equal(t, types.DefaultParams(), params)
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			ctx := storetesting.BuildContext(keys, nil, nil)
+
+			mockSubspace := tc.setupSubspace()
+
+			err := v9.MigrateStore(ctx, keys[types.StoreKey], mockSubspace, cdc)
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+				if tc.check != nil {
+					tc.check(ctx)
+				}
+			}
+		})
+	}
+}

@@ -32,7 +32,7 @@ import (
 )
 
 const (
-	consensusVersion = 9
+	consensusVersion = 10
 )
 
 // type check to ensure the interface is properly implemented
@@ -103,6 +103,9 @@ type AppModule struct {
 	ak     authkeeper.AccountKeeper
 	bk     bankkeeper.Keeper
 	fk     feeskeeper.Keeper
+
+	// legacySubspace is used solely for migration of x/params managed parameters
+	legacySubspace types.ParamsSubspace
 }
 
 // RegisterServices registers module services.
@@ -110,7 +113,7 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
 	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
 
-	m := keeper.NewMigrator(am.ak, am.keeper)
+	m := keeper.NewMigrator(am.ak, am.keeper, am.legacySubspace)
 	err := cfg.RegisterMigration(types.ModuleName, 4, m.Migrate4to5)
 	if err != nil {
 		panic(err)
@@ -136,7 +139,7 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 // NewAppModule creates a new AppModule Object
 func NewAppModule(
 	cdc codec.Codec, legacyAmino *codec.LegacyAmino,
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper, legacySubspace types.ParamsSubspace,
 ) AppModule {
 	return AppModule{
 		AppModuleBasic: AppModuleBasic{cdc: cdc, legacyAmino: legacyAmino},
@@ -144,6 +147,8 @@ func NewAppModule(
 		ak:             ak,
 		bk:             bk,
 		fk:             fk,
+
+		legacySubspace: legacySubspace,
 	}
 }
 
