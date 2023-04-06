@@ -29,3 +29,7 @@ After the download, ensure it's the correct one by checking that it has the corr
 ```bash
 jq -S -c -M '' ~/.desmos/config/genesis.json | shasum -a 256
 ```
+
+The expected output should be:
+
+`619c9462ccd9045522300c5ce9e7f4662cac096eed02ef0535cca2a6826074c4  -`
