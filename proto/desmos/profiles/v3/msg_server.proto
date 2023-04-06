@@ -1,15 +1,20 @@
 syntax = "proto3";
 package desmos.profiles.v3;
 
+import "cosmos/msg/v1/msg.proto";
+
 import "desmos/profiles/v3/msgs_profile.proto";
 import "desmos/profiles/v3/msgs_dtag_requests.proto";
 import "desmos/profiles/v3/msgs_chain_links.proto";
 import "desmos/profiles/v3/msgs_app_links.proto";
+import "desmos/profiles/v3/msgs_params.proto";
 
 option go_package = "github.com/desmos-labs/desmos/v4/x/profiles/types";
 
 // Msg defines the relationships Msg service.
 service Msg {
+  option (cosmos.msg.v1.service) = true;
+
   // SaveProfile defines the method to save a profile
   rpc SaveProfile(MsgSaveProfile) returns (MsgSaveProfileResponse);
 
@@ -58,4 +63,10 @@ service Msg {
   // UnlinkApplication defines a method to remove a centralized application
   rpc UnlinkApplication(MsgUnlinkApplication)
       returns (MsgUnlinkApplicationResponse);
+
+  // UpdateParams defines a (governance) operation for updating the module parameters.
+  //  The authority defaults to the x/gov module account.
+  //
+  // Since: desmos 5.0.0
+  rpc UpdateParams(MsgUpdateParams) returns (MsgUpdateParamsResponse);
 }

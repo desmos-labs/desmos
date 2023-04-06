@@ -19,7 +19,6 @@ import (
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
-	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/require"
 
@@ -31,7 +30,6 @@ import (
 func setupBenchTest() (sdk.Context, authkeeper.AccountKeeper, keeper.Keeper) {
 	// Define the store keys
 	keys := sdk.NewKVStoreKeys(types.StoreKey, authtypes.StoreKey, paramstypes.StoreKey)
-	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
 	storeKey := keys[types.StoreKey]
@@ -41,9 +39,6 @@ func setupBenchTest() (sdk.Context, authkeeper.AccountKeeper, keeper.Keeper) {
 	ms := store.NewCommitMultiStore(memDB)
 	for _, key := range keys {
 		ms.MountStoreWithDB(key, storetypes.StoreTypeIAVL, memDB)
-	}
-	for _, tKey := range tKeys {
-		ms.MountStoreWithDB(tKey, storetypes.StoreTypeTransient, memDB)
 	}
 	for _, memKey := range memKeys {
 		ms.MountStoreWithDB(memKey, storetypes.StoreTypeMemory, nil)
@@ -55,10 +50,6 @@ func setupBenchTest() (sdk.Context, authkeeper.AccountKeeper, keeper.Keeper) {
 
 	ctx := sdk.NewContext(ms, tmproto.Header{ChainID: "test-chain-id"}, false, log.NewNopLogger())
 	cdc, legacyAminoCdc := app.MakeCodecs()
-
-	paramsKeeper := paramskeeper.NewKeeper(
-		cdc, legacyAminoCdc, keys[paramstypes.StoreKey], tKeys[paramstypes.TStoreKey],
-	)
 
 	ak := authkeeper.NewAccountKeeper(
 		cdc,
@@ -73,12 +64,12 @@ func setupBenchTest() (sdk.Context, authkeeper.AccountKeeper, keeper.Keeper) {
 		cdc,
 		legacyAminoCdc,
 		storeKey,
-		paramsKeeper.Subspace(types.DefaultParamsSpace),
 		ak,
 		nil,
 		nil,
 		nil,
 		nil,
+		authtypes.NewModuleAddress("gov").String(),
 	)
 
 	return ctx, ak, k

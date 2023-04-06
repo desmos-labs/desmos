@@ -590,12 +590,12 @@ func NewDesmosApp(
 		app.appCodec,
 		app.legacyAmino,
 		keys[profilestypes.StoreKey],
-		app.GetSubspace(profilestypes.ModuleName),
 		app.AccountKeeper,
 		app.RelationshipsKeeper,
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper,
 		scopedProfilesKeeper,
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 
 	// Create posts keeper and module

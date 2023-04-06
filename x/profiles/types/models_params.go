@@ -7,8 +7,6 @@ import (
 
 	"cosmossdk.io/math"
 
-	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -29,22 +27,7 @@ var (
 	DefaultAppLinksValidityDuration = time.Hour * 24 * 365 // 1 year
 )
 
-// Parameters store keys
-var (
-	NicknameParamsKey = []byte("NicknameParams")
-	DTagParamsKey     = []byte("DTagParams")
-	BioParamsKey      = []byte("MaxBioLen")
-	OracleParamsKey   = []byte("OracleParams")
-	AppLinksParamsKey = []byte("AppLinksParams")
-)
-
 // ___________________________________________________________________________________________________________________
-
-// ParamKeyTable Key declaration for parameters
-func ParamKeyTable() paramstypes.KeyTable {
-	return paramstypes.NewKeyTable().
-		RegisterParamSet(&Params{})
-}
 
 // NewParams creates a new ProfileParams obj
 func NewParams(nickname NicknameParams, dTag DTagParams, bio BioParams, oracle OracleParams, appLinks AppLinksParams) Params {
@@ -65,18 +48,6 @@ func DefaultParams() Params {
 		Bio:      DefaultBioParams(),
 		Oracle:   DefaultOracleParams(),
 		AppLinks: DefaultAppLinksParams(),
-	}
-}
-
-// ParamSetPairs implements the ParamSet interface and returns the key/value pairs
-// of profile module's parameters.
-func (params *Params) ParamSetPairs() paramstypes.ParamSetPairs {
-	return paramstypes.ParamSetPairs{
-		paramstypes.NewParamSetPair(NicknameParamsKey, &params.Nickname, ValidateNicknameParams),
-		paramstypes.NewParamSetPair(DTagParamsKey, &params.DTag, ValidateDTagParams),
-		paramstypes.NewParamSetPair(BioParamsKey, &params.Bio, ValidateBioParams),
-		paramstypes.NewParamSetPair(OracleParamsKey, &params.Oracle, ValidateOracleParams),
-		paramstypes.NewParamSetPair(AppLinksParamsKey, &params.AppLinks, ValidateAppLinksParams),
 	}
 }
 

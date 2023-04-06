@@ -149,7 +149,7 @@ func (suite *TestSuite) SetupTest() {
 	authKeeper := authkeeper.NewAccountKeeper(suite.cdc, keys[authtypes.StoreKey], authtypes.ProtoBaseAccount, app.GetMaccPerms(), "cosmos", authtypes.NewModuleAddress("gov").String())
 	suite.sk = subspaceskeeper.NewKeeper(suite.cdc, keys[subspacestypes.StoreKey], nil, nil)
 	suite.rk = relationshipskeeper.NewKeeper(suite.cdc, keys[relationshipstypes.StoreKey], suite.sk)
-	suite.ak = profileskeeper.NewKeeper(suite.cdc, suite.legacyAminoCdc, keys[profilestypes.StoreKey], paramsKeeper.Subspace(profilestypes.DefaultParamsSpace), authKeeper, suite.rk, nil, nil, nil)
+	suite.ak = profileskeeper.NewKeeper(suite.cdc, suite.legacyAminoCdc, keys[profilestypes.StoreKey], authKeeper, suite.rk, nil, nil, nil, authtypes.NewModuleAddress("gov").String())
 	suite.k = keeper.NewKeeper(
 		suite.cdc,
 		suite.storeKey,
