@@ -3,8 +3,9 @@ package keeper_test
 import (
 	"time"
 
-	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 	"github.com/golang/mock/gomock"
+
+	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
