@@ -10,7 +10,6 @@ import (
 	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
@@ -32,7 +31,7 @@ func SimulateMsgCreateSection(
 		// Get the data
 		subspaceID, update, parentID, creator, skip := randomCreateSectionFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreateSection"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgCreateSection", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -45,12 +44,7 @@ func SimulateMsgCreateSection(
 		)
 
 		// Send the message
-		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{creator.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreateSection"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "MsgCreateSection", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, creator)
 	}
 }
 
@@ -106,7 +100,7 @@ func SimulateMsgEditSection(
 		// Get the data
 		subspaceID, sectionID, update, creator, skip := randomEditSectionFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgEditSection"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgEditSection", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -119,12 +113,7 @@ func SimulateMsgEditSection(
 		)
 
 		// Send the message
-		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{creator.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgEditSection"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "MsgEditSection", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, creator)
 	}
 }
 
@@ -180,7 +169,7 @@ func SimulateMsgMoveSection(
 		// Get the data
 		subspaceID, sectionID, newParentID, creator, skip := randomMoveSectionFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgMoveSection"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgMoveSection", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -192,12 +181,7 @@ func SimulateMsgMoveSection(
 		)
 
 		// Send the message
-		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{creator.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgMoveSection"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "MsgMoveSection", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, creator)
 	}
 }
 
@@ -228,6 +212,18 @@ func randomMoveSectionFields(
 	// Get a random new parent
 	parent := RandomSection(r, sections)
 	newParentID = parent.ID
+	if newParentID == sectionID {
+		// Skip because we can't move the section to itself
+		skip = true
+		return
+	}
+
+	section.ParentID = newParentID
+	if parent.ParentID == sectionID {
+		// Skip because the new section path is invalid
+		skip = true
+		return
+	}
 
 	// Get a signer
 	signers := k.GetUsersWithRootPermissions(ctx, subspace.ID, types.NewPermissions(types.PermissionManageSections))
@@ -256,7 +252,7 @@ func SimulateMsgDeleteSection(
 		// Get the data
 		subspaceID, sectionID, creator, skip := randomDeleteFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgDeleteSection"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgDeleteSection", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -267,12 +263,7 @@ func SimulateMsgDeleteSection(
 		)
 
 		// Send the message
-		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{creator.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgDeleteSection"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "MsgDeleteSection", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, creator)
 	}
 }
 

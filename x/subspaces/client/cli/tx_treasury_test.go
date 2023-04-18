@@ -63,7 +63,7 @@ func (s *IntegrationTestSuite) TestCmdRevokeGrantAuthorization() {
 				fmt.Sprintf("--%s=%s", authzcli.FlagSpendLimit, "100stake"),
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 			},
 			shouldErr: false,
@@ -82,7 +82,7 @@ func (s *IntegrationTestSuite) TestCmdRevokeGrantAuthorization() {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
-				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
 			}
 		})
 	}
@@ -137,7 +137,7 @@ func (s *IntegrationTestSuite) TestCmdRevokeGrantAuthorization__SendAuthorizatio
 				fmt.Sprintf("--%s=%s", authzcli.FlagSpendLimit, "100stake"),
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 			},
 			shouldErr: false,
@@ -152,7 +152,7 @@ func (s *IntegrationTestSuite) TestCmdRevokeGrantAuthorization__SendAuthorizatio
 				fmt.Sprintf("--%s=%s", authzcli.FlagSpendLimit, "100stake"),
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 			},
 			shouldErr: false,
@@ -171,7 +171,7 @@ func (s *IntegrationTestSuite) TestCmdRevokeGrantAuthorization__SendAuthorizatio
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
-				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
 			}
 		})
 	}
@@ -195,7 +195,7 @@ func (s *IntegrationTestSuite) TestCmdRevokeGrantAuthorization__GenericAuthoriza
 				fmt.Sprintf("--%s=%s", authzcli.FlagExpiration, "10000"),
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 			},
 			shouldErr: false,
@@ -214,7 +214,7 @@ func (s *IntegrationTestSuite) TestCmdRevokeGrantAuthorization__GenericAuthoriza
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
-				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
 			}
 		})
 	}
@@ -290,7 +290,7 @@ func (s *IntegrationTestSuite) TestCmdRevokeGrantAuthorization__StakeAuthorizati
 				fmt.Sprintf("--%s=%s", authzcli.FlagAllowedValidators, val.ValAddress.String()),
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 			},
 			shouldErr: false,
@@ -306,7 +306,7 @@ func (s *IntegrationTestSuite) TestCmdRevokeGrantAuthorization__StakeAuthorizati
 				fmt.Sprintf("--%s=%s", authzcli.FlagAllowedValidators, val.ValAddress.String()),
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 			},
 			shouldErr: false,
@@ -322,7 +322,7 @@ func (s *IntegrationTestSuite) TestCmdRevokeGrantAuthorization__StakeAuthorizati
 				fmt.Sprintf("--%s=%s", authzcli.FlagAllowedValidators, val.ValAddress.String()),
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 			},
 			shouldErr: false,
@@ -341,7 +341,7 @@ func (s *IntegrationTestSuite) TestCmdRevokeGrantAuthorization__StakeAuthorizati
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
-				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
 			}
 		})
 	}
@@ -381,7 +381,7 @@ func (s *IntegrationTestSuite) TestCmdRevokeTreasuryAuthorization() {
 				"/cosmos.bank.v1beta1.MsgSend",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 			},
 			shouldErr: false,
@@ -400,7 +400,7 @@ func (s *IntegrationTestSuite) TestCmdRevokeTreasuryAuthorization() {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
-				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
 			}
 		})
 	}

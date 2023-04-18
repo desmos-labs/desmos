@@ -6,6 +6,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
+	errors "cosmossdk.io/errors"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/desmos-labs/desmos/v4/x/profiles/types"
@@ -29,7 +30,7 @@ func (k Keeper) LinkApplication(
 	}
 
 	if found && link.IsVerificationOngoing() {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest,
 			"verification process of link for application %s and username %s is already happening",
 			msg.LinkData.Application, msg.LinkData.Username)
 	}
@@ -78,7 +79,7 @@ func (k msgServer) UnlinkApplication(
 	}
 
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrNotFound, "application link not found")
+		return nil, errors.Wrap(sdkerrors.ErrNotFound, "application link not found")
 	}
 
 	// Delete the link

@@ -17,7 +17,6 @@ import (
 	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
@@ -28,7 +27,7 @@ import (
 
 // SimulateMsgAddReaction tests and runs a single MsgAddReaction
 func SimulateMsgAddReaction(
-	k keeper.Keeper, sk subspaceskeeper.Keeper, pk postskeeper.Keeper,
+	k keeper.Keeper, profilesKeeper types.ProfilesKeeper, sk subspaceskeeper.Keeper, pk postskeeper.Keeper,
 	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
 ) simtypes.Operation {
 	return func(
@@ -37,9 +36,9 @@ func SimulateMsgAddReaction(
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 
 		// Get the data
-		data, signer, skip := randomAddReactionFields(r, ctx, accs, k, sk, pk)
+		data, signer, skip := randomAddReactionFields(r, ctx, accs, k, profilesKeeper, sk, pk)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgAddReaction"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgAddReaction", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -51,19 +50,14 @@ func SimulateMsgAddReaction(
 		)
 
 		// Send the message
-		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgAddReaction"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "MsgAddReaction", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 	}
 }
 
 // randomAddReactionFields returns the data used to build a random MsgAddReaction
 func randomAddReactionFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account,
-	k keeper.Keeper, sk subspaceskeeper.Keeper, pk postskeeper.Keeper,
+	k keeper.Keeper, profilesKeeper types.ProfilesKeeper, sk subspaceskeeper.Keeper, pk postskeeper.Keeper,
 ) (reaction types.Reaction, user simtypes.Account, skip bool) {
 	// Get the user
 	if len(accs) == 0 {
@@ -71,7 +65,6 @@ func randomAddReactionFields(
 		skip = true
 		return
 	}
-	user, _ = simtypes.RandomAcc(r, accs)
 
 	// Get a subspace id
 	subspaces := sk.GetAllSubspaces(ctx)
@@ -137,6 +130,12 @@ func randomAddReactionFields(
 		skip = true
 		return
 	}
+	if !profilesKeeper.HasProfile(ctx, acc.Address.String()) {
+		// Skip because user has no profile
+		skip = true
+		return
+	}
+
 	user = *acc
 
 	// Generate a random reaction
@@ -159,7 +158,7 @@ func SimulateMsgRemoveReaction(
 		// Get the data
 		reaction, signer, skip := randomRemoveReactionFields(r, ctx, accs, k, sk)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRemoveReaction"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgRemoveReaction", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -171,12 +170,7 @@ func SimulateMsgRemoveReaction(
 		)
 
 		// Send the message
-		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRemoveReaction"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "MsgRemoveReaction", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 	}
 }
 

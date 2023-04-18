@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
@@ -33,16 +32,12 @@ func SimulateMsgAnswerPoll(
 
 		answer, user, skip := randomAnswerPollFields(r, ctx, accs, k, sk)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "answer poll"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "answer poll", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgAnswerPoll(answer.SubspaceID, answer.PostID, answer.PollID, answer.AnswersIndexes, user.Address.String())
-		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{user.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "answer poll"), nil, err
-		}
 
-		return simtypes.NewOperationMsg(msg, true, "answer poll", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, user)
 	}
 }
 

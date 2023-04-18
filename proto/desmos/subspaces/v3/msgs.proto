@@ -2,9 +2,7 @@ syntax = "proto3";
 package desmos.subspaces.v3;
 
 import "gogoproto/gogo.proto";
-import "cosmos_proto/cosmos.proto";
 
-import "desmos/subspaces/v3/models.proto";
 import "desmos/subspaces/v3/msgs_treasury.proto";
 import "desmos/subspaces/v3/msgs_feegrant.proto";
 

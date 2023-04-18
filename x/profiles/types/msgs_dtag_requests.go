@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	errors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -29,16 +30,16 @@ func (msg MsgRequestDTagTransfer) Type() string { return ActionRequestDTag }
 func (msg MsgRequestDTagTransfer) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Receiver)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid receiver address: %s", msg.Receiver))
+		return errors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid receiver address: %s", msg.Receiver))
 	}
 
 	_, err = sdk.AccAddressFromBech32(msg.Sender)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid sender address: %s", msg.Sender))
+		return errors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid sender address: %s", msg.Sender))
 	}
 
 	if msg.Sender == msg.Receiver {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the sender and receiver must be different")
+		return errors.Wrap(sdkerrors.ErrInvalidRequest, "the sender and receiver must be different")
 	}
 
 	return nil
@@ -74,16 +75,16 @@ func (msg MsgCancelDTagTransferRequest) Type() string { return ActionCancelDTagT
 func (msg MsgCancelDTagTransferRequest) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Receiver)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid receiver address: %s", msg.Receiver))
+		return errors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid receiver address: %s", msg.Receiver))
 	}
 
 	_, err = sdk.AccAddressFromBech32(msg.Sender)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid sender address: %s", msg.Sender))
+		return errors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid sender address: %s", msg.Sender))
 	}
 
 	if msg.Receiver == msg.Sender {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the sender and receiver must be different")
+		return errors.Wrap(sdkerrors.ErrInvalidRequest, "the sender and receiver must be different")
 	}
 
 	return nil
@@ -119,21 +120,21 @@ func (msg MsgAcceptDTagTransferRequest) Type() string { return ActionAcceptDTagT
 
 func (msg MsgAcceptDTagTransferRequest) ValidateBasic() error {
 	if strings.TrimSpace(msg.NewDTag) == "" {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "new DTag can't be empty")
+		return errors.Wrap(sdkerrors.ErrInvalidRequest, "new DTag can't be empty")
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.Sender)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid sender address: %s", msg.Sender)
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid sender address: %s", msg.Sender)
 	}
 
 	_, err = sdk.AccAddressFromBech32(msg.Receiver)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid receiver address: %s", msg.Receiver)
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid receiver address: %s", msg.Receiver)
 	}
 
 	if msg.Sender == msg.Receiver {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the sender and receiver must be different")
+		return errors.Wrap(sdkerrors.ErrInvalidRequest, "the sender and receiver must be different")
 	}
 
 	return nil
@@ -169,16 +170,16 @@ func (msg MsgRefuseDTagTransferRequest) Type() string { return ActionRefuseDTagT
 func (msg MsgRefuseDTagTransferRequest) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Sender)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid sender address: %s", msg.Sender))
+		return errors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid sender address: %s", msg.Sender))
 	}
 
 	_, err = sdk.AccAddressFromBech32(msg.Receiver)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid receiver address: %s", msg.Receiver))
+		return errors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid receiver address: %s", msg.Receiver))
 	}
 
 	if msg.Sender == msg.Receiver {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the sender and receiver must be different")
+		return errors.Wrap(sdkerrors.ErrInvalidRequest, "the sender and receiver must be different")
 	}
 
 	return nil

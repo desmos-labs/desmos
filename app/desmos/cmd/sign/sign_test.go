@@ -26,7 +26,8 @@ func TestGetSignCmd(t *testing.T) {
 	cfg := sdk.GetConfig()
 	app.SetupConfig(cfg)
 
-	keyBase := keyring.NewInMemory()
+	cdc, _ := app.MakeCodecs()
+	keyBase := keyring.NewInMemory(cdc)
 	algo := hd.Secp256k1
 	hdPath := sdk.GetConfig().GetFullFundraiserPath()
 

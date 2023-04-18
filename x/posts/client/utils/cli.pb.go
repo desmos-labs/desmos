@@ -9,7 +9,7 @@ import (
 	types "github.com/desmos-labs/desmos/v4/x/posts/types"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
-	_ "github.com/regen-network/cosmos-proto"
+	_ "github.com/cosmos/cosmos-proto"
 	_ "google.golang.org/protobuf/types/known/timestamppb"
 	io "io"
 	math "math"

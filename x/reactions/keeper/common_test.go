@@ -3,16 +3,16 @@ package keeper_test
 import (
 	"testing"
 
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/golang/mock/gomock"
 
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
-
+	db "github.com/cometbft/cometbft-db"
+	"github.com/cometbft/cometbft/libs/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/suite"
-	"github.com/tendermint/tendermint/libs/log"
-	db "github.com/tendermint/tm-db"
 
 	"github.com/desmos-labs/desmos/v4/app"
 
@@ -31,7 +31,7 @@ type KeeperTestSuite struct {
 	cdc            codec.Codec
 	legacyAminoCdc *codec.LegacyAmino
 	ctx            sdk.Context
-	storeKey       sdk.StoreKey
+	storeKey       storetypes.StoreKey
 
 	ak *testutil.MockProfilesKeeper
 	rk *testutil.MockRelationshipsKeeper
@@ -50,7 +50,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 	memDB := db.NewMemDB()
 	ms := store.NewCommitMultiStore(memDB)
 	for _, key := range keys {
-		ms.MountStoreWithDB(key, sdk.StoreTypeIAVL, memDB)
+		ms.MountStoreWithDB(key, storetypes.StoreTypeIAVL, memDB)
 	}
 
 	if err := ms.LoadLatestVersion(); err != nil {

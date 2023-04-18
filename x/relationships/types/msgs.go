@@ -1,6 +1,7 @@
 package types
 
 import (
+	errors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -26,20 +27,20 @@ func (msg MsgCreateRelationship) Type() string {
 func (msg MsgCreateRelationship) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid signer address")
+		return errors.Wrap(sdkerrors.ErrInvalidAddress, "invalid signer address")
 	}
 
 	_, err = sdk.AccAddressFromBech32(msg.Counterparty)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid counterparty address")
+		return errors.Wrap(sdkerrors.ErrInvalidAddress, "invalid counterparty address")
 	}
 
 	if msg.Signer == msg.Counterparty {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "signer and counterparty must be different")
+		return errors.Wrap(sdkerrors.ErrInvalidRequest, "signer and counterparty must be different")
 	}
 
 	if msg.SubspaceID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
 	return nil
@@ -79,20 +80,20 @@ func (msg MsgDeleteRelationship) Type() string {
 func (msg MsgDeleteRelationship) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid user address")
+		return errors.Wrap(sdkerrors.ErrInvalidAddress, "invalid user address")
 	}
 
 	_, err = sdk.AccAddressFromBech32(msg.Counterparty)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid counterparty address")
+		return errors.Wrap(sdkerrors.ErrInvalidAddress, "invalid counterparty address")
 	}
 
 	if msg.Signer == msg.Counterparty {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "signer and counterparty must be different")
+		return errors.Wrap(sdkerrors.ErrInvalidRequest, "signer and counterparty must be different")
 	}
 
 	if msg.SubspaceID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
 	return nil
@@ -133,16 +134,16 @@ func (msg MsgBlockUser) Type() string {
 func (msg MsgBlockUser) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Blocker)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid blocker address")
+		return errors.Wrap(sdkerrors.ErrInvalidAddress, "invalid blocker address")
 	}
 
 	_, err = sdk.AccAddressFromBech32(msg.Blocked)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid blocked address")
+		return errors.Wrap(sdkerrors.ErrInvalidAddress, "invalid blocked address")
 	}
 
 	if msg.Blocker == msg.Blocked {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "blocker and blocked must be different")
+		return errors.Wrap(sdkerrors.ErrInvalidRequest, "blocker and blocked must be different")
 	}
 
 	return nil
@@ -182,16 +183,16 @@ func (msg MsgUnblockUser) Type() string {
 func (msg MsgUnblockUser) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Blocker)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid blocker")
+		return errors.Wrap(sdkerrors.ErrInvalidAddress, "invalid blocker")
 	}
 
 	_, err = sdk.AccAddressFromBech32(msg.Blocked)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid blocked")
+		return errors.Wrap(sdkerrors.ErrInvalidAddress, "invalid blocked")
 	}
 
 	if msg.Blocker == msg.Blocked {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "blocker and blocked must be different")
+		return errors.Wrap(sdkerrors.ErrInvalidRequest, "blocker and blocked must be different")
 	}
 
 	return nil

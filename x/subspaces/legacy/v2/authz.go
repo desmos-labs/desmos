@@ -3,6 +3,7 @@ package v2
 // DONTCOVER
 
 import (
+	errors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/authz"
@@ -45,19 +46,19 @@ func (a GenericSubspaceAuthorization) Accept(ctx sdk.Context, msg sdk.Msg) (auth
 		return authz.AcceptResponse{Accept: false}, nil
 
 	default:
-		return authz.AcceptResponse{}, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "unknown msg type")
+		return authz.AcceptResponse{}, errors.Wrap(sdkerrors.ErrInvalidRequest, "unknown msg type")
 	}
 }
 
 // ValidateBasic implements Authorization.ValidateBasic.
 func (a GenericSubspaceAuthorization) ValidateBasic() error {
 	if a.SubspacesIDs == nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "at least one subspace id is required")
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "at least one subspace id is required")
 	}
 
 	for _, subspaceID := range a.SubspacesIDs {
 		if subspaceID == 0 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id")
+			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id")
 		}
 	}
 

@@ -9,14 +9,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cosmos/cosmos-sdk/x/auth/legacy/legacytx"
+	"github.com/cosmos/cosmos-sdk/x/auth/migrations/legacytx"
 
+	"github.com/cometbft/cometbft/crypto/tmhash"
 	"github.com/cosmos/cosmos-sdk/types/bech32"
 	"github.com/cosmos/cosmos-sdk/types/tx"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
-	"github.com/tendermint/tendermint/crypto/tmhash"
 
-	"github.com/btcsuite/btcd/btcec"
+	"github.com/btcsuite/btcd/btcec/v2"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/gogo/protobuf/proto"
 	"github.com/mr-tron/base58"
@@ -463,7 +463,7 @@ func (h HexAddress) VerifyPubKey(key cryptotypes.PubKey) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	pubKey, err := btcec.ParsePubKey(key.Bytes(), btcec.S256())
+	pubKey, err := btcec.ParsePubKey(key.Bytes())
 	if err != nil {
 		return false, err
 	}

@@ -3,11 +3,12 @@ package keeper
 import (
 	"fmt"
 
+	errors "cosmossdk.io/errors"
+	"github.com/cometbft/cometbft/libs/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/desmos-labs/desmos/v4/x/fees/types"
 )
@@ -63,7 +64,7 @@ func (k Keeper) CheckFees(ctx sdk.Context, msgs []sdk.Msg, fees sdk.Coins) error
 	for _, coin := range requiredFees {
 		amt := fees.AmountOf(coin.Denom)
 		if coin.Amount.GT(amt) {
-			return sdkerrors.Wrap(sdkerrors.ErrInsufficientFee,
+			return errors.Wrap(sdkerrors.ErrInsufficientFee,
 				fmt.Sprintf("expected at least %s, got %s", requiredFees, fees))
 		}
 	}

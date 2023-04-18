@@ -5,7 +5,12 @@ import (
 	"path/filepath"
 	"testing"
 
+	db "github.com/cometbft/cometbft-db"
+	"github.com/cometbft/cometbft/libs/log"
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
+
 	"github.com/cosmos/cosmos-sdk/store"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -18,12 +23,10 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-	ibchost "github.com/cosmos/ibc-go/v4/modules/core/24-host"
-	ibckeeper "github.com/cosmos/ibc-go/v4/modules/core/keeper"
+	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
+
+	ibckeeper "github.com/cosmos/ibc-go/v7/modules/core/keeper"
 	"github.com/stretchr/testify/suite"
-	"github.com/tendermint/tendermint/libs/log"
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
-	db "github.com/tendermint/tm-db"
 
 	"github.com/desmos-labs/desmos/v4/app"
 	"github.com/desmos-labs/desmos/v4/x/profiles/keeper"
@@ -158,15 +161,15 @@ type TestSuite struct {
 	cdc              codec.Codec
 	legacyAminoCdc   *codec.LegacyAmino
 	ctx              sdk.Context
-	storeKey         sdk.StoreKey
+	storeKey         storetypes.StoreKey
 	k                keeper.Keeper
 	ak               authkeeper.AccountKeeper
 	rk               relationshipskeeper.Keeper
 	sk               subspaceskeeper.Keeper
 	paramsKeeper     paramskeeper.Keeper
 	bankKeeper       bankkeeper.Keeper
-	stakingKeeper    stakingkeeper.Keeper
-	upgradeKeeper    upgradekeeper.Keeper
+	stakingKeeper    *stakingkeeper.Keeper
+	upgradeKeeper    *upgradekeeper.Keeper
 	IBCKeeper        *ibckeeper.Keeper
 	capabilityKeeper *capabilitykeeper.Keeper
 }
@@ -179,7 +182,7 @@ func (suite *TestSuite) SetupTest() {
 	// Define the store keys
 	keys := sdk.NewKVStoreKeys(
 		types.StoreKey, relationshipstypes.StoreKey, subspacestypes.StoreKey,
-		authtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, capabilitytypes.StoreKey,
+		authtypes.StoreKey, paramstypes.StoreKey, ibcexported.StoreKey, capabilitytypes.StoreKey,
 	)
 	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -190,13 +193,13 @@ func (suite *TestSuite) SetupTest() {
 	memDB := db.NewMemDB()
 	ms := store.NewCommitMultiStore(memDB)
 	for _, key := range keys {
-		ms.MountStoreWithDB(key, sdk.StoreTypeIAVL, memDB)
+		ms.MountStoreWithDB(key, storetypes.StoreTypeIAVL, memDB)
 	}
 	for _, tKey := range tKeys {
-		ms.MountStoreWithDB(tKey, sdk.StoreTypeTransient, memDB)
+		ms.MountStoreWithDB(tKey, storetypes.StoreTypeTransient, memDB)
 	}
 	for _, memKey := range memKeys {
-		ms.MountStoreWithDB(memKey, sdk.StoreTypeMemory, nil)
+		ms.MountStoreWithDB(memKey, storetypes.StoreTypeMemory, nil)
 	}
 
 	if err := ms.LoadLatestVersion(); err != nil {
@@ -210,15 +213,25 @@ func (suite *TestSuite) SetupTest() {
 		suite.cdc, suite.legacyAminoCdc, keys[paramstypes.StoreKey], tKeys[paramstypes.TStoreKey],
 	)
 
+	suite.bankKeeper = bankkeeper.NewBaseKeeper(
+		suite.cdc,
+		keys[banktypes.StoreKey],
+		suite.ak,
+		nil,
+		authtypes.NewModuleAddress("gov").String(),
+	)
+
 	suite.ak = authkeeper.NewAccountKeeper(
 		suite.cdc,
 		keys[authtypes.StoreKey],
-		suite.paramsKeeper.Subspace(authtypes.ModuleName),
 		authtypes.ProtoBaseAccount,
 		app.GetMaccPerms(),
+		"cosmos",
+		authtypes.NewModuleAddress("gov").String(),
 	)
 
 	suite.capabilityKeeper = capabilitykeeper.NewKeeper(suite.cdc, keys[capabilitytypes.StoreKey], memKeys[capabilitytypes.MemStoreKey])
+
 	homeDir := filepath.Join(suite.T().TempDir(), "x_upgrade_keeper_test")
 	suite.upgradeKeeper = upgradekeeper.NewKeeper(
 		nil,
@@ -226,14 +239,7 @@ func (suite *TestSuite) SetupTest() {
 		suite.cdc,
 		homeDir,
 		nil,
-	)
-
-	suite.bankKeeper = bankkeeper.NewBaseKeeper(
-		suite.cdc,
-		keys[banktypes.StoreKey],
-		suite.ak,
-		suite.paramsKeeper.Subspace(banktypes.ModuleName),
-		nil,
+		authtypes.NewModuleAddress("gov").String(),
 	)
 
 	suite.stakingKeeper = stakingkeeper.NewKeeper(
@@ -241,15 +247,15 @@ func (suite *TestSuite) SetupTest() {
 		keys[stakingtypes.StoreKey],
 		suite.ak,
 		suite.bankKeeper,
-		suite.paramsKeeper.Subspace(stakingtypes.ModuleName),
+		authtypes.NewModuleAddress("gov").String(),
 	)
 
-	scopedIBCKeeper := suite.capabilityKeeper.ScopeToModule(ibchost.ModuleName)
+	scopedIBCKeeper := suite.capabilityKeeper.ScopeToModule(ibcexported.ModuleName)
 	scopedProfilesKeeper := suite.capabilityKeeper.ScopeToModule(types.ModuleName)
 	suite.IBCKeeper = ibckeeper.NewKeeper(
 		suite.cdc,
-		keys[ibchost.StoreKey],
-		suite.paramsKeeper.Subspace(ibchost.ModuleName),
+		keys[ibcexported.StoreKey],
+		suite.paramsKeeper.Subspace(ibcexported.ModuleName),
 		suite.stakingKeeper,
 		suite.upgradeKeeper,
 		scopedIBCKeeper,

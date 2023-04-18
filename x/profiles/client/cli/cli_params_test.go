@@ -6,8 +6,8 @@ package cli_test
 import (
 	"fmt"
 
+	tmcli "github.com/cometbft/cometbft/libs/cli"
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
-	tmcli "github.com/tendermint/tendermint/libs/cli"
 
 	"github.com/desmos-labs/desmos/v4/x/profiles/client/cli"
 	"github.com/desmos-labs/desmos/v4/x/profiles/types"
@@ -46,7 +46,7 @@ func (s *IntegrationTestSuite) TestCmdQueryParams() {
 				s.Require().NoError(err)
 
 				var response types.QueryParamsResponse
-				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(tc.expectedOutput, response)
 			}
 		})

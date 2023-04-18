@@ -156,7 +156,7 @@ func ValidReactionsInvariant(k Keeper) sdk.Invariant {
 // formatOutputReactions concatenates the given reactions information into a string
 func formatOutputReactions(reactions []types.Reaction) (output string) {
 	for _, reaction := range reactions {
-		output += fmt.Sprintf("SuspaceID: %d, PostID: %d, ReactionID:%d\n",
+		output += fmt.Sprintf("SuspaceID: %d, PostID: %d, ReactionID: %d\n",
 			reaction.SubspaceID, reaction.PostID, reaction.ID)
 	}
 	return output

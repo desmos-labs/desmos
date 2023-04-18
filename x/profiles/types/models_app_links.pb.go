@@ -5,9 +5,9 @@ package types
 
 import (
 	fmt "fmt"
-	_ "github.com/gogo/protobuf/gogoproto"
-	proto "github.com/gogo/protobuf/proto"
-	github_com_gogo_protobuf_types "github.com/gogo/protobuf/types"
+	_ "github.com/cosmos/gogoproto/gogoproto"
+	proto "github.com/cosmos/gogoproto/proto"
+	github_com_cosmos_gogoproto_types "github.com/cosmos/gogoproto/types"
 	_ "google.golang.org/protobuf/types/known/timestamppb"
 	io "io"
 	math "math"
@@ -271,6 +271,7 @@ type Result struct {
 	// failure result
 	//
 	// Types that are valid to be assigned to Sum:
+	//
 	//	*Result_Success_
 	//	*Result_Failed_
 	Sum isResult_Sum `protobuf_oneof:"sum"`
@@ -796,7 +797,7 @@ func (m *ApplicationLink) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	n1, err1 := github_com_gogo_protobuf_types.StdTimeMarshalTo(m.ExpirationTime, dAtA[i-github_com_gogo_protobuf_types.SizeOfStdTime(m.ExpirationTime):])
+	n1, err1 := github_com_cosmos_gogoproto_types.StdTimeMarshalTo(m.ExpirationTime, dAtA[i-github_com_cosmos_gogoproto_types.SizeOfStdTime(m.ExpirationTime):])
 	if err1 != nil {
 		return 0, err1
 	}
@@ -804,7 +805,7 @@ func (m *ApplicationLink) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i = encodeVarintModelsAppLinks(dAtA, i, uint64(n1))
 	i--
 	dAtA[i] = 0x3a
-	n2, err2 := github_com_gogo_protobuf_types.StdTimeMarshalTo(m.CreationTime, dAtA[i-github_com_gogo_protobuf_types.SizeOfStdTime(m.CreationTime):])
+	n2, err2 := github_com_cosmos_gogoproto_types.StdTimeMarshalTo(m.CreationTime, dAtA[i-github_com_cosmos_gogoproto_types.SizeOfStdTime(m.CreationTime):])
 	if err2 != nil {
 		return 0, err2
 	}
@@ -1156,9 +1157,9 @@ func (m *ApplicationLink) Size() (n int) {
 		l = m.Result.Size()
 		n += 1 + l + sovModelsAppLinks(uint64(l))
 	}
-	l = github_com_gogo_protobuf_types.SizeOfStdTime(m.CreationTime)
+	l = github_com_cosmos_gogoproto_types.SizeOfStdTime(m.CreationTime)
 	n += 1 + l + sovModelsAppLinks(uint64(l))
-	l = github_com_gogo_protobuf_types.SizeOfStdTime(m.ExpirationTime)
+	l = github_com_cosmos_gogoproto_types.SizeOfStdTime(m.ExpirationTime)
 	n += 1 + l + sovModelsAppLinks(uint64(l))
 	return n
 }
@@ -1501,7 +1502,7 @@ func (m *ApplicationLink) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if err := github_com_gogo_protobuf_types.StdTimeUnmarshal(&m.CreationTime, dAtA[iNdEx:postIndex]); err != nil {
+			if err := github_com_cosmos_gogoproto_types.StdTimeUnmarshal(&m.CreationTime, dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -1534,7 +1535,7 @@ func (m *ApplicationLink) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if err := github_com_gogo_protobuf_types.StdTimeUnmarshal(&m.ExpirationTime, dAtA[iNdEx:postIndex]); err != nil {
+			if err := github_com_cosmos_gogoproto_types.StdTimeUnmarshal(&m.ExpirationTime, dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex

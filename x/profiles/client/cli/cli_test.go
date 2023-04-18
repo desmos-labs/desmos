@@ -9,6 +9,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/cosmos/cosmos-sdk/codec"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 
 	"github.com/desmos-labs/desmos/v4/app"
@@ -65,7 +66,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	s.Require().NoError(cfg.Codec.UnmarshalJSON(genesisState[authtypes.ModuleName], &authData))
 
 	// Generate test keys
-	s.setupKeyBase()
+	s.setupKeyBase(cfg.Codec)
 
 	// Get keys
 	srcKey, err := s.keyBase.Key(srcKeyName)
@@ -94,14 +95,23 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	authData.Accounts = append(authData.Accounts, accountAny)
 
 	// Set accounts of keys inside the auth genesis data
-	srcBaseAcc := authtypes.NewBaseAccountWithAddress(srcKey.GetAddress())
+	srcAddr, err := srcKey.GetAddress()
+	s.Require().NoError(err)
+
+	srcBaseAcc := authtypes.NewBaseAccountWithAddress(srcAddr)
 	srcAccountAny, err := codectypes.NewAnyWithValue(srcBaseAcc)
 	s.Require().NoError(err)
-	authData.Accounts = append(authData.Accounts, srcAccountAny)
-	destBaseAcc := authtypes.NewBaseAccountWithAddress(destKey.GetAddress())
+
+	destAddr, err := destKey.GetAddress()
 	s.Require().NoError(err)
+
+	authData.Accounts = append(authData.Accounts, srcAccountAny)
+	destBaseAcc := authtypes.NewBaseAccountWithAddress(destAddr)
+	s.Require().NoError(err)
+
 	destAccountAny, err := codectypes.NewAnyWithValue(destBaseAcc)
 	s.Require().NoError(err)
+
 	authData.Accounts = append(authData.Accounts, destAccountAny)
 
 	authDataBz, err := cfg.Codec.MarshalJSON(&authData)
@@ -160,13 +170,14 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	cfg.GenesisState = genesisState
 
 	s.cfg = cfg
-	s.network = network.New(s.T(), cfg)
+	s.network, err = network.New(s.T(), s.T().TempDir(), cfg)
+	s.Require().NoError(err)
 	_, err = s.network.WaitForHeight(1)
 	s.Require().NoError(err)
 }
 
-func (s *IntegrationTestSuite) setupKeyBase() {
-	keyBase := keyring.NewInMemory()
+func (s *IntegrationTestSuite) setupKeyBase(cdc codec.Codec) {
+	keyBase := keyring.NewInMemory(cdc)
 	algo := hd.Secp256k1
 	hdPath := sdk.GetConfig().GetFullFundraiserPath()
 
@@ -212,7 +223,7 @@ func (s *IntegrationTestSuite) writeChainLinkJSONFile(filePath string) {
 		types.NewChainConfig("cosmos"),
 	)
 
-	params := app.MakeTestEncodingConfig()
+	params := app.MakeEncodingConfig()
 	jsonBz := params.Marshaler.MustMarshalJSON(&jsonData)
 
 	// Write the JSON to a temp file

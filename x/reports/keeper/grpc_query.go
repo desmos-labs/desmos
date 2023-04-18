@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 
+	errors "cosmossdk.io/errors"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -44,7 +45,7 @@ func getReportsStorePrefix(request *types.QueryReportsRequest) ([]byte, error) {
 // Reports implements the QueryReports gRPC method
 func (k Keeper) Reports(ctx context.Context, request *types.QueryReportsRequest) (*types.QueryReportsResponse, error) {
 	if request.SubspaceId == 0 {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id")
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id")
 	}
 
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
@@ -97,17 +98,17 @@ func (k Keeper) Reports(ctx context.Context, request *types.QueryReportsRequest)
 // Report implements the QueryReport gRPC method
 func (k Keeper) Report(ctx context.Context, request *types.QueryReportRequest) (*types.QueryReportResponse, error) {
 	if request.SubspaceId == 0 {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id")
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id")
 	}
 
 	if request.ReportId == 0 {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid report id")
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid report id")
 	}
 
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	report, found := k.GetReport(sdkCtx, request.SubspaceId, request.ReportId)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrNotFound, "report with id %d not found inside subspace %d", request.ReportId, request.SubspaceId)
+		return nil, errors.Wrapf(sdkerrors.ErrNotFound, "report with id %d not found inside subspace %d", request.ReportId, request.SubspaceId)
 	}
 
 	return &types.QueryReportResponse{Report: report}, nil
@@ -116,7 +117,7 @@ func (k Keeper) Report(ctx context.Context, request *types.QueryReportRequest) (
 // Reasons implements the QueryReasons gRPC method
 func (k Keeper) Reasons(ctx context.Context, request *types.QueryReasonsRequest) (*types.QueryReasonsResponse, error) {
 	if request.SubspaceId == 0 {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id")
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id")
 	}
 
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
@@ -147,17 +148,17 @@ func (k Keeper) Reasons(ctx context.Context, request *types.QueryReasonsRequest)
 // Reason implements the QueryReason gRPC method
 func (k Keeper) Reason(ctx context.Context, request *types.QueryReasonRequest) (*types.QueryReasonResponse, error) {
 	if request.SubspaceId == 0 {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id")
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id")
 	}
 
 	if request.ReasonId == 0 {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid reason id")
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid reason id")
 	}
 
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	reason, found := k.GetReason(sdkCtx, request.SubspaceId, request.ReasonId)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrNotFound, "reason with id %d not found inside subspace %d", request.ReasonId, request.SubspaceId)
+		return nil, errors.Wrapf(sdkerrors.ErrNotFound, "reason with id %d not found inside subspace %d", request.ReasonId, request.SubspaceId)
 	}
 
 	return &types.QueryReasonResponse{Reason: reason}, nil

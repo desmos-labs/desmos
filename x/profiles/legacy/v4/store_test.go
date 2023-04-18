@@ -11,19 +11,19 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/types/tx"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
-	"github.com/cosmos/cosmos-sdk/x/auth/legacy/legacytx"
+	"github.com/cosmos/cosmos-sdk/x/auth/migrations/legacytx"
 
 	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
 	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
 
+	dbm "github.com/cometbft/cometbft-db"
+	"github.com/cometbft/cometbft/libs/log"
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/cosmos/cosmos-sdk/store"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
-	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	"github.com/tendermint/tendermint/libs/log"
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
-	dbm "github.com/tendermint/tm-db"
 
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 
@@ -35,18 +35,18 @@ import (
 )
 
 func buildContext(
-	keys map[string]*sdk.KVStoreKey, tKeys map[string]*sdk.TransientStoreKey, memKeys map[string]*sdk.MemoryStoreKey,
+	keys map[string]*storetypes.KVStoreKey, tKeys map[string]*storetypes.TransientStoreKey, memKeys map[string]*storetypes.MemoryStoreKey,
 ) sdk.Context {
 	db := dbm.NewMemDB()
 	cms := store.NewCommitMultiStore(db)
 	for _, key := range keys {
-		cms.MountStoreWithDB(key, sdk.StoreTypeIAVL, db)
+		cms.MountStoreWithDB(key, storetypes.StoreTypeIAVL, db)
 	}
 	for _, tKey := range tKeys {
-		cms.MountStoreWithDB(tKey, sdk.StoreTypeTransient, db)
+		cms.MountStoreWithDB(tKey, storetypes.StoreTypeTransient, db)
 	}
 	for _, memKey := range memKeys {
-		cms.MountStoreWithDB(memKey, sdk.StoreTypeMemory, nil)
+		cms.MountStoreWithDB(memKey, storetypes.StoreTypeMemory, nil)
 	}
 
 	err := cms.LoadLatestVersion()
@@ -66,18 +66,13 @@ func TestMigrateStore(t *testing.T) {
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
 	// Build the x/auth keeper
-	paramsKeeper := paramskeeper.NewKeeper(
-		cdc,
-		legacyAmino,
-		keys[paramstypes.StoreKey],
-		tKeys[paramstypes.TStoreKey],
-	)
 	authKeeper := authkeeper.NewAccountKeeper(
 		cdc,
 		keys[authtypes.StoreKey],
-		paramsKeeper.Subspace(authtypes.ModuleName),
 		authtypes.ProtoBaseAccount,
 		app.GetMaccPerms(),
+		"cosmos",
+		authtypes.NewModuleAddress("gov").String(),
 	)
 
 	// Build common data

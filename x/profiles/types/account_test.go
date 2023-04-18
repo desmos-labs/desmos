@@ -305,7 +305,7 @@ func TestProfile_Validate(t *testing.T) {
 
 func TestProfileSerialization(t *testing.T) {
 
-	cdc := app.MakeTestEncodingConfig().Marshaler
+	cdc := app.MakeEncodingConfig().Marshaler
 
 	// Create a profile
 	protoAccount := &authtypes.BaseAccount{

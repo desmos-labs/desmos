@@ -2,6 +2,7 @@ package v2
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
@@ -22,7 +23,7 @@ type PostsKeeper interface {
 // 1. setting next registered reaction id
 // 2. setting next reaction id for existing posts
 // 3. setting the reaction params for existing subspaces
-func MigrateStore(ctx sdk.Context, storeKey sdk.StoreKey, sk SubspacesKeeper, pk PostsKeeper, cdc codec.BinaryCodec) error {
+func MigrateStore(ctx sdk.Context, storeKey storetypes.StoreKey, sk SubspacesKeeper, pk PostsKeeper, cdc codec.BinaryCodec) error {
 	store := ctx.KVStore(storeKey)
 
 	// Set the next registered reaction id for all the subspaces

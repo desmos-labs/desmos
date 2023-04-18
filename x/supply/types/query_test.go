@@ -3,6 +3,7 @@ package types_test
 import (
 	"testing"
 
+	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
@@ -13,7 +14,7 @@ func Test_NewDividerFromRawInt(t *testing.T) {
 	testCases := []struct {
 		name        string
 		rawDivider  uint64
-		expectedInt sdk.Int
+		expectedInt math.Int
 	}{
 		{
 			name:        "raw divider equal to zero return 1",

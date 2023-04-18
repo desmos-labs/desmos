@@ -7,34 +7,35 @@ import (
 	"testing"
 	"time"
 
+	abci "github.com/cometbft/cometbft/abci/types"
+	"github.com/cometbft/cometbft/crypto/tmhash"
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
+	tmprotoversion "github.com/cometbft/cometbft/proto/tendermint/version"
+	tmtypes "github.com/cometbft/cometbft/types"
+	tmversion "github.com/cometbft/cometbft/version"
 	"github.com/stretchr/testify/require"
-	abci "github.com/tendermint/tendermint/abci/types"
-	"github.com/tendermint/tendermint/crypto/tmhash"
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
-	tmprotoversion "github.com/tendermint/tendermint/proto/tendermint/version"
-	tmtypes "github.com/tendermint/tendermint/types"
-	tmversion "github.com/tendermint/tendermint/version"
 
+	errors "cosmossdk.io/errors"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
+	simtestutil "github.com/cosmos/cosmos-sdk/testutil/sims"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
-	"github.com/cosmos/cosmos-sdk/x/staking/teststaking"
+	stakingtestutil "github.com/cosmos/cosmos-sdk/x/staking/testutil"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	clienttypes "github.com/cosmos/ibc-go/v4/modules/core/02-client/types"
-	connectiontypes "github.com/cosmos/ibc-go/v4/modules/core/03-connection/types"
-	channeltypes "github.com/cosmos/ibc-go/v4/modules/core/04-channel/types"
-	commitmenttypes "github.com/cosmos/ibc-go/v4/modules/core/23-commitment/types"
-	host "github.com/cosmos/ibc-go/v4/modules/core/24-host"
-	"github.com/cosmos/ibc-go/v4/modules/core/exported"
-	"github.com/cosmos/ibc-go/v4/modules/core/types"
-	ibctmtypes "github.com/cosmos/ibc-go/v4/modules/light-clients/07-tendermint/types"
-	"github.com/cosmos/ibc-go/v4/testing/mock"
+	clienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
+	connectiontypes "github.com/cosmos/ibc-go/v7/modules/core/03-connection/types"
+	channeltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
+	commitmenttypes "github.com/cosmos/ibc-go/v7/modules/core/23-commitment/types"
+	host "github.com/cosmos/ibc-go/v7/modules/core/24-host"
+	"github.com/cosmos/ibc-go/v7/modules/core/exported"
+	"github.com/cosmos/ibc-go/v7/modules/core/types"
+	ibctmtypes "github.com/cosmos/ibc-go/v7/modules/light-clients/07-tendermint"
+	"github.com/cosmos/ibc-go/v7/testing/mock"
 
 	simapp "github.com/desmos-labs/desmos/v4/app"
 
@@ -110,7 +111,7 @@ func NewTestChain(t *testing.T, chainID string) *TestChain {
 		Coins:   sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(100000000000000))),
 	}
 
-	app := SetupWithGenesisValSet(t, valSet, []authtypes.GenesisAccount{acc}, balance)
+	app := SetupWithGenesisValSet(t, valSet, []authtypes.GenesisAccount{acc}, chainID, balance)
 
 	// create current header and call begin block
 	header := tmproto.Header{
@@ -119,8 +120,6 @@ func NewTestChain(t *testing.T, chainID string) *TestChain {
 		Time:    globalStartTime,
 	}
 
-	txConfig := simapp.MakeTestEncodingConfig().TxConfig
-
 	// create an account to send transactions from
 	chain := &TestChain{
 		t:             t,
@@ -128,7 +127,7 @@ func NewTestChain(t *testing.T, chainID string) *TestChain {
 		App:           app,
 		CurrentHeader: header,
 		QueryServer:   app.IBCKeeper,
-		TxConfig:      txConfig,
+		TxConfig:      app.TxConfig(),
 		Codec:         app.AppCodec(),
 		Vals:          valSet,
 		Signers:       signers,
@@ -152,7 +151,7 @@ func (chain *TestChain) GetContext() sdk.Context {
 // for the query and the height at which the proof will succeed on a tendermint verifier.
 func (chain *TestChain) QueryProof(key []byte) ([]byte, clienttypes.Height) {
 	res := chain.App.Query(abci.RequestQuery{
-		Path:   fmt.Sprintf("store/%s/key", host.StoreKey),
+		Path:   fmt.Sprintf("store/%s/key", exported.StoreKey),
 		Height: chain.App.LastBlockHeight() - 1,
 		Data:   key,
 		Prove:  true,
@@ -256,7 +255,7 @@ func (chain *TestChain) sendMsgs(msgs ...sdk.Msg) error {
 // number and updates the TestChain's headers. It returns the result and error if one
 // occurred.
 func (chain *TestChain) SendMsgs(msgs ...sdk.Msg) (*sdk.Result, error) {
-	_, r, err := SignCheckDeliver(
+	_, r, err := simtestutil.SignCheckDeliver(
 		chain.t,
 		chain.TxConfig,
 		chain.App.BaseApp,
@@ -305,7 +304,7 @@ func (chain *TestChain) GetValsAtHeight(height int64) (*tmtypes.ValidatorSet, bo
 
 	valSet := stakingtypes.Validators(histInfo.Valset)
 
-	tmValidators, err := teststaking.ToTmValidators(valSet, sdk.DefaultPowerReduction)
+	tmValidators, err := stakingtestutil.ToTmValidators(valSet, sdk.DefaultPowerReduction)
 	if err != nil {
 		panic(err)
 	}
@@ -425,7 +424,7 @@ func (chain *TestChain) ConstructMsgCreateClient(counterparty *TestChain, client
 		height := counterparty.LastHeader.GetHeight().(clienttypes.Height)
 		clientState = ibctmtypes.NewClientState(
 			counterparty.ChainID, DefaultTrustLevel, TrustingPeriod, UnbondingPeriod, MaxClockDrift,
-			height, commitmenttypes.GetSDKSpecs(), UpgradePath, false, false,
+			height, commitmenttypes.GetSDKSpecs(), UpgradePath,
 		)
 		consensusState = counterparty.LastHeader.ConsensusState()
 	default:
@@ -485,7 +484,7 @@ func (chain *TestChain) ConstructUpdateTMClientHeader(counterparty *TestChain, c
 		// NextValidatorsHash
 		tmTrustedVals, ok = counterparty.GetValsAtHeight(int64(trustedHeight.RevisionHeight + 1))
 		if !ok {
-			return nil, sdkerrors.Wrapf(ibctmtypes.ErrInvalidHeaderHeight, "could not retrieve trusted validators at trustedHeight: %d", trustedHeight)
+			return nil, errors.Wrapf(ibctmtypes.ErrInvalidHeaderHeight, "could not retrieve trusted validators at trustedHeight: %d", trustedHeight)
 		}
 	}
 	// inject trusted fields into last header

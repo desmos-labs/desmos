@@ -1,16 +1,17 @@
 package keeper
 
 import (
+	"github.com/cometbft/cometbft/libs/log"
 	"github.com/cosmos/cosmos-sdk/codec"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/desmos-labs/desmos/v4/x/reports/types"
 )
 
 type Keeper struct {
-	storeKey       sdk.StoreKey
+	storeKey       storetypes.StoreKey
 	cdc            codec.BinaryCodec
 	paramsSubspace paramstypes.Subspace
 	hooks          types.ReportsHooks
@@ -23,7 +24,7 @@ type Keeper struct {
 
 // NewKeeper creates a new instance of the Posts Keeper.
 func NewKeeper(
-	cdc codec.BinaryCodec, storeKey sdk.StoreKey, paramsSubspace paramstypes.Subspace,
+	cdc codec.BinaryCodec, storeKey storetypes.StoreKey, paramsSubspace paramstypes.Subspace,
 	ak types.ProfilesKeeper, sk types.SubspacesKeeper, rk types.RelationshipsKeeper, pk types.PostsKeeper,
 ) Keeper {
 	if !paramsSubspace.HasKeyTable() {

@@ -3,7 +3,6 @@ package desmos.profiles.v3.client;
 
 import "gogoproto/gogo.proto";
 import "google/protobuf/any.proto";
-import "google/protobuf/timestamp.proto";
 import "cosmos_proto/cosmos.proto";
 import "desmos/profiles/v3/models_chain_links.proto";
 
@@ -19,7 +18,7 @@ message ChainLinkJSON {
   // with the Desmos profile
   google.protobuf.Any address = 1 [
     (gogoproto.moretags) = "yaml:\"address\"",
-    (cosmos_proto.accepts_interface) = "AddressData"
+    (cosmos_proto.accepts_interface) = "desmos.profiles.v3.AddressData"
   ];
 
   // Proof contains the ownership proof of the external chain address

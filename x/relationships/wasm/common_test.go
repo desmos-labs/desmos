@@ -4,17 +4,18 @@ import (
 	"encoding/json"
 	"testing"
 
+	db "github.com/cometbft/cometbft-db"
+	"github.com/cometbft/cometbft/libs/log"
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/cosmos/cosmos-sdk/store"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	ibchost "github.com/cosmos/ibc-go/v4/modules/core/24-host"
+	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
 	"github.com/stretchr/testify/suite"
-	"github.com/tendermint/tendermint/libs/log"
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
-	db "github.com/tendermint/tm-db"
 
 	"github.com/desmos-labs/desmos/v4/app"
 	profileskeeper "github.com/desmos-labs/desmos/v4/x/profiles/keeper"
@@ -75,7 +76,7 @@ type TestSuite struct {
 	cdc            codec.Codec
 	legacyAminoCdc *codec.LegacyAmino
 	ctx            sdk.Context
-	storeKey       sdk.StoreKey
+	storeKey       storetypes.StoreKey
 	k              keeper.Keeper
 	pk             profileskeeper.Keeper
 	sk             subspaceskeeper.Keeper
@@ -84,7 +85,7 @@ type TestSuite struct {
 func (suite *TestSuite) SetupTest() {
 	// Define the store keys
 	keys := sdk.NewKVStoreKeys(
-		authtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, capabilitytypes.StoreKey,
+		authtypes.StoreKey, paramstypes.StoreKey, ibcexported.StoreKey, capabilitytypes.StoreKey,
 
 		types.StoreKey, profilestypes.StoreKey, subspacestypes.StoreKey,
 	)
@@ -97,13 +98,13 @@ func (suite *TestSuite) SetupTest() {
 	memDB := db.NewMemDB()
 	ms := store.NewCommitMultiStore(memDB)
 	for _, key := range keys {
-		ms.MountStoreWithDB(key, sdk.StoreTypeIAVL, memDB)
+		ms.MountStoreWithDB(key, storetypes.StoreTypeIAVL, memDB)
 	}
 	for _, tKey := range tKeys {
-		ms.MountStoreWithDB(tKey, sdk.StoreTypeTransient, memDB)
+		ms.MountStoreWithDB(tKey, storetypes.StoreTypeTransient, memDB)
 	}
 	for _, memKey := range memKeys {
-		ms.MountStoreWithDB(memKey, sdk.StoreTypeMemory, nil)
+		ms.MountStoreWithDB(memKey, storetypes.StoreTypeMemory, nil)
 	}
 
 	if err := ms.LoadLatestVersion(); err != nil {
@@ -119,9 +120,10 @@ func (suite *TestSuite) SetupTest() {
 	authKeeper := authkeeper.NewAccountKeeper(
 		suite.cdc,
 		keys[authtypes.StoreKey],
-		paramsKeeper.Subspace(authtypes.ModuleName),
 		authtypes.ProtoBaseAccount,
 		app.GetMaccPerms(),
+		"cosmos",
+		authtypes.NewModuleAddress("gov").String(),
 	)
 
 	suite.pk = profileskeeper.NewKeeper(

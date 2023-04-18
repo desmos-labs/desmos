@@ -3,6 +3,7 @@ package commons
 import (
 	"encoding/json"
 
+	errors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
@@ -13,7 +14,7 @@ import (
 func HandleWasmMsg(cdc codec.Codec, data json.RawMessage, msg sdk.Msg) ([]sdk.Msg, error) {
 	err := cdc.UnmarshalJSON(data, msg)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 	return []sdk.Msg{msg}, msg.ValidateBasic()
 }

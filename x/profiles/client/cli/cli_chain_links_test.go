@@ -8,12 +8,12 @@ import (
 	"path"
 	"time"
 
+	tmcli "github.com/cometbft/cometbft/libs/cli"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/golang/protobuf/proto"
-	tmcli "github.com/tendermint/tendermint/libs/cli"
 
 	"github.com/desmos-labs/desmos/v4/x/profiles/client/cli"
 	"github.com/desmos-labs/desmos/v4/x/profiles/types"
@@ -97,7 +97,7 @@ func (s *IntegrationTestSuite) TestCmdQueryChainLinks() {
 				s.Require().NoError(err)
 
 				var response types.QueryChainLinksResponse
-				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(uc.expectedOutput.Pagination, response.Pagination)
 				for i := range uc.expectedOutput.Links {
 					s.Require().True(uc.expectedOutput.Links[i].Equal(response.Links[i]))
@@ -192,7 +192,7 @@ func (s *IntegrationTestSuite) TestCmdQueryChainLinkOwners() {
 				s.Require().NoError(err)
 
 				var response types.QueryChainLinkOwnersResponse
-				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(uc.expectedOutput.Pagination, response.Pagination)
 				s.Require().Equal(uc.expectedOutput.Owners, response.Owners)
 			}
@@ -278,7 +278,7 @@ func (s *IntegrationTestSuite) TestCmdQueryDefaultExternalAddresses() {
 				s.Require().NoError(err)
 
 				var response types.QueryChainLinksResponse
-				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(uc.expectedOutput.Pagination, response.Pagination)
 				for i := range uc.expectedOutput.Links {
 					s.Require().True(uc.expectedOutput.Links[i].Equal(response.Links[i]))
@@ -325,7 +325,7 @@ func (s *IntegrationTestSuite) TestCmdLinkChainAccount() {
 				filePath,
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, dstKeyName),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 			},
 			shouldErr: false,
@@ -355,6 +355,10 @@ func (s *IntegrationTestSuite) TestCmdUnlinkChainAccount() {
 	cliCtx.Keyring = s.keyBase
 	src, err := s.keyBase.Key("src")
 	s.Require().NoError(err)
+
+	srcAddr, err := src.GetAddress()
+	s.Require().NoError(err)
+
 	testCases := []struct {
 		name      string
 		args      []string
@@ -365,7 +369,7 @@ func (s *IntegrationTestSuite) TestCmdUnlinkChainAccount() {
 			name: "empty chain name returns error",
 			args: []string{
 				"",
-				src.GetAddress().String(),
+				srcAddr.String(),
 			},
 			shouldErr: true,
 			respType:  &sdk.TxResponse{},
@@ -383,10 +387,10 @@ func (s *IntegrationTestSuite) TestCmdUnlinkChainAccount() {
 			name: "valid request works properly",
 			args: []string{
 				"cosmos",
-				src.GetAddress().String(),
+				srcAddr.String(),
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, dstKeyName),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 			},
 			shouldErr: false,
@@ -416,6 +420,10 @@ func (s *IntegrationTestSuite) TestCmdSetDefaultExternalAddress() {
 	cliCtx.Keyring = s.keyBase
 	src, err := s.keyBase.Key("src")
 	s.Require().NoError(err)
+
+	srcAddr, err := src.GetAddress()
+	s.Require().NoError(err)
+
 	testCases := []struct {
 		name      string
 		args      []string
@@ -426,7 +434,7 @@ func (s *IntegrationTestSuite) TestCmdSetDefaultExternalAddress() {
 			name: "empty chain name returns error",
 			args: []string{
 				"",
-				src.GetAddress().String(),
+				srcAddr.String(),
 			},
 			shouldErr: true,
 			respType:  &sdk.TxResponse{},
@@ -444,10 +452,10 @@ func (s *IntegrationTestSuite) TestCmdSetDefaultExternalAddress() {
 			name: "valid request works properly",
 			args: []string{
 				"cosmos",
-				src.GetAddress().String(),
+				srcAddr.String(),
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, dstKeyName),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 			},
 			shouldErr: false,

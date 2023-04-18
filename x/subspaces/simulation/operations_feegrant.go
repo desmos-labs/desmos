@@ -4,7 +4,6 @@ import (
 	"math/rand"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
@@ -30,18 +29,14 @@ func SimulateMsgGrantAllowance(
 		// Get the data
 		subspaceID, granter, grantee, signer, skip := randomGrantAllowanceFields(r, ctx, accs, k, ak)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgGrantAllowance"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgGrantAllowance", "skip"), nil, nil
 		}
 
 		// Build the message
 		msg := types.NewMsgGrantAllowance(subspaceID, granter, grantee, &feegrant.BasicAllowance{})
 
 		// Send the message
-		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgGrantAllowance"), nil, err
-		}
-		return simtypes.NewOperationMsg(msg, true, "MsgGrantAllowance", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 	}
 }
 
@@ -77,10 +72,15 @@ func randomGrantAllowanceFields(
 			skip = true
 			return
 		}
+		if granteeAddr == granter {
+			// Skip because granting to itself is not allowed
+			skip = true
+			return
+		}
 
 		grantee = types.NewUserGrantee(granteeAddr)
 	} else {
-		groups := k.GetAllUserGroups(ctx)
+		groups := k.GetSubspaceUserGroups(ctx, subspaceID)
 		if len(groups) == 0 {
 			// Skip because there are no groups
 			skip = true
@@ -89,7 +89,7 @@ func randomGrantAllowanceFields(
 
 		group := RandomGroup(r, groups)
 		if group.ID == 0 {
-			// Skip because we cannot grant the group with ID 0
+			// Skip because we cannot grant the default group
 			skip = true
 			return
 		}
@@ -128,18 +128,14 @@ func SimulateMsgRevokeAllowance(
 		// Get the data
 		subspaceID, granter, grantee, signer, skip := randomRevokeAllowanceFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRevokeAllowance"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgRevokeAllowance", "skip"), nil, nil
 		}
 
 		// Build the message
 		msg := types.NewMsgRevokeAllowance(subspaceID, granter, grantee)
 
 		// Send the message
-		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRevokeAllowance"), nil, err
-		}
-		return simtypes.NewOperationMsg(msg, true, "MsgRevokeAllowance", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 	}
 }
 

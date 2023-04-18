@@ -9,8 +9,6 @@ import (
 
 	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
 
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
-
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -32,17 +30,12 @@ func SimulateMsgRequestDTagTransfer(
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 		sender, receiver, skip := randomDTagRequestTransferFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgRequestDTagTransfer", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgRequestDTagTransfer(sender.Address.String(), receiver.GetAddress().String())
 
-		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{sender.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRequestDTagTransfer"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, sender)
 	}
 }
 
@@ -95,16 +88,11 @@ func SimulateMsgAcceptDTagTransfer(
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 		acc, request, dTag, skip := randomDTagAcceptRequestTransferFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgAcceptDTagTransferRequest", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgAcceptDTagTransferRequest(dTag, request.Sender, request.Receiver)
-		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{acc.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgAcceptDTagTransfer"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, acc)
 	}
 }
 
@@ -146,16 +134,11 @@ func SimulateMsgRefuseDTagTransfer(
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 		sender, receiver, skip := randomRefuseDTagTransferFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgRefuseDTagTransferRequest", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgRefuseDTagTransferRequest(sender.Address.String(), receiver.Address.String())
-		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{receiver.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRefuseDTagTransfer"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, receiver)
 	}
 }
 
@@ -205,7 +188,7 @@ func SimulateMsgCancelDTagTransfer(
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 		sender, receiver, skip := randomCancelDTagTransferFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgCancelDTagTransfer", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgCancelDTagTransferRequest(
@@ -213,12 +196,7 @@ func SimulateMsgCancelDTagTransfer(
 			receiver.Address.String(),
 		)
 
-		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{sender.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "MsgCancelDTagTransfer", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, sender)
 	}
 }
 

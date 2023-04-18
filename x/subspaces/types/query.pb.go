@@ -7,9 +7,9 @@ import (
 	context "context"
 	fmt "fmt"
 	query "github.com/cosmos/cosmos-sdk/types/query"
-	_ "github.com/gogo/protobuf/gogoproto"
-	grpc1 "github.com/gogo/protobuf/grpc"
-	proto "github.com/gogo/protobuf/proto"
+	_ "github.com/cosmos/gogoproto/gogoproto"
+	grpc1 "github.com/cosmos/gogoproto/grpc"
+	proto "github.com/cosmos/gogoproto/proto"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
@@ -869,6 +869,7 @@ type PermissionDetail struct {
 	// group permission detail
 	//
 	// Types that are valid to be assigned to Sum:
+	//
 	//	*PermissionDetail_User_
 	//	*PermissionDetail_Group_
 	Sum isPermissionDetail_Sum `protobuf_oneof:"sum"`

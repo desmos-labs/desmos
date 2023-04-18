@@ -3,6 +3,7 @@ package cosmwasm
 import (
 	"encoding/json"
 
+	errors "cosmossdk.io/errors"
 	"github.com/CosmWasm/wasmd/x/wasm"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -51,7 +52,7 @@ func (router ParserRouter) ParseCustom(contractAddr sdk.AccAddress, data json.Ra
 	var customMsg CustomMsg
 	err := json.Unmarshal(data, &customMsg)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 	// get route and msg from data
 	var route string
@@ -80,5 +81,5 @@ func (router ParserRouter) ParseCustom(contractAddr sdk.AccAddress, data json.Ra
 	if parser, ok := router.Parsers[route]; ok {
 		return parser.ParseCustomMsgs(contractAddr, msg)
 	}
-	return nil, sdkerrors.Wrap(wasm.ErrInvalidMsg, "unimplemented route")
+	return nil, errors.Wrap(wasm.ErrInvalidMsg, "unimplemented route")
 }

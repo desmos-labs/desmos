@@ -3,6 +3,7 @@ package types
 import (
 	"fmt"
 
+	errors "cosmossdk.io/errors"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -34,7 +35,7 @@ func (t *UserGrantee) isGrantee() {}
 func (t *UserGrantee) Validate() error {
 	_, err := sdk.AccAddressFromBech32(t.User)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid grantee address")
+		return errors.Wrap(sdkerrors.ErrInvalidAddress, "invalid grantee address")
 	}
 
 	return nil
@@ -66,7 +67,7 @@ func (t *GroupGrantee) Validate() error {
 func NewGrant(subspaceID uint64, granter string, grantee Grantee, feeAllowance feegranttypes.FeeAllowanceI) Grant {
 	allowanceProto, isProto := feeAllowance.(proto.Message)
 	if !isProto {
-		panic(sdkerrors.Wrapf(sdkerrors.ErrPackAny, "cannot proto marshal %T", feeAllowance))
+		panic(errors.Wrapf(sdkerrors.ErrPackAny, "cannot proto marshal %T", feeAllowance))
 	}
 
 	allowanceAny, err := codectypes.NewAnyWithValue(allowanceProto)
@@ -95,7 +96,7 @@ func (g Grant) Validate() error {
 
 	_, err := sdk.AccAddressFromBech32(g.Granter)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid granter address")
+		return errors.Wrap(sdkerrors.ErrInvalidAddress, "invalid granter address")
 	}
 
 	grantee, isGrantee := g.Grantee.GetCachedValue().(Grantee)
@@ -110,7 +111,7 @@ func (g Grant) Validate() error {
 
 	if u, isUserGrantee := grantee.(*UserGrantee); isUserGrantee {
 		if u.User == g.Granter {
-			return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "cannot self-grant fee authorization")
+			return errors.Wrap(sdkerrors.ErrInvalidAddress, "cannot self-grant fee authorization")
 		}
 	}
 

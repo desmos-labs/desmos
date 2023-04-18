@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	authsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
@@ -29,7 +30,7 @@ func NewAccountChainLinkJSONBuilder(getter getter.MultiSignatureAccountReference
 }
 
 // BuildChainLinkJSON implements ChainLinkJSONBuilder
-func (b *AccountChainLinkJSONBuilder) BuildChainLinkJSON(chain types.Chain) (utils.ChainLinkJSON, error) {
+func (b *AccountChainLinkJSONBuilder) BuildChainLinkJSON(_ codec.Codec, chain types.Chain) (utils.ChainLinkJSON, error) {
 	txFilePath, err := b.getter.GetMultiSignedTxFilePath()
 	if err != nil {
 		return utils.ChainLinkJSON{}, err
@@ -40,7 +41,7 @@ func (b *AccountChainLinkJSONBuilder) BuildChainLinkJSON(chain types.Chain) (uti
 		return utils.ChainLinkJSON{}, err
 	}
 
-	encodingConfig := app.MakeTestEncodingConfig()
+	encodingConfig := app.MakeEncodingConfig()
 	txCfg := encodingConfig.TxConfig
 
 	// Read the transaction file
@@ -74,14 +75,20 @@ func (b *AccountChainLinkJSONBuilder) BuildChainLinkJSON(chain types.Chain) (uti
 		return utils.ChainLinkJSON{}, fmt.Errorf("invalid number of signatures")
 	}
 
-	// Re-create the bytes that have been signed in order to produce the signature
-	signingData := authsigning.SignerData{AccountNumber: 0, Sequence: 0, ChainID: signedChainID}
-	value, err := txCfg.SignModeHandler().GetSignBytes(signMode, signingData, parsedTx)
+	addr, err := sdk.Bech32ifyAddressBytes(chain.Prefix, sigs[0].PubKey.Address().Bytes())
 	if err != nil {
 		return utils.ChainLinkJSON{}, err
 	}
 
-	addr, err := sdk.Bech32ifyAddressBytes(chain.Prefix, sigs[0].PubKey.Address().Bytes())
+	// Re-create the bytes that have been signed in order to produce the signature
+	signingData := authsigning.SignerData{
+		AccountNumber: 0,
+		Sequence:      0,
+		ChainID:       signedChainID,
+		Address:       addr,
+		PubKey:        sigs[0].PubKey,
+	}
+	value, err := txCfg.SignModeHandler().GetSignBytes(signMode, signingData, parsedTx)
 	if err != nil {
 		return utils.ChainLinkJSON{}, err
 	}

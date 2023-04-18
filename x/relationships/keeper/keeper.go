@@ -1,22 +1,23 @@
 package keeper
 
 import (
+	"github.com/cometbft/cometbft/libs/log"
 	"github.com/cosmos/cosmos-sdk/codec"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/desmos-labs/desmos/v4/x/relationships/types"
 )
 
 // Keeper maintains the link to data storage and exposes getter/setter methods for the various parts of the state machine
 type Keeper struct {
-	storeKey sdk.StoreKey
+	storeKey storetypes.StoreKey
 	cdc      codec.BinaryCodec
 	sk       types.SubspacesKeeper
 }
 
 // NewKeeper creates new instances of the relationships Keeper.
-func NewKeeper(cdc codec.BinaryCodec, storeKey sdk.StoreKey, sk types.SubspacesKeeper) Keeper {
+func NewKeeper(cdc codec.BinaryCodec, storeKey storetypes.StoreKey, sk types.SubspacesKeeper) Keeper {
 	return Keeper{
 		storeKey: storeKey,
 		cdc:      cdc,

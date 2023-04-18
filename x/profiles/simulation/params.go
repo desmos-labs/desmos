@@ -14,29 +14,29 @@ import (
 	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
-func ParamChanges(r *rand.Rand) []simtypes.ParamChange {
-	return []simtypes.ParamChange{
-		simulation.NewSimParamChange(types.ModuleName, string(types.NicknameParamsKey),
+func ParamChanges(r *rand.Rand) []simtypes.LegacyParamChange {
+	return []simtypes.LegacyParamChange{
+		simulation.NewSimLegacyParamChange(types.ModuleName, string(types.NicknameParamsKey),
 			func(r *rand.Rand) string {
 				params := RandomNicknameParams(r)
 				return fmt.Sprintf(`{"min_length":"%s","max_length":"%s"}`,
 					params.MinLength, params.MaxLength)
 			},
 		),
-		simulation.NewSimParamChange(types.ModuleName, string(types.DTagParamsKey),
+		simulation.NewSimLegacyParamChange(types.ModuleName, string(types.DTagParamsKey),
 			func(r *rand.Rand) string {
 				params := RandomDTagParams(r)
 				return fmt.Sprintf(`{"min_length":"%s","max_length":"%s"}`,
 					params.MinLength, params.MaxLength)
 			},
 		),
-		simulation.NewSimParamChange(types.ModuleName, string(types.BioParamsKey),
+		simulation.NewSimLegacyParamChange(types.ModuleName, string(types.BioParamsKey),
 			func(r *rand.Rand) string {
 				params := RandomBioParams(r)
 				return fmt.Sprintf(`{"max_length":"%s"}`, params.MaxLength)
 			},
 		),
-		simulation.NewSimParamChange(types.ModuleName, string(types.OracleParamsKey),
+		simulation.NewSimLegacyParamChange(types.ModuleName, string(types.OracleParamsKey),
 			func(r *rand.Rand) string {
 				params := RandomOracleParams(r)
 				feeAmountBz, err := json.Marshal(params.FeeAmount)
@@ -49,7 +49,7 @@ func ParamChanges(r *rand.Rand) []simtypes.ParamChange {
 				)
 			},
 		),
-		simulation.NewSimParamChange(types.ModuleName, string(types.AppLinksParamsKey),
+		simulation.NewSimLegacyParamChange(types.ModuleName, string(types.AppLinksParamsKey),
 			func(r *rand.Rand) string {
 				params := RandomAppLinksParams(r)
 				return fmt.Sprintf(`{"validity_duration":"%d"}`, params.ValidityDuration)

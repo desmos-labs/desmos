@@ -7,6 +7,7 @@ import (
 	"github.com/golang/mock/gomock"
 
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	"github.com/cosmos/go-bip39"
 
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
@@ -15,18 +16,18 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
 	"github.com/desmos-labs/desmos/v4/app"
 	"github.com/desmos-labs/desmos/v4/testutil/ibctesting"
 
+	db "github.com/cometbft/cometbft-db"
+	"github.com/cometbft/cometbft/libs/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/suite"
-	"github.com/tendermint/tendermint/libs/log"
-	db "github.com/tendermint/tm-db"
 
 	"github.com/desmos-labs/desmos/v4/x/profiles/keeper"
 	"github.com/desmos-labs/desmos/v4/x/profiles/testutil"
@@ -43,7 +44,7 @@ type KeeperTestSuite struct {
 	cdc            codec.Codec
 	legacyAminoCdc *codec.LegacyAmino
 	ctx            sdk.Context
-	storeKey       sdk.StoreKey
+	storeKey       storetypes.StoreKey
 	k              keeper.Keeper
 	ak             authkeeper.AccountKeeper
 	paramsKeeper   paramskeeper.Keeper
@@ -86,10 +87,10 @@ func (suite *KeeperTestSuite) SetupTest() {
 	memDB := db.NewMemDB()
 	ms := store.NewCommitMultiStore(memDB)
 	for _, key := range keys {
-		ms.MountStoreWithDB(key, sdk.StoreTypeIAVL, memDB)
+		ms.MountStoreWithDB(key, storetypes.StoreTypeIAVL, memDB)
 	}
 	for _, tKey := range tKeys {
-		ms.MountStoreWithDB(tKey, sdk.StoreTypeTransient, memDB)
+		ms.MountStoreWithDB(tKey, storetypes.StoreTypeTransient, memDB)
 	}
 	if err := ms.LoadLatestVersion(); err != nil {
 		panic(err)
@@ -105,9 +106,10 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.ak = authkeeper.NewAccountKeeper(
 		suite.cdc,
 		keys[authtypes.StoreKey],
-		suite.paramsKeeper.Subspace(authtypes.ModuleName),
 		authtypes.ProtoBaseAccount,
 		app.GetMaccPerms(),
+		"cosmos",
+		authtypes.NewModuleAddress("gov").String(),
 	)
 
 	// Mocks initializations

@@ -16,14 +16,15 @@ import (
 	relationshipskeeper "github.com/desmos-labs/desmos/v4/x/relationships/keeper"
 	relationshipstypes "github.com/desmos-labs/desmos/v4/x/relationships/types"
 
+	db "github.com/cometbft/cometbft-db"
+	"github.com/cometbft/cometbft/libs/log"
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/cosmos/cosmos-sdk/store"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/require"
-	"github.com/tendermint/tendermint/libs/log"
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
-	db "github.com/tendermint/tm-db"
 
 	"github.com/desmos-labs/desmos/v4/app"
 	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
@@ -42,10 +43,10 @@ func TestBeginBlocker(t *testing.T) {
 	memDB := db.NewMemDB()
 	ms := store.NewCommitMultiStore(memDB)
 	for _, key := range keys {
-		ms.MountStoreWithDB(key, sdk.StoreTypeIAVL, memDB)
+		ms.MountStoreWithDB(key, storetypes.StoreTypeIAVL, memDB)
 	}
 	for _, tKey := range tKeys {
-		ms.MountStoreWithDB(tKey, sdk.StoreTypeTransient, memDB)
+		ms.MountStoreWithDB(tKey, storetypes.StoreTypeTransient, memDB)
 	}
 
 	err := ms.LoadLatestVersion()
@@ -56,7 +57,7 @@ func TestBeginBlocker(t *testing.T) {
 	pk := paramskeeper.NewKeeper(cdc, legacyAmino, keys[paramstypes.StoreKey], tKeys[paramstypes.TStoreKey])
 	sk := subspaceskeeper.NewKeeper(cdc, keys[subspacestypes.StoreKey], nil, nil)
 	rk := relationshipskeeper.NewKeeper(cdc, keys[relationshipstypes.StoreKey], sk)
-	ak := authkeeper.NewAccountKeeper(cdc, keys[authtypes.StoreKey], pk.Subspace(authtypes.ModuleName), authtypes.ProtoBaseAccount, app.GetMaccPerms())
+	ak := authkeeper.NewAccountKeeper(cdc, keys[authtypes.StoreKey], authtypes.ProtoBaseAccount, app.GetMaccPerms(), "cosmos", authtypes.NewModuleAddress("gov").String())
 	k := keeper.NewKeeper(cdc, legacyAmino, keys[types.StoreKey], pk.Subspace(types.DefaultParamsSpace), ak, rk, nil, nil, nil)
 
 	testCases := []struct {

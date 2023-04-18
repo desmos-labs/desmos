@@ -12,10 +12,10 @@ import (
 	"github.com/desmos-labs/desmos/v4/x/fees/types"
 )
 
-func ParamChanges(r *rand.Rand) []simtypes.ParamChange {
+func ParamChanges(r *rand.Rand) []simtypes.LegacyParamChange {
 	params := types.NewParams(randomMinFees(r))
-	return []simtypes.ParamChange{
-		simulation.NewSimParamChange(types.ModuleName, string(types.MinFeesStoreKey),
+	return []simtypes.LegacyParamChange{
+		simulation.NewSimLegacyParamChange(types.ModuleName, string(types.MinFeesStoreKey),
 			func(r *rand.Rand) string {
 				minFeesBytes, err := json.Marshal(params.MinFees)
 				if err != nil {

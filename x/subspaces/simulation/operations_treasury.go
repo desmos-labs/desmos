@@ -4,7 +4,6 @@ import (
 	"math/rand"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
@@ -33,19 +32,15 @@ func SimulateMsgGrantTreasuryAuthorization(
 		// Get the data
 		subspaceID, grantee, granter, skip := randomGrantTreasuryAuthorizationFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgGrantTreasuryAuthorization"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgGrantTreasuryAuthorization", "skip"), nil, nil
 		}
 
 		// Build the message
-		msg := types.NewMsgGrantTreasuryAuthorization(subspaceID, granter.Address.String(), grantee, authz.NewGenericAuthorization(sdk.MsgTypeURL(&banktypes.MsgSend{})), ctx.BlockTime().AddDate(1, 0, 0))
+		expiration := ctx.BlockTime().AddDate(1, 0, 0)
+		msg := types.NewMsgGrantTreasuryAuthorization(subspaceID, granter.Address.String(), grantee, authz.NewGenericAuthorization(sdk.MsgTypeURL(&banktypes.MsgSend{})), &expiration)
 
 		// Send the message
-		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{granter.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgGrantTreasuryAuthorization"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "MsgGrantTreasuryAuthorization", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, granter)
 	}
 }
 
@@ -100,19 +95,14 @@ func SimulateMsgRevokeTreasuryAuthorization(
 		// Get the data
 		subspaceID, grantee, granter, msgTypeUrl, skip := randomRevokeTreasuryAuthorizationFields(r, ctx, accs, k, authzk)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRevokeTreasuryAuthorization"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgRevokeTreasuryAuthorization", "skip"), nil, nil
 		}
 
 		// Build the message
 		msg := types.NewMsgRevokeTreasuryAuthorization(subspaceID, granter.Address.String(), grantee, msgTypeUrl)
 
 		// Send the message
-		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{granter.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRevokeTreasuryAuthorization"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "MsgRevokeTreasuryAuthorization", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, granter)
 	}
 }
 
@@ -135,7 +125,12 @@ func randomRevokeTreasuryAuthorizationFields(
 	var grantees []string
 	authzk.IterateGrants(ctx, func(granterAddr sdk.AccAddress, granteeAddr sdk.AccAddress, grant authz.Grant) bool {
 		if granterAddr.String() == subspace.Treasury {
-			authorizations = append(authorizations, grant.GetAuthorization())
+			authorization, err := grant.GetAuthorization()
+			if err != nil {
+				panic(err)
+			}
+
+			authorizations = append(authorizations, authorization)
 			grantees = append(grantees, granteeAddr.String())
 		}
 		return false

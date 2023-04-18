@@ -1,8 +1,8 @@
 package keeper
 
 import (
+	errors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
@@ -16,12 +16,12 @@ func (k Keeper) SaveChainLink(ctx sdk.Context, link types.ChainLink) error {
 	// Validate the chain link
 	err := link.Validate()
 	if err != nil {
-		return sdkerrors.Wrap(types.ErrInvalidChainLink, err.Error())
+		return errors.Wrap(types.ErrInvalidChainLink, err.Error())
 	}
 
 	// Make sure the user has a profile
 	if !k.HasProfile(ctx, link.User) {
-		return sdkerrors.Wrap(types.ErrProfileNotFound, "a profile is required to link a chain")
+		return errors.Wrap(types.ErrProfileNotFound, "a profile is required to link a chain")
 	}
 
 	// Validate the source address
@@ -32,13 +32,13 @@ func (k Keeper) SaveChainLink(ctx sdk.Context, link types.ChainLink) error {
 
 	err = srcAddrData.Validate()
 	if err != nil {
-		return sdkerrors.Wrap(types.ErrInvalidAddressData, err.Error())
+		return errors.Wrap(types.ErrInvalidAddressData, err.Error())
 	}
 
 	// Verify the proof
 	err = link.Proof.Verify(k.cdc, k.legacyAmino, link.User, srcAddrData)
 	if err != nil {
-		return sdkerrors.Wrap(types.ErrInvalidProof, err.Error())
+		return errors.Wrap(types.ErrInvalidProof, err.Error())
 	}
 
 	target := srcAddrData.GetValue()

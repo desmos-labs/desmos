@@ -38,7 +38,7 @@ message Report {
   // Target of the report
   google.protobuf.Any target = 6 [
     (gogoproto.moretags) = "yaml:\"target\"",
-    (cosmos_proto.accepts_interface) = "ReportTarget"
+    (cosmos_proto.accepts_interface) = "desmos.reports.v1.ReportTarget"
   ];
 
   // Time in which the report was created
@@ -53,7 +53,7 @@ message Report {
 message UserTarget {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
-  option (cosmos_proto.implements_interface) = "ReportTarget";
+  option (cosmos_proto.implements_interface) = "desmos.reports.v1.ReportTarget";
 
   // Address of the reported user
   string user = 1 [ (gogoproto.moretags) = "yaml:\"user\"" ];
@@ -63,7 +63,7 @@ message UserTarget {
 message PostTarget {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
-  option (cosmos_proto.implements_interface) = "ReportTarget";
+  option (cosmos_proto.implements_interface) = "desmos.reports.v1.ReportTarget";
 
   // Id of the reported post
   uint64 post_id = 1 [

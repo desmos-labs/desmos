@@ -3,6 +3,7 @@ package types
 import (
 	"strings"
 
+	errors "cosmossdk.io/errors"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -41,25 +42,25 @@ func (msg MsgAddReaction) Type() string { return ActionAddReaction }
 // ValidateBasic implements sdk.Msg
 func (msg MsgAddReaction) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
 	if msg.PostID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id: %d", msg.PostID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id: %d", msg.PostID)
 	}
 
 	if msg.Value == nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid value: %s", msg.Value)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid value: %s", msg.Value)
 	}
 
 	err := msg.Value.GetCachedValue().(ReactionValue).Validate()
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid value: %s", err)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid value: %s", err)
 	}
 
 	_, err = sdk.AccAddressFromBech32(msg.User)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address")
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address")
 	}
 
 	return nil
@@ -103,20 +104,20 @@ func (msg MsgRemoveReaction) Type() string { return ActionRemoveReaction }
 // ValidateBasic implements sdk.Msg
 func (msg MsgRemoveReaction) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
 	if msg.PostID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id: %d", msg.PostID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id: %d", msg.PostID)
 	}
 
 	if msg.ReactionID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid reaction id: %d", msg.ReactionID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid reaction id: %d", msg.ReactionID)
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.User)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address")
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address")
 	}
 
 	return nil
@@ -159,20 +160,20 @@ func (msg MsgAddRegisteredReaction) Type() string { return ActionAddRegisteredRe
 // ValidateBasic implements sdk.Msg
 func (msg MsgAddRegisteredReaction) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
 	if strings.TrimSpace(msg.ShorthandCode) == "" {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid shorthand code: %s", msg.ShorthandCode)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid shorthand code: %s", msg.ShorthandCode)
 	}
 
 	if strings.TrimSpace(msg.DisplayValue) == "" {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid display value: %s", msg.DisplayValue)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid display value: %s", msg.DisplayValue)
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.User)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address")
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address")
 	}
 
 	return nil
@@ -217,24 +218,24 @@ func (msg MsgEditRegisteredReaction) Type() string { return ActionEditRegistered
 // ValidateBasic implements sdk.Msg
 func (msg MsgEditRegisteredReaction) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
 	if msg.RegisteredReactionID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid registered reaction id: %d", msg.RegisteredReactionID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid registered reaction id: %d", msg.RegisteredReactionID)
 	}
 
 	if strings.TrimSpace(msg.ShorthandCode) == "" {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid shorthand code: %s", msg.ShorthandCode)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid shorthand code: %s", msg.ShorthandCode)
 	}
 
 	if strings.TrimSpace(msg.DisplayValue) == "" {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid display value: %s", msg.DisplayValue)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid display value: %s", msg.DisplayValue)
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.User)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address")
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address")
 	}
 
 	return nil
@@ -275,16 +276,16 @@ func (msg MsgRemoveRegisteredReaction) Type() string { return ActionRemoveRegist
 // ValidateBasic implements sdk.Msg
 func (msg MsgRemoveRegisteredReaction) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
 	if msg.RegisteredReactionID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid registered reaction id: %d", msg.RegisteredReactionID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid registered reaction id: %d", msg.RegisteredReactionID)
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.User)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address")
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address")
 	}
 
 	return nil
@@ -327,17 +328,17 @@ func (msg MsgSetReactionsParams) Type() string { return ActionSetReactionParams 
 // ValidateBasic implements sdk.Msg
 func (msg MsgSetReactionsParams) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
 	err := msg.FreeText.Validate()
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid free text params: %s", err)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid free text params: %s", err)
 	}
 
 	_, err = sdk.AccAddressFromBech32(msg.User)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address")
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address")
 	}
 
 	return nil

@@ -8,11 +8,11 @@ import (
 	"testing"
 	"time"
 
+	tmcli "github.com/cometbft/cometbft/libs/cli"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/gogo/protobuf/proto"
-	tmcli "github.com/tendermint/tendermint/libs/cli"
 
 	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
 	"github.com/desmos-labs/desmos/v4/x/reports/client/cli"
@@ -151,7 +151,8 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	cfg.GenesisState = genesisState
 
 	s.cfg = cfg
-	s.network = network.New(s.T(), cfg)
+	s.network, err = network.New(s.T(), s.T().TempDir(), cfg)
+	s.Require().NoError(err)
 
 	_, err = s.network.WaitForHeight(1)
 	s.Require().NoError(err)
@@ -222,7 +223,7 @@ func (s *IntegrationTestSuite) TestCmdQueryReport() {
 				s.Require().NoError(err)
 
 				var response types.QueryReportResponse
-				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(response.Report, tc.expResponse.Report)
 			}
 		})
@@ -325,7 +326,7 @@ func (s *IntegrationTestSuite) TestCmdQueryReports() {
 				s.Require().NoError(err)
 
 				var response types.QueryReportsResponse
-				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(response.Reports, tc.expResponse.Reports)
 			}
 		})
@@ -387,7 +388,7 @@ func (s *IntegrationTestSuite) TestCmdQueryReason() {
 				s.Require().NoError(err)
 
 				var response types.QueryReasonResponse
-				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(response.Reason, tc.expResponse.Reason)
 			}
 		})
@@ -437,7 +438,7 @@ func (s *IntegrationTestSuite) TestCmdQueryReasons() {
 				s.Require().NoError(err)
 
 				var response types.QueryReasonsResponse
-				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(response.Reasons, tc.expResponse.Reasons)
 			}
 		})
@@ -479,7 +480,7 @@ func (s *IntegrationTestSuite) TestCmdQueryParams() {
 				s.Require().NoError(err)
 
 				var response types.QueryParamsResponse
-				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(response.Params, tc.expResponse.Params)
 			}
 		})
@@ -515,7 +516,7 @@ func (s *IntegrationTestSuite) TestCmdCreateReport() {
 				fmt.Sprintf("--%s=%s", cli.FlagMessage, "This is a new report"),
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 			},
 			shouldErr: true,
@@ -528,7 +529,7 @@ func (s *IntegrationTestSuite) TestCmdCreateReport() {
 				fmt.Sprintf("--%s=%s", cli.FlagMessage, "This is a new report"),
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 			},
 			shouldErr: false,
@@ -542,7 +543,7 @@ func (s *IntegrationTestSuite) TestCmdCreateReport() {
 				fmt.Sprintf("--%s=%s", cli.FlagMessage, "This is a new report"),
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 			},
 			shouldErr: false,
@@ -561,7 +562,7 @@ func (s *IntegrationTestSuite) TestCmdCreateReport() {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
-				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
 			}
 		})
 	}
@@ -595,7 +596,7 @@ func (s *IntegrationTestSuite) TestCmdDeleteReport() {
 				"1", "1",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 			},
 			shouldErr: false,
@@ -614,7 +615,7 @@ func (s *IntegrationTestSuite) TestCmdDeleteReport() {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
-				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
 			}
 		})
 	}
@@ -648,7 +649,7 @@ func (s *IntegrationTestSuite) TestCmdSupportStandardReason() {
 				"1", "1",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 			},
 			shouldErr: false,
@@ -667,7 +668,7 @@ func (s *IntegrationTestSuite) TestCmdSupportStandardReason() {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
-				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
 			}
 		})
 	}
@@ -701,7 +702,7 @@ func (s *IntegrationTestSuite) TGetCmdAddReason() {
 				"1", "Spam", "This content is spam",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 			},
 			shouldErr: false,
@@ -720,7 +721,7 @@ func (s *IntegrationTestSuite) TGetCmdAddReason() {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
-				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
 			}
 		})
 	}

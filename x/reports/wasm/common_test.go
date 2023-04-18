@@ -13,15 +13,16 @@ import (
 	postskeeper "github.com/desmos-labs/desmos/v4/x/posts/keeper"
 	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
 
+	db "github.com/cometbft/cometbft-db"
+	"github.com/cometbft/cometbft/libs/log"
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/suite"
-	"github.com/tendermint/tendermint/libs/log"
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
-	db "github.com/tendermint/tm-db"
 
 	"github.com/desmos-labs/desmos/v4/app"
 	relationshipskeeper "github.com/desmos-labs/desmos/v4/x/relationships/keeper"
@@ -93,7 +94,7 @@ type Testsuite struct {
 	legacyAminoCdc *codec.LegacyAmino
 	ctx            sdk.Context
 
-	storeKey sdk.StoreKey
+	storeKey storetypes.StoreKey
 	k        keeper.Keeper
 
 	ak profileskeeper.Keeper
@@ -117,10 +118,10 @@ func (suite *Testsuite) SetupTest() {
 	memDB := db.NewMemDB()
 	ms := store.NewCommitMultiStore(memDB)
 	for _, key := range keys {
-		ms.MountStoreWithDB(key, sdk.StoreTypeIAVL, memDB)
+		ms.MountStoreWithDB(key, storetypes.StoreTypeIAVL, memDB)
 	}
 	for _, tKey := range tKeys {
-		ms.MountStoreWithDB(tKey, sdk.StoreTypeTransient, memDB)
+		ms.MountStoreWithDB(tKey, storetypes.StoreTypeTransient, memDB)
 	}
 
 	if err := ms.LoadLatestVersion(); err != nil {
@@ -135,7 +136,7 @@ func (suite *Testsuite) SetupTest() {
 	// Define keeper
 	suite.sk = subspaceskeeper.NewKeeper(suite.cdc, keys[subspacestypes.StoreKey], nil, nil)
 	suite.rk = relationshipskeeper.NewKeeper(suite.cdc, keys[relationshipstypes.StoreKey], suite.sk)
-	authKeeper := authkeeper.NewAccountKeeper(suite.cdc, keys[authtypes.StoreKey], paramsKeeper.Subspace(authtypes.ModuleName), authtypes.ProtoBaseAccount, app.GetMaccPerms())
+	authKeeper := authkeeper.NewAccountKeeper(suite.cdc, keys[authtypes.StoreKey], authtypes.ProtoBaseAccount, app.GetMaccPerms(), "cosmos", authtypes.NewModuleAddress("gov").String())
 	suite.ak = profileskeeper.NewKeeper(suite.cdc, suite.legacyAminoCdc, keys[profilestypes.StoreKey], paramsKeeper.Subspace(profilestypes.DefaultParamsSpace), authKeeper, suite.rk, nil, nil, nil)
 	suite.pk = postskeeper.NewKeeper(suite.cdc, keys[poststypes.StoreKey], paramsKeeper.Subspace(poststypes.DefaultParamsSpace), suite.ak, suite.sk, suite.rk)
 	suite.k = keeper.NewKeeper(

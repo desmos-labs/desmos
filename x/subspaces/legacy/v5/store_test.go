@@ -8,7 +8,6 @@ import (
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
-	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
 	"github.com/stretchr/testify/require"
@@ -20,7 +19,7 @@ import (
 )
 
 func TestMigrateStore(t *testing.T) {
-	cdc, legacyAmino := app.MakeCodecs()
+	cdc, _ := app.MakeCodecs()
 
 	// Build all the necessary keys
 	keys := sdk.NewKVStoreKeys(types.StoreKey, authtypes.StoreKey, paramstypes.StoreKey)
@@ -28,18 +27,13 @@ func TestMigrateStore(t *testing.T) {
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
 	// Build the x/auth keeper
-	paramsKeeper := paramskeeper.NewKeeper(
-		cdc,
-		legacyAmino,
-		keys[paramstypes.StoreKey],
-		tKeys[paramstypes.TStoreKey],
-	)
 	authKeeper := authkeeper.NewAccountKeeper(
 		cdc,
 		keys[authtypes.StoreKey],
-		paramsKeeper.Subspace(authtypes.ModuleName),
 		authtypes.ProtoBaseAccount,
 		app.GetMaccPerms(),
+		"cosmos",
+		authtypes.NewModuleAddress("gov").String(),
 	)
 
 	testCases := []struct {

@@ -38,7 +38,7 @@ func TestParseLinkAccountJSON(t *testing.T) {
 		types.NewChainConfig("cosmos"),
 	)
 
-	params := app.MakeTestEncodingConfig()
+	params := app.MakeEncodingConfig()
 	jsonBz := params.Marshaler.MustMarshalJSON(&jsonData)
 
 	// Write the JSON to a temp file

@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"math/rand"
 
 	"github.com/desmos-labs/desmos/v4/x/reactions/client/cli"
 
@@ -21,12 +20,12 @@ import (
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 
+	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/gorilla/mux"
+
 	"github.com/spf13/cobra"
-	abci "github.com/tendermint/tendermint/abci/types"
 
 	"github.com/desmos-labs/desmos/v4/x/reactions/keeper"
 	"github.com/desmos-labs/desmos/v4/x/reactions/simulation"
@@ -73,9 +72,6 @@ func (AppModuleBasic) ValidateGenesis(cdc codec.JSONCodec, _ client.TxEncodingCo
 	return types.ValidateGenesis(&data)
 }
 
-// RegisterRESTRoutes registers the REST routes for the reactions module.
-func (AppModuleBasic) RegisterRESTRoutes(_ client.Context, _ *mux.Router) {}
-
 // RegisterGRPCGatewayRoutes registers the gRPC Gateway routes for the reactions module.
 func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *runtime.ServeMux) {
 	types.RegisterQueryHandlerClient(context.Background(), mux, types.NewQueryClient(clientCtx))
@@ -105,8 +101,10 @@ type AppModule struct {
 	ak     authkeeper.AccountKeeper
 	bk     bankkeeper.Keeper
 	fk     feeskeeper.Keeper
-	sk     subspaceskeeper.Keeper
-	pk     postskeeper.Keeper
+
+	profilesKeeper types.ProfilesKeeper
+	sk             subspaceskeeper.Keeper
+	pk             postskeeper.Keeper
 }
 
 // RegisterServices registers module services.
@@ -129,7 +127,7 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 // NewAppModule creates a new AppModule Object
 func NewAppModule(
 	cdc codec.Codec,
-	k keeper.Keeper, sk subspaceskeeper.Keeper, pk postskeeper.Keeper,
+	k keeper.Keeper, profilesKeeper types.ProfilesKeeper, sk subspaceskeeper.Keeper, pk postskeeper.Keeper,
 	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
 ) AppModule {
 	return AppModule{
@@ -138,6 +136,8 @@ func NewAppModule(
 		ak:             ak,
 		bk:             bk,
 		fk:             fk,
+
+		profilesKeeper: profilesKeeper,
 		sk:             sk,
 		pk:             pk,
 	}
@@ -153,19 +153,9 @@ func (am AppModule) RegisterInvariants(ir sdk.InvariantRegistry) {
 	keeper.RegisterInvariants(ir, am.keeper)
 }
 
-// Deprecated: Route returns the module's message router and handler.
-func (am AppModule) Route() sdk.Route {
-	return sdk.Route{}
-}
-
 // QuerierRoute returns the reactions module's querier route name.
 func (am AppModule) QuerierRoute() string {
 	return types.RouterKey
-}
-
-// LegacyQuerierHandler returns the reactions module sdk.Querier.
-func (am AppModule) LegacyQuerierHandler(legacyQuerierCdc *codec.LegacyAmino) sdk.Querier {
-	return nil
 }
 
 // InitGenesis performs genesis initialization for the reactions module.
@@ -209,16 +199,6 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 	simulation.RandomizedGenState(simState)
 }
 
-// ProposalContents doesn't return any content functions for governance proposals.
-func (AppModule) ProposalContents(_ module.SimulationState) []simtypes.WeightedProposalContent {
-	return nil
-}
-
-// RandomizedParams creates randomized profile param changes for the simulator.
-func (AppModule) RandomizedParams(_ *rand.Rand) []simtypes.ParamChange {
-	return nil
-}
-
 // RegisterStoreDecoder performs a no-op.
 func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
 	sdr[types.ModuleName] = simulation.NewDecodeStore(am.cdc)
@@ -226,5 +206,5 @@ func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
 
 // WeightedOperations returns the all the reactions module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
-	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.sk, am.pk, am.ak, am.bk, am.fk)
+	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.profilesKeeper, am.sk, am.pk, am.ak, am.bk, am.fk)
 }

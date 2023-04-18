@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	errors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
@@ -29,34 +30,34 @@ func (k msgServer) CreateReport(goCtx context.Context, msg *types.MsgCreateRepor
 
 	// Check if the reporter has a profile
 	if !k.HasProfile(ctx, msg.Reporter) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "you cannot create a report without having a profile")
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "you cannot create a report without having a profile")
 	}
 
 	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 
 	// Check if the reasons exist
 	for _, reasonID := range msg.ReasonsIDs {
 		if !k.HasReason(ctx, msg.SubspaceID, reasonID) {
-			return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "reason with id %d not found inside subspace %d", reasonID, msg.SubspaceID)
+			return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "reason with id %d not found inside subspace %d", reasonID, msg.SubspaceID)
 		}
 	}
 
 	// Check the permission to report
 	if !k.HasPermission(ctx, msg.SubspaceID, msg.Reporter, types.PermissionReportContent) {
-		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot report content inside this subspace")
+		return nil, errors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot report content inside this subspace")
 	}
 
 	target, ok := msg.Target.GetCachedValue().(types.ReportTarget)
 	if !ok {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid target type: %s", msg.Target)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid target type: %s", msg.Target)
 	}
 
 	// Make sure the report is not duplicated
 	if k.HasReported(ctx, msg.SubspaceID, msg.Reporter, target) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "you have already reported this target")
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "you have already reported this target")
 	}
 
 	// Get the next report id
@@ -104,7 +105,7 @@ func (k msgServer) CreateReport(goCtx context.Context, msg *types.MsgCreateRepor
 			sdk.NewAttribute(types.AttributeKeyReporter, msg.Reporter),
 		)
 	default:
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid report target type: %T", msg.Target)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid report target type: %T", msg.Target)
 	}
 
 	ctx.EventManager().EmitEvents(sdk.Events{
@@ -136,20 +137,20 @@ func (k msgServer) DeleteReport(goCtx context.Context, msg *types.MsgDeleteRepor
 
 	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 
 	// Check if the report exists
 	report, found := k.GetReport(ctx, msg.SubspaceID, msg.ReportID)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "report with id %d not found inside subspace %d", msg.ReportID, msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "report with id %d not found inside subspace %d", msg.ReportID, msg.SubspaceID)
 	}
 
 	// Check the permission to delete reports
 	isModerator := k.HasPermission(ctx, msg.SubspaceID, msg.Signer, types.PermissionManageReports)
 	canDelete := report.Reporter == msg.Signer && k.HasPermission(ctx, msg.SubspaceID, msg.Signer, types.PermissionDeleteOwnReports)
 	if !isModerator && !canDelete {
-		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot delete reports inside this subspace")
+		return nil, errors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot delete reports inside this subspace")
 	}
 
 	// Delete the report
@@ -178,18 +179,18 @@ func (k msgServer) SupportStandardReason(goCtx context.Context, msg *types.MsgSu
 
 	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 
 	// Check if the standard reason exists
 	standardReason, found := k.GetStandardReason(ctx, msg.StandardReasonID)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "standard reason with id %d could not be found", msg.StandardReasonID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "standard reason with id %d could not be found", msg.StandardReasonID)
 	}
 
 	// Check the permission to manage reasons
 	if !k.HasPermission(ctx, msg.SubspaceID, msg.Signer, types.PermissionManageReasons) {
-		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot manage reasons inside this subspace")
+		return nil, errors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot manage reasons inside this subspace")
 	}
 
 	// Get the next reason id for the subspace
@@ -202,7 +203,7 @@ func (k msgServer) SupportStandardReason(goCtx context.Context, msg *types.MsgSu
 	reason := types.NewReason(msg.SubspaceID, reasonID, standardReason.Title, standardReason.Description)
 	err = reason.Validate()
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	// Store the reason
@@ -237,12 +238,12 @@ func (k msgServer) AddReason(goCtx context.Context, msg *types.MsgAddReason) (*t
 
 	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 
 	// Check the permission to manage reasons
 	if !k.HasPermission(ctx, msg.SubspaceID, msg.Signer, types.PermissionManageReasons) {
-		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot manage reasons inside this subspace")
+		return nil, errors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot manage reasons inside this subspace")
 	}
 
 	// Get the next reason id for the subspace
@@ -255,7 +256,7 @@ func (k msgServer) AddReason(goCtx context.Context, msg *types.MsgAddReason) (*t
 	reason := types.NewReason(msg.SubspaceID, reasonID, msg.Title, msg.Description)
 	err = reason.Validate()
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	// Store the reason
@@ -289,17 +290,17 @@ func (k msgServer) RemoveReason(goCtx context.Context, msg *types.MsgRemoveReaso
 
 	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 
 	// Check if the reason exists
 	if !k.HasReason(ctx, msg.SubspaceID, msg.ReasonID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "reason with id %d does not existing inside subspace %d", msg.ReasonID, msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "reason with id %d does not existing inside subspace %d", msg.ReasonID, msg.SubspaceID)
 	}
 
 	// Check the permission to manage reasons
 	if !k.HasPermission(ctx, msg.SubspaceID, msg.Signer, types.PermissionManageReasons) {
-		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot manage reasons inside this subspace")
+		return nil, errors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot manage reasons inside this subspace")
 	}
 
 	// Delete the reason

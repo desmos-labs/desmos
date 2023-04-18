@@ -37,7 +37,7 @@ func TestMigrateStore(t *testing.T) {
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
 	paramsKeeper := paramskeeper.NewKeeper(cdc, legacyAminoCdc, keys[paramstypes.StoreKey], tKeys[paramstypes.TStoreKey])
-	authKeeper := authkeeper.NewAccountKeeper(cdc, keys[authtypes.StoreKey], paramsKeeper.Subspace(authtypes.ModuleName), authtypes.ProtoBaseAccount, app.GetMaccPerms())
+	authKeeper := authkeeper.NewAccountKeeper(cdc, keys[authtypes.StoreKey], authtypes.ProtoBaseAccount, app.GetMaccPerms(), "cosmos", authtypes.NewModuleAddress("gov").String())
 
 	sk := subspaceskeeper.NewKeeper(cdc, keys[subspacestypes.StoreKey], nil, nil)
 	rk := relationshipskeeper.NewKeeper(cdc, keys[relationshipstypes.StoreKey], sk)

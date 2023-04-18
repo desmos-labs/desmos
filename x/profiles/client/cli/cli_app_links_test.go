@@ -7,11 +7,11 @@ import (
 	"fmt"
 	"time"
 
+	tmcli "github.com/cometbft/cometbft/libs/cli"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/golang/protobuf/proto"
-	tmcli "github.com/tendermint/tendermint/libs/cli"
 
 	"github.com/desmos-labs/desmos/v4/x/profiles/client/cli"
 	"github.com/desmos-labs/desmos/v4/x/profiles/types"
@@ -103,7 +103,7 @@ func (s *IntegrationTestSuite) TestCmdQueryApplicationsLinks() {
 				s.Require().NoError(err)
 
 				var response types.QueryApplicationLinksResponse
-				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(tc.expectedOutput.Links, response.Links)
 			}
 		})
@@ -178,7 +178,7 @@ func (s *IntegrationTestSuite) TestCmdQueryApplicationsLinkOwners() {
 				s.Require().NoError(err)
 
 				var response types.QueryApplicationLinkOwnersResponse
-				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(tc.expectedOutput.Owners, response.Owners)
 			}
 		})
@@ -212,7 +212,7 @@ func (s *IntegrationTestSuite) TestCmdUnlinkApplication() {
 				"reddit-user",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
 			},
 			shouldErr: false,
 			respType:  &sdk.TxResponse{},
@@ -230,7 +230,7 @@ func (s *IntegrationTestSuite) TestCmdUnlinkApplication() {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
-				s.Require().NoError(val.ClientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+				s.Require().NoError(val.ClientCtx.Codec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
 			}
 		})
 	}

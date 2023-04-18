@@ -8,6 +8,7 @@ import (
 	profileskeeper "github.com/desmos-labs/desmos/v4/x/profiles/keeper"
 	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 
+	errors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
@@ -29,7 +30,7 @@ func (querier ProfilesWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMes
 	var query types.ProfilesQuery
 	err := json.Unmarshal(data, &query)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 	switch {
 	case query.Profile != nil:
@@ -57,15 +58,15 @@ func (querier ProfilesWasmQuerier) handleProfileRequest(ctx sdk.Context, request
 	var req types.QueryProfileRequest
 	err = querier.cdc.UnmarshalJSON(request, &req)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 	res, err := querier.profilesKeeper.Profile(sdk.WrapSDKContext(ctx), &req)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 	bz, err = querier.cdc.MarshalJSON(res)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 	}
 	return bz, nil
 }
@@ -74,15 +75,15 @@ func (querier ProfilesWasmQuerier) handleIncomingDTagRequest(ctx sdk.Context, re
 	var req types.QueryIncomingDTagTransferRequestsRequest
 	err = querier.cdc.UnmarshalJSON(request, &req)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 	res, err := querier.profilesKeeper.IncomingDTagTransferRequests(sdk.WrapSDKContext(ctx), &req)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 	bz, err = querier.cdc.MarshalJSON(res)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 	}
 	return bz, nil
 }
@@ -91,15 +92,15 @@ func (querier ProfilesWasmQuerier) handleChainLinksRequest(ctx sdk.Context, requ
 	var req types.QueryChainLinksRequest
 	err = querier.cdc.UnmarshalJSON(request, &req)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 	res, err := querier.profilesKeeper.ChainLinks(sdk.WrapSDKContext(ctx), &req)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 	bz, err = querier.cdc.MarshalJSON(res)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 	}
 
 	return bz, nil
@@ -109,15 +110,15 @@ func (querier ProfilesWasmQuerier) handleChainLinkOwnersRequest(ctx sdk.Context,
 	var req types.QueryChainLinkOwnersRequest
 	err = querier.cdc.UnmarshalJSON(request, &req)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 	res, err := querier.profilesKeeper.ChainLinkOwners(sdk.WrapSDKContext(ctx), &req)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 	bz, err = querier.cdc.MarshalJSON(res)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 	}
 
 	return bz, nil
@@ -127,15 +128,15 @@ func (querier ProfilesWasmQuerier) handleDefaultExternalAddressesRequest(ctx sdk
 	var req types.QueryDefaultExternalAddressesRequest
 	err = querier.cdc.UnmarshalJSON(request, &req)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 	res, err := querier.profilesKeeper.DefaultExternalAddresses(sdk.WrapSDKContext(ctx), &req)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 	bz, err = querier.cdc.MarshalJSON(res)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 	}
 
 	return bz, nil
@@ -145,15 +146,15 @@ func (querier ProfilesWasmQuerier) handleApplicationLinksRequest(ctx sdk.Context
 	var req types.QueryApplicationLinksRequest
 	err = querier.cdc.UnmarshalJSON(request, &req)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 	res, err := querier.profilesKeeper.ApplicationLinks(sdk.WrapSDKContext(ctx), &req)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 	bz, err = querier.cdc.MarshalJSON(res)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 	}
 	return bz, nil
 }
@@ -162,18 +163,18 @@ func (querier ProfilesWasmQuerier) handleApplicationLinkByClientIDRequest(ctx sd
 	var req types.QueryApplicationLinkByClientIDRequest
 	err = querier.cdc.UnmarshalJSON(request, &req)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 	res, err := querier.profilesKeeper.ApplicationLinkByClientID(
 		sdk.WrapSDKContext(ctx),
 		&req,
 	)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 	bz, err = querier.cdc.MarshalJSON(res)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 	}
 	return bz, nil
 }
@@ -182,18 +183,18 @@ func (querier ProfilesWasmQuerier) handleApplicationLinkOwnersRequest(ctx sdk.Co
 	var req types.QueryApplicationLinkOwnersRequest
 	err = querier.cdc.UnmarshalJSON(request, &req)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 	res, err := querier.profilesKeeper.ApplicationLinkOwners(
 		sdk.WrapSDKContext(ctx),
 		&req,
 	)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 	bz, err = querier.cdc.MarshalJSON(res)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 	}
 	return bz, nil
 }

@@ -13,9 +13,9 @@ import (
 	"github.com/desmos-labs/desmos/v4/x/reports/types"
 )
 
-func ParamChanges(_ *rand.Rand) []simtypes.ParamChange {
-	return []simtypes.ParamChange{
-		simulation.NewSimParamChange(types.ModuleName, string(types.ReasonsKey),
+func ParamChanges(_ *rand.Rand) []simtypes.LegacyParamChange {
+	return []simtypes.LegacyParamChange{
+		simulation.NewSimLegacyParamChange(types.ModuleName, string(types.ReasonsKey),
 			func(r *rand.Rand) string {
 				standardReasons := GetRandomStandardReasons(r, 10)
 				bz, err := json.Marshal(&standardReasons)

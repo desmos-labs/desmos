@@ -1,11 +1,9 @@
 package types
 
+import "cosmossdk.io/errors"
+
 // DONTCOVER
 
-import (
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-)
-
 var (
-	ErrInvalidGenesis = sdkerrors.Register(ModuleName, 1, "invalid genesis state")
+	ErrInvalidGenesis = errors.Register(ModuleName, 1, "invalid genesis state")
 )

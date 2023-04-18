@@ -8,7 +8,6 @@ import (
 	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
@@ -33,16 +32,11 @@ func SimulateMsgAddPostAttachment(
 
 		subspaceID, postID, content, editor, skip := randomAddPostAttachmentFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "add post attachment"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "add post attachment", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgAddPostAttachment(subspaceID, postID, content, editor.Address.String())
-		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{editor.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "add post attachment"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "add post attachment", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, editor)
 	}
 }
 
@@ -74,10 +68,16 @@ func randomAddPostAttachmentFields(
 		skip = true
 		return
 	}
+	if !k.HasPermission(ctx, subspaceID, post.SectionID, acc.Address.String(), types.PermissionEditOwnContent) {
+		// Skip because the author does not have permission
+		skip = true
+		return
+	}
+
 	editor = *acc
 
 	// Generate a random attachment content
-	content = GenerateRandomAttachmentContent(r)
+	content = GenerateRandomAttachmentContent(r, ctx.BlockTime())
 
 	return subspaceID, postID, content, editor, false
 }
@@ -95,16 +95,12 @@ func SimulateMsgRemovePostAttachment(
 
 		subspaceID, postID, attachmentID, editor, skip := randomRemovePostAttachmentFields(r, ctx, accs, k, sk)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "remove post attachment"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "remove post attachment", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgRemovePostAttachment(subspaceID, postID, attachmentID, editor.Address.String())
-		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{editor.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "remove post attachment"), nil, err
-		}
 
-		return simtypes.NewOperationMsg(msg, true, "remove post attachment", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, editor)
 	}
 }
 

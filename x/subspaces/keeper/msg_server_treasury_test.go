@@ -10,6 +10,8 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 )
 
+var expiration = time.Date(2100, 1, 11, 0, 0, 0, 0, time.UTC)
+
 func (suite *KeeperTestSuite) TestMsgServer_GrantTreasuryAuthorization() {
 	blockTime := time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC)
 	testCases := []struct {
@@ -28,7 +30,7 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantTreasuryAuthorization() {
 				"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez",
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 				&banktypes.SendAuthorization{SpendLimit: sdk.NewCoins(sdk.NewInt64Coin("steak", 100))},
-				time.Date(2023, 1, 11, 0, 0, 0, 0, time.UTC),
+				&expiration,
 			),
 			shouldErr: true,
 		},
@@ -49,7 +51,7 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantTreasuryAuthorization() {
 				"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez",
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 				&banktypes.SendAuthorization{SpendLimit: sdk.NewCoins(sdk.NewInt64Coin("steak", 100))},
-				time.Date(2023, 1, 11, 0, 0, 0, 0, time.UTC),
+				&expiration,
 			),
 			shouldErr: true,
 		},
@@ -77,7 +79,7 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantTreasuryAuthorization() {
 				"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez",
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 				&banktypes.SendAuthorization{SpendLimit: sdk.NewCoins(sdk.NewInt64Coin("steak", 100))},
-				time.Date(2023, 1, 11, 0, 0, 0, 0, time.UTC),
+				&expiration,
 			),
 			shouldErr: true,
 		},
@@ -105,7 +107,7 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantTreasuryAuthorization() {
 				"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez",
 				"",
 				&banktypes.SendAuthorization{SpendLimit: sdk.NewCoins(sdk.NewInt64Coin("steak", 100))},
-				time.Date(2023, 1, 11, 0, 0, 0, 0, time.UTC),
+				&expiration,
 			),
 			shouldErr: true,
 		},
@@ -133,7 +135,7 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantTreasuryAuthorization() {
 				"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez",
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 				&banktypes.SendAuthorization{SpendLimit: sdk.NewCoins(sdk.NewInt64Coin("steak", 100))},
-				time.Date(2023, 1, 11, 0, 0, 0, 0, time.UTC),
+				&expiration,
 			),
 			shouldErr:   false,
 			expResponse: &types.MsgGrantTreasuryAuthorizationResponse{},
@@ -156,7 +158,9 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantTreasuryAuthorization() {
 				suite.Require().NoError(err)
 				grantee, err := sdk.AccAddressFromBech32("cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69")
 				suite.Require().NoError(err)
-				authorizations := suite.authzKeeper.GetAuthorizations(ctx, grantee, treasury)
+
+				authorizations, err := suite.authzKeeper.GetAuthorizations(ctx, grantee, treasury)
+				suite.Require().NoError(err)
 				suite.Require().Equal(1, len(authorizations))
 			},
 		},
@@ -343,11 +347,12 @@ func (suite *KeeperTestSuite) TestMsgServer_RevokeTreasuryAuthorization() {
 				grantee, err := sdk.AccAddressFromBech32("cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69")
 				suite.Require().NoError(err)
 
+				expiration := time.Date(2024, 1, 11, 1, 1, 1, 1, time.UTC)
 				err = suite.authzKeeper.SaveGrant(ctx,
 					grantee,
 					treasury,
 					&banktypes.SendAuthorization{SpendLimit: sdk.NewCoins(sdk.NewInt64Coin("steak", 100))},
-					time.Date(2024, 1, 11, 1, 1, 1, 1, time.UTC),
+					&expiration,
 				)
 				suite.Require().NoError(err)
 			},
@@ -378,7 +383,9 @@ func (suite *KeeperTestSuite) TestMsgServer_RevokeTreasuryAuthorization() {
 				suite.Require().NoError(err)
 				grantee, err := sdk.AccAddressFromBech32("cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69")
 				suite.Require().NoError(err)
-				authorizations := suite.authzKeeper.GetAuthorizations(ctx, grantee, treasury)
+
+				authorizations, err := suite.authzKeeper.GetAuthorizations(ctx, grantee, treasury)
+				suite.Require().NoError(err)
 				suite.Require().Equal(0, len(authorizations))
 			},
 		},

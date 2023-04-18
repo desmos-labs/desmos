@@ -3,6 +3,7 @@ package keeper
 import (
 	"fmt"
 
+	errors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
@@ -26,7 +27,7 @@ func (k Keeper) GetNextReportID(ctx sdk.Context, subspaceID uint64) (reportID ui
 	store := ctx.KVStore(k.storeKey)
 	bz := store.Get(types.NextReportIDStoreKey(subspaceID))
 	if bz == nil {
-		return 0, sdkerrors.Wrapf(types.ErrInvalidGenesis, "initial report id hasn't been set for subspace %d", subspaceID)
+		return 0, errors.Wrapf(types.ErrInvalidGenesis, "initial report id hasn't been set for subspace %d", subspaceID)
 	}
 
 	reportID = types.GetReportIDFromBytes(bz)
@@ -44,7 +45,7 @@ func (k Keeper) DeleteNextReportID(ctx sdk.Context, subspaceID uint64) {
 // validateUserReportContent validates the given target data to make sure the reported user has not blocked the reporter
 func (k Keeper) validateUserReportContent(ctx sdk.Context, report types.Report, data *types.UserTarget) error {
 	if k.HasUserBlocked(ctx, data.User, report.Reporter, report.SubspaceID) {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "the reported user has blocked you on subspace %d", report.SubspaceID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "the reported user has blocked you on subspace %d", report.SubspaceID)
 	}
 
 	return nil
@@ -56,11 +57,11 @@ func (k Keeper) validateUserReportContent(ctx sdk.Context, report types.Report, 
 func (k Keeper) validatePostReportContent(ctx sdk.Context, report types.Report, data *types.PostTarget) error {
 	post, found := k.GetPost(ctx, report.SubspaceID, data.PostID)
 	if !found {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post %d does not exist inside subspace %d", data.PostID, report.SubspaceID)
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "post %d does not exist inside subspace %d", data.PostID, report.SubspaceID)
 	}
 
 	if k.HasUserBlocked(ctx, post.Author, report.Reporter, report.ID) {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post author has blocked you on this subspace")
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "post author has blocked you on this subspace")
 	}
 
 	return nil
@@ -71,7 +72,7 @@ func (k Keeper) ValidateReport(ctx sdk.Context, report types.Report) (err error)
 	// Validate the report
 	err = report.Validate()
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	// Validate the content

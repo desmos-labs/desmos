@@ -1,6 +1,7 @@
 package keeper_test
 
 import (
+	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -9,8 +10,8 @@ func (suite *KeeperTestSuite) TestKeeper_GetTotalSupply() {
 		name      string
 		store     func(ctx sdk.Context)
 		denom     string
-		divider   sdk.Int
-		expSupply sdk.Int
+		divider   math.Int
+		expSupply math.Int
 	}{
 		{
 			name: "total supply is computed properly",
@@ -46,8 +47,8 @@ func (suite *KeeperTestSuite) TestKeeper_GetCirculatingSupply() {
 		name      string
 		store     func(ctx sdk.Context)
 		denom     string
-		divider   sdk.Int
-		expSupply sdk.Int
+		divider   math.Int
+		expSupply math.Int
 	}{
 		{
 			name: "circulating supply is computed properly",

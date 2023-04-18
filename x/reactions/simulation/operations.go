@@ -18,6 +18,7 @@ import (
 
 	"github.com/desmos-labs/desmos/v4/app/params"
 	"github.com/desmos-labs/desmos/v4/x/reactions/keeper"
+	"github.com/desmos-labs/desmos/v4/x/reactions/types"
 )
 
 // Simulation operation weights constants
@@ -36,7 +37,7 @@ const (
 // WeightedOperations returns all the operations from the module with their respective weights
 func WeightedOperations(
 	appParams simtypes.AppParams, cdc codec.JSONCodec,
-	k keeper.Keeper, sk subspaceskeeper.Keeper, pk postskeeper.Keeper,
+	k keeper.Keeper, profilesKeeper types.ProfilesKeeper, sk subspaceskeeper.Keeper, pk postskeeper.Keeper,
 	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
 ) sim.WeightedOperations {
 
@@ -85,7 +86,7 @@ func WeightedOperations(
 	return sim.WeightedOperations{
 		sim.NewWeightedOperation(
 			weightMsgAddReaction,
-			SimulateMsgAddReaction(k, sk, pk, ak, bk, fk),
+			SimulateMsgAddReaction(k, profilesKeeper, sk, pk, ak, bk, fk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgRemoveReaction,

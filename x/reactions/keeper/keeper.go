@@ -1,15 +1,16 @@
 package keeper
 
 import (
+	"github.com/cometbft/cometbft/libs/log"
 	"github.com/cosmos/cosmos-sdk/codec"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/desmos-labs/desmos/v4/x/reactions/types"
 )
 
 type Keeper struct {
-	storeKey sdk.StoreKey
+	storeKey storetypes.StoreKey
 	cdc      codec.BinaryCodec
 	hooks    types.ReactionsHooks
 
@@ -21,7 +22,7 @@ type Keeper struct {
 
 // NewKeeper creates a new instance of the reactions Keeper.
 func NewKeeper(
-	cdc codec.BinaryCodec, storeKey sdk.StoreKey,
+	cdc codec.BinaryCodec, storeKey storetypes.StoreKey,
 	ak types.ProfilesKeeper, sk types.SubspacesKeeper, rk types.RelationshipsKeeper, pk types.PostsKeeper,
 ) Keeper {
 	return Keeper{

@@ -1,11 +1,13 @@
 package app
 
 import (
+	errors "cosmossdk.io/errors"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
-	ibcante "github.com/cosmos/ibc-go/v4/modules/core/ante"
-	ibckeeper "github.com/cosmos/ibc-go/v4/modules/core/keeper"
+	ibcante "github.com/cosmos/ibc-go/v7/modules/core/ante"
+	ibckeeper "github.com/cosmos/ibc-go/v7/modules/core/keeper"
 
 	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
 	subspaceante "github.com/desmos-labs/desmos/v4/x/subspaces/ante"
@@ -23,19 +25,25 @@ type HandlerOptions struct {
 	IBCkeeper         *ibckeeper.Keeper
 	FeesKeeper        feeskeeper.Keeper
 	SubspacesKeeper   subspaceskeeper.Keeper
-	TxCounterStoreKey sdk.StoreKey
-	WasmConfig        wasmTypes.WasmConfig
+	TxCounterStoreKey storetypes.StoreKey
+	WasmConfig        *wasmTypes.WasmConfig
 }
 
 func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 	if options.AccountKeeper == nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "account keeper is required for AnteHandler")
+		return nil, errors.Wrap(sdkerrors.ErrLogic, "account keeper is required for AnteHandler")
 	}
 	if options.BankKeeper == nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "bank keeper is required for AnteHandler")
+		return nil, errors.Wrap(sdkerrors.ErrLogic, "bank keeper is required for AnteHandler")
 	}
 	if options.SignModeHandler == nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "sign mode handler is required for ante builder")
+		return nil, errors.Wrap(sdkerrors.ErrLogic, "sign mode handler is required for ante builder")
+	}
+	if options.WasmConfig == nil {
+		return nil, errors.Wrap(sdkerrors.ErrLogic, "wasm config is required for ante builder")
+	}
+	if options.TxCounterStoreKey == nil {
+		return nil, errors.Wrap(sdkerrors.ErrLogic, "tx counter key is required for ante builder")
 	}
 
 	var sigGasConsumer = options.SigGasConsumer
@@ -47,21 +55,20 @@ func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 		ante.NewSetUpContextDecorator(),
 		wasmkeeper.NewLimitSimulationGasDecorator(options.WasmConfig.SimulationGasLimit),
 		wasmkeeper.NewCountTXDecorator(options.TxCounterStoreKey),
-		ante.NewRejectExtensionOptionsDecorator(),
-		ante.NewMempoolFeeDecorator(),
+		ante.NewExtensionOptionsDecorator(options.ExtensionOptionChecker),
 		feeskeeper.NewMinFeeDecorator(options.FeesKeeper),
 		ante.NewValidateBasicDecorator(),
 		ante.NewTxTimeoutHeightDecorator(),
 		ante.NewValidateMemoDecorator(options.AccountKeeper),
 		ante.NewConsumeGasForTxSizeDecorator(options.AccountKeeper),
 		subspaceante.NewDeductFeeDecorator(
-			ante.NewDeductFeeDecorator(options.AccountKeeper, options.BankKeeper, options.FeegrantKeeper), options.AccountKeeper, options.BankKeeper, options.SubspacesKeeper),
+			ante.NewDeductFeeDecorator(options.AccountKeeper, options.BankKeeper, options.FeegrantKeeper, options.TxFeeChecker), options.AccountKeeper, options.BankKeeper, options.SubspacesKeeper),
 		// SetPubKeyDecorator must be called before all signature verification decorators
 		ante.NewSetPubKeyDecorator(options.AccountKeeper),
 		ante.NewValidateSigCountDecorator(options.AccountKeeper),
 		ante.NewSigGasConsumeDecorator(options.AccountKeeper, sigGasConsumer),
 		ante.NewSigVerificationDecorator(options.AccountKeeper, options.SignModeHandler),
 		ante.NewIncrementSequenceDecorator(options.AccountKeeper),
-		ibcante.NewAnteDecorator(options.IBCkeeper),
+		ibcante.NewRedundantRelayDecorator(options.IBCkeeper),
 	), nil
 }

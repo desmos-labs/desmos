@@ -10,7 +10,6 @@ import (
 	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
@@ -32,7 +31,7 @@ func SimulateMsgCreateSubspace(
 		// Get the data
 		subspace, creator, skip := randomSubspaceCreateFields(r, accs)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreateSubspace"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgCreateSubspace", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -44,12 +43,7 @@ func SimulateMsgCreateSubspace(
 		)
 
 		// Send the message
-		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{creator.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreateSubspace"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "MsgCreateSubspace", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, creator)
 	}
 }
 
@@ -86,7 +80,7 @@ func SimulateMsgEditSubspace(
 		// Get the data
 		subspaceID, update, editor, skip := randomEditSubspaceFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgEditSubspace"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgEditSubspace", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -99,12 +93,7 @@ func SimulateMsgEditSubspace(
 		)
 
 		// Send the data
-		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{editor.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgEditSubspace"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "MsgEditSubspace", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, editor)
 	}
 }
 
@@ -168,19 +157,14 @@ func SimulateMsgDeleteSubspace(
 		// Get the data
 		subspaceID, editor, skip := randomDeleteSubspaceFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgDeleteSubspace"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgDeleteSubspace", "skip"), nil, nil
 		}
 
 		// Build the message
 		msg := types.NewMsgDeleteSubspace(subspaceID, editor.Address.String())
 
 		// Send the data
-		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, 1_500_000, []cryptotypes.PrivKey{editor.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgDeleteSubspace"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "MsgDeleteSubspace", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, editor)
 	}
 }
 

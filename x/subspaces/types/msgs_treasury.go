@@ -9,7 +9,7 @@ import (
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/cosmos/cosmos-sdk/x/auth/legacy/legacytx"
+	"github.com/cosmos/cosmos-sdk/x/auth/migrations/legacytx"
 	authz "github.com/cosmos/cosmos-sdk/x/authz"
 )
 
@@ -23,8 +23,8 @@ var (
 	_ codectypes.UnpackInterfacesMessage = &MsgGrantTreasuryAuthorization{}
 )
 
-func NewMsgGrantTreasuryAuthorization(subspaceID uint64, granter string, grantee string, authorization authz.Authorization, expiration time.Time) *MsgGrantTreasuryAuthorization {
-	grant, err := authz.NewGrant(authorization, expiration)
+func NewMsgGrantTreasuryAuthorization(subspaceID uint64, granter string, grantee string, authorization authz.Authorization, expiration *time.Time) *MsgGrantTreasuryAuthorization {
+	grant, err := authz.NewGrant(time.Time{}, authorization, expiration)
 	if err != nil {
 		panic("failed to pack authorization to grant")
 	}

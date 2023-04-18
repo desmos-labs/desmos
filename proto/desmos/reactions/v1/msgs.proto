@@ -3,7 +3,6 @@ package desmos.reactions.v1;
 
 import "gogoproto/gogo.proto";
 import "google/protobuf/any.proto";
-import "google/protobuf/timestamp.proto";
 import "cosmos_proto/cosmos.proto";
 
 import "desmos/reactions/v1/models.proto";
@@ -52,7 +51,7 @@ message MsgAddReaction {
   // Value of the reaction
   google.protobuf.Any value = 3 [
     (gogoproto.moretags) = "yaml:\"value\"",
-    (cosmos_proto.accepts_interface) = "ReactionValue"
+    (cosmos_proto.accepts_interface) = "desmos.reactions.v1.ReactionValue"
   ];
 
   // User reacting to the post

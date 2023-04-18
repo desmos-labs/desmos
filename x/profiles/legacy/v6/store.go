@@ -5,6 +5,8 @@ import (
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
+	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 
 	v5types "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v5/types"
 
@@ -15,8 +17,6 @@ import (
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	"github.com/cosmos/cosmos-sdk/types/tx/signing"
-
 	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
@@ -26,7 +26,7 @@ import (
 // - migrating all the profiles to have the proper Protobuf type
 // - add the expiration date to all application links
 // - set the default external address to oldest chain link of each chain for each owner
-func MigrateStore(ctx sdk.Context, ak authkeeper.AccountKeeper, storeKey sdk.StoreKey, amino *codec.LegacyAmino, cdc codec.BinaryCodec) error {
+func MigrateStore(ctx sdk.Context, ak authkeeper.AccountKeeper, storeKey storetypes.StoreKey, amino *codec.LegacyAmino, cdc codec.BinaryCodec) error {
 	store := ctx.KVStore(storeKey)
 
 	// Migrate the profiles

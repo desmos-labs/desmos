@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	errors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/query"
@@ -24,20 +25,20 @@ func (k Keeper) Profile(ctx context.Context, request *types.QueryProfileRequest)
 
 	dTagOrAddress := request.User
 	if strings.TrimSpace(dTagOrAddress) == "" {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "DTag or address cannot be empty or blank")
+		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, "DTag or address cannot be empty or blank")
 	}
 
 	sdkAddress, err := sdk.AccAddressFromBech32(dTagOrAddress)
 	if err != nil {
 		addr := k.GetAddressFromDTag(sdkCtx, dTagOrAddress)
 		if addr == "" {
-			return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+			return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest,
 				"No address related to this DTag: %s", dTagOrAddress)
 		}
 
 		sdkAddress, err = sdk.AccAddressFromBech32(addr)
 		if err != nil {
-			return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, addr)
+			return nil, errors.Wrapf(sdkerrors.ErrInvalidAddress, addr)
 		}
 	}
 
@@ -181,7 +182,7 @@ func (k Keeper) DefaultExternalAddresses(ctx context.Context, request *types.Que
 		owner, chainName := types.GetDefaultExternalAddressData(keyWithPrefix)
 		link, found := k.GetChainLink(sdkCtx, owner, chainName, string(value))
 		if !found {
-			return sdkerrors.Wrap(sdkerrors.ErrNotFound, "chain link not found")
+			return errors.Wrap(sdkerrors.ErrNotFound, "chain link not found")
 		}
 		links = append(links, link)
 		return nil

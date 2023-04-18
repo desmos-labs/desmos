@@ -8,6 +8,7 @@ import (
 	postskeeper "github.com/desmos-labs/desmos/v4/x/posts/keeper"
 	"github.com/desmos-labs/desmos/v4/x/posts/types"
 
+	errors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
@@ -30,7 +31,7 @@ func (querier PostsWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMessag
 	err := json.Unmarshal(data, &query)
 
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 
 	var response []byte
@@ -66,15 +67,15 @@ func (querier PostsWasmQuerier) handleSubspacePostsRequest(ctx sdk.Context, requ
 	var PostsReq types.QuerySubspacePostsRequest
 	err = querier.cdc.UnmarshalJSON(request, &PostsReq)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 	PostsResponse, err := querier.postsKeeper.SubspacePosts(sdk.WrapSDKContext(ctx), &PostsReq)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 	bz, err = querier.cdc.MarshalJSON(PostsResponse)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 	}
 	return bz, nil
 }
@@ -83,15 +84,15 @@ func (querier PostsWasmQuerier) handleSectionPostsRequest(ctx sdk.Context, reque
 	var incomingDtagReq types.QuerySectionPostsRequest
 	err = querier.cdc.UnmarshalJSON(request, &incomingDtagReq)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 	SectionPostsResponse, err := querier.postsKeeper.SectionPosts(sdk.WrapSDKContext(ctx), &incomingDtagReq)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 	bz, err = querier.cdc.MarshalJSON(SectionPostsResponse)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 	}
 	return bz, nil
 }
@@ -100,15 +101,15 @@ func (querier PostsWasmQuerier) handlePostRequest(ctx sdk.Context, request json.
 	var chainLinkReq types.QueryPostRequest
 	err = querier.cdc.UnmarshalJSON(request, &chainLinkReq)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 	PostResponse, err := querier.postsKeeper.Post(sdk.WrapSDKContext(ctx), &chainLinkReq)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 	bz, err = querier.cdc.MarshalJSON(PostResponse)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 	}
 
 	return bz, nil
@@ -118,15 +119,15 @@ func (querier PostsWasmQuerier) handlePostAttachmentsRequest(ctx sdk.Context, re
 	var PostAttachmentsReq types.QueryPostAttachmentsRequest
 	err = querier.cdc.UnmarshalJSON(request, &PostAttachmentsReq)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 	PostAttachmentsResponse, err := querier.postsKeeper.PostAttachments(sdk.WrapSDKContext(ctx), &PostAttachmentsReq)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 	bz, err = querier.cdc.MarshalJSON(PostAttachmentsResponse)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 	}
 	return bz, nil
 }
@@ -135,18 +136,18 @@ func (querier PostsWasmQuerier) handlePollAnswersRequest(ctx sdk.Context, reques
 	var applicationReq types.QueryPollAnswersRequest
 	err = querier.cdc.UnmarshalJSON(request, &applicationReq)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 	applicationLinkByChainIDResponse, err := querier.postsKeeper.PollAnswers(
 		sdk.WrapSDKContext(ctx),
 		&applicationReq,
 	)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 	bz, err = querier.cdc.MarshalJSON(applicationLinkByChainIDResponse)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 	}
 	return bz, nil
 }

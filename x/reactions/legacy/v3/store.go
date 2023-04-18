@@ -3,6 +3,7 @@ package v3
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
@@ -11,17 +12,17 @@ import (
 
 // MigrateStore performs in-place store migrations from v2 to v3
 // It removes all the duplicated reactions and fix missing reaction ids.
-func MigrateStore(ctx sdk.Context, reactionsStoreKey sdk.StoreKey, pk types.PostsKeeper, cdc codec.BinaryCodec) error {
-	err := RemoveDuplicatedReactions(ctx, reactionsStoreKey, cdc)
+func MigrateStore(ctx sdk.Context, storeKey storetypes.StoreKey, pk types.PostsKeeper, cdc codec.BinaryCodec) error {
+	err := RemoveDuplicatedReactions(ctx, storeKey, cdc)
 	if err != nil {
 		return err
 	}
 
-	return FixMissingNextReactionIDs(ctx, reactionsStoreKey, pk, cdc)
+	return FixMissingNextReactionIDs(ctx, storeKey, pk, cdc)
 }
 
 // RemoveDuplicatedReactions removes all the duplicated reactions
-func RemoveDuplicatedReactions(ctx sdk.Context, storeKey sdk.StoreKey, cdc codec.BinaryCodec) error {
+func RemoveDuplicatedReactions(ctx sdk.Context, storeKey storetypes.StoreKey, cdc codec.BinaryCodec) error {
 	store := ctx.KVStore(storeKey)
 	reactionsStore := prefix.NewStore(store, types.ReactionPrefix)
 
@@ -68,7 +69,7 @@ func contains(reactions []types.Reaction, reaction types.Reaction) bool {
 // --------------------------------------------------------------------------------------------------------------------
 
 // FixMissingNextReactionIDs fixes the missing next reaction ids for existing posts
-func FixMissingNextReactionIDs(ctx sdk.Context, storeKey sdk.StoreKey, pk types.PostsKeeper, cdc codec.BinaryCodec) error {
+func FixMissingNextReactionIDs(ctx sdk.Context, storeKey storetypes.StoreKey, pk types.PostsKeeper, cdc codec.BinaryCodec) error {
 	store := ctx.KVStore(storeKey)
 
 	pk.IteratePosts(ctx, func(post poststypes.Post) bool {

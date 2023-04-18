@@ -1,8 +1,8 @@
 package keeper
 
 import (
+	errors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
@@ -24,7 +24,7 @@ func (k Keeper) GetNextSectionID(ctx sdk.Context, subspaceID uint64) (sectionID 
 	store := ctx.KVStore(k.storeKey)
 	bz := store.Get(types.NextSectionIDStoreKey(subspaceID))
 	if bz == nil {
-		return 0, sdkerrors.Wrapf(types.ErrInvalidGenesis, "initial section id hasn't been set for subspace %d", subspaceID)
+		return 0, errors.Wrapf(types.ErrInvalidGenesis, "initial section id hasn't been set for subspace %d", subspaceID)
 	}
 
 	sectionID = types.GetSectionIDFromBytes(bz)

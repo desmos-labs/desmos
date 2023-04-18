@@ -17,7 +17,6 @@ import (
 	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
@@ -40,7 +39,7 @@ func SimulateMsgCreateReport(
 		// Get the data
 		data, creator, skip := randomCreateReportFields(r, ctx, accs, sk, pk, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreateReport"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgCreateReport", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -53,12 +52,7 @@ func SimulateMsgCreateReport(
 		)
 
 		// Send the message
-		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{creator.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreateReport"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "MsgCreateReport", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, creator)
 	}
 }
 
@@ -126,6 +120,12 @@ func randomCreateReportFields(
 		return
 	}
 
+	if k.HasReported(ctx, subspaceID, creator.Address.String(), data) {
+		// Skip because the creator has already reported
+		skip = true
+		return
+	}
+
 	// Get the report target
 	report = types.NewReport(
 		subspaceID,
@@ -155,19 +155,14 @@ func SimulateMsgDeleteReport(
 		// Get the data
 		subspaceID, reportID, editor, skip := randomDeleteReportFields(r, ctx, accs, k, sk)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgDeleteReport"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgDeleteReport", "skip"), nil, nil
 		}
 
 		// Build the message
 		msg := types.NewMsgDeleteReport(subspaceID, reportID, editor.Address.String())
 
 		// Send the data
-		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, 1_500_000, []cryptotypes.PrivKey{editor.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgDeleteReport"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "MsgDeleteReport", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, editor)
 	}
 }
 

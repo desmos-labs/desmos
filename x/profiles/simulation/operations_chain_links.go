@@ -9,8 +9,6 @@ import (
 	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
 	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
 
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
-
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -36,7 +34,7 @@ func SimulateMsgLinkChainAccount(
 		// Get the data
 		link, signer, skip := randomLinkChainAccountFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -48,12 +46,7 @@ func SimulateMsgLinkChainAccount(
 		)
 
 		// Send the message
-		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgLinkChainAccount"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 	}
 }
 
@@ -69,6 +62,11 @@ func randomLinkChainAccountFields(
 
 	// Get random signer
 	signer, _ = simtypes.RandomAcc(r, accs)
+	if !k.HasProfile(ctx, signer.Address.String()) {
+		// Skip because signer has no profile
+		skip = true
+		return
+	}
 
 	chainAccount := profilestesting.GetChainLinkAccount("cosmos", "cosmos")
 	link = chainAccount.GetBech32ChainLink(signer.Address.String(), time.Now())
@@ -97,18 +95,14 @@ func SimulateMsgUnlinkChainAccount(
 		// Get the data
 		link, signer, skip := randomUnlinkChainAccountFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgUnlinkChainAccount", "skip"), nil, nil
 		}
 
 		// Build the message
 		msg := types.NewMsgUnlinkChainAccount(link.User, link.ChainConfig.Name, link.GetAddressData().GetValue())
 
 		// Send the message
-		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgUnlinkChainAccount"), nil, err
-		}
-		return simtypes.NewOperationMsg(msg, true, "", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 	}
 }
 
@@ -156,18 +150,14 @@ func SimulateMsgSetDefaultExternalAddress(
 		// Get the data
 		link, signer, skip := randomSetDefaultExternalAddressFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgSetDefaultExternalAddress", "skip"), nil, nil
 		}
 
 		// Build the message
 		msg := types.NewMsgSetDefaultExternalAddress(link.ChainConfig.Name, link.GetAddressData().GetValue(), link.User)
 
 		// Send the message
-		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgSetDefaultExternalAddress"), nil, err
-		}
-		return simtypes.NewOperationMsg(msg, true, "", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 	}
 }
 

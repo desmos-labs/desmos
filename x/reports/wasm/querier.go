@@ -3,6 +3,7 @@ package wasm
 import (
 	"encoding/json"
 
+	errors "cosmossdk.io/errors"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -27,7 +28,7 @@ func (querier ReportsWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMess
 	var query types.ReportsQuery
 	err := json.Unmarshal(data, &query)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 	switch {
 	case query.Reports != nil:
@@ -47,11 +48,11 @@ func (querier ReportsWasmQuerier) handleReportsRequest(ctx sdk.Context, data jso
 	var req types.QueryReportsRequest
 	err := querier.cdc.UnmarshalJSON(data, &req)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 	res, err := querier.reportskeeper.Reports(sdk.WrapSDKContext(ctx), &req)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 	return querier.cdc.MarshalJSON(res)
 }
@@ -60,11 +61,11 @@ func (querier ReportsWasmQuerier) handleReportRequest(ctx sdk.Context, data json
 	var req types.QueryReportRequest
 	err := querier.cdc.UnmarshalJSON(data, &req)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 	res, err := querier.reportskeeper.Report(sdk.WrapSDKContext(ctx), &req)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 	return querier.cdc.MarshalJSON(res)
 }
@@ -73,11 +74,11 @@ func (querier ReportsWasmQuerier) handleReasonsRequest(ctx sdk.Context, data jso
 	var req types.QueryReasonsRequest
 	err := querier.cdc.UnmarshalJSON(data, &req)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 	res, err := querier.reportskeeper.Reasons(sdk.WrapSDKContext(ctx), &req)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 	return querier.cdc.MarshalJSON(res)
 }
@@ -86,11 +87,11 @@ func (querier ReportsWasmQuerier) handleReasonRequest(ctx sdk.Context, data json
 	var req types.QueryReasonRequest
 	err := querier.cdc.UnmarshalJSON(data, &req)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 	res, err := querier.reportskeeper.Reason(sdk.WrapSDKContext(ctx), &req)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 	return querier.cdc.MarshalJSON(res)
 }

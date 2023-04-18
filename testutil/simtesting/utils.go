@@ -4,57 +4,59 @@ import (
 	"math/rand"
 
 	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
+	"github.com/desmos-labs/desmos/v4/x/fees/types"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
+	"github.com/cosmos/cosmos-sdk/codec"
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
-	"github.com/cosmos/cosmos-sdk/simapp/helpers"
-	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	"github.com/cosmos/cosmos-sdk/x/auth/tx"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+	"github.com/cosmos/cosmos-sdk/x/simulation"
 )
 
 // SendMsg sends a transaction with the specified message.
 func SendMsg(
 	r *rand.Rand, app *baseapp.BaseApp, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
-	msg sdk.Msg, ctx sdk.Context, chainID string, gasValue uint64, privkeys []cryptotypes.PrivKey,
-) error {
+	msg interface {
+		sdk.Msg
+		Route() string
+		Type() string
+	}, ctx sdk.Context,
+	simAccount simtypes.Account,
+) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 	addr := msg.GetSigners()[0]
 	account := ak.GetAccount(ctx, addr)
 	coins := bk.SpendableCoins(ctx, account.GetAddress())
 
 	fees, sendTx, err := computeFees(r, ctx, fk, msg, coins)
 	if err != nil {
-		return err
+		return simtypes.NoOpMsg(msg.Route(), msg.Type(), "invalid fees"), nil, err
 	}
-
 	if !sendTx {
-		return nil
+		return simtypes.NoOpMsg(msg.Route(), msg.Type(), "skip because insufficient fees"), nil, nil
 	}
 
-	txGen := simappparams.MakeTestEncodingConfig().TxConfig
-	tx, err := helpers.GenTx(
-		txGen,
-		[]sdk.Msg{msg},
-		fees,
-		gasValue,
-		chainID,
-		[]uint64{account.GetAccountNumber()},
-		[]uint64{account.GetSequence()},
-		privkeys...,
-	)
-	if err != nil {
-		return err
+	interfaceRegistry := codectypes.NewInterfaceRegistry()
+	txConfig := tx.NewTxConfig(codec.NewProtoCodec(interfaceRegistry), tx.DefaultSignModes)
+	txCtx := simulation.OperationInput{
+		R:               r,
+		App:             app,
+		TxGen:           txConfig,
+		Cdc:             nil,
+		Msg:             msg,
+		MsgType:         msg.Type(),
+		Context:         ctx,
+		SimAccount:      simAccount,
+		AccountKeeper:   ak,
+		Bankkeeper:      bk,
+		ModuleName:      types.ModuleName,
+		CoinsSpentInMsg: coins,
 	}
-
-	_, _, err = app.Deliver(txGen.TxEncoder(), tx)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return simulation.GenAndDeliverTx(txCtx, fees)
 }
 
 // computeFees computes the fees that should be used to send a transaction with the given message,

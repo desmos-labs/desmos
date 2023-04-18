@@ -3,10 +3,10 @@ package wasm
 import (
 	"encoding/json"
 
+	errors "cosmossdk.io/errors"
 	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/desmos-labs/desmos/v4/cosmwasm"
 	"github.com/desmos-labs/desmos/v4/x/commons"
@@ -27,7 +27,7 @@ func (parser MsgsParser) ParseCustomMsgs(contractAddr sdk.AccAddress, data json.
 	var msg types.ReportsMsg
 	err := json.Unmarshal(data, &msg)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(err, "failed to parse x/reports message from contract %s", contractAddr.String())
+		return nil, errors.Wrapf(err, "failed to parse x/reports message from contract %s", contractAddr.String())
 	}
 	switch {
 	case msg.CreateReport != nil:
@@ -41,6 +41,6 @@ func (parser MsgsParser) ParseCustomMsgs(contractAddr sdk.AccAddress, data json.
 	case msg.RemoveReason != nil:
 		return commons.HandleWasmMsg(parser.cdc, *msg.RemoveReason, &types.MsgRemoveReason{})
 	default:
-		return nil, sdkerrors.Wrap(wasm.ErrInvalidMsg, "cosmwasm-reports-msg-parser: message not supported")
+		return nil, errors.Wrap(wasm.ErrInvalidMsg, "cosmwasm-reports-msg-parser: message not supported")
 	}
 }

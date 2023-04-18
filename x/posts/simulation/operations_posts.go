@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
@@ -33,7 +32,7 @@ func SimulateMsgCreatePost(
 
 		data, author, skip := randomPostCreateFields(r, ctx, accs, k, sk)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "create post"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "create post", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgCreatePost(
@@ -49,12 +48,7 @@ func SimulateMsgCreatePost(
 			data.ReferencedPosts,
 			author.Address.String(),
 		)
-		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{author.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "create post"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "create post", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, author)
 	}
 }
 
@@ -122,16 +116,11 @@ func SimulateMsgEditPost(
 
 		subspaceID, postID, data, editor, skip := randomPostEditFields(r, ctx, accs, k, sk)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "edit post"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "edit post", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgEditPost(subspaceID, postID, data.Text, data.Entities, data.Tags, editor.Address.String())
-		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{editor.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "edit post"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "edit post", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, editor)
 	}
 }
 
@@ -196,16 +185,11 @@ func SimulateMsgDeletePost(
 
 		subspaceID, postID, editor, skip := randomPostDeleteFields(r, ctx, accs, k, sk)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "delete post"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "delete post", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgDeletePost(subspaceID, postID, editor.Address.String())
-		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{editor.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "delete post"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "delete post", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, editor)
 	}
 }
 

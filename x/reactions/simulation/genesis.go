@@ -74,9 +74,9 @@ func getSubspacesData(subspaces []subspacestypes.Subspace, reactions []types.Reg
 	for i, subspace := range subspaces {
 		// Get the max reaction id
 		maxReactionID := uint32(0)
-		for _, reason := range reactions {
-			if reason.SubspaceID == subspace.ID && reason.ID > maxReactionID {
-				maxReactionID = reason.ID
+		for _, reaction := range reactions {
+			if reaction.SubspaceID == subspace.ID && reaction.ID > maxReactionID {
+				maxReactionID = reaction.ID
 			}
 		}
 
@@ -168,8 +168,8 @@ func getPostsData(posts []poststypes.Post, reactions []types.Reaction) (entries 
 	maxReactionIDs := map[postReference]uint32{}
 	for _, reaction := range reactions {
 		key := postReference{SubspaceID: reaction.SubspaceID, PostID: reaction.PostID}
-		maxAttachmentID, ok := maxReactionIDs[key]
-		if !ok || maxAttachmentID < reaction.ID {
+		maxReactionID, ok := maxReactionIDs[key]
+		if !ok || maxReactionID < reaction.ID {
 			maxReactionIDs[key] = reaction.ID
 		}
 	}

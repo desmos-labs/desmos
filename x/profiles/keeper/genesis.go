@@ -1,9 +1,9 @@
 package keeper
 
 import (
+	abci "github.com/cometbft/cometbft/abci/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	abci "github.com/tendermint/tendermint/abci/types"
 
 	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )

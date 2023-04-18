@@ -47,7 +47,10 @@ The printed JSON object can be safely used as the verification proof when connec
 			}
 
 			// Build a tx factory
-			txFactory := tx.NewFactoryCLI(clientCtx, cmd.Flags())
+			txFactory, err := tx.NewFactoryCLI(clientCtx, cmd.Flags())
+			if err != nil {
+				return err
+			}
 
 			// Get the value of the "from" flag
 			from, _ := cmd.Flags().GetString(flags.FlagFrom)
@@ -75,7 +78,11 @@ The printed JSON object can be safely used as the verification proof when connec
 			}
 
 			// Build the signature data output
-			pubKey := key.GetPubKey()
+			pubKey, err := key.GetPubKey()
+			if err != nil {
+				return err
+			}
+
 			signatureData := SignatureData{
 				Address:   strings.ToLower(pubKey.Address().String()),
 				Signature: strings.ToLower(hex.EncodeToString(sigBz)),
@@ -98,14 +105,14 @@ The printed JSON object can be safely used as the verification proof when connec
 }
 
 // signRaw signs the given value directly by converting it into raw bytes
-func signRaw(txFactory tx.Factory, key keyring.Info, value string) (valueBz []byte, sigBz []byte, err error) {
+func signRaw(txFactory tx.Factory, key *keyring.Record, value string) (valueBz []byte, sigBz []byte, err error) {
 	valueBz = []byte(value)
-	sigBz, _, err = txFactory.Keybase().Sign(key.GetName(), valueBz)
+	sigBz, _, err = txFactory.Keybase().Sign(key.Name, valueBz)
 	return valueBz, sigBz, err
 }
 
 // signAmino puts the given value into a transaction memo field, and signs the transaction using the Amino encoding
-func signAmino(clientCtx client.Context, txFactory tx.Factory, key keyring.Info, value string) (valueBz []byte, sigBz []byte, err error) {
+func signAmino(clientCtx client.Context, txFactory tx.Factory, key *keyring.Record, value string) (valueBz []byte, sigBz []byte, err error) {
 	// Set a fake chain id
 	txFactory = txFactory.WithChainID("desmos")
 
@@ -119,7 +126,7 @@ func signAmino(clientCtx client.Context, txFactory tx.Factory, key keyring.Info,
 	}
 
 	// Sign the data with the private key
-	err = tx.Sign(txFactory, key.GetName(), txBuilder, true)
+	err = tx.Sign(txFactory, key.Name, txBuilder, true)
 	if err != nil {
 		return
 	}

@@ -1,6 +1,7 @@
 package keeper_test
 
 import (
+	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/v4/x/supply/types"
@@ -11,7 +12,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Total() {
 		name      string
 		store     func(ctx sdk.Context)
 		req       *types.QueryTotalRequest
-		expSupply sdk.Int
+		expSupply math.Int
 	}{
 		{
 			name: "valid query returns properly",
@@ -59,7 +60,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Circulating() {
 		name      string
 		store     func(ctx sdk.Context)
 		req       *types.QueryCirculatingRequest
-		expSupply sdk.Int
+		expSupply math.Int
 	}{
 		{
 			name: "valid query returns properly",

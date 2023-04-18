@@ -29,7 +29,7 @@ func TestMigrateStore(t *testing.T) {
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
 	// Build the authz keeper
-	authzKeeper := authzkeeper.NewKeeper(keys[authzkeeper.StoreKey], cdc, nil)
+	authzKeeper := authzkeeper.NewKeeper(keys[authzkeeper.StoreKey], cdc, nil, nil)
 
 	testCases := []struct {
 		name      string
@@ -49,7 +49,7 @@ func TestMigrateStore(t *testing.T) {
 				granteeAddr, err := sdk.AccAddressFromBech32("cosmos1w6hk7984dpgtgxwqwuv5645yeq02c4svknv5ua")
 				require.NoError(t, err)
 
-				err = authzKeeper.SaveGrant(ctx, granteeAddr, granterAddr, authorization, expiration)
+				err = authzKeeper.SaveGrant(ctx, granteeAddr, granterAddr, authorization, &expiration)
 				require.NoError(t, err)
 			},
 			check: func(ctx sdk.Context) {
@@ -59,7 +59,8 @@ func TestMigrateStore(t *testing.T) {
 				granteeAddr, err := sdk.AccAddressFromBech32("cosmos1w6hk7984dpgtgxwqwuv5645yeq02c4svknv5ua")
 				require.NoError(t, err)
 
-				authorizations := authzKeeper.GetAuthorizations(ctx, granteeAddr, granterAddr)
+				authorizations, err := authzKeeper.GetAuthorizations(ctx, granteeAddr, granterAddr)
+				require.NoError(t, err)
 				require.Len(t, authorizations, 1)
 
 				require.Equal(t, subspacesauthz.NewGenericSubspaceAuthorization(

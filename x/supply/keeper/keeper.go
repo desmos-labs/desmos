@@ -1,6 +1,8 @@
 package keeper
 
 import (
+	"cosmossdk.io/math"
+	"github.com/cometbft/cometbft/libs/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
@@ -8,7 +10,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting/exported"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	distributionkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
-	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/desmos-labs/desmos/v4/x/supply/types"
 )
@@ -37,15 +38,15 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 
 // GetTotalSupply returns the total supply computed using the following formula:
 // total_supply = total_supply / divider
-func (k Keeper) GetTotalSupply(ctx sdk.Context, coinDenom string, divider sdk.Int) sdk.Int {
+func (k Keeper) GetTotalSupply(ctx sdk.Context, coinDenom string, divider math.Int) math.Int {
 	totalSupply := k.bk.GetSupply(ctx, coinDenom)
 	return totalSupply.Amount.Quo(divider)
 }
 
 // GetCirculatingSupply returns the circulating supply computed using the following formula:
 // circulating_supply = (total_supply - community_pool - vested_amount) / divider
-func (k Keeper) GetCirculatingSupply(ctx sdk.Context, coinDenom string, divider sdk.Int) sdk.Int {
-	var circulatingSupply sdk.Int
+func (k Keeper) GetCirculatingSupply(ctx sdk.Context, coinDenom string, divider math.Int) math.Int {
+	var circulatingSupply math.Int
 
 	// Get total supply
 	totalSupply := k.bk.GetSupply(ctx, coinDenom)
@@ -72,8 +73,8 @@ func (k Keeper) GetCirculatingSupply(ctx sdk.Context, coinDenom string, divider 
 
 // subtractVestingAccountDenomAmounts subtract the given vesting account denom amount from the
 // circulating supply
-func subtractVestingAccountDenomAmounts(circulatingSupply sdk.Int,
-	vestingAccount exported.VestingAccount, denom string) sdk.Int {
+func subtractVestingAccountDenomAmounts(circulatingSupply math.Int,
+	vestingAccount exported.VestingAccount, denom string) math.Int {
 	originalVesting := vestingAccount.GetOriginalVesting()
 	delegatedFree := vestingAccount.GetDelegatedFree()
 

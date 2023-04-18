@@ -6,11 +6,12 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/tx"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
-	"github.com/cosmos/cosmos-sdk/x/auth/legacy/legacytx"
+	"github.com/cosmos/cosmos-sdk/x/auth/migrations/legacytx"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	v4types "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v4/types"
@@ -28,7 +29,7 @@ import (
 // NOTE: This method must be called AFTER the migration from v0 to v1 of the x/relationships module.
 //
 //	If this order is not preserved, all relationships and blocks WILL BE DELETED.
-func MigrateStore(ctx sdk.Context, ak authkeeper.AccountKeeper, storeKey sdk.StoreKey, amino *codec.LegacyAmino, cdc codec.BinaryCodec) error {
+func MigrateStore(ctx sdk.Context, ak authkeeper.AccountKeeper, storeKey storetypes.StoreKey, amino *codec.LegacyAmino, cdc codec.BinaryCodec) error {
 	legacyKeeper := NewKeeper(storeKey, cdc)
 
 	// Migrate the profiles
@@ -83,7 +84,7 @@ func migrateProfiles(ctx sdk.Context, ak authkeeper.AccountKeeper) error {
 	return nil
 }
 
-func migrateDTags(ctx sdk.Context, k Keeper, storeKey sdk.StoreKey) {
+func migrateDTags(ctx sdk.Context, k Keeper, storeKey storetypes.StoreKey) {
 	dTags := map[string][]byte{}
 	k.IterateDTags(ctx, func(index int64, dTag string, value []byte) (stop bool) {
 		dTags[dTag] = value
@@ -100,7 +101,7 @@ func migrateDTags(ctx sdk.Context, k Keeper, storeKey sdk.StoreKey) {
 	}
 }
 
-func migrateDTagTransferRequests(ctx sdk.Context, k Keeper, storeKey sdk.StoreKey, cdc codec.BinaryCodec) {
+func migrateDTagTransferRequests(ctx sdk.Context, k Keeper, storeKey storetypes.StoreKey, cdc codec.BinaryCodec) {
 	var requests []v4types.DTagTransferRequest
 	k.IterateDTagTransferRequests(ctx, func(index int64, request v4types.DTagTransferRequest) (stop bool) {
 		requests = append(requests, request)
@@ -120,7 +121,7 @@ func migrateDTagTransferRequests(ctx sdk.Context, k Keeper, storeKey sdk.StoreKe
 	}
 }
 
-func migrateApplicationLinks(ctx sdk.Context, k Keeper, storeKey sdk.StoreKey, cdc codec.BinaryCodec) {
+func migrateApplicationLinks(ctx sdk.Context, k Keeper, storeKey storetypes.StoreKey, cdc codec.BinaryCodec) {
 	store := ctx.KVStore(storeKey)
 
 	var applicationLinks []v4types.ApplicationLink
@@ -152,7 +153,7 @@ func migrateApplicationLinks(ctx sdk.Context, k Keeper, storeKey sdk.StoreKey, c
 	}
 }
 
-func migrateChainLinks(ctx sdk.Context, k Keeper, storeKey sdk.StoreKey, amino *codec.LegacyAmino, cdc codec.BinaryCodec) error {
+func migrateChainLinks(ctx sdk.Context, k Keeper, storeKey storetypes.StoreKey, amino *codec.LegacyAmino, cdc codec.BinaryCodec) error {
 	var chainLinks []v4types.ChainLink
 	k.IterateChainLinks(ctx, func(index int64, chainLink v4types.ChainLink) (stop bool) {
 		chainLinks = append(chainLinks, chainLink)

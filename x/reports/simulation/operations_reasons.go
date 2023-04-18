@@ -13,7 +13,6 @@ import (
 	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
@@ -36,19 +35,14 @@ func SimulateMsgSupportStandardReason(
 		// Get the data
 		subspaceID, standardReasonID, signer, skip := randomSupportStandardReasonFields(r, ctx, accs, sk, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgSupportStandardReason"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgSupportStandardReason", "skip"), nil, nil
 		}
 
 		// Build the message
 		msg := types.NewMsgSupportStandardReason(subspaceID, standardReasonID, signer.Address.String())
 
 		// Send the message
-		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgSupportStandardReason"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "MsgSupportStandardReason", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 	}
 }
 
@@ -111,19 +105,14 @@ func SimulateMsgAddReason(
 		// Get the data
 		data, signer, skip := randomAddReasonFields(r, ctx, accs, sk)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgAddReason"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgAddReason", "skip"), nil, nil
 		}
 
 		// Build the message
 		msg := types.NewMsgAddReason(data.SubspaceID, data.Title, data.Description, signer.Address.String())
 
 		// Send the message
-		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgAddReason"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "MsgAddReason", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 	}
 }
 
@@ -185,19 +174,14 @@ func SimulateMsgRemoveReason(
 		// Get the data
 		subspaceID, reasonID, signer, skip := randomRemoveReason(r, ctx, accs, k, sk)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRemoveReason"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgRemoveReason", "skip"), nil, nil
 		}
 
 		// Build the message
 		msg := types.NewMsgRemoveReason(subspaceID, reasonID, signer.Address.String())
 
 		// Send the message
-		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRemoveReason"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "MsgRemoveReason", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 	}
 }
 

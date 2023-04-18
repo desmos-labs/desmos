@@ -24,7 +24,7 @@ message ChainLink {
   // with the Desmos profile
   google.protobuf.Any address = 2 [
     (gogoproto.moretags) = "yaml:\"address\"",
-    (cosmos_proto.accepts_interface) = "AddressData"
+    (cosmos_proto.accepts_interface) = "desmos.profiles.v2.AddressData"
   ];
 
   // Proof contains the ownership proof of the external chain address
@@ -79,7 +79,7 @@ message Bech32Address {
   option (gogoproto.goproto_getters) = false;
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
-  option (cosmos_proto.implements_interface) = "AddressData";
+  option (cosmos_proto.implements_interface) = "desmos.profiles.v2.AddressData";
 
   // Value represents the Bech-32 encoded address value
   string value = 1 [ (gogoproto.moretags) = "yaml:\"value\"" ];
@@ -93,7 +93,7 @@ message Base58Address {
   option (gogoproto.goproto_getters) = false;
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
-  option (cosmos_proto.implements_interface) = "AddressData";
+  option (cosmos_proto.implements_interface) = "desmos.profiles.v2.AddressData";
 
   // Value contains the Base58-encoded address
   string value = 1 [ (gogoproto.moretags) = "yaml:\"value\"" ];
@@ -105,7 +105,7 @@ message HexAddress {
   option (gogoproto.goproto_getters) = false;
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
-  option (cosmos_proto.implements_interface) = "AddressData";
+  option (cosmos_proto.implements_interface) = "desmos.profiles.v2.AddressData";
 
   // Value represents the hex address value
   string value = 1 [ (gogoproto.moretags) = "yaml:\"value\"" ];
@@ -119,7 +119,8 @@ message HexAddress {
 message SingleSignatureData {
   option (gogoproto.goproto_getters) = false;
   option (gogoproto.equal) = true;
-  option (cosmos_proto.implements_interface) = "SignatureData";
+  option (cosmos_proto.implements_interface) =
+      "desmos.profiles.v2.SignatureData";
 
   // Mode is the signing mode of the single signer
   cosmos.tx.signing.v1beta1.SignMode mode = 1;
@@ -132,7 +133,8 @@ message SingleSignatureData {
 message MultiSignatureData {
   option (gogoproto.goproto_getters) = false;
   option (gogoproto.equal) = true;
-  option (cosmos_proto.implements_interface) = "SignatureData";
+  option (cosmos_proto.implements_interface) =
+      "desmos.profiles.v2.SignatureData";
 
   // Bitarray specifies which keys within the multisig are signing
   cosmos.crypto.multisig.v1beta1.CompactBitArray bit_array = 1;

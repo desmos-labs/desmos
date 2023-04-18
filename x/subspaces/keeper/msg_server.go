@@ -7,6 +7,7 @@ import (
 
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 
+	errors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -75,24 +76,24 @@ func (k msgServer) EditSubspace(goCtx context.Context, msg *types.MsgEditSubspac
 	// Check if the subspace exists
 	subspace, exists := k.GetSubspace(ctx, msg.SubspaceID)
 	if !exists {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 
 	signer, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address: %s", msg.Signer)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address: %s", msg.Signer)
 	}
 
 	// Check the permission to edit
 	if !k.HasPermission(ctx, msg.SubspaceID, types.RootSectionID, signer.String(), types.PermissionEditSubspace) {
-		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage this subspace")
+		return nil, errors.Wrap(types.ErrPermissionDenied, "you cannot manage this subspace")
 	}
 
 	// Update the subspace and validate it
 	updated := subspace.Update(types.NewSubspaceUpdate(msg.Name, msg.Description, msg.Owner))
 	err = updated.Validate()
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	// Save the subspace
@@ -120,17 +121,17 @@ func (k msgServer) DeleteSubspace(goCtx context.Context, msg *types.MsgDeleteSub
 
 	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 
 	signer, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address: %s", msg.Signer)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address: %s", msg.Signer)
 	}
 
 	// Check the permission to edit
 	if !k.HasPermission(ctx, msg.SubspaceID, types.RootSectionID, signer.String(), types.PermissionDeleteSubspace) {
-		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage this subspace")
+		return nil, errors.Wrap(types.ErrPermissionDenied, "you cannot manage this subspace")
 	}
 
 	// Delete the subspace
@@ -158,22 +159,22 @@ func (k msgServer) CreateSection(goCtx context.Context, msg *types.MsgCreateSect
 
 	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 
 	// Check the parent section
 	if !k.HasSection(ctx, msg.SubspaceID, msg.ParentID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "section with id %d not found inside subspace %d", msg.ParentID, msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "section with id %d not found inside subspace %d", msg.ParentID, msg.SubspaceID)
 	}
 
 	signer, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address: %s", msg.Creator)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address: %s", msg.Creator)
 	}
 
 	// Check the permission to manage sections
 	if !k.HasPermission(ctx, msg.SubspaceID, types.RootSectionID, signer.String(), types.PermissionManageSections) {
-		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage sections within this subspace")
+		return nil, errors.Wrap(types.ErrPermissionDenied, "you cannot manage sections within this subspace")
 	}
 
 	// Get the next section ID
@@ -186,7 +187,7 @@ func (k msgServer) CreateSection(goCtx context.Context, msg *types.MsgCreateSect
 	section := types.NewSection(msg.SubspaceID, sectionID, msg.ParentID, msg.Name, msg.Description)
 	err = section.Validate()
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	// Save the section
@@ -220,23 +221,23 @@ func (k msgServer) EditSection(goCtx context.Context, msg *types.MsgEditSection)
 
 	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 
 	// Check if the section exists
 	section, found := k.GetSection(ctx, msg.SubspaceID, msg.SectionID)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "section with id %d not found inside subspace %d", msg.SectionID, msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "section with id %d not found inside subspace %d", msg.SectionID, msg.SubspaceID)
 	}
 
 	signer, err := sdk.AccAddressFromBech32(msg.Editor)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid editor address: %s", msg.Editor)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid editor address: %s", msg.Editor)
 	}
 
 	// Check the permission to manage sections
 	if !k.HasPermission(ctx, msg.SubspaceID, types.RootSectionID, signer.String(), types.PermissionManageSections) {
-		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage sections within this subspace")
+		return nil, errors.Wrap(types.ErrPermissionDenied, "you cannot manage sections within this subspace")
 	}
 
 	// Update the section and validate it
@@ -244,7 +245,7 @@ func (k msgServer) EditSection(goCtx context.Context, msg *types.MsgEditSection)
 	updated := section.Update(update)
 	err = updated.Validate()
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	// Save the section
@@ -273,35 +274,35 @@ func (k msgServer) MoveSection(goCtx context.Context, msg *types.MsgMoveSection)
 
 	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 
 	// Check if the section exists
 	section, found := k.GetSection(ctx, msg.SubspaceID, msg.SectionID)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "section with id %d not found inside subspace %d", msg.SectionID, msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "section with id %d not found inside subspace %d", msg.SectionID, msg.SubspaceID)
 	}
 
 	// Check if the destination section exists
 	if !k.HasSection(ctx, msg.SubspaceID, msg.NewParentID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "section with id %d does not exist inside subspace %d", msg.NewParentID, msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "section with id %d does not exist inside subspace %d", msg.NewParentID, msg.SubspaceID)
 	}
 
 	signer, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address: %s", msg.Signer)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address: %s", msg.Signer)
 	}
 
 	// Check the permission to manage sections
 	if !k.HasPermission(ctx, msg.SubspaceID, types.RootSectionID, signer.String(), types.PermissionManageSections) {
-		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage sections within this subspace")
+		return nil, errors.Wrap(types.ErrPermissionDenied, "you cannot manage sections within this subspace")
 	}
 
 	// Update the section parent id and validate it
 	section.ParentID = msg.NewParentID
 	err = section.Validate()
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	// Save the section
@@ -309,7 +310,7 @@ func (k msgServer) MoveSection(goCtx context.Context, msg *types.MsgMoveSection)
 
 	// Make sure the section path is valid
 	if !k.IsSectionPathValid(ctx, section.SubspaceID, section.ID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid section path")
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid section path")
 	}
 
 	ctx.EventManager().EmitEvents(sdk.Events{
@@ -335,22 +336,22 @@ func (k msgServer) DeleteSection(goCtx context.Context, msg *types.MsgDeleteSect
 
 	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 
 	// Check if the section exists
 	if !k.HasSection(ctx, msg.SubspaceID, msg.SectionID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "section with id %d not found inside subspace %d", msg.SectionID, msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "section with id %d not found inside subspace %d", msg.SectionID, msg.SubspaceID)
 	}
 
 	signer, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address: %s", msg.Signer)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address: %s", msg.Signer)
 	}
 
 	// Check the permission to manage sections
 	if !k.HasPermission(ctx, msg.SubspaceID, types.RootSectionID, signer.String(), types.PermissionManageSections) {
-		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage sections within this subspace")
+		return nil, errors.Wrap(types.ErrPermissionDenied, "you cannot manage sections within this subspace")
 	}
 
 	// Delete the section
@@ -379,30 +380,30 @@ func (k msgServer) CreateUserGroup(goCtx context.Context, msg *types.MsgCreateUs
 
 	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "group with id %d not found", msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "group with id %d not found", msg.SubspaceID)
 	}
 
 	// Check if the section exists
 	if !k.HasSection(ctx, msg.SubspaceID, msg.SectionID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "section with id %d not found inside subspace %d", msg.SectionID, msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "section with id %d not found inside subspace %d", msg.SectionID, msg.SubspaceID)
 	}
 
 	creator, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address: %s", msg.Creator)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address: %s", msg.Creator)
 	}
 
 	// Check the permissions to manage groups
 	if !k.HasPermission(ctx, msg.SubspaceID, msg.SectionID, creator.String(), types.PermissionManageGroups) {
-		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage user groups in this subspace")
+		return nil, errors.Wrap(types.ErrPermissionDenied, "you cannot manage user groups in this subspace")
 	}
 	if !k.HasPermission(ctx, msg.SubspaceID, msg.SectionID, creator.String(), types.PermissionSetPermissions) {
-		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage permissions in this subspace")
+		return nil, errors.Wrap(types.ErrPermissionDenied, "you cannot manage permissions in this subspace")
 	}
 
 	// Make sure the default permissions are valid
 	if !types.ArePermissionsValid(msg.DefaultPermissions) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid permission value")
+		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, "invalid permission value")
 	}
 
 	// Get the next group ID
@@ -461,30 +462,30 @@ func (k msgServer) EditUserGroup(goCtx context.Context, msg *types.MsgEditUserGr
 
 	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "group with id %d not found", msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "group with id %d not found", msg.SubspaceID)
 	}
 
 	// Check if the group exists
 	group, found := k.GetUserGroup(ctx, msg.SubspaceID, msg.GroupID)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "group with id %d not found", msg.GroupID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "group with id %d not found", msg.GroupID)
 	}
 
 	signer, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address: %s", msg.Signer)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address: %s", msg.Signer)
 	}
 
 	// Check the permission to create a group
 	if !k.HasPermission(ctx, group.SubspaceID, group.SectionID, signer.String(), types.PermissionManageGroups) {
-		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage user groups in this subspace")
+		return nil, errors.Wrap(types.ErrPermissionDenied, "you cannot manage user groups in this subspace")
 	}
 
 	// Update the group and validate it
 	updated := group.Update(types.NewGroupUpdate(msg.Name, msg.Description))
 	err = updated.Validate()
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	// Save the updated group
@@ -513,36 +514,36 @@ func (k msgServer) MoveUserGroup(goCtx context.Context, msg *types.MsgMoveUserGr
 
 	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "group with id %d not found", msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "group with id %d not found", msg.SubspaceID)
 	}
 
 	// Check if the destination section exists
 	if !k.HasSection(ctx, msg.SubspaceID, msg.NewSectionID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "section with id %d not found inside subspace %d", msg.NewSectionID, msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "section with id %d not found inside subspace %d", msg.NewSectionID, msg.SubspaceID)
 	}
 
 	// Check if the group exists
 	group, found := k.GetUserGroup(ctx, msg.SubspaceID, msg.GroupID)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "group with id %d not found", msg.GroupID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "group with id %d not found", msg.GroupID)
 	}
 
 	signer, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address: %s", msg.Signer)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address: %s", msg.Signer)
 	}
 
 	// Check the permissions to manage the current section groups
 	if !k.HasPermission(ctx, group.SubspaceID, group.SectionID, signer.String(), types.PermissionManageGroups) {
-		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage user groups in this section")
+		return nil, errors.Wrap(types.ErrPermissionDenied, "you cannot manage user groups in this section")
 	}
 
 	// Check the permissions to manage the destination section groups
 	if !k.HasPermission(ctx, msg.SubspaceID, msg.NewSectionID, signer.String(), types.PermissionManageGroups) {
-		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage user groups in the destination section")
+		return nil, errors.Wrap(types.ErrPermissionDenied, "you cannot manage user groups in the destination section")
 	}
 	if !k.HasPermission(ctx, msg.SubspaceID, msg.NewSectionID, signer.String(), types.PermissionSetPermissions) {
-		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage permissions in the destination section")
+		return nil, errors.Wrap(types.ErrPermissionDenied, "you cannot manage permissions in the destination section")
 	}
 
 	// Update the group section
@@ -575,33 +576,33 @@ func (k msgServer) SetUserGroupPermissions(goCtx context.Context, msg *types.Msg
 	// Check if the subspace exists
 	subspace, found := k.GetSubspace(ctx, msg.SubspaceID)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 
 	// Check if the group exists
 	group, found := k.GetUserGroup(ctx, msg.SubspaceID, msg.GroupID)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "group with id %d not found", msg.GroupID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "group with id %d not found", msg.GroupID)
 	}
 
 	signer, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address: %s", msg.Signer)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address: %s", msg.Signer)
 	}
 
 	// Check the permissions
 	if !k.HasPermission(ctx, group.SubspaceID, group.SectionID, signer.String(), types.PermissionSetPermissions) {
-		return nil, sdkerrors.Wrapf(types.ErrPermissionDenied, "you cannot manage permissions in this subspace")
+		return nil, errors.Wrapf(types.ErrPermissionDenied, "you cannot manage permissions in this subspace")
 	}
 
 	// Make sure the permission is valid
 	if !types.ArePermissionsValid(msg.Permissions) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid permission value")
+		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, "invalid permission value")
 	}
 
 	// Make sure that the user is not part of the group they want to change the permissions for, unless they are the owner
 	if subspace.Owner != msg.Signer && k.IsMemberOfGroup(ctx, msg.SubspaceID, msg.GroupID, signer.String()) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "cannot set the permissions for a group you are part of")
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "cannot set the permissions for a group you are part of")
 	}
 
 	// Set the group permissions and store the group
@@ -631,23 +632,23 @@ func (k msgServer) DeleteUserGroup(goCtx context.Context, msg *types.MsgDeleteUs
 
 	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 
 	// Check if the group exists
 	group, found := k.GetUserGroup(ctx, msg.SubspaceID, msg.GroupID)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "group %d could not be found", msg.GroupID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "group %d could not be found", msg.GroupID)
 	}
 
 	signer, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address: %s", msg.Signer)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address: %s", msg.Signer)
 	}
 
 	// Check for permissions
 	if !k.HasPermission(ctx, group.SubspaceID, group.SectionID, signer.String(), types.PermissionManageGroups) {
-		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot delete user groups in this subspace")
+		return nil, errors.Wrap(types.ErrPermissionDenied, "you cannot delete user groups in this subspace")
 	}
 
 	// Delete the group
@@ -676,23 +677,23 @@ func (k msgServer) AddUserToUserGroup(goCtx context.Context, msg *types.MsgAddUs
 
 	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 
 	// Check if the group exists
 	group, found := k.GetUserGroup(ctx, msg.SubspaceID, msg.GroupID)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "group %d could not be found", msg.GroupID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "group %d could not be found", msg.GroupID)
 	}
 
 	signer, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address: %s", msg.Signer)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address: %s", msg.Signer)
 	}
 
 	// Check the permissions
 	if !k.HasPermission(ctx, group.SubspaceID, group.SectionID, signer.String(), types.PermissionSetPermissions) {
-		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage user group members in this subspace")
+		return nil, errors.Wrap(types.ErrPermissionDenied, "you cannot manage user group members in this subspace")
 	}
 
 	user, err := sdk.AccAddressFromBech32(msg.User)
@@ -702,7 +703,7 @@ func (k msgServer) AddUserToUserGroup(goCtx context.Context, msg *types.MsgAddUs
 
 	// Check if the user is already part of the group
 	if k.IsMemberOfGroup(ctx, msg.SubspaceID, msg.GroupID, user.String()) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "user is already part of group %d", msg.GroupID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "user is already part of group %d", msg.GroupID)
 	}
 
 	// Set the user group
@@ -732,28 +733,28 @@ func (k msgServer) RemoveUserFromUserGroup(goCtx context.Context, msg *types.Msg
 
 	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 
 	// Check if the group exists
 	group, found := k.GetUserGroup(ctx, msg.SubspaceID, msg.GroupID)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "group %d could not be found", msg.GroupID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "group %d could not be found", msg.GroupID)
 	}
 
 	signer, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address: %s", msg.Signer)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address: %s", msg.Signer)
 	}
 
 	// Check the permissions
 	if !k.HasPermission(ctx, group.SubspaceID, group.SectionID, signer.String(), types.PermissionSetPermissions) {
-		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage user group members in this subspace")
+		return nil, errors.Wrap(types.ErrPermissionDenied, "you cannot manage user group members in this subspace")
 	}
 
 	// Check if the user is already part of the group
 	if !k.IsMemberOfGroup(ctx, msg.SubspaceID, msg.GroupID, msg.User) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "user is not part of group %d", msg.GroupID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "user is not part of group %d", msg.GroupID)
 	}
 
 	// Remove the user group
@@ -783,27 +784,27 @@ func (k msgServer) SetUserPermissions(goCtx context.Context, msg *types.MsgSetUs
 
 	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 
 	// Check if the section exists
 	if !k.HasSection(ctx, msg.SubspaceID, msg.SectionID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "section with id %d not found inside subspace %d", msg.SectionID, msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "section with id %d not found inside subspace %d", msg.SectionID, msg.SubspaceID)
 	}
 
 	signer, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address: %s", msg.Signer)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address: %s", msg.Signer)
 	}
 
 	// Check the permissions
 	if !k.HasPermission(ctx, msg.SubspaceID, msg.SectionID, signer.String(), types.PermissionSetPermissions) {
-		return nil, sdkerrors.Wrapf(types.ErrPermissionDenied, "you cannot manage permissions in this subspace")
+		return nil, errors.Wrapf(types.ErrPermissionDenied, "you cannot manage permissions in this subspace")
 	}
 
 	// Make sure the permission is valid
 	if !types.ArePermissionsValid(msg.Permissions) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid permission value")
+		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, "invalid permission value")
 	}
 
 	// Set the permissions

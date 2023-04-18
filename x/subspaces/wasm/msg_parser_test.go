@@ -25,6 +25,8 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 	wrongMsgBz, err := json.Marshal(profilestypes.ProfilesMsg{DeleteProfile: nil})
 	require.NoError(t, err)
 
+	expiration := time.Date(2023, 1, 11, 1, 1, 1, 1, time.UTC)
+
 	testCases := []struct {
 		name      string
 		msg       json.RawMessage
@@ -243,7 +245,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					"cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
 					authz.NewGenericAuthorization("/cosmos.bank.v1beta1.MsgSend"),
-					time.Date(2023, 1, 11, 1, 1, 1, 1, time.UTC),
+					&expiration,
 				),
 			),
 			shouldErr: false,
@@ -253,7 +255,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					"cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
 					authz.NewGenericAuthorization("/cosmos.bank.v1beta1.MsgSend"),
-					time.Date(2023, 1, 11, 1, 1, 1, 1, time.UTC),
+					&expiration,
 				),
 			},
 		},

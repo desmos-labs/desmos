@@ -6,6 +6,7 @@ import (
 
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 
+	errors "cosmossdk.io/errors"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -47,7 +48,7 @@ func (k Keeper) Subspace(ctx context.Context, request *types.QuerySubspaceReques
 
 	subspace, found := k.GetSubspace(sdkCtx, request.SubspaceId)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrNotFound, "subspace with id %d not found", request.SubspaceId)
+		return nil, errors.Wrapf(sdkerrors.ErrNotFound, "subspace with id %d not found", request.SubspaceId)
 	}
 
 	return &types.QuerySubspaceResponse{Subspace: subspace}, nil
@@ -59,7 +60,7 @@ func (k Keeper) Sections(ctx context.Context, request *types.QuerySectionsReques
 
 	// Check if the subspace exists
 	if !k.HasSubspace(sdkCtx, request.SubspaceId) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", request.SubspaceId)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", request.SubspaceId)
 	}
 
 	store := sdkCtx.KVStore(k.storeKey)
@@ -90,12 +91,12 @@ func (k Keeper) Section(ctx context.Context, request *types.QuerySectionRequest)
 
 	// Check if the subspace exists
 	if !k.HasSubspace(sdkCtx, request.SubspaceId) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", request.SubspaceId)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", request.SubspaceId)
 	}
 
 	section, found := k.GetSection(sdkCtx, request.SubspaceId, request.SectionId)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrNotFound, "section with id %d not found inside subspace %d", request.SectionId, request.SubspaceId)
+		return nil, errors.Wrapf(sdkerrors.ErrNotFound, "section with id %d not found inside subspace %d", request.SectionId, request.SubspaceId)
 	}
 
 	return &types.QuerySectionResponse{Section: section}, nil
@@ -107,7 +108,7 @@ func (k Keeper) UserGroups(ctx context.Context, request *types.QueryUserGroupsRe
 
 	// Check if the subspace exists
 	if !k.HasSubspace(sdkCtx, request.SubspaceId) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", request.SubspaceId)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", request.SubspaceId)
 	}
 
 	store := sdkCtx.KVStore(k.storeKey)
@@ -142,13 +143,13 @@ func (k Keeper) UserGroup(ctx context.Context, request *types.QueryUserGroupRequ
 
 	// Check if the subspace exists
 	if !k.HasSubspace(sdkCtx, request.SubspaceId) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", request.SubspaceId)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", request.SubspaceId)
 	}
 
 	// Get the group
 	group, found := k.GetUserGroup(sdkCtx, request.SubspaceId, request.GroupId)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "group %d could not be found", request.GroupId)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "group %d could not be found", request.GroupId)
 	}
 
 	return &types.QueryUserGroupResponse{Group: group}, nil
@@ -160,12 +161,12 @@ func (k Keeper) UserGroupMembers(ctx context.Context, request *types.QueryUserGr
 
 	// Check if the subspace exists
 	if !k.HasSubspace(sdkCtx, request.SubspaceId) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", request.SubspaceId)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", request.SubspaceId)
 	}
 
 	// Check if the group exists
 	if !k.HasUserGroup(sdkCtx, request.SubspaceId, request.GroupId) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "group %d could not be found", request.GroupId)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "group %d could not be found", request.GroupId)
 	}
 
 	store := sdkCtx.KVStore(k.storeKey)
@@ -192,7 +193,7 @@ func (k Keeper) UserPermissions(ctx context.Context, request *types.QueryUserPer
 
 	// Check if the subspace exists
 	if !k.HasSubspace(sdkCtx, request.SubspaceId) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", request.SubspaceId)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", request.SubspaceId)
 	}
 
 	// Get the user specific permissions
@@ -230,7 +231,7 @@ func (k Keeper) UserAllowances(ctx context.Context, request *types.QueryUserAllo
 
 	// Check if the subspace exists
 	if !k.HasSubspace(sdkCtx, request.SubspaceId) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", request.SubspaceId)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", request.SubspaceId)
 	}
 
 	// Get grants prefix store
@@ -267,7 +268,7 @@ func (k Keeper) GroupAllowances(ctx context.Context, request *types.QueryGroupAl
 
 	// Check if the subspace exists
 	if !k.HasSubspace(sdkCtx, request.SubspaceId) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", request.SubspaceId)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", request.SubspaceId)
 	}
 
 	// Get grants prefix store

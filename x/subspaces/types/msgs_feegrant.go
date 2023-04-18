@@ -3,10 +3,11 @@ package types
 import (
 	"fmt"
 
+	errors "cosmossdk.io/errors"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/cosmos/cosmos-sdk/x/auth/legacy/legacytx"
+	"github.com/cosmos/cosmos-sdk/x/auth/migrations/legacytx"
 	feegranttypes "github.com/cosmos/cosmos-sdk/x/feegrant"
 	proto "github.com/gogo/protobuf/proto"
 )
@@ -55,7 +56,7 @@ func (msg MsgGrantAllowance) ValidateBasic() error {
 
 	_, err := sdk.AccAddressFromBech32(msg.Granter)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid granter address")
+		return errors.Wrap(sdkerrors.ErrInvalidAddress, "invalid granter address")
 	}
 
 	grantee := msg.Grantee.GetCachedValue().(Grantee)
@@ -66,7 +67,7 @@ func (msg MsgGrantAllowance) ValidateBasic() error {
 
 	if u, ok := grantee.(*UserGrantee); ok {
 		if u.User == msg.Granter {
-			return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "cannot self-grant fee authorization")
+			return errors.Wrap(sdkerrors.ErrInvalidAddress, "cannot self-grant fee authorization")
 		}
 	}
 
@@ -106,7 +107,7 @@ func (msg MsgGrantAllowance) GetSignBytes() []byte {
 func (msg MsgGrantAllowance) GetUnpackedAllowance() (feegranttypes.FeeAllowanceI, error) {
 	allowance, ok := msg.Allowance.GetCachedValue().(feegranttypes.FeeAllowanceI)
 	if !ok {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid allowance type %T", allowance)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid allowance type %T", allowance)
 	}
 	return allowance, nil
 }
@@ -146,7 +147,7 @@ func (msg MsgRevokeAllowance) ValidateBasic() error {
 
 	_, err := sdk.AccAddressFromBech32(msg.Granter)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid granter address")
+		return errors.Wrap(sdkerrors.ErrInvalidAddress, "invalid granter address")
 	}
 
 	return msg.Grantee.GetCachedValue().(Grantee).Validate()

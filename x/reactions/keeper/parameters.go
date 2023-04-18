@@ -1,8 +1,8 @@
 package keeper
 
 import (
+	errors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/desmos-labs/desmos/v4/x/reactions/types"
 )
@@ -24,7 +24,7 @@ func (k Keeper) GetSubspaceReactionsParams(ctx sdk.Context, subspaceID uint64) (
 	store := ctx.KVStore(k.storeKey)
 	bz := store.Get(types.SubspaceReactionsParamsStoreKey(subspaceID))
 	if bz == nil {
-		return types.SubspaceReactionsParams{}, sdkerrors.Wrapf(types.ErrInvalidGenesis, "reactions params are not set for subspace %d", subspaceID)
+		return types.SubspaceReactionsParams{}, errors.Wrapf(types.ErrInvalidGenesis, "reactions params are not set for subspace %d", subspaceID)
 	}
 
 	k.cdc.MustUnmarshal(bz, &params)

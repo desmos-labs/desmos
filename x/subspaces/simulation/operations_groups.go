@@ -12,7 +12,6 @@ import (
 	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
@@ -34,7 +33,7 @@ func SimulateMsgCreateUserGroup(
 		// Get the data
 		subspaceID, update, permissions, creator, skip := randomCreateUserGroupFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreateUserGroup"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgCreateUserGroup", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -49,12 +48,7 @@ func SimulateMsgCreateUserGroup(
 		)
 
 		// Send the message
-		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{creator.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreateUserGroup"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "MsgCreateUserGroup", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, creator)
 	}
 }
 
@@ -109,19 +103,14 @@ func SimulateMsgEditUserGroup(
 		// Get the data
 		subspaceID, groupID, update, signer, skip := randomEditUserGroupFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgEditUserGroup"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgEditUserGroup", "skip"), nil, nil
 		}
 
 		// Build the message
 		msg := types.NewMsgEditUserGroup(subspaceID, groupID, update.Name, update.Description, signer.Address.String())
 
 		// Send the message
-		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgEditUserGroup"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "MsgEditUserGroup", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 	}
 }
 
@@ -178,19 +167,14 @@ func SimulateMsgMoveUserGroup(
 		// Get the data
 		subspaceID, groupID, newSectionID, signer, skip := randomMoveUserGroupFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgMoveUserGroup"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgMoveUserGroup", "skip"), nil, nil
 		}
 
 		// Build the message
 		msg := types.NewMsgMoveUserGroup(subspaceID, groupID, newSectionID, signer.Address.String())
 
 		// Send the message
-		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgMoveUserGroup"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "MsgMoveUserGroup", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 	}
 }
 
@@ -250,19 +234,14 @@ func SimulateMsgSetUserGroupPermissions(
 		// Get the data
 		subspaceID, groupID, permissions, signer, skip := randomSetUserGroupPermissionsFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgSetUserGroupPermissions"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgSetUserGroupPermissions", "skip"), nil, nil
 		}
 
 		// Build the message
 		msg := types.NewMsgSetUserGroupPermissions(subspaceID, groupID, permissions, signer.Address.String())
 
 		// Send the message
-		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgSetUserGroupPermissions"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "MsgSetUserGroupPermissions", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 	}
 }
 
@@ -326,19 +305,14 @@ func SimulateMsgDeleteUserGroup(
 		// Get the data
 		subspaceID, groupID, signer, skip := randomDeleteUserGroupFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgDeleteUserGroup"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgDeleteUserGroup", "skip"), nil, nil
 		}
 
 		// Build the message
 		msg := types.NewMsgDeleteUserGroup(subspaceID, groupID, signer.Address.String())
 
 		// Send the message
-		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgDeleteUserGroup"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "MsgDeleteUserGroup", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 	}
 }
 
@@ -390,19 +364,14 @@ func SimulateMsgAddUserToUserGroup(
 		// Get the data
 		subspaceID, groupID, user, signer, skip := randomAddUserToUserGroupFields(r, ctx, accs, k, ak)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgAddUserToUserGroup"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgAddUserToUserGroup", "skip"), nil, nil
 		}
 
 		// Build the message
 		msg := types.NewMsgAddUserToUserGroup(subspaceID, groupID, user, signer.Address.String())
 
 		// Send the message
-		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgAddUserToUserGroup"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "MsgAddUserToUserGroup", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 	}
 }
 
@@ -464,19 +433,14 @@ func SimulateMsgRemoveUserFromUserGroup(
 		// Get the data
 		subspaceID, groupID, user, signer, skip := randomRemoveUserFromUserGroupFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRemoveUserFromUserGroup"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgRemoveUserFromUserGroup", "skip"), nil, nil
 		}
 
 		// Build the message
 		msg := types.NewMsgRemoveUserFromUserGroup(subspaceID, groupID, user, signer.Address.String())
 
 		// Send the message
-		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRemoveUserFromUserGroup"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "MsgRemoveUserFromUserGroup", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 	}
 }
 

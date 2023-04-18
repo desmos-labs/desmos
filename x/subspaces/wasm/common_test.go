@@ -4,17 +4,18 @@ import (
 	"encoding/json"
 	"testing"
 
+	db "github.com/cometbft/cometbft-db"
+	"github.com/cometbft/cometbft/libs/log"
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/suite"
-	"github.com/tendermint/tendermint/libs/log"
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
-	db "github.com/tendermint/tm-db"
 
 	"github.com/desmos-labs/desmos/v4/app"
 	"github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
@@ -160,7 +161,7 @@ type TestSuite struct {
 	legacyAminoCdc *codec.LegacyAmino
 	ctx            sdk.Context
 	k              keeper.Keeper
-	storeKey       sdk.StoreKey
+	storeKey       storetypes.StoreKey
 	ak             authkeeper.AccountKeeper
 	paramsKeeper   paramskeeper.Keeper
 }
@@ -175,10 +176,10 @@ func (suite *TestSuite) SetupTest() {
 	memDB := db.NewMemDB()
 	ms := store.NewCommitMultiStore(memDB)
 	for _, key := range keys {
-		ms.MountStoreWithDB(key, sdk.StoreTypeIAVL, memDB)
+		ms.MountStoreWithDB(key, storetypes.StoreTypeIAVL, memDB)
 	}
 	for _, tKey := range tKeys {
-		ms.MountStoreWithDB(tKey, sdk.StoreTypeTransient, memDB)
+		ms.MountStoreWithDB(tKey, storetypes.StoreTypeTransient, memDB)
 	}
 
 	if err := ms.LoadLatestVersion(); err != nil {
@@ -195,9 +196,10 @@ func (suite *TestSuite) SetupTest() {
 	suite.ak = authkeeper.NewAccountKeeper(
 		suite.cdc,
 		keys[authtypes.StoreKey],
-		suite.paramsKeeper.Subspace(authtypes.ModuleName),
 		authtypes.ProtoBaseAccount,
 		app.GetMaccPerms(),
+		"cosmos",
+		authtypes.NewModuleAddress("gov").String(),
 	)
 	suite.k = keeper.NewKeeper(suite.cdc, suite.storeKey, suite.ak, nil)
 }

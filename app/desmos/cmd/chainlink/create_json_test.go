@@ -50,8 +50,8 @@ func (suite *CreateJSONChainLinkTestSuite) TestSingleSignatureAccount() {
 	err = suite.Codec.UnmarshalJSON(out, &data)
 	suite.Require().NoError(err)
 
-	// Create an account inside the inmemory keybase
-	keyBase := keyring.NewInMemory()
+	// Create an account inside the in memory keybase
+	keyBase := keyring.NewInMemory(suite.Codec)
 	mnemonic := "clip toilet stairs jaguar baby over mosquito capital speed mule adjust eye print voyage verify smart open crack imitate auto gauge museum planet rebel"
 	_, err = keyBase.NewAccount(singlebuilder.KeyName, mnemonic, "", "m/44'/118'/0'/0/0", hd.Secp256k1)
 	suite.Require().NoError(err)
@@ -63,10 +63,13 @@ func (suite *CreateJSONChainLinkTestSuite) TestSingleSignatureAccount() {
 	sig, _, err := keyBase.Sign(singlebuilder.KeyName, []byte(suite.Owner))
 	suite.Require().NoError(err)
 
+	pubKey, err := key.GetPubKey()
+	suite.Require().NoError(err)
+
 	expected := profilescliutils.NewChainLinkJSON(
 		profilestypes.NewBech32Address("cosmos13j7p6faa9jr8ty6lvqv0prldprr6m5xenmafnt", "cosmos"),
 		profilestypes.NewProof(
-			key.GetPubKey(),
+			pubKey,
 			profilestesting.SingleSignatureFromHex(hex.EncodeToString(sig)),
 			hex.EncodeToString([]byte(suite.Owner)),
 		),

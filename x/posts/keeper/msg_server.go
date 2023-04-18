@@ -6,6 +6,7 @@ import (
 	"sort"
 	"time"
 
+	errors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
@@ -31,24 +32,24 @@ func (k msgServer) CreatePost(goCtx context.Context, msg *types.MsgCreatePost) (
 
 	// Check if the author has a profile
 	if !k.HasProfile(ctx, msg.Author) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "you cannot create a post without having a profile")
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "you cannot create a post without having a profile")
 	}
 
 	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 
 	// Check if the section exists
 	if !k.HasSection(ctx, msg.SubspaceID, msg.SectionID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace section with id %d not found", msg.SectionID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace section with id %d not found", msg.SectionID)
 	}
 
 	// Check the permission to create this post
 	canWrite := k.HasPermission(ctx, msg.SubspaceID, msg.SectionID, msg.Author, types.PermissionWrite)
 	canComment := msg.ConversationID != 0 && k.HasPermission(ctx, msg.SubspaceID, msg.SectionID, msg.Author, types.PermissionComment)
 	if !canWrite && !canComment {
-		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot create posts nor comment inside this section")
+		return nil, errors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot create posts nor comment inside this section")
 	}
 
 	// Get the next post id
@@ -87,7 +88,7 @@ func (k msgServer) CreatePost(goCtx context.Context, msg *types.MsgCreatePost) (
 	// Unpack the attachments
 	attachments, err := types.UnpackAttachments(k.cdc, msg.Attachments)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid attachments: %s", err)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid attachments: %s", err)
 	}
 
 	// Store the attachments
@@ -127,23 +128,23 @@ func (k msgServer) EditPost(goCtx context.Context, msg *types.MsgEditPost) (*typ
 
 	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 
 	// Get the post
 	post, found := k.GetPost(ctx, msg.SubspaceID, msg.PostID)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %d not found", msg.PostID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %d not found", msg.PostID)
 	}
 
 	// Make sure the editor matches the author
 	if post.Author != msg.Editor {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "you are not the author of this post")
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "you are not the author of this post")
 	}
 
 	// Check the permission to create content
 	if !k.HasPermission(ctx, msg.SubspaceID, post.SectionID, msg.Editor, types.PermissionEditOwnContent) {
-		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot edit content inside this subspace")
+		return nil, errors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot edit content inside this subspace")
 	}
 
 	// Update the post and validate it
@@ -184,20 +185,20 @@ func (k msgServer) DeletePost(goCtx context.Context, msg *types.MsgDeletePost) (
 
 	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 
 	// Get the post
 	post, found := k.GetPost(ctx, msg.SubspaceID, msg.PostID)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %d does not exist", msg.PostID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %d does not exist", msg.PostID)
 	}
 
 	// Check the permission to remove the post
 	isModerator := k.HasPermission(ctx, msg.SubspaceID, post.SectionID, msg.Signer, types.PermissionModerateContent)
 	canEdit := post.Author == msg.Signer && k.HasPermission(ctx, msg.SubspaceID, post.SectionID, msg.Signer, types.PermissionEditOwnContent)
 	if !isModerator && !canEdit {
-		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot edit content inside this subspace")
+		return nil, errors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot edit content inside this subspace")
 	}
 
 	// Delete the post
@@ -226,12 +227,12 @@ func (k msgServer) storePostAttachment(ctx sdk.Context, subspaceID uint64, postI
 	if poll, ok := content.(*types.Poll); ok {
 		// Make sure no tally results are provided
 		if poll.FinalTallyResults != nil {
-			return 0, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "poll tally results must be nil")
+			return 0, errors.Wrapf(sdkerrors.ErrInvalidRequest, "poll tally results must be nil")
 		}
 
 		// Make sure the end date is in the future
 		if poll.EndDate.Before(ctx.BlockTime()) {
-			return 0, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "poll end date must be in the future")
+			return 0, errors.Wrapf(sdkerrors.ErrInvalidRequest, "poll end date must be in the future")
 		}
 	}
 
@@ -245,7 +246,7 @@ func (k msgServer) storePostAttachment(ctx sdk.Context, subspaceID uint64, postI
 	attachment := types.NewAttachment(subspaceID, postID, attachmentID, content)
 	err = attachment.Validate()
 	if err != nil {
-		return 0, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid attachment content: %s", err)
+		return 0, errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid attachment content: %s", err)
 	}
 
 	// Save the attachment
@@ -268,30 +269,30 @@ func (k msgServer) AddPostAttachment(goCtx context.Context, msg *types.MsgAddPos
 
 	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 
 	// Get the post
 	post, found := k.GetPost(ctx, msg.SubspaceID, msg.PostID)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %d does not exist", msg.PostID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %d does not exist", msg.PostID)
 	}
 
 	// Make sure the editor matches the author
 	if post.Author != msg.Editor {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "you are not the author of this post")
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "you are not the author of this post")
 	}
 
 	// Check the permission to edit content
 	if !k.HasPermission(ctx, msg.SubspaceID, post.SectionID, msg.Editor, types.PermissionEditOwnContent) {
-		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot edit content inside this subspace")
+		return nil, errors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot edit content inside this subspace")
 	}
 
 	// Unpack the content
 	var content types.AttachmentContent
 	err := k.cdc.UnpackAny(msg.Content, &content)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid attachment content: %s", err)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid attachment content: %s", err)
 	}
 
 	// Save the attachment
@@ -337,25 +338,25 @@ func (k msgServer) RemovePostAttachment(goCtx context.Context, msg *types.MsgRem
 
 	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 
 	// Get the post
 	post, found := k.GetPost(ctx, msg.SubspaceID, msg.PostID)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %d does not exist", msg.PostID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %d does not exist", msg.PostID)
 	}
 
 	// Check the permission to remove the attachment
 	isModerator := k.HasPermission(ctx, msg.SubspaceID, post.SectionID, msg.Editor, types.PermissionModerateContent)
 	canEdit := post.Author == msg.Editor && k.HasPermission(ctx, msg.SubspaceID, post.SectionID, msg.Editor, types.PermissionEditOwnContent)
 	if !isModerator && !canEdit {
-		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot edit content inside this subspace")
+		return nil, errors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot edit content inside this subspace")
 	}
 
 	// Check if the attachment exists
 	if !k.HasAttachment(ctx, msg.SubspaceID, msg.PostID, msg.AttachmentID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "attachment with id %d not found", msg.AttachmentID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "attachment with id %d not found", msg.AttachmentID)
 	}
 
 	// Remove the post attachment
@@ -399,46 +400,46 @@ func (k msgServer) AnswerPoll(goCtx context.Context, msg *types.MsgAnswerPoll) (
 
 	// Check if the author has a profile
 	if !k.HasProfile(ctx, msg.Signer) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "you cannot answer a poll without having a profile")
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "you cannot answer a poll without having a profile")
 	}
 
 	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 
 	// Make sure the post exists
 	post, found := k.GetPost(ctx, msg.SubspaceID, msg.PostID)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %d does not exist", msg.PostID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %d does not exist", msg.PostID)
 	}
 
 	// Check the permission to interact with content
 	if !k.HasPermission(ctx, msg.SubspaceID, post.SectionID, msg.Signer, types.PermissionInteractWithContent) {
-		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot interact with content inside this subspace")
+		return nil, errors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot interact with content inside this subspace")
 	}
 
 	// Get the poll
 	poll, found := k.GetPoll(ctx, msg.SubspaceID, msg.PostID, msg.PollID)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "poll with id %d does not exist", msg.PollID)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "poll with id %d does not exist", msg.PollID)
 	}
 
 	// Make sure the poll is still active
 	if ctx.BlockTime().After(poll.EndDate) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "the poll voting period has already ended")
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "the poll voting period has already ended")
 	}
 
 	alreadyAnswered := k.HasUserAnswer(ctx, msg.SubspaceID, msg.PostID, msg.PollID, msg.Signer)
 
 	// Make sure the user is not trying to edit the answer when the poll does not allow it
 	if alreadyAnswered && !poll.AllowsAnswerEdits {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "you cannot edit this poll's answer")
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "you cannot edit this poll's answer")
 	}
 
 	// Make sure the user not answering with multiple options when the poll does not allow it
 	if len(msg.AnswersIndexes) > 1 && !poll.AllowsMultipleAnswers {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "only one answer is allowed on this post")
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "only one answer is allowed on this post")
 	}
 
 	// Sort the answers indexes
@@ -450,7 +451,7 @@ func (k msgServer) AnswerPoll(goCtx context.Context, msg *types.MsgAnswerPoll) (
 	maxProvidedIndex := uint32(len(poll.ProvidedAnswers) - 1)
 	maxAnswerIndex := msg.AnswersIndexes[len(msg.AnswersIndexes)-1]
 	if maxAnswerIndex > maxProvidedIndex {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid answer index: %d", maxAnswerIndex)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid answer index: %d", maxAnswerIndex)
 	}
 
 	// Store the user answer

@@ -15,7 +15,6 @@ import (
 	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
@@ -36,7 +35,7 @@ func SimulateMsgAddRegisteredReaction(
 		// Get the data
 		data, signer, skip := randomAddRegisteredReactionFields(r, ctx, accs, sk)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgAddRegisteredReaction"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgAddRegisteredReaction", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -48,12 +47,7 @@ func SimulateMsgAddRegisteredReaction(
 		)
 
 		// Send the message
-		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgAddRegisteredReaction"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "MsgAddRegisteredReaction", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 	}
 }
 
@@ -114,7 +108,7 @@ func SimulateMsgEditRegisteredReaction(
 		// Get the data
 		data, signer, skip := randomEditRegisteredReactionFields(r, ctx, accs, k, sk)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgEditRegisteredReaction"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgEditRegisteredReaction", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -127,12 +121,7 @@ func SimulateMsgEditRegisteredReaction(
 		)
 
 		// Send the message
-		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgEditRegisteredReaction"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "MsgEditRegisteredReaction", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 	}
 }
 
@@ -203,7 +192,7 @@ func SimulateMsgRemoveRegisteredReaction(
 		// Get the data
 		data, signer, skip := randomRemoveRegisteredReactionFields(r, ctx, accs, k, sk)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRemoveRegisteredReaction"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgRemoveRegisteredReaction", "skip"), nil, nil
 		}
 
 		// Build the message
@@ -214,12 +203,7 @@ func SimulateMsgRemoveRegisteredReaction(
 		)
 
 		// Send the message
-		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRemoveRegisteredReaction"), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "MsgRemoveRegisteredReaction", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
 	}
 }
 

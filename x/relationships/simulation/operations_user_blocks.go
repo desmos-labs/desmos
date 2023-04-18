@@ -17,7 +17,6 @@ import (
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/v4/x/relationships/keeper"
@@ -33,16 +32,11 @@ func SimulateMsgBlockUser(
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 		acc, blocked, subspaceID, skip := randomUserBlocksFields(r, ctx, accs, k, sk)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgBlockUser", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgBlockUser(acc.Address.String(), blocked, "", subspaceID)
-		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{acc.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, acc)
 	}
 }
 
@@ -98,16 +92,11 @@ func SimulateMsgUnblockUser(
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 		acc, blocked, subspaceID, skip := randomUnblockUserFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgUnblockUser", "skip"), nil, nil
 		}
 
 		msg := types.NewMsgUnblockUser(acc.Address.String(), blocked, subspaceID)
-		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{acc.PrivKey})
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, err
-		}
-
-		return simtypes.NewOperationMsg(msg, true, "", nil), nil, nil
+		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, acc)
 	}
 }
 

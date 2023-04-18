@@ -11,12 +11,14 @@ import (
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
+var expiration = time.Date(2100, 1, 11, 0, 0, 0, 0, time.UTC)
+
 var msgGrantTreasuryAuthorization = types.NewMsgGrantTreasuryAuthorization(
 	1,
 	"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez",
 	"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 	&banktypes.SendAuthorization{SpendLimit: sdk.NewCoins(sdk.NewInt64Coin("steak", 100))},
-	time.Date(2023, 1, 11, 0, 0, 0, 0, time.UTC),
+	&expiration,
 )
 
 func TestMsgGrantTreasuryAuthorization_Route(t *testing.T) {
@@ -40,7 +42,7 @@ func TestMsgGrantTreasuryAuthorization_ValidateBasic(t *testing.T) {
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 				&banktypes.SendAuthorization{SpendLimit: sdk.NewCoins(sdk.NewInt64Coin("steak", 100))},
-				time.Date(2023, 1, 11, 0, 0, 0, 0, time.UTC),
+				&expiration,
 			),
 			shouldErr: true,
 		},
@@ -51,7 +53,7 @@ func TestMsgGrantTreasuryAuthorization_ValidateBasic(t *testing.T) {
 				"",
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 				&banktypes.SendAuthorization{SpendLimit: sdk.NewCoins(sdk.NewInt64Coin("steak", 100))},
-				time.Date(2023, 1, 11, 0, 0, 0, 0, time.UTC),
+				&expiration,
 			),
 			shouldErr: true,
 		},
@@ -62,7 +64,7 @@ func TestMsgGrantTreasuryAuthorization_ValidateBasic(t *testing.T) {
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 				"",
 				&banktypes.SendAuthorization{SpendLimit: sdk.NewCoins(sdk.NewInt64Coin("steak", 100))},
-				time.Date(2023, 1, 11, 0, 0, 0, 0, time.UTC),
+				&expiration,
 			),
 			shouldErr: true,
 		},
@@ -73,7 +75,7 @@ func TestMsgGrantTreasuryAuthorization_ValidateBasic(t *testing.T) {
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 				&banktypes.SendAuthorization{SpendLimit: nil},
-				time.Date(2023, 1, 11, 0, 0, 0, 0, time.UTC),
+				&expiration,
 			),
 			shouldErr: true,
 		},
@@ -97,7 +99,7 @@ func TestMsgGrantTreasuryAuthorization_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgGrantTreasuryAuthorization_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgGrantTreasuryAuthorization","value":{"grant":{"authorization":{"spend_limit":[{"amount":"100","denom":"steak"}]},"expiration":"2023-01-11T00:00:00Z"},"grantee":"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69","granter":"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez","subspace_id":"1"}}`
+	expected := `{"type":"desmos/MsgGrantTreasuryAuthorization","value":{"grant":{"authorization":{"spend_limit":[{"amount":"100","denom":"steak"}]},"expiration":"2100-01-11T00:00:00Z"},"grantee":"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69","granter":"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez","subspace_id":"1"}}`
 	require.Equal(t, expected, string(msgGrantTreasuryAuthorization.GetSignBytes()))
 }
 

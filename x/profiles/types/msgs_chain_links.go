@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	errors "cosmossdk.io/errors"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -49,7 +50,7 @@ func (msg MsgLinkChainAccount) ValidateBasic() error {
 	}
 
 	if _, err := sdk.AccAddressFromBech32(msg.Signer); err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid destination address: %s", msg.Signer)
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid destination address: %s", msg.Signer)
 	}
 	return nil
 }
@@ -100,15 +101,15 @@ func (msg MsgUnlinkChainAccount) Type() string {
 func (msg MsgUnlinkChainAccount) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Owner)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid owner")
+		return errors.Wrap(sdkerrors.ErrInvalidAddress, "invalid owner")
 	}
 
 	if strings.TrimSpace(msg.ChainName) == "" {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "chain name cannot be empty or blank")
+		return errors.Wrap(sdkerrors.ErrInvalidRequest, "chain name cannot be empty or blank")
 	}
 
 	if strings.TrimSpace(msg.Target) == "" {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid target")
+		return errors.Wrap(sdkerrors.ErrInvalidAddress, "invalid target")
 	}
 	return nil
 }
@@ -145,16 +146,16 @@ func (msg MsgSetDefaultExternalAddress) Type() string {
 // ValidateBasic runs stateless checks on the message
 func (msg MsgSetDefaultExternalAddress) ValidateBasic() error {
 	if strings.TrimSpace(msg.ChainName) == "" {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "chain name cannot be empty or blank")
+		return errors.Wrap(sdkerrors.ErrInvalidRequest, "chain name cannot be empty or blank")
 	}
 
 	if strings.TrimSpace(msg.Target) == "" {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid external address")
+		return errors.Wrap(sdkerrors.ErrInvalidAddress, "invalid external address")
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid signer")
+		return errors.Wrap(sdkerrors.ErrInvalidAddress, "invalid signer")
 	}
 
 	return nil
