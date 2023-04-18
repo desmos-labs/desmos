@@ -274,6 +274,9 @@ replace (
 	// Our wasmd branch is: https://github.com/desmos-labs/wasmd v0.28.x-desmos
 	github.com/CosmWasm/wasmd => github.com/desmos-labs/wasmd v0.29.0-desmos.2
 
+	// Fixes Cherry
+	github.com/CosmWasm/wasmvm => github.com/CosmWasm/wasmvm v1.1.2
+
 	// Fixes Dragonberry
 	github.com/confio/ics23/go => github.com/cosmos/cosmos-sdk/ics23/go v0.8.0
 
