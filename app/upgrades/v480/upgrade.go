@@ -1,4 +1,4 @@
-package v410
+package v480
 
 import (
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
@@ -13,7 +13,7 @@ var (
 	_ upgrades.Upgrade = &Upgrade{}
 )
 
-// Upgrade represents the v4.1.0 upgrade
+// Upgrade represents the v4.6.0 upgrade
 type Upgrade struct {
 	mm           *module.Manager
 	configurator module.Configurator
@@ -29,12 +29,13 @@ func NewUpgrade(mm *module.Manager, configurator module.Configurator) *Upgrade {
 
 // Name implements upgrades.Upgrade
 func (u *Upgrade) Name() string {
-	return "v4.1.0"
+	return "v4.8.0"
 }
 
 // Handler implements upgrades.Upgrade
 func (u *Upgrade) Handler() upgradetypes.UpgradeHandler {
 	return func(ctx sdk.Context, plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
+
 		// Do nothing here as we don't have anything particular in this update
 		return u.mm.RunMigrations(ctx, u.configurator, fromVM)
 	}

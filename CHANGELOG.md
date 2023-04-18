@@ -2,6 +2,16 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
+## Version 4.8.0
+### Bug Fixes
+#### Reactions
+- ([\#1091](https://github.com/desmos-labs/desmos/pull/1091)) Fixed duplicated reaction storing
+
+## Version 4.7.1
+### Bug Fixes
+#### Other
+- ([\#1069](https://github.com/desmos-labs/desmos/pull/1069)) Register missing Wasm snapshotter extension
+
 ## Version 4.7.0
 ### Features
 #### Bank
