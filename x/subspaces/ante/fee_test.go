@@ -251,7 +251,6 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)
-
 				if tc.check != nil {
 					tc.check(ctx)
 				}
