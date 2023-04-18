@@ -5,17 +5,15 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
 	"github.com/desmos-labs/desmos/v4/x/posts/types"
 )
 
 // Keeper maintains the link to data storage and exposes getter/setter methods for the various parts of the state machine
 type Keeper struct {
-	storeKey       storetypes.StoreKey
-	cdc            codec.BinaryCodec
-	paramsSubspace paramstypes.Subspace
-	hooks          types.PostsHooks
+	storeKey storetypes.StoreKey
+	cdc      codec.BinaryCodec
+	hooks    types.PostsHooks
 
 	ak types.ProfilesKeeper
 	sk types.SubspacesKeeper
