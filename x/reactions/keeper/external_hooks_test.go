@@ -213,12 +213,12 @@ func (suite *KeeperTestSuite) TestKeeper_AfterPostDeleted() {
 		{
 			name: "next reaction id is deleted properly",
 			store: func(ctx sdk.Context) {
-				suite.k.SetNextReactionID(ctx, 1, 1, 1)
+				suite.k.SetNextReactionID(ctx, 1, 2, 1)
 			},
 			subspaceID: 1,
-			postID:     1,
+			postID:     2,
 			check: func(ctx sdk.Context) {
-				suite.Require().False(suite.k.HasNextReactionID(ctx, 1, 1))
+				suite.Require().False(suite.k.HasNextReactionID(ctx, 1, 2))
 			},
 		},
 		{

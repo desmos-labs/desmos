@@ -8,9 +8,10 @@ import (
 	reflect "reflect"
 
 	types "github.com/cosmos/cosmos-sdk/types"
+	gomock "github.com/golang/mock/gomock"
+
 	types0 "github.com/desmos-labs/desmos/v4/x/posts/types"
 	types1 "github.com/desmos-labs/desmos/v4/x/subspaces/types"
-	gomock "github.com/golang/mock/gomock"
 )
 
 // MockProfilesKeeper is a mock of ProfilesKeeper interface.
