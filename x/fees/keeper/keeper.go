@@ -6,26 +6,28 @@ import (
 	errors "cosmossdk.io/errors"
 	"github.com/cometbft/cometbft/libs/log"
 	"github.com/cosmos/cosmos-sdk/codec"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
 	"github.com/desmos-labs/desmos/v4/x/fees/types"
 )
 
 type Keeper struct {
-	paramSubspace paramstypes.Subspace
-	cdc           codec.BinaryCodec
+	cdc      codec.BinaryCodec
+	storeKey storetypes.StoreKey
+
+	// the address capable of executing a MsgUpdateParams message. Typically, this
+	// should be the x/gov module account.
+	authority string
 }
 
-func NewKeeper(cdc codec.BinaryCodec, paramSpace paramstypes.Subspace) Keeper {
-	if !paramSpace.HasKeyTable() {
-		paramSpace = paramSpace.WithKeyTable(types.ParamKeyTable())
-	}
+func NewKeeper(cdc codec.BinaryCodec, storeKey storetypes.StoreKey, authority string) Keeper {
 
 	return Keeper{
-		cdc:           cdc,
-		paramSubspace: paramSpace,
+		cdc:       cdc,
+		storeKey:  storeKey,
+		authority: authority,
 	}
 }
 
@@ -36,12 +38,19 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 
 // SetParams sets module parameters
 func (k Keeper) SetParams(ctx sdk.Context, params types.Params) {
-	k.paramSubspace.SetParamSet(ctx, &params)
+	store := ctx.KVStore(k.storeKey)
+	bz := k.cdc.MustMarshal(&params)
+	store.Set(types.ParamsKey, bz)
 }
 
 // GetParams returns the module parameters
 func (k Keeper) GetParams(ctx sdk.Context) (p types.Params) {
-	k.paramSubspace.GetParamSet(ctx, &p)
+	store := ctx.KVStore(k.storeKey)
+	bz := store.Get(types.ParamsKey)
+	if bz == nil {
+		return p
+	}
+	k.cdc.MustUnmarshal(bz, &p)
 	return p
 }
 

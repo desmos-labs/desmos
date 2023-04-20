@@ -573,7 +573,7 @@ func NewDesmosApp(
 	)
 
 	// Create fees keeper
-	app.FeesKeeper = feeskeeper.NewKeeper(app.appCodec, app.GetSubspace(feestypes.ModuleName))
+	app.FeesKeeper = feeskeeper.NewKeeper(app.appCodec, keys[feestypes.StoreKey], authtypes.NewModuleAddress(govtypes.ModuleName).String())
 
 	// Create subspaces keeper and module
 	subspacesKeeper := subspaceskeeper.NewKeeper(app.appCodec, keys[subspacestypes.StoreKey], app.AccountKeeper, app.AuthzKeeper)
