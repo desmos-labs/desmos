@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"math/rand"
 
 	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -24,7 +23,7 @@ import (
 )
 
 const (
-	consensusVersion = 1
+	consensusVersion = 2
 )
 
 // type check to ensure the interface is properly implemented
@@ -44,10 +43,9 @@ func (AppModuleBasic) Name() string {
 	return types.ModuleName
 }
 
-func (AppModuleBasic) RegisterLegacyAminoCodec(_ *codec.LegacyAmino) {}
-
-// RegisterCodec registers the fees module's types for the given codec.
-func (AppModuleBasic) RegisterCodec(_ *codec.LegacyAmino) {}
+func (AppModuleBasic) RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
+	types.RegisterLegacyAminoCodec(cdc)
+}
 
 // DefaultGenesis returns default genesis state as raw bytes for the auth
 // module.
@@ -80,7 +78,9 @@ func (AppModuleBasic) GetQueryCmd() *cobra.Command {
 }
 
 // RegisterInterfaces registers interfaces and implementations of the fees module.
-func (AppModuleBasic) RegisterInterfaces(_ codectypes.InterfaceRegistry) {}
+func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) {
+	types.RegisterInterfaces(registry)
+}
 
 // ____________________________________________________________________________
 
@@ -88,11 +88,22 @@ func (AppModuleBasic) RegisterInterfaces(_ codectypes.InterfaceRegistry) {}
 type AppModule struct {
 	AppModuleBasic
 	keeper keeper.Keeper
+
+	// legacySubspace is used solely for migration of x/params managed parameters
+	legacySubspace types.ParamsSubspace
 }
 
 // RegisterServices registers module services.
 func (am AppModule) RegisterServices(cfg module.Configurator) {
+	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
 	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
+
+	m := keeper.NewMigrator(am.keeper, am.legacySubspace)
+	err := cfg.RegisterMigration(types.ModuleName, 1, m.Migrate1to2)
+	if err != nil {
+		panic(err)
+	}
+
 }
 
 // NewAppModule creates a new AppModule Object
@@ -162,9 +173,9 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 	simulation.RandomizedGenState(simState)
 }
 
-// RandomizedParams creates randomized fees param changes for the simulator.
-func (AppModule) RandomizedParams(r *rand.Rand) []simtypes.LegacyParamChange {
-	return simulation.ParamChanges(r)
+// ProposalMsgs returns msgs used for governance proposals for simulations.
+func (AppModule) ProposalMsgs(simState module.SimulationState) []simtypes.WeightedProposalMsg {
+	return simulation.ProposalMsgs()
 }
 
 // RegisterStoreDecoder performs a no-op.

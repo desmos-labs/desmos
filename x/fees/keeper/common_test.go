@@ -10,7 +10,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/store"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/stretchr/testify/suite"
 
 	"github.com/desmos-labs/desmos/v4/app"
@@ -25,23 +25,19 @@ func TestKeeperTestSuite(t *testing.T) {
 type KeeperTestSuite struct {
 	suite.Suite
 
-	cdc            codec.BinaryCodec
-	legacyAminoCdc *codec.LegacyAmino
-	ctx            sdk.Context
-	keeper         keeper.Keeper
-	paramsKeeper   paramskeeper.Keeper
+	cdc    codec.BinaryCodec
+	ctx    sdk.Context
+	keeper keeper.Keeper
 }
 
 func (suite *KeeperTestSuite) SetupTest() {
 	//define store keys
-	paramsKey := sdk.NewKVStoreKey("params")
-	paramsTKey := sdk.NewTransientStoreKey("transient_params")
+	storeKey := sdk.NewKVStoreKey(types.StoreKey)
 
 	// create an in-memory db
 	memDB := db.NewMemDB()
 	ms := store.NewCommitMultiStore(memDB)
-	ms.MountStoreWithDB(paramsKey, storetypes.StoreTypeIAVL, memDB)
-	ms.MountStoreWithDB(paramsTKey, storetypes.StoreTypeTransient, memDB)
+	ms.MountStoreWithDB(storeKey, storetypes.StoreTypeIAVL, memDB)
 	if err := ms.LoadLatestVersion(); err != nil {
 		panic(err)
 	}
@@ -53,7 +49,6 @@ func (suite *KeeperTestSuite) SetupTest() {
 		log.NewNopLogger(),
 	)
 
-	suite.cdc, suite.legacyAminoCdc = app.MakeCodecs()
-	suite.paramsKeeper = paramskeeper.NewKeeper(suite.cdc, suite.legacyAminoCdc, paramsKey, paramsTKey)
-	suite.keeper = keeper.NewKeeper(suite.cdc, suite.paramsKeeper.Subspace(types.DefaultParamspace))
+	suite.cdc, _ = app.MakeCodecs()
+	suite.keeper = keeper.NewKeeper(suite.cdc, storeKey, authtypes.NewModuleAddress("gov").String())
 }

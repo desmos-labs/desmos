@@ -24,18 +24,23 @@ const (
 	ActionRemovePostAttachment = "remove_post_attachment"
 	ActionDeletePost           = "delete_post"
 	ActionAnswerPoll           = "answer_poll"
+	ActionUpdateParams         = "update_params"
 
 	DoNotModify = "[do-not-modify]"
 )
 
 var (
-	NextPostIDPrefix       = []byte{0x00}
-	PostPrefix             = []byte{0x01}
-	PostSectionPrefix      = []byte{0x02}
+	NextPostIDPrefix  = []byte{0x00}
+	PostPrefix        = []byte{0x01}
+	PostSectionPrefix = []byte{0x02}
+
 	NextAttachmentIDPrefix = []byte{0x10}
 	AttachmentPrefix       = []byte{0x11}
-	UserAnswerPrefix       = []byte{0x20}
-	ActivePollQueuePrefix  = []byte{0x21}
+
+	UserAnswerPrefix      = []byte{0x20}
+	ActivePollQueuePrefix = []byte{0x21}
+
+	ParamsKey = []byte{0x30}
 )
 
 // GetPostIDBytes returns the byte representation of the postID
