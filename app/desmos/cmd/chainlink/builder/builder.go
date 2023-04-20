@@ -2,6 +2,7 @@ package builder
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
+
 	"github.com/desmos-labs/desmos/v4/app/desmos/cmd/chainlink/types"
 	"github.com/desmos-labs/desmos/v4/x/profiles/client/utils"
 )

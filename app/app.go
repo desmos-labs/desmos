@@ -8,9 +8,10 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/gorilla/mux"
+
 	"github.com/desmos-labs/desmos/v4/x/reactions"
 	reactionstypes "github.com/desmos-labs/desmos/v4/x/reactions/types"
-	"github.com/gorilla/mux"
 
 	postskeeper "github.com/desmos-labs/desmos/v4/x/posts/keeper"
 	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
