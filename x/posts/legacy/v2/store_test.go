@@ -4,10 +4,7 @@ import (
 	"testing"
 	"time"
 
-	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/require"
 
@@ -19,17 +16,29 @@ import (
 	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
+type mockSubspace struct {
+	ps types.Params
+}
+
+func newMockSubspace(ps types.Params) *mockSubspace {
+	return &mockSubspace{ps: ps}
+}
+
+func (ms mockSubspace) GetParamSet(ctx sdk.Context, ps paramstypes.ParamSet) {
+	*ps.(*types.Params) = ms.ps
+}
+
+func (ms *mockSubspace) SetParamSet(ctx sdk.Context, ps paramstypes.ParamSet) {
+	ms.ps = *ps.(*types.Params)
+}
+
 func TestMigrateStore(t *testing.T) {
-	cdc, amino := app.MakeCodecs()
+	cdc, _ := app.MakeCodecs()
 
 	// Build all the necessary keys
 	keys := sdk.NewKVStoreKeys(paramstypes.StoreKey, subspacestypes.StoreKey, types.StoreKey)
-	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
-	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
-	pk := paramskeeper.NewKeeper(cdc, amino, keys[paramstypes.StoreKey], tKeys[paramstypes.TStoreKey])
-	paramsSubspace := pk.Subspace(types.ModuleName)
-	paramsSubspace = paramsSubspace.WithKeyTable(types.ParamKeyTable())
+	paramsSubspace := newMockSubspace(types.Params{})
 
 	sk := subspaceskeeper.NewKeeper(cdc, keys[subspacestypes.StoreKey], nil, nil)
 
@@ -87,7 +96,7 @@ func TestMigrateStore(t *testing.T) {
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			ctx := storetesting.BuildContext(keys, tKeys, memKeys)
+			ctx := storetesting.BuildContext(keys, nil, nil)
 			if tc.store != nil {
 				tc.store(ctx)
 			}

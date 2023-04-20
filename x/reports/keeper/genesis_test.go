@@ -9,7 +9,7 @@ import (
 	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
-func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
+func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -124,7 +124,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
+func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 	testCases := []struct {
 		name  string
 		store func(ctx sdk.Context)

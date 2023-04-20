@@ -5,6 +5,7 @@ import "gogoproto/gogo.proto";
 import "google/protobuf/any.proto";
 import "google/protobuf/timestamp.proto";
 import "cosmos_proto/cosmos.proto";
+import "cosmos/msg/v1/msg.proto";
 
 import "desmos/posts/v3/models.proto";
 
@@ -12,6 +13,8 @@ option go_package = "github.com/desmos-labs/desmos/v4/x/posts/types";
 
 // Msg defines the posts Msg service.
 service Msg {
+  option (cosmos.msg.v1.service) = true;
+
   // CreatePost allows to create a new post
   rpc CreatePost(MsgCreatePost) returns (MsgCreatePostResponse);
 
@@ -31,6 +34,13 @@ service Msg {
 
   // AnswerPoll allows to answer a post poll
   rpc AnswerPoll(MsgAnswerPoll) returns (MsgAnswerPollResponse);
+
+  // UpdateParams defines a (governance) operation for updating the module
+  // parameters.
+  //  The authority defaults to the x/gov module account.
+  //
+  // Since: desmos 5.0.0
+  rpc UpdateParams(MsgUpdateParams) returns (MsgUpdateParamsResponse);
 }
 
 // MsgCreatePost represents the message to be used to create a post.
@@ -272,3 +282,25 @@ message MsgAnswerPoll {
 
 // MsgAnswerPollResponse represents the MSg/AnswerPoll response type
 message MsgAnswerPollResponse {}
+
+// MsgUpdateParams is the Msg/UpdateParams request type.
+//
+// Since: desmos 5.0.0
+message MsgUpdateParams {
+  option (cosmos.msg.v1.signer) = "authority";
+
+  // authority is the address that controls the module (defaults to x/gov unless
+  // overwritten).
+  string authority = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+
+  // params defines the parameters to update.
+  //
+  // NOTE: All parameters must be supplied.
+  Params params = 2 [ (gogoproto.nullable) = false ];
+}
+
+// MsgUpdateParamsResponse defines the response structure for executing a
+// MsgUpdateParams message.
+//
+// Since: desmos 5.0.0
+message MsgUpdateParamsResponse {}

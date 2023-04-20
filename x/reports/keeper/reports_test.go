@@ -11,7 +11,7 @@ import (
 	"github.com/desmos-labs/desmos/v4/x/reports/types"
 )
 
-func (suite *KeeperTestsuite) TestKeeper_SetNextReportID() {
+func (suite *KeeperTestSuite) TestKeeper_SetNextReportID() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -60,7 +60,7 @@ func (suite *KeeperTestsuite) TestKeeper_SetNextReportID() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_GetNextReportID() {
+func (suite *KeeperTestSuite) TestKeeper_GetNextReportID() {
 	testCases := []struct {
 		name        string
 		store       func(ctx sdk.Context)
@@ -103,7 +103,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetNextReportID() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_DeleteNextReportID() {
+func (suite *KeeperTestSuite) TestKeeper_DeleteNextReportID() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -141,7 +141,7 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteNextReportID() {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-func (suite *KeeperTestsuite) TestKeeper_ValidateReport() {
+func (suite *KeeperTestSuite) TestKeeper_ValidateReport() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -295,7 +295,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidateReport() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_SaveReport() {
+func (suite *KeeperTestSuite) TestKeeper_SaveReport() {
 	testCases := []struct {
 		name   string
 		store  func(ctx sdk.Context)
@@ -378,7 +378,7 @@ func (suite *KeeperTestsuite) TestKeeper_SaveReport() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_HasReport() {
+func (suite *KeeperTestSuite) TestKeeper_HasReport() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -425,7 +425,7 @@ func (suite *KeeperTestsuite) TestKeeper_HasReport() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_HasReported() {
+func (suite *KeeperTestSuite) TestKeeper_HasReported() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -558,7 +558,7 @@ func (suite *KeeperTestsuite) TestKeeper_HasReported() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_GetReport() {
+func (suite *KeeperTestSuite) TestKeeper_GetReport() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -617,7 +617,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetReport() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_DeleteReport() {
+func (suite *KeeperTestSuite) TestKeeper_DeleteReport() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)

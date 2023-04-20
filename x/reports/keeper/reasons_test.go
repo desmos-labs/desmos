@@ -8,7 +8,7 @@ import (
 	"github.com/desmos-labs/desmos/v4/x/reports/types"
 )
 
-func (suite *KeeperTestsuite) TestKeeper_SetNextReasonID() {
+func (suite *KeeperTestSuite) TestKeeper_SetNextReasonID() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -58,7 +58,7 @@ func (suite *KeeperTestsuite) TestKeeper_SetNextReasonID() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_GetNextReasonID() {
+func (suite *KeeperTestSuite) TestKeeper_GetNextReasonID() {
 	testCases := []struct {
 		name        string
 		store       func(ctx sdk.Context)
@@ -101,7 +101,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetNextReasonID() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_DeleteNextReasonID() {
+func (suite *KeeperTestSuite) TestKeeper_DeleteNextReasonID() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -147,7 +147,7 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteNextReasonID() {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-func (suite *KeeperTestsuite) TestKeeper_SaveReason() {
+func (suite *KeeperTestSuite) TestKeeper_SaveReason() {
 	testCases := []struct {
 		name   string
 		store  func(ctx sdk.Context)
@@ -218,7 +218,7 @@ func (suite *KeeperTestsuite) TestKeeper_SaveReason() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_HasReason() {
+func (suite *KeeperTestSuite) TestKeeper_HasReason() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -262,7 +262,7 @@ func (suite *KeeperTestsuite) TestKeeper_HasReason() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_GetReason() {
+func (suite *KeeperTestSuite) TestKeeper_GetReason() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -315,7 +315,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetReason() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_DeleteReason() {
+func (suite *KeeperTestSuite) TestKeeper_DeleteReason() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
