@@ -13,7 +13,7 @@ Alternatively, you can also write an email to _security@desmos.network_.
 
 _Please avoid opening a public Github issue or posting on social media_.
 
-The Desmos team will respond with the next steps following the email. The team will keep you informed on the remediation process and may ask for additional guidance/information.
+The Desmos team will respond with the next steps following the report. It will also keep you informed on the remediation process and may ask for additional guidance/information.
 
 Please include the following in your report:
 
