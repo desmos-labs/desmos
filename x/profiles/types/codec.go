@@ -29,6 +29,9 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgSetDefaultExternalAddress{}, "desmos/MsgSetDefaultExternalAddress", nil)
 	cdc.RegisterConcrete(&MsgLinkApplication{}, "desmos/MsgLinkApplication", nil)
 	cdc.RegisterConcrete(&MsgUnlinkApplication{}, "desmos/MsgUnlinkApplication", nil)
+	cdc.RegisterConcrete(&MsgUpdateParams{}, "desmos/x/profiles/MsgUpdateParams", nil)
+
+	cdc.RegisterConcrete(&Params{}, "desmos/x/profiles/Params", nil)
 
 	cdc.RegisterInterface((*AddressData)(nil), nil)
 	cdc.RegisterConcrete(&Bech32Address{}, "desmos/Bech32Address", nil)
@@ -72,6 +75,7 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 		&MsgLinkApplication{},
 		&MsgUnlinkApplication{},
 		&MsgSetDefaultExternalAddress{},
+		&MsgUpdateParams{},
 	)
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)

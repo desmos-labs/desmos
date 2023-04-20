@@ -591,12 +591,12 @@ func NewDesmosApp(
 		app.appCodec,
 		app.legacyAmino,
 		keys[profilestypes.StoreKey],
-		app.GetSubspace(profilestypes.ModuleName),
 		app.AccountKeeper,
 		app.RelationshipsKeeper,
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper,
 		scopedProfilesKeeper,
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 
 	// Create posts keeper and module
@@ -794,7 +794,7 @@ func NewDesmosApp(
 		// Custom modules
 		fees.NewAppModule(app.appCodec, app.FeesKeeper),
 		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AuthzKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
-		profiles.NewAppModule(appCodec, legacyAmino, app.ProfilesKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
+		profiles.NewAppModule(appCodec, legacyAmino, app.ProfilesKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper, app.GetSubspace(profilestypes.ModuleName)),
 		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv4.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		posts.NewAppModule(appCodec, app.PostsKeeper, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper, app.GetSubspace(poststypes.ModuleName)),
 		reports.NewAppModule(appCodec, app.ReportsKeeper, app.SubspacesKeeper, app.PostsKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper, app.GetSubspace(reportstypes.ModuleName)),

@@ -33,6 +33,10 @@ type Keeper struct {
 	channelKeeper types.ChannelKeeper
 	portKeeper    types.PortKeeper
 	scopedKeeper  types.ScopedKeeper
+
+	// the address capable of executing a MsgUpdateParams message. Typically, this
+	// should be the x/gov module account.
+	authority string
 }
 
 // NewKeeper creates new instances of the Profiles Keeper.
@@ -45,27 +49,24 @@ func NewKeeper(
 	cdc codec.BinaryCodec,
 	legacyAmino *codec.LegacyAmino,
 	storeKey storetypes.StoreKey,
-	paramSpace paramstypes.Subspace,
 	ak authkeeper.AccountKeeper,
 	rk types.RelationshipsKeeper,
 	channelKeeper types.ChannelKeeper,
 	portKeeper types.PortKeeper,
 	scopedKeeper types.ScopedKeeper,
+	authority string,
 ) Keeper {
-	if !paramSpace.HasKeyTable() {
-		paramSpace = paramSpace.WithKeyTable(types.ParamKeyTable())
-	}
-
 	return Keeper{
 		storeKey:      storeKey,
 		cdc:           cdc,
 		legacyAmino:   legacyAmino,
-		paramSubspace: paramSpace,
 		ak:            ak,
 		rk:            rk,
 		channelKeeper: channelKeeper,
 		portKeeper:    portKeeper,
 		scopedKeeper:  scopedKeeper,
+
+		authority: authority,
 	}
 }
 

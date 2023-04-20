@@ -26,6 +26,7 @@ const (
 	ActionLinkApplication           = "link_application"
 	ActionUnlinkApplication         = "unlink_application"
 	ActionSetDefaultExternalAddress = "set_default_external_address"
+	ActionUpdateParams              = "update_params"
 
 	DoNotModify = "[do-not-modify]"
 
@@ -49,6 +50,8 @@ var (
 	ApplicationLinkAppPrefix     = []byte{0x16}
 	ExpiringAppLinkTimePrefix    = []byte{0x17}
 	DefaultExternalAddressPrefix = []byte{0x18}
+
+	ParamsKey = []byte{0x20}
 )
 
 // DTagStoreKey turns a DTag into the key used to store the address associated with it into the store
