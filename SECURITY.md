@@ -26,7 +26,7 @@ Please include the following in your report:
 
 The core team asks security researchers to keep communications around vulnerabilities private and confidential until a patch is ready.
 
-Additionally, we request:
+Additionally, we request reporters to:
 
 - Allow a reasonable amount of time to correct and address the issue.
 - Avoid exploiting the vulnerability.
