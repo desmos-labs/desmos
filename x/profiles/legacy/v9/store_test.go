@@ -6,9 +6,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
+	"github.com/stretchr/testify/require"
+
 	"github.com/desmos-labs/desmos/v4/app"
 	"github.com/desmos-labs/desmos/v4/testutil/storetesting"
-	"github.com/stretchr/testify/require"
 
 	v9 "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v9"
 	"github.com/desmos-labs/desmos/v4/x/profiles/types"
