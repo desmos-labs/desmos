@@ -9,6 +9,7 @@ To report a security issue go to [Discord](https://discord.desmos.network) and a
 * Paul | Desmos `Paul | Desmos#0380`
 * Manuel | Desmos `Manuel Turetta#8033`
 
+Alternatively, you can also write an email to _security@desmos.network_.
 
 _Please avoid opening a public Github issue or posting on social media_.
 
