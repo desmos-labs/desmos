@@ -36,10 +36,10 @@ Additionally, we request reporters to:
 
 Once a report is received, the following process will be followed:
 
-- The Desmos core team will work to verify the issue.
-- Work on a patch in a private repository.
-- Notify the community and validators that a security update is coming, giving ample time to upgrade and apply the patch.
-- After the community has been notified, and after verifying that the patch works, the team will pay out any relevant bug bounties to submitters.
-- A post-mortem will be published a week after the vulnerability is discovered.
+1. The Desmos core team will work to verify the issue.
+2. The team will work on a patch in a private repository.
+3. The team will notify the community and validators that a security update is coming, giving ample time to upgrade and apply the patch.
+4. After the community has been notified, and after verifying that the patch works, the team will pay out any relevant bug bounties to submitters.
+5. A post-mortem will be published a week after the vulnerability is discovered.
 
 Every effort will be made to handle disclosures in a timely manner. It's very important to follow the above process for vulnerabilities to be handled quickly and effectively.
