@@ -10,7 +10,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/store"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/require"
 
@@ -26,7 +25,6 @@ func TestEndBlocker(t *testing.T) {
 	keys := sdk.NewMemoryStoreKeys(
 		paramstypes.StoreKey, types.StoreKey,
 	)
-	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 
 	// Create an in-memory db
 	memDB := db.NewMemDB()
@@ -34,18 +32,14 @@ func TestEndBlocker(t *testing.T) {
 	for _, key := range keys {
 		ms.MountStoreWithDB(key, storetypes.StoreTypeIAVL, memDB)
 	}
-	for _, tKey := range tKeys {
-		ms.MountStoreWithDB(tKey, storetypes.StoreTypeTransient, memDB)
-	}
 
 	err := ms.LoadLatestVersion()
 	require.NoError(t, err)
 
 	ctx := sdk.NewContext(ms, tmproto.Header{ChainID: "test-chain"}, false, log.NewNopLogger())
-	cdc, legacyAmino := app.MakeCodecs()
-	pk := paramskeeper.NewKeeper(cdc, legacyAmino, keys[paramstypes.StoreKey], tKeys[paramstypes.TStoreKey])
+	cdc, _ := app.MakeCodecs()
 
-	keeper := postskeeper.NewKeeper(cdc, keys[poststypes.StoreKey], pk.Subspace(types.DefaultParamsSpace), nil, nil, nil)
+	keeper := postskeeper.NewKeeper(cdc, keys[poststypes.StoreKey], nil, nil, nil, "authority")
 
 	testCases := []struct {
 		name     string
