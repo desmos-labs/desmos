@@ -611,7 +611,8 @@ var xxx_messageInfo_MsgRemoveReasonResponse proto.InternalMessageInfo
 //
 // Since: desmos 5.0.0
 type MsgUpdateParams struct {
-	// authority is the address that controls the module (defaults to x/gov unless overwritten).
+	// authority is the address that controls the module (defaults to x/gov unless
+	// overwritten).
 	Authority string `protobuf:"bytes,1,opt,name=authority,proto3" json:"authority,omitempty"`
 	// params defines the parameters to update.
 	//
@@ -808,7 +809,8 @@ type MsgClient interface {
 	AddReason(ctx context.Context, in *MsgAddReason, opts ...grpc.CallOption) (*MsgAddReasonResponse, error)
 	// RemoveReason allows to remove a supported reporting reason
 	RemoveReason(ctx context.Context, in *MsgRemoveReason, opts ...grpc.CallOption) (*MsgRemoveReasonResponse, error)
-	// UpdateParams defines a (governance) operation for updating the module parameters.
+	// UpdateParams defines a (governance) operation for updating the module
+	// parameters.
 	//
 	//	The authority defaults to the x/gov module account.
 	//
@@ -891,7 +893,8 @@ type MsgServer interface {
 	AddReason(context.Context, *MsgAddReason) (*MsgAddReasonResponse, error)
 	// RemoveReason allows to remove a supported reporting reason
 	RemoveReason(context.Context, *MsgRemoveReason) (*MsgRemoveReasonResponse, error)
-	// UpdateParams defines a (governance) operation for updating the module parameters.
+	// UpdateParams defines a (governance) operation for updating the module
+	// parameters.
 	//
 	//	The authority defaults to the x/gov module account.
 	//

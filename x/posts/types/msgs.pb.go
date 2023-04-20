@@ -840,7 +840,8 @@ var xxx_messageInfo_MsgAnswerPollResponse proto.InternalMessageInfo
 //
 // Since: desmos 5.0.0
 type MsgUpdateParams struct {
-	// authority is the address that controls the module (defaults to x/gov unless overwritten).
+	// authority is the address that controls the module (defaults to x/gov unless
+	// overwritten).
 	Authority string `protobuf:"bytes,1,opt,name=authority,proto3" json:"authority,omitempty"`
 	// params defines the parameters to update.
 	//
@@ -1060,7 +1061,8 @@ type MsgClient interface {
 	RemovePostAttachment(ctx context.Context, in *MsgRemovePostAttachment, opts ...grpc.CallOption) (*MsgRemovePostAttachmentResponse, error)
 	// AnswerPoll allows to answer a post poll
 	AnswerPoll(ctx context.Context, in *MsgAnswerPoll, opts ...grpc.CallOption) (*MsgAnswerPollResponse, error)
-	// UpdateParams defines a (governance) operation for updating the module parameters.
+	// UpdateParams defines a (governance) operation for updating the module
+	// parameters.
 	//
 	//	The authority defaults to the x/gov module account.
 	//
@@ -1153,7 +1155,8 @@ type MsgServer interface {
 	RemovePostAttachment(context.Context, *MsgRemovePostAttachment) (*MsgRemovePostAttachmentResponse, error)
 	// AnswerPoll allows to answer a post poll
 	AnswerPoll(context.Context, *MsgAnswerPoll) (*MsgAnswerPollResponse, error)
-	// UpdateParams defines a (governance) operation for updating the module parameters.
+	// UpdateParams defines a (governance) operation for updating the module
+	// parameters.
 	//
 	//	The authority defaults to the x/gov module account.
 	//
