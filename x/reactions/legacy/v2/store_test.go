@@ -42,7 +42,7 @@ func TestMigrateStore(t *testing.T) {
 	sk := subspaceskeeper.NewKeeper(cdc, keys[subspacestypes.StoreKey], nil, nil)
 	rk := relationshipskeeper.NewKeeper(cdc, keys[relationshipstypes.StoreKey], sk)
 	ak := profileskeeper.NewKeeper(cdc, legacyAminoCdc, keys[profilestypes.StoreKey], paramsKeeper.Subspace(profilestypes.DefaultParamsSpace), authKeeper, rk, nil, nil, nil)
-	pk := postskeeper.NewKeeper(cdc, keys[poststypes.StoreKey], paramsKeeper.Subspace(poststypes.DefaultParamsSpace), ak, sk, rk)
+	pk := postskeeper.NewKeeper(cdc, keys[poststypes.StoreKey], ak, sk, rk, authtypes.NewModuleAddress("gov").String())
 
 	testCases := []struct {
 		name      string

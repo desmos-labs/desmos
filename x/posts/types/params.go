@@ -2,13 +2,6 @@ package types
 
 import (
 	"fmt"
-
-	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
-)
-
-const (
-	// DefaultParamsSpace represents the default paramspace for the Params keeper
-	DefaultParamsSpace = ModuleName
 )
 
 var (
@@ -16,18 +9,7 @@ var (
 	DefaultMaxTextLength uint32 = 500
 )
 
-var (
-	// MaxTextLengthKey represents the key used to store the max length for posts texts
-	MaxTextLengthKey = []byte("MaxTextLength")
-)
-
 // -------------------------------------------------------------------------------------------------------------------
-
-// ParamKeyTable Key declaration for parameters
-func ParamKeyTable() paramstypes.KeyTable {
-	return paramstypes.NewKeyTable().
-		RegisterParamSet(&Params{})
-}
 
 // NewParams returns a new Params instance
 func NewParams(maxTextLength uint32) Params {
@@ -40,14 +22,6 @@ func NewParams(maxTextLength uint32) Params {
 func DefaultParams() Params {
 	return Params{
 		MaxTextLength: DefaultMaxTextLength,
-	}
-}
-
-// ParamSetPairs implements the ParamSet interface and returns the key/value pairs
-// of posts module's parameters.
-func (params *Params) ParamSetPairs() paramstypes.ParamSetPairs {
-	return paramstypes.ParamSetPairs{
-		paramstypes.NewParamSetPair(MaxTextLengthKey, &params.MaxTextLength, ValidateMaxTextLength),
 	}
 }
 
