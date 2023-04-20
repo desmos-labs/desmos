@@ -2,6 +2,7 @@ package app
 
 import (
 	"github.com/cosmos/cosmos-sdk/std"
+
 	"github.com/desmos-labs/desmos/v4/app/params"
 )
 

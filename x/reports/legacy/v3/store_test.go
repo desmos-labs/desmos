@@ -1,4 +1,4 @@
-package v6_test
+package v3_test
 
 import (
 	"testing"
@@ -11,8 +11,8 @@ import (
 	"github.com/desmos-labs/desmos/v4/app"
 	"github.com/desmos-labs/desmos/v4/testutil/storetesting"
 
-	v6 "github.com/desmos-labs/desmos/v4/x/posts/legacy/v6"
-	"github.com/desmos-labs/desmos/v4/x/posts/types"
+	v3 "github.com/desmos-labs/desmos/v4/x/reports/legacy/v3"
+	"github.com/desmos-labs/desmos/v4/x/reports/types"
 )
 
 type mockSubspace struct {
@@ -66,7 +66,7 @@ func TestMigrate(t *testing.T) {
 
 			mockSubspace := tc.setupSubspace()
 
-			err := v6.MigrateStore(ctx, keys[types.StoreKey], mockSubspace, cdc)
+			err := v3.MigrateStore(ctx, keys[types.StoreKey], mockSubspace, cdc)
 			if tc.shouldErr {
 				require.Error(t, err)
 			} else {

@@ -12,7 +12,7 @@ import (
 	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
-func (suite *KeeperTestsuite) TestValidSubspacesInvariant() {
+func (suite *KeeperTestSuite) TestValidSubspacesInvariant() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -83,7 +83,7 @@ func (suite *KeeperTestsuite) TestValidSubspacesInvariant() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestValidReasonsInvariant() {
+func (suite *KeeperTestSuite) TestValidReasonsInvariant() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -208,7 +208,7 @@ func (suite *KeeperTestsuite) TestValidReasonsInvariant() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestValidReportsInvariant() {
+func (suite *KeeperTestSuite) TestValidReportsInvariant() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)

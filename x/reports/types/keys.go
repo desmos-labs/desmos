@@ -21,6 +21,7 @@ const (
 	ActionSupportStandardReason = "support_standard_reason"
 	ActionAddReason             = "add_reason"
 	ActionRemoveReason          = "remove_reason"
+	ActionUpdateParams          = "update_params"
 )
 
 var (
@@ -31,6 +32,8 @@ var (
 
 	NextReasonIDPrefix = []byte{0x10}
 	ReasonPrefix       = []byte{0x11}
+
+	ParamsKey = []byte{0x20}
 )
 
 // GetReportIDBytes returns the byte representation of the reportID
