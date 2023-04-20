@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/cosmos/cosmos-sdk/client"
+
 	"github.com/desmos-labs/desmos/v4/app/desmos/cmd/chainlink/builder"
 	chainlinktypes "github.com/desmos-labs/desmos/v4/app/desmos/cmd/chainlink/getter"
 

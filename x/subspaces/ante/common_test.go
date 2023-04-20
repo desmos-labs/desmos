@@ -29,6 +29,11 @@ type AnteTestSuite struct {
 	ante ante.DeductFeeDecorator
 }
 
+func MockTxFeeChecker(ctx sdk.Context, tx sdk.Tx) (sdk.Coins, int64, error) {
+	feeTx := tx.(sdk.FeeTx)
+	return feeTx.GetFee(), 10, nil
+}
+
 func TestAnteTestSuite(t *testing.T) {
 	suite.Run(t, new(AnteTestSuite))
 }
@@ -46,5 +51,5 @@ func (suite *AnteTestSuite) SetupTest() {
 	encodingConfig := app.MakeEncodingConfig()
 	suite.clientCtx = client.Context{}.WithTxConfig(encodingConfig.TxConfig)
 
-	suite.ante = ante.NewDeductFeeDecorator(suite.authDeductFeeDecorator, suite.ak, suite.bk, suite.sk)
+	suite.ante = ante.NewDeductFeeDecorator(suite.authDeductFeeDecorator, suite.ak, suite.bk, suite.sk, MockTxFeeChecker)
 }

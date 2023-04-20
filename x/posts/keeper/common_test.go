@@ -17,8 +17,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/store"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
-	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/stretchr/testify/suite"
 
 	"github.com/desmos-labs/desmos/v4/app"
@@ -41,10 +40,7 @@ type KeeperTestSuite struct {
 
 func (suite *KeeperTestSuite) SetupTest() {
 	// Define store keys
-	keys := sdk.NewMemoryStoreKeys(
-		paramstypes.StoreKey, types.StoreKey,
-	)
-	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
+	keys := sdk.NewMemoryStoreKeys(types.StoreKey)
 	suite.storeKey = keys[types.StoreKey]
 
 	// Create an in-memory db
@@ -53,9 +49,6 @@ func (suite *KeeperTestSuite) SetupTest() {
 	for _, key := range keys {
 		ms.MountStoreWithDB(key, storetypes.StoreTypeIAVL, memDB)
 	}
-	for _, tKey := range tKeys {
-		ms.MountStoreWithDB(tKey, storetypes.StoreTypeTransient, memDB)
-	}
 
 	if err := ms.LoadLatestVersion(); err != nil {
 		panic(err)
@@ -63,9 +56,6 @@ func (suite *KeeperTestSuite) SetupTest() {
 
 	suite.ctx = sdk.NewContext(ms, tmproto.Header{ChainID: "test-chain"}, false, log.NewNopLogger())
 	suite.cdc, suite.legacyAminoCdc = app.MakeCodecs()
-
-	// Dependencies initializations
-	paramsKeeper := paramskeeper.NewKeeper(suite.cdc, suite.legacyAminoCdc, keys[paramstypes.StoreKey], tKeys[paramstypes.TStoreKey])
 
 	// Mocks initializations
 	ctrl := gomock.NewController(suite.T())
@@ -77,10 +67,10 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.k = keeper.NewKeeper(
 		suite.cdc,
 		suite.storeKey,
-		paramsKeeper.Subspace(types.DefaultParamsSpace),
 		suite.ak,
 		suite.sk,
 		suite.rk,
+		authtypes.NewModuleAddress("gov").String(),
 	)
 }
 

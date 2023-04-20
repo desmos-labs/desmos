@@ -160,10 +160,10 @@ func (suite *Testsuite) SetupTest() {
 	suite.pk = postskeeper.NewKeeper(
 		suite.cdc,
 		keys[poststypes.StoreKey],
-		paramsKeeper.Subspace(poststypes.DefaultParamsSpace),
 		suite.pk,
 		suite.sk,
 		suite.rk,
+		authtypes.NewModuleAddress("gov").String(),
 	)
 	suite.k = keeper.NewKeeper(suite.cdc, keys[types.StoreKey], suite.ak, suite.sk, suite.rk, suite.pk)
 }

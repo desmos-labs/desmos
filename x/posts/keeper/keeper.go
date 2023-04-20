@@ -5,40 +5,39 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
 	"github.com/desmos-labs/desmos/v4/x/posts/types"
 )
 
 // Keeper maintains the link to data storage and exposes getter/setter methods for the various parts of the state machine
 type Keeper struct {
-	storeKey       storetypes.StoreKey
-	cdc            codec.BinaryCodec
-	paramsSubspace paramstypes.Subspace
-	hooks          types.PostsHooks
+	storeKey storetypes.StoreKey
+	cdc      codec.BinaryCodec
+	hooks    types.PostsHooks
 
 	ak types.ProfilesKeeper
 	sk types.SubspacesKeeper
 	rk types.RelationshipsKeeper
+
+	// the address capable of executing a MsgUpdateParams message. Typically, this
+	// should be the x/gov module account.
+	authority string
 }
 
 // NewKeeper creates a new instance of the Posts Keeper.
 func NewKeeper(
-	cdc codec.BinaryCodec, storeKey storetypes.StoreKey, paramsSubspace paramstypes.Subspace,
-	ak types.ProfilesKeeper, sk types.SubspacesKeeper, rk types.RelationshipsKeeper,
+	cdc codec.BinaryCodec, storeKey storetypes.StoreKey,
+	ak types.ProfilesKeeper, sk types.SubspacesKeeper, rk types.RelationshipsKeeper, authority string,
 ) Keeper {
-	if !paramsSubspace.HasKeyTable() {
-		paramsSubspace = paramsSubspace.WithKeyTable(types.ParamKeyTable())
-	}
-
 	return Keeper{
-		storeKey:       storeKey,
-		cdc:            cdc,
-		paramsSubspace: paramsSubspace,
+		storeKey: storeKey,
+		cdc:      cdc,
 
 		ak: ak,
 		sk: sk,
 		rk: rk,
+
+		authority: authority,
 	}
 }
 

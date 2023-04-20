@@ -49,7 +49,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	s.Require().NoError(cfg.Codec.UnmarshalJSON(genesisState[stakingtypes.ModuleName], &stakingData))
 
 	s.cfg = cfg
-	
+
 	var err error
 	s.network, err = network.New(s.T(), s.T().TempDir(), cfg)
 	s.Require().NoError(err)
