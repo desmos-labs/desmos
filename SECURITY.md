@@ -5,7 +5,7 @@ The Desmos core team and community takes all security issues and vulnerabilities
 Thanks for improving the security of Desmos. We appreciate your efforts. Following these responsible disclosure guidelines will make sure your contribution is acknowledged.
 
 To report a security issue go to [Discord](https://discord.desmos.network) and alert the core engineers:  
-* Riccardo | Desmo `Riccardo Montagnin#5414`
+* Riccardo | Desmos `Riccardo Montagnin#5414`
 * Paul | Desmos `Paul | Desmos#0380`
 * Manuel | Desmos `Manuel Turetta#8033`
 
