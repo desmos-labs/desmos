@@ -267,11 +267,11 @@ func (suite *TestSuite) SetupTest() {
 		suite.cdc,
 		suite.legacyAminoCdc,
 		suite.storeKey,
-		suite.paramsKeeper.Subspace(types.DefaultParamsSpace),
 		suite.ak,
 		suite.rk,
 		suite.IBCKeeper.ChannelKeeper,
 		&suite.IBCKeeper.PortKeeper,
 		scopedProfilesKeeper,
+		authtypes.NewModuleAddress("gov").String(),
 	)
 }

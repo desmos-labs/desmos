@@ -3,6 +3,7 @@ run:
   timeout: 5m
   skip-dirs:
     - pkg
+    - client/docs
 
 linters:
   disable-all: true

@@ -22,8 +22,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/store"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
-	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/require"
 
 	"github.com/desmos-labs/desmos/v4/app"
@@ -34,10 +32,8 @@ import (
 func TestBeginBlocker(t *testing.T) {
 	// Define store keys
 	keys := sdk.NewMemoryStoreKeys(
-		paramstypes.StoreKey, authtypes.StoreKey,
-		relationshipstypes.StoreKey, types.StoreKey,
+		authtypes.StoreKey, relationshipstypes.StoreKey, types.StoreKey,
 	)
-	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 
 	// Create an in-memory db
 	memDB := db.NewMemDB()
@@ -45,20 +41,16 @@ func TestBeginBlocker(t *testing.T) {
 	for _, key := range keys {
 		ms.MountStoreWithDB(key, storetypes.StoreTypeIAVL, memDB)
 	}
-	for _, tKey := range tKeys {
-		ms.MountStoreWithDB(tKey, storetypes.StoreTypeTransient, memDB)
-	}
 
 	err := ms.LoadLatestVersion()
 	require.NoError(t, err)
 
 	ctx := sdk.NewContext(ms, tmproto.Header{ChainID: "test-chain"}, false, log.NewNopLogger())
 	cdc, legacyAmino := app.MakeCodecs()
-	pk := paramskeeper.NewKeeper(cdc, legacyAmino, keys[paramstypes.StoreKey], tKeys[paramstypes.TStoreKey])
 	sk := subspaceskeeper.NewKeeper(cdc, keys[subspacestypes.StoreKey], nil, nil)
 	rk := relationshipskeeper.NewKeeper(cdc, keys[relationshipstypes.StoreKey], sk)
 	ak := authkeeper.NewAccountKeeper(cdc, keys[authtypes.StoreKey], authtypes.ProtoBaseAccount, app.GetMaccPerms(), "cosmos", authtypes.NewModuleAddress("gov").String())
-	k := keeper.NewKeeper(cdc, legacyAmino, keys[types.StoreKey], pk.Subspace(types.DefaultParamsSpace), ak, rk, nil, nil, nil)
+	k := keeper.NewKeeper(cdc, legacyAmino, keys[types.StoreKey], ak, rk, nil, nil, nil, authtypes.NewModuleAddress("gov").String())
 
 	testCases := []struct {
 		name      string

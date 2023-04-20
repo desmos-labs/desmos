@@ -100,9 +100,6 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.cdc, suite.legacyAminoCdc = app.MakeCodecs()
 
 	// Dependencies initializations
-	suite.paramsKeeper = paramskeeper.NewKeeper(
-		suite.cdc, suite.legacyAminoCdc, keys[paramstypes.StoreKey], tKeys[paramstypes.TStoreKey],
-	)
 	suite.ak = authkeeper.NewAccountKeeper(
 		suite.cdc,
 		keys[authtypes.StoreKey],
@@ -125,12 +122,12 @@ func (suite *KeeperTestSuite) SetupTest() {
 		suite.cdc,
 		suite.legacyAminoCdc,
 		suite.storeKey,
-		suite.paramsKeeper.Subspace(types.DefaultParamsSpace),
 		suite.ak,
 		suite.rk,
 		suite.channelKeeper,
 		suite.portKeeper,
 		suite.scopedKeeper,
+		authtypes.NewModuleAddress("gov").String(),
 	)
 
 	// Set the IBC data

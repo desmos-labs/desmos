@@ -70,7 +70,11 @@ func (suite *KeeperTestSuite) TestKeeper_GetParams() {
 			),
 		},
 		{
-			name:      "invalid params panics",
+			name: "invalid params panics",
+			store: func(ctx sdk.Context) {
+				store := ctx.KVStore(suite.storeKey)
+				store.Set(types.ParamsKey, []byte{0x01})
+			},
 			shouldErr: true,
 			expParams: types.Params{},
 		},

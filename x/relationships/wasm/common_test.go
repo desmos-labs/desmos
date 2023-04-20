@@ -12,8 +12,6 @@ import (
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
-	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
-	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
 	"github.com/stretchr/testify/suite"
 
@@ -85,12 +83,10 @@ type TestSuite struct {
 func (suite *TestSuite) SetupTest() {
 	// Define the store keys
 	keys := sdk.NewKVStoreKeys(
-		authtypes.StoreKey, paramstypes.StoreKey, ibcexported.StoreKey, capabilitytypes.StoreKey,
+		authtypes.StoreKey, ibcexported.StoreKey, capabilitytypes.StoreKey,
 
 		types.StoreKey, profilestypes.StoreKey, subspacestypes.StoreKey,
 	)
-	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
-	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
 	suite.storeKey = keys[types.StoreKey]
 
@@ -100,12 +96,6 @@ func (suite *TestSuite) SetupTest() {
 	for _, key := range keys {
 		ms.MountStoreWithDB(key, storetypes.StoreTypeIAVL, memDB)
 	}
-	for _, tKey := range tKeys {
-		ms.MountStoreWithDB(tKey, storetypes.StoreTypeTransient, memDB)
-	}
-	for _, memKey := range memKeys {
-		ms.MountStoreWithDB(memKey, storetypes.StoreTypeMemory, nil)
-	}
 
 	if err := ms.LoadLatestVersion(); err != nil {
 		panic(err)
@@ -114,9 +104,6 @@ func (suite *TestSuite) SetupTest() {
 	suite.ctx = sdk.NewContext(ms, tmproto.Header{ChainID: "test-chain-id"}, false, log.NewNopLogger())
 	suite.cdc, suite.legacyAminoCdc = app.MakeCodecs()
 
-	paramsKeeper := paramskeeper.NewKeeper(
-		suite.cdc, suite.legacyAminoCdc, keys[paramstypes.StoreKey], tKeys[paramstypes.TStoreKey],
-	)
 	authKeeper := authkeeper.NewAccountKeeper(
 		suite.cdc,
 		keys[authtypes.StoreKey],
@@ -130,12 +117,12 @@ func (suite *TestSuite) SetupTest() {
 		suite.cdc,
 		suite.legacyAminoCdc,
 		keys[profilestypes.StoreKey],
-		paramsKeeper.Subspace(profilestypes.DefaultParamsSpace),
 		authKeeper,
 		suite.k,
 		nil,
 		nil,
 		nil,
+		authtypes.NewModuleAddress("gov").String(),
 	)
 	suite.sk = subspaceskeeper.NewKeeper(suite.cdc, keys[subspacestypes.StoreKey], nil, nil)
 	suite.k = keeper.NewKeeper(suite.cdc, suite.storeKey, suite.sk)

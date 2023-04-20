@@ -9,6 +9,8 @@ import (
 	v6 "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v6"
 	v7 "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v7"
 	v8 "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v8"
+	v9 "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v9"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 // DONTCOVER
@@ -17,13 +19,16 @@ import (
 type Migrator struct {
 	keeper Keeper
 	ak     authkeeper.AccountKeeper
+
+	legacySubspace types.ParamsSubspace
 }
 
 // NewMigrator returns a new Migrator
-func NewMigrator(ak authkeeper.AccountKeeper, keeper Keeper) Migrator {
+func NewMigrator(ak authkeeper.AccountKeeper, keeper Keeper, legacySubspace types.ParamsSubspace) Migrator {
 	return Migrator{
-		keeper: keeper,
-		ak:     ak,
+		keeper:         keeper,
+		ak:             ak,
+		legacySubspace: legacySubspace,
 	}
 }
 
@@ -50,4 +55,9 @@ func (m Migrator) Migrate7to8(ctx sdk.Context) error {
 // Migrate8to9 migrates from version 8 to 9.
 func (m Migrator) Migrate8to9(ctx sdk.Context) error {
 	return v8.MigrateStore(ctx, m.keeper.storeKey, m.keeper.cdc, m.keeper.legacyAmino)
+}
+
+// Migrate9to10 migrates from version 9 to 10.
+func (m Migrator) Migrate9to10(ctx sdk.Context) error {
+	return v9.MigrateStore(ctx, m.keeper.storeKey, m.legacySubspace, m.keeper.cdc)
 }
