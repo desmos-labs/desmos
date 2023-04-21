@@ -1,4 +1,4 @@
-# ADR 019: Post moving
+# ADR 019: Subspace post migration
 
 ## Changelog
 - April 20th, 2023: First draft;
@@ -9,7 +9,7 @@ Proposed
 
 ## Abstract
 
-This ADR introduces a new feature that enables post owners to move their own content to a different subspaces.
+This ADR introduces a new feature that enables post owners to move their own content between subspaces.
 
 ## Context
 
@@ -21,11 +21,9 @@ This process is overly complicated and time-consuming because it requires the us
 
 ## Decision
 
-We will implement a new handler that allows users to move their own posts through a message.
+We will implement a new handler that allows users to move their own posts through a message. Here are the upcoming changes:
 
-## `Msg` Service
-
-In order to enable users to move their own posts, we will need to implement a new message. 
+### `Msg` Service
 
 ```proto
 service Msg {
