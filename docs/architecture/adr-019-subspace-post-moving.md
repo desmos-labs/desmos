@@ -2,6 +2,7 @@
 
 ## Changelog
 - April 20th, 2023: First draft;
+- April 24th, 2023: First review;
 
 ## Status
 
@@ -13,11 +14,7 @@ This ADR introduces a new feature that enables post owners to move their own con
 
 ## Context
 
-Currently, the only way to move a post to another subspace is by following process:
-1. Create an identical post as the original post in the target subspace
-2. Delete the original post on source subspace
-
-This process is overly complicated and time-consuming because it requires the user to perform two steps and manually recreate the post in the new location. Additionally, it can lead to inconsistencies if the user forgets to include certain details. A more user-friendly process would be beneficial for improving efficiency and reducing the risk of inconsistencies.
+Currently, when a user creates a post, they are assigned the author role and become the only user who can edit or manage the post. While this approach works, it may not meet all use cases. For instance, we don't allow users to transfer ownership of a post to another user, which could be useful in certain scenarios. For example, an employee might want to draft a post and later transfer ownership to their company.
 
 ## Decision
 
@@ -53,6 +50,16 @@ message MsgMovePost {
 message MsgMovePostResponse {
     // New id of the post in the target subspace
     uint64 post_id = 1;
+}
+```
+
+### Hooks
+
+Currently, reactions and report reasons are not compatible across different subspaces. This means that the IDs used to identify reactions and reasons may differ between subspaces. To address this limitation, we propose implementing a hook to notify `x/reactions`, `x/reports` and other references modules, which will be used to remove references to the posts. The hook will be as follows:
+
+```go
+func (k Keeper) AfterPostMoved(ctx sdk.Context, subspaceID uint64, postID uint64) {
+    // Remove all reactions, reports and other references to the post
 }
 ```
 
