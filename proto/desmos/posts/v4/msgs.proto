@@ -331,7 +331,7 @@ message MsgChangePostOwner {
   ];
   
   // Address of the current post owner
-  string owner = 5 [ 
+  string owner = 4 [ 
     (cosmos_proto.scalar) = "cosmos.AddressString",
     (gogoproto.moretags) = "yaml:\"owner\""
   ];

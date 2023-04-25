@@ -215,7 +215,7 @@ message Attachment {
 
   // Content of the attachment
   google.protobuf.Any content = 4 [
-    (cosmos_proto.accepts_interface) = "desmos.posts.v3.AttachmentContent",
+    (cosmos_proto.accepts_interface) = "desmos.posts.v4.AttachmentContent",
     (gogoproto.moretags) = "yaml:\"content\""
   ];
 }
