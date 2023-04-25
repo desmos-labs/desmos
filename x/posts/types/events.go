@@ -9,6 +9,7 @@ const (
 	EventTypeRemovePostAttachment = "remove_post_attachment"
 	EventTypeAnswerPoll           = "answer_poll"
 	EventTypeTallyPoll            = "tally_poll"
+	EventTypeChangePostOwner      = "change_post_owner"
 
 	AttributeValueCategory   = ModuleName
 	AttributeKeySubspaceID   = "subspace_id"
@@ -19,4 +20,6 @@ const (
 	AttributeKeyLastEditTime = "last_edit_date"
 	AttributeKeyAttachmentID = "attachment_id"
 	AttributeKeyPollID       = "poll_id"
+	AttributeKeyOwner        = "owner"
+	AttributeKeyNewOwner     = "new_owner"
 )

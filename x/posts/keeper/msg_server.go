@@ -501,6 +501,66 @@ func (m msgServer) UpdateParams(goCtx context.Context, msg *types.MsgUpdateParam
 }
 
 // ChangePostOwner defines the rpc method for Msg/ChangePostOwner
-func (m msgServer) ChangePostOwner(goCtx context.Context, msg *types.MsgChangePostOwner) (*types.MsgChangePostOwnerResponse, error) {
-	return nil, nil
+func (k msgServer) ChangePostOwner(goCtx context.Context, msg *types.MsgChangePostOwner) (*types.MsgChangePostOwnerResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Check if the subspace exists
+	if !k.HasSubspace(ctx, msg.SubspaceID) {
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+	}
+
+	// Get the post
+	post, found := k.GetPost(ctx, msg.SubspaceID, msg.PostID)
+	if !found {
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %d not found", msg.PostID)
+	}
+
+	// Make sure the sender matches the owner
+	if post.Owner != msg.Owner {
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "you are not the owner of this post")
+	}
+
+	// Check the new owner has profile
+	if !k.HasProfile(ctx, msg.NewOwner) {
+		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, "you cannot transfer the post ownership to the user who has no profile")
+	}
+
+	// Check the new owner has mutual connections to the owner
+	if !k.HasRelationship(ctx, msg.Owner, msg.NewOwner, msg.SubspaceID) || !k.rk.HasRelationship(ctx, msg.NewOwner, msg.Owner, msg.SubspaceID) {
+		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, "you cannot transfer the post ownership to the user who has no mutual connections to you")
+	}
+
+	// Update the post and validate it
+	updateTime := ctx.BlockTime()
+	post.Owner = msg.NewOwner
+	post.LastEditedDate = &updateTime
+
+	err := k.ValidatePost(ctx, post)
+	if err != nil {
+		return nil, err
+	}
+
+	// Store the update
+	k.SavePost(ctx, post)
+
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Owner),
+		),
+		sdk.NewEvent(
+			types.EventTypeChangePostOwner,
+			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			sdk.NewAttribute(types.AttributeKeyPostID, fmt.Sprintf("%d", msg.PostID)),
+			sdk.NewAttribute(types.AttributeKeyOwner, msg.Owner),
+			sdk.NewAttribute(types.AttributeKeyNewOwner, msg.NewOwner),
+			sdk.NewAttribute(types.AttributeKeyLastEditTime, post.LastEditedDate.Format(time.RFC3339)),
+		),
+	})
+
+	return &types.MsgChangePostOwnerResponse{
+		EditDate: updateTime,
+	}, nil
 }

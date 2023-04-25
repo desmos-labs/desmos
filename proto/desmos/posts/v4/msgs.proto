@@ -337,4 +337,11 @@ message MsgChangePostOwner {
   ];
 }
 // MsgChangePostOwnerResponse defines the Msg/MsgChangePostOwner response type
-message MsgChangePostOwnerResponse {}
+message MsgChangePostOwnerResponse {
+  // Edit date of the post
+  google.protobuf.Timestamp edit_date = 1 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true,
+    (gogoproto.moretags) = "yaml:\"edit_date\""
+  ];
+}

@@ -2424,3 +2424,341 @@ func (suite *KeeperTestSuite) TestMsgServer_UpdateParams() {
 		})
 	}
 }
+
+func (suite *KeeperTestSuite) TestMsgServer_ChangePostOwner() {
+	testCases := []struct {
+		name        string
+		setup       func()
+		store       func(ctx sdk.Context)
+		setupCtx    func(ctx sdk.Context) sdk.Context
+		msg         *types.MsgChangePostOwner
+		shouldErr   bool
+		expResponse *types.MsgChangePostOwnerResponse
+		expEvents   sdk.Events
+		check       func(ctx sdk.Context)
+	}{
+		{
+			name: "non existing subspace returns error",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(false)
+			},
+			msg: types.NewMsgChangePostOwner(
+				1,
+				1,
+				"cosmos10d07y265gmmuvt4z0w9aw880jnsr700j6zn9kn",
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "not found post returns error",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+			},
+			msg: types.NewMsgChangePostOwner(
+				1,
+				1,
+				"cosmos10d07y265gmmuvt4z0w9aw880jnsr700j6zn9kn",
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid owner returns error",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+			},
+			store: func(ctx sdk.Context) {
+				suite.k.SavePost(ctx, types.NewPost(
+					1,
+					0,
+					1,
+					"",
+					"This is a new post",
+					"cosmos19mkklc8arp6phlg5eydu3v49syyqyfrq2sp4at",
+					0,
+					nil,
+					nil,
+					nil,
+					types.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
+				))
+			},
+			msg: types.NewMsgChangePostOwner(
+				1,
+				1,
+				"cosmos10d07y265gmmuvt4z0w9aw880jnsr700j6zn9kn",
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "new owner has no profile returns error",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+
+				suite.ak.EXPECT().
+					HasProfile(gomock.Any(), "cosmos10d07y265gmmuvt4z0w9aw880jnsr700j6zn9kn").
+					Return(false)
+			},
+			store: func(ctx sdk.Context) {
+				suite.k.SavePost(ctx, types.NewPost(
+					1,
+					0,
+					1,
+					"",
+					"This is a new post",
+					"cosmos19mkklc8arp6phlg5eydu3v49syyqyfrq2sp4at",
+					0,
+					nil,
+					nil,
+					nil,
+					types.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
+				))
+			},
+			msg: types.NewMsgChangePostOwner(
+				1,
+				1,
+				"cosmos10d07y265gmmuvt4z0w9aw880jnsr700j6zn9kn",
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "not mutual relationships returns error",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+
+				suite.ak.EXPECT().
+					HasProfile(gomock.Any(), "cosmos10d07y265gmmuvt4z0w9aw880jnsr700j6zn9kn").
+					Return(true)
+
+				suite.rk.EXPECT().
+					HasRelationship(
+						gomock.Any(),
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+						"cosmos10d07y265gmmuvt4z0w9aw880jnsr700j6zn9kn",
+						uint64(1),
+					).
+					Return(true)
+
+				suite.rk.EXPECT().
+					HasRelationship(
+						gomock.Any(),
+						"cosmos10d07y265gmmuvt4z0w9aw880jnsr700j6zn9kn",
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+						uint64(1),
+					).
+					Return(false)
+			},
+			store: func(ctx sdk.Context) {
+				suite.k.SavePost(ctx, types.NewPost(
+					1,
+					0,
+					1,
+					"",
+					"This is a new post",
+					"cosmos19mkklc8arp6phlg5eydu3v49syyqyfrq2sp4at",
+					0,
+					nil,
+					nil,
+					nil,
+					types.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+				))
+			},
+			msg: types.NewMsgChangePostOwner(
+				1,
+				1,
+				"cosmos10d07y265gmmuvt4z0w9aw880jnsr700j6zn9kn",
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid post returns error",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+
+				suite.ak.EXPECT().
+					HasProfile(gomock.Any(), "cosmos10d07y265gmmuvt4z0w9aw880jnsr700j6zn9kn").
+					Return(true)
+
+				suite.rk.EXPECT().
+					HasRelationship(
+						gomock.Any(),
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+						"cosmos10d07y265gmmuvt4z0w9aw880jnsr700j6zn9kn",
+						uint64(1),
+					).
+					Return(true)
+
+				suite.rk.EXPECT().
+					HasRelationship(
+						gomock.Any(),
+						"cosmos10d07y265gmmuvt4z0w9aw880jnsr700j6zn9kn",
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+						uint64(1),
+					).
+					Return(true)
+			},
+			store: func(ctx sdk.Context) {
+				suite.k.SetParams(ctx, types.NewParams(1))
+
+				suite.k.SavePost(ctx, types.NewPost(
+					1,
+					0,
+					1,
+					"",
+					"This is a new post",
+					"cosmos19mkklc8arp6phlg5eydu3v49syyqyfrq2sp4at",
+					0,
+					nil,
+					nil,
+					nil,
+					types.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+				))
+			},
+			msg: types.NewMsgChangePostOwner(
+				1,
+				1,
+				"cosmos10d07y265gmmuvt4z0w9aw880jnsr700j6zn9kn",
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "change post owner properly returns no error",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+
+				suite.ak.EXPECT().
+					HasProfile(gomock.Any(), "cosmos10d07y265gmmuvt4z0w9aw880jnsr700j6zn9kn").
+					Return(true)
+
+				suite.rk.EXPECT().
+					HasRelationship(
+						gomock.Any(),
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+						"cosmos10d07y265gmmuvt4z0w9aw880jnsr700j6zn9kn",
+						uint64(1),
+					).
+					Return(true)
+
+				suite.rk.EXPECT().
+					HasRelationship(
+						gomock.Any(),
+						"cosmos10d07y265gmmuvt4z0w9aw880jnsr700j6zn9kn",
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+						uint64(1),
+					).
+					Return(true)
+			},
+			setupCtx: func(ctx sdk.Context) sdk.Context {
+				return ctx.WithBlockTime(time.Date(2022, 1, 1, 12, 00, 00, 000, time.UTC))
+			},
+			store: func(ctx sdk.Context) {
+				suite.k.SetParams(ctx, types.NewParams(100))
+
+				suite.k.SavePost(ctx, types.NewPost(
+					1,
+					0,
+					1,
+					"",
+					"This is a new post",
+					"cosmos19mkklc8arp6phlg5eydu3v49syyqyfrq2sp4at",
+					0,
+					nil,
+					nil,
+					nil,
+					types.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+				))
+			},
+			msg: types.NewMsgChangePostOwner(
+				1,
+				1,
+				"cosmos10d07y265gmmuvt4z0w9aw880jnsr700j6zn9kn",
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+			),
+			shouldErr: false,
+			expResponse: &types.MsgChangePostOwnerResponse{
+				EditDate: time.Date(2022, 1, 1, 12, 00, 00, 000, time.UTC),
+			},
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					sdk.EventTypeMessage,
+					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgChangePostOwner{})),
+					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"),
+				),
+				sdk.NewEvent(
+					types.EventTypeChangePostOwner,
+					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					sdk.NewAttribute(types.AttributeKeyPostID, "1"),
+					sdk.NewAttribute(types.AttributeKeyOwner, "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"),
+					sdk.NewAttribute(types.AttributeKeyNewOwner, "cosmos10d07y265gmmuvt4z0w9aw880jnsr700j6zn9kn"),
+					sdk.NewAttribute(types.AttributeKeyLastEditTime, time.Date(2022, 1, 1, 12, 00, 00, 000, time.UTC).Format(time.RFC3339)),
+				),
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup()
+			}
+			if tc.setupCtx != nil {
+				ctx = tc.setupCtx(ctx)
+			}
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			// Reset any event that might have been emitted during the setup
+			ctx = ctx.WithEventManager(sdk.NewEventManager())
+
+			// Run the message
+			service := keeper.NewMsgServerImpl(suite.k)
+			_, err := service.ChangePostOwner(sdk.WrapSDKContext(ctx), tc.msg)
+
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(tc.expEvents, ctx.EventManager().Events())
+
+				if tc.check != nil {
+					tc.check(ctx)
+				}
+			}
+		})
+	}
+}
