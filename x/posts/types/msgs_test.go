@@ -798,3 +798,95 @@ func TestMsgUpdateParams_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgUpdateParams.Authority)
 	require.Equal(t, []sdk.AccAddress{addr}, msgUpdateParams.GetSigners())
 }
+
+// --------------------------------------------------------------------------------------------------------------------
+
+var msgChangePostOwner = types.NewMsgChangePostOwner(
+	1,
+	1,
+	"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+	"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+)
+
+func TestMsgChangePostOwner_Route(t *testing.T) {
+	require.Equal(t, types.RouterKey, msgChangePostOwner.Route())
+}
+
+func TestMsgChangePostOwner_Type(t *testing.T) {
+	require.Equal(t, types.ActionChangePostOwner, msgChangePostOwner.Type())
+}
+
+func TestMsgChangePostOwner_ValidateBasic(t *testing.T) {
+	testCases := []struct {
+		name      string
+		msg       *types.MsgChangePostOwner
+		shouldErr bool
+	}{
+		{
+			name: "invalid subspace id returns error",
+			msg: types.NewMsgChangePostOwner(
+				0,
+				1,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid post id returns error",
+			msg: types.NewMsgChangePostOwner(
+				1,
+				0,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid new owner returns error",
+			msg: types.NewMsgChangePostOwner(
+				1,
+				0,
+				"",
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid owner returns error",
+			msg: types.NewMsgChangePostOwner(
+				1,
+				0,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+				"",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "valid message returns no error",
+			msg:  msgChangePostOwner,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.msg.ValidateBasic()
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestMsgChangePostOwner_GetSignBytes(t *testing.T) {
+	expected := `{"type":"desmos/MsgChangePostOwner","value":{"new_owner":"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd","owner":"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg","post_id":"1","subspace_id":"1"}}`
+	require.Equal(t, expected, string(msgChangePostOwner.GetSignBytes()))
+}
+
+func TestMsgChangePostOwner_GetSigners(t *testing.T) {
+	addr, _ := sdk.AccAddressFromBech32(msgChangePostOwner.Owner)
+	require.Equal(t, []sdk.AccAddress{addr}, msgChangePostOwner.GetSigners())
+}

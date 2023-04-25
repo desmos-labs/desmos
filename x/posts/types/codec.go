@@ -25,11 +25,13 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 
 	cdc.RegisterConcrete(&Params{}, "desmos/x/posts/Params", nil)
 	cdc.RegisterConcrete(&MsgUpdateParams{}, "desmos/x/posts/MsgUpdateParams", nil)
+
+	cdc.RegisterConcrete(&MsgChangePostOwner{}, "desmos/MsgChangePostOwner", nil)
 }
 
 func RegisterInterfaces(registry types.InterfaceRegistry) {
 	registry.RegisterInterface(
-		"desmos.posts.v3.AttachmentContent",
+		"desmos.posts.v4.AttachmentContent",
 		(*AttachmentContent)(nil),
 		&Poll{},
 		&Media{},
@@ -43,6 +45,7 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 		&MsgDeletePost{},
 		&MsgAnswerPoll{},
 		&MsgUpdateParams{},
+		&MsgChangePostOwner{},
 	)
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)

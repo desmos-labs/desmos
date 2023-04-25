@@ -271,6 +271,38 @@ func TestPost_Validate(t *testing.T) {
 			shouldErr: true,
 		},
 		{
+			name: "invalid owner returns error",
+			post: types.NewPost(
+				1,
+				0,
+				2,
+				"External id",
+				"This is a post text that does not contain any useful information",
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+				1,
+				types.NewEntities(
+					[]types.TextTag{
+						types.NewTextTag(1, 3, "tag"),
+					},
+					[]types.TextTag{
+						types.NewTextTag(4, 6, "tag"),
+					},
+					[]types.Url{
+						types.NewURL(7, 9, "URL", "Display URL"),
+					},
+				),
+				[]string{"general"},
+				[]types.PostReference{
+					types.NewPostReference(types.POST_REFERENCE_TYPE_QUOTE, 1, 0),
+				},
+				types.REPLY_SETTING_EVERYONE,
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				nil,
+				"",
+			),
+			shouldErr: true,
+		},
+		{
 			name: "valid post returns no error",
 			post: types.NewPost(
 				1,

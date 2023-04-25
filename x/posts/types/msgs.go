@@ -490,12 +490,13 @@ var (
 	_ legacytx.LegacyMsg = &MsgChangePostOwner{}
 )
 
-func NewMsgChangePostOwner(subspaceID uint64, postID uint64, owner string, newOwner string) *MsgChangePostOwner {
+// NewMsgChangePostOwner returns a new MsgChangePostOwner instance
+func NewMsgChangePostOwner(subspaceID uint64, postID uint64, newOwner string, owner string) *MsgChangePostOwner {
 	return &MsgChangePostOwner{
 		SubspaceID: subspaceID,
 		PostID:     postID,
-		Owner:      owner,
 		NewOwner:   newOwner,
+		Owner:      owner,
 	}
 }
 
