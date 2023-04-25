@@ -60,7 +60,7 @@ func (k Keeper) validatePostReportContent(ctx sdk.Context, report types.Report, 
 		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "post %d does not exist inside subspace %d", data.PostID, report.SubspaceID)
 	}
 
-	if k.HasUserBlocked(ctx, post.Author, report.Reporter, report.ID) {
+	if k.HasUserBlocked(ctx, post.Owner, report.Reporter, report.ID) {
 		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "post author has blocked you on this subspace")
 	}
 
