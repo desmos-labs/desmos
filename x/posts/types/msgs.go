@@ -482,3 +482,63 @@ func (msg MsgUpdateParams) GetSigners() []sdk.AccAddress {
 func (msg MsgUpdateParams) GetSignBytes() []byte {
 	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
 }
+
+// --------------------------------------------------------------------------------------------------------------------
+
+var (
+	_ sdk.Msg            = &MsgChangePostOwner{}
+	_ legacytx.LegacyMsg = &MsgChangePostOwner{}
+)
+
+func NewMsgChangePostOwner(subspaceID uint64, postID uint64, owner string, newOwner string) *MsgChangePostOwner {
+	return &MsgChangePostOwner{
+		SubspaceID: subspaceID,
+		PostID:     postID,
+		Owner:      owner,
+		NewOwner:   newOwner,
+	}
+}
+
+// Route implements legacytx.LegacyMsg
+func (msg MsgChangePostOwner) Route() string {
+	return RouterKey
+}
+
+// Type implements legacytx.LegacyMsg
+func (msg MsgChangePostOwner) Type() string {
+	return ActionChangePostOwner
+}
+
+// ValidateBasic implements sdk.Msg
+func (msg MsgChangePostOwner) ValidateBasic() error {
+	if msg.SubspaceID == 0 {
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+	}
+
+	if msg.PostID == 0 {
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id: %d", msg.PostID)
+	}
+
+	_, err := sdk.AccAddressFromBech32(msg.NewOwner)
+	if err != nil {
+		return err
+	}
+
+	_, err = sdk.AccAddressFromBech32(msg.Owner)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// GetSignBytes implements sdk.Msg
+func (msg MsgChangePostOwner) GetSigners() []sdk.AccAddress {
+	owner := sdk.MustAccAddressFromBech32(msg.Owner)
+	return []sdk.AccAddress{owner}
+}
+
+// GetSigners implements legacytx.LegacyMsg
+func (msg MsgChangePostOwner) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
+}

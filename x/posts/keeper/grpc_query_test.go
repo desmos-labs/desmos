@@ -39,6 +39,7 @@ func (suite *KeeperTestSuite) TestQueryServer_SubspacePosts() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
@@ -54,6 +55,7 @@ func (suite *KeeperTestSuite) TestQueryServer_SubspacePosts() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 13, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 			},
 			request:   types.NewQuerySubspacePostsRequest(1, nil),
@@ -73,6 +75,7 @@ func (suite *KeeperTestSuite) TestQueryServer_SubspacePosts() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				),
 				types.NewPost(
 					1,
@@ -88,6 +91,7 @@ func (suite *KeeperTestSuite) TestQueryServer_SubspacePosts() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 13, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				),
 			},
 		},
@@ -108,6 +112,7 @@ func (suite *KeeperTestSuite) TestQueryServer_SubspacePosts() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
@@ -123,6 +128,7 @@ func (suite *KeeperTestSuite) TestQueryServer_SubspacePosts() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 13, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 			},
 			request: types.NewQuerySubspacePostsRequest(1, &query.PageRequest{
@@ -144,6 +150,7 @@ func (suite *KeeperTestSuite) TestQueryServer_SubspacePosts() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				),
 			},
 		},
@@ -198,6 +205,7 @@ func (suite *KeeperTestSuite) TestQueryServer_SectionPosts() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
@@ -213,6 +221,7 @@ func (suite *KeeperTestSuite) TestQueryServer_SectionPosts() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 13, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 			},
 			request:   types.NewQuerySectionPostsRequest(1, 1, nil),
@@ -232,6 +241,7 @@ func (suite *KeeperTestSuite) TestQueryServer_SectionPosts() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				),
 				types.NewPost(
 					1,
@@ -247,6 +257,7 @@ func (suite *KeeperTestSuite) TestQueryServer_SectionPosts() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 13, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				),
 			},
 		},
@@ -267,6 +278,7 @@ func (suite *KeeperTestSuite) TestQueryServer_SectionPosts() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
@@ -282,6 +294,7 @@ func (suite *KeeperTestSuite) TestQueryServer_SectionPosts() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 13, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 			},
 			request: types.NewQuerySectionPostsRequest(1, 1, &query.PageRequest{
@@ -303,6 +316,7 @@ func (suite *KeeperTestSuite) TestQueryServer_SectionPosts() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				),
 			},
 		},
@@ -367,6 +381,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Post() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 			},
 			request:   types.NewQueryPostRequest(1, 1),
@@ -385,6 +400,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Post() {
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				nil,
+				"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 			),
 		},
 	}

@@ -225,6 +225,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateReport() {
 					poststypes.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos10s22qjua2n3law0ymstm3txm7764mfk2cjawq5",
 				))
 
 				suite.rk.SaveUserBlock(ctx, relationshipstypes.NewUserBlock(
@@ -262,6 +263,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateReport() {
 					poststypes.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos10s22qjua2n3law0ymstm3txm7764mfk2cjawq5",
 				))
 			},
 			report: types.NewReport(

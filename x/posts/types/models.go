@@ -41,6 +41,7 @@ func NewPost(
 	replySetting ReplySetting,
 	creationDate time.Time,
 	lastEditedDate *time.Time,
+	owner string,
 ) Post {
 	return Post{
 		SubspaceID:      subspaceID,
@@ -56,6 +57,7 @@ func NewPost(
 		ReplySettings:   replySetting,
 		CreationDate:    creationDate,
 		LastEditedDate:  lastEditedDate,
+		Owner:           owner,
 	}
 }
 
@@ -120,6 +122,11 @@ func (p Post) Validate() error {
 		if p.LastEditedDate.Before(p.CreationDate) {
 			return fmt.Errorf("last edited date cannot be before the creation date")
 		}
+	}
+
+	_, err = sdk.AccAddressFromBech32(p.Owner)
+	if err != nil {
+		return fmt.Errorf("invalid owner address: %s", err)
 	}
 
 	return nil
@@ -223,6 +230,7 @@ func (p Post) Update(update PostUpdate) Post {
 		p.ReplySettings,
 		p.CreationDate,
 		&update.UpdateTime,
+		p.Owner,
 	)
 }
 

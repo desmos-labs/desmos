@@ -84,6 +84,7 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 
 				suite.k.SetNextAttachmentID(ctx, 1, 2, 3)
@@ -101,6 +102,7 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 			},
 			expGenesis: types.NewGenesisState(
@@ -120,6 +122,7 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 						types.REPLY_SETTING_EVERYONE,
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 						nil,
+						"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 					),
 					types.NewPost(
 						1,
@@ -135,6 +138,7 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 						types.REPLY_SETTING_EVERYONE,
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 						nil,
+						"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 					),
 				},
 				[]types.PostDataEntry{
@@ -345,6 +349,7 @@ func (suite *KeeperTestSuite) TestKeeper_ImportGenesis() {
 						types.REPLY_SETTING_EVERYONE,
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 						nil,
+						"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 					),
 				},
 			},
@@ -365,6 +370,7 @@ func (suite *KeeperTestSuite) TestKeeper_ImportGenesis() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				), post)
 			},
 		},
@@ -438,6 +444,7 @@ func (suite *KeeperTestSuite) TestKeeper_ImportGenesis() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 			},
 			data: types.GenesisState{
@@ -494,6 +501,7 @@ func (suite *KeeperTestSuite) TestKeeper_ImportGenesis() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 
 				suite.k.SaveAttachment(ctx, types.NewAttachment(1, 1, 1, types.NewPoll(

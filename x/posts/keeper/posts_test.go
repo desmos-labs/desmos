@@ -182,7 +182,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidatePostReference() {
 					1,
 					"External id",
 					"This is a long post text to make sure tags are valid",
-					"cosmos1fvnkn5yjhdc6sxwlph8e98udw8nsly0w9yznrk",
+					"author",
 					0,
 					nil,
 					nil,
@@ -190,6 +190,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidatePostReference() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1fvnkn5yjhdc6sxwlph8e98udw8nsly0w9yznrk",
 				))
 			},
 			postAuthor:  "cosmos1t457f629cc3ykftepjejgzxv0vmz5dw2gn940g",
@@ -212,7 +213,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidatePostReference() {
 					1,
 					"External id",
 					"This is a long post text to make sure tags are valid",
-					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+					"author",
 					0,
 					nil,
 					nil,
@@ -220,6 +221,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidatePostReference() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 				))
 			},
 			postAuthor:  "cosmos1t457f629cc3ykftepjejgzxv0vmz5dw2gn940g",
@@ -282,7 +284,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidatePostReply() {
 					1,
 					"",
 					"This is a test post",
-					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+					"author",
 					0,
 					nil,
 					nil,
@@ -290,6 +292,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidatePostReply() {
 					types.REPLY_SETTING_FOLLOWERS,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 				))
 			},
 			postAuthor:  "cosmos1t457f629cc3ykftepjejgzxv0vmz5dw2gn940g",
@@ -312,7 +315,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidatePostReply() {
 					1,
 					"",
 					"This is a test post",
-					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+					"author",
 					0,
 					nil,
 					nil,
@@ -320,6 +323,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidatePostReply() {
 					types.REPLY_SETTING_FOLLOWERS,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 				))
 			},
 			postAuthor:  "cosmos1t457f629cc3ykftepjejgzxv0vmz5dw2gn940g",
@@ -346,7 +350,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidatePostReply() {
 					1,
 					"",
 					"This is a test post",
-					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+					"author",
 					0,
 					nil,
 					nil,
@@ -354,6 +358,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidatePostReply() {
 					types.REPLY_SETTING_MUTUAL,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 				))
 			},
 			postAuthor:  "cosmos1t457f629cc3ykftepjejgzxv0vmz5dw2gn940g",
@@ -380,7 +385,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidatePostReply() {
 					1,
 					"",
 					"This is a test post",
-					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+					"author",
 					0,
 					nil,
 					nil,
@@ -388,6 +393,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidatePostReply() {
 					types.REPLY_SETTING_MUTUAL,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 				))
 			},
 			postAuthor:  "cosmos1t457f629cc3ykftepjejgzxv0vmz5dw2gn940g",
@@ -404,7 +410,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidatePostReply() {
 					1,
 					"",
 					"This is a test post",
-					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+					"author",
 					0,
 					nil,
 					nil,
@@ -412,6 +418,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidatePostReply() {
 					types.REPLY_SETTING_MENTIONS,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 				))
 			},
 			postAuthor:  "cosmos1t457f629cc3ykftepjejgzxv0vmz5dw2gn940g",
@@ -428,7 +435,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidatePostReply() {
 					1,
 					"cosmos1t457f629cc3ykftepjejgzxv0vmz5dw2gn940g",
 					"This is a test post",
-					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+					"author",
 					0,
 					types.NewEntities(nil, []types.TextTag{
 						types.NewTextTag(0, 44, "cosmos1t457f629cc3ykftepjejgzxv0vmz5dw2gn940g"),
@@ -438,6 +445,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidatePostReply() {
 					types.REPLY_SETTING_MENTIONS,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 				))
 			},
 			postAuthor:  "cosmos1t457f629cc3ykftepjejgzxv0vmz5dw2gn940g",
@@ -487,7 +495,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidatePost() {
 				2,
 				"External id",
 				"Text",
-				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+				"author",
 				1,
 				nil,
 				nil,
@@ -495,6 +503,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidatePost() {
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				nil,
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 			),
 			shouldErr: true,
 		},
@@ -509,7 +518,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidatePost() {
 				2,
 				"External id",
 				"Text",
-				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+				"author",
 				1,
 				nil,
 				nil,
@@ -517,6 +526,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidatePost() {
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				nil,
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 			),
 			shouldErr: true,
 		},
@@ -531,7 +541,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidatePost() {
 				2,
 				"External id",
 				"Text",
-				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+				"author",
 				0,
 				nil,
 				nil,
@@ -541,6 +551,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidatePost() {
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				nil,
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 			),
 			shouldErr: true,
 		},
@@ -555,7 +566,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidatePost() {
 				0,
 				"External id",
 				"Text",
-				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+				"author",
 				0,
 				nil,
 				nil,
@@ -563,6 +574,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidatePost() {
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				nil,
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 			),
 			shouldErr: true,
 		},
@@ -584,7 +596,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidatePost() {
 					1,
 					"External id",
 					"This is a long post text to make sure tags are valid",
-					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+					"author",
 					0,
 					nil,
 					nil,
@@ -592,6 +604,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidatePost() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 				))
 			},
 			post: types.NewPost(
@@ -600,7 +613,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidatePost() {
 				2,
 				"External id",
 				"This is a long post text to make sure tags are valid",
-				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+				"author",
 				1,
 				types.NewEntities(
 					[]types.TextTag{
@@ -620,6 +633,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidatePost() {
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				nil,
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 			),
 			shouldErr: false,
 		},
@@ -661,7 +675,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 				2,
 				"External id",
 				"Text",
-				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+				"author",
 				1,
 				types.NewEntities(
 					[]types.TextTag{
@@ -681,6 +695,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				nil,
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 			),
 			check: func(ctx sdk.Context) {
 				// Check the post exists
@@ -692,7 +707,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 					2,
 					"External id",
 					"Text",
-					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+					"author",
 					1,
 					types.NewEntities(
 						[]types.TextTag{
@@ -712,6 +727,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 				), stored)
 
 				store := ctx.KVStore(suite.storeKey)
@@ -733,7 +749,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 					2,
 					"External id",
 					"Text",
-					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+					"author",
 					1,
 					types.NewEntities(
 						[]types.TextTag{
@@ -753,6 +769,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 				))
 			},
 			post: types.NewPost(
@@ -761,7 +778,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 				2,
 				"External id",
 				"This is a new text",
-				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+				"author",
 				1,
 				types.NewEntities(
 					[]types.TextTag{
@@ -781,6 +798,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				nil,
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 			),
 			check: func(ctx sdk.Context) {
 				// Make sure the post is saved properly
@@ -792,7 +810,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 					2,
 					"External id",
 					"This is a new text",
-					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+					"author",
 					1,
 					types.NewEntities(
 						[]types.TextTag{
@@ -812,6 +830,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 				), stored)
 
 				store := ctx.KVStore(suite.storeKey)
@@ -865,7 +884,7 @@ func (suite *KeeperTestSuite) TestKeeper_HasPost() {
 					2,
 					"External id",
 					"Text",
-					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+					"author",
 					1,
 					nil,
 					nil,
@@ -873,6 +892,7 @@ func (suite *KeeperTestSuite) TestKeeper_HasPost() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 				))
 			},
 			subspaceID: 1,
@@ -920,7 +940,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetPost() {
 					2,
 					"External id",
 					"Text",
-					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+					"author",
 					1,
 					types.NewEntities(
 						[]types.TextTag{
@@ -940,6 +960,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetPost() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 				))
 			},
 			subspaceID: 1,
@@ -951,7 +972,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetPost() {
 				2,
 				"External id",
 				"Text",
-				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+				"author",
 				1,
 				types.NewEntities(
 					[]types.TextTag{
@@ -971,6 +992,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetPost() {
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				nil,
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 			),
 		},
 	}
@@ -1015,7 +1037,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeletePost() {
 					2,
 					"External id",
 					"Text",
-					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+					"author",
 					1,
 					nil,
 					nil,
@@ -1023,6 +1045,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeletePost() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 				))
 
 				suite.k.SetNextAttachmentID(ctx, 1, 2, 2)

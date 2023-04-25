@@ -1,5 +1,5 @@
 syntax = "proto3";
-package desmos.posts.v3;
+package desmos.posts.v4;
 
 import "gogoproto/gogo.proto";
 import "google/protobuf/any.proto";
@@ -7,7 +7,7 @@ import "google/protobuf/timestamp.proto";
 import "cosmos_proto/cosmos.proto";
 import "cosmos/msg/v1/msg.proto";
 
-import "desmos/posts/v3/models.proto";
+import "desmos/posts/v4/models.proto";
 
 option go_package = "github.com/desmos-labs/desmos/v4/x/posts/types";
 
@@ -41,6 +41,9 @@ service Msg {
   //
   // Since: desmos 5.0.0
   rpc UpdateParams(MsgUpdateParams) returns (MsgUpdateParamsResponse);
+
+  // ChangePostOwner allows users to transfer the ownership of a post to another person
+  rpc ChangePostOwner(MsgChangePostOwner) returns (MsgChangePostOwnerResponse);
 }
 
 // MsgCreatePost represents the message to be used to create a post.
@@ -304,3 +307,34 @@ message MsgUpdateParams {
 //
 // Since: desmos 5.0.0
 message MsgUpdateParamsResponse {}
+
+// MsgChangePostOwner transfer a post ownership to another user
+message MsgChangePostOwner {
+  option (cosmos.msg.v1.signer) = "owner";
+
+  // Id of the subspace
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+  
+  // Id of the post
+  uint64 post_id = 2 [
+    (gogoproto.customname) = "PostID",
+    (gogoproto.moretags) = "yaml:\"post_id\""
+  ];
+
+  // Address of the new post owner
+  string new_owner = 3 [
+    (cosmos_proto.scalar) = "cosmos.AddressString", 
+    (gogoproto.moretags) = "yaml:\"new_owner\""
+  ];
+  
+  // Address of the current post owner
+  string owner = 5 [ 
+    (cosmos_proto.scalar) = "cosmos.AddressString",
+    (gogoproto.moretags) = "yaml:\"owner\""
+  ];
+}
+// MsgChangePostOwnerResponse defines the Msg/MsgChangePostOwner response type
+message MsgChangePostOwnerResponse {}

@@ -81,6 +81,7 @@ func (suite *KeeperTestSuite) TestKeeper_AfterSubspaceDeleted() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
@@ -96,6 +97,7 @@ func (suite *KeeperTestSuite) TestKeeper_AfterSubspaceDeleted() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 			},
 			subspaceID: 1,
@@ -153,6 +155,7 @@ func (suite *KeeperTestSuite) TestKeeper_AfterSectionDeleted() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
@@ -168,6 +171,7 @@ func (suite *KeeperTestSuite) TestKeeper_AfterSectionDeleted() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 			},
 			subspaceID: 1,

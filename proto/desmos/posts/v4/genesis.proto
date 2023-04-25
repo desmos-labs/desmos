@@ -1,10 +1,10 @@
 syntax = "proto3";
-package desmos.posts.v3;
+package desmos.posts.v4;
 
 import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";
 
-import "desmos/posts/v3/models.proto";
+import "desmos/posts/v4/models.proto";
 
 option go_package = "github.com/desmos-labs/desmos/v4/x/posts/types";
 

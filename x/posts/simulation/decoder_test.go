@@ -43,6 +43,7 @@ func TestDecodeStore(t *testing.T) {
 		types.REPLY_SETTING_EVERYONE,
 		time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 		nil,
+		"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 	)
 	attachment := types.NewAttachment(1, 1, 1, types.NewMedia(
 		"ftp://user:password@example.com/image.png",

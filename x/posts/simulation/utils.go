@@ -29,6 +29,7 @@ var (
 // GenerateRandomPost generates a random post
 func GenerateRandomPost(r *rand.Rand, accounts []simtypes.Account, subspaceID uint64, sectionID uint32, postID uint64, params types.Params) types.Post {
 	author, _ := simtypes.RandomAcc(r, accounts)
+	owner, _ := simtypes.RandomAcc(r, accounts)
 	return types.NewPost(
 		subspaceID,
 		sectionID,
@@ -43,6 +44,7 @@ func GenerateRandomPost(r *rand.Rand, accounts []simtypes.Account, subspaceID ui
 		RandomReplySettings(r),
 		time.Now(),
 		nil,
+		owner.Address.String(),
 	)
 }
 

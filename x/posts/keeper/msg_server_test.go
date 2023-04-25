@@ -396,6 +396,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 				), stored)
 
 				// Check the attachments
@@ -449,7 +450,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 					1,
 					"External ID",
 					"This is a text",
-					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
+					"author",
 					0,
 					nil,
 					nil,
@@ -457,6 +458,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 				suite.k.SetNextPostID(ctx, 1, 2)
 
@@ -516,6 +518,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 				), stored)
 
 				// Check the attachments
@@ -617,7 +620,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 					1,
 					"",
 					"This is a new post",
-					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
+					"author",
 					0,
 					nil,
 					nil,
@@ -625,6 +628,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 			},
 			msg: types.NewMsgEditPost(
@@ -657,7 +661,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 					1,
 					"",
 					"This is a new post",
-					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
+					"author",
 					0,
 					nil,
 					nil,
@@ -665,6 +669,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 			},
 			msg: types.NewMsgEditPost(
@@ -700,7 +705,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 					1,
 					"",
 					"This is a new post",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					"author",
 					0,
 					nil,
 					nil,
@@ -708,6 +713,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 				))
 
 				// Set max post text length to 1 character
@@ -748,7 +754,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 					1,
 					"External ID",
 					"This is a new post",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					"author",
 					0,
 					nil,
 					nil,
@@ -756,6 +762,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 				))
 			},
 			msg: types.NewMsgEditPost(
@@ -796,7 +803,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 					1,
 					"External ID",
 					"This is my new text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					"author",
 					0,
 					nil,
 					[]string{"generic"},
@@ -804,6 +811,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					&editDate,
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 				), stored)
 			},
 		},
@@ -895,7 +903,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeletePost() {
 					1,
 					"External ID",
 					"This is a text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					"author",
 					1,
 					nil,
 					nil,
@@ -903,6 +911,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeletePost() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 				))
 			},
 			msg:       types.NewMsgDeletePost(1, 1, "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"),
@@ -928,7 +937,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeletePost() {
 					1,
 					"External ID",
 					"This is a text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					"author",
 					1,
 					nil,
 					nil,
@@ -936,6 +945,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeletePost() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 				))
 			},
 			msg:       types.NewMsgDeletePost(1, 1, "cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4"),
@@ -961,7 +971,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeletePost() {
 					1,
 					"External ID",
 					"This is a text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					"author",
 					1,
 					nil,
 					nil,
@@ -969,6 +979,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeletePost() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 				))
 			},
 			msg:       types.NewMsgDeletePost(1, 1, "cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4"),
@@ -1018,7 +1029,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeletePost() {
 					1,
 					"External ID",
 					"This is a text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					"author",
 					1,
 					nil,
 					nil,
@@ -1026,6 +1037,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeletePost() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 				))
 			},
 			msg: types.NewMsgDeletePost(1, 1, "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"),
@@ -1130,7 +1142,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddPostAttachment() {
 					1,
 					"External ID",
 					"This is a text",
-					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
+					"author",
 					0,
 					nil,
 					nil,
@@ -1138,6 +1150,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddPostAttachment() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 			},
 			msg: types.NewMsgAddPostAttachment(
@@ -1168,7 +1181,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddPostAttachment() {
 					1,
 					"External ID",
 					"This is a text",
-					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
+					"author",
 					0,
 					nil,
 					nil,
@@ -1176,6 +1189,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddPostAttachment() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 			},
 			msg: types.NewMsgAddPostAttachment(
@@ -1208,7 +1222,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddPostAttachment() {
 					1,
 					"External ID",
 					"This is a text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					"author",
 					0,
 					nil,
 					nil,
@@ -1216,6 +1230,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddPostAttachment() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 				))
 			},
 			msg: types.NewMsgAddPostAttachment(
@@ -1230,14 +1245,6 @@ func (suite *KeeperTestSuite) TestMsgServer_AddPostAttachment() {
 			name: "correct data is stored properly",
 			setup: func() {
 				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
-
-				// suite.sk.EXPECT().HasPermission(
-				// 	gomock.Any(),
-				// 	uint64(1),
-				// 	uint32(0),
-				// 	"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-				// 	subspacestypes.NewPermission(types.PermissionEditOwnContent),
-				// ).Return(true)
 			},
 			setupCtx: func(ctx sdk.Context) sdk.Context {
 				return ctx.WithBlockTime(time.Date(2021, 1, 1, 12, 00, 00, 000, time.UTC))
@@ -1251,7 +1258,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddPostAttachment() {
 					1,
 					"External ID",
 					"This is a text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					"author",
 					0,
 					nil,
 					nil,
@@ -1259,6 +1266,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddPostAttachment() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 				))
 			},
 			msg: types.NewMsgAddPostAttachment(
@@ -1397,7 +1405,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostAttachment() {
 					1,
 					"External ID",
 					"This is a text",
-					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
+					"author",
 					0,
 					nil,
 					nil,
@@ -1405,6 +1413,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostAttachment() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 			},
 			msg: types.NewMsgRemovePostAttachment(
@@ -1443,7 +1452,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostAttachment() {
 					1,
 					"External ID",
 					"This is a text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					"author",
 					0,
 					nil,
 					nil,
@@ -1451,6 +1460,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostAttachment() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 				))
 			},
 			msg: types.NewMsgRemovePostAttachment(
@@ -1489,7 +1499,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostAttachment() {
 					1,
 					"External ID",
 					"This is a text",
-					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
+					"author",
 					0,
 					nil,
 					nil,
@@ -1497,6 +1507,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostAttachment() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 			},
 			msg: types.NewMsgRemovePostAttachment(
@@ -1535,7 +1546,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostAttachment() {
 					1,
 					"External ID",
 					"This is a text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					"author",
 					0,
 					nil,
 					nil,
@@ -1543,6 +1554,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostAttachment() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 				))
 			},
 			msg: types.NewMsgRemovePostAttachment(
@@ -1578,7 +1590,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostAttachment() {
 					1,
 					"External ID",
 					"This is a text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					"author",
 					0,
 					nil,
 					nil,
@@ -1586,6 +1598,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostAttachment() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 				))
 
 				suite.k.SaveAttachment(ctx, types.NewAttachment(
@@ -1665,7 +1678,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostAttachment() {
 					1,
 					"External ID",
 					"This is a text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					"author",
 					0,
 					nil,
 					nil,
@@ -1673,6 +1686,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostAttachment() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 				))
 
 				suite.k.SaveAttachment(ctx, types.NewAttachment(
@@ -1853,7 +1867,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 					1,
 					"External ID",
 					"This is a text",
-					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
+					"author",
 					0,
 					nil,
 					nil,
@@ -1861,6 +1875,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 			},
 			msg: types.NewMsgAnswerPoll(
@@ -1896,7 +1911,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 					1,
 					"External ID",
 					"This is a text",
-					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
+					"author",
 					0,
 					nil,
 					nil,
@@ -1904,6 +1919,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 
 				suite.k.SaveAttachment(ctx, types.NewAttachment(
@@ -1964,7 +1980,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 					1,
 					"External ID",
 					"This is a text",
-					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
+					"author",
 					0,
 					nil,
 					nil,
@@ -1972,6 +1988,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 
 				suite.k.SaveAttachment(ctx, types.NewAttachment(
@@ -2032,7 +2049,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 					1,
 					"External ID",
 					"This is a text",
-					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
+					"author",
 					0,
 					nil,
 					nil,
@@ -2040,6 +2057,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 
 				suite.k.SaveAttachment(ctx, types.NewAttachment(
@@ -2092,7 +2110,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 					1,
 					"External ID",
 					"This is a text",
-					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
+					"author",
 					0,
 					nil,
 					nil,
@@ -2100,6 +2118,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 
 				suite.k.SaveAttachment(ctx, types.NewAttachment(
@@ -2153,7 +2172,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 					1,
 					"External ID",
 					"This is a text",
-					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
+					"author",
 					0,
 					nil,
 					nil,
@@ -2161,6 +2180,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 
 				suite.k.SaveAttachment(ctx, types.NewAttachment(
@@ -2247,7 +2267,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 					1,
 					"External ID",
 					"This is a text",
-					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
+					"author",
 					0,
 					nil,
 					nil,
@@ -2255,6 +2275,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 
 				suite.k.SaveAttachment(ctx, types.NewAttachment(

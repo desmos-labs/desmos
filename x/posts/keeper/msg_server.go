@@ -74,6 +74,7 @@ func (k msgServer) CreatePost(goCtx context.Context, msg *types.MsgCreatePost) (
 		msg.ReplySettings,
 		ctx.BlockTime(),
 		nil,
+		msg.Author,
 	)
 	err = k.ValidatePost(ctx, post)
 	if err != nil {
@@ -497,4 +498,9 @@ func (m msgServer) UpdateParams(goCtx context.Context, msg *types.MsgUpdateParam
 	})
 
 	return &types.MsgUpdateParamsResponse{}, nil
+}
+
+// ChangePostOwner defines the rpc method for Msg/ChangePostOwner
+func (m msgServer) ChangePostOwner(goCtx context.Context, msg *types.MsgChangePostOwner) (*types.MsgChangePostOwnerResponse, error) {
+	return nil, nil
 }
