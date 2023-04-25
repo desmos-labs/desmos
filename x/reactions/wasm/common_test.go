@@ -22,7 +22,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/store"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/suite"
 
@@ -148,10 +147,6 @@ func (suite *Testsuite) SetupTest() {
 
 	suite.ctx = sdk.NewContext(ms, tmproto.Header{ChainID: "test-chain-id"}, false, log.NewNopLogger())
 	suite.cdc, suite.legacyAminoCdc = app.MakeCodecs()
-
-	paramsKeeper := paramskeeper.NewKeeper(
-		suite.cdc, suite.legacyAminoCdc, keys[paramstypes.StoreKey], tKeys[paramstypes.TStoreKey],
-	)
 
 	authKeeper := authkeeper.NewAccountKeeper(suite.cdc, keys[authtypes.StoreKey], authtypes.ProtoBaseAccount, app.GetMaccPerms(), "cosmos", authtypes.NewModuleAddress("gov").String())
 	suite.ak = profileskeeper.NewKeeper(suite.cdc, suite.legacyAminoCdc, keys[profilestypes.StoreKey], authKeeper, suite.rk, nil, nil, nil, authtypes.NewModuleAddress("gov").String())
