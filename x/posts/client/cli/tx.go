@@ -35,6 +35,7 @@ func NewTxCmd() *cobra.Command {
 		GetCmdAddPostAttachment(),
 		GetCmdRemovePostAttachment(),
 		GetCmdAnswerPoll(),
+		GetCmdChangePostOwner(),
 	)
 
 	return subspacesTxCmd
@@ -335,6 +336,46 @@ Then, the "Cat" answer has index 0 and and the "Dog" answer has index 1.
 			signer := clientCtx.FromAddress.String()
 
 			msg := types.NewMsgAnswerPoll(subspaceID, postID, pollID, answers, signer)
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// GetCmdChangePostOwner returns the command allowing to change the owner of a existing post
+func GetCmdChangePostOwner() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "change-post-owner [subspace-id] [post-id] [new-owner]",
+		Args:    cobra.ExactArgs(3),
+		Short:   "Change the owner of a existing post",
+		Example: fmt.Sprintf(`%s tx posts change-post-owner 1 1 desmos1e209r8nc8qdkmqujahwrq4xrlxhk3fs9k7yzmw --from alice`, version.AppName),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			subspaceID, err := subspacestypes.ParseSubspaceID(args[0])
+			if err != nil {
+				return err
+			}
+
+			postID, err := types.ParsePostID(args[1])
+			if err != nil {
+				return err
+			}
+
+			newOwner := args[2]
+			signer := clientCtx.FromAddress.String()
+
+			msg := types.NewMsgChangePostOwner(subspaceID, postID, newOwner, signer)
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}

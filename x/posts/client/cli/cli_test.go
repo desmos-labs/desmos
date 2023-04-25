@@ -93,6 +93,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				nil,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 			),
 			types.NewPost(
 				1,
@@ -108,6 +109,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				nil,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 			),
 		},
 		[]types.PostDataEntry{
@@ -194,6 +196,7 @@ func (s *IntegrationTestSuite) TestCmdQueryPost() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 				),
 			},
 		},
@@ -253,6 +256,7 @@ func (s *IntegrationTestSuite) TestCmdQueryPosts() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 				),
 			},
 		},
@@ -281,6 +285,7 @@ func (s *IntegrationTestSuite) TestCmdQueryPosts() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 				),
 			},
 		},
@@ -867,6 +872,66 @@ func (s *IntegrationTestSuite) TestCmdAnswerPoll() {
 		tc := tc
 		s.Run(tc.name, func() {
 			cmd := cli.GetCmdAnswerPoll()
+			clientCtx := val.ClientCtx
+
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+			if tc.shouldErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+			}
+		})
+	}
+}
+
+func (s *IntegrationTestSuite) TestCmdChangePostOwner() {
+	val := s.network.Validators[0]
+	testCases := []struct {
+		name      string
+		args      []string
+		shouldErr bool
+		respType  proto.Message
+	}{
+		{
+			name: "invalid subspace id returns error",
+			args: []string{
+				"0", "1", "desmos1e209r8nc8qdkmqujahwrq4xrlxhk3fs9k7yzmw",
+			},
+			shouldErr: true,
+		},
+		{
+			name: "invalid post id returns error",
+			args: []string{
+				"1", "0", "desmos1e209r8nc8qdkmqujahwrq4xrlxhk3fs9k7yzmw",
+			},
+			shouldErr: true,
+		},
+		{
+			name: "invalid msg returns error",
+			args: []string{
+				"1", "1", "",
+			},
+			shouldErr: true,
+		},
+		{
+			name: "valid data returns no error",
+			args: []string{
+				"1", "1", "cosmos19mkklc8arp6phlg5eydu3v49syyqyfrq2sp4at",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
+				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+			},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdChangePostOwner()
 			clientCtx := val.ClientCtx
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
