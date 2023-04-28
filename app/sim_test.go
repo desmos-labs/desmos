@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
+	"path"
 	"runtime/debug"
 	"strings"
 	"testing"
@@ -168,7 +169,18 @@ func TestAppImportExport(t *testing.T) {
 		app.AppCodec(),
 	)
 
-	// export state and simParams before the simulation error is checked
+	// Create export folder
+	if config.ExportStatePath != "" {
+		err = os.MkdirAll(path.Dir(config.ExportStatePath), 0755)
+		require.NoError(t, err)
+	}
+	if config.ExportParamsPath != "" {
+		println(path.Dir(config.ExportParamsPath))
+		err = os.MkdirAll(path.Dir(config.ExportParamsPath), 0755)
+		require.NoError(t, err)
+	}
+
+	// Export state and simParams before the simulation error is checked
 	err = simtestutil.CheckExportSimulation(app, config, simParams)
 	require.NoError(t, err)
 	require.NoError(t, simErr)
