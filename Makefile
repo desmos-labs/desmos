@@ -207,15 +207,18 @@ TEST_TARGETS := test-unit test-unit-amino test-unit-proto test-ledger-mock test-
 # Test runs-specific rules. To add a new test target, just add
 # a new rule, customise ARGS or TEST_PACKAGES ad libitum, and
 # append the new rule to the TEST_TARGETS list.
-
-test-unit: ARGS=-tags='cgo ledger test_ledger_mock norace'
-test-unit-amino: ARGS=-tags='ledger test_ledger_mock test_amino norace'
-test-ledger: ARGS=-tags='cgo ledger norace'
-test-ledger-mock: ARGS=-tags='ledger test_ledger_mock norace'
-test-race: ARGS=-race -tags='cgo ledger test_ledger_mock'
+test-unit: test_tags += cgo ledger test_ledger_mock norace
+test-unit-amino: test_tags += ledger test_ledger_mock test_amino norace
+test-ledger: test_tags += cgo ledger norace
+test-ledger-mock: test_tags += ledger test_ledger_mock norace
+test-race: test_tags += cgo ledger test_ledger_mock
+test-race: ARGS=-race
 test-race: TEST_PACKAGES=$(PACKAGES_NOSIMULATION)
-
 $(TEST_TARGETS): run-tests
+
+ARGS += -tags "$(test_tags)"
+SUB_MODULES = $(shell find . -type f -name 'go.mod' -print0 | xargs -0 -n1 dirname | sort)
+CURRENT_DIR = $(shell pwd)
 
 run-tests:
 ifneq (,$(shell which tparse 2>/dev/null))
