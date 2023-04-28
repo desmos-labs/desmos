@@ -36,8 +36,6 @@ import (
 	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
-	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
-
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -260,8 +258,6 @@ func TestAppImportExport(t *testing.T) {
 		{app.keys[poststypes.StoreKey], newApp.keys[poststypes.StoreKey], [][]byte{}},
 		{app.keys[reportstypes.StoreKey], newApp.keys[reportstypes.StoreKey], [][]byte{}},
 		{app.keys[reactionstypes.StoreKey], newApp.keys[reactionstypes.StoreKey], [][]byte{}},
-
-		{app.keys[wasm.StoreKey], newApp.keys[wasm.StoreKey], [][]byte{wasmtypes.TXCounterPrefix}},
 	}
 
 	for _, skp := range storeKeysPrefixes {
