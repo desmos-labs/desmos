@@ -10,7 +10,7 @@ Proposed
 
 ## Abstract
 
-This ADR introduces a mechanism that allows users to pay fees within a designated subspace using their existing service tokens.
+This ADR enables subspace owners to let content creators pay for transaction fees using different token denominations when creating contents within their subspace.
 
 ## Context
 
