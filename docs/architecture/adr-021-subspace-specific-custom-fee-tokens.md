@@ -20,10 +20,14 @@ For instance, let's consider an existing application that uses a centralized dat
 
 ## Decision
 
-To address the issue mentioned above, we propose implementing a mechanism that allows users to pay fees using the existing service tokens within the specified subspace. The mechanism must have the following features:
-- Defining a minimum gas prices for non-DSM tokens that validators are willing to accept via governance proposal;
-- Allowing the subspace manager(s) to update the list of fee tokens allowed in the subspace;
-- Checking the on-chain minimum gas price requirement for non-DSM fees using a custom `TxChecker`.
+To address the issue mentioned above, we propose implementing a mechanism that allows users to pay content-related fees using additional token denominations within the specified subspace. 
+
+Ideally, the flow that will lead one subspace to accept an additional fee token is going to be the following: 
+
+1. The subspace owner creates an on-chain governance proposal asking validators if they are fine in receiving fees paid in the new token denomination when validating transactions related to that subspace.
+2. Validators will agree or reject the proposal through on-chain voting. 
+3. If the proposal is accepted, the new token denom will be added to the list of additional fee token denoms that can be used to pay for fees within that subspace.
+4. If the proposal is rejected, the new token denom will not be added to the list of additional fee token denoms.
 
 
 ### Types
