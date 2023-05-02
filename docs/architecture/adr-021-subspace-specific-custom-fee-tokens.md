@@ -25,7 +25,6 @@ To address the issue mentioned above, we propose implementing a mechanism that a
 - Allowing the subspace manager(s) to update the list of fee tokens allowed in the subspace;
 - Checking the on-chain minimum gas price requirement for non-DSM fees using a custom `TxChecker`.
 
-The upcoming changes are as follows:
 
 ### Types
 
