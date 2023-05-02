@@ -22,97 +22,189 @@ This have the consequence of not giving any financial incentive on creating a so
 ## Decision
 
 We will wrap the Osmosis [Token Factory module](https://docs.osmosis.zone/osmosis-core/modules/tokenfactory/)
-so that a subspace admin can create, mint and burn a coin related to a subspace.
+with the following modifications:
+1. Instead of use the token creator address to compose the coin denom we will use the subspace treasury address
+   as following: `factory/{trasury_address}/subdenom`.
+2. All the operations of `CreateDenom`, `Mint`, `Burn`, `SetDenomMetadata`, `SetBeforeSendHook` and
+   `ForceTransfer` can only be performed by the subspace administrators;
+3. The `CreateDenom` action will burn the coins instead of send them to the community pool.  
 
-### Type
-
-```proto
-message Post {
-  uint64 subspace_id = 1;
-  uint32 section_id = 2;
-  
-  ...skip
-
-  google.protobuf.Timestamp last_edited_date = 13;
-  
-  // Owner of the post
-  string owner = 14;
-}
-```
+With this module subspace admins will be able to create a coin that can be later used to pay for 
+subspace related transactions.
 
 ### `Msg` Service
 
 ```protobuf
+// Msg defines the tokenfactory module's gRPC message service.
 service Msg {
-    // CreateDenom allows a subspace admin to create a new coin that will have denom:
-    // factor/{subspace_tresury_address}/{subdenom}.
-    rpc CreateDenom(MsgCreateDenom) returns (MsgCreateDenomResponse);
-    
-    // Mint allows a subspace admin to mint an amount of coins of previously created denom.
-    rpc Mint(MsgMint) returns (MsgMintResponse);
+  // CreateDenom allows a subspace admin to create a new coin that will have
+  // denom: factory/{subspace_treasury_address}/{subdenom}.
+  rpc CreateDenom(MsgCreateDenom) returns (MsgCreateDenomResponse);
 
-    // Burn allows a subspace admin to burn an amount of coins of previously created denom.
-    rpc Burn(MsgBurn) returns (MsgBurnResponse);
+  // Mint allows a subspace admin to mint an amount of coins of a previously
+  // created denom.
+  rpc Mint(MsgMint) returns (MsgMintResponse);
 
-    // SetDenomMetadata allows a subspace admin to change the metadata of previously created denom.
-    rpc SetDenomMetadata(MsgSetDenomMetadata) returns (MsgSetDenomMetadataResponse);
+  // Burn allows a subspace admin to burn an amount of coins of a previously
+  // created denom.
+  rpc Burn(MsgBurn) returns (MsgBurnResponse);
+
+  // SetDenomMetadata allows a subspace admin to change the metadata of a
+  // previously created denom.
+  rpc SetDenomMetadata(MsgSetDenomMetadata)
+      returns (MsgSetDenomMetadataResponse);
+
+  // SetBeforeSendHook allows a subspace admin to set the address of a wasm contract
+  // that will be called before the coins are sent to track or block the send action.
+  rpc SetBeforeSendHook(MsgSetBeforeSendHook)
+      returns (MsgSetBeforeSendHookResponse);
+
+  // ForceTransfer allows a subspace admin to force transfer some coins from one
+  // address to another
+  rpc ForceTransfer(MsgForceTransfer) returns (MsgForceTransferResponse);
 }
 
-// MsgChangePostOwner move a post to another subspace.
+// MsgCreateDenom defines the message structure for the CreateDenom gRPC service
+// method. It allows an account to create a new denom. It requires a subspace
+// id and a sub denomination. The (subspace_id, sub_denomination) tuple
+// must be unique and cannot be re-used.
+//
+// The resulting denom created is defined as
+// <factory/{subspace_treasury_address}/{subdenom}>. 
 message MsgCreateDenom {
-    // Address of the coin creator.
-    string creator = 1;
+  // Address of who is creating the denom.
+  string sender = 1 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
   
-    // Id of the subspace.
-    uint64 subspace_id = 2;
+  // Subspace id where the coin can be used.
+  uint64 subspace_id = 2 [ (gogoproto.moretags) = "yaml:\"subspace_id\"" ];
 
-    // Subdenom of the coin that will be created.
-    string subdenom = 3;
+  // subdenom can be up to 44 "alphanumeric" characters long.
+  string subdenom = 3 [ (gogoproto.moretags) = "yaml:\"subdenom\"" ];
 }
-// MsgCreateDenomResponse defines the Msg/MsgCreateDenom response type.
-message MsgCreateDenomResponse {}
 
-// MsgMint allow a subspace admin to mint an amount coins.
+// MsgCreateDenomResponse is the return value of MsgCreateDenom
+// It returns the full string of the newly created denom
+message MsgCreateDenomResponse {
+  // Denom of the newly created coin.
+  string new_token_denom = 1
+  [ (gogoproto.moretags) = "yaml:\"new_token_denom\"" ];
+}
+
+// MsgMint is the sdk.Msg type for allowing an admin account to mint
+// more of a token.
 message MsgMint {
-  // Address of the user that is performing the mint.
-  string sender = 1;
-
-  // Id of the subspace.
-  uint64 subspace_id = 2;
+  // Address of who is minting the coins.
+  string sender = 1 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
   
-  // Amount of coins to be minted.
-  cosmos.base.v1beta1.Coin amount = 3;
+  // Subspace id where the coin has been created.
+  uint64 subspace_id = 2 [ (gogoproto.moretags) = "yaml:\"subspace_id\"" ];
+  
+  // Amount of coins to mint.
+  cosmos.base.v1beta1.Coin amount = 3 [
+    (gogoproto.moretags) = "yaml:\"amount\"",
+    (gogoproto.nullable) = false
+  ];
+  
+  // Optional address to which the coins will be sent, if this is empty
+  // the coins will be sent to the sender. 
+  string mint_to_address = 4
+  [ (gogoproto.moretags) = "yaml:\"mint_to_address\"" ];
 }
-// MsgMintResponse defines the Msg/MsgMint response type
+
+// MsgMintResponse defines the Msg/MintResponse response type.
 message MsgMintResponse {}
 
-// MsgBurn allow a subspace admin to mint an amount coins.
+// MsgBurn is the sdk.Msg type for allowing an admin account to burn
+// a token.
 message MsgBurn {
-  // Address of the user that is performing the burn.
-  string sender = 1;
+  // Address of who is burning the coins.
+  string sender = 1 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
 
-  // Id of the subspace.
-  uint64 subspace_id = 2;
-  
-  // Amount of coins to be burned.
-  cosmos.base.v1beta1.Coin amount = 3;
+  // Subspace id where the coin has been created.
+  uint64 subspace_id = 2 [ (gogoproto.moretags) = "yaml:\"subspace_id\"" ];
+
+  // Amount of coins to burn.
+  cosmos.base.v1beta1.Coin amount = 3 [
+    (gogoproto.moretags) = "yaml:\"amount\"",
+    (gogoproto.nullable) = false
+  ];
+
+  // Optional address from which the tokens will be burned, if this is empty
+  // the coins will be burned from the sender. 
+  string burn_from_address = 4
+  [ (gogoproto.moretags) = "yaml:\"burn_from_address\"" ];
 }
-// MsgBurnResponse defines the Msg/MsgBurn response type
+
+// MsgBurnResponse defines the Msg/BurnResponse response type.
 message MsgBurnResponse {}
 
-// MsgBurn allow a subspace admin to mint an amount coins.
-message MsgSetDenomMetadata {
-  // Address of the user that is changing the coin metadata.
-  string sender = 1;
+// MsgSetBeforeSendHook is the sdk.Msg type for allowing an admin account to
+// assign a CosmWasm contract to call with a BeforeSend hook.
+message MsgSetBeforeSendHook {
+  // Address of who is setting the hook.
+  string sender = 1 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
 
-  // Id of the subspace.
-  uint64 subspace_id = 2;
+  // Subspace id where the coin has been created.
+  uint64 subspace_id = 2 [ (gogoproto.moretags) = "yaml:\"subspace_id\"" ];
+
+  // Coin denom.
+  string denom = 3 [ (gogoproto.moretags) = "yaml:\"denom\"" ];
   
-  // Amount of coins to be burned.
-  cosmos.bank.v1beta1.Metadata metadata = 2;
+  // Address of the CosmWasm address that will be called.
+  string cosmwasm_address = 4
+  [ (gogoproto.moretags) = "yaml:\"cosmwasm_address\"" ];
 }
-// MsgSetDenomMetadataResponse defines the Msg/MsgSetDenomMetadata response type
+
+// MsgSetBeforeSendHookResponse defines the response structure for an executed
+// MsgSetBeforeSendHook message.
+message MsgSetBeforeSendHookResponse {}
+
+// MsgSetDenomMetadata is the sdk.Msg type for allowing an admin account to set
+// the denom's bank metadata.
+message MsgSetDenomMetadata {
+  // Address of who is setting the coin's metadata.
+  string sender = 1 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
+
+  // Subspace id where the coin has been created.
+  uint64 subspace_id = 2 [ (gogoproto.moretags) = "yaml:\"subspace_id\"" ];
+
+   // Coin metadata to be set.
+  cosmos.bank.v1beta1.Metadata metadata = 3 [
+    (gogoproto.moretags) = "yaml:\"metadata\"",
+    (gogoproto.nullable) = false
+  ];
+}
+
+// MsgSetDenomMetadataResponse defines the response structure for an executed
+// MsgSetDenomMetadata message.
 message MsgSetDenomMetadataResponse {}
+
+// MsgForceTransfer allows a subspace admin to transfer some coins from one
+// address to another one.
+message MsgForceTransfer {
+  // Address of who is performing the force transfer.
+  string sender = 1 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
+
+  // Subspace id where the coin has been created.
+  uint64 subspace_id = 2 [ (gogoproto.moretags) = "yaml:\"subspace_id\"" ];
+  
+  // Amount of coin to transfer.
+  cosmos.base.v1beta1.Coin amount = 3 [
+    (gogoproto.moretags) = "yaml:\"amount\"",
+    (gogoproto.nullable) = false
+  ];
+  
+  // Address from which the coins will be taken.
+  string transfer_from_address = 4
+  [ (gogoproto.moretags) = "yaml:\"transfer_from_address\"" ];
+  
+  // Address where will be sent the coins.
+  string transfer_to_address = 5
+  [ (gogoproto.moretags) = "yaml:\"transfer_to_address\"" ];
+}
+
+// MsgBurnResponse defines the Msg/BurnResponse response type.
+message MsgForceTransferResponse {}
 ```
 
 ## Consequences
