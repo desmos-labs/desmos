@@ -14,9 +14,9 @@ This ADR enables subspace owners to let content creators pay for transaction fee
 
 ## Context
 
-Desmos uses subspaces to represent virtual applications built on top of our protocol. Currently, subspaces are mainly used to store content such as posts, reports, and reactions. While this is sufficient for developing DApps on Desmos, it may not be enough to convince existing applications to migrate to our platform since Desmos is lack of a mechanism that enables users to pay fees with existing service tokens.
+Desmos uses subspaces to represent virtual applications built on top of our protocol. Currently, subspaces are mainly used to store content such as posts, reports, and reactions. While these features are sufficient to develop new applications on top of Desmos, they may not be enough to convince existing applications to migrate to our platform.
 
-For instance, consider Keplr's on-chain governance discussions feature, which is currently implemented using a custom backend that stores data in a centralized way. Although Keplr could easily use Desmos as their backend, they are not willing to do so because it offers no advantage to them. Migrating to Desmos would simply transfer their existing users to our chain without any benefits for them.
+For instance, let's consider an existing application that uses a centralized database in order to store users discussions. Although such application might easily use Desmos as its backend, they most likely are not going to do so because it offers no advantage to them. Migrating to Desmos would simply transfer their existing users to our chain without any benefits for them.
 
 ## Decision
 
