@@ -39,7 +39,7 @@ message Params {
 }
 ```
 
-In addition, we will add a __allowed_fee_tokens__ field to current `Subspace` structure.
+In order to represent the list of fee token denoms that are supported by a subspace, we will add a new field to the current `Subspace` structure.
 
 ```proto
 message Subspace {
