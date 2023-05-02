@@ -1,5 +1,5 @@
 ARG DESMOS_VERSION="v0.17.2"
-FROM golang:1.18-alpine AS build-env
+FROM golang:1.19-alpine AS build-env
 
 ENV PACKAGES curl make git libc-dev bash gcc linux-headers eudev-dev python3
 RUN apk add --no-cache $PACKAGES

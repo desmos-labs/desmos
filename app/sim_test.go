@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
+	"path"
 	"runtime/debug"
 	"strings"
 	"testing"
@@ -35,8 +36,6 @@ import (
 	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
-	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
-
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -168,7 +167,18 @@ func TestAppImportExport(t *testing.T) {
 		app.AppCodec(),
 	)
 
-	// export state and simParams before the simulation error is checked
+	// Create export folder
+	if config.ExportStatePath != "" {
+		err = os.MkdirAll(path.Dir(config.ExportStatePath), 0755)
+		require.NoError(t, err)
+	}
+	if config.ExportParamsPath != "" {
+		println(path.Dir(config.ExportParamsPath))
+		err = os.MkdirAll(path.Dir(config.ExportParamsPath), 0755)
+		require.NoError(t, err)
+	}
+
+	// Export state and simParams before the simulation error is checked
 	err = simtestutil.CheckExportSimulation(app, config, simParams)
 	require.NoError(t, err)
 	require.NoError(t, simErr)
@@ -248,8 +258,6 @@ func TestAppImportExport(t *testing.T) {
 		{app.keys[poststypes.StoreKey], newApp.keys[poststypes.StoreKey], [][]byte{}},
 		{app.keys[reportstypes.StoreKey], newApp.keys[reportstypes.StoreKey], [][]byte{}},
 		{app.keys[reactionstypes.StoreKey], newApp.keys[reactionstypes.StoreKey], [][]byte{}},
-
-		{app.keys[wasm.StoreKey], newApp.keys[wasm.StoreKey], [][]byte{wasmtypes.TXCounterPrefix}},
 	}
 
 	for _, skp := range storeKeysPrefixes {
