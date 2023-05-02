@@ -24,10 +24,10 @@ To address the issue mentioned above, we propose implementing a mechanism that a
 
 Ideally, the flow that will lead one subspace to accept an additional fee token is going to be the following: 
 
-1. The subspace owner creates an on-chain governance proposal asking validators if they are fine in receiving fees paid in the new token denomination when validating transactions related to that subspace.
+1. The subspace owner creates an on-chain governance proposal asking validators if they are fine in receiving fees paid in the new token denomination with minimum gas price.
 2. Validators will agree or reject the proposal through on-chain voting. 
-3. If the proposal is accepted, the new token denom will be added to the list of additional fee token denoms that can be used to pay for fees within that subspace.
-4. If the proposal is rejected, the new token denom will not be added to the list of additional fee token denoms.
+3. If the proposal is accepted, the new token denom with minimum gas price will be added to the list of accepted  minimum gas prices that can be used to pay for fees for content-related transactions, then subspace managers can add the token denom to allowed fee token list.
+4. If the proposal is rejected, the new token denom will not be added to the list of accepted minimum gas prices that can be used to pay for fees for content-related transactions.
 
 
 ### Types
