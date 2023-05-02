@@ -49,7 +49,7 @@ message Subspace {
   // the creation time of the subspace
   google.protobuf.Timestamp creation_time = 7;
   
-  // List of allowed fee tokens inside the subspace
+  // List of fee token denoms allowed inside the subspace
   repeated string allowed_fee_tokens = 8;
 }
 ```
