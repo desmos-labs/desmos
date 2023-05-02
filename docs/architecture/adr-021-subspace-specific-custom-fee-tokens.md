@@ -43,11 +43,6 @@ In addition, we will add a __allowed_fee_tokens__ field to current `Subspace` st
 
 ```proto
 message Subspace {
-  // Unique id that identifies the subspace
-  uint64 id = 1;
-
-  // Human-readable name of the subspace
-  string name = 2 [ (gogoproto.moretags) = "yaml:\"name\"" ];
 
   ...skip
 
