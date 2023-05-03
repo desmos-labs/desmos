@@ -8,7 +8,7 @@ import "desmos/profiles/v3/query_params.proto";
 import "desmos/profiles/v3/query_chain_links.proto";
 import "desmos/profiles/v3/query_app_links.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v4/x/profiles/types";
+option go_package = "github.com/desmos-labs/desmos/v5/x/profiles/types";
 
 // Query defines the gRPC querier service.
 service Query {

@@ -8,7 +8,7 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 
-	"github.com/desmos-labs/desmos/v4/app/upgrades"
+	"github.com/desmos-labs/desmos/v5/app/upgrades"
 )
 
 var (

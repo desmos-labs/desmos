@@ -5,7 +5,7 @@ import (
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v4/x/profiles/types"
+	"github.com/desmos-labs/desmos/v5/x/profiles/types"
 )
 
 // MigrateStore migrates the x/profiles module state from the consensus version 8 to version 9.

@@ -6,7 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v5/x/subspaces/types"
 )
 
 // createAccountIfNotExists creates a new account for the given user if it does not exist already

@@ -5,7 +5,7 @@ import "gogoproto/gogo.proto";
 
 import "desmos/reactions/v1/models.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v4/x/reactions/client/utils";
+option go_package = "github.com/desmos-labs/desmos/v5/x/reactions/client/utils";
 
 // SetReactionsParamsJSON contains the data that can be specified when setting a
 // subspace reactions params using the CLI command

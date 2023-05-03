@@ -4,8 +4,8 @@ import (
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v4/x/reports/types"
-	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v5/x/reports/types"
+	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 )
 
 type SubspacesKeeper interface {

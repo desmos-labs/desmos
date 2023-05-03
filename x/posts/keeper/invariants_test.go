@@ -6,9 +6,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/golang/mock/gomock"
 
-	"github.com/desmos-labs/desmos/v4/x/posts/keeper"
-	"github.com/desmos-labs/desmos/v4/x/posts/types"
-	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v5/x/posts/keeper"
+	"github.com/desmos-labs/desmos/v5/x/posts/types"
+	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 )
 
 func (suite *KeeperTestSuite) TestValidSubspacesInvariant() {

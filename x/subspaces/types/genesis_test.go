@@ -7,7 +7,7 @@ import (
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/x/feegrant"
 
-	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v5/x/subspaces/types"
 
 	"github.com/stretchr/testify/require"
 )

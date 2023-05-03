@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	v2 "github.com/desmos-labs/desmos/v4/x/subspaces/legacy/v2"
+	v2 "github.com/desmos-labs/desmos/v5/x/subspaces/legacy/v2"
 )
 
 func TestSplitPermissions(t *testing.T) {

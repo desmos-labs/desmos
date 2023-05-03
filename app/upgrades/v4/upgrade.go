@@ -9,12 +9,12 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 
-	feestypes "github.com/desmos-labs/desmos/v4/x/fees/types"
-	reactionstypes "github.com/desmos-labs/desmos/v4/x/reactions/types"
-	relationshipstypes "github.com/desmos-labs/desmos/v4/x/relationships/types"
-	reportstypes "github.com/desmos-labs/desmos/v4/x/reports/types"
+	feestypes "github.com/desmos-labs/desmos/v5/x/fees/types"
+	reactionstypes "github.com/desmos-labs/desmos/v5/x/reactions/types"
+	relationshipstypes "github.com/desmos-labs/desmos/v5/x/relationships/types"
+	reportstypes "github.com/desmos-labs/desmos/v5/x/reports/types"
 
-	"github.com/desmos-labs/desmos/v4/app/upgrades"
+	"github.com/desmos-labs/desmos/v5/app/upgrades"
 )
 
 var (

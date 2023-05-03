@@ -3,7 +3,7 @@ package desmos.profiles.v3;
 
 import "gogoproto/gogo.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v4/x/profiles/types";
+option go_package = "github.com/desmos-labs/desmos/v5/x/profiles/types";
 
 // MsgSaveProfile represents a message to save a profile.
 message MsgSaveProfile {

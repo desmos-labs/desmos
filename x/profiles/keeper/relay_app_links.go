@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	errors "cosmossdk.io/errors"
+	"cosmossdk.io/errors"
 	"github.com/armon/go-metrics"
 	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -13,11 +13,11 @@ import (
 	channeltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
 	host "github.com/cosmos/ibc-go/v7/modules/core/24-host"
 
-	"github.com/desmos-labs/desmos/v4/pkg/obi"
+	"github.com/desmos-labs/desmos/v5/pkg/obi"
 
-	"github.com/desmos-labs/desmos/v4/x/profiles/types"
+	"github.com/desmos-labs/desmos/v5/x/profiles/types"
 
-	oracletypes "github.com/desmos-labs/desmos/v4/x/oracle/types"
+	oracletypes "github.com/desmos-labs/desmos/v5/x/oracle/types"
 )
 
 // oracleScriptCallData represents the data that should be OBI-encoded and sent to perform an oracle request

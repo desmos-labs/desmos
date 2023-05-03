@@ -3,11 +3,11 @@ package keeper
 import (
 	"regexp"
 
-	errors "cosmossdk.io/errors"
+	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/desmos-labs/desmos/v4/x/reactions/types"
+	"github.com/desmos-labs/desmos/v5/x/reactions/types"
 )
 
 // SetNextReactionID sets the next reaction id for the given subspace

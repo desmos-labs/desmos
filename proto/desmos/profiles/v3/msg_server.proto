@@ -9,7 +9,7 @@ import "desmos/profiles/v3/msgs_chain_links.proto";
 import "desmos/profiles/v3/msgs_app_links.proto";
 import "desmos/profiles/v3/msgs_params.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v4/x/profiles/types";
+option go_package = "github.com/desmos-labs/desmos/v5/x/profiles/types";
 
 // Msg defines the relationships Msg service.
 service Msg {

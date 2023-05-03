@@ -3,7 +3,7 @@ package desmos.profiles.v1beta1;
 
 import "gogoproto/gogo.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v4/types";
+option go_package = "github.com/desmos-labs/desmos/v5/x/profiles/legacy/v4/types";
 
 // DTagTransferRequest represent a DTag transfer request between two users
 message DTagTransferRequest {

@@ -6,8 +6,8 @@ import (
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	v1 "github.com/desmos-labs/desmos/v4/x/relationships/legacy/v1"
-	"github.com/desmos-labs/desmos/v4/x/relationships/types"
+	v1 "github.com/desmos-labs/desmos/v5/x/relationships/legacy/v1"
+	"github.com/desmos-labs/desmos/v5/x/relationships/types"
 )
 
 // MigrateStore performs in-place store migrations from v1 to v2.

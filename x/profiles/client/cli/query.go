@@ -4,7 +4,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/spf13/cobra"
 
-	"github.com/desmos-labs/desmos/v4/x/profiles/types"
+	"github.com/desmos-labs/desmos/v5/x/profiles/types"
 )
 
 // DONTCOVER

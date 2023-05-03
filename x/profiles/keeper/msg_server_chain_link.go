@@ -4,12 +4,12 @@ import (
 	"context"
 	"time"
 
-	errors "cosmossdk.io/errors"
+	"cosmossdk.io/errors"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v4/x/profiles/types"
+	"github.com/desmos-labs/desmos/v5/x/profiles/types"
 )
 
 // LinkChainAccount defines a rpc method for MsgLinkChainAccount

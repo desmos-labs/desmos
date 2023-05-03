@@ -2,13 +2,12 @@ package types_test
 
 import (
 	"encoding/hex"
-
-	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
-
-	"github.com/mr-tron/base58"
-
 	"testing"
 	"time"
+
+	"github.com/desmos-labs/desmos/v5/testutil/profilestesting"
+
+	"github.com/mr-tron/base58"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
@@ -22,11 +21,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	"github.com/cosmos/cosmos-sdk/x/auth/migrations/legacytx"
 
-	"github.com/desmos-labs/desmos/v4/app"
+	"github.com/desmos-labs/desmos/v5/app"
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v4/x/profiles/types"
+	"github.com/desmos-labs/desmos/v5/x/profiles/types"
 )
 
 func TestUnmarshalSignature(t *testing.T) {

@@ -16,9 +16,9 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 
-	"github.com/desmos-labs/desmos/v4/x/supply/client/cli"
-	"github.com/desmos-labs/desmos/v4/x/supply/keeper"
-	"github.com/desmos-labs/desmos/v4/x/supply/types"
+	"github.com/desmos-labs/desmos/v5/x/supply/client/cli"
+	"github.com/desmos-labs/desmos/v5/x/supply/keeper"
+	"github.com/desmos-labs/desmos/v5/x/supply/types"
 )
 
 var (

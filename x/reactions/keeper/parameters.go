@@ -1,10 +1,10 @@
 package keeper
 
 import (
-	errors "cosmossdk.io/errors"
+	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v4/x/reactions/types"
+	"github.com/desmos-labs/desmos/v5/x/reactions/types"
 )
 
 // SaveSubspaceReactionsParams stores the given reactions params inside the store

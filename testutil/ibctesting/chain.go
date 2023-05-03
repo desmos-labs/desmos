@@ -15,7 +15,7 @@ import (
 	tmversion "github.com/cometbft/cometbft/version"
 	"github.com/stretchr/testify/require"
 
-	errors "cosmossdk.io/errors"
+	"cosmossdk.io/errors"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
@@ -37,9 +37,9 @@ import (
 	ibctmtypes "github.com/cosmos/ibc-go/v7/modules/light-clients/07-tendermint"
 	"github.com/cosmos/ibc-go/v7/testing/mock"
 
-	simapp "github.com/desmos-labs/desmos/v4/app"
+	simapp "github.com/desmos-labs/desmos/v5/app"
 
-	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
+	profilestypes "github.com/desmos-labs/desmos/v5/x/profiles/types"
 )
 
 const (

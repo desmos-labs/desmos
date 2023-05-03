@@ -5,7 +5,7 @@ import "gogoproto/gogo.proto";
 import "google/protobuf/any.proto";
 import "cosmos_proto/cosmos.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v4/x/subspaces/types";
+option go_package = "github.com/desmos-labs/desmos/v5/x/subspaces/types";
 
 // MsgGrantAllowance adds grants for the grantee to spend up allowance of fees
 // from the treasury inside the given subspace

@@ -1,10 +1,10 @@
 package keeper
 
 import (
-	errors "cosmossdk.io/errors"
+	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v4/x/profiles/types"
+	"github.com/desmos-labs/desmos/v5/x/profiles/types"
 )
 
 // SaveChainLink stores the given chain link

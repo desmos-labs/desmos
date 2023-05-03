@@ -26,12 +26,12 @@ import (
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 
-	feestypes "github.com/desmos-labs/desmos/v4/x/fees/types"
-	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
-	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
-	reportstypes "github.com/desmos-labs/desmos/v4/x/reports/types"
+	feestypes "github.com/desmos-labs/desmos/v5/x/fees/types"
+	poststypes "github.com/desmos-labs/desmos/v5/x/posts/types"
+	profilestypes "github.com/desmos-labs/desmos/v5/x/profiles/types"
+	reportstypes "github.com/desmos-labs/desmos/v5/x/reports/types"
 
-	"github.com/desmos-labs/desmos/v4/app/upgrades"
+	"github.com/desmos-labs/desmos/v5/app/upgrades"
 )
 
 var (

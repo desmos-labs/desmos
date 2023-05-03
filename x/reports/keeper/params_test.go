@@ -3,7 +3,7 @@ package keeper_test
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v4/x/reports/types"
+	"github.com/desmos-labs/desmos/v5/x/reports/types"
 )
 
 func (suite *KeeperTestSuite) TestKeeper_SetParams() {

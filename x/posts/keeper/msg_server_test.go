@@ -8,9 +8,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	"github.com/desmos-labs/desmos/v4/x/posts/keeper"
-	"github.com/desmos-labs/desmos/v4/x/posts/types"
-	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v5/x/posts/keeper"
+	"github.com/desmos-labs/desmos/v5/x/posts/types"
+	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 )
 
 func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {

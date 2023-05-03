@@ -11,7 +11,7 @@ import (
 	authzcodec "github.com/cosmos/cosmos-sdk/x/authz/codec"
 	govcodec "github.com/cosmos/cosmos-sdk/x/gov/codec"
 
-	"github.com/desmos-labs/desmos/v4/types/crypto/ethsecp256k1"
+	"github.com/desmos-labs/desmos/v5/types/crypto/ethsecp256k1"
 )
 
 func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {

@@ -1,11 +1,11 @@
 package keeper
 
 import (
-	errors "cosmossdk.io/errors"
+	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/desmos-labs/desmos/v4/x/profiles/types"
+	"github.com/desmos-labs/desmos/v5/x/profiles/types"
 )
 
 // SaveDTagTransferRequest save the given request associating it to the request recipient.

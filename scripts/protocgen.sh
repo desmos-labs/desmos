@@ -12,5 +12,5 @@ done
 
 cd ..
 # move proto files to the right places
-cp -r github.com/desmos-labs/desmos/v4/* ./
+cp -r github.com/desmos-labs/desmos/v5/* ./
 rm -rf github.com

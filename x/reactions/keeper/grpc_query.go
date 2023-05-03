@@ -3,7 +3,7 @@ package keeper
 import (
 	"context"
 
-	errors "cosmossdk.io/errors"
+	"cosmossdk.io/errors"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -11,7 +11,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/desmos-labs/desmos/v4/x/reactions/types"
+	"github.com/desmos-labs/desmos/v5/x/reactions/types"
 )
 
 var _ types.QueryServer = &Keeper{}

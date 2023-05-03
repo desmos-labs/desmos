@@ -5,7 +5,7 @@ package desmos.subspaces.v3;
 import "gogoproto/gogo.proto";
 import "cosmos/authz/v1beta1/authz.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v4/x/subspaces/types";
+option go_package = "github.com/desmos-labs/desmos/v5/x/subspaces/types";
 
 // MsgGrantTreasuryAuthorization grants an authorization on behalf of the
 // treasury to a user

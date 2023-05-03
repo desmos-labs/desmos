@@ -8,10 +8,10 @@ import (
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v4/app"
-	"github.com/desmos-labs/desmos/v4/testutil/storetesting"
-	v2 "github.com/desmos-labs/desmos/v4/x/subspaces/legacy/v2"
-	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v5/app"
+	"github.com/desmos-labs/desmos/v5/testutil/storetesting"
+	v2 "github.com/desmos-labs/desmos/v5/x/subspaces/legacy/v2"
+	"github.com/desmos-labs/desmos/v5/x/subspaces/types"
 )
 
 func TestMigrateStore(t *testing.T) {

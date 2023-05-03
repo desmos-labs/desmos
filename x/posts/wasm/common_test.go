@@ -10,25 +10,25 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
-	"github.com/desmos-labs/desmos/v4/app"
-	"github.com/desmos-labs/desmos/v4/x/posts/keeper"
-	profileskeeper "github.com/desmos-labs/desmos/v4/x/profiles/keeper"
-	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
+	"github.com/desmos-labs/desmos/v5/app"
+	"github.com/desmos-labs/desmos/v5/x/posts/keeper"
+	profileskeeper "github.com/desmos-labs/desmos/v5/x/profiles/keeper"
+	profilestypes "github.com/desmos-labs/desmos/v5/x/profiles/types"
 
 	db "github.com/cometbft/cometbft-db"
 	"github.com/cometbft/cometbft/libs/log"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/stretchr/testify/suite"
 
-	relationshipskeeper "github.com/desmos-labs/desmos/v4/x/relationships/keeper"
-	relationshipstypes "github.com/desmos-labs/desmos/v4/x/relationships/types"
-	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
-	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
+	relationshipskeeper "github.com/desmos-labs/desmos/v5/x/relationships/keeper"
+	relationshipstypes "github.com/desmos-labs/desmos/v5/x/relationships/types"
+	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
+	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v4/x/posts/types"
+	"github.com/desmos-labs/desmos/v5/x/posts/types"
 )
 
 func buildCreatePostRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {

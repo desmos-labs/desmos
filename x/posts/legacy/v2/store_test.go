@@ -8,12 +8,12 @@ import (
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v4/app"
-	"github.com/desmos-labs/desmos/v4/testutil/storetesting"
-	v2 "github.com/desmos-labs/desmos/v4/x/posts/legacy/v2"
-	"github.com/desmos-labs/desmos/v4/x/posts/types"
-	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
-	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v5/app"
+	"github.com/desmos-labs/desmos/v5/testutil/storetesting"
+	v2 "github.com/desmos-labs/desmos/v5/x/posts/legacy/v2"
+	"github.com/desmos-labs/desmos/v5/x/posts/types"
+	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
+	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 )
 
 type mockSubspace struct {

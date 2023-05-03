@@ -7,7 +7,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	subspacetypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
+	subspacetypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 )
 
 // DONTCOVER

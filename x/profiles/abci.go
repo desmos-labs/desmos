@@ -3,8 +3,8 @@ package profiles
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v4/x/profiles/keeper"
-	"github.com/desmos-labs/desmos/v4/x/profiles/types"
+	"github.com/desmos-labs/desmos/v5/x/profiles/keeper"
+	"github.com/desmos-labs/desmos/v5/x/profiles/types"
 )
 
 // BeginBlocker is called every block, processes expired application links

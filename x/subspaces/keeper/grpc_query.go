@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"context"
 
-	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v5/x/subspaces/types"
 
-	errors "cosmossdk.io/errors"
+	"cosmossdk.io/errors"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"

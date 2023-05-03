@@ -6,7 +6,7 @@ import "gogoproto/gogo.proto";
 import "desmos/subspaces/v3/msgs_treasury.proto";
 import "desmos/subspaces/v3/msgs_feegrant.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v4/x/subspaces/types";
+option go_package = "github.com/desmos-labs/desmos/v5/x/subspaces/types";
 
 // Msg defines subspaces Msg service.
 service Msg {
