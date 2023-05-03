@@ -211,7 +211,7 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.profilesKeeper, am.sk, am.pk, am.ak, am.bk)
 }
 
-// ____________________________________________________________________________
+// --------------------------------------------------------------------------------------------------------------------
 
 // App Wiring Setup
 
