@@ -26,7 +26,7 @@ with the following modifications:
 1. Instead of use the token creator address to compose the coin denom we will use the subspace treasury address
    as following: `factory/{trasury_address}/subdenom`;
 2. All the operations of `CreateDenom`, `Mint`, `Burn`, `SetDenomMetadata`, `SetBeforeSendHook` and
-   `ForceTransfer` can only be performed by the subspace administrators;
+   `ForceTransfer` can only be performed by subspace treasury;
 3. The `CreateDenom` action will burn the coins instead of send them to the community pool.  
 
 With this module subspace admins will be able to create a coin that can be used to pay for 
@@ -37,35 +37,35 @@ subspace related transactions after a governance proposal.
 ```protobuf
 // Msg defines the tokenfactory module's gRPC message service.
 service Msg {
-  // CreateDenom allows a subspace admin to create a new coin that will have
+  // CreateDenom allows the subspace treasury to create a new coin that will have
   // denom: factory/{subspace_treasury_address}/{subdenom}.
   rpc CreateDenom(MsgCreateDenom) returns (MsgCreateDenomResponse);
 
-  // Mint allows a subspace admin to mint an amount of coins of a previously
+  // Mint allows the subspace treasury to mint an amount of coins of a previously
   // created denom.
   rpc Mint(MsgMint) returns (MsgMintResponse);
 
-  // Burn allows a subspace admin to burn an amount of coins of a previously
+  // Burn allows the subspace treasury to burn an amount of coins of a previously
   // created denom.
   rpc Burn(MsgBurn) returns (MsgBurnResponse);
 
-  // SetDenomMetadata allows a subspace admin to change the metadata of a
+  // SetDenomMetadata allows the subspace treasury to change the metadata of a
   // previously created denom.
   rpc SetDenomMetadata(MsgSetDenomMetadata)
       returns (MsgSetDenomMetadataResponse);
 
-  // SetBeforeSendHook allows a subspace admin to set the address of a CosmWasm contract
+  // SetBeforeSendHook allows the subspace treasury to set the address of a CosmWasm contract
   // that will be called before the coins are sent to track or block the send action.
   rpc SetBeforeSendHook(MsgSetBeforeSendHook)
       returns (MsgSetBeforeSendHookResponse);
 
-  // ForceTransfer allows a subspace admin to force transfer some coins from one
+  // ForceTransfer allows the subspace treasury to force transfer some coins from one
   // address to another.
   rpc ForceTransfer(MsgForceTransfer) returns (MsgForceTransferResponse);
 }
 
 // MsgCreateDenom defines the message structure for the CreateDenom gRPC service
-// method. It allows a subspace admin to create a new denom. It requires a subspace
+// method. It allows the subspace treasury to create a new denom. It requires a subspace
 // id and a sub denomination. The (subspace_id, sub_denomination) tuple
 // must be unique and cannot be re-used.
 //
@@ -90,7 +90,7 @@ message MsgCreateDenomResponse {
   [ (gogoproto.moretags) = "yaml:\"new_token_denom\"" ];
 }
 
-// MsgMint is the sdk.Msg type for allowing a subspace admin to mint
+// MsgMint is the sdk.Msg type for allowing the subspace treasury to mint
 // more of a token.
 message MsgMint {
   // Address of who is performing the mint action.
@@ -114,7 +114,7 @@ message MsgMint {
 // MsgMintResponse defines the Msg/MintResponse response type.
 message MsgMintResponse {}
 
-// MsgBurn is the sdk.Msg type for allowing a subspace admin to burn
+// MsgBurn is the sdk.Msg type for allowing the subspace treasury to burn
 // a token.
 message MsgBurn {
   // Address of who is performing the burn action.
@@ -138,7 +138,7 @@ message MsgBurn {
 // MsgBurnResponse defines the Msg/BurnResponse response type.
 message MsgBurnResponse {}
 
-// MsgSetBeforeSendHook is the sdk.Msg type for allowing a subspace admin to
+// MsgSetBeforeSendHook is the sdk.Msg type for allowing the subspace treasury to
 // assign a CosmWasm contract to call with a BeforeSend hook.
 message MsgSetBeforeSendHook {
   // Address of who is setting the hook.
@@ -159,7 +159,7 @@ message MsgSetBeforeSendHook {
 // MsgSetBeforeSendHook message.
 message MsgSetBeforeSendHookResponse {}
 
-// MsgSetDenomMetadata is the sdk.Msg type for allowing a subspace admin to set
+// MsgSetDenomMetadata is the sdk.Msg type for allowing the subspace treasury to set
 // the denom's bank metadata.
 message MsgSetDenomMetadata {
   // Address of who is setting the coin's metadata.
@@ -179,7 +179,7 @@ message MsgSetDenomMetadata {
 // MsgSetDenomMetadata message.
 message MsgSetDenomMetadataResponse {}
 
-// MsgForceTransfer allows a subspace admin to transfer some coins from one
+// MsgForceTransfer allows the subspace treasury to transfer some coins from one
 // address to another one.
 message MsgForceTransfer {
   // Address of who is performing the force transfer.
