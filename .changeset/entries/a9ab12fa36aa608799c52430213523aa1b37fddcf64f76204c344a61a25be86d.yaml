@@ -1,6 +1,6 @@
 type: deps
 module: other
 pull_request: 1124
-description: Updated Cosmos SDK to v0.47.2
+description: Updated Cosmos SDK to `v0.47.2`
 backward_compatible: true
 date: 2023-04-28T16:00:55.119755697Z

@@ -1,6 +1,6 @@
 type: feat
 module: other
 pull_request: 1082
-description: integrate interchain account module
+description: Added the InterChain Accounts module
 backward_compatible: true
 date: 2023-02-03T09:48:02.6497929Z

@@ -1,6 +1,6 @@
 type: feat
 module: x/subspaces
 pull_request: 1067
-description: Implemented ADR-018 new treasury account
+description: Changed how subspace treasury addresses are generated and managed
 backward_compatible: false
 date: 2023-01-19T12:58:08.0524794Z
