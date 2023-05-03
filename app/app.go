@@ -792,7 +792,7 @@ func NewDesmosApp(
 		ica.NewAppModule(&app.ICAControllerKeeper, &app.ICAHostKeeper),
 
 		// Custom modules
-		fees.NewAppModule(app.appCodec, app.FeesKeeper),
+		fees.NewAppModule(app.appCodec, app.FeesKeeper, app.GetSubspace(feestypes.ModuleName)),
 		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AuthzKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		profiles.NewAppModule(appCodec, legacyAmino, app.ProfilesKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper, app.GetSubspace(profilestypes.ModuleName)),
 		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv4.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
