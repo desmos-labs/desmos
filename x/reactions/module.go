@@ -25,8 +25,7 @@ import (
 
 	modulev1 "github.com/desmos-labs/desmos/v5/api/desmos/reactions/module/v1"
 
-	postskeeper "github.com/desmos-labs/desmos/v5/x/posts/keeper"
-	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
+	poststypes "github.com/desmos-labs/desmos/v5/x/posts/types"
 
 	"github.com/desmos-labs/desmos/v5/x/reactions/client/cli"
 	"github.com/desmos-labs/desmos/v5/x/reactions/keeper"
@@ -250,6 +249,7 @@ type ModuleOutputs struct {
 
 	ReactionsKeeper keeper.Keeper
 	Module          appmodule.AppModule
+	PostsHooks      poststypes.PostsHooksWrapper
 }
 
 func provideModule(in ModuleInputs) ModuleOutputs {
@@ -273,5 +273,9 @@ func provideModule(in ModuleInputs) ModuleOutputs {
 		in.BankKeeper,
 	)
 
-	return ModuleOutputs{ReactionsKeeper: k, Module: m}
+	return ModuleOutputs{
+		ReactionsKeeper: k,
+		Module:          m,
+		PostsHooks:      poststypes.PostsHooksWrapper{Hooks: k.Hooks()},
+	}
 }

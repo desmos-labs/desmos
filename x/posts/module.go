@@ -4,17 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"sort"
 
-	v2 "github.com/desmos-labs/desmos/v5/x/posts/legacy/v2"
-	v4 "github.com/desmos-labs/desmos/v5/x/posts/legacy/v4"
-
-	"github.com/desmos-labs/desmos/v5/x/posts/client/cli"
-	"github.com/desmos-labs/desmos/v5/x/posts/keeper"
-	"github.com/desmos-labs/desmos/v5/x/posts/simulation"
-	"github.com/desmos-labs/desmos/v5/x/posts/types"
-	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
-
-	modulev1 "github.com/desmos-labs/desmos/v5/api/desmos/posts/module/v1"
+	"cosmossdk.io/core/appmodule"
+	"cosmossdk.io/depinject"
 
 	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -31,6 +24,19 @@ import (
 
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
+	"golang.org/x/exp/maps"
+
+	modulev1 "github.com/desmos-labs/desmos/v5/api/desmos/posts/module/v1"
+
+	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
+
+	v2 "github.com/desmos-labs/desmos/v5/x/posts/legacy/v2"
+	v4 "github.com/desmos-labs/desmos/v5/x/posts/legacy/v4"
+
+	"github.com/desmos-labs/desmos/v5/x/posts/client/cli"
+	"github.com/desmos-labs/desmos/v5/x/posts/keeper"
+	"github.com/desmos-labs/desmos/v5/x/posts/simulation"
+	"github.com/desmos-labs/desmos/v5/x/posts/types"
 )
 
 const (
@@ -241,6 +247,9 @@ func init() {
 		appmodule.Provide(
 			provideModule,
 		),
+		appmodule.Invoke(
+			invokeSetPostsHooks,
+		),
 	)
 }
 
@@ -296,4 +305,43 @@ func provideModule(in ModuleInputs) ModuleOutputs {
 	)
 
 	return ModuleOutputs{PostsKeeper: k, Module: m}
+}
+
+func invokeSetPostsHooks(
+	config *modulev1.Module,
+	keeper *keeper.Keeper,
+	wrappers map[string]types.PostsHooksWrapper,
+) error {
+	// all arguments to invokers are optional
+	if keeper == nil || config == nil {
+		return nil
+	}
+
+	modNames := maps.Keys(wrappers)
+	order := config.HooksOrder
+	if len(order) == 0 {
+		order = modNames
+		sort.Strings(order)
+	}
+
+	if len(order) != len(modNames) {
+		return fmt.Errorf("len(hooks_order: %v) != len(hooks modules: %v)", order, modNames)
+	}
+
+	if len(modNames) == 0 {
+		return nil
+	}
+
+	var multiHooks types.MultiPostsHooks
+	for _, modName := range order {
+		wrapper, ok := wrappers[modName]
+		if !ok {
+			return fmt.Errorf("can't find posts hooks for module %s", modName)
+		}
+
+		multiHooks = append(multiHooks, wrapper.Hooks)
+	}
+
+	keeper.SetHooks(multiHooks)
+	return nil
 }

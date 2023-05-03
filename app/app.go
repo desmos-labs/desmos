@@ -784,7 +784,7 @@ func NewDesmosApp(
 		posts.NewAppModule(appCodec, app.PostsKeeper, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper, app.GetSubspace(poststypes.ModuleName)),
 		reports.NewAppModule(appCodec, app.ReportsKeeper, app.SubspacesKeeper, app.PostsKeeper, app.AccountKeeper, app.BankKeeper, app.GetSubspace(reportstypes.ModuleName)),
 		reactions.NewAppModule(appCodec, app.ReactionsKeeper, app.ProfilesKeeper, app.SubspacesKeeper, app.PostsKeeper, app.AccountKeeper, app.BankKeeper),
-		supply.NewAppModule(appCodec, legacyAmino, app.SupplyKeeper),
+		supply.NewAppModule(appCodec, app.SupplyKeeper),
 
 		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper, app.MsgServiceRouter(), app.GetSubspace(wasmtypes.ModuleName)),
 	)

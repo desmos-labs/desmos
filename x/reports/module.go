@@ -8,6 +8,8 @@ import (
 	"cosmossdk.io/core/appmodule"
 	"cosmossdk.io/depinject"
 
+	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
+
 	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -260,6 +262,7 @@ type ModuleOutputs struct {
 
 	ReportsKeeper keeper.Keeper
 	Module        appmodule.AppModule
+	PostsHooks    poststypes.PostsHooksWrapper
 }
 
 func provideModule(in ModuleInputs) ModuleOutputs {
@@ -291,5 +294,9 @@ func provideModule(in ModuleInputs) ModuleOutputs {
 		in.LegacySubspace,
 	)
 
-	return ModuleOutputs{ReportsKeeper: k, Module: m}
+	return ModuleOutputs{
+		ReportsKeeper: k,
+		Module:        m,
+		PostsHooks:    poststypes.PostsHooksWrapper{Hooks: k.Hooks()},
+	}
 }
