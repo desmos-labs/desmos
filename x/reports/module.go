@@ -39,6 +39,8 @@ var (
 	_ module.AppModule           = AppModule{}
 	_ module.AppModuleBasic      = AppModuleBasic{}
 	_ module.AppModuleSimulation = AppModule{}
+	_ appmodule.AppModule        = AppModule{}
+	_ depinject.OnePerModuleType = AppModule{}
 )
 
 // AppModuleBasic defines the basic application module used by the reports module.
