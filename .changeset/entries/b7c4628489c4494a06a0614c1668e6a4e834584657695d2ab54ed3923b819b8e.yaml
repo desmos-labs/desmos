@@ -1,0 +1,6 @@
+type: deps
+module: other
+pull_request: 1133
+description: Bump CosmWasm to `v0.40.0-rc.1`
+backward_compatible: true
+date: 2023-05-03T19:30:07.448271383Z
