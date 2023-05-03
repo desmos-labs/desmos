@@ -5,31 +5,33 @@ import (
 	"encoding/json"
 	"fmt"
 
-	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
-
-	v2 "github.com/desmos-labs/desmos/v5/x/subspaces/legacy/v2"
-
-	"github.com/desmos-labs/desmos/v5/x/subspaces/authz"
-
-	"github.com/desmos-labs/desmos/v5/x/subspaces/simulation"
-
-	"github.com/desmos-labs/desmos/v5/x/subspaces/client/cli"
-
-	"github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
-	"github.com/desmos-labs/desmos/v5/x/subspaces/types"
+	"cosmossdk.io/core/appmodule"
+	"cosmossdk.io/depinject"
 
 	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
+
+	modulev1 "github.com/desmos-labs/desmos/v5/api/desmos/subspaces/module/v1"
+
+	v2 "github.com/desmos-labs/desmos/v5/x/subspaces/legacy/v2"
+
+	"github.com/desmos-labs/desmos/v5/x/subspaces/authz"
+	"github.com/desmos-labs/desmos/v5/x/subspaces/client/cli"
+	"github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
+	"github.com/desmos-labs/desmos/v5/x/subspaces/simulation"
+	"github.com/desmos-labs/desmos/v5/x/subspaces/types"
 )
 
 const (
@@ -41,6 +43,8 @@ var (
 	_ module.AppModule           = AppModule{}
 	_ module.AppModuleBasic      = AppModuleBasic{}
 	_ module.AppModuleSimulation = AppModule{}
+	_ appmodule.AppModule        = AppModule{}
+	_ depinject.OnePerModuleType = AppModule{}
 )
 
 // AppModuleBasic defines the basic application module used by the subspaces module.
@@ -211,4 +215,61 @@ func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
 // WeightedOperations returns the all the subspaces module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
 	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.ak, am.bk, am.authzk)
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// App Wiring Setup
+
+// IsOnePerModuleType implements the depinject.OnePerModuleType interface.
+func (am AppModule) IsOnePerModuleType() {}
+
+// IsAppModule implements the appmodule.AppModule interface.
+func (am AppModule) IsAppModule() {}
+
+func init() {
+	appmodule.Register(
+		&modulev1.Module{},
+		appmodule.Provide(
+			provideModule,
+		),
+	)
+}
+
+type ModuleInputs struct {
+	depinject.In
+
+	Cdc codec.Codec
+	Key *storetypes.KVStoreKey
+
+	AccountKeeper authkeeper.AccountKeeper
+	BankKeeper    bankkeeper.Keeper
+	AuthzKeeper   authzkeeper.Keeper
+}
+
+type ModuleOutputs struct {
+	depinject.Out
+
+	SubspacesKeeper keeper.Keeper
+	Module          appmodule.AppModule
+}
+
+func provideModule(in ModuleInputs) ModuleOutputs {
+
+	k := keeper.NewKeeper(
+		in.Cdc,
+		in.Key,
+		in.AccountKeeper,
+		in.AuthzKeeper,
+	)
+
+	m := NewAppModule(
+		in.Cdc,
+		k,
+		in.AuthzKeeper,
+		in.AccountKeeper,
+		in.BankKeeper,
+	)
+
+	return ModuleOutputs{SubspacesKeeper: k, Module: m}
 }

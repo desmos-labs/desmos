@@ -233,9 +233,8 @@ func init() {
 type ModuleInputs struct {
 	depinject.In
 
-	Config *modulev1.Module
-	Cdc    codec.Codec
-	Key    *storetypes.KVStoreKey
+	Cdc codec.Codec
+	Key *storetypes.KVStoreKey
 
 	AccountKeeper authkeeper.AccountKeeper
 	BankKeeper    bankkeeper.Keeper
