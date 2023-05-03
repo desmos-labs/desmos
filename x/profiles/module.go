@@ -232,6 +232,8 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.ak, am.bk)
 }
 
+// --------------------------------------------------------------------------------------------------------------------
+
 // App Wiring Setup
 
 // IsOnePerModuleType implements the depinject.OnePerModuleType interface.
@@ -273,8 +275,8 @@ type ModuleInputs struct {
 type ModuleOutputs struct {
 	depinject.Out
 
-	PostsKeeper keeper.Keeper
-	Module      appmodule.AppModule
+	ProfilesKeeper keeper.Keeper
+	Module         appmodule.AppModule
 }
 
 func provideModule(in ModuleInputs) ModuleOutputs {
@@ -307,5 +309,5 @@ func provideModule(in ModuleInputs) ModuleOutputs {
 		in.LegacySubspace,
 	)
 
-	return ModuleOutputs{PostsKeeper: k, Module: m}
+	return ModuleOutputs{ProfilesKeeper: k, Module: m}
 }
