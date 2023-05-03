@@ -1,6 +1,0 @@
-type: fix
-module: x/posts
-pull_request: 1075
-description: Changed `Poll_ProvidedAnswer` attachments type from `Attachment` to `AttachmentContent`
-backward_compatible: false
-date: 2023-01-27T17:17:38.465554809Z

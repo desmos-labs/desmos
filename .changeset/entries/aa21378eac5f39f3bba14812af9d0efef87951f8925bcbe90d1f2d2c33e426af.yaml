@@ -1,6 +1,0 @@
-type: feat
-module: other
-pull_request: 1083
-description: Added missing stargate querier accepted list
-backward_compatible: true
-date: 2023-02-23T15:45:35.2217003Z
