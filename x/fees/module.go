@@ -107,10 +107,12 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 }
 
 // NewAppModule creates a new AppModule Object
-func NewAppModule(cdc codec.Codec, keeper keeper.Keeper) AppModule {
+func NewAppModule(cdc codec.Codec, keeper keeper.Keeper, legacySubspace types.ParamsSubspace) AppModule {
 	return AppModule{
 		AppModuleBasic: AppModuleBasic{cdc: cdc},
 		keeper:         keeper,
+
+		legacySubspace: legacySubspace,
 	}
 }
 
