@@ -8,8 +8,6 @@ import (
 	"cosmossdk.io/core/appmodule"
 	"cosmossdk.io/depinject"
 
-	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
-
 	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -26,6 +24,7 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 
+	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
 	postskeeper "github.com/desmos-labs/desmos/v5/x/posts/keeper"
 	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
 
@@ -262,7 +261,9 @@ type ModuleOutputs struct {
 
 	ReportsKeeper keeper.Keeper
 	Module        appmodule.AppModule
-	PostsHooks    poststypes.PostsHooksWrapper
+
+	SubspacesHooks subspacestypes.SubspacesHooksWrapper
+	PostsHooks     poststypes.PostsHooksWrapper
 }
 
 func provideModule(in ModuleInputs) ModuleOutputs {
@@ -295,8 +296,9 @@ func provideModule(in ModuleInputs) ModuleOutputs {
 	)
 
 	return ModuleOutputs{
-		ReportsKeeper: k,
-		Module:        m,
-		PostsHooks:    poststypes.PostsHooksWrapper{Hooks: k.Hooks()},
+		ReportsKeeper:  k,
+		Module:         m,
+		SubspacesHooks: subspacestypes.SubspacesHooksWrapper{Hooks: k.Hooks()},
+		PostsHooks:     poststypes.PostsHooksWrapper{Hooks: k.Hooks()},
 	}
 }

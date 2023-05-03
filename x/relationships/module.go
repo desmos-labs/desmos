@@ -244,6 +244,8 @@ type ModuleOutputs struct {
 
 	RelationshipsKeeper keeper.Keeper
 	Module              appmodule.AppModule
+
+	SubspacesHooks subspacestypes.SubspacesHooksWrapper
 }
 
 func provideModule(in ModuleInputs) ModuleOutputs {
@@ -263,5 +265,9 @@ func provideModule(in ModuleInputs) ModuleOutputs {
 		in.BankKeeper,
 	)
 
-	return ModuleOutputs{RelationshipsKeeper: k, Module: m}
+	return ModuleOutputs{
+		RelationshipsKeeper: k,
+		Module:              m,
+		SubspacesHooks:      subspacestypes.SubspacesHooksWrapper{Hooks: k.Hooks()},
+	}
 }

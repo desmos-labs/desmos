@@ -276,6 +276,8 @@ type ModuleOutputs struct {
 
 	PostsKeeper keeper.Keeper
 	Module      appmodule.AppModule
+
+	SubspacesHooks subspacestypes.SubspacesHooksWrapper
 }
 
 func provideModule(in ModuleInputs) ModuleOutputs {
@@ -304,7 +306,11 @@ func provideModule(in ModuleInputs) ModuleOutputs {
 		in.LegacySubspace,
 	)
 
-	return ModuleOutputs{PostsKeeper: k, Module: m}
+	return ModuleOutputs{
+		PostsKeeper:    k,
+		Module:         m,
+		SubspacesHooks: subspacestypes.SubspacesHooksWrapper{Hooks: k.Hooks()},
+	}
 }
 
 func invokeSetPostsHooks(

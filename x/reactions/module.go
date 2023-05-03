@@ -249,7 +249,9 @@ type ModuleOutputs struct {
 
 	ReactionsKeeper keeper.Keeper
 	Module          appmodule.AppModule
-	PostsHooks      poststypes.PostsHooksWrapper
+
+	SubspacesHooks subspacestypes.SubspacesHooksWrapper
+	PostsHooks     poststypes.PostsHooksWrapper
 }
 
 func provideModule(in ModuleInputs) ModuleOutputs {
@@ -276,6 +278,7 @@ func provideModule(in ModuleInputs) ModuleOutputs {
 	return ModuleOutputs{
 		ReactionsKeeper: k,
 		Module:          m,
+		SubspacesHooks:  subspacestypes.SubspacesHooksWrapper{Hooks: k.Hooks()},
 		PostsHooks:      poststypes.PostsHooksWrapper{Hooks: k.Hooks()},
 	}
 }

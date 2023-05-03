@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"sort"
 
 	"cosmossdk.io/core/appmodule"
 	"cosmossdk.io/depinject"
@@ -233,6 +234,9 @@ func init() {
 		appmodule.Provide(
 			provideModule,
 		),
+		appmodule.Invoke(
+			invokeSetPostsHooks,
+		),
 	)
 }
 
@@ -272,4 +276,43 @@ func provideModule(in ModuleInputs) ModuleOutputs {
 	)
 
 	return ModuleOutputs{SubspacesKeeper: k, Module: m}
+}
+
+func invokeSetPostsHooks(
+	config *modulev1.Module,
+	keeper *keeper.Keeper,
+	wrappers map[string]types.SubspacesHooksWrapper,
+) error {
+	// all arguments to invokers are optional
+	if keeper == nil || config == nil {
+		return nil
+	}
+
+	modNames := maps.Keys(wrappers)
+	order := config.HooksOrder
+	if len(order) == 0 {
+		order = modNames
+		sort.Strings(order)
+	}
+
+	if len(order) != len(modNames) {
+		return fmt.Errorf("len(hooks_order: %v) != len(hooks modules: %v)", order, modNames)
+	}
+
+	if len(modNames) == 0 {
+		return nil
+	}
+
+	var multiHooks types.MultiSubspacesHooks
+	for _, modName := range order {
+		wrapper, ok := wrappers[modName]
+		if !ok {
+			return fmt.Errorf("can't find posts hooks for module %s", modName)
+		}
+
+		multiHooks = append(multiHooks, wrapper.Hooks)
+	}
+
+	keeper.SetHooks(multiHooks)
+	return nil
 }
