@@ -22,9 +22,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
-      GENESIS_DESMOS_VERSION: "v4.6.3"
-      GENESIS_URL: "https://raw.githubusercontent.com/RiccardoM/desmos-states/master/morpheus-apollo-3-9238240.json"
-      UPGRADE_NAME: "v4.7.1"
+      GENESIS_DESMOS_VERSION: "v4.8.1"
+      GENESIS_URL: "https://raw.githubusercontent.com/desmos-labs/states/main/morpheus-apollo-3-10883000.json"
+      UPGRADE_NAME: "v5.0.0"
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v3
