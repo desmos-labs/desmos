@@ -3,6 +3,7 @@
 ## Changelog
 - April 20th, 2023: First draft;
 - April 24th, 2023: First review;
+- May 2th, 2023: Second review;
 
 ## Status
 
@@ -18,9 +19,16 @@ Currently, when a user creates a post, they are assigned the author role and bec
 
 ## Decision
 
-We will implement a new handler that allows users to move their own posts through a message. Here are the upcoming changes:
+In order to move the post properly, we will implement an operation that involves the following functions:
+
+1. delete all reactions, reports and references that are incompatible with the new subspace of the post
+2. reset the moved post `PostReferences` to be __empty__
+3. reset the moved post `Conversation` ID to be __0__
+4. set the proper `PostID` within target subspace
 
 ### `Msg` Service
+
+We will implement a new handler that allows users to move their own posts through a message.
 
 ```proto
 service Msg {
