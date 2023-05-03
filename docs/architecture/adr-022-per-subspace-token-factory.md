@@ -24,13 +24,13 @@ This have the consequence of not giving any financial incentive on creating a so
 We will wrap the Osmosis [Token Factory module](https://docs.osmosis.zone/osmosis-core/modules/tokenfactory/)
 with the following modifications:
 1. Instead of use the token creator address to compose the coin denom we will use the subspace treasury address
-   as following: `factory/{trasury_address}/subdenom`.
+   as following: `factory/{trasury_address}/subdenom`;
 2. All the operations of `CreateDenom`, `Mint`, `Burn`, `SetDenomMetadata`, `SetBeforeSendHook` and
    `ForceTransfer` can only be performed by the subspace administrators;
 3. The `CreateDenom` action will burn the coins instead of send them to the community pool.  
 
-With this module subspace admins will be able to create a coin that can be later used to pay for 
-subspace related transactions.
+With this module subspace admins will be able to create a coin that can be used to pay for 
+subspace related transactions after a governance proposal.
 
 ### `Msg` Service
 
@@ -54,18 +54,18 @@ service Msg {
   rpc SetDenomMetadata(MsgSetDenomMetadata)
       returns (MsgSetDenomMetadataResponse);
 
-  // SetBeforeSendHook allows a subspace admin to set the address of a wasm contract
+  // SetBeforeSendHook allows a subspace admin to set the address of a CosmWasm contract
   // that will be called before the coins are sent to track or block the send action.
   rpc SetBeforeSendHook(MsgSetBeforeSendHook)
       returns (MsgSetBeforeSendHookResponse);
 
   // ForceTransfer allows a subspace admin to force transfer some coins from one
-  // address to another
+  // address to another.
   rpc ForceTransfer(MsgForceTransfer) returns (MsgForceTransferResponse);
 }
 
 // MsgCreateDenom defines the message structure for the CreateDenom gRPC service
-// method. It allows an account to create a new denom. It requires a subspace
+// method. It allows a subspace admin to create a new denom. It requires a subspace
 // id and a sub denomination. The (subspace_id, sub_denomination) tuple
 // must be unique and cannot be re-used.
 //
@@ -83,17 +83,17 @@ message MsgCreateDenom {
 }
 
 // MsgCreateDenomResponse is the return value of MsgCreateDenom
-// It returns the full string of the newly created denom
+// It returns the full string of the newly created denom.
 message MsgCreateDenomResponse {
   // Denom of the newly created coin.
   string new_token_denom = 1
   [ (gogoproto.moretags) = "yaml:\"new_token_denom\"" ];
 }
 
-// MsgMint is the sdk.Msg type for allowing an admin account to mint
+// MsgMint is the sdk.Msg type for allowing a subspace admin to mint
 // more of a token.
 message MsgMint {
-  // Address of who is minting the coins.
+  // Address of who is performing the mint action.
   string sender = 1 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
   
   // Subspace id where the coin has been created.
@@ -114,10 +114,10 @@ message MsgMint {
 // MsgMintResponse defines the Msg/MintResponse response type.
 message MsgMintResponse {}
 
-// MsgBurn is the sdk.Msg type for allowing an admin account to burn
+// MsgBurn is the sdk.Msg type for allowing a subspace admin to burn
 // a token.
 message MsgBurn {
-  // Address of who is burning the coins.
+  // Address of who is performing the burn action.
   string sender = 1 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
 
   // Subspace id where the coin has been created.
@@ -138,7 +138,7 @@ message MsgBurn {
 // MsgBurnResponse defines the Msg/BurnResponse response type.
 message MsgBurnResponse {}
 
-// MsgSetBeforeSendHook is the sdk.Msg type for allowing an admin account to
+// MsgSetBeforeSendHook is the sdk.Msg type for allowing a subspace admin to
 // assign a CosmWasm contract to call with a BeforeSend hook.
 message MsgSetBeforeSendHook {
   // Address of who is setting the hook.
@@ -159,7 +159,7 @@ message MsgSetBeforeSendHook {
 // MsgSetBeforeSendHook message.
 message MsgSetBeforeSendHookResponse {}
 
-// MsgSetDenomMetadata is the sdk.Msg type for allowing an admin account to set
+// MsgSetDenomMetadata is the sdk.Msg type for allowing a subspace admin to set
 // the denom's bank metadata.
 message MsgSetDenomMetadata {
   // Address of who is setting the coin's metadata.
@@ -168,7 +168,7 @@ message MsgSetDenomMetadata {
   // Subspace id where the coin has been created.
   uint64 subspace_id = 2 [ (gogoproto.moretags) = "yaml:\"subspace_id\"" ];
 
-   // Coin metadata to be set.
+  // Coin metadata to be set.
   cosmos.bank.v1beta1.Metadata metadata = 3 [
     (gogoproto.moretags) = "yaml:\"metadata\"",
     (gogoproto.nullable) = false
@@ -215,7 +215,7 @@ The solution outlined above is fully backward compatible since we are just addin
 
 ### Positive
 
-- Enable other projects to have economic incentives on building on Desmos 
+- Enable other projects to have economic incentives on building on Desmos.
 
 ### Negative
 
