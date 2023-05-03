@@ -5,14 +5,19 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"cosmossdk.io/core/appmodule"
+	"cosmossdk.io/depinject"
 	v4 "github.com/desmos-labs/desmos/v5/x/profiles/legacy/v4/types"
 	v5 "github.com/desmos-labs/desmos/v5/x/profiles/legacy/v5/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 
 	abci "github.com/cometbft/cometbft/abci/types"
@@ -21,6 +26,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 
 	"github.com/spf13/cobra"
+
+	modulev1 "github.com/desmos-labs/desmos/v5/api/desmos/profiles/module/v1"
 
 	"github.com/desmos-labs/desmos/v5/x/profiles/client/cli"
 	"github.com/desmos-labs/desmos/v5/x/profiles/keeper"
@@ -37,6 +44,8 @@ var (
 	_ module.AppModule           = AppModule{}
 	_ module.AppModuleBasic      = AppModuleBasic{}
 	_ module.AppModuleSimulation = AppModule{}
+	_ appmodule.AppModule        = AppModule{}
+	_ depinject.OnePerModuleType = AppModule{}
 )
 
 // AppModuleBasic defines the basic application module used by the profiles module.
@@ -221,4 +230,82 @@ func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
 // WeightedOperations returns the all the profiles module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
 	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.ak, am.bk)
+}
+
+// App Wiring Setup
+
+// IsOnePerModuleType implements the depinject.OnePerModuleType interface.
+func (am AppModule) IsOnePerModuleType() {}
+
+// IsAppModule implements the appmodule.AppModule interface.
+func (am AppModule) IsAppModule() {}
+
+func init() {
+	appmodule.Register(
+		&modulev1.Module{},
+		appmodule.Provide(
+			provideModule,
+		),
+	)
+}
+
+type ModuleInputs struct {
+	depinject.In
+
+	Config    *modulev1.Module
+	Cdc       codec.Codec
+	LegacyCdc *codec.LegacyAmino
+	Key       *storetypes.KVStoreKey
+
+	AccountKeeper authkeeper.AccountKeeper
+	BankKeeper    bankkeeper.Keeper
+
+	FeesKeeper          feeskeeper.Keeper
+	RelationshipsKeeper types.RelationshipsKeeper
+	ScopedKeeper        types.ScopedKeeper
+	ChannelKeeper       types.ChannelKeeper
+	PortKeeper          types.PortKeeper
+
+	// LegacySubspace is used solely for migration of x/params managed parameters
+	LegacySubspace types.ParamsSubspace `optional:"true"`
+}
+
+type ModuleOutputs struct {
+	depinject.Out
+
+	PostsKeeper keeper.Keeper
+	Module      appmodule.AppModule
+}
+
+func provideModule(in ModuleInputs) ModuleOutputs {
+
+	// default to governance authority if not provided
+	authority := authtypes.NewModuleAddress(govtypes.ModuleName)
+	if in.Config.Authority != "" {
+		authority = authtypes.NewModuleAddressOrBech32Address(in.Config.Authority)
+	}
+
+	k := keeper.NewKeeper(
+		in.Cdc,
+		in.LegacyCdc,
+		in.Key,
+		in.AccountKeeper,
+		in.RelationshipsKeeper,
+		in.ChannelKeeper,
+		in.PortKeeper,
+		in.ScopedKeeper,
+		authority.String(),
+	)
+
+	m := NewAppModule(
+		in.Cdc,
+		in.LegacyCdc,
+		k,
+		in.AccountKeeper,
+		in.BankKeeper,
+		in.FeesKeeper,
+		in.LegacySubspace,
+	)
+
+	return ModuleOutputs{PostsKeeper: k, Module: m}
 }
