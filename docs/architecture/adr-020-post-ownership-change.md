@@ -45,7 +45,7 @@ In order to handle the post owner transfer process easily, we will define a new 
 // PostOwnerTransferRequest represent a request that transfers the post ownership to receiver
 message PostOwnerTransferRequest {
 
-  // Id of the subspace where the post owner transfer will be performed
+  // Id of the subspace that holds the post to transfer
   uint64 subspace_id = 1;
   
   // Id of the post which will be transferred
