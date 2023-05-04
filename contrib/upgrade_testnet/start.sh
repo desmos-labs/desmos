@@ -13,7 +13,7 @@ TESTNETDIR=$CONTRIBFOLDER/upgrade_testnet
 echo "===> Removing build folder"
 rm -r -f $BUILDDIR
 
-DESMOS="docker run --rm --name desmos-tesnet -it --user "$(id -u):$(id -g)" -v $HOME/.desmos:/.desmos -v .:/out -v $HOME/.desmos:/.desmos desmoslabs/desmos:$GENESIS_VERSION desmos"
+DESMOS="docker run --rm --name desmos-tesnet -it --user $(id -u):$(id -g) -v $HOME/.desmos:/.desmos -v .:/out -v $HOME/.desmos:/.desmos desmoslabs/desmos:$GENESIS_VERSION desmos"
 
 # Create the 4 nodes folders with the correct denom
 echo "===> Creating $NODES nodes localnet"
