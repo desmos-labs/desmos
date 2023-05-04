@@ -130,7 +130,7 @@ message MsgAcceptPostOwnerTransfer {
   // Id of the subspace holding the post for which the request will be accepted
   uint64 subspace_id = 1;
     
-  // Id of the post whose request will be accepted
+  // Id of the post for which the request will be accepted
   uint64 post_id = 2;
 
   // Address of the request receiver
