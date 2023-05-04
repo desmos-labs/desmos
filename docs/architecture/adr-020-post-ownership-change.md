@@ -2,7 +2,7 @@
 
 ## Changelog
 - April 21th, 2023: First draft;
-- April 26th, 2023: First revise;
+- April 26th, 2023: First review;
 
 ## Status
 
