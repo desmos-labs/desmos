@@ -42,7 +42,7 @@ message Post {
 
 In order to handle the post owner transfer process easily, we will define a new structure as follows:
 
-// PostOwnerTransferRequest represent a request that transfers the post ownership to receiver
+// PostOwnerTransferRequest represents a request to transfer the ownership of a post from the sender to the receiver
 message PostOwnerTransferRequest {
 
   // Id of the subspace that holds the post to transfer
