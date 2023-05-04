@@ -96,7 +96,7 @@ service Msg {
 
 // MsgRequestPostOwnerTransfer represent a message used to transfer a post ownership to receiver
 message MsgRequestPostOwnerTransfer {
-  // Id of the subspace where the post owner transfer will be performed
+  // Id of the subspace that holds the post which ownership should be transfered
   uint64 subspace_id = 1;
     
   // Id of the post which will be transferred
