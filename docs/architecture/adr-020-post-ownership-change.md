@@ -142,7 +142,7 @@ message MsgAcceptPostOwnerTransferResponse {}
 
 // MsgRefusePostOwnerTransfer represents a message used to refuse a incoming post transfer request
 message MsgRefusePostOwnerTransfer {
-  // Id of the subspace where the request will be refused
+  // Id of the subspace holding the post for which the request will be refused
   uint64 subspace_id = 1;
     
   // Id of the post whose request will be refused
