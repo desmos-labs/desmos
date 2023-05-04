@@ -113,7 +113,7 @@ message MsgRequestPostOwnerTransferResponse {}
 
 // MsgCancelPostOwnerTransfer represents a message used to cancel a outgoing post transfer request
 message MsgCancelPostOwnerTransfer {
-  // Id of the subspace where the request will be cancelled
+  // Id of the subspace that holds the post for which the request should be canceled
   uint64 subspace_id = 1;
     
   // Id of the post whose request will be cancelled
