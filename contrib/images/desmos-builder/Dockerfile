@@ -1,4 +1,4 @@
-FROM golang:1.19-alpine
+FROM golang:1.19.9-alpine
 ARG arch=x86_64
 
 # Set up dependencies
