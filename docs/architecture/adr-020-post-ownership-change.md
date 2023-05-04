@@ -133,7 +133,7 @@ message MsgAcceptPostOwnerTransfer {
   // Id of the post whose request will be accepted
   uint64 post_id = 2;
 
-  // Address of the receiver who is accepting the request
+  // Address of the request receiver
   string receiver = 3;
 }
 
