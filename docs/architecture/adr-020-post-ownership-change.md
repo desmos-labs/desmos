@@ -18,10 +18,12 @@ Desmos is a social network protocol that allows users to create, share, and enga
 
 ## Decision
 
-We will add an __owner__ field to the `Post` structure and implement post ownership transfer functionality. Simple transfer functionality could result in someone receiving spam messages that damage their reputation. For example, scammers can transfer scam messages to victims, leading to reputational harm. Therefore, the functionality we will implement should include the following features:
-1. Permit the sender to initiate a request to transfer post ownership to the receiver
-2. Allow the receiver to accept or refuse the transfer request from the sender
-3. Allow the sender to cancel the transfer request if the receiver has not deal with the request
+We will enhance the `Post` structure by adding an **owner** field and implementing post ownership transfer functionality. It's important to consider potential issues that could arise from simple transfer functionality, such as someone receiving spam messages that could harm their reputation. For instance, scammers may transfer scam messages to victims, leading to reputational damage. To address this, the implemented functionality will include the following features:
+
+1. **Initiating Transfer**: The sender will be able to initiate a request to transfer post ownership to the receiver.
+2. **Accepting or Refusing Transfer**: The receiver will have the option to accept or refuse the transfer request from the sender.
+3. **Canceling Transfer Request**: In case the receiver has not yet addressed the transfer request, the sender will be able to cancel it.
+
 
 ### Type
 
