@@ -205,7 +205,7 @@ The solution outlined above is **not** backwards compatible and will require a m
 
 ### Positive
 
-- Enable users to transfer a post to another user
+- Enable users to transfer the ownership of a post to another user
 
 ### Negative
 
