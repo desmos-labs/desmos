@@ -127,7 +127,7 @@ message MsgRequestPostOwnerTransferResponse {}
 
 // MsgAcceptPostOwnerTransfer represents a message used to accept a incoming post transfer request
 message MsgAcceptPostOwnerTransfer {
-  // Id of the subspace where the request will be accepted
+  // Id of the subspace holding the post for which the request will be accepted
   uint64 subspace_id = 1;
     
   // Id of the post whose request will be accepted
