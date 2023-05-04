@@ -119,7 +119,7 @@ message MsgCancelPostOwnerTransfer {
   // Id of the post for which the request will be cancelled
   uint64 post_id = 2;
 
-  // Address of the sender who is cancelling the request
+  // Address of the transfer request sender
   string sender = 3;
 }
 // MsgCancelPostOwnerTransferResponse defines the Msg/CancelPostOwnerTransfer response type
