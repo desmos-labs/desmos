@@ -116,7 +116,7 @@ message MsgCancelPostOwnerTransfer {
   // Id of the subspace that holds the post for which the request should be canceled
   uint64 subspace_id = 1;
     
-  // Id of the post whose request will be cancelled
+  // Id of the post for which the request will be cancelled
   uint64 post_id = 2;
 
   // Address of the sender who is cancelling the request
