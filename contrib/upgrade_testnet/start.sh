@@ -13,8 +13,15 @@ TESTNETDIR=$CONTRIBFOLDER/upgrade_testnet
 echo "===> Removing build folder"
 rm -r -f $BUILDDIR
 
+DESMOS="docker run --rm --name desmos-tesnet -it --user "$(id -u):$(id -g)" -v $HOME/.desmos:/.desmos -v .:/out -v $HOME/.desmos:/.desmos desmoslabs/desmos:$GENESIS_VERSION desmos"
+
 # Create the 4 nodes folders with the correct denom
 echo "===> Creating $NODES nodes localnet"
+if ! [ -f build/node0/desmos/config/genesis.json ]; then $DESMOS testnet \
+		-o /out/build --starting-ip-address 192.168.10.2 --keyring-backend=test \
+		--v=$NODES --gentx-coin-denom="udaric" --minimum-gas-prices="0.000006udaric" \
+		--home /.desmos; fi
+
 make setup-localnet COIN_DENOM="udaric" NODES=$NODES > /dev/null > /dev/null
 
 # Run the Python script to setup the genesis
