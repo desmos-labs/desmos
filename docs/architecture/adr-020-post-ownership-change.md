@@ -148,7 +148,7 @@ message MsgRefusePostOwnerTransfer {
   // Id of the post whose request will be refused
   uint64 post_id = 2;
 
-  // Address of the receiver who is refusing the request
+  // Address of the request receiver
   string receiver = 3;
 }
 
