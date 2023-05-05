@@ -19,6 +19,7 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
+	ibcfeetypes "github.com/cosmos/ibc-go/v7/modules/apps/29-fee/types"
 
 	icacontrollertypes "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/controller/types"
 	icahosttypes "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/host/types"
@@ -129,6 +130,12 @@ func (u *Upgrade) Handler() upgradetypes.UpgradeHandler {
 func (u *Upgrade) StoreUpgrades() *storetypes.StoreUpgrades {
 	return &storetypes.StoreUpgrades{
 		Added: []string{
+			// New IBC features integration upgrades
+			ibcfeetypes.StoreKey,
+			icacontrollertypes.StoreKey,
+			icahosttypes.StoreKey,
+
+			// Cosmos SDK v0.47.x upgrades
 			consensustypes.ModuleName,
 			crisistypes.ModuleName,
 		},
