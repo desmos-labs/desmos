@@ -1,0 +1,70 @@
+{
+  "body": {
+    "messages": [
+      {
+        "@type": "/cosmos.gov.v1beta1.MsgVote",
+        "proposal_id": "1",
+        "voter": "cosmos1exdjkfxud8yzqtvua3hdd93xu0gmek5l47r8ra",
+        "option": "VOTE_OPTION_YES"
+      }
+    ],
+    "memo": "desmos1n8345tvzkg3jumkm859r2qz0v6xsc3henzddcj",
+    "timeout_height": "0",
+    "extension_options": [],
+    "non_critical_extension_options": []
+  },
+  "auth_info": {
+    "signer_infos": [
+      {
+        "public_key": {
+          "@type": "/cosmos.crypto.multisig.LegacyAminoPubKey",
+          "threshold": 2,
+          "public_keys": [
+            {
+              "@type": "/cosmos.crypto.secp256k1.PubKey",
+              "key": "A4k1o4weHTkMVXqzT0zKRkRmWTwQEh3JGiPkJvCQ4VO7"
+            },
+            {
+              "@type": "/cosmos.crypto.secp256k1.PubKey",
+              "key": "ApfZ2jzyWcRxzgCnKEKr+oIMyrGIJMp+1FjouYPovluE"
+            },
+            {
+              "@type": "/cosmos.crypto.secp256k1.PubKey",
+              "key": "AziL8Ly6QrMOr+V7Vf6XCBjDjLPTq0Dtxv7PPzDRnFQe"
+            }
+          ]
+        },
+        "mode_info": {
+          "multi": {
+            "bitarray": {
+              "extra_bits_stored": 3,
+              "elems": "wA=="
+            },
+            "mode_infos": [
+              {
+                "single": {
+                  "mode": "SIGN_MODE_LEGACY_AMINO_JSON"
+                }
+              },
+              {
+                "single": {
+                  "mode": "SIGN_MODE_LEGACY_AMINO_JSON"
+                }
+              }
+            ]
+          }
+        },
+        "sequence": "0"
+      }
+    ],
+    "fee": {
+      "amount": [],
+      "gas_limit": "200000",
+      "payer": "",
+      "granter": ""
+    }
+  },
+  "signatures": [
+    "CkAn/EVngYopgD7BP0KUBMcTHIGKzBlU9RLz1xozeefsdB0l3osUL2EVFlKwbveKrv/VhwcCPm6N++mMmQGFAWR2CkCTlMhmMOevuWGJmt2PwaIR0UuMw4cCxTyqcBhRVX81gywR4RUQ2k1nZXihmzQoZTF1R1SbK0vXjN+Ana+lUEH3"
+  ]
+}
