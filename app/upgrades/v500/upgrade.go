@@ -111,6 +111,10 @@ func (u *Upgrade) Handler() upgradetypes.UpgradeHandler {
 				// wasm
 			case wasmtypes.ModuleName:
 				keyTable = wasmtypes.ParamKeyTable() //nolint:staticcheck
+
+				// Skip if module is not migration target
+			default:
+				continue
 			}
 
 			if !subspace.HasKeyTable() {
