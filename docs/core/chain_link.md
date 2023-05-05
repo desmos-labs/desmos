@@ -9,7 +9,8 @@ This is due to the fact that the type uri of the new type will now be `/desmos.p
 
 In order to update this test case properly, you need to follow the steps below.
 
-**1.** Create a file named `tx.json` with the following contents:
+#### 1. Create the transaction file
+First of all, create a file named `tx.json` with the following contents:
 
 ```json
 {
@@ -84,7 +85,8 @@ In order to update this test case properly, you need to follow the steps below.
 }
 ```
 
-**2.** Run the following command using the latest Desmos version:
+#### 2. Create the chain link JSON file
+Now, run the following command using the latest Desmos version:
 
 ```bash
 desmos create-chain-link-json
@@ -95,7 +97,8 @@ Use the following data when running that command:
 - Chain ID: `cosmos`
 - Path of multi-signed tx file: path to the `tx.json` file created at the previous step
 
-*3.* Run the `export-signature.go` script in order to produce the hex-encoded signature value:
+#### 3. Export the signature
+Run the `export-signature.go` script in order to produce the hex-encoded signature value:
 
 ```bash
 go run docs/core/export-signature.go /path/to/data.json
@@ -107,7 +110,8 @@ This script should output something similar to this:
 0a282f6465736d6f732e70726f66696c65732e76332e436f736d6f734d756c74695369676e617475726512ed010a0508031201c012710a292f6465736d6f732e70726f66696c65732e76332e436f736d6f7353696e676c655369676e61747572651244087f124027fc4567818a29803ec13f429404c7131c818acc1954f512f3d71a3379e7ec741d25de8b142f61151652b06ef78aaeffd58707023e6e8dfbe98c99018501647612710a292f6465736d6f732e70726f66696c65732e76332e436f736d6f7353696e676c655369676e61747572651244087f12409394c86630e7afb961899add8fc1a211d14b8cc38702c53caa701851557f35832c11e11510da4d676578a19b342865317547549b2b4bd78cdf809dafa55041f7
 ```
 
-*4.* Replace the signature value of the multisignature account test case with the newly produced hex-encoded value:
+#### 4. Replace the signature
+Finally, replace the signature value of the multi-signature account test case with the newly produced hex-encoded value:
 
 ```go
 expected := profilescliutils.NewChainLinkJSON(
