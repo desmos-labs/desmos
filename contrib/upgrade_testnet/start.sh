@@ -9,27 +9,30 @@ BUILDDIR=$(pwd)/build
 CONTRIBFOLDER=$(pwd)/contrib
 TESTNETDIR=$CONTRIBFOLDER/upgrade_testnet
 
-# Remove the build folder
+# Remove all build files
 echo "===> Removing build folder"
-rm -r -f $BUILDDIR
-
-DESMOS="docker run --rm --name desmos-tesnet -it --user $(id -u):$(id -g) -v $HOME/.desmos:/.desmos -v .:/out -v $HOME/.desmos:/.desmos desmoslabs/desmos:$GENESIS_VERSION desmos"
+rm -r -f $BUILDDIR && mkdir $BUILDDIR
 
 # Create the 4 nodes folders with the correct denom
 echo "===> Creating $NODES nodes localnet"
-if ! [ -f build/node0/desmos/config/genesis.json ]; then $DESMOS testnet \
-		-o /out/build --starting-ip-address 192.168.10.2 --keyring-backend=test \
-		--v=$NODES --gentx-coin-denom="udaric" --minimum-gas-prices="0.000006udaric" \
-		--home /.desmos; fi
-
-make setup-localnet COIN_DENOM="udaric" NODES=$NODES > /dev/null > /dev/null
+docker run --rm --name desmos-tesnet --user $UID:$GID \
+  -v $BUILDDIR:/workerplace/build:Z --workdir /workerplace \
+  desmoslabs/desmos:$GENESIS_VERSION \
+    desmos testnet \
+      --home ./build \
+      -o ./build \
+      --starting-ip-address 192.168.10.2 \
+      --keyring-backend=test \
+	    --v=$NODES \
+	    --gentx-coin-denom="udaric" \
+	    --minimum-gas-prices="0.000001udaric"
 
 # Run the Python script to setup the genesis
 echo "===> Setting up the genesis file"
-docker run --rm --user $UID:$GID \
-  -v $TESTNETDIR:/usr/src/app \
-  -v $BUILDDIR:/desmos:Z \
-  desmoslabs/desmos-python python setup_genesis.py /desmos $NODES $GENESIS_URL > /dev/null
+docker run --rm --name desmos-python --user $UID:$GID \
+  -v $TESTNETDIR:/usr/src/app -v $BUILDDIR:/desmos:Z \
+  desmoslabs/desmos-python \
+    python setup_genesis.py /desmos $NODES $GENESIS_URL > /dev/null
 
 # Build the new Desmos-Cosmovisor image
 echo "===> Building the new Desmos-Cosmovisor image"
