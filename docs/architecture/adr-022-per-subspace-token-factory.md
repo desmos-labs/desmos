@@ -9,8 +9,7 @@ Draft
 
 ## Abstract
 
-This ADR introduces a new feature that enables the subspace admins to create, mint and burn a subspace related
-coin. 
+This ADR introduces a new feature that allows subspace admins to create, mint and burn new tokens. 
 
 ## Context
 
