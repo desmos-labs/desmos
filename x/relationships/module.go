@@ -8,10 +8,6 @@ import (
 	"cosmossdk.io/core/appmodule"
 	"cosmossdk.io/depinject"
 
-	profilesv4 "github.com/desmos-labs/desmos/v5/x/profiles/legacy/v4"
-
-	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
@@ -28,6 +24,9 @@ import (
 	"github.com/spf13/cobra"
 
 	modulev1 "github.com/desmos-labs/desmos/v5/api/desmos/relationships/module/v1"
+
+	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
+	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 
 	"github.com/desmos-labs/desmos/v5/x/relationships/client/cli"
 	"github.com/desmos-labs/desmos/v5/x/relationships/keeper"
@@ -103,7 +102,6 @@ func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) 
 type AppModule struct {
 	AppModuleBasic
 	keeper keeper.Keeper
-	pk     profilesv4.Keeper
 	sk     subspaceskeeper.Keeper
 	ak     authkeeper.AccountKeeper
 	bk     bankkeeper.Keeper
@@ -114,12 +112,8 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
 	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
 
-	m := keeper.NewMigrator(am.keeper, am.pk)
-	err := cfg.RegisterMigration(types.ModuleName, 1, m.Migrate1To2)
-	if err != nil {
-		panic(err)
-	}
-	err = cfg.RegisterMigration(types.ModuleName, 2, m.Migrate2To3)
+	m := keeper.NewMigrator(am.keeper)
+	err := cfg.RegisterMigration(types.ModuleName, 2, m.Migrate2To3)
 	if err != nil {
 		panic(err)
 	}
@@ -128,7 +122,7 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 // NewAppModule creates a new AppModule Object
 func NewAppModule(
 	cdc codec.Codec,
-	k keeper.Keeper, sk subspaceskeeper.Keeper, pk profilesv4.Keeper,
+	k keeper.Keeper, sk subspaceskeeper.Keeper,
 	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) AppModule {
 	return AppModule{
@@ -137,7 +131,6 @@ func NewAppModule(
 		ak:             ak,
 		bk:             bk,
 		sk:             sk,
-		pk:             pk,
 	}
 }
 
@@ -221,7 +214,7 @@ func init() {
 	appmodule.Register(
 		&modulev1.Module{},
 		appmodule.Provide(
-			provideModule,
+			ProvideModule,
 		),
 	)
 }
@@ -235,8 +228,7 @@ type ModuleInputs struct {
 	AccountKeeper authkeeper.AccountKeeper
 	BankKeeper    bankkeeper.Keeper
 
-	ProfilesV4Keeper profilesv4.Keeper
-	SubspacesKeeper  subspaceskeeper.Keeper
+	SubspacesKeeper subspaceskeeper.Keeper
 }
 
 type ModuleOutputs struct {
@@ -248,7 +240,7 @@ type ModuleOutputs struct {
 	SubspacesHooks subspacestypes.SubspacesHooksWrapper
 }
 
-func provideModule(in ModuleInputs) ModuleOutputs {
+func ProvideModule(in ModuleInputs) ModuleOutputs {
 
 	k := keeper.NewKeeper(
 		in.Cdc,
@@ -260,7 +252,6 @@ func provideModule(in ModuleInputs) ModuleOutputs {
 		in.Cdc,
 		k,
 		in.SubspacesKeeper,
-		in.ProfilesV4Keeper,
 		in.AccountKeeper,
 		in.BankKeeper,
 	)

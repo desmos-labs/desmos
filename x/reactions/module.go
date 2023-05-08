@@ -25,7 +25,11 @@ import (
 
 	modulev1 "github.com/desmos-labs/desmos/v5/api/desmos/reactions/module/v1"
 
+	postskeeper "github.com/desmos-labs/desmos/v5/x/posts/keeper"
 	poststypes "github.com/desmos-labs/desmos/v5/x/posts/types"
+	profileskeeper "github.com/desmos-labs/desmos/v5/x/profiles/keeper"
+	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
+	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 
 	"github.com/desmos-labs/desmos/v5/x/reactions/client/cli"
 	"github.com/desmos-labs/desmos/v5/x/reactions/keeper"
@@ -224,7 +228,7 @@ func init() {
 	appmodule.Register(
 		&modulev1.Module{},
 		appmodule.Provide(
-			provideModule,
+			ProvideModule,
 		),
 	)
 }
@@ -238,10 +242,10 @@ type ModuleInputs struct {
 	AccountKeeper authkeeper.AccountKeeper
 	BankKeeper    bankkeeper.Keeper
 
-	ProfilesKeeper      types.ProfilesKeeper
+	ProfilesKeeper      profileskeeper.Keeper
 	SubspacesKeeper     subspaceskeeper.Keeper
 	PostsKeeper         postskeeper.Keeper
-	RelationshipsKeeper types.RelationshipsKeeper
+	RelationshipsKeeper relationshipskeeper.Keeper
 }
 
 type ModuleOutputs struct {
@@ -254,7 +258,7 @@ type ModuleOutputs struct {
 	PostsHooks     poststypes.PostsHooksWrapper
 }
 
-func provideModule(in ModuleInputs) ModuleOutputs {
+func ProvideModule(in ModuleInputs) ModuleOutputs {
 
 	k := keeper.NewKeeper(
 		in.Cdc,

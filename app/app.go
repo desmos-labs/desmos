@@ -1,14 +1,13 @@
+//go:build !app_v2
+
 package app
 
 import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"net/http"
 	"os"
 	"path/filepath"
-
-	"github.com/gorilla/mux"
 
 	"github.com/desmos-labs/desmos/v5/x/reactions"
 	reactionstypes "github.com/desmos-labs/desmos/v5/x/reactions/types"
@@ -18,8 +17,6 @@ import (
 
 	"github.com/desmos-labs/desmos/v5/app/upgrades"
 	v500 "github.com/desmos-labs/desmos/v5/app/upgrades/v500"
-
-	profilesv4 "github.com/desmos-labs/desmos/v5/x/profiles/legacy/v4"
 
 	"github.com/cosmos/cosmos-sdk/runtime"
 	"github.com/cosmos/cosmos-sdk/server"
@@ -47,7 +44,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	nodeservice "github.com/cosmos/cosmos-sdk/client/grpc/node"
 	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
-	"github.com/prometheus/client_golang/prometheus"
 
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
 	"github.com/spf13/cast"
@@ -58,8 +54,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/server/api"
 	"github.com/cosmos/cosmos-sdk/server/config"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
-
-	"github.com/rakyll/statik/fs"
 
 	dbm "github.com/cometbft/cometbft-db"
 	abci "github.com/cometbft/cometbft/abci/types"
@@ -80,7 +74,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	"github.com/cosmos/cosmos-sdk/x/gov"
 	"github.com/cosmos/cosmos-sdk/x/params"
-	paramsclient "github.com/cosmos/cosmos-sdk/x/params/client"
 	"github.com/cosmos/cosmos-sdk/x/slashing"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 
@@ -101,12 +94,10 @@ import (
 	ibctransferkeeper "github.com/cosmos/ibc-go/v7/modules/apps/transfer/keeper"
 	ibctransfertypes "github.com/cosmos/ibc-go/v7/modules/apps/transfer/types"
 	ibc "github.com/cosmos/ibc-go/v7/modules/core"
-	ibcclientclient "github.com/cosmos/ibc-go/v7/modules/core/02-client/client"
 	ibcclienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
 	porttypes "github.com/cosmos/ibc-go/v7/modules/core/05-port/types"
 	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
 	ibckeeper "github.com/cosmos/ibc-go/v7/modules/core/keeper"
-	ibctm "github.com/cosmos/ibc-go/v7/modules/light-clients/07-tendermint"
 
 	ica "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts"
 	icacontroller "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/controller"
@@ -118,7 +109,6 @@ import (
 	icatypes "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/types"
 
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
-	upgradeclient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
 
 	"github.com/desmos-labs/desmos/v5/x/profiles"
 	profileskeeper "github.com/desmos-labs/desmos/v5/x/profiles/keeper"
@@ -151,7 +141,6 @@ import (
 	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	evidencetypes "github.com/cosmos/cosmos-sdk/x/evidence/types"
-	govclient "github.com/cosmos/cosmos-sdk/x/gov/client"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	govv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
@@ -170,117 +159,6 @@ import (
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
-)
-
-const (
-	appName          = "Desmos"
-	Bech32MainPrefix = "desmos"
-
-	CoinType           = 852
-	FullFundraiserPath = "44'/852'/0'/0/0"
-)
-
-// GetWasmOpts parses appOpts and add wasm opt to the given options array.
-// if telemetry is enabled, the wasmVM cache metrics are activated.
-func GetWasmOpts(
-	appOpts servertypes.AppOptions,
-	grpcQueryRouter *baseapp.GRPCQueryRouter,
-	cdc codec.Codec,
-	profilesKeeper profileskeeper.Keeper,
-	subspacesKeeper subspaceskeeper.Keeper,
-	relationshipsKeeper relationshipskeeper.Keeper,
-	postsKeeper postskeeper.Keeper,
-	reportsKeeper reportskeeper.Keeper,
-	reactionsKeeper reactionskeeper.Keeper,
-) []wasm.Option {
-	var wasmOpts []wasm.Option
-	if cast.ToBool(appOpts.Get("telemetry.enabled")) {
-		wasmOpts = append(wasmOpts, wasmkeeper.WithVMCacheMetrics(prometheus.DefaultRegisterer))
-	}
-
-	customQueryPlugin := NewDesmosCustomQueryPlugin(
-		cdc,
-		grpcQueryRouter,
-		profilesKeeper,
-		subspacesKeeper,
-		relationshipsKeeper,
-		postsKeeper,
-		reportsKeeper,
-		reactionsKeeper,
-	)
-	customMessageEncoder := NewDesmosCustomMessageEncoder(cdc)
-
-	wasmOpts = append(wasmOpts, wasmkeeper.WithGasRegister(NewDesmosWasmGasRegister()))
-	wasmOpts = append(wasmOpts, wasmkeeper.WithQueryPlugins(&customQueryPlugin))
-	wasmOpts = append(wasmOpts, wasmkeeper.WithMessageEncoders(&customMessageEncoder))
-
-	return wasmOpts
-}
-
-var (
-	// DefaultNodeHome sets the folder where the application data and configuration will be stored
-	DefaultNodeHome string
-
-	// ModuleBasics is in charge of setting up basic module elements
-	ModuleBasics = module.NewBasicManager(
-		auth.AppModuleBasic{},
-		genutil.NewAppModuleBasic(genutiltypes.DefaultMessageValidator),
-		bank.AppModuleBasic{},
-		capability.AppModuleBasic{},
-		staking.AppModuleBasic{},
-		mint.AppModuleBasic{},
-		distr.AppModuleBasic{},
-		gov.NewAppModuleBasic(
-			[]govclient.ProposalHandler{
-				paramsclient.ProposalHandler,
-				upgradeclient.LegacyProposalHandler,
-				upgradeclient.LegacyCancelProposalHandler,
-				ibcclientclient.UpdateClientProposalHandler,
-				ibcclientclient.UpgradeProposalHandler,
-			},
-		),
-		params.AppModuleBasic{},
-		crisis.AppModuleBasic{},
-		slashing.AppModuleBasic{},
-		feegrantmodule.AppModuleBasic{},
-		upgrade.AppModuleBasic{},
-		evidence.AppModuleBasic{},
-		authzmodule.AppModuleBasic{},
-		vesting.AppModuleBasic{},
-		consensus.AppModuleBasic{},
-
-		wasm.AppModuleBasic{},
-
-		// IBC modules
-		ibc.AppModuleBasic{},
-		ibctm.AppModuleBasic{},
-		ibctransfer.AppModuleBasic{},
-		ibcfee.AppModuleBasic{},
-		ica.AppModuleBasic{},
-
-		// Custom modules
-		profiles.AppModuleBasic{},
-		relationships.AppModuleBasic{},
-		subspaces.AppModuleBasic{},
-		posts.AppModuleBasic{},
-		reports.AppModuleBasic{},
-		reactions.AppModuleBasic{},
-		supply.AppModuleBasic{},
-	)
-
-	// Module account permissions
-	maccPerms = map[string][]string{
-		authtypes.FeeCollectorName:     nil,
-		distrtypes.ModuleName:          nil,
-		minttypes.ModuleName:           {authtypes.Minter},
-		stakingtypes.BondedPoolName:    {authtypes.Burner, authtypes.Staking},
-		stakingtypes.NotBondedPoolName: {authtypes.Burner, authtypes.Staking},
-		govtypes.ModuleName:            {authtypes.Burner},
-		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
-		wasm.ModuleName:                {authtypes.Burner},
-		ibcfeetypes.ModuleName:         nil,
-		icatypes.ModuleName:            nil,
-	}
 )
 
 var (
@@ -440,7 +318,7 @@ func NewDesmosApp(
 	app.CapabilityKeeper.Seal()
 
 	// add keepers
-	app.AccountKeeper = authkeeper.NewAccountKeeper(appCodec, keys[authtypes.StoreKey], authtypes.ProtoBaseAccount, maccPerms, sdk.Bech32MainPrefix, authtypes.NewModuleAddress(govtypes.ModuleName).String())
+	app.AccountKeeper = authkeeper.NewAccountKeeper(appCodec, keys[authtypes.StoreKey], authtypes.ProtoBaseAccount, GetMaccPerms(), sdk.Bech32MainPrefix, authtypes.NewModuleAddress(govtypes.ModuleName).String())
 
 	app.BankKeeper = bankkeeper.NewBaseKeeper(
 		appCodec,
@@ -780,7 +658,7 @@ func NewDesmosApp(
 		// Custom modules
 		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AuthzKeeper, app.AccountKeeper, app.BankKeeper),
 		profiles.NewAppModule(appCodec, legacyAmino, app.ProfilesKeeper, app.AccountKeeper, app.BankKeeper, app.GetSubspace(profilestypes.ModuleName)),
-		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv4.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper),
+		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
 		posts.NewAppModule(appCodec, app.PostsKeeper, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper, app.GetSubspace(poststypes.ModuleName)),
 		reports.NewAppModule(appCodec, app.ReportsKeeper, app.SubspacesKeeper, app.PostsKeeper, app.AccountKeeper, app.BankKeeper, app.GetSubspace(reportstypes.ModuleName)),
 		reactions.NewAppModule(appCodec, app.ReactionsKeeper, app.ProfilesKeeper, app.SubspacesKeeper, app.PostsKeeper, app.AccountKeeper, app.BankKeeper),
@@ -1065,25 +943,6 @@ func NewDesmosApp(
 	return app
 }
 
-// SetupConfig sets up the given config as it should be for Desmos
-func SetupConfig(config *sdk.Config) {
-	config.SetBech32PrefixForAccount(Bech32MainPrefix, Bech32MainPrefix+sdk.PrefixPublic)
-	config.SetBech32PrefixForValidator(Bech32MainPrefix+sdk.PrefixValidator+sdk.PrefixOperator, Bech32MainPrefix+sdk.PrefixValidator+sdk.PrefixOperator+sdk.PrefixPublic)
-	config.SetBech32PrefixForConsensusNode(Bech32MainPrefix+sdk.PrefixValidator+sdk.PrefixConsensus, Bech32MainPrefix+sdk.PrefixValidator+sdk.PrefixConsensus+sdk.PrefixPublic)
-
-	// 852 is the international dialing code of Hong Kong
-	// Following the coin type registered at https://github.com/satoshilabs/slips/blob/master/slip-0044.md
-	config.SetCoinType(CoinType)
-}
-
-// MakeCodecs constructs the *std.Codec and *codec.LegacyAmino instances used by
-// DesmosApp. It is useful for tests and clients who do not want to construct the
-// full DesmosApp
-func MakeCodecs() (codec.Codec, *codec.LegacyAmino) {
-	cfg := MakeEncodingConfig()
-	return cfg.Marshaler, cfg.Amino
-}
-
 // Name returns the name of the App
 func (app *DesmosApp) Name() string { return app.BaseApp.Name() }
 
@@ -1110,19 +969,6 @@ func (app *DesmosApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain) ab
 // LoadHeight loads a particular height
 func (app *DesmosApp) LoadHeight(height int64) error {
 	return app.LoadVersion(height)
-}
-
-// BlockedAddresses returns all the app's blocked account addresses.
-func BlockedAddresses() map[string]bool {
-	modAccAddrs := make(map[string]bool)
-	for acc := range GetMaccPerms() {
-		modAccAddrs[authtypes.NewModuleAddress(acc).String()] = true
-	}
-
-	// allow the following addresses to receive funds
-	delete(modAccAddrs, authtypes.NewModuleAddress(govtypes.ModuleName).String())
-
-	return modAccAddrs
 }
 
 // LegacyAmino returns DesmosApp's amino codec.
@@ -1246,26 +1092,6 @@ func (app *DesmosApp) registerUpgrade(upgrade upgrades.Upgrade) {
 	}
 }
 
-// RegisterSwaggerAPI registers swagger route with API Server
-func RegisterSwaggerAPI(rtr *mux.Router) {
-	statikFS, err := fs.New()
-	if err != nil {
-		panic(err)
-	}
-
-	staticServer := http.FileServer(statikFS)
-	rtr.PathPrefix("/swagger/").Handler(http.StripPrefix("/swagger/", staticServer))
-}
-
-// GetMaccPerms returns a copy of the module account permissions
-func GetMaccPerms() map[string][]string {
-	dupMaccPerms := make(map[string][]string)
-	for k, v := range maccPerms {
-		dupMaccPerms[k] = v
-	}
-	return dupMaccPerms
-}
-
 // initParamsKeeper init params keeper and its subspaces
 func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino, key, tkey storetypes.StoreKey) paramskeeper.Keeper {
 	paramsKeeper := paramskeeper.NewKeeper(appCodec, legacyAmino, key, tkey)
@@ -1292,4 +1118,17 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(reactionstypes.ModuleName)
 
 	return paramsKeeper
+}
+
+// BlockedAddresses returns all the app's blocked account addresses.
+func BlockedAddresses() map[string]bool {
+	modAccAddrs := make(map[string]bool)
+	for acc := range GetMaccPerms() {
+		modAccAddrs[authtypes.NewModuleAddress(acc).String()] = true
+	}
+
+	// allow the following addresses to receive funds
+	delete(modAccAddrs, authtypes.NewModuleAddress(govtypes.ModuleName).String())
+
+	return modAccAddrs
 }

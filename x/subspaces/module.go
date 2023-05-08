@@ -232,10 +232,10 @@ func init() {
 	appmodule.Register(
 		&modulev1.Module{},
 		appmodule.Provide(
-			provideModule,
+			ProvideModule,
 		),
 		appmodule.Invoke(
-			invokeSetPostsHooks,
+			InvokeSetPostsHooks,
 		),
 	)
 }
@@ -258,7 +258,7 @@ type ModuleOutputs struct {
 	Module          appmodule.AppModule
 }
 
-func provideModule(in ModuleInputs) ModuleOutputs {
+func ProvideModule(in ModuleInputs) ModuleOutputs {
 
 	k := keeper.NewKeeper(
 		in.Cdc,
@@ -278,7 +278,7 @@ func provideModule(in ModuleInputs) ModuleOutputs {
 	return ModuleOutputs{SubspacesKeeper: k, Module: m}
 }
 
-func invokeSetPostsHooks(
+func InvokeSetPostsHooks(
 	config *modulev1.Module,
 	keeper *keeper.Keeper,
 	wrappers map[string]types.SubspacesHooksWrapper,

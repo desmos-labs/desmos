@@ -170,7 +170,7 @@ func init() {
 	appmodule.Register(
 		&modulev1.Module{},
 		appmodule.Provide(
-			provideModule,
+			ProvideModule,
 		),
 	)
 }
@@ -194,7 +194,7 @@ type ModuleOutputs struct {
 	Module       appmodule.AppModule
 }
 
-func provideModule(in ModuleInputs) ModuleOutputs {
+func ProvideModule(in ModuleInputs) ModuleOutputs {
 
 	k := keeper.NewKeeper(
 		in.Cdc,

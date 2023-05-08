@@ -7,8 +7,6 @@ import (
 
 	"cosmossdk.io/core/appmodule"
 	"cosmossdk.io/depinject"
-	v4 "github.com/desmos-labs/desmos/v5/x/profiles/legacy/v4/types"
-	v5 "github.com/desmos-labs/desmos/v5/x/profiles/legacy/v5/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -17,6 +15,7 @@ import (
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 
@@ -28,6 +27,11 @@ import (
 	"github.com/spf13/cobra"
 
 	modulev1 "github.com/desmos-labs/desmos/v5/api/desmos/profiles/module/v1"
+
+	relationshipskeeper "github.com/desmos-labs/desmos/v5/x/relationships/keeper"
+
+	v4 "github.com/desmos-labs/desmos/v5/x/profiles/legacy/v4/types"
+	v5 "github.com/desmos-labs/desmos/v5/x/profiles/legacy/v5/types"
 
 	"github.com/desmos-labs/desmos/v5/x/profiles/client/cli"
 	"github.com/desmos-labs/desmos/v5/x/profiles/keeper"
@@ -246,7 +250,7 @@ func init() {
 	appmodule.Register(
 		&modulev1.Module{},
 		appmodule.Provide(
-			provideModule,
+			ProvideModule,
 		),
 	)
 }
@@ -259,12 +263,12 @@ type ModuleInputs struct {
 	LegacyCdc *codec.LegacyAmino
 	Key       *storetypes.KVStoreKey
 
-	AccountKeeper authkeeper.AccountKeeper
-	BankKeeper    bankkeeper.Keeper
+	AccountKeeper    authkeeper.AccountKeeper
+	BankKeeper       bankkeeper.Keeper
+	Capabilitykeeper *capabilitykeeper.Keeper
 
 	FeesKeeper          feeskeeper.Keeper
-	RelationshipsKeeper types.RelationshipsKeeper
-	ScopedKeeper        types.ScopedKeeper
+	RelationshipsKeeper relationshipskeeper.Keeper
 	ChannelKeeper       types.ChannelKeeper
 	PortKeeper          types.PortKeeper
 
@@ -279,7 +283,7 @@ type ModuleOutputs struct {
 	Module         appmodule.AppModule
 }
 
-func provideModule(in ModuleInputs) ModuleOutputs {
+func ProvideModule(in ModuleInputs) ModuleOutputs {
 
 	// default to governance authority if not provided
 	authority := authtypes.NewModuleAddress(govtypes.ModuleName)
@@ -295,7 +299,7 @@ func provideModule(in ModuleInputs) ModuleOutputs {
 		in.RelationshipsKeeper,
 		in.ChannelKeeper,
 		in.PortKeeper,
-		in.ScopedKeeper,
+		in.Capabilitykeeper.ScopeToModule(types.ModuleName),
 		authority.String(),
 	)
 

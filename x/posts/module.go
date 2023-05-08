@@ -28,7 +28,10 @@ import (
 
 	modulev1 "github.com/desmos-labs/desmos/v5/api/desmos/posts/module/v1"
 
+	profileskeeper "github.com/desmos-labs/desmos/v5/x/profiles/keeper"
+	relationshipskeeper "github.com/desmos-labs/desmos/v5/x/relationships/keeper"
 	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
+	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 
 	v2 "github.com/desmos-labs/desmos/v5/x/posts/legacy/v2"
 	v4 "github.com/desmos-labs/desmos/v5/x/posts/legacy/v4"
@@ -245,10 +248,10 @@ func init() {
 	appmodule.Register(
 		&modulev1.Module{},
 		appmodule.Provide(
-			provideModule,
+			ProvideModule,
 		),
 		appmodule.Invoke(
-			invokeSetPostsHooks,
+			InvokeSetPostsHooks,
 		),
 	)
 }
@@ -263,9 +266,9 @@ type ModuleInputs struct {
 	AccountKeeper authkeeper.AccountKeeper
 	BankKeeper    bankkeeper.Keeper
 
-	ProfilesKeeper      types.ProfilesKeeper
+	ProfilesKeeper      profileskeeper.Keeper
 	SubspacesKeeper     subspaceskeeper.Keeper
-	RelationshipsKeeper types.RelationshipsKeeper
+	RelationshipsKeeper relationshipskeeper.Keeper
 
 	// LegacySubspace is used solely for migration of x/params managed parameters
 	LegacySubspace types.ParamsSubspace `optional:"true"`
@@ -280,7 +283,7 @@ type ModuleOutputs struct {
 	SubspacesHooks subspacestypes.SubspacesHooksWrapper
 }
 
-func provideModule(in ModuleInputs) ModuleOutputs {
+func ProvideModule(in ModuleInputs) ModuleOutputs {
 
 	// default to governance authority if not provided
 	authority := authtypes.NewModuleAddress(govtypes.ModuleName)
@@ -313,7 +316,7 @@ func provideModule(in ModuleInputs) ModuleOutputs {
 	}
 }
 
-func invokeSetPostsHooks(
+func InvokeSetPostsHooks(
 	config *modulev1.Module,
 	keeper *keeper.Keeper,
 	wrappers map[string]types.PostsHooksWrapper,
