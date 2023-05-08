@@ -49,15 +49,6 @@ service Msg {
   // previously created denom.
   rpc SetDenomMetadata(MsgSetDenomMetadata)
       returns (MsgSetDenomMetadataResponse);
-
-  // SetBeforeSendHook allows the subspace treasury to set the address of a CosmWasm contract
-  // that will be called before the coins are sent to track or block the send action.
-  rpc SetBeforeSendHook(MsgSetBeforeSendHook)
-      returns (MsgSetBeforeSendHookResponse);
-
-  // ForceTransfer allows the subspace treasury to force transfer some coins from one
-  // address to another.
-  rpc ForceTransfer(MsgForceTransfer) returns (MsgForceTransferResponse);
 }
 
 // MsgCreateDenom defines the message structure for the CreateDenom gRPC service
@@ -134,27 +125,6 @@ message MsgBurn {
 // MsgBurnResponse defines the Msg/BurnResponse response type.
 message MsgBurnResponse {}
 
-// MsgSetBeforeSendHook is the sdk.Msg type for allowing the subspace treasury to
-// assign a CosmWasm contract to call with a BeforeSend hook.
-message MsgSetBeforeSendHook {
-  // Address of who is setting the hook.
-  string sender = 1 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
-
-  // Subspace id where the coin has been created.
-  uint64 subspace_id = 2 [ (gogoproto.moretags) = "yaml:\"subspace_id\"" ];
-
-  // Coin denom.
-  string denom = 3 [ (gogoproto.moretags) = "yaml:\"denom\"" ];
-  
-  // Address of the CosmWasm address that will be called.
-  string cosmwasm_address = 4
-  [ (gogoproto.moretags) = "yaml:\"cosmwasm_address\"" ];
-}
-
-// MsgSetBeforeSendHookResponse defines the response structure for an executed
-// MsgSetBeforeSendHook message.
-message MsgSetBeforeSendHookResponse {}
-
 // MsgSetDenomMetadata is the sdk.Msg type for allowing the subspace treasury to set
 // the denom's bank metadata.
 message MsgSetDenomMetadata {
@@ -174,33 +144,6 @@ message MsgSetDenomMetadata {
 // MsgSetDenomMetadataResponse defines the response structure for an executed
 // MsgSetDenomMetadata message.
 message MsgSetDenomMetadataResponse {}
-
-// MsgForceTransfer allows the subspace treasury to transfer some coins from one
-// address to another one.
-message MsgForceTransfer {
-  // Address of who is performing the force transfer.
-  string sender = 1 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
-
-  // Subspace id where the coin has been created.
-  uint64 subspace_id = 2 [ (gogoproto.moretags) = "yaml:\"subspace_id\"" ];
-  
-  // Amount of coin to transfer.
-  cosmos.base.v1beta1.Coin amount = 3 [
-    (gogoproto.moretags) = "yaml:\"amount\"",
-    (gogoproto.nullable) = false
-  ];
-  
-  // Address from which the coins will be taken.
-  string transfer_from_address = 4
-  [ (gogoproto.moretags) = "yaml:\"transfer_from_address\"" ];
-  
-  // Address where will be sent the coins.
-  string transfer_to_address = 5
-  [ (gogoproto.moretags) = "yaml:\"transfer_to_address\"" ];
-}
-
-// MsgBurnResponse defines the Msg/BurnResponse response type.
-message MsgForceTransferResponse {}
 ```
 
 ## Consequences
