@@ -24,8 +24,7 @@ By allowing subspace admins to mint custom tokens, we are going to enable the im
 We will wrap the Osmosis [Token Factory module](https://docs.osmosis.zone/osmosis-core/modules/tokenfactory/)
 with the following modifications:
 1. Instead of using the token creator address to compose the coin denom, we will use the subspace treasury address: `factory/{trasury_address}/subdenom`;
-2. All the operations of `CreateDenom`, `Mint`, `Burn`, `SetDenomMetadata`, `SetBeforeSendHook` and
-   `ForceTransfer` can only be performed by subspace treasury;
+2. Only the subspace treasury will be able to perform the admin-related operations.
 3. The `CreateDenom` action will burn the coins instead of send them to the community pool.  
 
 With this module subspace admins will be able to create a coin that can be used to pay for 
