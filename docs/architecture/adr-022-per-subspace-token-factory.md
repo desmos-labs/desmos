@@ -21,7 +21,7 @@ By allowing subspace admins to mint custom tokens, we are going to enable the im
 
 ## Decision
 
-We will wrap the Osmosis [Token Factory module](https://docs.osmosis.zone/osmosis-core/modules/tokenfactory/)
+We will wrap the CosmWasm [Token Factory module](https://github.com/CosmWasm/token-factory/blob/main/x/tokenfactory)
 with the following modifications:
 1. Instead of using the token creator address to compose the coin denom, we will use the subspace treasury address: `factory/{trasury_address}/subdenom`;
 2. Only the subspace treasury will be able to perform the admin-related operations.
