@@ -25,7 +25,7 @@ We will wrap the Osmosis [Token Factory module](https://docs.osmosis.zone/osmosi
 with the following modifications:
 1. Instead of using the token creator address to compose the coin denom, we will use the subspace treasury address: `factory/{trasury_address}/subdenom`;
 2. Only the subspace treasury will be able to perform the admin-related operations.
-3. The `CreateDenom` action will burn the coins instead of send them to the community pool.  
+3. The `CreateDenom` action will burn `dsm` instead of send them to the community pool.  
 
 With this module subspace admins will be able to create a coin that can be used to pay for 
 subspace related transactions after a governance proposal.
