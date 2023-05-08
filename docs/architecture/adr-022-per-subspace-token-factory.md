@@ -13,10 +13,11 @@ This ADR introduces a new feature that allows subspace admins to create, mint an
 
 ## Context
 
-Desmos is a social network protocol that allows users to create, share, and engage with content 
-on a decentralized platform. 
-Currently, to post or interact with the content in a subspace you need to pay the gas fee using DSM. 
-This have the consequence of not giving any financial incentive on creating a social network on Desmos.
+Desmos is a social network protocol that allows users to create, share, and engage with content on a decentralized platform. It also provides the ability to create subspaces, which represent applications built on top of Desmos.
+
+Currently, to post or interact with content within a subspace on Desmos, users are required to pay the gas fee using DSM (Desmos native token). This means that there is no direct financial incentive for creating a social network on Desmos itself.
+
+By allowing subspace admins to mint custom tokens, we are going to enable the implementation of a custom tokenomic system within the subspace. This means that when users create or interact with content stored within a particular subspace, they may earn or spend these custom tokens. This will provide a new level of flexibility and incentive for users to actively participate within the subspaces.
 
 ## Decision
 
