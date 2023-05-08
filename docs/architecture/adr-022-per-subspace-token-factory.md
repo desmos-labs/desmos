@@ -27,8 +27,6 @@ with the following modifications:
 2. Only the subspace treasury will be able to perform the admin-related operations.
 3. The `CreateDenom` action will burn `dsm` instead of send them to the community pool.  
 
-With this module subspace admins will be able to create a coin that can be used to pay for 
-subspace related transactions after a governance proposal.
 
 ### `Msg` Service
 
