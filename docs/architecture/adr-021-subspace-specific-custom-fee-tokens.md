@@ -3,6 +3,7 @@
 ## Changelog
 
 - April 24th, 2023: First draft;
+- May 8th, 2023: First review;
 
 ## Status
 
@@ -24,25 +25,14 @@ To address the issue mentioned above, we propose implementing a mechanism that a
 
 Ideally, the flow that will lead one subspace to accept an additional fee token is going to be the following: 
 
-1. The subspace owner creates an on-chain governance proposal asking validators if they are fine in receiving fees paid in the new token denomination with minimum gas price.
+1. The subspace owner creates an on-chain governance proposal asking validators if they are fine in receiving fees paid in the new token denomination when validating transactions related to that subspace.
 2. Validators will agree or reject the proposal through on-chain voting. 
-3. If the proposal is accepted, the new token denom with minimum gas price will be added to the list of accepted  minimum gas prices that can be used to pay for fees for content-related transactions, then subspace managers can add the token denom to allowed fee token list.
-4. If the proposal is rejected, the new token denom will not be added to the list of accepted minimum gas prices that can be used to pay for fees for content-related transactions.
-
+3. If the proposal is accepted, the new token denom will be added to the list of additional fee token denoms that can be used to pay for fees within that subspace.
+4. If the proposal is rejected, the new token denom will not be added to the list of additional fee token denoms.
 
 ### Types
 
-We will define a new `Params` type to show the `x/subspaces` parameters.
-
-```proto
-// Params contains the module parameters
-message Params {
-  // List of the minimum gas prices to be accepted by validators
-  repeated Coin min_gas_prices = 2;
-}
-```
-
-In order to represent the list of fee token denoms that are supported by a subspace, we will add a new field to the current `Subspace` structure.
+To represent the list of supported fee token denoms and their default minimum prices within a subspace, we will add a new field `allowed_fee_tokens` to the existing Subspace structure.
 
 ```proto
 message Subspace {
@@ -52,82 +42,51 @@ message Subspace {
   // the creation time of the subspace
   google.protobuf.Timestamp creation_time = 7;
   
-  // List of fee token denoms allowed inside the subspace
-  repeated string allowed_fee_tokens = 8;
+  // List of fee token denoms with default minimum gas prices allowed inside the subspace
+  repeated Coin allowed_fee_tokens = 8;
 }
 ```
 
 ### Msgs
 
-We will allow the the following operations:
-1. update subspace allowed fee tokens list by managers;
-2. update `x/subspaces` parameters by governance.
+We will implement the operation that allows subspace admins to updates subspace allowed fee tokens list by governance;
 
 ```proto
 service Msg {
-  // UpdateSubspaceFeeTokens allows subspace managers to update the allowed tokens to be fee tokens inside the subspace
+  // UpdateSubspaceFeeTokens allows subspace admins to update the allowed tokens to be fee tokens inside the subspace by governance
   rpc UpdateSubspaceFeeTokens(MsgUpdateSubspaceFeeTokens) returns (MsgUpdateSubspaceFeeTokensResponse);
-    
-  // UpdateParams defines a (governance) operation for updating the module
-  rpc UpdateParams(MsgUpdateParams) returns (MsgUpdateParamsResponse);
 }
 
-// MsgUpdateSubspaceFeeTokens represents the message to be used to update a subspace fee tokens
+// MsgUpdateSubspaceFeeTokens represents the message to be used to update a subspace fee tokens by governance
 message MsgUpdateSubspaceFeeTokens {
 
   // Id of the subspace where the list of allowed fee tokens will be updated
   uint64 subspace_id = 1;
     
-  // List of the allowed tokens to be fee token inside the subspace
-  repeated string allowed_fee_tokens = 2;
+  // List of the allowed tokens to be fee token inside the subspace along with their default minimum prices
+  repeated Coin allowed_fee_tokens = 2;
     
-  // Address of the sender/signer
-  string signer = 3;
+  // authority is the address that controls the module (defaults to x/gov unless overwritten).
+  string authority = 3;
 }
 
 // MsgUpdateSubspaceFeeTokensResponse represents the Msg/UpdateSubspaceFeeTokens response type
 message MsgUpdateSubspaceFeeTokensResponse {}
-
-
-// MsgUpdateParams is the Msg/UpdateParams request type.
-message MsgUpdateParams {
-  string authority = 1;
-  Params params = 2;
-}
-
-// MsgUpdateParamsResponse defines the response structure for executing a
-// MsgUpdateParams message.
-message MsgUpdateParamsResponse {}
-```
-
-### Query
-
-We will also provide a new query endpoint that enables users to check `x/subspaces` parameters.
-
-```proto
-service Query {
-  // Params allows to query the module parameters
-  rpc Params(QueryParamsRequest) returns (QueryParamsResponses) {
-    option (google.api.http).get = "/desmos/subspaces/v3/params";
-  };
-}
-
-// QueryParamsRequest is the request type for Query/Params RPC method
-message QueryParamsRequest {}
-
-// QueryParamsResponse is the response type for Query/Params RPC method
-message QueryParamsResponse {
-  Params params = 1;
-}
 ```
 
 ### Custom TxFeeChecker
 
-We will build a new `TxFeeChecker` based on the existing one that acts as follows:
-1. check if the provided fee tokens are included in the list of subspace allowed fee tokens;
-2. perform the following operation:
-  1. if the provide fee tokens are all included subspace allowed fee tokens list, run custom `x/subspaces` TxFeeChecker;
-  2. otherwise, run the default fee checker `CheckTxFeeWithValidatorMinGasPrices`.
+To make it easier for validators to manage the minimum prices of fee tokens allowed within a subspace, we will develop a new `TxFeeChecker` based on the existing one, which will function as follows:
+- Combine the list of minimum gas prices in the validator's local configuration with the list of allowed fee tokens and their minimum prices within the subspace.
+- Follow the same process as the existing `TxFeeChecker`.
+
+### Update `x/fees`
+
+Since `x/fees` module may conflict with the custom fee tokens feature, as demonstrated in the following scenario:
+- Governance decides to change the minimum fees of MsgCreatePost to `10dsm` using `x/fees`.
+- Governance accepts the custom token `minttoken` as a fee within subspace 1 using `MsgUpdateSubspaceFeeTokens`.
+
+Due to this conflict, `minttoken` will not be accepted as a fee within the subspace 1. Therefore, we decided to update the `CheckFees` logic of `x/fees` to ensure compatibility with this feature.
 
 ## Consequences
 
