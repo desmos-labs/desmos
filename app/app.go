@@ -645,7 +645,7 @@ func NewDesmosApp(
 		subspaces.NewAppModule(appCodec, &app.SubspacesKeeper, app.AuthzKeeper, app.AccountKeeper, app.BankKeeper),
 		profiles.NewAppModule(appCodec, legacyAmino, &app.ProfilesKeeper, app.AccountKeeper, app.BankKeeper, app.GetSubspace(profilestypes.ModuleName)),
 		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
-		posts.NewAppModule(appCodec, app.PostsKeeper, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper, app.GetSubspace(poststypes.ModuleName)),
+		posts.NewAppModule(appCodec, &app.PostsKeeper, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper, app.GetSubspace(poststypes.ModuleName)),
 		reports.NewAppModule(appCodec, app.ReportsKeeper, app.SubspacesKeeper, app.PostsKeeper, app.AccountKeeper, app.BankKeeper, app.GetSubspace(reportstypes.ModuleName)),
 		reactions.NewAppModule(appCodec, app.ReactionsKeeper, app.ProfilesKeeper, app.SubspacesKeeper, app.PostsKeeper, app.AccountKeeper, app.BankKeeper),
 		supply.NewAppModule(appCodec, app.SupplyKeeper),

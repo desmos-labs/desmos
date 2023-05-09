@@ -111,7 +111,7 @@ func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) 
 // AppModule implements an application module for the posts module.
 type AppModule struct {
 	AppModuleBasic
-	keeper keeper.Keeper
+	keeper *keeper.Keeper
 	ak     authkeeper.AccountKeeper
 	bk     bankkeeper.Keeper
 	sk     types.SubspacesKeeper
@@ -122,7 +122,7 @@ type AppModule struct {
 
 // RegisterServices registers module services.
 func (am AppModule) RegisterServices(cfg module.Configurator) {
-	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
+	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(*am.keeper))
 	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
 
 	m := keeper.NewMigrator(am.keeper, am.sk, am.legacySubspace)
@@ -150,7 +150,7 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 
 // NewAppModule creates a new AppModule Object
 func NewAppModule(
-	cdc codec.Codec, keeper keeper.Keeper, sk types.SubspacesKeeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, legacySubspace types.ParamsSubspace,
+	cdc codec.Codec, keeper *keeper.Keeper, sk types.SubspacesKeeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, legacySubspace types.ParamsSubspace,
 ) AppModule {
 	return AppModule{
 		AppModuleBasic: AppModuleBasic{cdc: cdc},
@@ -170,7 +170,7 @@ func (AppModule) Name() string {
 
 // RegisterInvariants registers the module invariants
 func (am AppModule) RegisterInvariants(ir sdk.InvariantRegistry) {
-	keeper.RegisterInvariants(ir, am.keeper)
+	keeper.RegisterInvariants(ir, *am.keeper)
 }
 
 // QuerierRoute returns the posts module's querier route name.
@@ -205,7 +205,7 @@ func (am AppModule) BeginBlock(_ sdk.Context, _ abci.RequestBeginBlock) {}
 // EndBlock returns the end blocker for the posts module. It returns no validator
 // updates.
 func (am AppModule) EndBlock(ctx sdk.Context, _ abci.RequestEndBlock) []abci.ValidatorUpdate {
-	EndBlocker(ctx, am.keeper)
+	EndBlocker(ctx, *am.keeper)
 	return []abci.ValidatorUpdate{}
 }
 
@@ -231,7 +231,7 @@ func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
 
 // WeightedOperations returns the all the posts module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
-	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.sk, am.ak, am.bk)
+	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, *am.keeper, am.sk, am.ak, am.bk)
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -302,7 +302,7 @@ func ProvideModule(in ModuleInputs) ModuleOutputs {
 
 	m := NewAppModule(
 		in.Cdc,
-		k,
+		&k,
 		in.SubspacesKeeper,
 		in.AccountKeeper,
 		in.BankKeeper,
