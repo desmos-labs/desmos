@@ -20,7 +20,6 @@ import (
 	poststypes "github.com/desmos-labs/desmos/v5/x/posts/types"
 
 	"github.com/desmos-labs/desmos/v5/app/upgrades"
-	v500 "github.com/desmos-labs/desmos/v5/app/upgrades/v500"
 
 	"github.com/cosmos/cosmos-sdk/runtime"
 	"github.com/cosmos/cosmos-sdk/server"
@@ -790,6 +789,11 @@ func (app *DesmosApp) EndBlocker(ctx sdk.Context, req abci.RequestEndBlock) abci
 	return app.ModuleManager.EndBlock(ctx, req)
 }
 
+// Configurator returns app configurator
+func (a *DesmosApp) Configurator() module.Configurator {
+	return a.configurator
+}
+
 // InitChainer application update.md at chain initialization
 func (app *DesmosApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci.ResponseInitChain {
 	var genesisState GenesisState
@@ -904,12 +908,6 @@ func (app *DesmosApp) RegisterTendermintService(clientCtx client.Context) {
 
 func (app *DesmosApp) RegisterNodeService(clientCtx client.Context) {
 	nodeservice.RegisterNodeService(clientCtx, app.GRPCQueryRouter())
-}
-
-// registerUpgradeHandlers registers all the upgrade handlers that are supported by the app
-func (app *DesmosApp) registerUpgradeHandlers() {
-	app.registerUpgrade(v500.NewUpgrade(app.ModuleManager, app.configurator, app.ParamsKeeper, app.ConsensusParamsKeeper))
-	app.registerUpgrade(v510.NewUpgrade(app.ModuleManager, app.configurator))
 }
 
 // registerUpgrade registers the given upgrade to be supported by the app

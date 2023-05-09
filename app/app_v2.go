@@ -9,10 +9,6 @@ import (
 	"path/filepath"
 
 	"github.com/desmos-labs/desmos/v4/app/upgrades"
-	v4 "github.com/desmos-labs/desmos/v4/app/upgrades/v4"
-	v471 "github.com/desmos-labs/desmos/v4/app/upgrades/v471"
-	v480 "github.com/desmos-labs/desmos/v4/app/upgrades/v480"
-	v500 "github.com/desmos-labs/desmos/v4/app/upgrades/v500"
 
 	"github.com/cosmos/cosmos-sdk/runtime"
 	"github.com/cosmos/cosmos-sdk/server"
@@ -37,6 +33,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/server/config"
 
 	dbm "github.com/cometbft/cometbft-db"
+	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cometbft/cometbft/libs/log"
 	tmos "github.com/cometbft/cometbft/libs/os"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
@@ -300,24 +297,6 @@ func NewDesmosApp(
 
 	/****  Module Options ****/
 
-	app.ModuleManager.RegisterInvariants(app.CrisisKeeper)
-
-	app.registerUpgradeHandlers()
-
-	// add test gRPC service for testing gRPC queries in isolation
-	// testdata_pulsar.RegisterQueryServer(app.GRPCQueryRouter(), testdata_pulsar.QueryImpl{})
-
-	// create the simulation manager and define the order of the modules for deterministic simulations
-	//
-	// NOTE: this is not required apps that don't use the simulator for fuzz testing
-	// transactions
-	overrideModules := map[string]module.AppModuleSimulation{
-		authtypes.ModuleName: auth.NewAppModule(app.appCodec, app.AccountKeeper, authsims.RandomGenesisAccounts, app.GetSubspace(authtypes.ModuleName)),
-	}
-	app.sm = module.NewSimulationManagerFromAppModules(app.ModuleManager.Modules, overrideModules)
-
-	app.sm.RegisterStoreDecoders()
-
 	// set params subspaces
 	for _, m := range []string{ibctransfertypes.ModuleName, ibcexported.ModuleName, icahosttypes.SubModuleName, icacontrollertypes.SubModuleName} {
 		app.ParamsKeeper.Subspace(m)
@@ -495,6 +474,21 @@ func NewDesmosApp(
 		}
 	}
 
+	// create the simulation manager and define the order of the modules for deterministic simulations
+	//
+	// NOTE: this is not required apps that don't use the simulator for fuzz testing
+	// transactions
+	overrideModules := map[string]module.AppModuleSimulation{
+		authtypes.ModuleName: auth.NewAppModule(app.appCodec, app.AccountKeeper, authsims.RandomGenesisAccounts, app.GetSubspace(authtypes.ModuleName)),
+	}
+
+	// NOTE: Simulation manager, invariants and upgrade handlers must be after all the modules are registered
+	app.sm = module.NewSimulationManagerFromAppModules(app.ModuleManager.Modules, overrideModules)
+
+	app.sm.RegisterStoreDecoders()
+	app.ModuleManager.RegisterInvariants(app.CrisisKeeper)
+	app.registerUpgradeHandlers()
+
 	// register additional types
 	ibctm.AppModuleBasic{}.RegisterInterfaces(app.interfaceRegistry)
 	solomachine.AppModuleBasic{}.RegisterInterfaces(app.interfaceRegistry)
@@ -568,11 +562,10 @@ func NewDesmosApp(
 	// For instance, the upgrade module will set automatically the module version map in its init genesis thanks to app wiring.
 	// However, when registering a module manually (i.e. that does not support app wiring), the module version map
 	// must be set manually as follow. The upgrade module will de-duplicate the module version map.
-	//
-	// app.SetInitChainer(func(ctx sdk.Context, req abci.RequestInitChain) abci.ResponseInitChain {
-	// 	app.UpgradeKeeper.SetModuleVersionMap(ctx, app.ModuleManager.GetVersionMap())
-	// 	return app.App.InitChainer(ctx, req)
-	// })
+	app.SetInitChainer(func(ctx sdk.Context, req abci.RequestInitChain) abci.ResponseInitChain {
+		app.UpgradeKeeper.SetModuleVersionMap(ctx, app.ModuleManager.GetVersionMap())
+		return app.App.InitChainer(ctx, req)
+	})
 
 	if err := app.Load(loadLatest); err != nil {
 		panic(err)
@@ -671,14 +664,6 @@ func (app *DesmosApp) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.API
 	if err := server.RegisterSwaggerAPI(apiSvr.ClientCtx, apiSvr.Router, apiConfig.Swagger); err != nil {
 		panic(err)
 	}
-}
-
-// registerUpgradeHandlers registers all the upgrade handlers that are supported by the app
-func (app *DesmosApp) registerUpgradeHandlers() {
-	app.registerUpgrade(v471.NewUpgrade(app.ModuleManager, app.Configurator(), app.BankKeeper))
-	app.registerUpgrade(v4.NewUpgrade(app.ModuleManager, app.Configurator(), app.BankKeeper))
-	app.registerUpgrade(v480.NewUpgrade(app.ModuleManager, app.Configurator()))
-	app.registerUpgrade(v500.NewUpgrade(app.ModuleManager, app.Configurator(), app.ParamsKeeper, app.ConsensusParamsKeeper))
 }
 
 // registerUpgrade registers the given upgrade to be supported by the app

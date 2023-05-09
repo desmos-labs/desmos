@@ -50,7 +50,6 @@ import (
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 
-	feesmodulev1 "github.com/desmos-labs/desmos/v4/api/desmos/fees/module/v1"
 	postsmodulev1 "github.com/desmos-labs/desmos/v4/api/desmos/posts/module/v1"
 	profilesmodulev1 "github.com/desmos-labs/desmos/v4/api/desmos/profiles/module/v1"
 	reactionsmodulev1 "github.com/desmos-labs/desmos/v4/api/desmos/reactions/module/v1"
@@ -59,7 +58,6 @@ import (
 	subspacesmodulev1 "github.com/desmos-labs/desmos/v4/api/desmos/subspaces/module/v1"
 	supplymodulev1 "github.com/desmos-labs/desmos/v4/api/desmos/supply/module/v1"
 
-	feestypes "github.com/desmos-labs/desmos/v4/x/fees/types"
 	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
 	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
 	reactionstypes "github.com/desmos-labs/desmos/v4/x/reactions/types"
@@ -200,10 +198,6 @@ var (
 			},
 
 			// Desmos modules
-			{
-				Name:   feestypes.ModuleName,
-				Config: appconfig.WrapAny(&feesmodulev1.Module{}),
-			},
 			{
 				Name:   poststypes.ModuleName,
 				Config: appconfig.WrapAny(&postsmodulev1.Module{}),
