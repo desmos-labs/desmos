@@ -89,6 +89,7 @@ var (
 	// application configuration (used by depinject)
 	AppConfig = appconfig.Compose(&appv1alpha1.Config{
 		Modules: []*appv1alpha1.ModuleConfig{
+			// SDK modules
 			{
 				Name: "runtime",
 				Config: appconfig.WrapAny(&runtimev1alpha1.Module{
@@ -197,6 +198,8 @@ var (
 				Name:   consensustypes.ModuleName,
 				Config: appconfig.WrapAny(&consensusmodulev1.Module{}),
 			},
+
+			// Desmos modules
 			{
 				Name:   feestypes.ModuleName,
 				Config: appconfig.WrapAny(&feesmodulev1.Module{}),
