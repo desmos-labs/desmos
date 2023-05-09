@@ -249,7 +249,7 @@ type ModuleInputs struct {
 	BankKeeper    bankkeeper.Keeper
 
 	FeesKeeper          feeskeeper.Keeper
-	ProfilesKeeper      profileskeeper.Keeper
+	ProfilesKeeper      *profileskeeper.Keeper
 	SubspacesKeeper     subspaceskeeper.Keeper
 	PostsKeeper         postskeeper.Keeper
 	RelationshipsKeeper relationshipskeeper.Keeper

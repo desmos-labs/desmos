@@ -235,7 +235,7 @@ func init() {
 			ProvideModule,
 		),
 		appmodule.Invoke(
-			InvokeSetPostsHooks,
+			InvokeSetSubspacesHooks,
 		),
 	)
 }
@@ -278,7 +278,7 @@ func ProvideModule(in ModuleInputs) ModuleOutputs {
 	return ModuleOutputs{SubspacesKeeper: k, Module: m}
 }
 
-func InvokeSetPostsHooks(
+func InvokeSetSubspacesHooks(
 	config *modulev1.Module,
 	keeper *keeper.Keeper,
 	wrappers map[string]types.SubspacesHooksWrapper,
@@ -307,7 +307,7 @@ func InvokeSetPostsHooks(
 	for _, modName := range order {
 		wrapper, ok := wrappers[modName]
 		if !ok {
-			return fmt.Errorf("can't find posts hooks for module %s", modName)
+			return fmt.Errorf("can't find subspaces hooks for module %s", modName)
 		}
 
 		multiHooks = append(multiHooks, wrapper.Hooks)

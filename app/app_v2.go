@@ -170,7 +170,7 @@ type DesmosApp struct {
 
 	// Custom modules
 	SubspacesKeeper     subspaceskeeper.Keeper
-	ProfilesKeeper      profileskeeper.Keeper
+	ProfilesKeeper      *profileskeeper.Keeper
 	RelationshipsKeeper relationshipskeeper.Keeper
 	PostsKeeper         postskeeper.Keeper
 	ReportsKeeper       reportskeeper.Keeper
@@ -416,7 +416,7 @@ func NewDesmosApp(
 		appOpts,
 		app.GRPCQueryRouter(),
 		app.appCodec,
-		app.ProfilesKeeper,
+		*app.ProfilesKeeper,
 		app.SubspacesKeeper,
 		app.RelationshipsKeeper,
 		app.PostsKeeper,

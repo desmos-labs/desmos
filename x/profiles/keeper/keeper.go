@@ -57,11 +57,12 @@ func NewKeeper(
 	authority string,
 ) Keeper {
 	return Keeper{
-		storeKey:      storeKey,
-		cdc:           cdc,
-		legacyAmino:   legacyAmino,
-		ak:            ak,
-		rk:            rk,
+		storeKey:    storeKey,
+		cdc:         cdc,
+		legacyAmino: legacyAmino,
+		ak:          ak,
+		rk:          rk,
+
 		channelKeeper: channelKeeper,
 		portKeeper:    portKeeper,
 		scopedKeeper:  scopedKeeper,
@@ -70,6 +71,7 @@ func NewKeeper(
 	}
 }
 
+// SetIBCKeepers set IBCKeepers for ProfilesKeeper
 func (k *Keeper) SetIBCKeepers(
 	channelKeeper types.ChannelKeeper,
 	portKeeper types.PortKeeper,
