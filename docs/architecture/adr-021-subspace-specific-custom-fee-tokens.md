@@ -80,13 +80,13 @@ To make it easier for validators to manage the minimum prices of fee tokens allo
 - Combine the list of minimum gas prices in the validator's local configuration with the list of allowed fee tokens and their minimum prices within the subspace.
 - Follow the same process as the existing `TxFeeChecker`.
 
-### Update `x/fees`
+### Deprecated `x/fees`
 
 Since `x/fees` module may conflict with the custom fee tokens feature, as demonstrated in the following scenario:
 - Governance decides to change the minimum fees of MsgCreatePost to `10dsm` using `x/fees`.
 - Governance accepts the custom token `minttoken` as a fee within subspace 1 using `MsgUpdateSubspaceFeeTokens`.
 
-Due to this conflict, `minttoken` will not be accepted as a fee within the subspace 1. Therefore, we decided to update the `CheckFees` logic of `x/fees` to ensure compatibility with this feature.
+Due to this conflict, `minttoken` will not be accepted as a fee within the subspace 1. Therefore, we decided to drop `x/fees` from Desmos.
 
 ## Consequences
 
