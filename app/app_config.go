@@ -1,14 +1,11 @@
 package app
 
 import (
-	"net/http"
 	"os"
 	"path/filepath"
 
 	"github.com/desmos-labs/desmos/v4/x/reactions"
 	supplytypes "github.com/desmos-labs/desmos/v4/x/supply/types"
-	"github.com/gorilla/mux"
-	"github.com/rakyll/statik/fs"
 
 	postskeeper "github.com/desmos-labs/desmos/v4/x/posts/keeper"
 	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
@@ -416,15 +413,4 @@ func GetMaccPerms() map[string][]string {
 		dupMaccPerms[perms.Account] = perms.Permissions
 	}
 	return dupMaccPerms
-}
-
-// RegisterSwaggerAPI registers swagger route with API Server
-func RegisterSwaggerAPI(rtr *mux.Router) {
-	statikFS, err := fs.New()
-	if err != nil {
-		panic(err)
-	}
-
-	staticServer := http.FileServer(statikFS)
-	rtr.PathPrefix("/swagger/").Handler(http.StripPrefix("/swagger/", staticServer))
 }

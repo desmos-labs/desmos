@@ -9,6 +9,10 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/gorilla/mux"
+	"github.com/rakyll/statik/fs"
+	"net/http"
+
 	"github.com/desmos-labs/desmos/v5/x/reactions"
 	reactionstypes "github.com/desmos-labs/desmos/v5/x/reactions/types"
 
@@ -921,6 +925,17 @@ func (app *DesmosApp) registerUpgrade(upgrade upgrades.Upgrade) {
 		// Configure store loader that checks if version == upgradeHeight and applies store upgrades
 		app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, upgrade.StoreUpgrades()))
 	}
+}
+
+// RegisterSwaggerAPI registers swagger route with API Server
+func RegisterSwaggerAPI(rtr *mux.Router) {
+	statikFS, err := fs.New()
+	if err != nil {
+		panic(err)
+	}
+
+	staticServer := http.FileServer(statikFS)
+	rtr.PathPrefix("/swagger/").Handler(http.StripPrefix("/swagger/", staticServer))
 }
 
 // initParamsKeeper init params keeper and its subspaces
