@@ -84,7 +84,7 @@ The solution outlined above is fully backward compatible since we are just addin
 
 ### Positive
 
-- Enable other projects to have economic incentives on building on Desmos.
+- Allow subspace admins to create their custom denominations enabling custom tokenomics
 
 ### Negative
 
