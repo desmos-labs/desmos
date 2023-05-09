@@ -49,8 +49,9 @@ import (
 	_ "github.com/cosmos/cosmos-sdk/x/auth/tx/config" // import for side-effects
 	"github.com/cosmos/cosmos-sdk/x/params"
 
-	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
+	"github.com/cosmos/cosmos-sdk/x/auth/ante"
 
+	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
 	feegrantkeeper "github.com/cosmos/cosmos-sdk/x/feegrant/keeper"
 	mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
 
@@ -130,7 +131,7 @@ type DesmosApp struct {
 	txConfig          client.TxConfig
 	interfaceRegistry types.InterfaceRegistry
 
-	// sdk keys to access the substores
+	// non depinject support modules store keys
 	keys map[string]*storetypes.KVStoreKey
 
 	// Keepers
@@ -290,8 +291,14 @@ func NewDesmosApp(
 
 	app.App = appBuilder.Build(logger, db, traceStore, baseAppOptions...)
 
+	app.keys = sdk.NewKVStoreKeys(
+		ibcexported.StoreKey, ibctransfertypes.StoreKey, ibcfeetypes.StoreKey,
+		icahosttypes.StoreKey, icacontrollertypes.StoreKey, wasmtypes.StoreKey,
+	)
+	app.MountKVStores(app.keys)
+
 	// load state streaming if enabled
-	if _, _, err := streaming.LoadStreamingServices(app.App.BaseApp, appOpts, app.appCodec, logger, app.keys); err != nil {
+	if _, _, err := streaming.LoadStreamingServices(app.App.BaseApp, appOpts, app.appCodec, logger, app.kvStoreKeys()); err != nil {
 		logger.Error("failed to load state streaming", "err", err)
 		os.Exit(1)
 	}
@@ -316,13 +323,6 @@ func NewDesmosApp(
 
 	app.sm.RegisterStoreDecoders()
 
-	keys := sdk.NewKVStoreKeys(
-		// non depinject support modules store keys
-		ibcexported.StoreKey, ibctransfertypes.StoreKey, ibcfeetypes.StoreKey,
-		icahosttypes.StoreKey, icacontrollertypes.StoreKey, wasm.StoreKey,
-	)
-	app.MountKVStores(keys)
-	app.keys = keys
 	// set params subspaces
 	for _, m := range []string{ibctransfertypes.ModuleName, ibcexported.ModuleName, icahosttypes.SubModuleName, icacontrollertypes.SubModuleName} {
 		app.ParamsKeeper.Subspace(m)
@@ -336,6 +336,11 @@ func NewDesmosApp(
 	scopedICAControllerKeeper := app.CapabilityKeeper.ScopeToModule(icacontrollertypes.SubModuleName)
 	scopedICAHostKeeper := app.CapabilityKeeper.ScopeToModule(icahosttypes.SubModuleName)
 
+	// Create IBC keeper
+	app.IBCKeeper = ibckeeper.NewKeeper(
+		app.appCodec, app.GetKey(ibcexported.StoreKey), app.GetSubspace(ibcexported.ModuleName), app.StakingKeeper, app.UpgradeKeeper, scopedIBCKeeper,
+	)
+
 	// Register the proposal types
 	// Deprecated: Avoid adding new handlers, instead use the new proposal flow
 	// by granting the governance module the right to execute the message.
@@ -347,7 +352,7 @@ func NewDesmosApp(
 		AddRoute(ibcclienttypes.RouterKey, ibcclient.NewClientProposalHandler(app.IBCKeeper.ClientKeeper))
 
 	app.IBCFeeKeeper = ibcfeekeeper.NewKeeper(
-		app.appCodec, keys[ibcfeetypes.StoreKey],
+		app.appCodec, app.GetKey(ibcfeetypes.StoreKey),
 		app.IBCKeeper.ChannelKeeper, // may be replaced with IBC middleware
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper, app.AccountKeeper, app.BankKeeper,
@@ -356,7 +361,7 @@ func NewDesmosApp(
 	// Create IBC transfer keeper
 	app.TransferKeeper = ibctransferkeeper.NewKeeper(
 		app.appCodec,
-		keys[ibctransfertypes.StoreKey],
+		app.GetKey(ibctransfertypes.StoreKey),
 		app.GetSubspace(ibctransfertypes.ModuleName),
 		app.IBCKeeper.ChannelKeeper,
 		app.IBCKeeper.ChannelKeeper,
@@ -369,7 +374,7 @@ func NewDesmosApp(
 	// Create interchain account keepers
 	app.ICAHostKeeper = icahostkeeper.NewKeeper(
 		app.appCodec,
-		keys[icahosttypes.StoreKey],
+		app.GetKey(icahosttypes.StoreKey),
 		app.GetSubspace(icahosttypes.SubModuleName),
 		app.IBCFeeKeeper, // use ics29 fee as ics4Wrapper in middleware stack
 		app.IBCKeeper.ChannelKeeper,
@@ -380,13 +385,20 @@ func NewDesmosApp(
 	)
 	app.ICAControllerKeeper = icacontrollerkeeper.NewKeeper(
 		app.appCodec,
-		keys[icacontrollertypes.StoreKey],
+		app.GetKey(icacontrollertypes.StoreKey),
 		app.GetSubspace(icacontrollertypes.SubModuleName),
 		app.IBCFeeKeeper, // use ics29 fee as ics4Wrapper in middleware stack
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper,
 		scopedICAControllerKeeper,
 		app.MsgServiceRouter(),
+	)
+
+	// Setup profiles IBC keepers manually
+	app.ProfilesKeeper.SetIBCKeepers(
+		app.IBCKeeper.ChannelKeeper,
+		&app.IBCKeeper.PortKeeper,
+		scopedProfilesKeeper,
 	)
 
 	// ------ CosmWasm setup ------
@@ -418,7 +430,7 @@ func NewDesmosApp(
 	availableCapabilities := "iterator,staking,stargate,cosmwasm_1_1,cosmwasm_1_2"
 	app.WasmKeeper = wasm.NewKeeper(
 		app.appCodec,
-		keys[wasm.StoreKey],
+		app.GetKey(wasm.StoreKey),
 		app.AccountKeeper,
 		app.BankKeeper,
 		app.StakingKeeper,
@@ -491,6 +503,59 @@ func NewDesmosApp(
 	ibctm.AppModuleBasic{}.RegisterInterfaces(app.interfaceRegistry)
 	solomachine.AppModuleBasic{}.RegisterInterfaces(app.interfaceRegistry)
 
+	app.ScopedIBCKeeper = scopedIBCKeeper
+	app.ScopedIBCTransferKeeper = scopedIBCTransferKeeper
+	app.ScopedProfilesKeeper = scopedProfilesKeeper
+	app.ScopedWasmKeeper = scopedWasmKeeper
+	app.ScopedICAHostKeeper = scopedICAHostKeeper
+	app.ScopedICAControllerKeeper = scopedICAControllerKeeper
+
+	anteHandler, err := NewAnteHandler(
+		HandlerOptions{
+			HandlerOptions: ante.HandlerOptions{
+				AccountKeeper:   app.AccountKeeper,
+				BankKeeper:      app.BankKeeper,
+				SignModeHandler: app.txConfig.SignModeHandler(),
+				FeegrantKeeper:  app.FeeGrantKeeper,
+				SigGasConsumer:  ante.DefaultSigVerificationGasConsumer,
+			},
+			IBCkeeper:         app.IBCKeeper,
+			FeesKeeper:        app.FeesKeeper,
+			TxCounterStoreKey: app.GetKey(wasm.StoreKey),
+			WasmConfig:        &wasmConfig,
+			SubspacesKeeper:   app.SubspacesKeeper,
+		},
+	)
+	if err != nil {
+		panic(err)
+	}
+
+	app.SetAnteHandler(anteHandler)
+
+	// In v0.46, the SDK introduces _postHandlers_. PostHandlers are like
+	// antehandlers, but are run _after_ the `runMsgs` execution. They are also
+	// defined as a chain, and have the same signature as antehandlers.
+	//
+	// In baseapp, postHandlers are run in the same store branch as `runMsgs`,
+	// meaning that both `runMsgs` and `postHandler` state will be committed if
+	// both are successful, and both will be reverted if any of the two fails.
+	//
+	// The SDK exposes a default postHandlers chain, which comprises of only
+	// one decorator: the Transaction Tips decorator. However, some chains do
+	// not need it by default, so feel free to comment the next line if you do
+	// not need tips.
+	// To read more about tips:
+	// https://docs.cosmos.network/main/core/tips.html
+	//
+	// Please note that changing any of the anteHandler or postHandler chain is
+	// likely to be a state-machine breaking change, which needs a coordinated
+	// upgrade.
+	postHandler, err := NewPostHandler()
+	if err != nil {
+		panic(err)
+	}
+	app.SetPostHandler(postHandler)
+
 	// must be before Loading version
 	// requires the snapshot store to be created and registered as a BaseAppOption
 	// see cmd/wasmd/root.go: 206 - 214 approx
@@ -518,41 +583,7 @@ func NewDesmosApp(
 		panic(err)
 	}
 
-	app.ScopedIBCKeeper = scopedIBCKeeper
-	app.ScopedIBCTransferKeeper = scopedIBCTransferKeeper
-	app.ScopedProfilesKeeper = scopedProfilesKeeper
-	app.ScopedWasmKeeper = scopedWasmKeeper
-	app.ScopedICAHostKeeper = scopedICAHostKeeper
-	app.ScopedICAControllerKeeper = scopedICAControllerKeeper
-
-	// In v0.46, the SDK introduces _postHandlers_. PostHandlers are like
-	// antehandlers, but are run _after_ the `runMsgs` execution. They are also
-	// defined as a chain, and have the same signature as antehandlers.
-	//
-	// In baseapp, postHandlers are run in the same store branch as `runMsgs`,
-	// meaning that both `runMsgs` and `postHandler` state will be committed if
-	// both are successful, and both will be reverted if any of the two fails.
-	//
-	// The SDK exposes a default postHandlers chain, which comprises of only
-	// one decorator: the Transaction Tips decorator. However, some chains do
-	// not need it by default, so feel free to comment the next line if you do
-	// not need tips.
-	// To read more about tips:
-	// https://docs.cosmos.network/main/core/tips.html
-	//
-	// Please note that changing any of the anteHandler or postHandler chain is
-	// likely to be a state-machine breaking change, which needs a coordinated
-	// upgrade.
-	postHandler, err := NewPostHandler()
-	if err != nil {
-		panic(err)
-	}
-	app.SetPostHandler(postHandler)
-
 	if loadLatest {
-		if err := app.LoadLatestVersion(); err != nil {
-			tmos.Exit(err.Error())
-		}
 		ctx := app.BaseApp.NewUncachedContext(true, tmproto.Header{})
 
 		// Initialize pinned codes in wasmvm as they are not persisted there
@@ -597,7 +628,31 @@ func (app *DesmosApp) TxConfig() client.TxConfig {
 //
 // NOTE: This is solely to be used for testing purposes.
 func (app *DesmosApp) GetKey(storeKey string) *storetypes.KVStoreKey {
-	return app.keys[storeKey]
+	if key, ok := app.keys[storeKey]; ok {
+		return key
+	}
+
+	sk := app.UnsafeFindStoreKey(storeKey)
+	kvStoreKey, ok := sk.(*storetypes.KVStoreKey)
+	if !ok {
+		return nil
+	}
+	return kvStoreKey
+}
+
+func (app *DesmosApp) kvStoreKeys() map[string]*storetypes.KVStoreKey {
+	keys := make(map[string]*storetypes.KVStoreKey)
+	for _, k := range app.GetStoreKeys() {
+		if kv, ok := k.(*storetypes.KVStoreKey); ok {
+			keys[kv.Name()] = kv
+		}
+	}
+
+	for _, kv := range app.keys {
+		keys[kv.Name()] = kv
+	}
+
+	return keys
 }
 
 // GetSubspace returns a param subspace for a given module name.

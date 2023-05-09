@@ -31,8 +31,6 @@ import (
 	reflectionv1 "cosmossdk.io/api/cosmos/reflection/v1"
 
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
-	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
-	"github.com/cosmos/cosmos-sdk/x/authz"
 	"github.com/cosmos/cosmos-sdk/x/feegrant"
 
 	"github.com/cosmos/cosmos-sdk/x/consensus"
@@ -53,7 +51,6 @@ import (
 	runtimeservices "github.com/cosmos/cosmos-sdk/runtime/services"
 	"github.com/cosmos/cosmos-sdk/server/api"
 	"github.com/cosmos/cosmos-sdk/server/config"
-	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 
 	dbm "github.com/cometbft/cometbft-db"
 	abci "github.com/cometbft/cometbft/abci/types"
@@ -106,7 +103,6 @@ import (
 	icahost "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/host"
 	icahostkeeper "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/host/keeper"
 	icahosttypes "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/host/types"
-	icatypes "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/types"
 
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
 
@@ -124,7 +120,6 @@ import (
 
 	"github.com/desmos-labs/desmos/v5/x/supply"
 	supplykeeper "github.com/desmos-labs/desmos/v5/x/supply/keeper"
-	supplytypes "github.com/desmos-labs/desmos/v5/x/supply/types"
 
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -667,169 +662,13 @@ func NewDesmosApp(
 		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper, app.MsgServiceRouter(), app.GetSubspace(wasmtypes.ModuleName)),
 	)
 
-	// During begin block slashing happens after distr.BeginBlocker so that
-	// there is nothing left over in the validator fee pool, so as to keep the
-	// CanWithdrawInvariant invariant.
-	// NOTE: staking module is required if HistoricalEntries param > 0
-	// NOTE: capability module's beginblocker must come before any modules using capabilities (e.g. IBC)
-	app.mm.SetOrderBeginBlockers(
-		upgradetypes.ModuleName,
-		capabilitytypes.ModuleName,
-		minttypes.ModuleName,
-		distrtypes.ModuleName,
-		slashingtypes.ModuleName,
-		evidencetypes.ModuleName,
-		stakingtypes.ModuleName,
-		authtypes.ModuleName,
-		banktypes.ModuleName,
-		govtypes.ModuleName,
-		crisistypes.ModuleName,
-		genutiltypes.ModuleName,
-		authz.ModuleName,
-		feegrant.ModuleName,
-		paramstypes.ModuleName,
-		vestingtypes.ModuleName,
-		consensusparamtypes.ModuleName,
+	app.mm.SetOrderBeginBlockers(beginBlockerOrder...)
 
-		// IBC modules
-		ibcexported.ModuleName,
-		ibctransfertypes.ModuleName,
-		ibcfeetypes.ModuleName,
-		icatypes.ModuleName,
+	app.mm.SetOrderEndBlockers(endBlockerOrder...)
 
-		// Custom modules
-		subspacestypes.ModuleName,
-		relationshipstypes.ModuleName,
-		profilestypes.ModuleName,
-		poststypes.ModuleName,
-		reportstypes.ModuleName,
-		reactionstypes.ModuleName,
-		supplytypes.ModuleName,
+	app.mm.SetOrderInitGenesis(genesisModuleOrder...)
 
-		wasm.ModuleName,
-	)
-	app.mm.SetOrderEndBlockers(
-		crisistypes.ModuleName,
-		govtypes.ModuleName,
-		stakingtypes.ModuleName,
-		capabilitytypes.ModuleName,
-		authtypes.ModuleName,
-		banktypes.ModuleName,
-		distrtypes.ModuleName,
-		slashingtypes.ModuleName,
-		minttypes.ModuleName,
-		genutiltypes.ModuleName,
-		evidencetypes.ModuleName,
-		authz.ModuleName,
-		feegrant.ModuleName,
-		paramstypes.ModuleName,
-		upgradetypes.ModuleName,
-		vestingtypes.ModuleName,
-		consensusparamtypes.ModuleName,
-
-		// IBC modules
-		ibcexported.ModuleName,
-		ibctransfertypes.ModuleName,
-		ibcfeetypes.ModuleName,
-		icatypes.ModuleName,
-
-		// Custom modules
-		subspacestypes.ModuleName,
-		relationshipstypes.ModuleName,
-		profilestypes.ModuleName,
-		poststypes.ModuleName,
-		reportstypes.ModuleName,
-		reactionstypes.ModuleName,
-		supplytypes.ModuleName,
-
-		wasm.ModuleName,
-	)
-
-	// NOTE: The genutils module must occur after staking so that pools are
-	// properly initialized with tokens from genesis accounts.
-	// NOTE: The genutils module must also occur after auth so that it can access the params from auth.
-	// NOTE: Capability module must occur first so that it can initialize any capabilities
-	// so that other modules that want to create or claim capabilities afterwards in InitChain
-	// can do so safely.
-	// NOTE: wasm module should be at the end as it can call other module functionality direct or via message dispatching during
-	// genesis phase. For example bank transfer, auth account check, staking, ...
-	app.mm.SetOrderInitGenesis(
-		capabilitytypes.ModuleName,
-		authtypes.ModuleName,
-		banktypes.ModuleName,
-		distrtypes.ModuleName,
-		stakingtypes.ModuleName,
-		slashingtypes.ModuleName,
-		govtypes.ModuleName,
-		minttypes.ModuleName,
-		genutiltypes.ModuleName,
-		evidencetypes.ModuleName,
-		authz.ModuleName,
-		feegrant.ModuleName,
-		paramstypes.ModuleName,
-		upgradetypes.ModuleName,
-		vestingtypes.ModuleName,
-		consensusparamtypes.ModuleName,
-
-		// IBC modules
-		ibcexported.ModuleName,
-		ibctransfertypes.ModuleName,
-		ibcfeetypes.ModuleName,
-		icatypes.ModuleName,
-
-		// Custom modules
-		subspacestypes.ModuleName,
-		profilestypes.ModuleName,
-		relationshipstypes.ModuleName,
-		poststypes.ModuleName,
-		reportstypes.ModuleName,
-		reactionstypes.ModuleName,
-		supplytypes.ModuleName,
-
-		// wasm module should be at the end of app modules
-		wasm.ModuleName,
-		crisistypes.ModuleName,
-	)
-
-	// NOTE: The auth module must occur before everyone else. All other modules can be sorted
-	// alphabetically (default order)
-	// NOTE: The relationships module must occur before the profiles module, or all relationships will be deleted
-	app.mm.SetOrderMigrations(
-		authtypes.ModuleName,
-		authz.ModuleName,
-		banktypes.ModuleName,
-		capabilitytypes.ModuleName,
-		distrtypes.ModuleName,
-		evidencetypes.ModuleName,
-		feegrant.ModuleName,
-		genutiltypes.ModuleName,
-		govtypes.ModuleName,
-		minttypes.ModuleName,
-		slashingtypes.ModuleName,
-		stakingtypes.ModuleName,
-		paramstypes.ModuleName,
-		upgradetypes.ModuleName,
-		vestingtypes.ModuleName,
-		consensusparamtypes.ModuleName,
-
-		// IBC modules
-		ibcexported.ModuleName,
-		ibctransfertypes.ModuleName,
-		ibcfeetypes.ModuleName,
-		icatypes.ModuleName,
-
-		// Custom modules
-		subspacestypes.ModuleName,
-		relationshipstypes.ModuleName,
-		profilestypes.ModuleName,
-		poststypes.ModuleName,
-		reportstypes.ModuleName,
-		reactionstypes.ModuleName,
-		supplytypes.ModuleName,
-
-		wasm.ModuleName,
-		crisistypes.ModuleName,
-	)
+	app.mm.SetOrderMigrations(migrationModuleOrder...)
 
 	app.mm.RegisterInvariants(app.CrisisKeeper)
 	app.configurator = module.NewConfigurator(app.appCodec, app.MsgServiceRouter(), app.GRPCQueryRouter())

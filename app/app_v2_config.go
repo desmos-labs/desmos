@@ -98,8 +98,8 @@ var (
 					// CanWithdrawInvariant invariant.
 					// NOTE: staking module is required if HistoricalEntries param > 0
 					// NOTE: capability module's beginblocker must come before any modules using capabilities (e.g. IBC)
-					BeginBlockers: beginBlocker,
-					EndBlockers:   endBlocker,
+					BeginBlockers: beginBlockerOrder,
+					EndBlockers:   endBlockerOrder,
 					OverrideStoreKeys: []*runtimev1alpha1.StoreKeyConfig{
 						{
 							ModuleName: authtypes.ModuleName,
@@ -112,6 +112,7 @@ var (
 					// ExportGenesis: genesisModuleOrder,
 					// Uncomment if you want to set a custom migration order here.
 					// OrderMigrations: nil,
+					OrderMigrations: migrationModuleOrder,
 				}),
 			},
 			{

@@ -15,7 +15,6 @@ import (
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
-	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 
@@ -263,14 +262,11 @@ type ModuleInputs struct {
 	LegacyCdc *codec.LegacyAmino
 	Key       *storetypes.KVStoreKey
 
-	AccountKeeper    authkeeper.AccountKeeper
-	BankKeeper       bankkeeper.Keeper
-	Capabilitykeeper *capabilitykeeper.Keeper
+	AccountKeeper authkeeper.AccountKeeper
+	BankKeeper    bankkeeper.Keeper
 
 	FeesKeeper          feeskeeper.Keeper
 	RelationshipsKeeper relationshipskeeper.Keeper
-	ChannelKeeper       types.ChannelKeeper
-	PortKeeper          types.PortKeeper
 
 	// LegacySubspace is used solely for migration of x/params managed parameters
 	LegacySubspace types.ParamsSubspace `optional:"true"`
@@ -297,9 +293,9 @@ func ProvideModule(in ModuleInputs) ModuleOutputs {
 		in.Key,
 		in.AccountKeeper,
 		in.RelationshipsKeeper,
-		in.ChannelKeeper,
-		in.PortKeeper,
-		in.Capabilitykeeper.ScopeToModule(types.ModuleName),
+		nil,
+		nil,
+		nil,
 		authority.String(),
 	)
 

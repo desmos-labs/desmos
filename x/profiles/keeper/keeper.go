@@ -70,6 +70,16 @@ func NewKeeper(
 	}
 }
 
+func (k *Keeper) SetIBCKeepers(
+	channelKeeper types.ChannelKeeper,
+	portKeeper types.PortKeeper,
+	scopedKeeper types.ScopedKeeper,
+) {
+	k.channelKeeper = channelKeeper
+	k.portKeeper = portKeeper
+	k.scopedKeeper = scopedKeeper
+}
+
 // Logger returns a module-specific logger.
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", "x/"+types.ModuleName)

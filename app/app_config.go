@@ -218,7 +218,7 @@ var (
 	// CanWithdrawInvariant invariant.
 	// NOTE: staking module is required if HistoricalEntries param > 0
 	// NOTE: capability module's beginblocker must come before any modules using capabilities (e.g. IBC)
-	beginBlocker = []string{
+	beginBlockerOrder = []string{
 		upgradetypes.ModuleName,
 		capabilitytypes.ModuleName,
 		minttypes.ModuleName,
@@ -255,7 +255,7 @@ var (
 		wasm.ModuleName,
 	}
 
-	endBlocker = []string{
+	endBlockerOrder = []string{
 		crisistypes.ModuleName,
 		govtypes.ModuleName,
 		stakingtypes.ModuleName,
@@ -334,6 +334,46 @@ var (
 		supplytypes.ModuleName,
 
 		// wasm module should be at the end of app modules
+		wasm.ModuleName,
+		crisistypes.ModuleName,
+	}
+
+	// NOTE: The auth module must occur before everyone else. All other modules can be sorted
+	// alphabetically (default order)
+	// NOTE: The relationships module must occur before the profiles module, or all relationships will be deleted
+	migrationModuleOrder = []string{
+		authtypes.ModuleName,
+		authz.ModuleName,
+		banktypes.ModuleName,
+		capabilitytypes.ModuleName,
+		distrtypes.ModuleName,
+		evidencetypes.ModuleName,
+		feegrant.ModuleName,
+		genutiltypes.ModuleName,
+		govtypes.ModuleName,
+		minttypes.ModuleName,
+		slashingtypes.ModuleName,
+		stakingtypes.ModuleName,
+		paramstypes.ModuleName,
+		upgradetypes.ModuleName,
+		vestingtypes.ModuleName,
+		consensusparamtypes.ModuleName,
+
+		// IBC modules
+		ibcexported.ModuleName,
+		ibctransfertypes.ModuleName,
+		ibcfeetypes.ModuleName,
+		icatypes.ModuleName,
+
+		// Custom modules
+		subspacestypes.ModuleName,
+		relationshipstypes.ModuleName,
+		profilestypes.ModuleName,
+		poststypes.ModuleName,
+		reportstypes.ModuleName,
+		reactionstypes.ModuleName,
+		supplytypes.ModuleName,
+
 		wasm.ModuleName,
 		crisistypes.ModuleName,
 	}
