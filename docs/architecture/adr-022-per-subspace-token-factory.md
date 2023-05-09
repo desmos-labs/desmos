@@ -37,7 +37,7 @@ with the following modifications:
 2. Removal of the `MsgChangeAdmin` message, since the allowed admin will only be the subspace treasury account;
 3. Addition of a `MsgUpdateParams` message, in order to update the amount of coins that a subspace admin need to burn to execute a `MsgCreateDenom`.  
 
-Here is the Msg service for the `MsgUpdateParams` that we add to the CosmWasm tokenfactory module.
+Here is the Msg service for the `MsgUpdateParams` that we are going to add to the CosmWasm tokenfactory module:
 
 ```protobuf
 service Msg {
