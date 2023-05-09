@@ -33,9 +33,9 @@ with the following modifications:
 ### `Msg` Service
 The messages used from this module will be the same as [CosmWasm](https://github.com/CosmWasm/token-factory/blob/main/proto/osmosis/tokenfactory/v1beta1/tx.proto)
 with the following modifications: 
-1. Addition of a `subspace_id` field to all the messages;
-2. Remove the `MsgChangeAdmin` since in our case the admin will be the subspace treasury and it will not be allowed to change it;
-3. Addition of a governance message `MsgUpdateParams` to update the amount of coins that a subspace admin need to burn to execute `MsgCreateDenom`.  
+1. Addition of a `subspace_id` field to all the messages, in order to identify for which subspace the operations are performed;
+2. Removal of the `MsgChangeAdmin` message, since the allowed admin will only be the subspace treasury account;
+3. Addition of a `MsgUpdateParams` message, in order to update the amount of coins that a subspace admin need to burn to execute a `MsgCreateDenom`.  
 
 Here is the Msg service for the `MsgUpdateParams` that we add to the CosmWasm tokenfactory module.
 
