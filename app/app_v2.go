@@ -291,6 +291,7 @@ func NewDesmosApp(
 
 	app.App = appBuilder.Build(logger, db, traceStore, baseAppOptions...)
 
+	// set up non depinject support modules store keys
 	app.keys = sdk.NewKVStoreKeys(
 		ibcexported.StoreKey, ibctransfertypes.StoreKey, ibcfeetypes.StoreKey,
 		icahosttypes.StoreKey, icacontrollertypes.StoreKey, wasmtypes.StoreKey,
