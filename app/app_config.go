@@ -2,6 +2,8 @@ package app
 
 import (
 	"net/http"
+	"os"
+	"path/filepath"
 
 	"github.com/desmos-labs/desmos/v4/x/reactions"
 	supplytypes "github.com/desmos-labs/desmos/v4/x/supply/types"
@@ -378,6 +380,15 @@ var (
 		crisistypes.ModuleName,
 	}
 )
+
+func init() {
+	userHomeDir, err := os.UserHomeDir()
+	if err != nil {
+		panic(err)
+	}
+
+	DefaultNodeHome = filepath.Join(userHomeDir, ".desmos")
+}
 
 // SetupConfig sets up the given config as it should be for Desmos
 func SetupConfig(config *sdk.Config) {
