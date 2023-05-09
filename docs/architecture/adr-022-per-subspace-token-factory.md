@@ -3,6 +3,7 @@
 ## Changelog
 - April 28th, 2023: First draft;
 - May 8th, 2023: First review;
+- May 9th, 2023: Second review;
 
 ## Status
 
@@ -31,8 +32,49 @@ with the following modifications:
 
 ### `Msg` Service
 The messages used from this module will be the same as [CosmWasm](https://github.com/CosmWasm/token-factory/blob/main/proto/osmosis/tokenfactory/v1beta1/tx.proto)
-with the addition of a `subspace_id` field and without the `MsgChangeAdmin` since in our case the admin will be the 
-subspace treasury and it will not be allowed to change it.
+with the following modifications: 
+1. Addition of a `subspace_id` field to all the messages;
+2. Remove the `MsgChangeAdmin` since in our case the admin will be the subspace treasury and it will not be allowed to change it;
+3. Addition of a governance message `MsgUpdateParams` to update the amount of coins that a subspace admin need to burn to execute `MsgCreateDenom`.  
+
+Here is the Msg service for the `MsgUpdateParams` that we add to the CosmWasm tokenfactory module.
+
+```protobuf
+service Msg {
+  ...
+
+  // UpdateParams defines a (governance) operation for updating the module
+  // parameters. The authority defaults to the x/gov module account.
+  rpc UpdateParams(MsgUpdateParams) returns (MsgUpdateParamsResponse);
+}
+
+// MsgUpdateParams is the Msg/UpdateParams request type.
+message MsgUpdateParams {
+  option (cosmos.msg.v1.signer) = "authority";
+
+  // authority is the address that controls the module (defaults to x/gov unless
+  // overwritten).
+  string authority = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+
+  // params defines the parameters to update.
+  //
+  // NOTE: All parameters must be supplied.
+  Params params = 2 [ (gogoproto.nullable) = false ];
+}
+
+// MsgUpdateParamsResponse defines the response structure for executing a
+// MsgUpdateParams message.
+message MsgUpdateParamsResponse {}
+
+// Params are the module parameters.
+message Params {
+  repeated cosmos.base.v1beta1.Coin denom_creation_fee = 1 [
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
+    (gogoproto.moretags) = "yaml:\"denom_creation_fee\"",
+    (gogoproto.nullable) = false
+  ];
+}
+```
 
 ## Consequences
 
