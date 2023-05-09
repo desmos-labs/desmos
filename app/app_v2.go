@@ -177,14 +177,8 @@ type DesmosApp struct {
 	ReactionsKeeper     reactionskeeper.Keeper
 	SupplyKeeper        supplykeeper.Keeper
 
-	// Module Manager
-	mm *module.Manager
-
 	// Simulation manager
 	sm *module.SimulationManager
-
-	// Module configurator
-	configurator module.Configurator
 }
 
 func NewDesmosApp(
@@ -492,6 +486,7 @@ func NewDesmosApp(
 		ica.NewAppModule(&app.ICAControllerKeeper, &app.ICAHostKeeper),
 		wasm.NewAppModule(app.appCodec, &app.WasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper, app.MsgServiceRouter(), app.GetSubspace(wasmtypes.ModuleName)),
 	}
+
 	app.RegisterModules(legacyModules...)
 	cfg := app.Configurator()
 	for _, m := range legacyModules {
@@ -680,10 +675,10 @@ func (app *DesmosApp) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.API
 
 // registerUpgradeHandlers registers all the upgrade handlers that are supported by the app
 func (app *DesmosApp) registerUpgradeHandlers() {
-	app.registerUpgrade(v471.NewUpgrade(app.mm, app.configurator, app.BankKeeper))
-	app.registerUpgrade(v4.NewUpgrade(app.mm, app.configurator, app.BankKeeper))
-	app.registerUpgrade(v480.NewUpgrade(app.mm, app.configurator))
-	app.registerUpgrade(v500.NewUpgrade(app.mm, app.configurator, app.ParamsKeeper, app.ConsensusParamsKeeper))
+	app.registerUpgrade(v471.NewUpgrade(app.ModuleManager, app.Configurator(), app.BankKeeper))
+	app.registerUpgrade(v4.NewUpgrade(app.ModuleManager, app.Configurator(), app.BankKeeper))
+	app.registerUpgrade(v480.NewUpgrade(app.ModuleManager, app.Configurator()))
+	app.registerUpgrade(v500.NewUpgrade(app.ModuleManager, app.Configurator(), app.ParamsKeeper, app.ConsensusParamsKeeper))
 }
 
 // registerUpgrade registers the given upgrade to be supported by the app
