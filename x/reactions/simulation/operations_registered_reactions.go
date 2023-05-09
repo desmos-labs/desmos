@@ -5,26 +5,24 @@ package simulation
 import (
 	"math/rand"
 
-	"github.com/desmos-labs/desmos/v5/x/reactions/keeper"
-
-	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
-	subspacessim "github.com/desmos-labs/desmos/v5/x/subspaces/simulation"
-	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
-
-	"github.com/desmos-labs/desmos/v5/testutil/simtesting"
-
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
+	"github.com/desmos-labs/desmos/v5/testutil/simtesting"
+
+	subspacessim "github.com/desmos-labs/desmos/v5/x/subspaces/simulation"
+	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
+
+	"github.com/desmos-labs/desmos/v5/x/reactions/keeper"
 	"github.com/desmos-labs/desmos/v5/x/reactions/types"
 )
 
 // SimulateMsgAddRegisteredReaction tests and runs a single MsgAddRegisteredReaction
 func SimulateMsgAddRegisteredReaction(
-	sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	sk types.SubspacesKeeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -52,7 +50,7 @@ func SimulateMsgAddRegisteredReaction(
 
 // randomAddRegisteredReactionFields returns the data used to build a random MsgAddRegisteredReaction
 func randomAddRegisteredReactionFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, sk subspaceskeeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, sk types.SubspacesKeeper,
 ) (reaction types.RegisteredReaction, user simtypes.Account, skip bool) {
 	// Get the user
 	if len(accs) == 0 {
@@ -96,7 +94,7 @@ func randomAddRegisteredReactionFields(
 
 // SimulateMsgEditRegisteredReaction tests and runs a single MsgEditRegisteredReaction
 func SimulateMsgEditRegisteredReaction(
-	k keeper.Keeper, sk subspaceskeeper.Keeper,
+	k keeper.Keeper, sk types.SubspacesKeeper,
 	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
@@ -127,7 +125,7 @@ func SimulateMsgEditRegisteredReaction(
 // randomEditRegisteredReactionFields returns the data used to build a random MsgEditRegisteredReaction
 func randomEditRegisteredReactionFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account,
-	k keeper.Keeper, sk subspaceskeeper.Keeper,
+	k keeper.Keeper, sk types.SubspacesKeeper,
 ) (reaction types.RegisteredReaction, user simtypes.Account, skip bool) {
 	// Get the user
 	if len(accs) == 0 {
@@ -181,7 +179,7 @@ func randomEditRegisteredReactionFields(
 
 // SimulateMsgRemoveRegisteredReaction tests and runs a single MsgRemoveRegisteredReaction
 func SimulateMsgRemoveRegisteredReaction(
-	k keeper.Keeper, sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k keeper.Keeper, sk types.SubspacesKeeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -209,7 +207,7 @@ func SimulateMsgRemoveRegisteredReaction(
 // randomRemoveRegisteredReactionFields returns the data used to build a random MsgRemoveRegisteredReaction
 func randomRemoveRegisteredReactionFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account,
-	k keeper.Keeper, sk subspaceskeeper.Keeper,
+	k keeper.Keeper, sk types.SubspacesKeeper,
 ) (reaction types.RegisteredReaction, user simtypes.Account, skip bool) {
 	// Get the user
 	if len(accs) == 0 {

@@ -2,6 +2,7 @@ package app
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"testing"
 
@@ -22,7 +23,7 @@ import (
 	"github.com/CosmWasm/wasmd/x/wasm"
 )
 
-func TestSimAppExport(t *testing.T) {
+func TestSimAppExportAndBlockedAddrs(t *testing.T) {
 	db := dbm.NewMemDB()
 	app := NewDesmosApp(
 		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true,
@@ -57,6 +58,23 @@ func TestSimAppExport(t *testing.T) {
 			AppStateBytes:   stateBytes,
 		},
 	)
+
+	// BlockedAddresses returns a map of addresses in app v1 and a map of modules name in app v2.
+	for acc := range BlockedAddresses() {
+		var addr sdk.AccAddress
+		if modAddr, err := sdk.AccAddressFromBech32(acc); err == nil {
+			addr = modAddr
+		} else {
+			addr = app.AccountKeeper.GetModuleAddress(acc)
+		}
+
+		require.True(
+			t,
+			app.BankKeeper.BlockedAddr(addr),
+			fmt.Sprintf("ensure that blocked addresses are properly set in bank keeper: %s should be blocked", acc),
+		)
+	}
+
 	app.Commit()
 
 	// Making a new app object with the db, so that initchain hasn't been called
@@ -65,9 +83,4 @@ func TestSimAppExport(t *testing.T) {
 	)
 	_, err = app2.ExportAppStateAndValidators(false, []string{}, []string{})
 	require.NoError(t, err, "ExportAppStateAndValidators should not have an error")
-}
-
-func TestGetMaccPerms(t *testing.T) {
-	dup := GetMaccPerms()
-	require.Equal(t, maccPerms, dup, "duplicated module account permissions differed from actual module account permissions")
 }

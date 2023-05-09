@@ -5,24 +5,23 @@ package simulation
 import (
 	"math/rand"
 
-	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
-	subspacessim "github.com/desmos-labs/desmos/v5/x/subspaces/simulation"
-	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
-
-	"github.com/desmos-labs/desmos/v5/testutil/simtesting"
-
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
+	"github.com/desmos-labs/desmos/v5/testutil/simtesting"
+
+	subspacessim "github.com/desmos-labs/desmos/v5/x/subspaces/simulation"
+	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
+
 	"github.com/desmos-labs/desmos/v5/x/reactions/types"
 )
 
 // SimulateMsgSetReactionsParams tests and runs a single MsgSetReactionsParams
 func SimulateMsgSetReactionsParams(
-	sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	sk types.SubspacesKeeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -50,7 +49,7 @@ func SimulateMsgSetReactionsParams(
 
 // randomSetReactionsParamsFields returns the data used to build a random MsgSetReactionsParams
 func randomSetReactionsParamsFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, sk subspaceskeeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, sk types.SubspacesKeeper,
 ) (data types.SubspaceReactionsParams, user simtypes.Account, skip bool) {
 	// Get the user
 	if len(accs) == 0 {

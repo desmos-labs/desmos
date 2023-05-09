@@ -13,16 +13,17 @@ import (
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
 	"github.com/desmos-labs/desmos/v5/testutil/simtesting"
+
 	"github.com/desmos-labs/desmos/v5/x/posts/keeper"
 	"github.com/desmos-labs/desmos/v5/x/posts/types"
-	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
+
 	subspacessim "github.com/desmos-labs/desmos/v5/x/subspaces/simulation"
 	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 )
 
 // SimulateMsgCreatePost tests and runs a single msg create post
 func SimulateMsgCreatePost(
-	k keeper.Keeper, sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k keeper.Keeper, sk types.SubspacesKeeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -53,7 +54,7 @@ func SimulateMsgCreatePost(
 
 // randomPostCreateFields returns the data needed to create a post
 func randomPostCreateFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk subspaceskeeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk types.SubspacesKeeper,
 ) (post types.Post, author simtypes.Account, skip bool) {
 	if len(accs) == 0 {
 		// Skip because there are no accounts
@@ -106,7 +107,7 @@ func randomPostCreateFields(
 
 // SimulateMsgEditPost tests and runs a single msg edit post
 func SimulateMsgEditPost(
-	k keeper.Keeper, sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k keeper.Keeper, sk types.SubspacesKeeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -125,7 +126,7 @@ func SimulateMsgEditPost(
 
 // randomPostEditFields returns the data needed to edit a post
 func randomPostEditFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk subspaceskeeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk types.SubspacesKeeper,
 ) (subspaceID uint64, postID uint64, update types.PostUpdate, editor simtypes.Account, skip bool) {
 	if len(accs) == 0 {
 		// Skip because there are no accounts
@@ -175,7 +176,7 @@ func randomPostEditFields(
 
 // SimulateMsgDeletePost tests and runs a single msg delete post
 func SimulateMsgDeletePost(
-	k keeper.Keeper, sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k keeper.Keeper, sk types.SubspacesKeeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -194,7 +195,7 @@ func SimulateMsgDeletePost(
 
 // randomPostEditFields returns the data needed to delete a post
 func randomPostDeleteFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk subspaceskeeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk types.SubspacesKeeper,
 ) (subspaceID uint64, postID uint64, user simtypes.Account, skip bool) {
 	if len(accs) == 0 {
 		// Skip because there are no accounts

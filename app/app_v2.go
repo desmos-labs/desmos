@@ -169,7 +169,7 @@ type DesmosApp struct {
 	ScopedICAControllerKeeper capabilitykeeper.ScopedKeeper
 
 	// Custom modules
-	SubspacesKeeper     subspaceskeeper.Keeper
+	SubspacesKeeper     *subspaceskeeper.Keeper
 	ProfilesKeeper      *profileskeeper.Keeper
 	RelationshipsKeeper relationshipskeeper.Keeper
 	PostsKeeper         postskeeper.Keeper
@@ -417,7 +417,7 @@ func NewDesmosApp(
 		app.GRPCQueryRouter(),
 		app.appCodec,
 		*app.ProfilesKeeper,
-		app.SubspacesKeeper,
+		*app.SubspacesKeeper,
 		app.RelationshipsKeeper,
 		app.PostsKeeper,
 		app.ReportsKeeper,
@@ -520,10 +520,9 @@ func NewDesmosApp(
 				SigGasConsumer:  ante.DefaultSigVerificationGasConsumer,
 			},
 			IBCkeeper:         app.IBCKeeper,
-			FeesKeeper:        app.FeesKeeper,
 			TxCounterStoreKey: app.GetKey(wasm.StoreKey),
 			WasmConfig:        &wasmConfig,
-			SubspacesKeeper:   app.SubspacesKeeper,
+			SubspacesKeeper:   *app.SubspacesKeeper,
 		},
 	)
 	if err != nil {

@@ -25,6 +25,12 @@ type SubspacesKeeper interface {
 
 	// IterateSubspaces iterates through the subspaces set and performs the given function
 	IterateSubspaces(ctx sdk.Context, fn func(subspace subspacestypes.Subspace) (stop bool))
+
+	// GetAllSections returns all the stored sections
+	GetAllSections(ctx sdk.Context) []subspacestypes.Section
+
+	// GetUsersWithRootPermissions returns all the users that have a given permission inside the specified subspace
+	GetUsersWithRootPermissions(ctx sdk.Context, subspaceID uint64, permission subspacestypes.Permissions) []string
 }
 
 // RelationshipsKeeper represents a keeper that deals with relationships

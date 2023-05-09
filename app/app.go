@@ -220,7 +220,7 @@ type DesmosApp struct {
 	SupplyKeeper        supplykeeper.Keeper
 
 	// Module Manager
-	mm *module.Manager
+	ModuleManager *module.Manager
 
 	// Simulation manager
 	sm *module.SimulationManager
@@ -622,7 +622,7 @@ func NewDesmosApp(
 	// Create the module manager
 	// NOTE: Any module instantiated in the module manager that is later modified
 	// must be passed by reference here.
-	app.mm = module.NewManager(
+	app.ModuleManager = module.NewManager(
 		genutil.NewAppModule(
 			app.AccountKeeper, app.StakingKeeper, app.BaseApp.DeliverTx,
 			encodingConfig.TxConfig,
@@ -651,7 +651,7 @@ func NewDesmosApp(
 		ica.NewAppModule(&app.ICAControllerKeeper, &app.ICAHostKeeper),
 
 		// Custom modules
-		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AuthzKeeper, app.AccountKeeper, app.BankKeeper),
+		subspaces.NewAppModule(appCodec, &app.SubspacesKeeper, app.AuthzKeeper, app.AccountKeeper, app.BankKeeper),
 		profiles.NewAppModule(appCodec, legacyAmino, &app.ProfilesKeeper, app.AccountKeeper, app.BankKeeper, app.GetSubspace(profilestypes.ModuleName)),
 		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
 		posts.NewAppModule(appCodec, app.PostsKeeper, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper, app.GetSubspace(poststypes.ModuleName)),
@@ -662,21 +662,21 @@ func NewDesmosApp(
 		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper, app.MsgServiceRouter(), app.GetSubspace(wasmtypes.ModuleName)),
 	)
 
-	app.mm.SetOrderBeginBlockers(beginBlockerOrder...)
+	app.ModuleManager.SetOrderBeginBlockers(beginBlockerOrder...)
 
-	app.mm.SetOrderEndBlockers(endBlockerOrder...)
+	app.ModuleManager.SetOrderEndBlockers(endBlockerOrder...)
 
-	app.mm.SetOrderInitGenesis(genesisModuleOrder...)
+	app.ModuleManager.SetOrderInitGenesis(genesisModuleOrder...)
 
-	app.mm.SetOrderMigrations(migrationModuleOrder...)
+	app.ModuleManager.SetOrderMigrations(migrationModuleOrder...)
 
-	app.mm.RegisterInvariants(app.CrisisKeeper)
+	app.ModuleManager.RegisterInvariants(app.CrisisKeeper)
 	app.configurator = module.NewConfigurator(app.appCodec, app.MsgServiceRouter(), app.GRPCQueryRouter())
-	app.mm.RegisterServices(app.configurator)
+	app.ModuleManager.RegisterServices(app.configurator)
 
 	app.registerUpgradeHandlers()
 
-	autocliv1.RegisterQueryServer(app.GRPCQueryRouter(), runtimeservices.NewAutoCLIQueryService(app.mm.Modules))
+	autocliv1.RegisterQueryServer(app.GRPCQueryRouter(), runtimeservices.NewAutoCLIQueryService(app.ModuleManager.Modules))
 
 	reflectionSvc, err := runtimeservices.NewReflectionService()
 	if err != nil {
@@ -691,7 +691,7 @@ func NewDesmosApp(
 	overrideModules := map[string]module.AppModuleSimulation{
 		authtypes.ModuleName: auth.NewAppModule(app.appCodec, app.AccountKeeper, authsims.RandomGenesisAccounts, app.GetSubspace(authtypes.ModuleName)),
 	}
-	app.sm = module.NewSimulationManagerFromAppModules(app.mm.Modules, overrideModules)
+	app.sm = module.NewSimulationManagerFromAppModules(app.ModuleManager.Modules, overrideModules)
 
 	app.sm.RegisterStoreDecoders()
 
@@ -787,12 +787,12 @@ func (app *DesmosApp) Name() string { return app.BaseApp.Name() }
 
 // BeginBlocker application updates every begin block
 func (app *DesmosApp) BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock) abci.ResponseBeginBlock {
-	return app.mm.BeginBlock(ctx, req)
+	return app.ModuleManager.BeginBlock(ctx, req)
 }
 
 // EndBlocker application updates every end block
 func (app *DesmosApp) EndBlocker(ctx sdk.Context, req abci.RequestEndBlock) abci.ResponseEndBlock {
-	return app.mm.EndBlock(ctx, req)
+	return app.ModuleManager.EndBlock(ctx, req)
 }
 
 // InitChainer application update.md at chain initialization
@@ -801,8 +801,8 @@ func (app *DesmosApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain) ab
 	if err := json.Unmarshal(req.AppStateBytes, &genesisState); err != nil {
 		panic(err)
 	}
-	app.UpgradeKeeper.SetModuleVersionMap(ctx, app.mm.GetVersionMap())
-	return app.mm.InitGenesis(ctx, app.appCodec, genesisState)
+	app.UpgradeKeeper.SetModuleVersionMap(ctx, app.ModuleManager.GetVersionMap())
+	return app.ModuleManager.InitGenesis(ctx, app.appCodec, genesisState)
 }
 
 // LoadHeight loads a particular height
@@ -913,7 +913,8 @@ func (app *DesmosApp) RegisterNodeService(clientCtx client.Context) {
 
 // registerUpgradeHandlers registers all the upgrade handlers that are supported by the app
 func (app *DesmosApp) registerUpgradeHandlers() {
-	app.registerUpgrade(v500.NewUpgrade(app.mm, app.configurator, app.ParamsKeeper, app.ConsensusParamsKeeper))
+	app.registerUpgrade(v500.NewUpgrade(app.ModuleManager, app.configurator, app.ParamsKeeper, app.ConsensusParamsKeeper))
+	app.registerUpgrade(v510.NewUpgrade(app.ModuleManager, app.configurator))
 }
 
 // registerUpgrade registers the given upgrade to be supported by the app

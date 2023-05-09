@@ -6,19 +6,18 @@ import (
 	"math/rand"
 	"time"
 
-	postskeeper "github.com/desmos-labs/desmos/v5/x/posts/keeper"
-	postssim "github.com/desmos-labs/desmos/v5/x/posts/simulation"
-	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
-	subspacessim "github.com/desmos-labs/desmos/v5/x/subspaces/simulation"
-	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
-
-	"github.com/desmos-labs/desmos/v5/testutil/simtesting"
-
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+
+	"github.com/desmos-labs/desmos/v5/testutil/simtesting"
+
+	postskeeper "github.com/desmos-labs/desmos/v5/x/posts/keeper"
+	postssim "github.com/desmos-labs/desmos/v5/x/posts/simulation"
+	subspacessim "github.com/desmos-labs/desmos/v5/x/subspaces/simulation"
+	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 
 	"github.com/desmos-labs/desmos/v5/x/reports/keeper"
 	"github.com/desmos-labs/desmos/v5/x/reports/types"
@@ -26,7 +25,7 @@ import (
 
 // SimulateMsgCreateReport tests and runs a single MsgCreateReport
 func SimulateMsgCreateReport(
-	k keeper.Keeper, sk subspaceskeeper.Keeper, pk postskeeper.Keeper,
+	k keeper.Keeper, sk types.SubspacesKeeper, pk postskeeper.Keeper,
 	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
@@ -56,7 +55,7 @@ func SimulateMsgCreateReport(
 
 // randomCreateReportFields returns the data used to build a random MsgCreateReport
 func randomCreateReportFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, sk subspaceskeeper.Keeper, pk postskeeper.Keeper, k keeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, sk types.SubspacesKeeper, pk postskeeper.Keeper, k keeper.Keeper,
 ) (report types.Report, creator simtypes.Account, skip bool) {
 	// Get the creator
 	if len(accs) == 0 {
@@ -142,7 +141,7 @@ func randomCreateReportFields(
 
 // SimulateMsgDeleteReport tests and runs a single msg delete subspace
 func SimulateMsgDeleteReport(
-	k keeper.Keeper, sk subspaceskeeper.Keeper,
+	k keeper.Keeper, sk types.SubspacesKeeper,
 	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
@@ -166,7 +165,7 @@ func SimulateMsgDeleteReport(
 
 // randomDeleteReportFields returns the data needed to delete a subspace
 func randomDeleteReportFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk subspaceskeeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk types.SubspacesKeeper,
 ) (subspaceID uint64, reportID uint64, account simtypes.Account, skip bool) {
 	// Get a subspace id
 	subspaces := sk.GetAllSubspaces(ctx)

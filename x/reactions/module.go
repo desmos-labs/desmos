@@ -109,7 +109,7 @@ type AppModule struct {
 	bk     bankkeeper.Keeper
 
 	profilesKeeper types.ProfilesKeeper
-	sk             subspaceskeeper.Keeper
+	sk             types.SubspacesKeeper
 	pk             postskeeper.Keeper
 }
 
@@ -133,7 +133,7 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 // NewAppModule creates a new AppModule Object
 func NewAppModule(
 	cdc codec.Codec,
-	k keeper.Keeper, profilesKeeper types.ProfilesKeeper, sk subspaceskeeper.Keeper, pk postskeeper.Keeper,
+	k keeper.Keeper, profilesKeeper types.ProfilesKeeper, sk types.SubspacesKeeper, pk postskeeper.Keeper,
 	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) AppModule {
 	return AppModule{
@@ -243,7 +243,7 @@ type ModuleInputs struct {
 	BankKeeper    bankkeeper.Keeper
 
 	ProfilesKeeper      *profileskeeper.Keeper
-	SubspacesKeeper     subspaceskeeper.Keeper
+	SubspacesKeeper     *subspaceskeeper.Keeper
 	PostsKeeper         postskeeper.Keeper
 	RelationshipsKeeper relationshipskeeper.Keeper
 }

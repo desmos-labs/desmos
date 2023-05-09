@@ -8,6 +8,7 @@ import (
 	reflect "reflect"
 
 	types "github.com/cosmos/cosmos-sdk/types"
+	types0 "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -32,6 +33,20 @@ func NewMockSubspacesKeeper(ctrl *gomock.Controller) *MockSubspacesKeeper {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockSubspacesKeeper) EXPECT() *MockSubspacesKeeperMockRecorder {
 	return m.recorder
+}
+
+// GetAllSubspaces mocks base method.
+func (m *MockSubspacesKeeper) GetAllSubspaces(ctx types.Context) []types0.Subspace {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAllSubspaces", ctx)
+	ret0, _ := ret[0].([]types0.Subspace)
+	return ret0
+}
+
+// GetAllSubspaces indicates an expected call of GetAllSubspaces.
+func (mr *MockSubspacesKeeperMockRecorder) GetAllSubspaces(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllSubspaces", reflect.TypeOf((*MockSubspacesKeeper)(nil).GetAllSubspaces), ctx)
 }
 
 // HasSubspace mocks base method.

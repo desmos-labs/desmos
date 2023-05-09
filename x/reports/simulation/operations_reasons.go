@@ -5,17 +5,16 @@ package simulation
 import (
 	"math/rand"
 
-	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
-	subspacessim "github.com/desmos-labs/desmos/v5/x/subspaces/simulation"
-	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
-
-	"github.com/desmos-labs/desmos/v5/testutil/simtesting"
-
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+
+	"github.com/desmos-labs/desmos/v5/testutil/simtesting"
+
+	subspacessim "github.com/desmos-labs/desmos/v5/x/subspaces/simulation"
+	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 
 	"github.com/desmos-labs/desmos/v5/x/reports/keeper"
 	"github.com/desmos-labs/desmos/v5/x/reports/types"
@@ -23,7 +22,7 @@ import (
 
 // SimulateMsgSupportStandardReason tests and runs a single MsgSupportStandardReason
 func SimulateMsgSupportStandardReason(
-	k keeper.Keeper, sk subspaceskeeper.Keeper,
+	k keeper.Keeper, sk types.SubspacesKeeper,
 	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
@@ -47,7 +46,7 @@ func SimulateMsgSupportStandardReason(
 
 // randomSupportStandardReasonFields returns the data used to build a random MsgSupportStandardReason
 func randomSupportStandardReasonFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, sk subspaceskeeper.Keeper, k keeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, sk types.SubspacesKeeper, k keeper.Keeper,
 ) (subspaceID uint64, standardReasonID uint32, user simtypes.Account, skip bool) {
 	// Get the user
 	if len(accs) == 0 {
@@ -94,7 +93,7 @@ func randomSupportStandardReasonFields(
 
 // SimulateMsgAddReason tests and runs a single MsgAddReason
 func SimulateMsgAddReason(
-	sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	sk types.SubspacesKeeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -117,7 +116,7 @@ func SimulateMsgAddReason(
 
 // randomAddReasonFields returns the data used to build a random MsgAddReason
 func randomAddReasonFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, sk subspaceskeeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, sk types.SubspacesKeeper,
 ) (data types.Reason, user simtypes.Account, skip bool) {
 	// Get the user
 	if len(accs) == 0 {
@@ -162,7 +161,7 @@ func randomAddReasonFields(
 
 // SimulateMsgRemoveReason tests and runs a single MsgRemoveReason
 func SimulateMsgRemoveReason(
-	k keeper.Keeper, sk subspaceskeeper.Keeper,
+	k keeper.Keeper, sk types.SubspacesKeeper,
 	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
@@ -186,7 +185,7 @@ func SimulateMsgRemoveReason(
 
 // randomRemoveReason returns the data used to build a random MsgRemoveReason
 func randomRemoveReason(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk subspaceskeeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk types.SubspacesKeeper,
 ) (subspaceID uint64, reasonID uint32, user simtypes.Account, skip bool) {
 	// Get the user
 	if len(accs) == 0 {
