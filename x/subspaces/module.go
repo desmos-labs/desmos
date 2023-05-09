@@ -104,7 +104,10 @@ func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) 
 // AppModule implements an application module for the subspaces module.
 type AppModule struct {
 	AppModuleBasic
+
+	// To ensure setting hooks properly, keeper must be a reference as DesmosApp
 	keeper *keeper.Keeper
+
 	authzk authzkeeper.Keeper
 	ak     authkeeper.AccountKeeper
 	bk     bankkeeper.Keeper

@@ -111,10 +111,13 @@ func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) 
 // AppModule implements an application module for the posts module.
 type AppModule struct {
 	AppModuleBasic
+
+	// To ensure setting hooks properly, keeper must be the reference as DesmosApp
 	keeper *keeper.Keeper
-	ak     authkeeper.AccountKeeper
-	bk     bankkeeper.Keeper
-	sk     types.SubspacesKeeper
+
+	ak authkeeper.AccountKeeper
+	bk bankkeeper.Keeper
+	sk types.SubspacesKeeper
 
 	// legacySubspace is used solely for migration of x/params managed parameters
 	legacySubspace types.ParamsSubspace

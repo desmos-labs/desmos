@@ -628,6 +628,7 @@ func (app *DesmosApp) GetKey(storeKey string) *storetypes.KVStoreKey {
 	return kvStoreKey
 }
 
+// kvStoreKeys returns all the kv store keys registered inside DesmosApp
 func (app *DesmosApp) kvStoreKeys() map[string]*storetypes.KVStoreKey {
 	keys := make(map[string]*storetypes.KVStoreKey)
 	for _, k := range app.GetStoreKeys() {

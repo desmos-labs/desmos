@@ -108,9 +108,12 @@ func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) 
 // AppModule implements an application module for the profiles module.
 type AppModule struct {
 	AppModuleBasic
+
+	// To ensure setting IBC keepers properly, keeper must be a reference as DesmosApp
 	keeper *keeper.Keeper
-	ak     authkeeper.AccountKeeper
-	bk     bankkeeper.Keeper
+
+	ak authkeeper.AccountKeeper
+	bk bankkeeper.Keeper
 
 	// legacySubspace is used solely for migration of x/params managed parameters
 	legacySubspace types.ParamsSubspace
@@ -265,7 +268,6 @@ type ModuleInputs struct {
 	AccountKeeper authkeeper.AccountKeeper
 	BankKeeper    bankkeeper.Keeper
 
-	FeesKeeper          feeskeeper.Keeper
 	RelationshipsKeeper relationshipskeeper.Keeper
 
 	// LegacySubspace is used solely for migration of x/params managed parameters
@@ -305,7 +307,6 @@ func ProvideModule(in ModuleInputs) ModuleOutputs {
 		&k,
 		in.AccountKeeper,
 		in.BankKeeper,
-		in.FeesKeeper,
 		in.LegacySubspace,
 	)
 
