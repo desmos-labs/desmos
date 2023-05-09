@@ -107,7 +107,7 @@ type AppModule struct {
 	AppModuleBasic
 	keeper keeper.Keeper
 	sk     types.SubspacesKeeper
-	pk     postskeeper.Keeper
+	pk     types.PostsKeeper
 	ak     authkeeper.AccountKeeper
 	bk     bankkeeper.Keeper
 
@@ -133,7 +133,7 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 
 // NewAppModule creates a new AppModule Object
 func NewAppModule(
-	cdc codec.Codec, keeper keeper.Keeper, sk types.SubspacesKeeper, pk postskeeper.Keeper,
+	cdc codec.Codec, keeper keeper.Keeper, sk types.SubspacesKeeper, pk types.PostsKeeper,
 	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, legacySubspace types.ParamsSubspace,
 ) AppModule {
 	return AppModule{
@@ -251,7 +251,7 @@ type ModuleInputs struct {
 	FeesKeeper          feeskeeper.Keeper
 	ProfilesKeeper      *profileskeeper.Keeper
 	SubspacesKeeper     *subspaceskeeper.Keeper
-	PostsKeeper         postskeeper.Keeper
+	PostsKeeper         *postskeeper.Keeper
 	RelationshipsKeeper relationshipskeeper.Keeper
 
 	// LegacySubspace is used solely for migration of x/params managed parameters

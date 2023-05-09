@@ -14,7 +14,6 @@ import (
 
 	"github.com/desmos-labs/desmos/v5/testutil/simtesting"
 
-	postskeeper "github.com/desmos-labs/desmos/v5/x/posts/keeper"
 	postssim "github.com/desmos-labs/desmos/v5/x/posts/simulation"
 	subspacessim "github.com/desmos-labs/desmos/v5/x/subspaces/simulation"
 	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
@@ -25,7 +24,7 @@ import (
 
 // SimulateMsgCreateReport tests and runs a single MsgCreateReport
 func SimulateMsgCreateReport(
-	k keeper.Keeper, sk types.SubspacesKeeper, pk postskeeper.Keeper,
+	k keeper.Keeper, sk types.SubspacesKeeper, pk types.PostsKeeper,
 	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
@@ -55,7 +54,7 @@ func SimulateMsgCreateReport(
 
 // randomCreateReportFields returns the data used to build a random MsgCreateReport
 func randomCreateReportFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, sk types.SubspacesKeeper, pk postskeeper.Keeper, k keeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, sk types.SubspacesKeeper, pk types.PostsKeeper, k keeper.Keeper,
 ) (report types.Report, creator simtypes.Account, skip bool) {
 	// Get the creator
 	if len(accs) == 0 {

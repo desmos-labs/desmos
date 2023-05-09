@@ -45,4 +45,7 @@ type PostsKeeper interface {
 
 	// GetPost returns the post associated with the given id.
 	GetPost(ctx sdk.Context, subspaceID uint64, postID uint64) (poststypes.Post, bool)
+
+	// GetSubspacePosts returns all the posts for the given subspace
+	GetSubspacePosts(ctx sdk.Context, subspaceID uint64) []poststypes.Post
 }

@@ -54,4 +54,7 @@ type PostsKeeper interface {
 
 	// IteratePosts iterates over all the posts stored inside the context and performs the provided function
 	IteratePosts(ctx sdk.Context, fn func(post poststypes.Post) (stop bool))
+
+	// GetSubspacePosts returns all the posts for the given subspace
+	GetSubspacePosts(ctx sdk.Context, subspaceID uint64) []poststypes.Post
 }

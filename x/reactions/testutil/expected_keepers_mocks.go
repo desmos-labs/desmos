@@ -230,6 +230,20 @@ func (mr *MockPostsKeeperMockRecorder) GetPost(ctx, subspaceID, postID interface
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPost", reflect.TypeOf((*MockPostsKeeper)(nil).GetPost), ctx, subspaceID, postID)
 }
 
+// GetSubspacePosts mocks base method.
+func (m *MockPostsKeeper) GetSubspacePosts(ctx types.Context, subspaceID uint64) []types0.Post {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetSubspacePosts", ctx, subspaceID)
+	ret0, _ := ret[0].([]types0.Post)
+	return ret0
+}
+
+// GetSubspacePosts indicates an expected call of GetSubspacePosts.
+func (mr *MockPostsKeeperMockRecorder) GetSubspacePosts(ctx, subspaceID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSubspacePosts", reflect.TypeOf((*MockPostsKeeper)(nil).GetSubspacePosts), ctx, subspaceID)
+}
+
 // HasPost mocks base method.
 func (m *MockPostsKeeper) HasPost(ctx types.Context, subspaceID, postID uint64) bool {
 	m.ctrl.T.Helper()

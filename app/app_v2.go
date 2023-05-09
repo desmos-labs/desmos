@@ -172,7 +172,7 @@ type DesmosApp struct {
 	SubspacesKeeper     *subspaceskeeper.Keeper
 	ProfilesKeeper      *profileskeeper.Keeper
 	RelationshipsKeeper relationshipskeeper.Keeper
-	PostsKeeper         postskeeper.Keeper
+	PostsKeeper         *postskeeper.Keeper
 	ReportsKeeper       reportskeeper.Keeper
 	ReactionsKeeper     reactionskeeper.Keeper
 	SupplyKeeper        supplykeeper.Keeper
@@ -419,7 +419,7 @@ func NewDesmosApp(
 		*app.ProfilesKeeper,
 		*app.SubspacesKeeper,
 		app.RelationshipsKeeper,
-		app.PostsKeeper,
+		*app.PostsKeeper,
 		app.ReportsKeeper,
 		app.ReactionsKeeper,
 	)

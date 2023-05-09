@@ -277,7 +277,7 @@ type ModuleInputs struct {
 type ModuleOutputs struct {
 	depinject.Out
 
-	PostsKeeper keeper.Keeper
+	PostsKeeper *keeper.Keeper
 	Module      appmodule.AppModule
 
 	SubspacesHooks subspacestypes.SubspacesHooksWrapper
@@ -310,7 +310,7 @@ func ProvideModule(in ModuleInputs) ModuleOutputs {
 	)
 
 	return ModuleOutputs{
-		PostsKeeper:    k,
+		PostsKeeper:    &k,
 		Module:         m,
 		SubspacesHooks: subspacestypes.SubspacesHooksWrapper{Hooks: k.Hooks()},
 	}

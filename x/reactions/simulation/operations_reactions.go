@@ -13,9 +13,7 @@ import (
 
 	"github.com/desmos-labs/desmos/v5/testutil/simtesting"
 
-	postskeeper "github.com/desmos-labs/desmos/v5/x/posts/keeper"
 	postssim "github.com/desmos-labs/desmos/v5/x/posts/simulation"
-
 	subspacessim "github.com/desmos-labs/desmos/v5/x/subspaces/simulation"
 	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 
@@ -25,7 +23,7 @@ import (
 
 // SimulateMsgAddReaction tests and runs a single MsgAddReaction
 func SimulateMsgAddReaction(
-	k keeper.Keeper, profilesKeeper types.ProfilesKeeper, sk types.SubspacesKeeper, pk postskeeper.Keeper,
+	k keeper.Keeper, profilesKeeper types.ProfilesKeeper, sk types.SubspacesKeeper, pk types.PostsKeeper,
 	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
@@ -55,7 +53,7 @@ func SimulateMsgAddReaction(
 // randomAddReactionFields returns the data used to build a random MsgAddReaction
 func randomAddReactionFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account,
-	k keeper.Keeper, profilesKeeper types.ProfilesKeeper, sk types.SubspacesKeeper, pk postskeeper.Keeper,
+	k keeper.Keeper, profilesKeeper types.ProfilesKeeper, sk types.SubspacesKeeper, pk types.PostsKeeper,
 ) (reaction types.Reaction, user simtypes.Account, skip bool) {
 	// Get the user
 	if len(accs) == 0 {
