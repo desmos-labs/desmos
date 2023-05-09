@@ -4,8 +4,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	v2 "github.com/desmos-labs/desmos/v5/x/relationships/legacy/v2"
-
-	profilesv4 "github.com/desmos-labs/desmos/v5/x/profiles/legacy/v4"
 )
 
 // DONTCOVER
@@ -13,7 +11,6 @@ import (
 // Migrator is a struct for handling in-place store migrations.
 type Migrator struct {
 	keeper Keeper
-	pk     profilesv4.Keeper
 }
 
 // NewMigrator returns a new Migrator
