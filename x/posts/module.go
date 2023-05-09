@@ -112,7 +112,7 @@ func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) 
 type AppModule struct {
 	AppModuleBasic
 
-	// To ensure setting hooks properly, keeper must be the reference as DesmosApp
+	// To ensure setting hooks properly, keeper must be a reference as DesmosApp
 	keeper *keeper.Keeper
 
 	ak authkeeper.AccountKeeper
