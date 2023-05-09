@@ -71,7 +71,7 @@ func NewKeeper(
 	}
 }
 
-// SetIBCKeepers set IBCKeepers for ProfilesKeeper
+// SetIBCKeepers set IBCKeepers for Keeper
 func (k *Keeper) SetIBCKeepers(
 	channelKeeper types.ChannelKeeper,
 	portKeeper types.PortKeeper,

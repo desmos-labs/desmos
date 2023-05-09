@@ -28,7 +28,9 @@ var (
 
 // IBCModule implements the ICS26 interface for transfer given the transfer keeper.
 type IBCModule struct {
-	cdc    codec.Codec
+	cdc codec.Codec
+
+	// To ensure setting IBC keepers properly, keeper must be a reference as DesmosApp
 	keeper *keeper.Keeper
 }
 
