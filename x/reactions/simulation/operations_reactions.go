@@ -147,7 +147,7 @@ func randomAddReactionFields(
 
 // SimulateMsgRemoveReaction tests and runs a single MsgRemoveReaction
 func SimulateMsgRemoveReaction(
-	k keeper.Keeper, sk subspaceskeeper.Keeper,
+	k keeper.Keeper, sk subspaceskeeper.Keeper, pk types.PostsKeeper,
 	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
 ) simtypes.Operation {
 	return func(
@@ -156,7 +156,7 @@ func SimulateMsgRemoveReaction(
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 
 		// Get the data
-		reaction, signer, skip := randomRemoveReactionFields(r, ctx, accs, k, sk)
+		reaction, signer, skip := randomRemoveReactionFields(r, ctx, accs, k, sk, pk)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, "MsgRemoveReaction", "skip"), nil, nil
 		}
@@ -177,7 +177,7 @@ func SimulateMsgRemoveReaction(
 // randomRemoveReactionFields returns the data used to build a random MsgRemoveReaction
 func randomRemoveReactionFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account,
-	k keeper.Keeper, sk subspaceskeeper.Keeper,
+	k keeper.Keeper, sk subspaceskeeper.Keeper, pk types.PostsKeeper,
 ) (reaction types.Reaction, user simtypes.Account, skip bool) {
 	// Get the user
 	if len(accs) == 0 {
@@ -206,9 +206,16 @@ func randomRemoveReactionFields(
 	}
 	reaction = RandomReaction(r, reactions)
 
+	// Check user permission
+	post, _ := pk.GetPost(ctx, subspaceID, reaction.PostID)
+	if !sk.HasPermission(ctx, subspace.ID, post.SectionID, reaction.Author, types.PermissionsReact) {
+		// Skip because reaction author has no permission
+		skip = true
+		return
+	}
+
 	// Get a user
-	users := sk.GetUsersWithRootPermissions(ctx, subspace.ID, subspacestypes.NewPermissions(types.PermissionsReact))
-	acc := subspacessim.GetAccount(subspacessim.RandomAddress(r, users), accs)
+	acc := subspacessim.GetAccount(reaction.Author, accs)
 	if acc == nil {
 		// Skip the operation without error as the account is not valid
 		skip = true

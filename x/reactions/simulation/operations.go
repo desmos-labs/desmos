@@ -90,7 +90,7 @@ func WeightedOperations(
 		),
 		sim.NewWeightedOperation(
 			weightMsgRemoveReaction,
-			SimulateMsgRemoveReaction(k, sk, ak, bk, fk),
+			SimulateMsgRemoveReaction(k, sk, pk, ak, bk, fk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgAddRegisteredReaction,
