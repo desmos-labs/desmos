@@ -53,7 +53,7 @@ We will implement the operation that allows subspace admins to update the list o
 
 ```proto
 service Msg {
-  // UpdateSubspaceFeeTokens allows subspace admins to update the allowed tokens to be fee tokens inside the subspace by governance
+  // UpdateSubspaceFeeTokens allows subspace admins to update the list of fee tokens inside the subspace via a governance proposal
   rpc UpdateSubspaceFeeTokens(MsgUpdateSubspaceFeeTokens) returns (MsgUpdateSubspaceFeeTokensResponse);
 }
 
@@ -95,8 +95,7 @@ For this reason, we have decided to remove the `x/fees` module from Desmos.
 
 ### Backwards Compatibility
 
-The solution outlined above is **not** backwards compatible and will require a migration script to update all existing subspaces to the new version. This script will handle the following tasks:
-- migrate all subspaces to have a default allowed fee tokens list.
+The solution outlined above is **not** backward compatible, and it requires a upgrade to delete `x/fees` stores.
 
 ### Positive
 
