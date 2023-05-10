@@ -143,5 +143,8 @@ func (u *Upgrade) StoreUpgrades() *storetypes.StoreUpgrades {
 			consensustypes.ModuleName,
 			crisistypes.ModuleName,
 		},
+		Deleted: []string{
+			feestypes.ModuleName,
+		},
 	}
 }
