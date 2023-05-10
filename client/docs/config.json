@@ -40,14 +40,6 @@
       }
     },
     {
-      "url": "./tmp-swagger-gen/desmos/fees/v1/query.swagger.json",
-      "operationIds": {
-        "rename": {
-          "Params": "FeesParams"
-        }
-      }
-    },
-    {
       "url": "./tmp-swagger-gen/desmos/supply/v1/query.swagger.json"
     }
   ]
