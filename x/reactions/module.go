@@ -5,11 +5,11 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/desmos-labs/desmos/v4/x/reactions/client/cli"
+	"github.com/desmos-labs/desmos/v5/x/reactions/client/cli"
 
-	postskeeper "github.com/desmos-labs/desmos/v4/x/posts/keeper"
+	postskeeper "github.com/desmos-labs/desmos/v5/x/posts/keeper"
 
-	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
+	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -25,9 +25,9 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/desmos-labs/desmos/v4/x/reactions/keeper"
-	"github.com/desmos-labs/desmos/v4/x/reactions/simulation"
-	"github.com/desmos-labs/desmos/v4/x/reactions/types"
+	"github.com/desmos-labs/desmos/v5/x/reactions/keeper"
+	"github.com/desmos-labs/desmos/v5/x/reactions/simulation"
+	"github.com/desmos-labs/desmos/v5/x/reactions/types"
 )
 
 const (

@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 
-	profilesv4 "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v4"
+	profilesv4 "github.com/desmos-labs/desmos/v5/x/profiles/legacy/v4"
 
-	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
+	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -23,10 +23,10 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/desmos-labs/desmos/v4/x/relationships/client/cli"
-	"github.com/desmos-labs/desmos/v4/x/relationships/keeper"
-	"github.com/desmos-labs/desmos/v4/x/relationships/simulation"
-	"github.com/desmos-labs/desmos/v4/x/relationships/types"
+	"github.com/desmos-labs/desmos/v5/x/relationships/client/cli"
+	"github.com/desmos-labs/desmos/v5/x/relationships/keeper"
+	"github.com/desmos-labs/desmos/v5/x/relationships/simulation"
+	"github.com/desmos-labs/desmos/v5/x/relationships/types"
 )
 
 const (

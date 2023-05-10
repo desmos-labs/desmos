@@ -6,9 +6,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 
-	"github.com/desmos-labs/desmos/v4/app/upgrades"
+	"github.com/desmos-labs/desmos/v5/app/upgrades"
 
-	feestypes "github.com/desmos-labs/desmos/v4/x/fees/types"
+	feestypes "github.com/desmos-labs/desmos/v5/x/fees/types"
 )
 
 var (

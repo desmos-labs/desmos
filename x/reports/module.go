@@ -5,16 +5,16 @@ import (
 	"encoding/json"
 	"fmt"
 
-	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
+	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
 
-	postskeeper "github.com/desmos-labs/desmos/v4/x/posts/keeper"
+	postskeeper "github.com/desmos-labs/desmos/v5/x/posts/keeper"
 
-	"github.com/desmos-labs/desmos/v4/x/reports/simulation"
+	"github.com/desmos-labs/desmos/v5/x/reports/simulation"
 
-	"github.com/desmos-labs/desmos/v4/x/reports/client/cli"
+	"github.com/desmos-labs/desmos/v5/x/reports/client/cli"
 
-	"github.com/desmos-labs/desmos/v4/x/reports/keeper"
-	"github.com/desmos-labs/desmos/v4/x/reports/types"
+	"github.com/desmos-labs/desmos/v5/x/reports/keeper"
+	"github.com/desmos-labs/desmos/v5/x/reports/types"
 
 	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cosmos/cosmos-sdk/client"

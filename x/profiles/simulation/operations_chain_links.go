@@ -4,8 +4,8 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
-	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
+	"github.com/desmos-labs/desmos/v5/testutil/profilestesting"
+	"github.com/desmos-labs/desmos/v5/testutil/simtesting"
 
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
@@ -14,8 +14,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v4/x/profiles/keeper"
-	"github.com/desmos-labs/desmos/v4/x/profiles/types"
+	"github.com/desmos-labs/desmos/v5/x/profiles/keeper"
+	"github.com/desmos-labs/desmos/v5/x/profiles/types"
 )
 
 // DONTCOVER

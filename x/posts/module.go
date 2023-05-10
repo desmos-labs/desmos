@@ -5,15 +5,15 @@ import (
 	"encoding/json"
 	"fmt"
 
-	v2 "github.com/desmos-labs/desmos/v4/x/posts/legacy/v2"
-	v4 "github.com/desmos-labs/desmos/v4/x/posts/legacy/v4"
+	v2 "github.com/desmos-labs/desmos/v5/x/posts/legacy/v2"
+	v4 "github.com/desmos-labs/desmos/v5/x/posts/legacy/v4"
 
-	"github.com/desmos-labs/desmos/v4/x/posts/simulation"
-	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
+	"github.com/desmos-labs/desmos/v5/x/posts/simulation"
+	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
 
-	"github.com/desmos-labs/desmos/v4/x/posts/client/cli"
-	"github.com/desmos-labs/desmos/v4/x/posts/keeper"
-	"github.com/desmos-labs/desmos/v4/x/posts/types"
+	"github.com/desmos-labs/desmos/v5/x/posts/client/cli"
+	"github.com/desmos-labs/desmos/v5/x/posts/keeper"
+	"github.com/desmos-labs/desmos/v5/x/posts/types"
 
 	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cosmos/cosmos-sdk/client"

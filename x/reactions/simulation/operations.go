@@ -5,8 +5,8 @@ package simulation
 import (
 	"math/rand"
 
-	postskeeper "github.com/desmos-labs/desmos/v4/x/posts/keeper"
-	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
+	postskeeper "github.com/desmos-labs/desmos/v5/x/posts/keeper"
+	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
@@ -14,9 +14,9 @@ import (
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
 
-	"github.com/desmos-labs/desmos/v4/app/params"
-	"github.com/desmos-labs/desmos/v4/x/reactions/keeper"
-	"github.com/desmos-labs/desmos/v4/x/reactions/types"
+	"github.com/desmos-labs/desmos/v5/app/params"
+	"github.com/desmos-labs/desmos/v5/x/reactions/keeper"
+	"github.com/desmos-labs/desmos/v5/x/reactions/types"
 )
 
 // Simulation operation weights constants

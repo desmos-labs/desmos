@@ -5,11 +5,11 @@ package simulation
 import (
 	"math/rand"
 
-	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
-	subspacessim "github.com/desmos-labs/desmos/v4/x/subspaces/simulation"
-	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
+	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
+	subspacessim "github.com/desmos-labs/desmos/v5/x/subspaces/simulation"
+	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 
-	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
+	"github.com/desmos-labs/desmos/v5/testutil/simtesting"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -17,8 +17,8 @@ import (
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
-	"github.com/desmos-labs/desmos/v4/x/reports/keeper"
-	"github.com/desmos-labs/desmos/v4/x/reports/types"
+	"github.com/desmos-labs/desmos/v5/x/reports/keeper"
+	"github.com/desmos-labs/desmos/v5/x/reports/types"
 )
 
 // SimulateMsgSupportStandardReason tests and runs a single MsgSupportStandardReason

@@ -7,16 +7,16 @@ import (
 
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 
-	v2 "github.com/desmos-labs/desmos/v4/x/subspaces/legacy/v2"
+	v2 "github.com/desmos-labs/desmos/v5/x/subspaces/legacy/v2"
 
-	"github.com/desmos-labs/desmos/v4/x/subspaces/authz"
+	"github.com/desmos-labs/desmos/v5/x/subspaces/authz"
 
-	"github.com/desmos-labs/desmos/v4/x/subspaces/simulation"
+	"github.com/desmos-labs/desmos/v5/x/subspaces/simulation"
 
-	"github.com/desmos-labs/desmos/v4/x/subspaces/client/cli"
+	"github.com/desmos-labs/desmos/v5/x/subspaces/client/cli"
 
-	"github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
-	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
+	"github.com/desmos-labs/desmos/v5/x/subspaces/types"
 
 	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cosmos/cosmos-sdk/client"

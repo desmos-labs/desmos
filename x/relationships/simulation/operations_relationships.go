@@ -5,14 +5,14 @@ package simulation
 import (
 	"math/rand"
 
-	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
+	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
 
-	subspacessim "github.com/desmos-labs/desmos/v4/x/subspaces/simulation"
+	subspacessim "github.com/desmos-labs/desmos/v5/x/subspaces/simulation"
 
-	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
+	"github.com/desmos-labs/desmos/v5/testutil/simtesting"
 
-	"github.com/desmos-labs/desmos/v4/x/relationships/keeper"
-	"github.com/desmos-labs/desmos/v4/x/relationships/types"
+	"github.com/desmos-labs/desmos/v5/x/relationships/keeper"
+	"github.com/desmos-labs/desmos/v5/x/relationships/types"
 
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
