@@ -8,8 +8,6 @@ import (
 	postskeeper "github.com/desmos-labs/desmos/v4/x/posts/keeper"
 	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
 
-	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
@@ -38,7 +36,7 @@ const (
 func WeightedOperations(
 	appParams simtypes.AppParams, cdc codec.JSONCodec,
 	k keeper.Keeper, profilesKeeper types.ProfilesKeeper, sk subspaceskeeper.Keeper, pk postskeeper.Keeper,
-	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) sim.WeightedOperations {
 
 	var weightMsgAddReaction int
@@ -86,27 +84,27 @@ func WeightedOperations(
 	return sim.WeightedOperations{
 		sim.NewWeightedOperation(
 			weightMsgAddReaction,
-			SimulateMsgAddReaction(k, profilesKeeper, sk, pk, ak, bk, fk),
+			SimulateMsgAddReaction(k, profilesKeeper, sk, pk, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgRemoveReaction,
-			SimulateMsgRemoveReaction(k, sk, pk, ak, bk, fk),
+			SimulateMsgRemoveReaction(k, sk, pk, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgAddRegisteredReaction,
-			SimulateMsgAddRegisteredReaction(sk, ak, bk, fk),
+			SimulateMsgAddRegisteredReaction(sk, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgEditRegisteredReaction,
-			SimulateMsgEditRegisteredReaction(k, sk, ak, bk, fk),
+			SimulateMsgEditRegisteredReaction(k, sk, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgRemoveRegisteredReaction,
-			SimulateMsgRemoveRegisteredReaction(k, sk, ak, bk, fk),
+			SimulateMsgRemoveRegisteredReaction(k, sk, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgSetReactionsParams,
-			SimulateMsgSetReactionsParams(sk, ak, bk, fk),
+			SimulateMsgSetReactionsParams(sk, ak, bk),
 		),
 	}
 }

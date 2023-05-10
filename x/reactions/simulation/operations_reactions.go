@@ -9,7 +9,6 @@ import (
 	postssim "github.com/desmos-labs/desmos/v4/x/posts/simulation"
 	"github.com/desmos-labs/desmos/v4/x/reactions/keeper"
 
-	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
 	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
 	subspacessim "github.com/desmos-labs/desmos/v4/x/subspaces/simulation"
 	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
@@ -28,7 +27,7 @@ import (
 // SimulateMsgAddReaction tests and runs a single MsgAddReaction
 func SimulateMsgAddReaction(
 	k keeper.Keeper, profilesKeeper types.ProfilesKeeper, sk subspaceskeeper.Keeper, pk postskeeper.Keeper,
-	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -50,7 +49,7 @@ func SimulateMsgAddReaction(
 		)
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, signer)
 	}
 }
 
@@ -148,7 +147,7 @@ func randomAddReactionFields(
 // SimulateMsgRemoveReaction tests and runs a single MsgRemoveReaction
 func SimulateMsgRemoveReaction(
 	k keeper.Keeper, sk subspaceskeeper.Keeper, pk types.PostsKeeper,
-	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -170,7 +169,7 @@ func SimulateMsgRemoveReaction(
 		)
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, signer)
 	}
 }
 

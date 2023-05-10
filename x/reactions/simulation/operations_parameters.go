@@ -5,7 +5,6 @@ package simulation
 import (
 	"math/rand"
 
-	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
 	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
 	subspacessim "github.com/desmos-labs/desmos/v4/x/subspaces/simulation"
 	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
@@ -23,7 +22,7 @@ import (
 
 // SimulateMsgSetReactionsParams tests and runs a single MsgSetReactionsParams
 func SimulateMsgSetReactionsParams(
-	sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -45,7 +44,7 @@ func SimulateMsgSetReactionsParams(
 		)
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, signer)
 	}
 }
 

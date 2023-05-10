@@ -5,8 +5,6 @@ package simulation
 import (
 	"math/rand"
 
-	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
-
 	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
 
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
@@ -22,7 +20,7 @@ import (
 
 // SimulateMsgRequestDTagTransfer tests and runs a single MsgRequestDTagTransfer
 func SimulateMsgRequestDTagTransfer(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -35,7 +33,7 @@ func SimulateMsgRequestDTagTransfer(
 
 		msg := types.NewMsgRequestDTagTransfer(sender.Address.String(), receiver.GetAddress().String())
 
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, sender)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, sender)
 	}
 }
 
@@ -80,7 +78,7 @@ func randomDTagRequestTransferFields(
 
 // SimulateMsgAcceptDTagTransfer tests and runs a single MsgAcceptDTagTransfer
 func SimulateMsgAcceptDTagTransfer(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -92,7 +90,7 @@ func SimulateMsgAcceptDTagTransfer(
 		}
 
 		msg := types.NewMsgAcceptDTagTransferRequest(dTag, request.Sender, request.Receiver)
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, acc)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, acc)
 	}
 }
 
@@ -126,7 +124,7 @@ func randomDTagAcceptRequestTransferFields(
 
 // SimulateMsgRefuseDTagTransfer tests and runs a single MsgRefuseDTagTransfer
 func SimulateMsgRefuseDTagTransfer(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -138,7 +136,7 @@ func SimulateMsgRefuseDTagTransfer(
 		}
 
 		msg := types.NewMsgRefuseDTagTransferRequest(sender.Address.String(), receiver.Address.String())
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, receiver)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, receiver)
 	}
 }
 
@@ -180,7 +178,7 @@ func randomRefuseDTagTransferFields(
 
 // SimulateMsgCancelDTagTransfer tests and runs a single MsgCancelDTagTransfer
 func SimulateMsgCancelDTagTransfer(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -196,7 +194,7 @@ func SimulateMsgCancelDTagTransfer(
 			receiver.Address.String(),
 		)
 
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, sender)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, sender)
 	}
 }
 

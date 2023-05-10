@@ -16,7 +16,6 @@ import (
 
 	reactionstypes "github.com/desmos-labs/desmos/v4/x/reactions/types"
 
-	feestypes "github.com/desmos-labs/desmos/v4/x/fees/types"
 	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
 	relationshipstypes "github.com/desmos-labs/desmos/v4/x/relationships/types"
 	reportstypes "github.com/desmos-labs/desmos/v4/x/reports/types"
@@ -251,7 +250,6 @@ func TestAppImportExport(t *testing.T) {
 		{app.keys[ibcexported.StoreKey], newApp.keys[ibcexported.StoreKey], [][]byte{}},
 		{app.keys[ibctransfertypes.StoreKey], newApp.keys[ibctransfertypes.StoreKey], [][]byte{}},
 
-		{app.keys[feestypes.StoreKey], newApp.keys[feestypes.StoreKey], [][]byte{}},
 		{app.keys[subspacestypes.StoreKey], newApp.keys[subspacestypes.StoreKey], [][]byte{}},
 		{app.keys[profilestypes.StoreKey], newApp.keys[profilestypes.StoreKey], [][]byte{}},
 		{app.keys[relationshipstypes.StoreKey], newApp.keys[relationshipstypes.StoreKey], [][]byte{}},

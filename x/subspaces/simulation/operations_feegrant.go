@@ -11,7 +11,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/feegrant"
 
 	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
-	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
 	"github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
@@ -20,7 +19,7 @@ import (
 
 // SimulateMsgGrantAllowance tests and runs a single MsgGrantAllowance
 func SimulateMsgGrantAllowance(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -36,7 +35,7 @@ func SimulateMsgGrantAllowance(
 		msg := types.NewMsgGrantAllowance(subspaceID, granter, grantee, &feegrant.BasicAllowance{})
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, signer)
 	}
 }
 
@@ -119,7 +118,7 @@ func randomGrantAllowanceFields(
 
 // SimulateMsgRevokeAllowance tests and runs a single MsgRevokeAllowance
 func SimulateMsgRevokeAllowance(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -135,7 +134,7 @@ func SimulateMsgRevokeAllowance(
 		msg := types.NewMsgRevokeAllowance(subspaceID, granter, grantee)
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, signer)
 	}
 }
 

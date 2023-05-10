@@ -5,7 +5,6 @@ package simulation
 import (
 	"math/rand"
 
-	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
 	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
 	subspacessim "github.com/desmos-labs/desmos/v4/x/subspaces/simulation"
 	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
@@ -25,7 +24,7 @@ import (
 // SimulateMsgSupportStandardReason tests and runs a single MsgSupportStandardReason
 func SimulateMsgSupportStandardReason(
 	k keeper.Keeper, sk subspaceskeeper.Keeper,
-	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -42,7 +41,7 @@ func SimulateMsgSupportStandardReason(
 		msg := types.NewMsgSupportStandardReason(subspaceID, standardReasonID, signer.Address.String())
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, signer)
 	}
 }
 
@@ -95,7 +94,7 @@ func randomSupportStandardReasonFields(
 
 // SimulateMsgAddReason tests and runs a single MsgAddReason
 func SimulateMsgAddReason(
-	sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -112,7 +111,7 @@ func SimulateMsgAddReason(
 		msg := types.NewMsgAddReason(data.SubspaceID, data.Title, data.Description, signer.Address.String())
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, signer)
 	}
 }
 
@@ -164,7 +163,7 @@ func randomAddReasonFields(
 // SimulateMsgRemoveReason tests and runs a single MsgRemoveReason
 func SimulateMsgRemoveReason(
 	k keeper.Keeper, sk subspaceskeeper.Keeper,
-	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -181,7 +180,7 @@ func SimulateMsgRemoveReason(
 		msg := types.NewMsgRemoveReason(subspaceID, reasonID, signer.Address.String())
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, signer)
 	}
 }
 

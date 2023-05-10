@@ -5,8 +5,6 @@ package simulation
 import (
 	"math/rand"
 
-	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
-
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -38,7 +36,7 @@ const (
 // WeightedOperations returns all the operations from the module with their respective weights
 func WeightedOperations(
 	appParams simtypes.AppParams, cdc codec.JSONCodec,
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) sim.WeightedOperations {
 	var weightMsgSaveProfile int
 	appParams.GetOrGenerate(cdc, OpWeightMsgSaveProfile, &weightMsgSaveProfile, nil,
@@ -106,39 +104,39 @@ func WeightedOperations(
 	return sim.WeightedOperations{
 		sim.NewWeightedOperation(
 			weightMsgSaveProfile,
-			SimulateMsgSaveProfile(k, ak, bk, fk),
+			SimulateMsgSaveProfile(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgDeleteProfile,
-			SimulateMsgDeleteProfile(k, ak, bk, fk),
+			SimulateMsgDeleteProfile(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgRequestDTagTransfer,
-			SimulateMsgRequestDTagTransfer(k, ak, bk, fk),
+			SimulateMsgRequestDTagTransfer(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgAcceptDTagTransfer,
-			SimulateMsgAcceptDTagTransfer(k, ak, bk, fk),
+			SimulateMsgAcceptDTagTransfer(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgRefuseDTagTransfer,
-			SimulateMsgRefuseDTagTransfer(k, ak, bk, fk),
+			SimulateMsgRefuseDTagTransfer(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgCancelDTagTransfer,
-			SimulateMsgCancelDTagTransfer(k, ak, bk, fk),
+			SimulateMsgCancelDTagTransfer(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgLinkChainAccount,
-			SimulateMsgLinkChainAccount(k, ak, bk, fk),
+			SimulateMsgLinkChainAccount(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgUnlinkChainAccount,
-			SimulateMsgUnlinkChainAccount(k, ak, bk, fk),
+			SimulateMsgUnlinkChainAccount(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgSetDefaultExternalAddress,
-			SimulateMsgSetDefaultExternalAddress(k, ak, bk, fk),
+			SimulateMsgSetDefaultExternalAddress(k, ak, bk),
 		),
 	}
 }

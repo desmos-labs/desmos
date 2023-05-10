@@ -5,8 +5,6 @@ package simulation
 import (
 	"math/rand"
 
-	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
-
 	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
@@ -21,7 +19,7 @@ import (
 
 // SimulateMsgCreateSubspace tests and runs a single MsgCreateSubspace
 func SimulateMsgCreateSubspace(
-	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -43,7 +41,7 @@ func SimulateMsgCreateSubspace(
 		)
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, creator)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, creator)
 	}
 }
 
@@ -70,7 +68,7 @@ func randomSubspaceCreateFields(
 
 // SimulateMsgEditSubspace tests and runs a single msg edit subspace
 func SimulateMsgEditSubspace(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -93,7 +91,7 @@ func SimulateMsgEditSubspace(
 		)
 
 		// Send the data
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, editor)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, editor)
 	}
 }
 
@@ -147,7 +145,7 @@ func randomEditSubspaceFields(
 
 // SimulateMsgDeleteSubspace tests and runs a single msg delete subspace
 func SimulateMsgDeleteSubspace(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -164,7 +162,7 @@ func SimulateMsgDeleteSubspace(
 		msg := types.NewMsgDeleteSubspace(subspaceID, editor.Address.String())
 
 		// Send the data
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, editor)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, editor)
 	}
 }
 

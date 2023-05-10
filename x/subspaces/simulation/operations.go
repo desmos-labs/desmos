@@ -5,8 +5,6 @@ package simulation
 import (
 	"math/rand"
 
-	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
@@ -47,7 +45,7 @@ const (
 // WeightedOperations returns all the operations from the module with their respective weights
 func WeightedOperations(
 	appParams simtypes.AppParams, cdc codec.JSONCodec,
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper, authzk authzkeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, authzk authzkeeper.Keeper,
 ) sim.WeightedOperations {
 
 	var weightMsgCreateSubspace int
@@ -185,79 +183,79 @@ func WeightedOperations(
 	return sim.WeightedOperations{
 		sim.NewWeightedOperation(
 			weightMsgCreateSubspace,
-			SimulateMsgCreateSubspace(ak, bk, fk),
+			SimulateMsgCreateSubspace(ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgEditSubspace,
-			SimulateMsgEditSubspace(k, ak, bk, fk),
+			SimulateMsgEditSubspace(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgDeleteSubspace,
-			SimulateMsgDeleteSubspace(k, ak, bk, fk),
+			SimulateMsgDeleteSubspace(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgCreateSection,
-			SimulateMsgCreateSection(k, ak, bk, fk),
+			SimulateMsgCreateSection(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgEditSection,
-			SimulateMsgEditSection(k, ak, bk, fk),
+			SimulateMsgEditSection(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgMoveSection,
-			SimulateMsgMoveSection(k, ak, bk, fk),
+			SimulateMsgMoveSection(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgDeleteSection,
-			SimulateMsgDeleteSection(k, ak, bk, fk),
+			SimulateMsgDeleteSection(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgCreateUserGroup,
-			SimulateMsgCreateUserGroup(k, ak, bk, fk),
+			SimulateMsgCreateUserGroup(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgEditUserGroup,
-			SimulateMsgEditUserGroup(k, ak, bk, fk),
+			SimulateMsgEditUserGroup(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgMoveUserGroup,
-			SimulateMsgMoveUserGroup(k, ak, bk, fk),
+			SimulateMsgMoveUserGroup(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgSetUserGroupPermissions,
-			SimulateMsgSetUserGroupPermissions(k, ak, bk, fk),
+			SimulateMsgSetUserGroupPermissions(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgDeleteUserGroup,
-			SimulateMsgDeleteUserGroup(k, ak, bk, fk),
+			SimulateMsgDeleteUserGroup(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgAddUserToUserGroup,
-			SimulateMsgAddUserToUserGroup(k, ak, bk, fk),
+			SimulateMsgAddUserToUserGroup(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgRemoveUserFromUserGroup,
-			SimulateMsgRemoveUserFromUserGroup(k, ak, bk, fk),
+			SimulateMsgRemoveUserFromUserGroup(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgSetUserPermissions,
-			SimulateMsgSetUserPermissions(k, ak, bk, fk),
+			SimulateMsgSetUserPermissions(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgGrantTreasuryAuthorization,
-			SimulateMsgGrantTreasuryAuthorization(k, ak, bk, fk),
+			SimulateMsgGrantTreasuryAuthorization(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgRevokeTreasuryAuthorization,
-			SimulateMsgRevokeTreasuryAuthorization(k, ak, bk, fk, authzk),
+			SimulateMsgRevokeTreasuryAuthorization(k, ak, bk, authzk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgGrantUserAllowance,
-			SimulateMsgGrantAllowance(k, ak, bk, fk),
+			SimulateMsgGrantAllowance(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgRevokeAllowance,
-			SimulateMsgRevokeAllowance(k, ak, bk, fk),
+			SimulateMsgRevokeAllowance(k, ak, bk),
 		),
 	}
 }

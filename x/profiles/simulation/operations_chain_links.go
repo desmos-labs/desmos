@@ -4,8 +4,6 @@ import (
 	"math/rand"
 	"time"
 
-	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
-
 	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
 	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
 
@@ -24,7 +22,7 @@ import (
 
 // SimulateMsgLinkChainAccount tests and runs a single MsgLinkChainAccount
 func SimulateMsgLinkChainAccount(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -46,7 +44,7 @@ func SimulateMsgLinkChainAccount(
 		)
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, signer)
 	}
 }
 
@@ -85,7 +83,7 @@ func randomLinkChainAccountFields(
 
 // SimulateMsgUnlinkChainAccount tests and runs a single MsgUnlinkChainAccount
 func SimulateMsgUnlinkChainAccount(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -102,7 +100,7 @@ func SimulateMsgUnlinkChainAccount(
 		msg := types.NewMsgUnlinkChainAccount(link.User, link.ChainConfig.Name, link.GetAddressData().GetValue())
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, signer)
 	}
 }
 
@@ -140,7 +138,7 @@ func randomUnlinkChainAccountFields(
 
 // SimulateMsgSetDefaultExternalAddress tests and runs a single MsgSetDefaultExternalAddress
 func SimulateMsgSetDefaultExternalAddress(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -157,7 +155,7 @@ func SimulateMsgSetDefaultExternalAddress(
 		msg := types.NewMsgSetDefaultExternalAddress(link.ChainConfig.Name, link.GetAddressData().GetValue(), link.User)
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, signer)
 	}
 }
 

@@ -5,8 +5,6 @@ package simulation
 import (
 	"math/rand"
 
-	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
-
 	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
 
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
@@ -35,7 +33,7 @@ const (
 // WeightedOperations returns all the operations from the module with their respective weights
 func WeightedOperations(
 	appParams simtypes.AppParams, cdc codec.JSONCodec,
-	k keeper.Keeper, sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	k keeper.Keeper, sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) sim.WeightedOperations {
 	var weightMsgCreateRelationship int
 	appParams.GetOrGenerate(cdc, OpWeightMsgCreateRelationship, &weightMsgCreateRelationship, nil,
@@ -68,19 +66,19 @@ func WeightedOperations(
 	return sim.WeightedOperations{
 		sim.NewWeightedOperation(
 			weightMsgCreateRelationship,
-			SimulateMsgCreateRelationship(k, sk, ak, bk, fk),
+			SimulateMsgCreateRelationship(k, sk, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgDeleteRelationship,
-			SimulateMsgDeleteRelationship(k, ak, bk, fk),
+			SimulateMsgDeleteRelationship(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgBlockUser,
-			SimulateMsgBlockUser(k, sk, ak, bk, fk),
+			SimulateMsgBlockUser(k, sk, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgUnblockUser,
-			SimulateMsgUnblockUser(k, ak, bk, fk),
+			SimulateMsgUnblockUser(k, ak, bk),
 		),
 	}
 }

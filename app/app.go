@@ -21,6 +21,7 @@ import (
 	v471 "github.com/desmos-labs/desmos/v4/app/upgrades/v471"
 	v480 "github.com/desmos-labs/desmos/v4/app/upgrades/v480"
 	v500 "github.com/desmos-labs/desmos/v4/app/upgrades/v500"
+	v510 "github.com/desmos-labs/desmos/v4/app/upgrades/v510"
 
 	profilesv4 "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v4"
 
@@ -32,10 +33,6 @@ import (
 	"github.com/desmos-labs/desmos/v4/x/posts"
 	"github.com/desmos-labs/desmos/v4/x/relationships"
 	relationshipstypes "github.com/desmos-labs/desmos/v4/x/relationships/types"
-
-	"github.com/desmos-labs/desmos/v4/x/fees"
-	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
-	feestypes "github.com/desmos-labs/desmos/v4/x/fees/types"
 
 	autocliv1 "cosmossdk.io/api/cosmos/autocli/v1"
 	reflectionv1 "cosmossdk.io/api/cosmos/reflection/v1"
@@ -272,7 +269,6 @@ var (
 		posts.AppModuleBasic{},
 		reports.AppModuleBasic{},
 		reactions.AppModuleBasic{},
-		fees.AppModuleBasic{},
 		supply.AppModuleBasic{},
 	)
 
@@ -346,7 +342,6 @@ type DesmosApp struct {
 	ScopedICAControllerKeeper capabilitykeeper.ScopedKeeper
 
 	// Custom modules
-	FeesKeeper          feeskeeper.Keeper
 	SubspacesKeeper     subspaceskeeper.Keeper
 	ProfilesKeeper      profileskeeper.Keeper
 	RelationshipsKeeper relationshipskeeper.Keeper
@@ -408,7 +403,6 @@ func NewDesmosApp(
 		// Custom modules
 		profilestypes.StoreKey, relationshipstypes.StoreKey, subspacestypes.StoreKey,
 		poststypes.StoreKey, reportstypes.StoreKey, reactionstypes.StoreKey,
-		feestypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -571,9 +565,6 @@ func NewDesmosApp(
 		scopedICAControllerKeeper,
 		app.MsgServiceRouter(),
 	)
-
-	// Create fees keeper
-	app.FeesKeeper = feeskeeper.NewKeeper(app.appCodec, keys[feestypes.StoreKey], authtypes.NewModuleAddress(govtypes.ModuleName).String())
 
 	// Create subspaces keeper and module
 	subspacesKeeper := subspaceskeeper.NewKeeper(app.appCodec, keys[subspacestypes.StoreKey], app.AccountKeeper, app.AuthzKeeper)
@@ -791,13 +782,12 @@ func NewDesmosApp(
 		ica.NewAppModule(&app.ICAControllerKeeper, &app.ICAHostKeeper),
 
 		// Custom modules
-		fees.NewAppModule(app.appCodec, app.FeesKeeper, app.GetSubspace(feestypes.ModuleName)),
-		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AuthzKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
-		profiles.NewAppModule(appCodec, legacyAmino, app.ProfilesKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper, app.GetSubspace(profilestypes.ModuleName)),
-		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv4.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
-		posts.NewAppModule(appCodec, app.PostsKeeper, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper, app.GetSubspace(poststypes.ModuleName)),
-		reports.NewAppModule(appCodec, app.ReportsKeeper, app.SubspacesKeeper, app.PostsKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper, app.GetSubspace(reportstypes.ModuleName)),
-		reactions.NewAppModule(appCodec, app.ReactionsKeeper, app.ProfilesKeeper, app.SubspacesKeeper, app.PostsKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
+		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AuthzKeeper, app.AccountKeeper, app.BankKeeper),
+		profiles.NewAppModule(appCodec, legacyAmino, app.ProfilesKeeper, app.AccountKeeper, app.BankKeeper, app.GetSubspace(profilestypes.ModuleName)),
+		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv4.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper),
+		posts.NewAppModule(appCodec, app.PostsKeeper, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper, app.GetSubspace(poststypes.ModuleName)),
+		reports.NewAppModule(appCodec, app.ReportsKeeper, app.SubspacesKeeper, app.PostsKeeper, app.AccountKeeper, app.BankKeeper, app.GetSubspace(reportstypes.ModuleName)),
+		reactions.NewAppModule(appCodec, app.ReactionsKeeper, app.ProfilesKeeper, app.SubspacesKeeper, app.PostsKeeper, app.AccountKeeper, app.BankKeeper),
 		supply.NewAppModule(appCodec, legacyAmino, app.SupplyKeeper),
 
 		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper, app.MsgServiceRouter(), app.GetSubspace(wasmtypes.ModuleName)),
@@ -834,7 +824,6 @@ func NewDesmosApp(
 		icatypes.ModuleName,
 
 		// Custom modules
-		feestypes.ModuleName,
 		subspacestypes.ModuleName,
 		relationshipstypes.ModuleName,
 		profilestypes.ModuleName,
@@ -871,7 +860,6 @@ func NewDesmosApp(
 		icatypes.ModuleName,
 
 		// Custom modules
-		feestypes.ModuleName,
 		subspacestypes.ModuleName,
 		relationshipstypes.ModuleName,
 		profilestypes.ModuleName,
@@ -916,7 +904,6 @@ func NewDesmosApp(
 		icatypes.ModuleName,
 
 		// Custom modules
-		feestypes.ModuleName,
 		subspacestypes.ModuleName,
 		profilestypes.ModuleName,
 		relationshipstypes.ModuleName,
@@ -958,7 +945,6 @@ func NewDesmosApp(
 		icatypes.ModuleName,
 
 		// Custom modules
-		feestypes.ModuleName,
 		subspacestypes.ModuleName,
 		relationshipstypes.ModuleName,
 		profilestypes.ModuleName,
@@ -1014,7 +1000,6 @@ func NewDesmosApp(
 				SigGasConsumer:  ante.DefaultSigVerificationGasConsumer,
 			},
 			IBCkeeper:         app.IBCKeeper,
-			FeesKeeper:        app.FeesKeeper,
 			TxCounterStoreKey: keys[wasm.StoreKey],
 			WasmConfig:        &wasmConfig,
 			SubspacesKeeper:   app.SubspacesKeeper,
@@ -1251,6 +1236,7 @@ func (app *DesmosApp) registerUpgradeHandlers() {
 	app.registerUpgrade(v4.NewUpgrade(app.mm, app.configurator, app.BankKeeper))
 	app.registerUpgrade(v480.NewUpgrade(app.mm, app.configurator))
 	app.registerUpgrade(v500.NewUpgrade(app.mm, app.configurator, app.ParamsKeeper, app.ConsensusParamsKeeper))
+	app.registerUpgrade(v510.NewUpgrade(app.mm, app.configurator))
 }
 
 // registerUpgrade registers the given upgrade to be supported by the app
@@ -1307,7 +1293,6 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(icahosttypes.SubModuleName)
 	paramsKeeper.Subspace(icacontrollertypes.SubModuleName)
 
-	paramsKeeper.Subspace(feestypes.ModuleName)
 	paramsKeeper.Subspace(subspacestypes.ModuleName)
 	paramsKeeper.Subspace(profilestypes.ModuleName)
 	paramsKeeper.Subspace(poststypes.ModuleName)

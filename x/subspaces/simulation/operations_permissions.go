@@ -5,8 +5,6 @@ package simulation
 import (
 	"math/rand"
 
-	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
-
 	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
@@ -21,7 +19,7 @@ import (
 
 // SimulateMsgSetUserPermissions tests and runs a single MsgSetUserPermissions
 func SimulateMsgSetUserPermissions(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -38,7 +36,7 @@ func SimulateMsgSetUserPermissions(
 		msg := types.NewMsgSetUserPermissions(subspaceID, 0, user, permissions, creator.Address.String())
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, creator)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, creator)
 	}
 }
 
