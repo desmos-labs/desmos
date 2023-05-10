@@ -49,7 +49,7 @@ message Subspace {
 
 ### Msgs
 
-We will implement the operation that allows subspace admins to updates subspace allowed fee tokens list by governance;
+We will implement the operation that allows subspace admins to update the list of allowed fee tokens list within their subspace via a governance proposal:
 
 ```proto
 service Msg {
