@@ -84,7 +84,20 @@ func (sub Subspace) Validate() error {
 		return fmt.Errorf("invalid subspace creation time: %s", sub.CreationTime)
 	}
 
+	err = sub.AllowedFeeTokens.Validate()
+	if err != nil {
+		return fmt.Errorf("invalid allowed fee tokens: %s", sub.AllowedFeeTokens)
+	}
+
 	return nil
+}
+
+// Set allowed fee tokens without validating it.
+// Before storing the updated subspace, a validation with Validate() should
+// be performed.
+func (sub Subspace) SetAllowedFeeTokens(feeTokens sdk.Coins) Subspace {
+	sub.AllowedFeeTokens = feeTokens
+	return sub
 }
 
 // Update updates the fields of a given subspace without validating it.

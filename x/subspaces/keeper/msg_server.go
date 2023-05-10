@@ -840,5 +840,35 @@ func (k msgServer) UpdateSubspaceFeeTokens(goCtx context.Context, msg *types.Msg
 		return nil, errors.Wrapf(govtypes.ErrInvalidSigner, "invalid authority; expected %s, got %s", authority, msg.Authority)
 	}
 
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Check if the subspace exists
+	subspace, exists := k.GetSubspace(ctx, msg.SubspaceID)
+	if !exists {
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+	}
+
+	// Update the subspace and validate it
+	updated := subspace.SetAllowedFeeTokens(msg.AllowedFeeTokens)
+	err := updated.Validate()
+	if err != nil {
+		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+
+	k.SaveSubspace(ctx, updated)
+
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Authority),
+		),
+		sdk.NewEvent(
+			types.EventTypeUpdateSubspaceFeeToken,
+			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", updated.ID)),
+		),
+	})
+
 	return &types.MsgUpdateSubspaceFeeTokensResponse{}, nil
 }

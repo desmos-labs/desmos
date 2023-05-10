@@ -839,8 +839,7 @@ func (msg MsgSetUserPermissions) GetSigners() []sdk.AccAddress {
 // --------------------------------------------------------------------------------------------------------------------
 
 var (
-	_ sdk.Msg = &MsgUpdateSubspaceFeeTokens{}
-
+	_ sdk.Msg            = &MsgUpdateSubspaceFeeTokens{}
 	_ legacytx.LegacyMsg = &MsgUpdateSubspaceFeeTokens{}
 )
 
@@ -857,10 +856,10 @@ func NewMsgUpdateSubspaceFeeTokens(
 	}
 }
 
-// Route implements sdk.Msg
+// Route implements legacytx.LegacyMsg
 func (msg MsgUpdateSubspaceFeeTokens) Route() string { return RouterKey }
 
-// Type implements sdk.Msg
+// Type implements legacytx.LegacyMsg
 func (msg MsgUpdateSubspaceFeeTokens) Type() string { return ActionUpdateSubspaceFeeTokens }
 
 // ValidateBasic implements sdk.Msg
@@ -869,15 +868,12 @@ func (msg MsgUpdateSubspaceFeeTokens) ValidateBasic() error {
 		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
-	for _, coin := range msg.AllowedFeeTokens {
-
-		err := coin.Validate()
-		if err != nil {
-			return err
-		}
+	err := msg.AllowedFeeTokens.Validate()
+	if err != nil {
+		return err
 	}
 
-	_, err := sdk.AccAddressFromBech32(msg.Authority)
+	_, err = sdk.AccAddressFromBech32(msg.Authority)
 	if err != nil {
 		return err
 	}
@@ -885,7 +881,7 @@ func (msg MsgUpdateSubspaceFeeTokens) ValidateBasic() error {
 	return nil
 }
 
-// GetSignBytes implements sdk.Msg
+// GetSignBytes implements legacytx.LegacyMsg
 func (msg MsgUpdateSubspaceFeeTokens) GetSignBytes() []byte {
 	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
 }
