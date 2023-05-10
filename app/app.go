@@ -17,9 +17,6 @@ import (
 	poststypes "github.com/desmos-labs/desmos/v5/x/posts/types"
 
 	"github.com/desmos-labs/desmos/v5/app/upgrades"
-	v4 "github.com/desmos-labs/desmos/v5/app/upgrades/v4"
-	v471 "github.com/desmos-labs/desmos/v5/app/upgrades/v471"
-	v480 "github.com/desmos-labs/desmos/v5/app/upgrades/v480"
 	v500 "github.com/desmos-labs/desmos/v5/app/upgrades/v500"
 
 	profilesv4 "github.com/desmos-labs/desmos/v5/x/profiles/legacy/v4"
@@ -1231,9 +1228,6 @@ func (app *DesmosApp) RegisterNodeService(clientCtx client.Context) {
 
 // registerUpgradeHandlers registers all the upgrade handlers that are supported by the app
 func (app *DesmosApp) registerUpgradeHandlers() {
-	app.registerUpgrade(v471.NewUpgrade(app.mm, app.configurator, app.BankKeeper))
-	app.registerUpgrade(v4.NewUpgrade(app.mm, app.configurator, app.BankKeeper))
-	app.registerUpgrade(v480.NewUpgrade(app.mm, app.configurator))
 	app.registerUpgrade(v500.NewUpgrade(app.mm, app.configurator, app.ParamsKeeper, app.ConsensusParamsKeeper))
 }
 

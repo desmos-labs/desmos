@@ -27,7 +27,6 @@ import (
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 
-	feestypes "github.com/desmos-labs/desmos/v5/x/fees/types"
 	poststypes "github.com/desmos-labs/desmos/v5/x/posts/types"
 	profilestypes "github.com/desmos-labs/desmos/v5/x/profiles/types"
 	reportstypes "github.com/desmos-labs/desmos/v5/x/reports/types"
@@ -74,21 +73,28 @@ func (u *Upgrade) Handler() upgradetypes.UpgradeHandler {
 			var keyTable paramstypes.KeyTable
 			switch subspace.Name() {
 			case authtypes.ModuleName:
-				keyTable = authtypes.ParamKeyTable() //nolint:staticcheck
+				//nolint:staticcheck
+				keyTable = authtypes.ParamKeyTable()
 			case banktypes.ModuleName:
-				keyTable = banktypes.ParamKeyTable() //nolint:staticcheck
+				//nolint:staticcheck
+				keyTable = banktypes.ParamKeyTable()
 			case stakingtypes.ModuleName:
 				keyTable = stakingtypes.ParamKeyTable()
 			case minttypes.ModuleName:
-				keyTable = minttypes.ParamKeyTable() //nolint:staticcheck
+				//nolint:staticcheck
+				keyTable = minttypes.ParamKeyTable()
 			case distrtypes.ModuleName:
-				keyTable = distrtypes.ParamKeyTable() //nolint:staticcheck
+				//nolint:staticcheck
+				keyTable = distrtypes.ParamKeyTable()
 			case slashingtypes.ModuleName:
-				keyTable = slashingtypes.ParamKeyTable() //nolint:staticcheck
+				//nolint:staticcheck
+				keyTable = slashingtypes.ParamKeyTable()
 			case govtypes.ModuleName:
-				keyTable = govv1.ParamKeyTable() //nolint:staticcheck
+				//nolint:staticcheck
+				keyTable = govv1.ParamKeyTable()
 			case crisistypes.ModuleName:
-				keyTable = crisistypes.ParamKeyTable() //nolint:staticcheck
+				//nolint:staticcheck
+				keyTable = crisistypes.ParamKeyTable()
 
 				// ibc
 			case ibctransfertypes.ModuleName:
@@ -99,8 +105,6 @@ func (u *Upgrade) Handler() upgradetypes.UpgradeHandler {
 				keyTable = icacontrollertypes.ParamKeyTable()
 
 				// custom
-			case feestypes.ModuleName:
-				keyTable = feestypes.ParamKeyTable()
 			case poststypes.ModuleName:
 				keyTable = poststypes.ParamKeyTable()
 			case profilestypes.ModuleName:
@@ -110,7 +114,8 @@ func (u *Upgrade) Handler() upgradetypes.UpgradeHandler {
 
 				// wasm
 			case wasmtypes.ModuleName:
-				keyTable = wasmtypes.ParamKeyTable() //nolint:staticcheck
+				//nolint:staticcheck
+				keyTable = wasmtypes.ParamKeyTable()
 
 				// Skip if module is not migration target
 			default:
@@ -144,7 +149,7 @@ func (u *Upgrade) StoreUpgrades() *storetypes.StoreUpgrades {
 			crisistypes.ModuleName,
 		},
 		Deleted: []string{
-			feestypes.ModuleName,
+			"fees",
 		},
 	}
 }
