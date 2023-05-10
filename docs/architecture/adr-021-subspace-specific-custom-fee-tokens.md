@@ -77,8 +77,8 @@ message MsgUpdateSubspaceFeeTokensResponse {}
 ### Custom TxFeeChecker
 
 To make it easier for validators to manage the minimum prices of fee tokens allowed within a subspace, we will develop a new `TxFeeChecker` based on the existing one, which will function as follows:
-- Combine the list of minimum gas prices in the validator's local configuration with the list of allowed fee tokens and their minimum prices within the subspace.
-- Follow the same process as the existing `TxFeeChecker`.
+1. combine the list of minimum gas prices in the validator's local configuration with the list of allowed fee tokens and their minimum prices within the subspace;
+2. follow the same process used inside the existing `TxFeeChecker`.
 
 ### Deprecated `x/fees`
 
