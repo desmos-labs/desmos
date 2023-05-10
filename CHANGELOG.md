@@ -4,6 +4,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
 ## Version 5.0.0
 ### Features
+#### Fees
+- ([\#1135](https://github.com/desmos-labs/desmos/pull/1135)) Removed the `x/fees` module
+
 #### Subspaces
 - ([\#1067](https://github.com/desmos-labs/desmos/pull/1067)) Changed how subspace treasury addresses are generated and managed
 - ([\#1071](https://github.com/desmos-labs/desmos/pull/1071)) Implemented the ability for subspace admins to grant authorizations on behalf of the subspace treasury
