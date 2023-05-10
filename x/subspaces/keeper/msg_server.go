@@ -10,6 +10,7 @@ import (
 	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 )
 
 type msgServer struct {
@@ -830,4 +831,14 @@ func (k msgServer) SetUserPermissions(goCtx context.Context, msg *types.MsgSetUs
 	})
 
 	return &types.MsgSetUserPermissionsResponse{}, nil
+}
+
+// UpdateSubspaceFeeTokens defines a rpc method for MsgUpdateSubspaceFeeTokens
+func (k msgServer) UpdateSubspaceFeeTokens(goCtx context.Context, msg *types.MsgUpdateSubspaceFeeTokens) (*types.MsgUpdateSubspaceFeeTokensResponse, error) {
+	authority := k.authority
+	if authority != msg.Authority {
+		return nil, errors.Wrapf(govtypes.ErrInvalidSigner, "invalid authority; expected %s, got %s", authority, msg.Authority)
+	}
+
+	return &types.MsgUpdateSubspaceFeeTokensResponse{}, nil
 }

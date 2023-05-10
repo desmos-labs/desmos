@@ -16,6 +16,10 @@ type Keeper struct {
 
 	ak     types.AccountKeeper
 	authzk types.AuthzKeeper
+
+	// the address capable of executing a MsgUpdateParams message. Typically, this
+	// should be the x/gov module account.
+	authority string
 }
 
 // NewKeeper creates new instances of the subspaces keeper

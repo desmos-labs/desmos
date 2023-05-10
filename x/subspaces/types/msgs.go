@@ -7,6 +7,7 @@ import (
 	errors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/cosmos/cosmos-sdk/x/auth/migrations/legacytx"
 )
 
 // SubspaceMsg represents a generic message that is related to a subspace
@@ -832,5 +833,65 @@ func (msg MsgSetUserPermissions) GetSignBytes() []byte {
 // GetSigners implements sdk.Msg
 func (msg MsgSetUserPermissions) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Signer)
+	return []sdk.AccAddress{addr}
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+var (
+	_ sdk.Msg = &MsgUpdateSubspaceFeeTokens{}
+
+	_ legacytx.LegacyMsg = &MsgUpdateSubspaceFeeTokens{}
+)
+
+// NewMsgUpdateSubspaceFeeTokens creates a new MsgUpdateSubspaceFeeTokens instance
+func NewMsgUpdateSubspaceFeeTokens(
+	subspaceID uint64,
+	allowedFeeTokens sdk.Coins,
+	authority string,
+) *MsgUpdateSubspaceFeeTokens {
+	return &MsgUpdateSubspaceFeeTokens{
+		SubspaceID:       subspaceID,
+		AllowedFeeTokens: allowedFeeTokens,
+		Authority:        authority,
+	}
+}
+
+// Route implements sdk.Msg
+func (msg MsgUpdateSubspaceFeeTokens) Route() string { return RouterKey }
+
+// Type implements sdk.Msg
+func (msg MsgUpdateSubspaceFeeTokens) Type() string { return ActionUpdateSubspaceFeeTokens }
+
+// ValidateBasic implements sdk.Msg
+func (msg MsgUpdateSubspaceFeeTokens) ValidateBasic() error {
+	if msg.SubspaceID == 0 {
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+	}
+
+	for _, coin := range msg.AllowedFeeTokens {
+
+		err := coin.Validate()
+		if err != nil {
+			return err
+		}
+	}
+
+	_, err := sdk.AccAddressFromBech32(msg.Authority)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// GetSignBytes implements sdk.Msg
+func (msg MsgUpdateSubspaceFeeTokens) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
+}
+
+// GetSigners implements sdk.Msg
+func (msg MsgUpdateSubspaceFeeTokens) GetSigners() []sdk.AccAddress {
+	addr, _ := sdk.AccAddressFromBech32(msg.Authority)
 	return []sdk.AccAddress{addr}
 }

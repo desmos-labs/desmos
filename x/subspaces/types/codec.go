@@ -39,6 +39,8 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterInterface((*Grantee)(nil), nil)
 	cdc.RegisterConcrete(&UserGrantee{}, "desmos/UserGrantee", nil)
 	cdc.RegisterConcrete(&GroupGrantee{}, "desmos/GroupGrantee", nil)
+
+	cdc.RegisterConcrete(&MsgUpdateSubspaceFeeTokens{}, "desmos/MsgUpdateSubspaceFeeTokens", nil)
 }
 
 func RegisterInterfaces(registry types.InterfaceRegistry) {
@@ -68,6 +70,7 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 		&MsgRevokeTreasuryAuthorization{},
 		&MsgGrantAllowance{},
 		&MsgRevokeAllowance{},
+		&MsgUpdateSubspaceFeeTokensResponse{},
 	)
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
