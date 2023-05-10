@@ -70,7 +70,7 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 		&MsgRevokeTreasuryAuthorization{},
 		&MsgGrantAllowance{},
 		&MsgRevokeAllowance{},
-		&MsgUpdateSubspaceFeeTokensResponse{},
+		&MsgUpdateSubspaceFeeTokens{},
 	)
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)

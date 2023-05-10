@@ -47,7 +47,7 @@ func TestBeginBlocker(t *testing.T) {
 
 	ctx := sdk.NewContext(ms, tmproto.Header{ChainID: "test-chain"}, false, log.NewNopLogger())
 	cdc, legacyAmino := app.MakeCodecs()
-	sk := subspaceskeeper.NewKeeper(cdc, keys[subspacestypes.StoreKey], nil, nil)
+	sk := subspaceskeeper.NewKeeper(cdc, keys[subspacestypes.StoreKey], nil, nil, "authority")
 	rk := relationshipskeeper.NewKeeper(cdc, keys[relationshipstypes.StoreKey], sk)
 	ak := authkeeper.NewAccountKeeper(cdc, keys[authtypes.StoreKey], authtypes.ProtoBaseAccount, app.GetMaccPerms(), "cosmos", authtypes.NewModuleAddress("gov").String())
 	k := keeper.NewKeeper(cdc, legacyAmino, keys[types.StoreKey], ak, rk, nil, nil, nil, authtypes.NewModuleAddress("gov").String())

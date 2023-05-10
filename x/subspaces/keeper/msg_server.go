@@ -867,6 +867,7 @@ func (k msgServer) UpdateSubspaceFeeTokens(goCtx context.Context, msg *types.Msg
 		sdk.NewEvent(
 			types.EventTypeUpdateSubspaceFeeToken,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", updated.ID)),
+			sdk.NewAttribute(types.AttributeKeyUser, msg.Authority),
 		),
 	})
 

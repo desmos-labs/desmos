@@ -76,7 +76,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.cdc, suite.legacyAminoCdc = app.MakeCodecs()
 
 	// Define keeper
-	suite.sk = subspaceskeeper.NewKeeper(suite.cdc, keys[subspacestypes.StoreKey], nil, nil)
+	suite.sk = subspaceskeeper.NewKeeper(suite.cdc, keys[subspacestypes.StoreKey], nil, nil, authtypes.NewModuleAddress("gov").String())
 	suite.rk = relationshipskeeper.NewKeeper(suite.cdc, keys[relationshipstypes.StoreKey], suite.sk)
 	authKeeper := authkeeper.NewAccountKeeper(suite.cdc, keys[authtypes.StoreKey], authtypes.ProtoBaseAccount, app.GetMaccPerms(), "cosmos", authtypes.NewModuleAddress("gov").String())
 	suite.ak = profileskeeper.NewKeeper(suite.cdc, suite.legacyAminoCdc, keys[profilestypes.StoreKey], authKeeper, suite.rk, nil, nil, nil, authtypes.NewModuleAddress("gov").String())

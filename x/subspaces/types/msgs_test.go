@@ -1308,7 +1308,7 @@ func TestMsgUpdateSubspaceFeeTokens_ValidateBasic(t *testing.T) {
 			name: "invalid allowed fee tokens returns error",
 			msg: types.NewMsgUpdateSubspaceFeeTokens(
 				1,
-				[]sdk.Coin{{Denom: "minttoken", Amount: sdk.NewInt(-10)}},
+				sdk.Coins{{Denom: "minttoken", Amount: sdk.NewInt(-10)}},
 				"cosmos1m0czrla04f7rp3zg7d",
 			),
 			shouldErr: true,

@@ -70,5 +70,5 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.authzKeeper = authzkeeper.NewKeeper(keys[authzkeeper.StoreKey], suite.cdc, &baseapp.MsgServiceRouter{}, suite.ak)
 
 	// Define keeper
-	suite.k = keeper.NewKeeper(suite.cdc, suite.storeKey, suite.ak, suite.authzKeeper)
+	suite.k = keeper.NewKeeper(suite.cdc, suite.storeKey, suite.ak, suite.authzKeeper, authtypes.NewModuleAddress("gov").String())
 }

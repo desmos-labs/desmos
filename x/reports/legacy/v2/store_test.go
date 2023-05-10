@@ -43,7 +43,7 @@ func TestMigrateStore(t *testing.T) {
 
 	paramsSubspace := newMockSubspace(types.Params{})
 
-	sk := subspaceskeeper.NewKeeper(cdc, keys[subspacestypes.StoreKey], nil, nil)
+	sk := subspaceskeeper.NewKeeper(cdc, keys[subspacestypes.StoreKey], nil, nil, "authority")
 
 	testCases := []struct {
 		name      string

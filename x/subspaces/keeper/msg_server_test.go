@@ -4,6 +4,7 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	"github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
 	"github.com/desmos-labs/desmos/v5/x/subspaces/types"
@@ -3045,6 +3046,128 @@ func (suite *KeeperTestSuite) TestMsgServer_SetUserPermissions() {
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.k)
 			_, err := service.SetUserPermissions(sdk.WrapSDKContext(ctx), tc.msg)
+
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(tc.expEvents, ctx.EventManager().Events())
+
+				if tc.check != nil {
+					tc.check(ctx)
+				}
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestMsgServer_UpdateSubspaceFeeTokens() {
+	testCases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		msg       *types.MsgUpdateSubspaceFeeTokens
+		shouldErr bool
+		expEvents sdk.Events
+		check     func(ctx sdk.Context)
+	}{
+		{
+			name: "invalid authority return error",
+			msg: types.NewMsgUpdateSubspaceFeeTokens(
+				1,
+				sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(10))),
+				"invalid",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "subspace not found returns error",
+			msg: types.NewMsgUpdateSubspaceFeeTokens(
+				1,
+				sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(10))),
+				"authority",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid allowed fee tokens returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+			},
+			msg: types.NewMsgUpdateSubspaceFeeTokens(
+				1,
+				sdk.Coins{{Denom: "minttoken", Amount: sdk.NewInt(-10)}},
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "subspace are updated correctly",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+			},
+			msg: types.NewMsgUpdateSubspaceFeeTokens(
+				1,
+				sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(10))),
+				authtypes.NewModuleAddress("gov").String(),
+			),
+			shouldErr: false,
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					sdk.EventTypeMessage,
+					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgUpdateSubspaceFeeTokens{})),
+					sdk.NewAttribute(sdk.AttributeKeySender, authtypes.NewModuleAddress("gov").String()),
+				),
+				sdk.NewEvent(
+					types.EventTypeUpdateSubspaceFeeToken,
+					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					sdk.NewAttribute(types.AttributeKeyUser, authtypes.NewModuleAddress("gov").String()),
+				),
+			},
+			check: func(ctx sdk.Context) {
+				subspace, _ := suite.k.GetSubspace(ctx, 1)
+				expected := types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				).SetAllowedFeeTokens(sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(10))))
+
+				suite.Require().Equal(expected, subspace)
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			// Run the message
+			service := keeper.NewMsgServerImpl(suite.k)
+			_, err := service.UpdateSubspaceFeeTokens(sdk.WrapSDKContext(ctx), tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
