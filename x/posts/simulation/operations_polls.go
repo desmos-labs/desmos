@@ -13,7 +13,6 @@ import (
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
 	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
-	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
 	"github.com/desmos-labs/desmos/v4/x/posts/keeper"
 	"github.com/desmos-labs/desmos/v4/x/posts/types"
 	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
@@ -23,7 +22,7 @@ import (
 
 // SimulateMsgAnswerPoll tests and runs a single msg answer poll post
 func SimulateMsgAnswerPoll(
-	k keeper.Keeper, sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	k keeper.Keeper, sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -37,7 +36,7 @@ func SimulateMsgAnswerPoll(
 
 		msg := types.NewMsgAnswerPoll(answer.SubspaceID, answer.PostID, answer.PollID, answer.AnswersIndexes, user.Address.String())
 
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, user)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, user)
 	}
 }
 

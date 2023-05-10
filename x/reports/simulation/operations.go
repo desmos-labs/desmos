@@ -8,8 +8,6 @@ import (
 	postskeeper "github.com/desmos-labs/desmos/v4/x/posts/keeper"
 	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
 
-	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
@@ -36,7 +34,7 @@ const (
 func WeightedOperations(
 	appParams simtypes.AppParams, cdc codec.JSONCodec,
 	k keeper.Keeper, sk subspaceskeeper.Keeper, pk postskeeper.Keeper,
-	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) sim.WeightedOperations {
 
 	var weightMsgCreateReport int
@@ -77,23 +75,23 @@ func WeightedOperations(
 	return sim.WeightedOperations{
 		sim.NewWeightedOperation(
 			weightMsgCreateReport,
-			SimulateMsgCreateReport(k, sk, pk, ak, bk, fk),
+			SimulateMsgCreateReport(k, sk, pk, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgDeleteReport,
-			SimulateMsgDeleteReport(k, sk, ak, bk, fk),
+			SimulateMsgDeleteReport(k, sk, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgSupportStandardReason,
-			SimulateMsgSupportStandardReason(k, sk, ak, bk, fk),
+			SimulateMsgSupportStandardReason(k, sk, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgAddReason,
-			SimulateMsgAddReason(sk, ak, bk, fk),
+			SimulateMsgAddReason(sk, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgRemoveReason,
-			SimulateMsgRemoveReason(k, sk, ak, bk, fk),
+			SimulateMsgRemoveReason(k, sk, ak, bk),
 		),
 	}
 }

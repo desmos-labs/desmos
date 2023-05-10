@@ -8,8 +8,6 @@ import (
 	v4 "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v4/types"
 	v5 "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v5/types"
 
-	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
@@ -101,7 +99,6 @@ type AppModule struct {
 	keeper keeper.Keeper
 	ak     authkeeper.AccountKeeper
 	bk     bankkeeper.Keeper
-	fk     feeskeeper.Keeper
 
 	// legacySubspace is used solely for migration of x/params managed parameters
 	legacySubspace types.ParamsSubspace
@@ -142,14 +139,13 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 // NewAppModule creates a new AppModule Object
 func NewAppModule(
 	cdc codec.Codec, legacyAmino *codec.LegacyAmino,
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper, legacySubspace types.ParamsSubspace,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, legacySubspace types.ParamsSubspace,
 ) AppModule {
 	return AppModule{
 		AppModuleBasic: AppModuleBasic{cdc: cdc, legacyAmino: legacyAmino},
 		keeper:         k,
 		ak:             ak,
 		bk:             bk,
-		fk:             fk,
 
 		legacySubspace: legacySubspace,
 	}
@@ -224,5 +220,5 @@ func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
 
 // WeightedOperations returns the all the profiles module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
-	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.ak, am.bk, am.fk)
+	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.ak, am.bk)
 }

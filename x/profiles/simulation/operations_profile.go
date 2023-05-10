@@ -5,8 +5,6 @@ package simulation
 import (
 	"math/rand"
 
-	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
-
 	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
 
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
@@ -23,7 +21,7 @@ import (
 
 // SimulateMsgSaveProfile tests and runs a single msg save profile where the creator already exists
 func SimulateMsgSaveProfile(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -43,7 +41,7 @@ func SimulateMsgSaveProfile(
 			data.Pictures.Cover,
 			acc.Address.String(),
 		)
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, acc)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, acc)
 	}
 }
 
@@ -94,7 +92,7 @@ func randomProfileSaveFields(
 
 // SimulateMsgDeleteProfile tests and runs a single msg delete profile where the creator already exists
 func SimulateMsgDeleteProfile(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -107,7 +105,7 @@ func SimulateMsgDeleteProfile(
 
 		msg := types.NewMsgDeleteProfile(acc.Address.String())
 
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, acc)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, acc)
 	}
 }
 

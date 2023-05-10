@@ -7,8 +7,6 @@ import (
 
 	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
 
-	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
-
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -37,7 +35,7 @@ const (
 // WeightedOperations returns all the operations from the module with their respective weights
 func WeightedOperations(
 	appParams simtypes.AppParams, cdc codec.JSONCodec,
-	k keeper.Keeper, sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	k keeper.Keeper, sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) sim.WeightedOperations {
 	var weightMsgCreatePost int
 	appParams.GetOrGenerate(cdc, OpWeightMsgCreatePost, &weightMsgCreatePost, nil,
@@ -84,27 +82,27 @@ func WeightedOperations(
 	return sim.WeightedOperations{
 		sim.NewWeightedOperation(
 			weightMsgCreatePost,
-			SimulateMsgCreatePost(k, sk, ak, bk, fk),
+			SimulateMsgCreatePost(k, sk, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgEditPost,
-			SimulateMsgEditPost(k, sk, ak, bk, fk),
+			SimulateMsgEditPost(k, sk, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgDeletePost,
-			SimulateMsgDeletePost(k, sk, ak, bk, fk),
+			SimulateMsgDeletePost(k, sk, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgAddPostAttachment,
-			SimulateMsgAddPostAttachment(k, ak, bk, fk),
+			SimulateMsgAddPostAttachment(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgRemovePostAttachment,
-			SimulateMsgRemovePostAttachment(k, sk, ak, bk, fk),
+			SimulateMsgRemovePostAttachment(k, sk, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgAnswerPoll,
-			SimulateMsgAnswerPoll(k, sk, ak, bk, fk),
+			SimulateMsgAnswerPoll(k, sk, ak, bk),
 		),
 	}
 }

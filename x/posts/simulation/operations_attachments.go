@@ -14,7 +14,6 @@ import (
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
 	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
-	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
 	"github.com/desmos-labs/desmos/v4/x/posts/keeper"
 	"github.com/desmos-labs/desmos/v4/x/posts/types"
 	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
@@ -23,7 +22,7 @@ import (
 
 // SimulateMsgAddPostAttachment tests and runs a single msg add post attachment
 func SimulateMsgAddPostAttachment(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -36,7 +35,7 @@ func SimulateMsgAddPostAttachment(
 		}
 
 		msg := types.NewMsgAddPostAttachment(subspaceID, postID, content, editor.Address.String())
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, editor)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, editor)
 	}
 }
 
@@ -86,7 +85,7 @@ func randomAddPostAttachmentFields(
 
 // SimulateMsgRemovePostAttachment tests and runs a single msg remove post attachment
 func SimulateMsgRemovePostAttachment(
-	k keeper.Keeper, sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	k keeper.Keeper, sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -100,7 +99,7 @@ func SimulateMsgRemovePostAttachment(
 
 		msg := types.NewMsgRemovePostAttachment(subspaceID, postID, attachmentID, editor.Address.String())
 
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, editor)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, editor)
 	}
 }
 

@@ -12,8 +12,6 @@ import (
 	subspacessim "github.com/desmos-labs/desmos/v4/x/subspaces/simulation"
 	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 
-	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
-
 	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
@@ -29,7 +27,7 @@ import (
 // SimulateMsgCreateReport tests and runs a single MsgCreateReport
 func SimulateMsgCreateReport(
 	k keeper.Keeper, sk subspaceskeeper.Keeper, pk postskeeper.Keeper,
-	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -52,7 +50,7 @@ func SimulateMsgCreateReport(
 		)
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, creator)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, creator)
 	}
 }
 
@@ -145,7 +143,7 @@ func randomCreateReportFields(
 // SimulateMsgDeleteReport tests and runs a single msg delete subspace
 func SimulateMsgDeleteReport(
 	k keeper.Keeper, sk subspaceskeeper.Keeper,
-	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -162,7 +160,7 @@ func SimulateMsgDeleteReport(
 		msg := types.NewMsgDeleteReport(subspaceID, reportID, editor.Address.String())
 
 		// Send the data
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, editor)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, editor)
 	}
 }
 

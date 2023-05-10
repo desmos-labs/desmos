@@ -13,7 +13,6 @@ import (
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
 	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
-	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
 	"github.com/desmos-labs/desmos/v4/x/posts/keeper"
 	"github.com/desmos-labs/desmos/v4/x/posts/types"
 	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
@@ -23,7 +22,7 @@ import (
 
 // SimulateMsgCreatePost tests and runs a single msg create post
 func SimulateMsgCreatePost(
-	k keeper.Keeper, sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	k keeper.Keeper, sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -48,7 +47,7 @@ func SimulateMsgCreatePost(
 			data.ReferencedPosts,
 			author.Address.String(),
 		)
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, author)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, author)
 	}
 }
 
@@ -107,7 +106,7 @@ func randomPostCreateFields(
 
 // SimulateMsgEditPost tests and runs a single msg edit post
 func SimulateMsgEditPost(
-	k keeper.Keeper, sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	k keeper.Keeper, sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -120,7 +119,7 @@ func SimulateMsgEditPost(
 		}
 
 		msg := types.NewMsgEditPost(subspaceID, postID, data.Text, data.Entities, data.Tags, editor.Address.String())
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, editor)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, editor)
 	}
 }
 
@@ -176,7 +175,7 @@ func randomPostEditFields(
 
 // SimulateMsgDeletePost tests and runs a single msg delete post
 func SimulateMsgDeletePost(
-	k keeper.Keeper, sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	k keeper.Keeper, sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -189,7 +188,7 @@ func SimulateMsgDeletePost(
 		}
 
 		msg := types.NewMsgDeletePost(subspaceID, postID, editor.Address.String())
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, editor)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, editor)
 	}
 }
 

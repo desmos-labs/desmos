@@ -22,7 +22,7 @@ jobs:
         continue-on-error: true
         run: make test-mutation $MODULES
         env:
-          MODULES: fees,profiles,subspaces,relationships,posts,reports,reactions
+          MODULES: profiles,subspaces,relationships,posts,reports,reactions
       
       - name: Format output 🔍
         id: mutest-formatted

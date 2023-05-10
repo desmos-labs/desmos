@@ -9,7 +9,6 @@ import (
 	ibcante "github.com/cosmos/ibc-go/v7/modules/core/ante"
 	ibckeeper "github.com/cosmos/ibc-go/v7/modules/core/keeper"
 
-	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
 	subspaceante "github.com/desmos-labs/desmos/v4/x/subspaces/ante"
 	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
 
@@ -23,7 +22,6 @@ type HandlerOptions struct {
 	ante.HandlerOptions
 
 	IBCkeeper         *ibckeeper.Keeper
-	FeesKeeper        feeskeeper.Keeper
 	SubspacesKeeper   subspaceskeeper.Keeper
 	TxCounterStoreKey storetypes.StoreKey
 	WasmConfig        *wasmTypes.WasmConfig
@@ -56,7 +54,6 @@ func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 		wasmkeeper.NewLimitSimulationGasDecorator(options.WasmConfig.SimulationGasLimit),
 		wasmkeeper.NewCountTXDecorator(options.TxCounterStoreKey),
 		ante.NewExtensionOptionsDecorator(options.ExtensionOptionChecker),
-		feeskeeper.NewMinFeeDecorator(options.FeesKeeper),
 		ante.NewValidateBasicDecorator(),
 		ante.NewTxTimeoutHeightDecorator(),
 		ante.NewValidateMemoDecorator(options.AccountKeeper),

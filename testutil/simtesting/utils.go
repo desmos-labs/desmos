@@ -3,12 +3,10 @@ package simtesting
 import (
 	"math/rand"
 
-	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
-	"github.com/desmos-labs/desmos/v4/x/fees/types"
-
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	"github.com/desmos-labs/desmos/v4/x/posts/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
@@ -20,7 +18,7 @@ import (
 
 // SendMsg sends a transaction with the specified message.
 func SendMsg(
-	r *rand.Rand, app *baseapp.BaseApp, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	r *rand.Rand, app *baseapp.BaseApp, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 	msg interface {
 		sdk.Msg
 		Route() string
@@ -28,16 +26,17 @@ func SendMsg(
 	}, ctx sdk.Context,
 	simAccount simtypes.Account,
 ) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
-	addr := msg.GetSigners()[0]
-	account := ak.GetAccount(ctx, addr)
-	coins := bk.SpendableCoins(ctx, account.GetAddress())
 
-	fees, sendTx, err := computeFees(r, ctx, fk, msg, coins)
-	if err != nil {
-		return simtypes.NoOpMsg(msg.Route(), msg.Type(), "invalid fees"), nil, err
+	deposit := sdk.Coins{}
+	spendableCoins := bk.SpendableCoins(ctx, simAccount.Address)
+	for _, v := range spendableCoins {
+		if bk.IsSendEnabledCoin(ctx, v) {
+			deposit = deposit.Add(simtypes.RandSubsetCoins(r, sdk.NewCoins(v))...)
+		}
 	}
-	if !sendTx {
-		return simtypes.NoOpMsg(msg.Route(), msg.Type(), "skip because insufficient fees"), nil, nil
+
+	if deposit.IsZero() {
+		return simtypes.NoOpMsg(msg.Route(), msg.Type(), "skip because of broke account"), nil, nil
 	}
 
 	interfaceRegistry := codectypes.NewInterfaceRegistry()
@@ -54,25 +53,7 @@ func SendMsg(
 		AccountKeeper:   ak,
 		Bankkeeper:      bk,
 		ModuleName:      types.ModuleName,
-		CoinsSpentInMsg: coins,
+		CoinsSpentInMsg: deposit,
 	}
-	return simulation.GenAndDeliverTx(txCtx, fees)
-}
-
-// computeFees computes the fees that should be used to send a transaction with the given message,
-// considering the max spendable amount provided and the min fees set inside the fees module
-func computeFees(
-	r *rand.Rand, ctx sdk.Context, fk feeskeeper.Keeper, msg sdk.Msg, max sdk.Coins,
-) (fees sdk.Coins, sendTx bool, err error) {
-	minFees := fk.GetParams(ctx).MinFees
-	for _, minFee := range minFees {
-		if sdk.MsgTypeURL(msg) == minFee.MessageType {
-			fees = minFee.Amount
-			sendTx = fees.IsAllLT(max)
-			return
-		}
-	}
-
-	fees, err = simtypes.RandomFees(r, ctx, max)
-	return
+	return simulation.GenAndDeliverTxWithRandFees(txCtx)
 }

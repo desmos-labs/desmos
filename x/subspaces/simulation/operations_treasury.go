@@ -13,7 +13,6 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 
 	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
-	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
 	"github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
 	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
@@ -22,7 +21,7 @@ import (
 
 // SimulateMsgGrantTreasuryAuthorization tests and runs a single MsgGrantTreasuryAuthorization
 func SimulateMsgGrantTreasuryAuthorization(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -40,7 +39,7 @@ func SimulateMsgGrantTreasuryAuthorization(
 		msg := types.NewMsgGrantTreasuryAuthorization(subspaceID, granter.Address.String(), grantee, authz.NewGenericAuthorization(sdk.MsgTypeURL(&banktypes.MsgSend{})), &expiration)
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, granter)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, granter)
 	}
 }
 
@@ -85,7 +84,7 @@ func randomGrantTreasuryAuthorizationFields(
 
 // SimulateMsgRevokeTreasuryAuthorization tests and runs a single MsgRevokeTreasuryAuthorization
 func SimulateMsgRevokeTreasuryAuthorization(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper, authzk authzkeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, authzk authzkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -102,7 +101,7 @@ func SimulateMsgRevokeTreasuryAuthorization(
 		msg := types.NewMsgRevokeTreasuryAuthorization(subspaceID, granter.Address.String(), grantee, msgTypeUrl)
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, granter)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, granter)
 	}
 }
 

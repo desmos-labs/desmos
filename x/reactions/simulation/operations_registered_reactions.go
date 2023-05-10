@@ -7,7 +7,6 @@ import (
 
 	"github.com/desmos-labs/desmos/v4/x/reactions/keeper"
 
-	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
 	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
 	subspacessim "github.com/desmos-labs/desmos/v4/x/subspaces/simulation"
 	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
@@ -25,7 +24,7 @@ import (
 
 // SimulateMsgAddRegisteredReaction tests and runs a single MsgAddRegisteredReaction
 func SimulateMsgAddRegisteredReaction(
-	sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -47,7 +46,7 @@ func SimulateMsgAddRegisteredReaction(
 		)
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, signer)
 	}
 }
 
@@ -98,7 +97,7 @@ func randomAddRegisteredReactionFields(
 // SimulateMsgEditRegisteredReaction tests and runs a single MsgEditRegisteredReaction
 func SimulateMsgEditRegisteredReaction(
 	k keeper.Keeper, sk subspaceskeeper.Keeper,
-	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -121,7 +120,7 @@ func SimulateMsgEditRegisteredReaction(
 		)
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, signer)
 	}
 }
 
@@ -182,7 +181,7 @@ func randomEditRegisteredReactionFields(
 
 // SimulateMsgRemoveRegisteredReaction tests and runs a single MsgRemoveRegisteredReaction
 func SimulateMsgRemoveRegisteredReaction(
-	k keeper.Keeper, sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	k keeper.Keeper, sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -203,7 +202,7 @@ func SimulateMsgRemoveRegisteredReaction(
 		)
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, signer)
 	}
 }
 

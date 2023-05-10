@@ -5,8 +5,6 @@ package simulation
 import (
 	"math/rand"
 
-	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
-
 	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
@@ -21,7 +19,7 @@ import (
 
 // SimulateMsgCreateSection tests and runs a single MsgCreateSection
 func SimulateMsgCreateSection(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -44,7 +42,7 @@ func SimulateMsgCreateSection(
 		)
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, creator)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, creator)
 	}
 }
 
@@ -90,7 +88,7 @@ func randomCreateSectionFields(
 
 // SimulateMsgEditSection tests and runs a single MsgEditSection
 func SimulateMsgEditSection(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -113,7 +111,7 @@ func SimulateMsgEditSection(
 		)
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, creator)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, creator)
 	}
 }
 
@@ -159,7 +157,7 @@ func randomEditSectionFields(
 
 // SimulateMsgMoveSection tests and runs a single MsgMoveSection
 func SimulateMsgMoveSection(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -181,7 +179,7 @@ func SimulateMsgMoveSection(
 		)
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, creator)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, creator)
 	}
 }
 
@@ -242,7 +240,7 @@ func randomMoveSectionFields(
 
 // SimulateMsgDeleteSection tests and runs a single MsgDeleteSection
 func SimulateMsgDeleteSection(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -263,7 +261,7 @@ func SimulateMsgDeleteSection(
 		)
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, creator)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, creator)
 	}
 }
 

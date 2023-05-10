@@ -7,8 +7,6 @@ import (
 
 	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
 
-	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
-
 	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
@@ -23,7 +21,7 @@ import (
 
 // SimulateMsgCreateUserGroup tests and runs a single MsgCreateUserGroup
 func SimulateMsgCreateUserGroup(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -48,7 +46,7 @@ func SimulateMsgCreateUserGroup(
 		)
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, creator)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, creator)
 	}
 }
 
@@ -93,7 +91,7 @@ func randomCreateUserGroupFields(
 
 // SimulateMsgEditUserGroup tests and runs a single MsgEditUserGroup
 func SimulateMsgEditUserGroup(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -110,7 +108,7 @@ func SimulateMsgEditUserGroup(
 		msg := types.NewMsgEditUserGroup(subspaceID, groupID, update.Name, update.Description, signer.Address.String())
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, signer)
 	}
 }
 
@@ -157,7 +155,7 @@ func randomEditUserGroupFields(
 
 // SimulateMsgMoveUserGroup tests and runs a single MsgMoveUserGroup
 func SimulateMsgMoveUserGroup(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -174,7 +172,7 @@ func SimulateMsgMoveUserGroup(
 		msg := types.NewMsgMoveUserGroup(subspaceID, groupID, newSectionID, signer.Address.String())
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, signer)
 	}
 }
 
@@ -224,7 +222,7 @@ func randomMoveUserGroupFields(
 
 // SimulateMsgSetUserGroupPermissions tests and runs a single MsgSetUserGroupPermissions
 func SimulateMsgSetUserGroupPermissions(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -241,7 +239,7 @@ func SimulateMsgSetUserGroupPermissions(
 		msg := types.NewMsgSetUserGroupPermissions(subspaceID, groupID, permissions, signer.Address.String())
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, signer)
 	}
 }
 
@@ -295,7 +293,7 @@ func randomSetUserGroupPermissionsFields(
 
 // SimulateMsgDeleteUserGroup tests and runs a single MsgDeleteUserGroup
 func SimulateMsgDeleteUserGroup(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -312,7 +310,7 @@ func SimulateMsgDeleteUserGroup(
 		msg := types.NewMsgDeleteUserGroup(subspaceID, groupID, signer.Address.String())
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, signer)
 	}
 }
 
@@ -354,7 +352,7 @@ func randomDeleteUserGroupFields(
 
 // SimulateMsgAddUserToUserGroup tests and runs a single MsgAddUserToUserGroup
 func SimulateMsgAddUserToUserGroup(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -371,7 +369,7 @@ func SimulateMsgAddUserToUserGroup(
 		msg := types.NewMsgAddUserToUserGroup(subspaceID, groupID, user, signer.Address.String())
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, signer)
 	}
 }
 
@@ -423,7 +421,7 @@ func randomAddUserToUserGroupFields(
 
 // SimulateMsgRemoveUserFromUserGroup tests and runs a single MsgRemoveUserFromUserGroup
 func SimulateMsgRemoveUserFromUserGroup(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -440,7 +438,7 @@ func SimulateMsgRemoveUserFromUserGroup(
 		msg := types.NewMsgRemoveUserFromUserGroup(subspaceID, groupID, user, signer.Address.String())
 
 		// Send the message
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, signer)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, signer)
 	}
 }
 

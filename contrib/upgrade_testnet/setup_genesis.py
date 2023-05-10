@@ -54,7 +54,7 @@ with open(chain_state_file, 'r') as chain_state_f, open(genesis_file, 'r') as ge
     genesis['app_state']['ibc'] = chain_state['app_state']['ibc']
     genesis['app_state']['profiles'] = chain_state['app_state']['profiles']
 
-    custom_modules = ['profiles', 'relationships', 'subspaces', 'posts', 'reports', 'reactions', 'fees', 'supply',
+    custom_modules = ['profiles', 'relationships', 'subspaces', 'posts', 'reports', 'reactions', 'supply',
                       'wasm']
     for module in custom_modules:
         if module in chain_state['app_state']:

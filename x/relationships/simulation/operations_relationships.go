@@ -5,8 +5,6 @@ package simulation
 import (
 	"math/rand"
 
-	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
-
 	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
 
 	subspacessim "github.com/desmos-labs/desmos/v4/x/subspaces/simulation"
@@ -26,7 +24,7 @@ import (
 
 // SimulateMsgCreateRelationship tests and runs a single MsgCreateRelationship
 func SimulateMsgCreateRelationship(
-	k keeper.Keeper, sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	k keeper.Keeper, sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -38,7 +36,7 @@ func SimulateMsgCreateRelationship(
 		}
 
 		msg := types.NewMsgCreateRelationship(relationship.Creator, relationship.Counterparty, relationship.SubspaceID)
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, acc)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, acc)
 	}
 }
 
@@ -93,7 +91,7 @@ func randomCreateRelationshipFields(
 
 // SimulateMsgDeleteRelationship tests and runs a single MsgDeleteRelationship
 func SimulateMsgDeleteRelationship(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context, accs []simtypes.Account, chainID string,
@@ -105,7 +103,7 @@ func SimulateMsgDeleteRelationship(
 		}
 
 		msg := types.NewMsgDeleteRelationship(acc.Address.String(), counterparty, subspace)
-		return simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, acc)
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, acc)
 	}
 }
 
