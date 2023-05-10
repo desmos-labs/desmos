@@ -82,11 +82,14 @@ To make it easier for validators to manage the minimum prices of fee tokens allo
 
 ### Deprecated `x/fees`
 
-Since `x/fees` module may conflict with the custom fee tokens feature, as demonstrated in the following scenario:
-- Governance decides to change the minimum fees of MsgCreatePost to `10dsm` using `x/fees`.
-- Governance accepts the custom token `minttoken` as a fee within subspace 1 using `MsgUpdateSubspaceFeeTokens`.
+By implementing the mechanism described above, there might be a problem with the `x/fees` module. Here's an example scenario to illustrate this:
 
-Due to this conflict, `minttoken` will not be accepted as a fee within the subspace 1. Therefore, we decided to drop `x/fees` from Desmos.
+1. the governance decides to use `x/fees` to change the minimum fees of `MsgCreatePost` to `10dsm`.
+2. the governance also wants to use a custom token called `TokenA` as a fee token within subspace `1` using `MsgUpdateSubspaceFeeTokens`.
+
+Because `x/fees` takes priority over anything, `TokenA` will not be accepted as a fee token within subspace `1`. 
+
+For this reason, we have decided to remove the `x/fees` module from Desmos.
 
 ## Consequences
 
