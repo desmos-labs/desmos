@@ -199,6 +199,11 @@ func randomMoveUserGroupFields(
 	}
 	group := RandomGroup(r, groups)
 	groupID = group.ID
+	if groupID == 0 {
+		// Skip because default group can not be moved
+		skip = true
+		return
+	}
 
 	// Get a section
 	sections := k.GetSubspaceSections(ctx, subspaceID)
