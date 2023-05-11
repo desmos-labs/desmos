@@ -635,7 +635,7 @@ func (msg MsgDeleteUserGroup) ValidateBasic() error {
 		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
-	if msg.GroupID == 0 {
+	if msg.GroupID == DefaultGroupID {
 		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid group id: %d", msg.GroupID)
 	}
 
@@ -687,7 +687,7 @@ func (msg MsgAddUserToUserGroup) ValidateBasic() error {
 		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
-	if msg.GroupID == 0 {
+	if msg.GroupID == DefaultGroupID {
 		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid group id: %d", msg.GroupID)
 	}
 
@@ -744,7 +744,7 @@ func (msg MsgRemoveUserFromUserGroup) ValidateBasic() error {
 		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
-	if msg.GroupID == 0 {
+	if msg.GroupID == DefaultGroupID {
 		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid group id: %d", msg.GroupID)
 	}
 

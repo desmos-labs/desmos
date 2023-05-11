@@ -136,6 +136,9 @@ func NewSubspaceUpdate(name, description, owner string) SubspaceUpdate {
 const (
 	// RootSectionID represents the id of the root section of each subspace
 	RootSectionID = 0
+
+	// DefaultGroupID represents the id of the default group of each subspace
+	DefaultGroupID = 0
 )
 
 // ParseSectionID parses the given value as a section id, returning an error if it's invalid
