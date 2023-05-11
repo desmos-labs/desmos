@@ -20,3 +20,4 @@ for dir in $module_dirs; do
   buf generate --template buf.gen.pulsar.yaml --path $dir
 done
 
+chmod 755 ../api -R
