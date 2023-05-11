@@ -36,7 +36,7 @@ func GenerateRandomSubspace(r *rand.Rand, accs []simtypes.Account) types.Subspac
 	simAccount, _ := simtypes.RandomAcc(r, accs)
 	creator := simAccount.Address.String()
 
-	subspace := types.NewSubspace(
+	return types.NewSubspace(
 		RandomID(r),
 		RandomName(r),
 		RandomDescription(r),
@@ -44,9 +44,7 @@ func GenerateRandomSubspace(r *rand.Rand, accs []simtypes.Account) types.Subspac
 		creator,
 		creator,
 		RandomDate(r),
-	).SetAllowedFeeTokens(GenerateRandomFeeTokens(r))
-
-	return subspace
+	)
 }
 
 // RandomID returns a new random ID
@@ -132,5 +130,5 @@ func GenerateRandomFeeTokens(r *rand.Rand) sdk.Coins {
 		coins[i] = sdk.NewCoin(simtypes.RandStringOfLength(r, 10), sdk.NewInt(r.Int63n(1000000)))
 	}
 
-	return coins
+	return coins.Sort()
 }

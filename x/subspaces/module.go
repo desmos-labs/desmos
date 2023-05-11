@@ -212,6 +212,11 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 	simulation.RandomizeGenState(simState)
 }
 
+// ProposalMsgs returns msgs used for governance proposals for simulations.
+func (am AppModule) ProposalMsgs(simState module.SimulationState) []simtypes.WeightedProposalMsg {
+	return simulation.ProposalMsgs(am.keeper)
+}
+
 // RegisterStoreDecoder performs a no-op.
 func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
 	sdr[types.ModuleName] = simulation.NewDecodeStore(am.cdc)
