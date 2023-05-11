@@ -248,7 +248,6 @@ type ModuleInputs struct {
 	AccountKeeper authkeeper.AccountKeeper
 	BankKeeper    bankkeeper.Keeper
 
-	FeesKeeper          feeskeeper.Keeper
 	ProfilesKeeper      *profileskeeper.Keeper
 	SubspacesKeeper     *subspaceskeeper.Keeper
 	PostsKeeper         *postskeeper.Keeper
@@ -293,7 +292,6 @@ func ProvideModule(in ModuleInputs) ModuleOutputs {
 		in.PostsKeeper,
 		in.AccountKeeper,
 		in.BankKeeper,
-		in.FeesKeeper,
 		in.LegacySubspace,
 	)
 
