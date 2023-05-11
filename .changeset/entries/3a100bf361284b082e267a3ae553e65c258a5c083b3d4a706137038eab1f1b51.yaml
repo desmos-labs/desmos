@@ -1,0 +1,6 @@
+type: fix
+module: x/subspaces
+pull_request: 1139
+description: Refuse to move default user group
+backward_compatible: true
+date: 2023-05-11T10:15:50.6146351Z
