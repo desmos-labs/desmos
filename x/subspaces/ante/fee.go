@@ -34,7 +34,7 @@ func NewDeductFeeDecorator(
 	txFeeChecker ante.TxFeeChecker,
 ) DeductFeeDecorator {
 	if txFeeChecker == nil {
-		txFeeChecker = ante.CheckTxFeeWithValidatorMinGasPrices
+		txFeeChecker = CheckTxFeeWithSubspaceMinPrices(ante.CheckTxFeeWithValidatorMinGasPrices, sk)
 	}
 
 	return DeductFeeDecorator{

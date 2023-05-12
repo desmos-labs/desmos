@@ -9,6 +9,7 @@ import (
 
 	types "github.com/cosmos/cosmos-sdk/types"
 	types0 "github.com/cosmos/cosmos-sdk/x/auth/types"
+	types1 "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -180,6 +181,21 @@ func NewMockSubspacesKeeper(ctrl *gomock.Controller) *MockSubspacesKeeper {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockSubspacesKeeper) EXPECT() *MockSubspacesKeeperMockRecorder {
 	return m.recorder
+}
+
+// GetSubspace mocks base method.
+func (m *MockSubspacesKeeper) GetSubspace(ctx types.Context, subspaceID uint64) (types1.Subspace, bool) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetSubspace", ctx, subspaceID)
+	ret0, _ := ret[0].(types1.Subspace)
+	ret1, _ := ret[1].(bool)
+	return ret0, ret1
+}
+
+// GetSubspace indicates an expected call of GetSubspace.
+func (mr *MockSubspacesKeeperMockRecorder) GetSubspace(ctx, subspaceID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSubspace", reflect.TypeOf((*MockSubspacesKeeper)(nil).GetSubspace), ctx, subspaceID)
 }
 
 // UseGrantedFees mocks base method.
