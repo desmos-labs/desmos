@@ -135,6 +135,12 @@ func randomAddReactionFields(
 		return
 	}
 
+	if k.HasReacted(ctx, subspaceID, postID, acc.Address.String(), value) {
+		// Skip because user has the same reaction to the post
+		skip = true
+		return
+	}
+
 	user = *acc
 
 	// Generate a random reaction

@@ -537,6 +537,10 @@ func (msg MsgMoveUserGroup) ValidateBasic() error {
 		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
+	if msg.GroupID == 0 {
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid group id: %d", msg.GroupID)
+	}
+
 	_, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
 		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address")
@@ -631,7 +635,7 @@ func (msg MsgDeleteUserGroup) ValidateBasic() error {
 		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
-	if msg.GroupID == 0 {
+	if msg.GroupID == DefaultGroupID {
 		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid group id: %d", msg.GroupID)
 	}
 
@@ -683,7 +687,7 @@ func (msg MsgAddUserToUserGroup) ValidateBasic() error {
 		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
-	if msg.GroupID == 0 {
+	if msg.GroupID == DefaultGroupID {
 		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid group id: %d", msg.GroupID)
 	}
 
@@ -740,7 +744,7 @@ func (msg MsgRemoveUserFromUserGroup) ValidateBasic() error {
 		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
-	if msg.GroupID == 0 {
+	if msg.GroupID == DefaultGroupID {
 		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid group id: %d", msg.GroupID)
 	}
 

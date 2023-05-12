@@ -785,6 +785,16 @@ func TestMsgMoveUserGroup_ValidateBasic(t *testing.T) {
 			shouldErr: true,
 		},
 		{
+			name: "invalid group id returns error",
+			msg: types.NewMsgMoveUserGroup(
+				0,
+				0,
+				msgMoveUserGroup.NewSectionID,
+				msgMoveUserGroup.Signer,
+			),
+			shouldErr: true,
+		},
+		{
 			name: "invalid creator returns error",
 			msg: types.NewMsgMoveUserGroup(
 				msgMoveUserGroup.SubspaceID,
