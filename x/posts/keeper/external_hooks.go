@@ -10,13 +10,14 @@ import (
 
 // Hooks represents a wrapper struct
 type Hooks struct {
-	k Keeper
+	// Keeper must be the same reference as the original
+	k *Keeper
 }
 
 var _ subspacestypes.SubspacesHooks = Hooks{}
 
 // Hooks creates new subspaces hooks
-func (k Keeper) Hooks() Hooks { return Hooks{k} }
+func (k *Keeper) Hooks() Hooks { return Hooks{k: k} }
 
 // AfterSubspaceSaved implements subspacestypes.Hooks
 func (h Hooks) AfterSubspaceSaved(ctx sdk.Context, subspaceID uint64) {
