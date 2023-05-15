@@ -46,4 +46,4 @@ jobs:
 
       - name: Submit upgrade ✅
         run: |
-          ./contrib/upgrade_testnet/submit_upgrade_proposal.sh 4 $UPGRADE_NAME 50
+          ./contrib/upgrade_testnet/submit_upgrade_proposal.sh 4 $GENESIS_VERSION $UPGRADE_NAME 50
