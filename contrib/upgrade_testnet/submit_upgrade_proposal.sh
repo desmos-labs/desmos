@@ -54,7 +54,7 @@ sleep $SLEEP
 
 echo ""
 echo "===> Submitting upgrade proposal"
-RESULT=$(desmos tx gov submit-proposal \
+RESULT=$(desmos tx gov submit-legacy-proposal \
   software-upgrade $UPGRADE_NAME \
   --title Upgrade \
   --description Description \
