@@ -9,6 +9,7 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting/exported"
 	authzcodec "github.com/cosmos/cosmos-sdk/x/authz/codec"
+	govcodec "github.com/cosmos/cosmos-sdk/x/gov/codec"
 
 	"github.com/desmos-labs/desmos/v4/types/crypto/ethsecp256k1"
 )
@@ -103,4 +104,8 @@ func init() {
 	// Register all Amino interfaces and concrete types on the authz Amino codec so that this can later be
 	// used to properly serialize MsgGrant and MsgExec instances
 	RegisterLegacyAminoCodec(authzcodec.Amino)
+
+	// Register all Amino interfaces and concrete types on the gov Amino codec so that this can later be
+	// used to properly serialize MsgSubmitProposal instances
+	RegisterLegacyAminoCodec(govcodec.Amino)
 }
