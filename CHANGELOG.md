@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Bug Fixes
 #### Subspaces
 - ([\#1074](https://github.com/desmos-labs/desmos/pull/1074)) Added missing `MsgDeleteSubspace` Amino registration
+- ([\#1139](https://github.com/desmos-labs/desmos/pull/1139)) Made it impossible to use the `DefaultUserGroup` to another section
 
 #### Posts
 - ([\#1075](https://github.com/desmos-labs/desmos/pull/1075)) Changed `Poll_ProvidedAnswer` attachments type from `Attachment` to `AttachmentContent`
