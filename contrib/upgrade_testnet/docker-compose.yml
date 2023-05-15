@@ -15,7 +15,7 @@ services:
       - ./../../build:/desmos:Z
     networks:
       devnet:
-        ipv4_address: 192.168.10.2
+        ipv4_address: 192.168.255.2
 
   desmosnode1:
     container_name: desmosnode1
@@ -31,7 +31,7 @@ services:
       - ./../../build:/desmos:Z
     networks:
       devnet:
-        ipv4_address: 192.168.10.3
+        ipv4_address: 192.168.255.3
 
   desmosnode2:
     container_name: desmosnode2
@@ -47,7 +47,7 @@ services:
       - ./../../build:/desmos:Z
     networks:
       devnet:
-        ipv4_address: 192.168.10.4
+        ipv4_address: 192.168.255.4
 
   desmosnode3:
     container_name: desmosnode3
@@ -63,7 +63,7 @@ services:
       - ./../../build:/desmos:Z
     networks:
       devnet:
-        ipv4_address: 192.168.10.5
+        ipv4_address: 192.168.255.5
 
 networks:
   devnet:
@@ -71,4 +71,4 @@ networks:
     ipam:
       driver: default
       config:
-        - subnet: 192.168.10.0/16
+        - subnet: 192.168.255.0/24

@@ -384,7 +384,7 @@ build-docker-desmosnode:
 # Setups 4 folders representing each one the genesis state of a testnet node
 setup-localnet: build-linux
 	if ! [ -f build/node0/desmos/config/genesis.json ]; then $(BUILDDIR)/desmos testnet \
-		-o ./build --starting-ip-address 192.168.10.2 --keyring-backend=test \
+		-o ./build --starting-ip-address 192.168.255.2 --keyring-backend=test \
 		--v=$(if $(NODES),$(NODES),4) \
 		--gentx-coin-denom=$(if $(COIN_DENOM),$(COIN_DENOM),"stake") \
 		--minimum-gas-prices="0.000006$(if $(COIN_DENOM),$(COIN_DENOM),"stake")"; fi

@@ -21,7 +21,7 @@ docker run --rm --name desmos-tesnet --user $UID:$GID \
     desmos testnet \
       --home ./build \
       -o ./build \
-      --starting-ip-address 192.168.10.2 \
+      --starting-ip-address 192.168.255.2 \
       --keyring-backend=test \
 	    --v=$NODES \
 	    --gentx-coin-denom="udaric" \
