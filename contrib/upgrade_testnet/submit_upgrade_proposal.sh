@@ -59,6 +59,7 @@ RESULT=$(desmos tx gov submit-legacy-proposal \
   --title Upgrade \
   --description Description \
   --upgrade-height $UPGRADE_HEIGHT \
+  --no-validate \
   $TX_FLAGS 2>&1)
 TX_HASH=$(echo "$RESULT" | grep txhash | sed -e 's/txhash: //')
 if [ -z "$TX_HASH" ]; then
