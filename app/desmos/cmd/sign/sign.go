@@ -132,11 +132,17 @@ func signAmino(clientCtx client.Context, txFactory tx.Factory, key *keyring.Reco
 	}
 
 	// Encode the transaction
+	address, err := key.GetAddress()
+	if err != nil {
+		return
+	}
+
 	signMode := signing.SignMode_SIGN_MODE_LEGACY_AMINO_JSON
 	signerData := authsigning.SignerData{
 		ChainID:       txFactory.ChainID(),
 		AccountNumber: txFactory.AccountNumber(),
 		Sequence:      txFactory.Sequence(),
+		Address:       address.String(),
 	}
 	valueBz, err = clientCtx.TxConfig.SignModeHandler().GetSignBytes(signMode, signerData, txBuilder.GetTx())
 	if err != nil {
