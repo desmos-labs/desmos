@@ -27,6 +27,11 @@ const (
 	ActionUpdateParams         = "update_params"
 	ActionMovePost             = "move_post"
 
+	ActionRequestPostOwnerTransfer = "request_post_owner_transfer"
+	ActionCancelPostOwnerTransfer  = "cancel_post_owner_transfer"
+	ActionAcceptPostOwnerTransfer  = "accept_post_owner_transfer"
+	ActionRefusePostOwnerTransfer  = "refuse_post_owner_transfer"
+
 	DoNotModify = "[do-not-modify]"
 )
 
