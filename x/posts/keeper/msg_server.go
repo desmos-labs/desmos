@@ -74,6 +74,7 @@ func (k msgServer) CreatePost(goCtx context.Context, msg *types.MsgCreatePost) (
 		msg.ReplySettings,
 		ctx.BlockTime(),
 		nil,
+		msg.Author,
 	)
 	err = k.ValidatePost(ctx, post)
 	if err != nil {
@@ -138,9 +139,9 @@ func (k msgServer) EditPost(goCtx context.Context, msg *types.MsgEditPost) (*typ
 		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %d not found", msg.PostID)
 	}
 
-	// Make sure the editor matches the author
-	if post.Author != msg.Editor {
-		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "you are not the author of this post")
+	// Make sure the editor matches the owner
+	if post.Owner != msg.Editor {
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "you are not the owner of this post")
 	}
 
 	// Check the permission to create content
@@ -197,7 +198,7 @@ func (k msgServer) DeletePost(goCtx context.Context, msg *types.MsgDeletePost) (
 
 	// Check the permission to remove the post
 	isModerator := k.HasPermission(ctx, msg.SubspaceID, post.SectionID, msg.Signer, types.PermissionModerateContent)
-	canEdit := post.Author == msg.Signer && k.HasPermission(ctx, msg.SubspaceID, post.SectionID, msg.Signer, types.PermissionEditOwnContent)
+	canEdit := post.Owner == msg.Signer && k.HasPermission(ctx, msg.SubspaceID, post.SectionID, msg.Signer, types.PermissionEditOwnContent)
 	if !isModerator && !canEdit {
 		return nil, errors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot edit content inside this subspace")
 	}
@@ -279,8 +280,8 @@ func (k msgServer) AddPostAttachment(goCtx context.Context, msg *types.MsgAddPos
 		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %d does not exist", msg.PostID)
 	}
 
-	// Make sure the editor matches the author
-	if post.Author != msg.Editor {
+	// Make sure the editor matches the owner
+	if post.Owner != msg.Editor {
 		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "you are not the author of this post")
 	}
 
@@ -350,7 +351,7 @@ func (k msgServer) RemovePostAttachment(goCtx context.Context, msg *types.MsgRem
 
 	// Check the permission to remove the attachment
 	isModerator := k.HasPermission(ctx, msg.SubspaceID, post.SectionID, msg.Editor, types.PermissionModerateContent)
-	canEdit := post.Author == msg.Editor && k.HasPermission(ctx, msg.SubspaceID, post.SectionID, msg.Editor, types.PermissionEditOwnContent)
+	canEdit := post.Owner == msg.Editor && k.HasPermission(ctx, msg.SubspaceID, post.SectionID, msg.Editor, types.PermissionEditOwnContent)
 	if !isModerator && !canEdit {
 		return nil, errors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot edit content inside this subspace")
 	}

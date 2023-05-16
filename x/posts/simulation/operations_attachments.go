@@ -62,7 +62,7 @@ func randomAddPostAttachmentFields(
 	postID = post.ID
 
 	// Get an editor
-	acc := subspacessim.GetAccount(post.Author, accs)
+	acc := subspacessim.GetAccount(post.Owner, accs)
 	if acc == nil {
 		// Skip because the author is not an account we have access to
 		skip = true
@@ -127,7 +127,7 @@ func randomRemovePostAttachmentFields(
 	postID = post.ID
 
 	// Get an editor
-	editorAddr := post.Author
+	editorAddr := post.Owner
 	if r.Intn(101) < 50 {
 		// 50% of a moderator removing an attachment
 		moderators := sk.GetUsersWithRootPermissions(ctx, subspaceID, subspacestypes.NewPermissions(types.PermissionModerateContent))

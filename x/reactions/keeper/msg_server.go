@@ -44,7 +44,7 @@ func (k msgServer) AddReaction(goCtx context.Context, msg *types.MsgAddReaction)
 	}
 
 	// Make sure the post author has not blocked the user
-	if k.HasUserBlocked(ctx, post.Author, msg.User, msg.SubspaceID) {
+	if k.HasUserBlocked(ctx, post.Owner, msg.User, msg.SubspaceID) {
 		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "the post author has blocked you on this subspace")
 	}
 

@@ -117,6 +117,7 @@ func (suite *KeeperTestSuite) TestValidPostsInvariant() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 			},
 			expBroken: true,
@@ -142,6 +143,7 @@ func (suite *KeeperTestSuite) TestValidPostsInvariant() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 			},
 			expBroken: true,
@@ -167,6 +169,7 @@ func (suite *KeeperTestSuite) TestValidPostsInvariant() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 			},
 			expBroken: true,
@@ -194,6 +197,7 @@ func (suite *KeeperTestSuite) TestValidPostsInvariant() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 			},
 			expBroken: true,
@@ -221,6 +225,7 @@ func (suite *KeeperTestSuite) TestValidPostsInvariant() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 				suite.k.DeleteNextAttachmentID(ctx, 1, 1)
 			},
@@ -249,6 +254,7 @@ func (suite *KeeperTestSuite) TestValidPostsInvariant() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 				suite.k.SetNextAttachmentID(ctx, 1, 1, 1)
 			},
@@ -277,6 +283,7 @@ func (suite *KeeperTestSuite) TestValidPostsInvariant() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 				suite.k.SetNextAttachmentID(ctx, 1, 1, 1)
 			},
@@ -352,6 +359,7 @@ func (suite *KeeperTestSuite) TestValidAttachmentsInvariant() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 
 				suite.k.SaveAttachment(ctx, types.NewAttachment(1, 1, 1,
@@ -380,6 +388,7 @@ func (suite *KeeperTestSuite) TestValidAttachmentsInvariant() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 				suite.k.SetNextAttachmentID(ctx, 1, 1, 1)
 
@@ -409,6 +418,7 @@ func (suite *KeeperTestSuite) TestValidAttachmentsInvariant() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 				suite.k.SetNextAttachmentID(ctx, 1, 1, 2)
 
@@ -438,6 +448,7 @@ func (suite *KeeperTestSuite) TestValidAttachmentsInvariant() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 				suite.k.SetNextAttachmentID(ctx, 1, 1, 2)
 
@@ -513,6 +524,7 @@ func (suite *KeeperTestSuite) TestValidUserAnswersInvariant() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 
 				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"))
@@ -539,6 +551,7 @@ func (suite *KeeperTestSuite) TestValidUserAnswersInvariant() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 
 				suite.k.SaveAttachment(ctx, types.NewAttachment(1, 1, 1, types.NewPoll(
@@ -577,6 +590,7 @@ func (suite *KeeperTestSuite) TestValidUserAnswersInvariant() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 
 				suite.k.SaveAttachment(ctx, types.NewAttachment(1, 1, 1, types.NewPoll(

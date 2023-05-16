@@ -45,7 +45,10 @@ message Post {
   repeated string tags = 7 [ (gogoproto.moretags) = "yaml:\"tags\"" ];
 
   // Author of the post
-  string author = 8 [ (gogoproto.moretags) = "yaml:\"author\"" ];
+  string author = 8 [ 
+    (gogoproto.moretags) = "yaml:\"author\"", 
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 
   // (optional) Id of the original post of the conversation
   uint64 conversation_id = 9 [
@@ -74,6 +77,12 @@ message Post {
   google.protobuf.Timestamp last_edited_date = 13 [
     (gogoproto.stdtime) = true,
     (gogoproto.moretags) = "yaml:\"last_edited_date\""
+  ];
+
+  // Owner of the post
+  string owner = 14 [
+    (gogoproto.moretags) = "yaml:\"owner\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
   ];
 }
 

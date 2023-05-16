@@ -100,7 +100,7 @@ func randomReports(r *rand.Rand, accs []simtypes.Account, subspaces []subspacest
 				continue
 			}
 			post := postssim.RandomPost(r, posts)
-			if isUserBlocked(reporter.Address.String(), post.Author, subspace.ID, blocks) {
+			if isUserBlocked(reporter.Address.String(), post.Owner, subspace.ID, blocks) {
 				continue
 			}
 			data = types.NewPostTarget(post.ID)
