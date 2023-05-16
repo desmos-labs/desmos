@@ -15,8 +15,8 @@ import (
 	feegrantcli "github.com/cosmos/cosmos-sdk/x/feegrant/client/cli"
 	"github.com/gogo/protobuf/proto"
 
-	"github.com/desmos-labs/desmos/v4/x/subspaces/client/cli"
-	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v5/x/subspaces/client/cli"
+	"github.com/desmos-labs/desmos/v5/x/subspaces/types"
 )
 
 func (s *IntegrationTestSuite) TestCmdQueryUserAllowances() {

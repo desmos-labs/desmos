@@ -1,7 +1,7 @@
 package app
 
 import (
-	errors "cosmossdk.io/errors"
+	"cosmossdk.io/errors"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -9,8 +9,8 @@ import (
 	ibcante "github.com/cosmos/ibc-go/v7/modules/core/ante"
 	ibckeeper "github.com/cosmos/ibc-go/v7/modules/core/keeper"
 
-	subspaceante "github.com/desmos-labs/desmos/v4/x/subspaces/ante"
-	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
+	subspaceante "github.com/desmos-labs/desmos/v5/x/subspaces/ante"
+	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
 
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmTypes "github.com/CosmWasm/wasmd/x/wasm/types"

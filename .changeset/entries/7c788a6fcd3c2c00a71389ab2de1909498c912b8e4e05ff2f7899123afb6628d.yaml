@@ -1,6 +1,0 @@
-type: feat
-module: x/fees
-pull_request: 1135
-description: Drop `x/fees`
-backward_compatible: false
-date: 2023-05-10T09:31:53.3857892Z

@@ -6,7 +6,7 @@ import (
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	v4types "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v4/types"
+	v4types "github.com/desmos-labs/desmos/v5/x/profiles/legacy/v4/types"
 )
 
 type Keeper struct {

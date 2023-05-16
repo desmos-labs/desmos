@@ -8,10 +8,10 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v4/app"
+	"github.com/desmos-labs/desmos/v5/app"
 
-	"github.com/desmos-labs/desmos/v4/x/relationships/simulation"
-	"github.com/desmos-labs/desmos/v4/x/relationships/types"
+	"github.com/desmos-labs/desmos/v5/x/relationships/simulation"
+	"github.com/desmos-labs/desmos/v5/x/relationships/types"
 )
 
 func TestDecodeStore(t *testing.T) {

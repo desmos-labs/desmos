@@ -4,7 +4,7 @@ package desmos.profiles.v3;
 import "gogoproto/gogo.proto";
 import "desmos/profiles/v3/models_params.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v4/x/profiles/types";
+option go_package = "github.com/desmos-labs/desmos/v5/x/profiles/types";
 
 // QueryParamsRequest is the request type for the Query/Params RPC endpoint
 message QueryParamsRequest {}

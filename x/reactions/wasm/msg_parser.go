@@ -3,14 +3,14 @@ package wasm
 import (
 	"encoding/json"
 
-	errors "cosmossdk.io/errors"
+	"cosmossdk.io/errors"
 	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v4/cosmwasm"
-	"github.com/desmos-labs/desmos/v4/x/commons"
-	"github.com/desmos-labs/desmos/v4/x/reactions/types"
+	"github.com/desmos-labs/desmos/v5/cosmwasm"
+	"github.com/desmos-labs/desmos/v5/x/commons"
+	"github.com/desmos-labs/desmos/v5/x/reactions/types"
 )
 
 var _ cosmwasm.MsgParserInterface = MsgsParser{}

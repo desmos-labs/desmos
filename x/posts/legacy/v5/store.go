@@ -6,8 +6,8 @@ import (
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	v4 "github.com/desmos-labs/desmos/v4/x/posts/legacy/v4"
-	"github.com/desmos-labs/desmos/v4/x/posts/types"
+	v4 "github.com/desmos-labs/desmos/v5/x/posts/legacy/v4"
+	"github.com/desmos-labs/desmos/v5/x/posts/types"
 )
 
 // MigrateStore performs the migration from version 4 to version 5 of the store.

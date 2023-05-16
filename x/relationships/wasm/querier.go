@@ -3,14 +3,14 @@ package wasm
 import (
 	"encoding/json"
 
-	errors "cosmossdk.io/errors"
+	"cosmossdk.io/errors"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/desmos-labs/desmos/v4/cosmwasm"
-	relationshipskeeper "github.com/desmos-labs/desmos/v4/x/relationships/keeper"
-	"github.com/desmos-labs/desmos/v4/x/relationships/types"
+	"github.com/desmos-labs/desmos/v5/cosmwasm"
+	relationshipskeeper "github.com/desmos-labs/desmos/v5/x/relationships/keeper"
+	"github.com/desmos-labs/desmos/v5/x/relationships/types"
 )
 
 var _ cosmwasm.Querier = RelationshipsWasmQuerier{}

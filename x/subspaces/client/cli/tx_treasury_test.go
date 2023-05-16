@@ -12,7 +12,7 @@ import (
 	authzcli "github.com/cosmos/cosmos-sdk/x/authz/client/cli"
 	"github.com/gogo/protobuf/proto"
 
-	"github.com/desmos-labs/desmos/v4/x/subspaces/client/cli"
+	"github.com/desmos-labs/desmos/v5/x/subspaces/client/cli"
 )
 
 func (s *IntegrationTestSuite) TestCmdRevokeGrantAuthorization() {

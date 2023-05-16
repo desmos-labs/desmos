@@ -9,7 +9,7 @@ import "cosmos/base/query/v1beta1/pagination.proto";
 
 import "desmos/reports/v1/models.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v4/x/reports/types";
+option go_package = "github.com/desmos-labs/desmos/v5/x/reports/types";
 
 // Query defines the gRPC querier service.
 service Query {

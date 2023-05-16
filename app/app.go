@@ -10,29 +10,25 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"github.com/desmos-labs/desmos/v4/x/reactions"
-	reactionstypes "github.com/desmos-labs/desmos/v4/x/reactions/types"
+	"github.com/desmos-labs/desmos/v5/x/reactions"
+	reactionstypes "github.com/desmos-labs/desmos/v5/x/reactions/types"
 
-	postskeeper "github.com/desmos-labs/desmos/v4/x/posts/keeper"
-	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
+	postskeeper "github.com/desmos-labs/desmos/v5/x/posts/keeper"
+	poststypes "github.com/desmos-labs/desmos/v5/x/posts/types"
 
-	"github.com/desmos-labs/desmos/v4/app/upgrades"
-	v4 "github.com/desmos-labs/desmos/v4/app/upgrades/v4"
-	v471 "github.com/desmos-labs/desmos/v4/app/upgrades/v471"
-	v480 "github.com/desmos-labs/desmos/v4/app/upgrades/v480"
-	v500 "github.com/desmos-labs/desmos/v4/app/upgrades/v500"
-	v510 "github.com/desmos-labs/desmos/v4/app/upgrades/v510"
+	"github.com/desmos-labs/desmos/v5/app/upgrades"
+	v500 "github.com/desmos-labs/desmos/v5/app/upgrades/v500"
 
-	profilesv4 "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v4"
+	profilesv4 "github.com/desmos-labs/desmos/v5/x/profiles/legacy/v4"
 
 	"github.com/cosmos/cosmos-sdk/runtime"
 	"github.com/cosmos/cosmos-sdk/server"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	"github.com/cosmos/cosmos-sdk/version"
 
-	"github.com/desmos-labs/desmos/v4/x/posts"
-	"github.com/desmos-labs/desmos/v4/x/relationships"
-	relationshipstypes "github.com/desmos-labs/desmos/v4/x/relationships/types"
+	"github.com/desmos-labs/desmos/v5/x/posts"
+	"github.com/desmos-labs/desmos/v5/x/relationships"
+	relationshipstypes "github.com/desmos-labs/desmos/v5/x/relationships/types"
 
 	autocliv1 "cosmossdk.io/api/cosmos/autocli/v1"
 	reflectionv1 "cosmossdk.io/api/cosmos/reflection/v1"
@@ -124,21 +120,21 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
 	upgradeclient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
 
-	"github.com/desmos-labs/desmos/v4/x/profiles"
-	profileskeeper "github.com/desmos-labs/desmos/v4/x/profiles/keeper"
-	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
-	reactionskeeper "github.com/desmos-labs/desmos/v4/x/reactions/keeper"
-	relationshipskeeper "github.com/desmos-labs/desmos/v4/x/relationships/keeper"
-	"github.com/desmos-labs/desmos/v4/x/reports"
-	reportskeeper "github.com/desmos-labs/desmos/v4/x/reports/keeper"
-	reportstypes "github.com/desmos-labs/desmos/v4/x/reports/types"
-	"github.com/desmos-labs/desmos/v4/x/subspaces"
-	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
-	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v5/x/profiles"
+	profileskeeper "github.com/desmos-labs/desmos/v5/x/profiles/keeper"
+	profilestypes "github.com/desmos-labs/desmos/v5/x/profiles/types"
+	reactionskeeper "github.com/desmos-labs/desmos/v5/x/reactions/keeper"
+	relationshipskeeper "github.com/desmos-labs/desmos/v5/x/relationships/keeper"
+	"github.com/desmos-labs/desmos/v5/x/reports"
+	reportskeeper "github.com/desmos-labs/desmos/v5/x/reports/keeper"
+	reportstypes "github.com/desmos-labs/desmos/v5/x/reports/types"
+	"github.com/desmos-labs/desmos/v5/x/subspaces"
+	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
+	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 
-	"github.com/desmos-labs/desmos/v4/x/supply"
-	supplykeeper "github.com/desmos-labs/desmos/v4/x/supply/keeper"
-	supplytypes "github.com/desmos-labs/desmos/v4/x/supply/types"
+	"github.com/desmos-labs/desmos/v5/x/supply"
+	supplykeeper "github.com/desmos-labs/desmos/v5/x/supply/keeper"
+	supplytypes "github.com/desmos-labs/desmos/v5/x/supply/types"
 
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -1232,11 +1228,7 @@ func (app *DesmosApp) RegisterNodeService(clientCtx client.Context) {
 
 // registerUpgradeHandlers registers all the upgrade handlers that are supported by the app
 func (app *DesmosApp) registerUpgradeHandlers() {
-	app.registerUpgrade(v471.NewUpgrade(app.mm, app.configurator, app.BankKeeper))
-	app.registerUpgrade(v4.NewUpgrade(app.mm, app.configurator, app.BankKeeper))
-	app.registerUpgrade(v480.NewUpgrade(app.mm, app.configurator))
 	app.registerUpgrade(v500.NewUpgrade(app.mm, app.configurator, app.ParamsKeeper, app.ConsensusParamsKeeper))
-	app.registerUpgrade(v510.NewUpgrade(app.mm, app.configurator))
 }
 
 // registerUpgrade registers the given upgrade to be supported by the app

@@ -7,7 +7,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/x/authz"
 
-	subspacesauthz "github.com/desmos-labs/desmos/v4/x/subspaces/authz"
+	subspacesauthz "github.com/desmos-labs/desmos/v5/x/subspaces/authz"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -17,7 +17,7 @@ import (
 	authzcli "github.com/cosmos/cosmos-sdk/x/authz/client/cli"
 	"github.com/spf13/cobra"
 
-	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v5/x/subspaces/types"
 )
 
 // DONTCOVER

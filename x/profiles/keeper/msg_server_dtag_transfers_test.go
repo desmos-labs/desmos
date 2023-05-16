@@ -3,12 +3,12 @@ package keeper_test
 import (
 	"fmt"
 
-	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
+	"github.com/desmos-labs/desmos/v5/testutil/profilestesting"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v4/x/profiles/keeper"
-	"github.com/desmos-labs/desmos/v4/x/profiles/types"
+	"github.com/desmos-labs/desmos/v5/x/profiles/keeper"
+	"github.com/desmos-labs/desmos/v5/x/profiles/types"
 )
 
 func (suite *KeeperTestSuite) TestMsgServer_RequestDTagTransfer() {

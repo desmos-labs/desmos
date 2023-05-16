@@ -12,8 +12,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
 
-	"github.com/desmos-labs/desmos/v4/app/params"
-	"github.com/desmos-labs/desmos/v4/x/profiles/keeper"
+	"github.com/desmos-labs/desmos/v5/app/params"
+	"github.com/desmos-labs/desmos/v5/x/profiles/keeper"
 )
 
 // Simulation operation weights constants

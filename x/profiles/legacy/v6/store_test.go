@@ -7,10 +7,10 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 
-	v5types "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v5/types"
-	v6 "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v6"
+	v5types "github.com/desmos-labs/desmos/v5/x/profiles/legacy/v5/types"
+	v6 "github.com/desmos-labs/desmos/v5/x/profiles/legacy/v6"
 
-	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
+	"github.com/desmos-labs/desmos/v5/testutil/profilestesting"
 
 	dbm "github.com/cometbft/cometbft-db"
 	"github.com/cometbft/cometbft/libs/log"
@@ -27,8 +27,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v4/app"
-	"github.com/desmos-labs/desmos/v4/x/profiles/types"
+	"github.com/desmos-labs/desmos/v5/app"
+	"github.com/desmos-labs/desmos/v5/x/profiles/types"
 )
 
 func buildContext(

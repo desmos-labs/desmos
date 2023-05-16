@@ -3,15 +3,15 @@ package v2_test
 import (
 	"testing"
 
-	v2 "github.com/desmos-labs/desmos/v4/x/relationships/legacy/v2"
+	v2 "github.com/desmos-labs/desmos/v5/x/relationships/legacy/v2"
 
 	"github.com/cosmos/cosmos-sdk/testutil"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v4/app"
-	v1 "github.com/desmos-labs/desmos/v4/x/relationships/legacy/v1"
-	"github.com/desmos-labs/desmos/v4/x/relationships/types"
+	"github.com/desmos-labs/desmos/v5/app"
+	v1 "github.com/desmos-labs/desmos/v5/x/relationships/legacy/v1"
+	"github.com/desmos-labs/desmos/v5/x/relationships/types"
 )
 
 func TestMigrateStore(t *testing.T) {

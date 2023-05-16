@@ -1,6 +1,0 @@
-type: feat
-module: other
-pull_request: 1081
-description: integrate ibc fee middleware
-backward_compatible: true
-date: 2023-02-03T09:46:43.2680984Z

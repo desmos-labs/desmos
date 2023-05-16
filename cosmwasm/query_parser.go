@@ -3,17 +3,17 @@ package cosmwasm
 import (
 	"encoding/json"
 
-	errors "cosmossdk.io/errors"
+	"cosmossdk.io/errors"
 	"github.com/CosmWasm/wasmd/x/wasm"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
-	profiletypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
-	reactionstypes "github.com/desmos-labs/desmos/v4/x/reactions/types"
-	relationshipstypes "github.com/desmos-labs/desmos/v4/x/relationships/types"
-	reportstypes "github.com/desmos-labs/desmos/v4/x/reports/types"
-	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
+	poststypes "github.com/desmos-labs/desmos/v5/x/posts/types"
+	profiletypes "github.com/desmos-labs/desmos/v5/x/profiles/types"
+	reactionstypes "github.com/desmos-labs/desmos/v5/x/reactions/types"
+	relationshipstypes "github.com/desmos-labs/desmos/v5/x/relationships/types"
+	reportstypes "github.com/desmos-labs/desmos/v5/x/reports/types"
+	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 )
 
 type Querier interface {

@@ -9,9 +9,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/spf13/cobra"
 
-	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
+	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 
-	"github.com/desmos-labs/desmos/v4/x/relationships/types"
+	"github.com/desmos-labs/desmos/v5/x/relationships/types"
 )
 
 // NewTxCmd returns a new command allowing to perform profiles transactions

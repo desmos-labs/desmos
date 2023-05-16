@@ -14,11 +14,11 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/desmos-labs/desmos/v4/app"
+	"github.com/desmos-labs/desmos/v5/app"
 
-	"github.com/desmos-labs/desmos/v4/x/reactions/keeper"
-	"github.com/desmos-labs/desmos/v4/x/reactions/testutil"
-	"github.com/desmos-labs/desmos/v4/x/reactions/types"
+	"github.com/desmos-labs/desmos/v5/x/reactions/keeper"
+	"github.com/desmos-labs/desmos/v5/x/reactions/testutil"
+	"github.com/desmos-labs/desmos/v5/x/reactions/types"
 )
 
 func TestKeeperTestSuite(t *testing.T) {

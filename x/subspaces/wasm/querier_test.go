@@ -8,10 +8,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/cosmos/cosmos-sdk/x/feegrant"
 
-	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
-	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
-	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
-	"github.com/desmos-labs/desmos/v4/x/subspaces/wasm"
+	poststypes "github.com/desmos-labs/desmos/v5/x/posts/types"
+	profilestypes "github.com/desmos-labs/desmos/v5/x/profiles/types"
+	"github.com/desmos-labs/desmos/v5/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v5/x/subspaces/wasm"
 )
 
 func (suite *TestSuite) TestSubspacesWasmQuerier_QueryCustom() {

@@ -6,7 +6,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v4/x/reports/types"
+	"github.com/desmos-labs/desmos/v5/x/reports/types"
 )
 
 var msgCreateReport = types.NewMsgCreateReport(

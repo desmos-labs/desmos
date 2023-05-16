@@ -14,7 +14,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/feegrant"
 	feegrantcli "github.com/cosmos/cosmos-sdk/x/feegrant/client/cli"
 
-	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v5/x/subspaces/types"
 )
 
 // DONTCOVER

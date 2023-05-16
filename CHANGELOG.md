@@ -2,6 +2,38 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
+## Version 5.0.0
+### Features
+#### Fees
+- ([\#1135](https://github.com/desmos-labs/desmos/pull/1135)) Removed the `x/fees` module
+
+#### Subspaces
+- ([\#1067](https://github.com/desmos-labs/desmos/pull/1067)) Changed how subspace treasury addresses are generated and managed
+- ([\#1071](https://github.com/desmos-labs/desmos/pull/1071)) Implemented the ability for subspace admins to grant authorizations on behalf of the subspace treasury
+
+#### Other
+- ([\#1059](https://github.com/desmos-labs/desmos/pull/1059)) Added proper support for Ledger devices inside the `sign` command
+- ([\#1081](https://github.com/desmos-labs/desmos/pull/1081)) Added the IBC fee middleware
+- ([\#1082](https://github.com/desmos-labs/desmos/pull/1082)) Added the InterChain Accounts module
+- ([\#1083](https://github.com/desmos-labs/desmos/pull/1083)) Added missing stargate querier accepted list
+
+### Bug Fixes
+#### Subspaces
+- ([\#1074](https://github.com/desmos-labs/desmos/pull/1074)) Added missing `MsgDeleteSubspace` Amino registration
+- ([\#1139](https://github.com/desmos-labs/desmos/pull/1139)) Made it impossible to use the `DefaultUserGroup` to another section
+
+#### Posts
+- ([\#1075](https://github.com/desmos-labs/desmos/pull/1075)) Changed `Poll_ProvidedAnswer` attachments type from `Attachment` to `AttachmentContent`
+
+#### Other
+- ([\#1069](https://github.com/desmos-labs/desmos/pull/1069)) Registered missing Wasm snapshotter extension
+
+### Dependencies
+#### Other
+- ([\#1079](https://github.com/desmos-labs/desmos/pull/1079)) Updated `ibc-go` to `v4.3.0`
+- ([\#1124](https://github.com/desmos-labs/desmos/pull/1124)) Updated `cosmos-sdk` to `v0.47.2`
+- ([\#1133](https://github.com/desmos-labs/desmos/pull/1133)) Updated `wasmd` to `v0.40.0-rc.1`
+
 ## Version 4.8.1
 ### Dependencies
 #### Other

@@ -24,8 +24,8 @@ import (
 	"github.com/cosmos/go-bip39"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/desmos-labs/desmos/v4/app"
-	"github.com/desmos-labs/desmos/v4/x/supply/keeper"
+	"github.com/desmos-labs/desmos/v5/app"
+	"github.com/desmos-labs/desmos/v5/x/supply/keeper"
 )
 
 type KeeperTestSuite struct {

@@ -5,11 +5,11 @@ package utils
 
 import (
 	fmt "fmt"
+	_ "github.com/cosmos/cosmos-proto"
 	types1 "github.com/cosmos/cosmos-sdk/codec/types"
-	types "github.com/desmos-labs/desmos/v4/x/posts/types"
+	types "github.com/desmos-labs/desmos/v5/x/posts/types"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
-	_ "github.com/cosmos/cosmos-proto"
 	_ "google.golang.org/protobuf/types/known/timestamppb"
 	io "io"
 	math "math"

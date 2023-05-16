@@ -5,9 +5,9 @@ import (
 
 	"github.com/golang/mock/gomock"
 
-	"github.com/desmos-labs/desmos/v4/x/posts/keeper"
-	"github.com/desmos-labs/desmos/v4/x/posts/testutil"
-	"github.com/desmos-labs/desmos/v4/x/posts/types"
+	"github.com/desmos-labs/desmos/v5/x/posts/keeper"
+	"github.com/desmos-labs/desmos/v5/x/posts/testutil"
+	"github.com/desmos-labs/desmos/v5/x/posts/types"
 
 	"github.com/cometbft/cometbft/libs/log"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
@@ -20,7 +20,7 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/desmos-labs/desmos/v4/app"
+	"github.com/desmos-labs/desmos/v5/app"
 )
 
 type KeeperTestSuite struct {

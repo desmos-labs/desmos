@@ -9,8 +9,8 @@ import (
 	tmcli "github.com/cometbft/cometbft/libs/cli"
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
 
-	"github.com/desmos-labs/desmos/v4/x/profiles/client/cli"
-	"github.com/desmos-labs/desmos/v4/x/profiles/types"
+	"github.com/desmos-labs/desmos/v5/x/profiles/client/cli"
+	"github.com/desmos-labs/desmos/v5/x/profiles/types"
 )
 
 func (s *IntegrationTestSuite) TestCmdQueryParams() {

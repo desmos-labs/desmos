@@ -1,10 +1,10 @@
 package keeper
 
 import (
-	errors "cosmossdk.io/errors"
+	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v4/x/posts/types"
+	"github.com/desmos-labs/desmos/v5/x/posts/types"
 )
 
 // SetNextAttachmentID sets the new attachment id for the given post to the store

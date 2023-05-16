@@ -1,6 +1,0 @@
-type: refactor
-module: x/posts
-pull_request: 1068
-description: Improved posts tests using gomock
-backward_compatible: true
-date: 2023-01-17T11:53:41.6620076Z

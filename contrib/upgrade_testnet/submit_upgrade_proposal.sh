@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
 NODES=$1
-UPGRADE_NAME=$2
-UPGRADE_HEIGHT=$3
+GENESIS_VERSION=$2
+UPGRADE_NAME=$3
+UPGRADE_HEIGHT=$4
 NODE="http://localhost:26657"
 TX_FLAGS="--node $NODE --yes"
 
@@ -10,6 +11,9 @@ TX_FLAGS="--node $NODE --yes"
 CNT=0
 ITER=20
 SLEEP=30
+
+BUILDDIR=$(pwd)/build
+DESMOS="docker run -i --net host --user $UID:$GID -v $BUILDDIR:/workerplace/build:Z --workdir /workerplace desmoslabs/desmos:$GENESIS_VERSION desmos --home ./build/node0/desmos"
 
 echo "===> Checking chain status"
 while [ ${CNT} -lt $ITER ]; do
@@ -39,43 +43,50 @@ if [ -z "$CHAIN_ID" ]; then
   exit 1
 fi
 
-TX_FLAGS="--from node0 --keyring-backend test --home ./build/node0/desmos --chain-id $CHAIN_ID --yes --fees 100udaric"
-
 # Import all nodes keys into node0
 echo ""
 echo "===> Importing keys into Node 0 keystore"
 for ((i = 1; i < $NODES; i++)); do
   echo "====> Node $i"
-  NODE_SECRET=$(cat "build/node$i/desmos/key_seed.json" | jq .secret -r)
-  echo $NODE_SECRET | desmos keys add "node$i" --recover --home ./build/node0/desmos --keyring-backend test >/dev/null 2>&1
+  NODE_SECRET=$(cat "$BUILDDIR/node$i/desmos/key_seed.json" | jq .secret -r)
+  echo $NODE_SECRET | $DESMOS keys add "node$i" --recover --keyring-backend test >/dev/null 2>&1
 done
 
 sleep $SLEEP
 
+TX_FLAGS="--from node0 --chain-id $CHAIN_ID --yes --fees 100udaric --keyring-backend test"
+
 echo ""
 echo "===> Submitting upgrade proposal"
-RESULT=$(desmos tx gov submit-proposal \
+RESULT=$($DESMOS tx gov submit-proposal \
   software-upgrade $UPGRADE_NAME \
   --title Upgrade \
   --description Description \
   --upgrade-height $UPGRADE_HEIGHT \
   $TX_FLAGS 2>&1)
+
 TX_HASH=$(echo "$RESULT" | grep txhash | sed -e 's/txhash: //')
+
 if [ -z "$TX_HASH" ]; then
   echo "Error while submitting transaction: $RESULT"
   exit 1
 fi
 
+echo "====> Submitted upgrade proposal"
+echo "====> Tx hash: $TX_HASH"
+
 sleep 6s
 
 echo ""
 echo "===> Getting proposal id"
-PROPOSAL_ID=$(desmos q tx $TX_HASH --node $NODE --output json 2>&1 | jq .logs[0].events[4].attributes[0].value -r)
+PROPOSAL_ID=$($DESMOS q tx $TX_HASH --node $NODE --output json 2>&1 | jq .logs[0].events[4].attributes[0].value -r)
 echo "Proposal ID: $PROPOSAL_ID"
+
+sleep 3s
 
 echo ""
 echo "===> Depositing proposal"
-desmos tx gov deposit $PROPOSAL_ID 10000000udaric $TX_FLAGS >/dev/null 2>&1
+$DESMOS tx gov deposit $PROPOSAL_ID 10000000udaric $TX_FLAGS >/dev/null 2>&1
 
 sleep 6s
 
@@ -83,7 +94,8 @@ echo ""
 echo "===> Voting proposal"
 for ((i = 0; i < $NODES; i++)); do
   echo "====> Node $i"
-  desmos tx gov vote $PROPOSAL_ID yes $TX_FLAGS --from "node$i" >/dev/null 2>&1
+  $DESMOS tx gov vote $PROPOSAL_ID yes $TX_FLAGS --from "node$i" >/dev/null 2>&1
+  sleep 3s
 done
 
 sleep 6s
