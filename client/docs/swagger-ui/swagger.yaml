@@ -8728,6 +8728,9 @@ paths:
                       type: string
                       format: date-time
                       title: (optional) Last edited time of the post
+                    owner:
+                      type: string
+                      title: Owner of the post
                   title: Post contains all the information about a single post
               pagination:
                 type: object
@@ -9196,6 +9199,9 @@ paths:
                     type: string
                     format: date-time
                     title: (optional) Last edited time of the post
+                  owner:
+                    type: string
+                    title: Owner of the post
                 title: Post contains all the information about a single post
             title: >-
               QueryPostResponse is the response type for the Query/Post RPC
@@ -10444,6 +10450,9 @@ paths:
                       type: string
                       format: date-time
                       title: (optional) Last edited time of the post
+                    owner:
+                      type: string
+                      title: Owner of the post
                   title: Post contains all the information about a single post
               pagination:
                 type: object
@@ -20320,6 +20329,9 @@ definitions:
         type: string
         format: date-time
         title: (optional) Last edited time of the post
+      owner:
+        type: string
+        title: Owner of the post
     title: Post contains all the information about a single post
   desmos.posts.v3.PostReference:
     type: object
@@ -20832,6 +20844,9 @@ definitions:
             type: string
             format: date-time
             title: (optional) Last edited time of the post
+          owner:
+            type: string
+            title: Owner of the post
         title: Post contains all the information about a single post
     title: QueryPostResponse is the response type for the Query/Post RPC method
   desmos.posts.v3.QuerySectionPostsResponse:
@@ -21006,6 +21021,9 @@ definitions:
               type: string
               format: date-time
               title: (optional) Last edited time of the post
+            owner:
+              type: string
+              title: Owner of the post
           title: Post contains all the information about a single post
       pagination:
         type: object
@@ -21210,6 +21228,9 @@ definitions:
               type: string
               format: date-time
               title: (optional) Last edited time of the post
+            owner:
+              type: string
+              title: Owner of the post
           title: Post contains all the information about a single post
       pagination:
         type: object
