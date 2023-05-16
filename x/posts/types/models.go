@@ -828,3 +828,42 @@ func NewAnswerResult(answerIndex uint32, votes uint64) PollTallyResults_AnswerRe
 		Votes:       votes,
 	}
 }
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// NewPostOwnerTransferRequest returns a new PostOwnerTransferRequest instance
+func NewPostOwnerTransferRequest(subspaceID uint64, postID uint64, sender, receiver string) PostOwnerTransferRequest {
+	return PostOwnerTransferRequest{
+		SubspaceID: subspaceID,
+		PostID:     postID,
+		Receiver:   receiver,
+		Sender:     sender,
+	}
+}
+
+// Validate checks the request validity
+func (request PostOwnerTransferRequest) Validate() error {
+	if request.SubspaceID == 0 {
+		return fmt.Errorf("invalid subspace id: %d", request.SubspaceID)
+	}
+
+	if request.PostID == 0 {
+		return fmt.Errorf("invalid post id: %d", request.PostID)
+	}
+
+	if request.Sender == request.Receiver {
+		return fmt.Errorf("receiver cannot be the same as sender")
+	}
+
+	_, err := sdk.AccAddressFromBech32(request.Sender)
+	if err != nil {
+		return fmt.Errorf("invalid sender address: %s", request.Sender)
+	}
+
+	_, err = sdk.AccAddressFromBech32(request.Receiver)
+	if err != nil {
+		return fmt.Errorf("invalid receiver address: %s", request.Receiver)
+	}
+
+	return nil
+}

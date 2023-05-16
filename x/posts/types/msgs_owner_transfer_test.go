@@ -50,6 +50,16 @@ func TestMsgRequestPostOwnerTransfer_ValidateBasic(t *testing.T) {
 			shouldErr: true,
 		},
 		{
+			name: "receiver equals to sender returns error",
+			msg: types.NewMsgRequestPostOwnerTransfer(
+				1,
+				0,
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+			),
+			shouldErr: true,
+		},
+		{
 			name: "invalid receiver returns error",
 			msg: types.NewMsgRequestPostOwnerTransfer(
 				1,

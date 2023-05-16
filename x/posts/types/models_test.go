@@ -1157,3 +1157,84 @@ func TestAttachmentMove(t *testing.T) {
 		"image/png",
 	)), updated)
 }
+
+func TestPostOwnerTransferRequest_Validate(t *testing.T) {
+	testCases := []struct {
+		name      string
+		request   types.PostOwnerTransferRequest
+		shouldErr bool
+	}{
+		{
+			name: "invalid subspace id returns error",
+			request: types.NewPostOwnerTransferRequest(
+				0,
+				1,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid post id returns error",
+			request: types.NewPostOwnerTransferRequest(
+				1,
+				0,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "receiver equals to sender returns error",
+			request: types.NewPostOwnerTransferRequest(
+				1,
+				1,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid receiver returns error",
+			request: types.NewPostOwnerTransferRequest(
+				1,
+				1,
+				"",
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid sender returns error",
+			request: types.NewPostOwnerTransferRequest(
+				1,
+				1,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+				"",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "valid request returns no error",
+			request: types.NewPostOwnerTransferRequest(
+				1,
+				1,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+			),
+			shouldErr: false,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.request.Validate()
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}

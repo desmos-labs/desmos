@@ -42,6 +42,10 @@ func (msg MsgRequestPostOwnerTransfer) ValidateBasic() error {
 		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id: %d", msg.PostID)
 	}
 
+	if msg.Sender == msg.Receiver {
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "receiver cannot be the same as sender")
+	}
+
 	_, err := sdk.AccAddressFromBech32(msg.Receiver)
 	if err != nil {
 		return err
