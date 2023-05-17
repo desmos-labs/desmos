@@ -1,0 +1,6 @@
+type: fix
+module: x/posts
+pull_request: 1148
+description: fix posts api routes
+backward_compatible: true
+date: 2023-05-17T12:49:57.6645056Z
