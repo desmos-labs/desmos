@@ -46,6 +46,26 @@ service Msg {
   //
   // Since: Desmos 6.0.0
   rpc MovePost(MsgMovePost) returns (MsgMovePostResponse);
+
+  // RequestPostOwnerTransfer allows sender to send a request to transfer a post ownership to receiver
+  //
+  // Since: Desmos 6.0.0
+  rpc RequestPostOwnerTransfer(MsgRequestPostOwnerTransfer) returns (MsgRequestPostOwnerTransferResponse);
+
+  // CancelPostOwnerTransfer allows sender to cancel an outgoing post owner transfer request
+  //
+  // Since: Desmos 6.0.0
+  rpc CancelPostOwnerTransfer(MsgCancelPostOwnerTransfer) returns (MsgCancelPostOwnerTransferResponse);
+
+  // AcceptPostOwnerTransfer allows receiver to accept an incoming post transfer request
+  //
+  // Since: Desmos 6.0.0
+  rpc AcceptPostOwnerTransfer(MsgAcceptPostOwnerTransfer) returns (MsgAcceptPostOwnerTransferResponse);
+
+  // RefusePostOwnerTransfer allows receiver to refuse an incoming post transfer request
+  //
+  // Since: Desmos 6.0.0
+  rpc RefusePostOwnerTransfer(MsgRefusePostOwnerTransfer) returns (MsgRefusePostOwnerTransferResponse);
 }
 
 // MsgCreatePost represents the message to be used to create a post.

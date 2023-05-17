@@ -183,6 +183,15 @@ func (r PostReference) Validate() error {
 
 // --------------------------------------------------------------------------------------------------------------------
 
+// UpdateOwner set the owner field of a given post without validating it.
+// Before storing the updated post, a validation with Validate should
+// be performed.
+func (p Post) UpdateOwner(owner string, updateTime *time.Time) Post {
+	p.Owner = owner
+	p.LastEditedDate = updateTime
+	return p
+}
+
 // PostUpdate contains all the data that can be updated about a post.
 // When performing an update, if a text field should not be edited then it must be set to types.DoNotModify.
 type PostUpdate struct {
@@ -194,6 +203,9 @@ type PostUpdate struct {
 
 	// Update's tags will always replace the existing ones
 	Tags []string
+
+	// Update's owner will always replace the existing ones
+	Owner string
 
 	UpdateTime time.Time
 }
