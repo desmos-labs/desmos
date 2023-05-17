@@ -47,6 +47,8 @@ var (
 	ActivePollQueuePrefix = []byte{0x21}
 
 	ParamsKey = []byte{0x30}
+
+	PostOwnerTransferRequestPrefix = []byte{0x40}
 )
 
 // GetPostIDBytes returns the byte representation of the postID
@@ -206,4 +208,16 @@ func PollAnswersPrefix(subspaceID uint64, postID uint64, pollID uint32) []byte {
 // PollAnswerStoreKey returns the store key used to store the poll answer for the given user
 func PollAnswerStoreKey(subspaceID uint64, postID uint64, pollID uint32, user string) []byte {
 	return append(PollAnswersPrefix(subspaceID, postID, pollID), []byte(user)...)
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// SubspacePostOwnerTransferRequestPrefix returns the store prefix used to store the post owner transfer request associated with the given subspace
+func SubspacePostOwnerTransferRequestPrefix(subspaceID uint64) []byte {
+	return append(PostOwnerTransferRequestPrefix, subspacetypes.GetSubspaceIDBytes(subspaceID)...)
+}
+
+// PostOwnerTransferRequestStoreKey returns the store key used to store the post owner transfer request the given post
+func PostOwnerTransferRequestStoreKey(subspaceID uint64, postID uint64) []byte {
+	return append(SubspacePostOwnerTransferRequestPrefix(subspaceID), GetPostIDBytes(postID)...)
 }

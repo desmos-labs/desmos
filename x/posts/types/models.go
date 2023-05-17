@@ -832,7 +832,7 @@ func NewAnswerResult(answerIndex uint32, votes uint64) PollTallyResults_AnswerRe
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewPostOwnerTransferRequest returns a new PostOwnerTransferRequest instance
-func NewPostOwnerTransferRequest(subspaceID uint64, postID uint64, sender, receiver string) PostOwnerTransferRequest {
+func NewPostOwnerTransferRequest(subspaceID uint64, postID uint64, receiver string, sender string) PostOwnerTransferRequest {
 	return PostOwnerTransferRequest{
 		SubspaceID: subspaceID,
 		PostID:     postID,

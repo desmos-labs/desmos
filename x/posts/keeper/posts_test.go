@@ -1065,6 +1065,42 @@ func (suite *KeeperTestSuite) TestKeeper_DeletePost() {
 				suite.Require().False(suite.k.HasAttachment(ctx, 1, 2, 1))
 			},
 		},
+		{
+			name: "existing post is deleted along with transfer requests",
+			store: func(ctx sdk.Context) {
+				suite.k.SavePost(ctx, types.NewPost(
+					1,
+					0,
+					2,
+					"External id",
+					"Text",
+					"cosmos19mkklc8arp6phlg5eydu3v49syyqyfrq2sp4at",
+					1,
+					nil,
+					nil,
+					nil,
+					types.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+				))
+
+				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(
+					1,
+					2,
+					"cosmos19mkklc8arp6phlg5eydu3v49syyqyfrq2sp4at",
+					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+				))
+			},
+			subspaceID: 1,
+			postID:     2,
+			check: func(ctx sdk.Context) {
+				store := ctx.KVStore(suite.storeKey)
+				suite.Require().False(suite.k.HasPost(ctx, 1, 2))
+				suite.Require().False(store.Has(types.PostSectionStoreKey(1, 0, 1)))
+				suite.Require().False(suite.k.HasPostOwnerTransferRequest(ctx, 1, 2))
+			},
+		},
 	}
 
 	for _, tc := range testCases {

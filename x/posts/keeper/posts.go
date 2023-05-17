@@ -192,5 +192,8 @@ func (k Keeper) DeletePost(ctx sdk.Context, subspaceID uint64, postID uint64) {
 	// Delete the attachment id key
 	k.DeleteNextAttachmentID(ctx, post.SubspaceID, post.ID)
 
+	// Delete the post owner transfer request
+	k.DeletePostOwnerTransferRequest(ctx, post.SubspaceID, post.ID)
+
 	k.AfterPostDeleted(ctx, post.SubspaceID, post.ID)
 }
