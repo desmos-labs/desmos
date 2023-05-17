@@ -8,13 +8,13 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/desmos-labs/desmos/v4/app/upgrades"
+	"github.com/desmos-labs/desmos/v5/app/upgrades"
 
 	"github.com/cosmos/cosmos-sdk/runtime"
 	"github.com/cosmos/cosmos-sdk/server"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 
-	postskeeper "github.com/desmos-labs/desmos/v4/x/posts/keeper"
+	postskeeper "github.com/desmos-labs/desmos/v5/x/posts/keeper"
 
 	"cosmossdk.io/depinject"
 
@@ -76,15 +76,15 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
 
-	"github.com/desmos-labs/desmos/v4/x/profiles"
-	profileskeeper "github.com/desmos-labs/desmos/v4/x/profiles/keeper"
-	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
-	reactionskeeper "github.com/desmos-labs/desmos/v4/x/reactions/keeper"
-	relationshipskeeper "github.com/desmos-labs/desmos/v4/x/relationships/keeper"
-	reportskeeper "github.com/desmos-labs/desmos/v4/x/reports/keeper"
-	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
+	"github.com/desmos-labs/desmos/v5/x/profiles"
+	profileskeeper "github.com/desmos-labs/desmos/v5/x/profiles/keeper"
+	profilestypes "github.com/desmos-labs/desmos/v5/x/profiles/types"
+	reactionskeeper "github.com/desmos-labs/desmos/v5/x/reactions/keeper"
+	relationshipskeeper "github.com/desmos-labs/desmos/v5/x/relationships/keeper"
+	reportskeeper "github.com/desmos-labs/desmos/v5/x/reports/keeper"
+	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
 
-	supplykeeper "github.com/desmos-labs/desmos/v4/x/supply/keeper"
+	supplykeeper "github.com/desmos-labs/desmos/v5/x/supply/keeper"
 
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"

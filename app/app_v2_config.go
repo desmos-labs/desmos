@@ -50,21 +50,21 @@ import (
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 
-	postsmodulev1 "github.com/desmos-labs/desmos/v4/api/desmos/posts/module/v1"
-	profilesmodulev1 "github.com/desmos-labs/desmos/v4/api/desmos/profiles/module/v1"
-	reactionsmodulev1 "github.com/desmos-labs/desmos/v4/api/desmos/reactions/module/v1"
-	relationshipsmodulev1 "github.com/desmos-labs/desmos/v4/api/desmos/relationships/module/v1"
-	reportsmodulev1 "github.com/desmos-labs/desmos/v4/api/desmos/reports/module/v1"
-	subspacesmodulev1 "github.com/desmos-labs/desmos/v4/api/desmos/subspaces/module/v1"
-	supplymodulev1 "github.com/desmos-labs/desmos/v4/api/desmos/supply/module/v1"
+	postsmodulev1 "github.com/desmos-labs/desmos/v5/api/desmos/posts/module/v1"
+	profilesmodulev1 "github.com/desmos-labs/desmos/v5/api/desmos/profiles/module/v1"
+	reactionsmodulev1 "github.com/desmos-labs/desmos/v5/api/desmos/reactions/module/v1"
+	relationshipsmodulev1 "github.com/desmos-labs/desmos/v5/api/desmos/relationships/module/v1"
+	reportsmodulev1 "github.com/desmos-labs/desmos/v5/api/desmos/reports/module/v1"
+	subspacesmodulev1 "github.com/desmos-labs/desmos/v5/api/desmos/subspaces/module/v1"
+	supplymodulev1 "github.com/desmos-labs/desmos/v5/api/desmos/supply/module/v1"
 
-	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
-	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
-	reactionstypes "github.com/desmos-labs/desmos/v4/x/reactions/types"
-	relationshipstypes "github.com/desmos-labs/desmos/v4/x/relationships/types"
-	reportstypes "github.com/desmos-labs/desmos/v4/x/reports/types"
-	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
-	supplytypes "github.com/desmos-labs/desmos/v4/x/supply/types"
+	poststypes "github.com/desmos-labs/desmos/v5/x/posts/types"
+	profilestypes "github.com/desmos-labs/desmos/v5/x/profiles/types"
+	reactionstypes "github.com/desmos-labs/desmos/v5/x/reactions/types"
+	relationshipstypes "github.com/desmos-labs/desmos/v5/x/relationships/types"
+	reportstypes "github.com/desmos-labs/desmos/v5/x/reports/types"
+	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
+	supplytypes "github.com/desmos-labs/desmos/v5/x/supply/types"
 )
 
 var (

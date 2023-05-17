@@ -11,8 +11,6 @@ import (
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
 
-	postskeeper "github.com/desmos-labs/desmos/v5/x/posts/keeper"
-
 	"github.com/desmos-labs/desmos/v5/app/params"
 	"github.com/desmos-labs/desmos/v5/x/reactions/keeper"
 	"github.com/desmos-labs/desmos/v5/x/reactions/types"

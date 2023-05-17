@@ -28,6 +28,7 @@ import (
 	postskeeper "github.com/desmos-labs/desmos/v5/x/posts/keeper"
 	poststypes "github.com/desmos-labs/desmos/v5/x/posts/types"
 	profileskeeper "github.com/desmos-labs/desmos/v5/x/profiles/keeper"
+	relationshipskeeper "github.com/desmos-labs/desmos/v5/x/relationships/keeper"
 	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
 	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 

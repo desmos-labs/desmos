@@ -23,6 +23,7 @@ import (
 
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
+	"golang.org/x/exp/maps"
 
 	modulev1 "github.com/desmos-labs/desmos/v5/api/desmos/subspaces/module/v1"
 
