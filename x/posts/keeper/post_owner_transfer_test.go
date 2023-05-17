@@ -21,14 +21,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePostOwnerTransferRequest() {
 				"sender",
 			),
 			check: func(ctx sdk.Context) {
-				store := ctx.KVStore(suite.storeKey)
-
-				var request types.PostOwnerTransferRequest
-				suite.cdc.MustUnmarshal(
-					store.Get(types.PostOwnerTransferRequestStoreKey(1, 1)),
-					&request,
-				)
-
+				request, _ := suite.k.GetPostOwnerTransferRequest(ctx, 1, 1)
 				suite.Require().Equal(types.NewPostOwnerTransferRequest(
 					1,
 					1,
@@ -54,14 +47,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePostOwnerTransferRequest() {
 				"sender",
 			),
 			check: func(ctx sdk.Context) {
-				store := ctx.KVStore(suite.storeKey)
-
-				var request types.PostOwnerTransferRequest
-				suite.cdc.MustUnmarshal(
-					store.Get(types.PostOwnerTransferRequestStoreKey(1, 1)),
-					&request,
-				)
-
+				request, _ := suite.k.GetPostOwnerTransferRequest(ctx, 1, 1)
 				suite.Require().Equal(types.NewPostOwnerTransferRequest(
 					1,
 					1,
@@ -85,6 +71,59 @@ func (suite *KeeperTestSuite) TestKeeper_SavePostOwnerTransferRequest() {
 			if tc.check != nil {
 				tc.check(ctx)
 			}
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestKeeper_GetPostOwnerTransferRequest() {
+	testCases := []struct {
+		name       string
+		store      func(ctx sdk.Context)
+		subspaceID uint64
+		postID     uint64
+		expFound   bool
+		expRequest types.PostOwnerTransferRequest
+	}{
+		{
+			name:       "non existing request returns false and empty request",
+			subspaceID: 1,
+			postID:     1,
+			expFound:   false,
+			expRequest: types.PostOwnerTransferRequest{},
+		},
+		{
+			name: "existing request returns correct value and true",
+			store: func(ctx sdk.Context) {
+				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(
+					1,
+					1,
+					"receiver",
+					"sender",
+				))
+			},
+			subspaceID: 1,
+			postID:     1,
+			expFound:   true,
+			expRequest: types.NewPostOwnerTransferRequest(
+				1,
+				1,
+				"receiver",
+				"sender",
+			),
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			request, found := suite.k.GetPostOwnerTransferRequest(ctx, tc.subspaceID, tc.postID)
+			suite.Require().Equal(tc.expFound, found)
+			suite.Require().Equal(tc.expRequest, request)
 		})
 	}
 }
