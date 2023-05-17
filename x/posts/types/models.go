@@ -204,9 +204,6 @@ type PostUpdate struct {
 	// Update's tags will always replace the existing ones
 	Tags []string
 
-	// Update's owner will always replace the existing ones
-	Owner string
-
 	UpdateTime time.Time
 }
 
