@@ -131,7 +131,7 @@ Example output:
 ```bash
 attachments:
 - content:
-    '@type': /desmos.posts.v2.media
+    '@type': /desmos.posts.v3.media
     mime_type: image/png
     uri: ftp://user:password@example.com/image.png
   id: 1
@@ -198,13 +198,13 @@ A user can query the `posts` module gRPC endpoints.
 The `Post` endpoint allows users to query a post with the given id inside a subspace with the given id.
 
 ```bash
-desmos.posts.v2.Query/Post
+desmos.posts.v3.Query/Post
 ```
 
 Example:
 ```bash
 grpcurl -plaintext \
--d '{"subspace_id":1, "post_id":1}' localhost:9090 desmos.posts.v2.Query/Post
+-d '{"subspace_id":1, "post_id":1}' localhost:9090 desmos.posts.v3.Query/Post
 ```
 
 Example output:
@@ -237,13 +237,13 @@ Example output:
 The `SubspacePosts` endpoint allows users to query all the posts of the subspace with the given id.
 
 ```bash
-desmos.posts.v2.Query/SubspacePosts
+desmos.posts.v3.Query/SubspacePosts
 ```
 
 Example:
 ```bash
 grpcurl -plaintext \
--d '{"subspace_id":1}' localhost:9090 desmos.posts.v2.Query/SubspacePosts
+-d '{"subspace_id":1}' localhost:9090 desmos.posts.v3.Query/SubspacePosts
 ```
 
 Example output:
@@ -301,13 +301,13 @@ Example output:
 The `SectionPosts` endpoint allows users to return all the posts associated with the section with the given id.
 
 ```bash
-desmos.posts.v2.Query/SectionPosts
+desmos.posts.v3.Query/SectionPosts
 ```
 
 Example:
 ```bash
 grpcurl -plaintext \
--d '{"subspace_id":1, "section_id":1}' localhost:9090 desmos.posts.v2.Query/SectionPosts
+-d '{"subspace_id":1, "section_id":1}' localhost:9090 desmos.posts.v3.Query/SectionPosts
 ```
 
 Example output:
@@ -364,13 +364,13 @@ Example output:
 The `PostAttachments` endpoint allows users to query all the attachment associated with the post id given.
 
 ```bash
-desmos.posts.v2.Query/PostAttachments
+desmos.posts.v3.Query/PostAttachments
 ```
 
 Example:
 ```bash
 grpcurl -plaintext \
--d '{"subspace_id":1, "post_id":1}' localhost:9090 desmos.posts.v2.Query/PostAttachments
+-d '{"subspace_id":1, "post_id":1}' localhost:9090 desmos.posts.v3.Query/PostAttachments
 ```
 
 Example output:
@@ -381,13 +381,13 @@ Example output:
       "subspaceId": "1",
       "postId": "1",
       "id": 1,
-      "content": {"@type":"/desmos.posts.v2.media","mimeType":"image/png","uri":"ftp://user:password@example.com/image.png"}
+      "content": {"@type":"/desmos.posts.v3.media","mimeType":"image/png","uri":"ftp://user:password@example.com/image.png"}
     },
     {
       "subspaceId": "1",
       "postId": "1",
       "id": 2,
-      "content": {"@type":"/desmos.posts.v2.poll","allowsAnswerEdits":true,"allowsMultipleAnswers":true,"endDate":"2025-01-01T12:00:00Z","providedAnswers":[{"text":"yes"},{"text":"no"}],"question":"A question"}
+      "content": {"@type":"/desmos.posts.v3.poll","allowsAnswerEdits":true,"allowsMultipleAnswers":true,"endDate":"2025-01-01T12:00:00Z","providedAnswers":[{"text":"yes"},{"text":"no"}],"question":"A question"}
     }
   ],
   "pagination": {
@@ -402,15 +402,15 @@ The `PollAnswers` endpoint allows users to query al the poll answer associated w
 with the given post id.
 
 ```bash
-desmos.posts.v2.Query/PollAnswers
+desmos.posts.v3.Query/PollAnswers
 ```
 
 Examples:
 ```bash
 grpcurl -plaintext \
--d '{"subspace_id":1, "post_id":1, "poll_id":2}' localhost:9090 desmos.posts.v2.Query/PollAnswers
+-d '{"subspace_id":1, "post_id":1, "poll_id":2}' localhost:9090 desmos.posts.v3.Query/PollAnswers
 grpcurl -plaintext \
--d '{"subspace_id":1, "post_id":1, "poll_id":2, "user":"desmos1rfv0f7mx7w9d3jv3h803u38vqym9ygg344asm3"}' localhost:9090 desmos.posts.v2.Query/PollAnswers
+-d '{"subspace_id":1, "post_id":1, "poll_id":2, "user":"desmos1rfv0f7mx7w9d3jv3h803u38vqym9ygg344asm3"}' localhost:9090 desmos.posts.v3.Query/PollAnswers
 ```
 
 Example output:
@@ -439,12 +439,12 @@ Example output:
 The `Params` endpoint allows users to query the module's parameters.
 
 ```bash
-desmos.posts.v2.Query/Params
+desmos.posts.v3.Query/Params
 ```
 
 Example:
 ```bash
-grpcurl -plaintext localhost:9090 desmos.posts.v2.Query/Params
+grpcurl -plaintext localhost:9090 desmos.posts.v3.Query/Params
 ```
 
 Example output:
@@ -463,14 +463,14 @@ A user can query the `posts` module using REST endpoints.
 The `Post` endpoint allows users to query a post with the given id inside a subspace with the given id.
 
 ```
-/desmos/posts/v2/subspaces/{subspace_id}/posts/{post_id}
+/desmos/posts/v3/subspaces/{subspace_id}/posts/{post_id}
 ```
 
 ### SubspacePosts
 The `SubspacePosts` endpoint allows users to query all the posts of the subspace with the given id.
 
 ```
-/desmos/posts/v2/subspaces/{subspace_id}/posts
+/desmos/posts/v3/subspaces/{subspace_id}/posts
 ```
 
 ### SectionPosts
@@ -478,7 +478,7 @@ The `SectionPosts` endpoint allows users to return all the posts associated with
 to the subspace with the given id.
 
 ```
-/desmos/posts/v2/subspaces/{subspace_id}/sections/{section_id}/posts
+/desmos/posts/v3/subspaces/{subspace_id}/sections/{section_id}/posts
 ```
 
 ### PostAttachments
@@ -486,7 +486,7 @@ The `PostAttachments` endpoint allows users to query all the attachment associat
 the subspace with the given id.
 
 ```
-/desmos/posts/v2/subspaces/{subspace_id}/posts/{post_id}/attachments
+/desmos/posts/v3/subspaces/{subspace_id}/posts/{post_id}/attachments
 ```
 
 ### PollAnswers
@@ -494,12 +494,12 @@ The `PollAnswers` endpoint allows users to query al the poll answer associated w
 with the given post id inside the subspace with the given id.
 
 ```
-/desmos/posts/v2/subspaces/{subspace_id}/posts/{post_id}/polls/{poll_id}/answers
+/desmos/posts/v3/subspaces/{subspace_id}/posts/{post_id}/polls/{poll_id}/answers
 ```
 
 ### Params
 The `Params` endpoint allows users to query the module's parameters.
 
 ```
-/desmos/posts/v2/params
+/desmos/posts/v3/params
 ```

@@ -3,6 +3,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
 ## Version 5.0.0
+### Breaking changes
+With this version, the Proto version of the `posts` module has been bumped from `v2` to `v3`. For this reason, the following changes have been made:
+- all posts-related Protobuf Type URLs have been changed from `desmos.posts.v2` to `desmos.posts.v3`
+- all posts-related APIs endpoints have been changed from `/desmos/posts/v2/` to `/desmos/posts/v3`
+
+Please make sure you update your client to use the new Protobuf URLs and APIs endpoints if you are interacting with a Desmos chain running `v5.0.0` or higher.
+
 ### Features
 #### Fees
 - ([\#1135](https://github.com/desmos-labs/desmos/pull/1135)) Removed the `x/fees` module

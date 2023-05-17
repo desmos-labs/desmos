@@ -43,7 +43,7 @@ type CreatePostJSON struct {
 	// (optional) Id of the original post of the conversation
 	ConversationID uint64 `protobuf:"varint,6,opt,name=conversation_id,json=conversationId,proto3" json:"conversation_id,omitempty"`
 	// Reply settings of this post
-	ReplySettings types.ReplySetting `protobuf:"varint,7,opt,name=reply_settings,json=replySettings,proto3,enum=desmos.posts.v2.ReplySetting" json:"reply_settings,omitempty"`
+	ReplySettings types.ReplySetting `protobuf:"varint,7,opt,name=reply_settings,json=replySettings,proto3,enum=desmos.posts.v3.ReplySetting" json:"reply_settings,omitempty"`
 	// A list this posts references (either as a reply, repost or quote)
 	ReferencedPosts []types.PostReference `protobuf:"bytes,8,rep,name=referenced_posts,json=referencedPosts,proto3" json:"referenced_posts"`
 }
@@ -203,8 +203,8 @@ func (m *EditPostJSON) GetTags() []string {
 }
 
 func init() {
-	proto.RegisterType((*CreatePostJSON)(nil), "desmos.posts.v2.client.CreatePostJSON")
-	proto.RegisterType((*EditPostJSON)(nil), "desmos.posts.v2.client.EditPostJSON")
+	proto.RegisterType((*CreatePostJSON)(nil), "desmos.posts.v3.client.CreatePostJSON")
+	proto.RegisterType((*EditPostJSON)(nil), "desmos.posts.v3.client.EditPostJSON")
 }
 
 func init() { proto.RegisterFile("desmos/posts/v2/client/cli.proto", fileDescriptor_d5899b795c71461f) }
