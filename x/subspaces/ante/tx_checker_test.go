@@ -6,8 +6,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/testutil/testdata"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
-	subspacesante "github.com/desmos-labs/desmos/v4/x/subspaces/ante"
-	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
+	subspacesante "github.com/desmos-labs/desmos/v5/x/subspaces/ante"
+	"github.com/desmos-labs/desmos/v5/x/subspaces/types"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 )
