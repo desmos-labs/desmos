@@ -645,3 +645,97 @@ func (suite *KeeperTestSuite) TestQueryServer_Params() {
 		})
 	}
 }
+
+func (suite *KeeperTestSuite) TestQueryServer_IncomingPostOwnerTransferRequests() {
+	testCases := []struct {
+		name        string
+		store       func(ctx sdk.Context)
+		request     *types.QueryIncomingPostOwnerTransferRequestsRequest
+		shouldErr   bool
+		expRequests []types.PostOwnerTransferRequest
+	}{
+		{
+			name:      "invalid subspace id returns error",
+			request:   types.NewQueryIncomingPostOwnerTransferRequestsRequest(0, "", nil),
+			shouldErr: true,
+		},
+		{
+			name: "valid request without receiver and without pagination returns properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(1, 1, "other_receiver", "sender"))
+				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(1, 2, "receiver", "sender"))
+				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(1, 3, "other_receiver", "sender"))
+				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(1, 4, "receiver", "sender"))
+			},
+			request:   types.NewQueryIncomingPostOwnerTransferRequestsRequest(1, "", nil),
+			shouldErr: false,
+			expRequests: []types.PostOwnerTransferRequest{
+				types.NewPostOwnerTransferRequest(1, 1, "other_receiver", "sender"),
+				types.NewPostOwnerTransferRequest(1, 2, "receiver", "sender"),
+				types.NewPostOwnerTransferRequest(1, 3, "other_receiver", "sender"),
+				types.NewPostOwnerTransferRequest(1, 4, "receiver", "sender"),
+			},
+		},
+		{
+			name: "valid request with receiver and without pagination returns properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(1, 1, "other_receiver", "sender"))
+				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(1, 2, "receiver", "sender"))
+				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(1, 3, "other_receiver", "sender"))
+				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(1, 4, "receiver", "sender"))
+			},
+			request:   types.NewQueryIncomingPostOwnerTransferRequestsRequest(1, "receiver", nil),
+			shouldErr: false,
+			expRequests: []types.PostOwnerTransferRequest{
+				types.NewPostOwnerTransferRequest(1, 2, "receiver", "sender"),
+				types.NewPostOwnerTransferRequest(1, 4, "receiver", "sender"),
+			},
+		},
+		{
+			name: "valid request without receiver and with pagination returns properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(1, 1, "other_receiver", "sender"))
+				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(1, 2, "receiver", "sender"))
+				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(1, 3, "other_receiver", "sender"))
+				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(1, 4, "receiver", "sender"))
+			},
+			request:   types.NewQueryIncomingPostOwnerTransferRequestsRequest(1, "", &query.PageRequest{Limit: 1}),
+			shouldErr: false,
+			expRequests: []types.PostOwnerTransferRequest{
+				types.NewPostOwnerTransferRequest(1, 1, "other_receiver", "sender"),
+			},
+		},
+		{
+			name: "valid request with receiver and with pagination returns properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(1, 1, "other_receiver", "sender"))
+				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(1, 2, "receiver", "sender"))
+				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(1, 3, "other_receiver", "sender"))
+				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(1, 4, "receiver", "sender"))
+			},
+			request:   types.NewQueryIncomingPostOwnerTransferRequestsRequest(1, "receiver", &query.PageRequest{Limit: 1}),
+			shouldErr: false,
+			expRequests: []types.PostOwnerTransferRequest{
+				types.NewPostOwnerTransferRequest(1, 2, "receiver", "sender"),
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			res, err := suite.k.IncomingPostOwnerTransferRequests(sdk.WrapSDKContext(ctx), tc.request)
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(tc.expRequests, res.Requests)
+			}
+		})
+	}
+}

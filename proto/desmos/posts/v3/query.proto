@@ -49,6 +49,12 @@ service Query {
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
     option (google.api.http).get = "/desmos/posts/v3/params";
   }
+
+  // IncomingPostOwnerTransferRequests queries all the post owner transfers requests that
+  // have been made towards the receiver with the given address
+  rpc IncomingPostOwnerTransferRequests(QueryIncomingPostOwnerTransferRequestsRequest) returns (QueryIncomingPostOwnerTransferRequestsResponse) {
+    option (google.api.http).get = "/desmos/posts/v3/subspaces/{subspace_id}/post-owner-transfer-requests";
+  }
 }
 
 // QuerySubspacePostsRequest is the request type for the Query/SubspacePosts RPC
@@ -152,4 +158,33 @@ message QueryParamsRequest {}
 // QueryParamsResponse is the response type for the Query/Params RPC method
 message QueryParamsResponse {
   Params params = 1 [ (gogoproto.nullable) = false ];
+}
+
+// QueryIncomingPostOwnerTransferRequestsRequest is the request type for the
+// Query/IncomingPostOwnerTransferRequests RPC endpoint
+message QueryIncomingPostOwnerTransferRequestsRequest {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+   // Id of the subspace where the requests are stored
+  uint64 subspace_id = 1;
+
+  // (optional) Receiver represents the address of the user to which query the
+  // incoming requests for
+  string receiver = 2;
+
+  // Pagination defines an optional pagination for the request
+  cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+// QueryIncomingPostOwnerTransferRequestsResponse is the response type for the
+// Query/IncomingPostOwnerTransferRequests RPC method.
+message QueryIncomingPostOwnerTransferRequestsResponse {
+  // Requests represent the list of all the post owner transfer requests made towards
+  // the receiver
+  repeated desmos.posts.v3.PostOwnerTransferRequest requests = 1
+      [ (gogoproto.nullable) = false ];
+
+  // Pagination defines the pagination response
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
