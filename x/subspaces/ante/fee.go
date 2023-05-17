@@ -9,6 +9,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
+	antetypes "github.com/desmos-labs/desmos/v5/x/subspaces/ante/types"
 	"github.com/desmos-labs/desmos/v5/x/subspaces/types"
 )
 
@@ -16,16 +17,22 @@ var _ sdk.AnteDecorator = &DeductFeeDecorator{}
 
 // DeductFeeDecorator represents the decorator used to deduct fee
 type DeductFeeDecorator struct {
-	authDeductFeeDecorator AuthDeductFeeDecorator
-	ak                     AccountKeeper
-	bk                     BankKeeper
-	sk                     SubspacesKeeper
+	authDeductFeeDecorator antetypes.AuthDeductFeeDecorator
+	ak                     antetypes.AccountKeeper
+	bk                     antetypes.BankKeeper
+	sk                     antetypes.SubspacesKeeper
 
 	txFeeChecker ante.TxFeeChecker
 }
 
 // NewDeductFeeDecorator returns a new DeductFeeDecorator instance
-func NewDeductFeeDecorator(authDeductFeeDecorator AuthDeductFeeDecorator, ak AccountKeeper, bk BankKeeper, sk SubspacesKeeper, txFeeChecker ante.TxFeeChecker) DeductFeeDecorator {
+func NewDeductFeeDecorator(
+	authDeductFeeDecorator antetypes.AuthDeductFeeDecorator,
+	ak antetypes.AccountKeeper,
+	bk antetypes.BankKeeper,
+	sk antetypes.SubspacesKeeper,
+	txFeeChecker ante.TxFeeChecker,
+) DeductFeeDecorator {
 	if txFeeChecker == nil {
 		txFeeChecker = ante.CheckTxFeeWithValidatorMinGasPrices
 	}

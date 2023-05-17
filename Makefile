@@ -152,6 +152,11 @@ $(BUILD_TARGETS): go.sum $(BUILDDIR)/
 $(BUILDDIR)/:
 	mkdir -p $(BUILDDIR)/
 
+mockgen:
+	@go install github.com/golang/mock/mockgen@v1.6.0
+	@./scripts/mockgen.sh
+.PHONY: mocks
+
 ###############################################################################
 ###                          Tools & Dependencies                           ###
 ###############################################################################
