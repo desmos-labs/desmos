@@ -17,7 +17,7 @@ func (k Keeper) SavePostOwnerTransferRequest(ctx sdk.Context, request types.Post
 // GetPostOwnerTransferRequest the post owner transfer request with given ids.
 // If there is no request associated with the given ids the function will return an empty request and false.
 func (k Keeper) GetPostOwnerTransferRequest(ctx sdk.Context, subspaceID uint64, postID uint64) (types.PostOwnerTransferRequest, bool) {
-	if !k.HasPostOwnerTransferRequest(ctx, 1, 1) {
+	if !k.HasPostOwnerTransferRequest(ctx, subspaceID, postID) {
 		return types.PostOwnerTransferRequest{}, false
 	}
 

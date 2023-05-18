@@ -18,7 +18,7 @@ func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 		k.getAllActivePollsData(ctx),
 		k.getAllUserAnswers(ctx),
 		k.GetParams(ctx),
-		k.getAllPostOwnerTransferRequests(ctx),
+		k.GetAllPostOwnerTransferRequests(ctx),
 	)
 }
 
@@ -85,16 +85,6 @@ func (k Keeper) getAllUserAnswers(ctx sdk.Context) []types.UserAnswer {
 		return false
 	})
 	return answers
-}
-
-// getAllPostOwnerTransferRequests returns all the post owner transfer requests stored inside the given context
-func (k Keeper) getAllPostOwnerTransferRequests(ctx sdk.Context) []types.PostOwnerTransferRequest {
-	var requests []types.PostOwnerTransferRequest
-	k.IteratePostOwnerTransferRequests(ctx, func(request types.PostOwnerTransferRequest) (stop bool) {
-		requests = append(requests, request)
-		return false
-	})
-	return requests
 }
 
 // --------------------------------------------------------------------------------------------------------------------

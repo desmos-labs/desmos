@@ -158,3 +158,8 @@ func RandomAnswersIndexes(r *rand.Rand, poll *types.Poll) (answersIndexes []uint
 func RandomMaxTextLength(r *rand.Rand) uint32 {
 	return uint32(r.Intn(950)) + 30
 }
+
+// RandomPostOwnerTransferRequest returns a random post owner transfer request from the ones given
+func RandomPostOwnerTransferRequest(r *rand.Rand, requests []types.PostOwnerTransferRequest) types.PostOwnerTransferRequest {
+	return requests[r.Intn(len(requests))]
+}

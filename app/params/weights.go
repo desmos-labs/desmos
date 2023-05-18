@@ -37,13 +37,6 @@ const (
 	DefaultWeightMsgGrantAllowance              int = 20
 	DefaultWeightMsgRevokeAllowance             int = 5
 
-	DefaultWeightMsgCreatePost           int = 80
-	DefaultWeightMsgEditPost             int = 40
-	DefaultWeightMsgDeletePost           int = 20
-	DefaultWeightMsgAddPostAttachment    int = 50
-	DefaultWeightMsgRemovePostAttachment int = 50
-	DefaultWeightMsgAnswerPoll           int = 50
-
 	DefaultWeightMsgCreateReport          int = 50
 	DefaultWeightMsgDeleteReport          int = 35
 	DefaultWeightMsgSupportStandardReason int = 20

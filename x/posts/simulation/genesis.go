@@ -28,6 +28,7 @@ func RandomizeGenState(simState *module.SimulationState) {
 	postsDataEntries := getPostsData(posts, attachments)
 	activePolls := getActivePollsData(attachments)
 	userAnswers := randomUserAnswers(simState.Rand, attachments, simState.Accounts)
+	postOwnerTransferRequests := randomPostOwnerTransferRequests(simState.Rand, posts, simState.Accounts)
 
 	// Save the genesis
 	postsGenesis := types.NewGenesisState(
@@ -38,7 +39,7 @@ func RandomizeGenState(simState *module.SimulationState) {
 		activePolls,
 		userAnswers,
 		params,
-		nil,
+		postOwnerTransferRequests,
 	)
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(postsGenesis)
 }
@@ -183,6 +184,43 @@ func randomUserAnswers(r *rand.Rand, attachments []types.Attachment, accs []simt
 func containsAnswer(answers []types.UserAnswer, answer types.UserAnswer) bool {
 	for _, item := range answers {
 		if item.SubspaceID == answer.SubspaceID && item.PostID == answer.PostID && item.PollID == answer.PollID && item.User == answer.User {
+			return true
+		}
+	}
+	return false
+}
+
+// randomPostOwnerTransferRequests returns randomly generated post owner transfer requests
+func randomPostOwnerTransferRequests(r *rand.Rand, posts []types.Post, accs []simtypes.Account) (requests []types.PostOwnerTransferRequest) {
+	if len(posts) == 0 {
+		return nil
+	}
+
+	requestsNumber := r.Intn(len(posts))
+	for index := 0; index < requestsNumber; index++ {
+		post := RandomPost(r, posts)
+		receiver, _ := simtypes.RandomAcc(r, accs)
+
+		// Make sure the receiver does not match the sender
+		if receiver.Address.String() == post.Owner {
+			continue
+		}
+
+		request := types.NewPostOwnerTransferRequest(post.SubspaceID, post.ID, receiver.Address.String(), post.Owner)
+
+		// Make sure there are no duplicated requests
+		if !containsRequest(requests, request) {
+			requests = append(requests, request)
+		}
+	}
+
+	return requests
+}
+
+// containsRequest tells whether the given post owner transfer requests slice contains a post owner transfer request from the same id of the given one
+func containsRequest(requests []types.PostOwnerTransferRequest, request types.PostOwnerTransferRequest) bool {
+	for _, item := range requests {
+		if item.SubspaceID == request.SubspaceID && item.PostID == request.PostID {
 			return true
 		}
 	}

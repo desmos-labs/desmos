@@ -265,6 +265,17 @@ func (k Keeper) GetPollUserAnswers(ctx sdk.Context, subspaceID uint64, postID ui
 
 // --------------------------------------------------------------------------------------------------------------------
 
+// GetAllPostOwnerTransferRequests returns all the post owner transfer requests stored inside the given context
+func (k Keeper) GetAllPostOwnerTransferRequests(ctx sdk.Context) []types.PostOwnerTransferRequest {
+	var requests []types.PostOwnerTransferRequest
+	k.IteratePostOwnerTransferRequests(ctx, func(request types.PostOwnerTransferRequest) (stop bool) {
+		requests = append(requests, request)
+		return false
+	})
+	return requests
+}
+
+// IteratePostOwnerTransferRequests iterates through the post owner transfer requests and performs the provided function
 func (k Keeper) IteratePostOwnerTransferRequests(ctx sdk.Context, fn func(request types.PostOwnerTransferRequest) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.PostOwnerTransferRequestPrefix)
