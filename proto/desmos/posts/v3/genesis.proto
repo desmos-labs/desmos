@@ -21,6 +21,7 @@ message GenesisState {
   repeated ActivePollData active_polls = 5 [ (gogoproto.nullable) = false ];
   repeated UserAnswer user_answers = 6 [ (gogoproto.nullable) = false ];
   Params params = 7 [ (gogoproto.nullable) = false ];
+  repeated PostOwnerTransferRequest post_owner_transfer_requests = 8 [ (gogoproto.nullable) = false ];
 }
 
 // SubspaceDataEntry contains the data for a given subspace

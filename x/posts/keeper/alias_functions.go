@@ -262,3 +262,20 @@ func (k Keeper) GetPollUserAnswers(ctx sdk.Context, subspaceID uint64, postID ui
 	})
 	return answers
 }
+
+// --------------------------------------------------------------------------------------------------------------------
+
+func (k Keeper) IteratePostOwnerTransferRequests(ctx sdk.Context, fn func(request types.PostOwnerTransferRequest) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.PostOwnerTransferRequestPrefix)
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		var request types.PostOwnerTransferRequest
+		k.cdc.MustUnmarshal(iterator.Value(), &request)
+		stop := fn(request)
+		if stop {
+			break
+		}
+	}
+}

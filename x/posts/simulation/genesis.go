@@ -38,6 +38,7 @@ func RandomizeGenState(simState *module.SimulationState) {
 		activePolls,
 		userAnswers,
 		params,
+		nil,
 	)
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(postsGenesis)
 }

@@ -16,21 +16,23 @@ func NewGenesisState(
 	activePolls []ActivePollData,
 	userAnswers []UserAnswer,
 	params Params,
+	transferRequests []PostOwnerTransferRequest,
 ) *GenesisState {
 	return &GenesisState{
-		SubspacesData: subspacesData,
-		Posts:         posts,
-		PostsData:     postsData,
-		Attachments:   attachments,
-		ActivePolls:   activePolls,
-		UserAnswers:   userAnswers,
-		Params:        params,
+		SubspacesData:             subspacesData,
+		Posts:                     posts,
+		PostsData:                 postsData,
+		Attachments:               attachments,
+		ActivePolls:               activePolls,
+		UserAnswers:               userAnswers,
+		Params:                    params,
+		PostOwnerTransferRequests: transferRequests,
 	}
 }
 
 // DefaultGenesisState returns a default GenesisState
 func DefaultGenesisState() *GenesisState {
-	return NewGenesisState(nil, nil, nil, nil, nil, nil, DefaultParams())
+	return NewGenesisState(nil, nil, nil, nil, nil, nil, DefaultParams(), nil)
 }
 
 // UnpackInterfaces implements UnpackInterfacesMessage.UnpackInterfaces
@@ -117,7 +119,24 @@ func ValidateGenesis(data *GenesisState) error {
 		}
 	}
 
-	return data.Params.Validate()
+	err := data.Params.Validate()
+	if err != nil {
+		return err
+	}
+
+	for _, request := range data.PostOwnerTransferRequests {
+		if containDuplicatedRequest(data.PostOwnerTransferRequests, request) {
+			return fmt.Errorf("duplicated post owner transfer request: subspace id %d, post id %d",
+				request.SubspaceID, request.PostID)
+		}
+
+		err := request.Validate()
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 // containsDuplicatedSubspaceDataEntry tells whether the given entries slice contains
@@ -186,6 +205,18 @@ func containsDuplicatedAnswer(answers []UserAnswer, answer UserAnswer) bool {
 	var count = 0
 	for _, s := range answers {
 		if s.SubspaceID == answer.SubspaceID && s.PostID == answer.PostID && s.PollID == answer.PollID && s.User == answer.User {
+			count++
+		}
+	}
+	return count > 1
+}
+
+// containDuplicatedRequest tells whether the given post owner transfer request slice contains two or more given
+// post owner transfer request by the same id as the given one
+func containDuplicatedRequest(requests []PostOwnerTransferRequest, request PostOwnerTransferRequest) bool {
+	var count = 0
+	for _, r := range requests {
+		if r.SubspaceID == request.SubspaceID && r.PostID == request.PostID {
 			count++
 		}
 	}
