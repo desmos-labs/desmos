@@ -480,7 +480,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptPostOwnerTransfer() {
 			setup: func() {
 				suite.ak.EXPECT().
 					HasProfile(gomock.Any(), "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd").
-					Return(false)
+					Return(true)
 			},
 			msg: types.NewMsgAcceptPostOwnerTransfer(
 				1,
@@ -494,7 +494,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptPostOwnerTransfer() {
 			setup: func() {
 				suite.ak.EXPECT().
 					HasProfile(gomock.Any(), "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd").
-					Return(false)
+					Return(true)
 			},
 			store: func(ctx sdk.Context) {
 				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(
@@ -516,7 +516,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptPostOwnerTransfer() {
 			setup: func() {
 				suite.ak.EXPECT().
 					HasProfile(gomock.Any(), "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd").
-					Return(false)
+					Return(true)
 			},
 			store: func(ctx sdk.Context) {
 				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(
@@ -538,7 +538,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptPostOwnerTransfer() {
 			setup: func() {
 				suite.ak.EXPECT().
 					HasProfile(gomock.Any(), "invalid_receiver").
-					Return(false)
+					Return(true)
 			},
 			store: func(ctx sdk.Context) {
 				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(
@@ -576,7 +576,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptPostOwnerTransfer() {
 			setup: func() {
 				suite.ak.EXPECT().
 					HasProfile(gomock.Any(), "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd").
-					Return(false)
+					Return(true)
 			},
 			store: func(ctx sdk.Context) {
 				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(

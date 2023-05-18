@@ -53,7 +53,7 @@ func TestMsgRequestPostOwnerTransfer_ValidateBasic(t *testing.T) {
 			name: "receiver equals to sender returns error",
 			msg: types.NewMsgRequestPostOwnerTransfer(
 				1,
-				0,
+				1,
 				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 			),
@@ -63,7 +63,7 @@ func TestMsgRequestPostOwnerTransfer_ValidateBasic(t *testing.T) {
 			name: "invalid receiver returns error",
 			msg: types.NewMsgRequestPostOwnerTransfer(
 				1,
-				0,
+				1,
 				"",
 				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 			),
@@ -73,7 +73,7 @@ func TestMsgRequestPostOwnerTransfer_ValidateBasic(t *testing.T) {
 			name: "invalid sender returns error",
 			msg: types.NewMsgRequestPostOwnerTransfer(
 				1,
-				0,
+				1,
 				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 				"",
 			),
@@ -152,7 +152,7 @@ func TestMsgCancelPostOwnerTransfer_ValidateBasic(t *testing.T) {
 			name: "invalid sender returns error",
 			msg: types.NewMsgCancelPostOwnerTransfer(
 				1,
-				0,
+				1,
 				"",
 			),
 			shouldErr: true,
@@ -230,7 +230,7 @@ func TestMsgAcceptPostOwnerTransfer_ValidateBasic(t *testing.T) {
 			name: "invalid receiver returns error",
 			msg: types.NewMsgAcceptPostOwnerTransfer(
 				1,
-				0,
+				1,
 				"",
 			),
 			shouldErr: true,
@@ -308,7 +308,7 @@ func TestMsgRefusePostOwnerTransfer_ValidateBasic(t *testing.T) {
 			name: "invalid receiver returns error",
 			msg: types.NewMsgRefusePostOwnerTransfer(
 				1,
-				0,
+				1,
 				"",
 			),
 			shouldErr: true,
