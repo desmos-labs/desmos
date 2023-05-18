@@ -309,7 +309,7 @@ func (s *IntegrationTestSuite) TestCmdGrantAllowance() {
 				[]string{
 					"1",
 					fmt.Sprintf("--%s=%s", cli.FlagUserGrantee, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
-					fmt.Sprintf("--%s=%s", feegrantcli.FlagAllowedMsgs, "/desmos.posts.v2.MsgCreatPost"),
+					fmt.Sprintf("--%s=%s", feegrantcli.FlagAllowedMsgs, "/desmos.posts.v3.MsgCreatPost"),
 					fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 					fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 					fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
