@@ -10,6 +10,7 @@ import (
 	v4 "github.com/desmos-labs/desmos/v5/x/posts/legacy/v4"
 	v5 "github.com/desmos-labs/desmos/v5/x/posts/legacy/v5"
 	v6 "github.com/desmos-labs/desmos/v5/x/posts/legacy/v6"
+	v7 "github.com/desmos-labs/desmos/v5/x/posts/legacy/v7"
 	"github.com/desmos-labs/desmos/v5/x/posts/types"
 )
 
@@ -50,7 +51,12 @@ func (m Migrator) Migrate4to5(ctx sdk.Context) error {
 	return v5.MigrateStore(ctx, m.k.storeKey, m.k.cdc)
 }
 
-// Migrate4to5 migrates from version 5 to 6.
+// Migrate5to6 migrates from version 5 to 6.
 func (m Migrator) Migrate5to6(ctx sdk.Context) error {
 	return v6.MigrateStore(ctx, m.k.storeKey, m.legacySubspace, m.k.cdc)
+}
+
+// Migrate6to7 migrates from version 6 to 7.
+func (m Migrator) Migrate6to7(ctx sdk.Context) error {
+	return v7.MigrateStore(ctx, m.k.storeKey, m.k.cdc)
 }

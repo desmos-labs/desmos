@@ -43,7 +43,7 @@ import (
 )
 
 const (
-	consensusVersion = 6
+	consensusVersion = 7
 )
 
 // type check to ensure the interface is properly implemented
@@ -146,6 +146,10 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 		panic(err)
 	}
 	err = cfg.RegisterMigration(types.ModuleName, 5, m.Migrate5to6)
+	if err != nil {
+		panic(err)
+	}
+	err = cfg.RegisterMigration(types.ModuleName, 6, m.Migrate6to7)
 	if err != nil {
 		panic(err)
 	}
