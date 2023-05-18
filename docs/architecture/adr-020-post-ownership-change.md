@@ -202,8 +202,8 @@ message QueryIncomingPostOwnerTransferRequestsResponse {
 
 ### Backwards Compatibility
 
-The solution outlined above is **not** backwards compatible and will require a migration script to update all existing posts to the new version. This script will handle the following tasks:
-- migrate all posts to have a new __owner__ field.
+The solution outlined above is fully backwards compatible since it introduces a new __owner__ field for post, but it will require a migration script to update all existing posts. This script will handle the following tasks:
+- migrate all posts to set a new __owner__ field to its __author__.
 
 ### Positive
 
