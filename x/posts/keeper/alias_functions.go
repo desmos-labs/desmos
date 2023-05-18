@@ -7,7 +7,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	subspacetypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
+	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 
 	"github.com/desmos-labs/desmos/v5/x/posts/types"
 )
@@ -28,7 +28,7 @@ func (k Keeper) HasSection(ctx sdk.Context, subspaceID uint64, sectionID uint32)
 }
 
 // HasPermission checks whether the given user has the provided permissions or not
-func (k Keeper) HasPermission(ctx sdk.Context, subspaceID uint64, sectionID uint32, user string, permission subspacetypes.Permission) bool {
+func (k Keeper) HasPermission(ctx sdk.Context, subspaceID uint64, sectionID uint32, user string, permission subspacestypes.Permission) bool {
 	return k.sk.HasPermission(ctx, subspaceID, sectionID, user, permission)
 }
 
@@ -51,7 +51,7 @@ func (k Keeper) IteratePostIDs(ctx sdk.Context, fn func(subspaceID uint64, postI
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
-		subspaceID := subspacetypes.GetSubspaceIDFromBytes(bytes.TrimPrefix(iterator.Key(), types.NextPostIDPrefix))
+		subspaceID := subspacestypes.GetSubspaceIDFromBytes(bytes.TrimPrefix(iterator.Key(), types.NextPostIDPrefix))
 		postID := types.GetPostIDFromBytes(iterator.Value())
 		stop := fn(subspaceID, postID)
 		if stop {
