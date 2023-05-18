@@ -7,7 +7,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	subspacetypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
+	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 )
 
 // DONTCOVER
@@ -65,17 +65,17 @@ func GetPostIDFromBytes(bz []byte) (postID uint64) {
 
 // GetSubspacePostIDBytes returns the byte representation of the subspaceID merged with the postID
 func GetSubspacePostIDBytes(subspaceID uint64, postID uint64) []byte {
-	return append(subspacetypes.GetSubspaceIDBytes(subspaceID), GetPostIDBytes(postID)...)
+	return append(subspacestypes.GetSubspaceIDBytes(subspaceID), GetPostIDBytes(postID)...)
 }
 
 // NextPostIDStoreKey returns the key uses to store the next post id for the given subspace
 func NextPostIDStoreKey(subspaceID uint64) []byte {
-	return append(NextPostIDPrefix, subspacetypes.GetSubspaceIDBytes(subspaceID)...)
+	return append(NextPostIDPrefix, subspacestypes.GetSubspaceIDBytes(subspaceID)...)
 }
 
 // SubspacePostsPrefix returns the store prefix used to store all the posts related to the given subspace
 func SubspacePostsPrefix(subspaceID uint64) []byte {
-	return append(PostPrefix, subspacetypes.GetSubspaceIDBytes(subspaceID)...)
+	return append(PostPrefix, subspacestypes.GetSubspaceIDBytes(subspaceID)...)
 }
 
 // PostStoreKey returns the key for a specific post
@@ -85,12 +85,12 @@ func PostStoreKey(subspaceID uint64, postID uint64) []byte {
 
 // SubspaceSectionsPrefix returns the prefix used to store all the section references for the given subspace
 func SubspaceSectionsPrefix(subspaceID uint64) []byte {
-	return append(PostSectionPrefix, subspacetypes.GetSubspaceIDBytes(subspaceID)...)
+	return append(PostSectionPrefix, subspacestypes.GetSubspaceIDBytes(subspaceID)...)
 }
 
 // SectionPostsPrefix returns the prefix used to store all the section references for the given section
 func SectionPostsPrefix(subspaceID uint64, sectionID uint32) []byte {
-	return append(SubspaceSectionsPrefix(subspaceID), subspacetypes.GetSectionIDBytes(sectionID)...)
+	return append(SubspaceSectionsPrefix(subspaceID), subspacestypes.GetSectionIDBytes(sectionID)...)
 }
 
 // PostSectionStoreKey returns the key used to store the section reference for the given post
@@ -100,8 +100,8 @@ func PostSectionStoreKey(subspaceID uint64, sectionID uint32, postID uint64) []b
 
 var (
 	PostSectionPrefixLen = len(PostSectionPrefix)
-	SubspaceIDLen        = len(subspacetypes.GetSubspaceIDBytes(1))
-	SectionIDLen         = len(subspacetypes.GetSectionIDBytes(1))
+	SubspaceIDLen        = len(subspacestypes.GetSubspaceIDBytes(1))
+	SectionIDLen         = len(subspacestypes.GetSectionIDBytes(1))
 	PostIDLen            = len(GetPostIDBytes(1))
 )
 
@@ -112,8 +112,8 @@ func SplitPostSectionStoreKey(key []byte) (subspaceID uint64, sectionID uint32, 
 	}
 
 	key = key[PostSectionPrefixLen:]
-	subspaceID = subspacetypes.GetSubspaceIDFromBytes(key[:SubspaceIDLen])
-	sectionID = subspacetypes.GetSectionIDFromBytes(key[SubspaceIDLen : SubspaceIDLen+SectionIDLen])
+	subspaceID = subspacestypes.GetSubspaceIDFromBytes(key[:SubspaceIDLen])
+	sectionID = subspacestypes.GetSectionIDFromBytes(key[SubspaceIDLen : SubspaceIDLen+SectionIDLen])
 	postID = GetPostIDFromBytes(key[SubspaceIDLen+SectionIDLen:])
 	return subspaceID, sectionID, postID
 }
@@ -177,7 +177,7 @@ func SplitActivePollQueueKey(key []byte) (subspaceID uint64, postID uint64, poll
 		panic(err)
 	}
 
-	subspaceID = subspacetypes.GetSubspaceIDFromBytes(key[lenPrefix+lenTime : lenPrefix+lenTime+lenSubspaceID])
+	subspaceID = subspacestypes.GetSubspaceIDFromBytes(key[lenPrefix+lenTime : lenPrefix+lenTime+lenSubspaceID])
 	postID = GetPostIDFromBytes(key[lenPrefix+lenTime+lenSubspaceID : lenPrefix+lenTime+lenSubspaceID+lenPostID])
 	pollID = GetAttachmentIDFromBytes(key[lenPrefix+lenTime+lenSubspaceID+lenPostID:])
 	return subspaceID, postID, pollID, endTime
@@ -194,7 +194,7 @@ func GetPollIDFromBytes(bz []byte) (subspaceID uint64, postID uint64, pollID uin
 		panic(fmt.Errorf("unexpected key length (%d ≠ %d", len(bz), 20))
 	}
 
-	subspaceID = subspacetypes.GetSubspaceIDFromBytes(bz[:lenSubspaceID])
+	subspaceID = subspacestypes.GetSubspaceIDFromBytes(bz[:lenSubspaceID])
 	postID = GetPostIDFromBytes(bz[lenSubspaceID : lenSubspaceID+lenPostID])
 	pollID = GetAttachmentIDFromBytes(bz[lenSubspaceID+lenPostID:])
 	return subspaceID, postID, pollID
@@ -214,7 +214,7 @@ func PollAnswerStoreKey(subspaceID uint64, postID uint64, pollID uint32, user st
 
 // SubspacePostOwnerTransferRequestPrefix returns the store prefix used to store the post owner transfer request associated with the given subspace
 func SubspacePostOwnerTransferRequestPrefix(subspaceID uint64) []byte {
-	return append(PostOwnerTransferRequestPrefix, subspacetypes.GetSubspaceIDBytes(subspaceID)...)
+	return append(PostOwnerTransferRequestPrefix, subspacestypes.GetSubspaceIDBytes(subspaceID)...)
 }
 
 // PostOwnerTransferRequestStoreKey returns the store key used to store the post owner transfer request the given post

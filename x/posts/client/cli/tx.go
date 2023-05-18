@@ -16,7 +16,6 @@ import (
 	cliutils "github.com/desmos-labs/desmos/v5/x/posts/client/utils"
 	"github.com/desmos-labs/desmos/v5/x/posts/types"
 	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
-	subspacetypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 )
 
 // NewTxCmd returns a new command to perform subspaces transactions
@@ -412,7 +411,7 @@ func GetCmdRequestPostOwnerTransfer() *cobra.Command {
 				return err
 			}
 
-			subspaceID, err := subspacetypes.ParseSubspaceID(args[0])
+			subspaceID, err := subspacestypes.ParseSubspaceID(args[0])
 			if err != nil {
 				return err
 			}
@@ -449,7 +448,7 @@ func GetCmdCancelPostOwnerTransfer() *cobra.Command {
 				return err
 			}
 
-			subspaceID, err := subspacetypes.ParseSubspaceID(args[0])
+			subspaceID, err := subspacestypes.ParseSubspaceID(args[0])
 			if err != nil {
 				return err
 			}
@@ -486,7 +485,7 @@ func GetCmdAcceptPostOwnerTransfer() *cobra.Command {
 				return err
 			}
 
-			subspaceID, err := subspacetypes.ParseSubspaceID(args[0])
+			subspaceID, err := subspacestypes.ParseSubspaceID(args[0])
 			if err != nil {
 				return err
 			}
@@ -523,7 +522,7 @@ func GetCmdRefusePostOwnerTransfer() *cobra.Command {
 				return err
 			}
 
-			subspaceID, err := subspacetypes.ParseSubspaceID(args[0])
+			subspaceID, err := subspacestypes.ParseSubspaceID(args[0])
 			if err != nil {
 				return err
 			}

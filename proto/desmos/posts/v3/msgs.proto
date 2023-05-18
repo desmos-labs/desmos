@@ -451,7 +451,7 @@ message MsgAcceptPostOwnerTransfer {
   option (cosmos.msg.v1.signer) = "receiver";
 
   // Id of the subspace holding the post for which the request will be accepted
-  uint64 subspace_id = 1[
+  uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];

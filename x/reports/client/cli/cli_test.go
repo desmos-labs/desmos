@@ -96,6 +96,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 		nil,
 		nil,
 		poststypes.DefaultParams(),
+		nil,
 	)
 	postsDataBz, err := cfg.Codec.MarshalJSON(postsGenesis)
 	s.Require().NoError(err)

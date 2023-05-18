@@ -15,7 +15,6 @@ import (
 
 	"github.com/desmos-labs/desmos/v5/x/posts/types"
 	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
-	subspacetypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 )
 
 // GetQueryCmd returns the command allowing to perform queries
@@ -265,9 +264,9 @@ func GetCmdQueryPostOwnerTransferRequests() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "incoming-post-owner-transfer-requests [subspace-id] [[receiver]]",
 		Short: "Retrieve the post owner transfer requests with subspace id, optional address and pagination",
-		Example: fmt.Sprintf(`%s tx posts incoming-post-owner-transfer-requests
-%s tx posts incoming-post-owner-transfer-requests 1 --page=2 --limit=100
-%s tx posts incoming-post-owner-transfer-requests 1 desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud
+		Example: fmt.Sprintf(`%s query posts incoming-post-owner-transfer-requests
+%s query posts incoming-post-owner-transfer-requests 1 --page=2 --limit=100
+%s query posts incoming-post-owner-transfer-requests 1 desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud
 `, version.AppName, version.AppName, version.AppName),
 		Args: cobra.RangeArgs(1, 2),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -277,7 +276,7 @@ func GetCmdQueryPostOwnerTransferRequests() *cobra.Command {
 			}
 			queryClient := types.NewQueryClient(clientCtx)
 
-			subspaceID, err := subspacetypes.ParseSubspaceID(args[0])
+			subspaceID, err := subspacestypes.ParseSubspaceID(args[0])
 			if err != nil {
 				return err
 			}
