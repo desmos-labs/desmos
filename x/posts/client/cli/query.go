@@ -15,6 +15,7 @@ import (
 
 	"github.com/desmos-labs/desmos/v5/x/posts/types"
 	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
+	subspacetypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 )
 
 // GetQueryCmd returns the command allowing to perform queries
@@ -32,6 +33,7 @@ func GetQueryCmd() *cobra.Command {
 		GetCmdQueryPostAttachments(),
 		GetCmdQueryPollAnswers(),
 		GetCmdQueryParams(),
+		GetCmdQueryPostOwnerTransferRequests(),
 	)
 	return subspaceQueryCmd
 }
@@ -254,6 +256,56 @@ func GetCmdQueryParams() *cobra.Command {
 	}
 
 	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// GetCmdQueryPostOwnerTransferRequests returns the command allowing to query all the post owner transfer requests made towards a user
+func GetCmdQueryPostOwnerTransferRequests() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "incoming-post-owner-transfer-requests [subspace-id] [[receiver]]",
+		Short: "Retrieve the post owner transfer requests with subspace id, optional address and pagination",
+		Example: fmt.Sprintf(`%s tx posts incoming-post-owner-transfer-requests
+%s tx posts incoming-post-owner-transfer-requests 1 --page=2 --limit=100
+%s tx posts incoming-post-owner-transfer-requests 1 desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud
+`, version.AppName, version.AppName, version.AppName),
+		Args: cobra.RangeArgs(1, 2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			subspaceID, err := subspacetypes.ParseSubspaceID(args[0])
+			if err != nil {
+				return err
+			}
+
+			var receiver string
+			if len(args) == 2 {
+				receiver = args[1]
+			}
+
+			pageReq, err := client.ReadPageRequest(cmd.Flags())
+			if err != nil {
+				return err
+			}
+
+			res, err := queryClient.IncomingPostOwnerTransferRequests(
+				context.Background(),
+				types.NewQueryIncomingPostOwnerTransferRequestsRequest(subspaceID, receiver, pageReq),
+			)
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
+
+	flags.AddQueryFlagsToCmd(cmd)
+	flags.AddPaginationFlagsToCmd(cmd, "post owner transfer requests")
 
 	return cmd
 }
