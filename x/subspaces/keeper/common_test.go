@@ -17,8 +17,6 @@ import (
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
-	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
-	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/suite"
 
 	"github.com/desmos-labs/desmos/v5/app"
@@ -31,7 +29,6 @@ type KeeperTestSuite struct {
 	legacyAminoCdc *codec.LegacyAmino
 	ctx            sdk.Context
 	k              keeper.Keeper
-	paramsKeeper   paramskeeper.Keeper
 	storeKey       storetypes.StoreKey
 
 	ak          authkeeper.AccountKeeper
@@ -44,8 +41,7 @@ func TestKeeperTestSuite(t *testing.T) {
 
 func (suite *KeeperTestSuite) SetupTest() {
 	// Define store keys
-	keys := sdk.NewMemoryStoreKeys(types.StoreKey, paramstypes.StoreKey, authtypes.StoreKey, authzkeeper.StoreKey)
-	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
+	keys := sdk.NewMemoryStoreKeys(types.StoreKey, authtypes.StoreKey, authzkeeper.StoreKey)
 	suite.storeKey = keys[types.StoreKey]
 
 	// Create an in-memory db
@@ -53,9 +49,6 @@ func (suite *KeeperTestSuite) SetupTest() {
 	ms := store.NewCommitMultiStore(memDB)
 	for _, key := range keys {
 		ms.MountStoreWithDB(key, storetypes.StoreTypeIAVL, memDB)
-	}
-	for _, tKey := range tKeys {
-		ms.MountStoreWithDB(tKey, storetypes.StoreTypeTransient, memDB)
 	}
 
 	if err := ms.LoadLatestVersion(); err != nil {
@@ -66,7 +59,6 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.cdc, suite.legacyAminoCdc = app.MakeCodecs()
 
 	// Dependencies initialization
-	suite.paramsKeeper = paramskeeper.NewKeeper(suite.cdc, suite.legacyAminoCdc, keys[paramstypes.StoreKey], tKeys[paramstypes.TStoreKey])
 	suite.ak = authkeeper.NewAccountKeeper(
 		suite.cdc,
 		keys[authtypes.StoreKey],

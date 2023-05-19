@@ -9,18 +9,10 @@ import (
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/cosmos/cosmos-sdk/store"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
-	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
-	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
 	"github.com/stretchr/testify/suite"
 
 	"github.com/desmos-labs/desmos/v5/app"
-	profileskeeper "github.com/desmos-labs/desmos/v5/x/profiles/keeper"
-	profilestypes "github.com/desmos-labs/desmos/v5/x/profiles/types"
 	"github.com/desmos-labs/desmos/v5/x/relationships/keeper"
-	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
-	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -76,17 +68,11 @@ type TestSuite struct {
 	ctx            sdk.Context
 	storeKey       storetypes.StoreKey
 	k              keeper.Keeper
-	pk             profileskeeper.Keeper
-	sk             subspaceskeeper.Keeper
 }
 
 func (suite *TestSuite) SetupTest() {
 	// Define the store keys
-	keys := sdk.NewKVStoreKeys(
-		authtypes.StoreKey, ibcexported.StoreKey, capabilitytypes.StoreKey,
-
-		types.StoreKey, profilestypes.StoreKey, subspacestypes.StoreKey,
-	)
+	keys := sdk.NewKVStoreKeys(types.StoreKey)
 
 	suite.storeKey = keys[types.StoreKey]
 
@@ -104,26 +90,5 @@ func (suite *TestSuite) SetupTest() {
 	suite.ctx = sdk.NewContext(ms, tmproto.Header{ChainID: "test-chain-id"}, false, log.NewNopLogger())
 	suite.cdc, suite.legacyAminoCdc = app.MakeCodecs()
 
-	authKeeper := authkeeper.NewAccountKeeper(
-		suite.cdc,
-		keys[authtypes.StoreKey],
-		authtypes.ProtoBaseAccount,
-		app.GetMaccPerms(),
-		"cosmos",
-		authtypes.NewModuleAddress("gov").String(),
-	)
-
-	suite.pk = profileskeeper.NewKeeper(
-		suite.cdc,
-		suite.legacyAminoCdc,
-		keys[profilestypes.StoreKey],
-		authKeeper,
-		suite.k,
-		nil,
-		nil,
-		nil,
-		authtypes.NewModuleAddress("gov").String(),
-	)
-	suite.sk = subspaceskeeper.NewKeeper(suite.cdc, keys[subspacestypes.StoreKey], nil, nil)
-	suite.k = keeper.NewKeeper(suite.cdc, suite.storeKey, suite.sk)
+	suite.k = keeper.NewKeeper(suite.cdc, suite.storeKey, nil)
 }

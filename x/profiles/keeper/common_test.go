@@ -14,10 +14,8 @@ import (
 
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
-	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 
 	"github.com/desmos-labs/desmos/v5/app"
 	"github.com/desmos-labs/desmos/v5/testutil/ibctesting"
@@ -47,7 +45,6 @@ type KeeperTestSuite struct {
 	storeKey       storetypes.StoreKey
 	k              keeper.Keeper
 	ak             authkeeper.AccountKeeper
-	paramsKeeper   paramskeeper.Keeper
 
 	rk            *testutil.MockRelationshipsKeeper
 	channelKeeper *testutil.MockChannelKeeper
@@ -78,8 +75,7 @@ func (p TestProfile) Sign(data []byte) []byte {
 
 func (suite *KeeperTestSuite) SetupTest() {
 	// Define the store keys
-	keys := sdk.NewKVStoreKeys(types.StoreKey, authtypes.StoreKey, paramstypes.StoreKey)
-	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
+	keys := sdk.NewKVStoreKeys(types.StoreKey, authtypes.StoreKey)
 
 	suite.storeKey = keys[types.StoreKey]
 
@@ -89,9 +85,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 	for _, key := range keys {
 		ms.MountStoreWithDB(key, storetypes.StoreTypeIAVL, memDB)
 	}
-	for _, tKey := range tKeys {
-		ms.MountStoreWithDB(tKey, storetypes.StoreTypeTransient, memDB)
-	}
+
 	if err := ms.LoadLatestVersion(); err != nil {
 		panic(err)
 	}
