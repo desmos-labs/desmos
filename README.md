@@ -11,20 +11,15 @@
 [![Discord](https://img.shields.io/discord/653856306553159696)](https://discord.desmos.network)
 
 ## Introduction
-Desmos is a blockchain in the [Cosmos](https://cosmos.network) ecosystem specific for social networking apps. 
-It uses game theory and on-chain governance to decentralize the business model of social network which prioritize 
-the interests of users.
+Desmos is a blockchain-based open protocol built on top of the [Cosmos SDK](https://github.com/cosmos/cosmos-sdk) that allows developers to easily build custom decentralized applications (DApps). If you want to know more, you can visit our website: [desmos.network](https://desmos.network).
 
 ## Useful links
 - [Take a look at the website](https://desmos.network)
 - [Read the documentation](https://docs.desmos.network)
-- [Join our incentivised testnets](https://primer.desmos.network)
-
-## Contribute
-- [Join our Telegram chat](https://t.me/desmosnetwork)
-- [Join our Discord chat](https://discord.gg/J6VsHDT)
 
 ## Social networks
 - [Take a look at the website](https://desmos.network)
 - [Follow us on Twitter](https://twitter.com/desmosnetwork)
 - [Read about us on Medium](https://medium.com/desmosnetwork)
+- [Read about us on Scripta](https://scripta.network/@desmosnetwork)
+- [Join our Discord chat](https://discord.desmos.network)
