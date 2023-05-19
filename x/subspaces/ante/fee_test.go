@@ -9,6 +9,8 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/golang/mock/gomock"
 
+	relationshipstypes "github.com/desmos-labs/desmos/v5/x/relationships/types"
+
 	"github.com/desmos-labs/desmos/v5/x/subspaces/types"
 )
 
@@ -18,10 +20,11 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 	granter := types.GetTreasuryAddress(1)
 	nonTreasuryGranter := sdk.MustAccAddressFromBech32("cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53")
 	module := sdk.MustAccAddressFromBech32("cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
-	nonSubspaceMsg := testdata.NewTestMsg(signer)
 	subspaceID, otherSubspaceID := uint64(1), uint64(2)
-	subspaceMsg := types.NewMsgAddUserToUserGroup(subspaceID, 1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
-	otherSubspaceMsg := types.NewMsgAddUserToUserGroup(otherSubspaceID, 1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
+
+	nonSocialMsg := testdata.NewTestMsg(signer)
+	socialMsg := relationshipstypes.NewMsgCreateRelationship("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5", "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5", subspaceID)
+	otherSubspaceSocialMsg := relationshipstypes.NewMsgCreateRelationship("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5", "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5", otherSubspaceID)
 
 	testCases := []struct {
 		name      string
@@ -40,7 +43,7 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 			},
 			buildTx: func() sdk.Tx {
 				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
-				txBuilder.SetMsgs(nonSubspaceMsg)
+				txBuilder.SetMsgs(nonSocialMsg)
 				txBuilder.SetFeeAmount(feeAmount)
 				return txBuilder.GetTx()
 			},
@@ -55,7 +58,7 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 			},
 			buildTx: func() sdk.Tx {
 				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
-				txBuilder.SetMsgs(nonSubspaceMsg)
+				txBuilder.SetMsgs(nonSocialMsg)
 				txBuilder.SetFeeAmount(feeAmount)
 				return txBuilder.GetTx()
 			},
@@ -70,7 +73,7 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 			},
 			buildTx: func() sdk.Tx {
 				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
-				txBuilder.SetMsgs(subspaceMsg, otherSubspaceMsg)
+				txBuilder.SetMsgs(socialMsg, otherSubspaceSocialMsg)
 				txBuilder.SetFeeAmount(feeAmount)
 				return txBuilder.GetTx()
 			},
@@ -85,7 +88,7 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 			},
 			buildTx: func() sdk.Tx {
 				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
-				txBuilder.SetMsgs(subspaceMsg)
+				txBuilder.SetMsgs(socialMsg)
 				txBuilder.SetFeeGranter(nonTreasuryGranter)
 				txBuilder.SetFeeAmount(feeAmount)
 				return txBuilder.GetTx()
@@ -100,7 +103,7 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 					Return(module)
 
 				suite.sk.EXPECT().
-					UseGrantedFees(gomock.Any(), subspaceID, signer, feeAmount, []sdk.Msg{subspaceMsg}).
+					UseGrantedFees(gomock.Any(), subspaceID, signer, feeAmount, []sdk.Msg{socialMsg}).
 					Return(true)
 
 				suite.ak.EXPECT().
@@ -109,7 +112,7 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 			},
 			buildTx: func() sdk.Tx {
 				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
-				txBuilder.SetMsgs(subspaceMsg)
+				txBuilder.SetMsgs(socialMsg)
 				txBuilder.SetFeeGranter(granter)
 				txBuilder.SetFeeAmount(feeAmount)
 				return txBuilder.GetTx()
@@ -125,7 +128,7 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 			},
 			buildTx: func() sdk.Tx {
 				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
-				txBuilder.SetMsgs(subspaceMsg)
+				txBuilder.SetMsgs(socialMsg)
 				txBuilder.SetFeeGranter(granter)
 				txBuilder.SetFeeAmount(feeAmount)
 				return txBuilder.GetTx()
@@ -140,7 +143,7 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 					Return(module)
 
 				suite.sk.EXPECT().
-					UseGrantedFees(gomock.Any(), subspaceID, signer, feeAmount, []sdk.Msg{subspaceMsg}).
+					UseGrantedFees(gomock.Any(), subspaceID, signer, feeAmount, []sdk.Msg{socialMsg}).
 					Return(true)
 
 				suite.ak.EXPECT().
@@ -153,7 +156,7 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 			},
 			buildTx: func() sdk.Tx {
 				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
-				txBuilder.SetMsgs(subspaceMsg)
+				txBuilder.SetMsgs(socialMsg)
 				txBuilder.SetFeeGranter(granter)
 				txBuilder.SetFeeAmount(feeAmount)
 				return txBuilder.GetTx()
@@ -168,7 +171,7 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 					Return(module)
 
 				suite.sk.EXPECT().
-					UseGrantedFees(gomock.Any(), subspaceID, signer, feeAmount, []sdk.Msg{subspaceMsg}).
+					UseGrantedFees(gomock.Any(), subspaceID, signer, feeAmount, []sdk.Msg{socialMsg}).
 					Return(true)
 
 				suite.ak.EXPECT().
@@ -181,7 +184,7 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 			},
 			buildTx: func() sdk.Tx {
 				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
-				txBuilder.SetMsgs(subspaceMsg)
+				txBuilder.SetMsgs(socialMsg)
 				txBuilder.SetFeeGranter(granter)
 				txBuilder.SetFeeAmount(feeAmount)
 				return txBuilder.GetTx()
@@ -199,7 +202,7 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 					Return(module)
 
 				suite.sk.EXPECT().
-					UseGrantedFees(gomock.Any(), subspaceID, signer, nil, []sdk.Msg{subspaceMsg}).
+					UseGrantedFees(gomock.Any(), subspaceID, signer, nil, []sdk.Msg{socialMsg}).
 					Return(true)
 
 				suite.ak.EXPECT().
@@ -208,7 +211,7 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 			},
 			buildTx: func() sdk.Tx {
 				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
-				txBuilder.SetMsgs(subspaceMsg)
+				txBuilder.SetMsgs(socialMsg)
 				txBuilder.SetFeeGranter(granter)
 				txBuilder.SetFeeAmount(nil)
 				return txBuilder.GetTx()
@@ -227,7 +230,7 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 			},
 			buildTx: func() sdk.Tx {
 				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
-				txBuilder.SetMsgs(subspaceMsg)
+				txBuilder.SetMsgs(socialMsg)
 				txBuilder.SetFeeAmount(feeAmount)
 				return txBuilder.GetTx()
 			},

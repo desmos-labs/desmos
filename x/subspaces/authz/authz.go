@@ -34,7 +34,7 @@ func (a GenericSubspaceAuthorization) MsgTypeURL() string {
 func (a GenericSubspaceAuthorization) Accept(ctx sdk.Context, msg sdk.Msg) (authz.AcceptResponse, error) {
 	switch msg := msg.(type) {
 
-	case types.SubspaceMsg:
+	case types.SocialMsg:
 		for _, subspaceID := range a.SubspacesIDs {
 			ctx.GasMeter().ConsumeGas(gasCostPerIteration, "generic subspace authorization")
 			if subspaceID == msg.GetSubspaceID() {

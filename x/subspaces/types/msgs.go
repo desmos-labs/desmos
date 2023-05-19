@@ -9,12 +9,15 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-// SubspaceMsg represents a generic message that is related to a subspace
-type SubspaceMsg interface {
+// SocialMsg represents a generic message that is related to the social feature
+type SocialMsg interface {
 	sdk.Msg
 
 	// GetSubspaceID returns the subspace id associated to this message
 	GetSubspaceID() uint64
+
+	// IsSocialMsg represents the message is a social message
+	IsSocialMsg()
 }
 
 var (

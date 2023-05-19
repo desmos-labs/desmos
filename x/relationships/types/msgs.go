@@ -57,6 +57,9 @@ func (msg MsgCreateRelationship) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sender}
 }
 
+// IsSocialMsg implements subspacestypes.SocialMsg
+func (msg MsgCreateRelationship) IsSocialMsg() {}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewMsgDeleteRelationship returns a new MsgDeleteRelationship instance
@@ -110,6 +113,9 @@ func (msg MsgDeleteRelationship) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sender}
 }
 
+// IsSocialMsg implements subspacestypes.SocialMsg
+func (msg MsgDeleteRelationship) IsSocialMsg() {}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewMsgBlockUser returns a new MsgBlockUser instance
@@ -160,6 +166,9 @@ func (msg MsgBlockUser) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{blocker}
 }
 
+// IsSocialMsg implements subspacestypes.SocialMsg
+func (msg MsgBlockUser) IsSocialMsg() {}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewMsgUnblockUser returns a new MsgUnblockUser instance
@@ -208,3 +217,6 @@ func (msg MsgUnblockUser) GetSigners() []sdk.AccAddress {
 	blocker, _ := sdk.AccAddressFromBech32(msg.Blocker)
 	return []sdk.AccAddress{blocker}
 }
+
+// IsSocialMsg implements subspacestypes.SocialMsg
+func (msg MsgUnblockUser) IsSocialMsg() {}

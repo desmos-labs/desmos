@@ -134,6 +134,9 @@ func (msg *MsgCreatePost) UnpackInterfaces(unpacker codectypes.AnyUnpacker) erro
 	return nil
 }
 
+// IsSocialMsg implements subspacestypes.SocialMsg
+func (msg MsgCreatePost) IsSocialMsg() {}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewMsgEditPost returns a new MsgEditPost instance
@@ -203,6 +206,9 @@ func (msg MsgEditPost) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{addr}
 }
 
+// IsSocialMsg implements subspacestypes.SocialMsg
+func (msg MsgEditPost) IsSocialMsg() {}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewMsgAddPostAttachment returns a new MsgAddPostAttachment instance
@@ -270,6 +276,9 @@ func (msg *MsgAddPostAttachment) UnpackInterfaces(unpacker codectypes.AnyUnpacke
 	return unpacker.UnpackAny(msg.Content, &content)
 }
 
+// IsSocialMsg implements subspacestypes.SocialMsg
+func (msg MsgAddPostAttachment) IsSocialMsg() {}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewMsgRemovePostAttachment returns a new MsgRemovePostAttachment instance
@@ -321,6 +330,9 @@ func (msg MsgRemovePostAttachment) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{addr}
 }
 
+// IsSocialMsg implements subspacestypes.SocialMsg
+func (msg MsgRemovePostAttachment) IsSocialMsg() {}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewMsgDeletePost returns a new MsgDeletePost instance
@@ -366,6 +378,9 @@ func (msg MsgDeletePost) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Signer)
 	return []sdk.AccAddress{addr}
 }
+
+// IsSocialMsg implements subspacestypes.SocialMsg
+func (msg MsgDeletePost) IsSocialMsg() {}
 
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -437,6 +452,9 @@ func (msg MsgAnswerPoll) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Signer)
 	return []sdk.AccAddress{addr}
 }
+
+// IsSocialMsg implements subspacestypes.SocialMsg
+func (msg MsgAnswerPoll) IsSocialMsg() {}
 
 // --------------------------------------------------------------------------------------------------------------------
 

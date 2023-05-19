@@ -83,6 +83,9 @@ func (msg MsgAddReaction) UnpackInterfaces(unpacker codectypes.AnyUnpacker) erro
 	return unpacker.UnpackAny(msg.Value, &target)
 }
 
+// IsSocialMsg implements subspacestypes.SocialMsg
+func (msg MsgAddReaction) IsSocialMsg() {}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewMsgRemoveReaction returns a new MsgRemoveReaction instance
@@ -133,6 +136,9 @@ func (msg MsgRemoveReaction) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.User)
 	return []sdk.AccAddress{addr}
 }
+
+// IsSocialMsg implements subspacestypes.SocialMsg
+func (msg MsgRemoveReaction) IsSocialMsg() {}
 
 // --------------------------------------------------------------------------------------------------------------------
 

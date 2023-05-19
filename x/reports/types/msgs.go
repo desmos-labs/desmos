@@ -87,6 +87,9 @@ func (msg MsgCreateReport) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sender}
 }
 
+// IsSocialMsg implements subspacestypes.SocialMsg
+func (msg MsgCreateReport) IsSocialMsg() {}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewMsgDeleteReport returns a new MsgDeleteReport instance
@@ -134,6 +137,9 @@ func (msg MsgDeleteReport) GetSigners() []sdk.AccAddress {
 	sender, _ := sdk.AccAddressFromBech32(msg.Signer)
 	return []sdk.AccAddress{sender}
 }
+
+// IsSocialMsg implements subspacestypes.SocialMsg
+func (msg MsgDeleteReport) IsSocialMsg() {}
 
 // --------------------------------------------------------------------------------------------------------------------
 

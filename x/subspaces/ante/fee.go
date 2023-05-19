@@ -41,8 +41,8 @@ func NewDeductFeeDecorator(authDeductFeeDecorator AuthDeductFeeDecorator, ak Acc
 
 // AnteHandle implements AnteDecorator
 func (dfd DeductFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, next sdk.AnteHandler) (newCtx sdk.Context, err error) {
-	subspaceID, isSubspaceTx := GetTxSubspaceID(tx)
-	if !isSubspaceTx {
+	subspaceID, isSocialTx := GetTxSubspaceID(tx)
+	if !isSocialTx {
 		return dfd.authDeductFeeDecorator.AnteHandle(ctx, tx, simulate, next)
 	}
 
@@ -64,7 +64,7 @@ func (dfd DeductFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bo
 		}
 	}
 
-	newCtx, success, err := dfd.tryHandleSubspaceTx(ctx, feeTx, subspaceID, fees)
+	newCtx, success, err := dfd.tryHandleSocialTx(ctx, feeTx, subspaceID, fees)
 	if err != nil {
 		return newCtx, err
 	}
@@ -83,12 +83,12 @@ func (dfd DeductFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bo
 func GetTxSubspaceID(tx sdk.Tx) (uint64, bool) {
 	subspaceID := uint64(0)
 	for _, msg := range tx.GetMsgs() {
-		if subspaceMsg, ok := msg.(types.SubspaceMsg); ok {
+		if socialMsg, ok := msg.(types.SocialMsg); ok {
 			if subspaceID == 0 {
-				subspaceID = subspaceMsg.GetSubspaceID()
+				subspaceID = socialMsg.GetSubspaceID()
 			}
 
-			if subspaceMsg.GetSubspaceID() == subspaceID {
+			if socialMsg.GetSubspaceID() == subspaceID {
 				continue
 			}
 		}
@@ -98,9 +98,9 @@ func GetTxSubspaceID(tx sdk.Tx) (uint64, bool) {
 	return subspaceID, true
 }
 
-// tryHandleSubspaceTx handles the fee deduction for a single-subspace transaction,
+// tryHandleSocialTx handles the fee deduction for a single-subspace transaction,
 // and returns if the process succeeded or not
-func (dfd DeductFeeDecorator) tryHandleSubspaceTx(ctx sdk.Context, tx sdk.FeeTx, subspaceID uint64, fees sdk.Coins) (newCtx sdk.Context, success bool, err error) {
+func (dfd DeductFeeDecorator) tryHandleSocialTx(ctx sdk.Context, tx sdk.FeeTx, subspaceID uint64, fees sdk.Coins) (newCtx sdk.Context, success bool, err error) {
 	feePayer := tx.FeePayer()
 	feeGranter := tx.FeeGranter()
 	deductFeesFrom := feePayer
