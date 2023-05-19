@@ -9,9 +9,10 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/stretchr/testify/require"
 
+	relationshipstypes "github.com/desmos-labs/desmos/v5/x/relationships/types"
+
 	"github.com/desmos-labs/desmos/v5/testutil/storetesting"
 	"github.com/desmos-labs/desmos/v5/x/subspaces/authz"
-	"github.com/desmos-labs/desmos/v5/x/subspaces/types"
 )
 
 func TestGenericSubspaceAuthorization_Accept(t *testing.T) {
@@ -24,32 +25,28 @@ func TestGenericSubspaceAuthorization_Accept(t *testing.T) {
 	}{
 		{
 			name:          "invalid message type returns error",
-			authorization: authz.NewGenericSubspaceAuthorization([]uint64{1}, sdk.MsgTypeURL(&types.MsgSetUserPermissions{})),
+			authorization: authz.NewGenericSubspaceAuthorization([]uint64{1}, sdk.MsgTypeURL(&relationshipstypes.MsgCreateRelationship{})),
 			msg:           &banktypes.MsgSend{},
 			shouldErr:     true,
 		},
 		{
 			name:          "wrong subspace id is rejected",
-			authorization: authz.NewGenericSubspaceAuthorization([]uint64{1}, sdk.MsgTypeURL(&types.MsgSetUserPermissions{})),
-			msg: types.NewMsgSetUserPermissions(
-				2,
-				0,
+			authorization: authz.NewGenericSubspaceAuthorization([]uint64{1}, sdk.MsgTypeURL(&relationshipstypes.MsgCreateRelationship{})),
+			msg: relationshipstypes.NewMsgCreateRelationship(
 				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-				types.NewPermissions(types.PermissionEditSubspace),
 				"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+				2,
 			),
 			shouldErr:   false,
 			expResponse: cosmosauthz.AcceptResponse{Accept: false},
 		},
 		{
 			name:          "valid subspace id is accepted",
-			authorization: authz.NewGenericSubspaceAuthorization([]uint64{1}, sdk.MsgTypeURL(&types.MsgSetUserPermissions{})),
-			msg: types.NewMsgSetUserPermissions(
-				1,
-				0,
+			authorization: authz.NewGenericSubspaceAuthorization([]uint64{1}, sdk.MsgTypeURL(&relationshipstypes.MsgCreateRelationship{})),
+			msg: relationshipstypes.NewMsgCreateRelationship(
 				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-				types.NewPermissions(types.PermissionEditSubspace),
 				"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+				1,
 			),
 			shouldErr:   false,
 			expResponse: cosmosauthz.AcceptResponse{Accept: true},
@@ -81,17 +78,17 @@ func TestGenericSubspaceAuthorization_ValidateBasic(t *testing.T) {
 	}{
 		{
 			name:          "empty subspaces ids return error",
-			authorization: authz.NewGenericSubspaceAuthorization(nil, sdk.MsgTypeURL(&types.MsgSetUserPermissions{})),
+			authorization: authz.NewGenericSubspaceAuthorization(nil, sdk.MsgTypeURL(&relationshipstypes.MsgCreateRelationship{})),
 			shouldErr:     true,
 		},
 		{
 			name:          "invalid subspace id returns error",
-			authorization: authz.NewGenericSubspaceAuthorization([]uint64{0}, sdk.MsgTypeURL(&types.MsgSetUserPermissions{})),
+			authorization: authz.NewGenericSubspaceAuthorization([]uint64{0}, sdk.MsgTypeURL(&relationshipstypes.MsgCreateRelationship{})),
 			shouldErr:     true,
 		},
 		{
 			name:          "valid data returns no error",
-			authorization: authz.NewGenericSubspaceAuthorization([]uint64{1, 2}, sdk.MsgTypeURL(&types.MsgSetUserPermissions{})),
+			authorization: authz.NewGenericSubspaceAuthorization([]uint64{1, 2}, sdk.MsgTypeURL(&relationshipstypes.MsgCreateRelationship{})),
 			shouldErr:     false,
 		},
 	}
