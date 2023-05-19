@@ -838,7 +838,7 @@ var xxx_messageInfo_MsgAnswerPollResponse proto.InternalMessageInfo
 
 // MsgUpdateParams is the Msg/UpdateParams request type.
 //
-// Since: desmos 5.0.0
+// Since: Desmos 5.0.0
 type MsgUpdateParams struct {
 	// authority is the address that controls the module (defaults to x/gov unless
 	// overwritten).
@@ -899,7 +899,7 @@ func (m *MsgUpdateParams) GetParams() Params {
 // MsgUpdateParamsResponse defines the response structure for executing a
 // MsgUpdateParams message.
 //
-// Since: desmos 5.0.0
+// Since: Desmos 5.0.0
 type MsgUpdateParamsResponse struct {
 }
 
@@ -1063,10 +1063,9 @@ type MsgClient interface {
 	AnswerPoll(ctx context.Context, in *MsgAnswerPoll, opts ...grpc.CallOption) (*MsgAnswerPollResponse, error)
 	// UpdateParams defines a (governance) operation for updating the module
 	// parameters.
+	// The authority defaults to the x/gov module account.
 	//
-	//	The authority defaults to the x/gov module account.
-	//
-	// Since: desmos 5.0.0
+	// Since: Desmos 5.0.0
 	UpdateParams(ctx context.Context, in *MsgUpdateParams, opts ...grpc.CallOption) (*MsgUpdateParamsResponse, error)
 }
 
@@ -1157,10 +1156,9 @@ type MsgServer interface {
 	AnswerPoll(context.Context, *MsgAnswerPoll) (*MsgAnswerPollResponse, error)
 	// UpdateParams defines a (governance) operation for updating the module
 	// parameters.
+	// The authority defaults to the x/gov module account.
 	//
-	//	The authority defaults to the x/gov module account.
-	//
-	// Since: desmos 5.0.0
+	// Since: Desmos 5.0.0
 	UpdateParams(context.Context, *MsgUpdateParams) (*MsgUpdateParamsResponse, error)
 }
 

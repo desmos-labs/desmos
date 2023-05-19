@@ -37,9 +37,9 @@ service Msg {
 
   // UpdateParams defines a (governance) operation for updating the module
   // parameters.
-  //  The authority defaults to the x/gov module account.
+  // The authority defaults to the x/gov module account.
   //
-  // Since: desmos 5.0.0
+  // Since: Desmos 5.0.0
   rpc UpdateParams(MsgUpdateParams) returns (MsgUpdateParamsResponse);
 }
 
@@ -285,7 +285,7 @@ message MsgAnswerPollResponse {}
 
 // MsgUpdateParams is the Msg/UpdateParams request type.
 //
-// Since: desmos 5.0.0
+// Since: Desmos 5.0.0
 message MsgUpdateParams {
   option (cosmos.msg.v1.signer) = "authority";
 
@@ -302,5 +302,5 @@ message MsgUpdateParams {
 // MsgUpdateParamsResponse defines the response structure for executing a
 // MsgUpdateParams message.
 //
-// Since: desmos 5.0.0
+// Since: Desmos 5.0.0
 message MsgUpdateParamsResponse {}

@@ -108,10 +108,11 @@ type MsgClient interface {
 	LinkApplication(ctx context.Context, in *MsgLinkApplication, opts ...grpc.CallOption) (*MsgLinkApplicationResponse, error)
 	// UnlinkApplication defines a method to remove a centralized application
 	UnlinkApplication(ctx context.Context, in *MsgUnlinkApplication, opts ...grpc.CallOption) (*MsgUnlinkApplicationResponse, error)
-	// UpdateParams defines a (governance) operation for updating the module parameters.
-	//  The authority defaults to the x/gov module account.
+	// UpdateParams defines a (governance) operation for updating the module
+	// parameters.
+	// The authority defaults to the x/gov module account.
 	//
-	// Since: desmos 5.0.0
+	// Since: Desmos 5.0.0
 	UpdateParams(ctx context.Context, in *MsgUpdateParams, opts ...grpc.CallOption) (*MsgUpdateParamsResponse, error)
 }
 
@@ -263,10 +264,11 @@ type MsgServer interface {
 	LinkApplication(context.Context, *MsgLinkApplication) (*MsgLinkApplicationResponse, error)
 	// UnlinkApplication defines a method to remove a centralized application
 	UnlinkApplication(context.Context, *MsgUnlinkApplication) (*MsgUnlinkApplicationResponse, error)
-	// UpdateParams defines a (governance) operation for updating the module parameters.
-	//  The authority defaults to the x/gov module account.
+	// UpdateParams defines a (governance) operation for updating the module
+	// parameters.
+	// The authority defaults to the x/gov module account.
 	//
-	// Since: desmos 5.0.0
+	// Since: Desmos 5.0.0
 	UpdateParams(context.Context, *MsgUpdateParams) (*MsgUpdateParamsResponse, error)
 }
 

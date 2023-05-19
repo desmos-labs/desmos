@@ -27,9 +27,10 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // MsgUpdateParams is the Msg/UpdateParams request type.
 //
-// Since: desmos 5.0.0
+// Since: Desmos 5.0.0
 type MsgUpdateParams struct {
-	// authority is the address that controls the module (defaults to x/gov unless overwritten).
+	// authority is the address that controls the module (defaults to x/gov unless
+	// overwritten).
 	Authority string `protobuf:"bytes,1,opt,name=authority,proto3" json:"authority,omitempty"`
 	// params defines the parameters to update.
 	//
@@ -87,7 +88,7 @@ func (m *MsgUpdateParams) GetParams() Params {
 // MsgUpdateParamsResponse defines the response structure for executing a
 // MsgUpdateParams message.
 //
-// Since: desmos 5.0.0
+// Since: Desmos 5.0.0
 type MsgUpdateParamsResponse struct {
 }
 
