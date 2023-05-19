@@ -4,17 +4,6 @@ import (
 	"encoding/json"
 	"testing"
 
-	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-
-	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
-
-	profileskeeper "github.com/desmos-labs/desmos/v5/x/profiles/keeper"
-	profilestypes "github.com/desmos-labs/desmos/v5/x/profiles/types"
-
-	postskeeper "github.com/desmos-labs/desmos/v5/x/posts/keeper"
-	poststypes "github.com/desmos-labs/desmos/v5/x/posts/types"
-
 	db "github.com/cometbft/cometbft-db"
 	"github.com/cometbft/cometbft/libs/log"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
@@ -22,16 +11,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/store"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/suite"
 
 	"github.com/desmos-labs/desmos/v5/app"
 	"github.com/desmos-labs/desmos/v5/x/reactions/keeper"
 	"github.com/desmos-labs/desmos/v5/x/reactions/types"
-	relationshipskeeper "github.com/desmos-labs/desmos/v5/x/relationships/keeper"
-	relationshipstypes "github.com/desmos-labs/desmos/v5/x/relationships/types"
-	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
-	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 )
 
 func buildAddReactionRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
@@ -108,23 +92,12 @@ type Testsuite struct {
 	ctx            sdk.Context
 	storeKey       storetypes.StoreKey
 
-	ak profileskeeper.Keeper
-	rk relationshipskeeper.Keeper
-	pk postskeeper.Keeper
-	sk subspaceskeeper.Keeper
-	k  keeper.Keeper
+	k keeper.Keeper
 }
 
 func (suite *Testsuite) SetupTest() {
 	// Define the store keys
-	keys := sdk.NewMemoryStoreKeys(
-		paramstypes.StoreKey, authtypes.StoreKey,
-		profilestypes.StoreKey, relationshipstypes.StoreKey,
-		subspacestypes.StoreKey, poststypes.StoreKey,
-		types.StoreKey,
-	)
-	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
-	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
+	keys := sdk.NewMemoryStoreKeys(types.StoreKey)
 
 	suite.storeKey = keys[types.StoreKey]
 
@@ -134,12 +107,6 @@ func (suite *Testsuite) SetupTest() {
 	for _, key := range keys {
 		ms.MountStoreWithDB(key, storetypes.StoreTypeIAVL, memDB)
 	}
-	for _, tKey := range tKeys {
-		ms.MountStoreWithDB(tKey, storetypes.StoreTypeTransient, memDB)
-	}
-	for _, memKey := range memKeys {
-		ms.MountStoreWithDB(memKey, storetypes.StoreTypeMemory, nil)
-	}
 
 	if err := ms.LoadLatestVersion(); err != nil {
 		panic(err)
@@ -148,19 +115,7 @@ func (suite *Testsuite) SetupTest() {
 	suite.ctx = sdk.NewContext(ms, tmproto.Header{ChainID: "test-chain-id"}, false, log.NewNopLogger())
 	suite.cdc, suite.legacyAminoCdc = app.MakeCodecs()
 
-	authKeeper := authkeeper.NewAccountKeeper(suite.cdc, keys[authtypes.StoreKey], authtypes.ProtoBaseAccount, app.GetMaccPerms(), "cosmos", authtypes.NewModuleAddress("gov").String())
-	suite.ak = profileskeeper.NewKeeper(suite.cdc, suite.legacyAminoCdc, keys[profilestypes.StoreKey], authKeeper, suite.rk, nil, nil, nil, authtypes.NewModuleAddress("gov").String())
-	suite.rk = relationshipskeeper.NewKeeper(suite.cdc, keys[relationshipstypes.StoreKey], suite.sk)
-	suite.sk = subspaceskeeper.NewKeeper(suite.cdc, keys[subspacestypes.StoreKey], nil, nil)
-	suite.pk = postskeeper.NewKeeper(
-		suite.cdc,
-		keys[poststypes.StoreKey],
-		suite.pk,
-		suite.sk,
-		suite.rk,
-		authtypes.NewModuleAddress("gov").String(),
-	)
-	suite.k = keeper.NewKeeper(suite.cdc, keys[types.StoreKey], suite.ak, suite.sk, suite.rk, suite.pk)
+	suite.k = keeper.NewKeeper(suite.cdc, keys[types.StoreKey], nil, nil, nil, nil)
 }
 
 func TestKeeperTestSuite(t *testing.T) {
