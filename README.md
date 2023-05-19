@@ -1,4 +1,4 @@
-[![Website](.img/cover.jpg)](https://desmos.network)
+[![Website](.img/cover.png)](https://desmos.network)
 
 [![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/desmos-labs/desmos)](https://github.com/desmos-labs/desmos/releases)
 ![License](https://img.shields.io/github/license/desmos-labs/desmos.svg)
