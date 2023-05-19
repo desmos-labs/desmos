@@ -3,10 +3,11 @@ package ante
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
+	antetypes "github.com/desmos-labs/desmos/v5/x/subspaces/ante/types"
 )
 
 // CheckTxFeeWithSubspaceMinPrices returns the tx checker that including the subspace allowed tokens into minimum prices list
-func CheckTxFeeWithSubspaceMinPrices(txFeeChecker ante.TxFeeChecker, sk SubspacesKeeper) ante.TxFeeChecker {
+func CheckTxFeeWithSubspaceMinPrices(txFeeChecker ante.TxFeeChecker, sk antetypes.SubspacesKeeper) ante.TxFeeChecker {
 	return func(ctx sdk.Context, tx sdk.Tx) (sdk.Coins, int64, error) {
 		subspaceID, isSubspaceTx := GetTxSubspaceID(tx)
 		if !isSubspaceTx {
