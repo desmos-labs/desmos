@@ -228,6 +228,53 @@ func (p Post) Update(update PostUpdate) Post {
 
 // --------------------------------------------------------------------------------------------------------------------
 
+// PostMove contains data related to a post that can be updated after it has been moved.
+type PostMove struct {
+	// Move's subspace id will always replace the existing ones
+	SubspaceID uint64
+
+	// Move's section id will always replace the existing ones
+	SectionID uint32
+
+	// Move's post id will always replace the existing ones
+	PostID uint64
+
+	UpdateTime time.Time
+}
+
+// NewPostMove returns a new PostMove instance
+func NewPostMove(subspaceID uint64, sectionID uint32, postID uint64, updateTime time.Time) PostMove {
+	return PostMove{
+		SubspaceID: subspaceID,
+		SectionID:  sectionID,
+		PostID:     postID,
+		UpdateTime: updateTime,
+	}
+}
+
+// Move updates the fields of a moved post without validating it.
+// Before storing the updated post, a validation with keeper.ValidatePost should
+// be performed.
+func (p Post) Move(update PostMove) Post {
+	return NewPost(
+		update.SubspaceID,
+		update.SectionID,
+		update.PostID,
+		p.ExternalID,
+		p.Text,
+		p.Author,
+		0,
+		p.Entities,
+		p.Tags,
+		p.ReferencedPosts,
+		p.ReplySettings,
+		p.CreationDate,
+		&update.UpdateTime,
+	)
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
 // NewEntities returns a new Entities instance
 func NewEntities(hashtags []TextTag, mentions []TextTag, urls []Url) *Entities {
 	return &Entities{

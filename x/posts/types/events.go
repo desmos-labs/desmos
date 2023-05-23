@@ -9,14 +9,17 @@ const (
 	EventTypeRemovePostAttachment = "remove_post_attachment"
 	EventTypeAnswerPoll           = "answer_poll"
 	EventTypeTallyPoll            = "tally_poll"
+	EventTypeMovePost             = "move_post"
 
-	AttributeValueCategory   = ModuleName
-	AttributeKeySubspaceID   = "subspace_id"
-	AttributeKeySectionID    = "section_id"
-	AttributeKeyPostID       = "post_id"
-	AttributeKeyAuthor       = "author"
-	AttributeKeyCreationTime = "creation_date"
-	AttributeKeyLastEditTime = "last_edit_date"
-	AttributeKeyAttachmentID = "attachment_id"
-	AttributeKeyPollID       = "poll_id"
+	AttributeValueCategory    = ModuleName
+	AttributeKeySubspaceID    = "subspace_id"
+	AttributeKeySectionID     = "section_id"
+	AttributeKeyPostID        = "post_id"
+	AttributeKeyAuthor        = "author"
+	AttributeKeyCreationTime  = "creation_date"
+	AttributeKeyLastEditTime  = "last_edit_date"
+	AttributeKeyAttachmentID  = "attachment_id"
+	AttributeKeyPollID        = "poll_id"
+	AttributeKeyNewSubspaceID = "new_subspace_id"
+	AttributeKeyNewPostID     = "new_post_id"
 )

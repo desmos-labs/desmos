@@ -41,6 +41,9 @@ service Msg {
   //
   // Since: Desmos 5.0.0
   rpc UpdateParams(MsgUpdateParams) returns (MsgUpdateParamsResponse);
+
+   // MovePost allows users to move their own posts to another subspace
+   rpc MovePost(MsgMovePost) returns (MsgMovePostResponse);
 }
 
 // MsgCreatePost represents the message to be used to create a post.
