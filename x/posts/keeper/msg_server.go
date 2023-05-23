@@ -519,7 +519,7 @@ func (k msgServer) MovePost(goCtx context.Context, msg *types.MsgMovePost) (*typ
 		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace section with id %d not found", msg.TargetSectionID)
 	}
 
-	// Check the permission to remove the post
+	// Check the permission to move the post
 	canMove := post.Author == msg.Owner && k.HasPermission(ctx, msg.TargetSubspaceID, msg.TargetSectionID, msg.Owner, types.PermissionWrite)
 	if !canMove {
 		return nil, errors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot move this post")
