@@ -25,6 +25,7 @@ const (
 	ActionDeletePost           = "delete_post"
 	ActionAnswerPoll           = "answer_poll"
 	ActionUpdateParams         = "update_params"
+	ActionMovePost             = "move_post"
 
 	DoNotModify = "[do-not-modify]"
 )
