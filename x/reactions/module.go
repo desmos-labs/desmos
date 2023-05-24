@@ -5,14 +5,12 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/desmos-labs/desmos/v5/x/reactions/client/cli"
-
-	postskeeper "github.com/desmos-labs/desmos/v5/x/posts/keeper"
-
-	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
+	"cosmossdk.io/core/appmodule"
+	"cosmossdk.io/depinject"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -25,6 +23,16 @@ import (
 
 	"github.com/spf13/cobra"
 
+	modulev1 "github.com/desmos-labs/desmos/v5/api/desmos/reactions/module/v1"
+
+	postskeeper "github.com/desmos-labs/desmos/v5/x/posts/keeper"
+	poststypes "github.com/desmos-labs/desmos/v5/x/posts/types"
+	profileskeeper "github.com/desmos-labs/desmos/v5/x/profiles/keeper"
+	relationshipskeeper "github.com/desmos-labs/desmos/v5/x/relationships/keeper"
+	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
+	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
+
+	"github.com/desmos-labs/desmos/v5/x/reactions/client/cli"
 	"github.com/desmos-labs/desmos/v5/x/reactions/keeper"
 	"github.com/desmos-labs/desmos/v5/x/reactions/simulation"
 	"github.com/desmos-labs/desmos/v5/x/reactions/types"
@@ -39,6 +47,8 @@ var (
 	_ module.AppModule           = AppModule{}
 	_ module.AppModuleBasic      = AppModuleBasic{}
 	_ module.AppModuleSimulation = AppModule{}
+	_ appmodule.AppModule        = AppModule{}
+	_ depinject.OnePerModuleType = AppModule{}
 )
 
 // AppModuleBasic defines the basic application module used by the reactions module.
@@ -100,8 +110,8 @@ type AppModule struct {
 	bk     bankkeeper.Keeper
 
 	profilesKeeper types.ProfilesKeeper
-	sk             subspaceskeeper.Keeper
-	pk             postskeeper.Keeper
+	sk             types.SubspacesKeeper
+	pk             types.PostsKeeper
 }
 
 // RegisterServices registers module services.
@@ -124,7 +134,7 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 // NewAppModule creates a new AppModule Object
 func NewAppModule(
 	cdc codec.Codec,
-	k keeper.Keeper, profilesKeeper types.ProfilesKeeper, sk subspaceskeeper.Keeper, pk postskeeper.Keeper,
+	k keeper.Keeper, profilesKeeper types.ProfilesKeeper, sk types.SubspacesKeeper, pk types.PostsKeeper,
 	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) AppModule {
 	return AppModule{
@@ -203,4 +213,77 @@ func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
 // WeightedOperations returns the all the reactions module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
 	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.profilesKeeper, am.sk, am.pk, am.ak, am.bk)
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// App Wiring Setup
+
+// IsOnePerModuleType implements the depinject.OnePerModuleType interface.
+func (am AppModule) IsOnePerModuleType() {}
+
+// IsAppModule implements the appmodule.AppModule interface.
+func (am AppModule) IsAppModule() {}
+
+func init() {
+	appmodule.Register(
+		&modulev1.Module{},
+		appmodule.Provide(
+			ProvideModule,
+		),
+	)
+}
+
+type ModuleInputs struct {
+	depinject.In
+
+	Cdc codec.Codec
+	Key *storetypes.KVStoreKey
+
+	AccountKeeper authkeeper.AccountKeeper
+	BankKeeper    bankkeeper.Keeper
+
+	ProfilesKeeper      *profileskeeper.Keeper
+	SubspacesKeeper     *subspaceskeeper.Keeper
+	PostsKeeper         *postskeeper.Keeper
+	RelationshipsKeeper relationshipskeeper.Keeper
+}
+
+type ModuleOutputs struct {
+	depinject.Out
+
+	ReactionsKeeper keeper.Keeper
+	Module          appmodule.AppModule
+
+	SubspacesHooks subspacestypes.SubspacesHooksWrapper
+	PostsHooks     poststypes.PostsHooksWrapper
+}
+
+func ProvideModule(in ModuleInputs) ModuleOutputs {
+
+	k := keeper.NewKeeper(
+		in.Cdc,
+		in.Key,
+		in.ProfilesKeeper,
+		in.SubspacesKeeper,
+		in.RelationshipsKeeper,
+		in.PostsKeeper,
+	)
+
+	m := NewAppModule(
+		in.Cdc,
+		k,
+		in.ProfilesKeeper,
+		in.SubspacesKeeper,
+		in.PostsKeeper,
+		in.AccountKeeper,
+		in.BankKeeper,
+	)
+
+	return ModuleOutputs{
+		ReactionsKeeper: k,
+		Module:          m,
+		SubspacesHooks:  subspacestypes.SubspacesHooksWrapper{Hooks: k.Hooks()},
+		PostsHooks:      poststypes.PostsHooksWrapper{Hooks: k.Hooks()},
+	}
 }

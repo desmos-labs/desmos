@@ -24,6 +24,12 @@ type SubspacesKeeper interface {
 
 	// IterateSubspaces iterates through the subspaces set and performs the given function
 	IterateSubspaces(ctx sdk.Context, fn func(subspace subspacestypes.Subspace) (stop bool))
+
+	// GetAllSubspaces returns a list of all the subspaces that have been store inside the given context
+	GetAllSubspaces(ctx sdk.Context) []subspacestypes.Subspace
+
+	// GetUsersWithRootPermissions returns all the users that have a given permission inside the specified subspace
+	GetUsersWithRootPermissions(ctx sdk.Context, subspaceID uint64, permission subspacestypes.Permissions) []string
 }
 
 // RelationshipsKeeper represents a keeper that deals with relationships
@@ -39,4 +45,7 @@ type PostsKeeper interface {
 
 	// GetPost returns the post associated with the given id.
 	GetPost(ctx sdk.Context, subspaceID uint64, postID uint64) (poststypes.Post, bool)
+
+	// GetSubspacePosts returns all the posts for the given subspace
+	GetSubspacePosts(ctx sdk.Context, subspaceID uint64) []poststypes.Post
 }

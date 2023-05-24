@@ -57,17 +57,29 @@ func NewKeeper(
 	authority string,
 ) Keeper {
 	return Keeper{
-		storeKey:      storeKey,
-		cdc:           cdc,
-		legacyAmino:   legacyAmino,
-		ak:            ak,
-		rk:            rk,
+		storeKey:    storeKey,
+		cdc:         cdc,
+		legacyAmino: legacyAmino,
+		ak:          ak,
+		rk:          rk,
+
 		channelKeeper: channelKeeper,
 		portKeeper:    portKeeper,
 		scopedKeeper:  scopedKeeper,
 
 		authority: authority,
 	}
+}
+
+// SetIBCKeepers set IBCKeepers for Keeper
+func (k *Keeper) SetIBCKeepers(
+	channelKeeper types.ChannelKeeper,
+	portKeeper types.PortKeeper,
+	scopedKeeper types.ScopedKeeper,
+) {
+	k.channelKeeper = channelKeeper
+	k.portKeeper = portKeeper
+	k.scopedKeeper = scopedKeeper
 }
 
 // Logger returns a module-specific logger.

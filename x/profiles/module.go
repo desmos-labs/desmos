@@ -5,14 +5,17 @@ import (
 	"encoding/json"
 	"fmt"
 
-	v4 "github.com/desmos-labs/desmos/v5/x/profiles/legacy/v4/types"
-	v5 "github.com/desmos-labs/desmos/v5/x/profiles/legacy/v5/types"
+	"cosmossdk.io/core/appmodule"
+	"cosmossdk.io/depinject"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 
 	abci "github.com/cometbft/cometbft/abci/types"
@@ -21,6 +24,13 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 
 	"github.com/spf13/cobra"
+
+	modulev1 "github.com/desmos-labs/desmos/v5/api/desmos/profiles/module/v1"
+
+	relationshipskeeper "github.com/desmos-labs/desmos/v5/x/relationships/keeper"
+
+	v4 "github.com/desmos-labs/desmos/v5/x/profiles/legacy/v4/types"
+	v5 "github.com/desmos-labs/desmos/v5/x/profiles/legacy/v5/types"
 
 	"github.com/desmos-labs/desmos/v5/x/profiles/client/cli"
 	"github.com/desmos-labs/desmos/v5/x/profiles/keeper"
@@ -37,6 +47,8 @@ var (
 	_ module.AppModule           = AppModule{}
 	_ module.AppModuleBasic      = AppModuleBasic{}
 	_ module.AppModuleSimulation = AppModule{}
+	_ appmodule.AppModule        = AppModule{}
+	_ depinject.OnePerModuleType = AppModule{}
 )
 
 // AppModuleBasic defines the basic application module used by the profiles module.
@@ -96,9 +108,12 @@ func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) 
 // AppModule implements an application module for the profiles module.
 type AppModule struct {
 	AppModuleBasic
-	keeper keeper.Keeper
-	ak     authkeeper.AccountKeeper
-	bk     bankkeeper.Keeper
+
+	// To ensure setting IBC keepers properly, keeper must be a reference as DesmosApp
+	keeper *keeper.Keeper
+
+	ak authkeeper.AccountKeeper
+	bk bankkeeper.Keeper
 
 	// legacySubspace is used solely for migration of x/params managed parameters
 	legacySubspace types.ParamsSubspace
@@ -106,10 +121,10 @@ type AppModule struct {
 
 // RegisterServices registers module services.
 func (am AppModule) RegisterServices(cfg module.Configurator) {
-	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
+	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(*am.keeper))
 	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
 
-	m := keeper.NewMigrator(am.ak, am.keeper, am.legacySubspace)
+	m := keeper.NewMigrator(am.ak, *am.keeper, am.legacySubspace)
 	err := cfg.RegisterMigration(types.ModuleName, 4, m.Migrate4to5)
 	if err != nil {
 		panic(err)
@@ -139,7 +154,7 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 // NewAppModule creates a new AppModule Object
 func NewAppModule(
 	cdc codec.Codec, legacyAmino *codec.LegacyAmino,
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, legacySubspace types.ParamsSubspace,
+	k *keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, legacySubspace types.ParamsSubspace,
 ) AppModule {
 	return AppModule{
 		AppModuleBasic: AppModuleBasic{cdc: cdc, legacyAmino: legacyAmino},
@@ -158,7 +173,7 @@ func (AppModule) Name() string {
 
 // RegisterInvariants performs a no-op.
 func (am AppModule) RegisterInvariants(ir sdk.InvariantRegistry) {
-	keeper.RegisterInvariants(ir, am.keeper)
+	keeper.RegisterInvariants(ir, *am.keeper)
 }
 
 // QuerierRoute returns the profiles module's querier route name.
@@ -189,7 +204,7 @@ func (AppModule) ConsensusVersion() uint64 {
 
 // BeginBlock returns the begin blocker for the profiles module.
 func (am AppModule) BeginBlock(ctx sdk.Context, _ abci.RequestBeginBlock) {
-	BeginBlocker(ctx, am.keeper)
+	BeginBlocker(ctx, *am.keeper)
 }
 
 // EndBlock returns the end blocker for the profiles module. It returns no validator
@@ -220,5 +235,80 @@ func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
 
 // WeightedOperations returns the all the profiles module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
-	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.ak, am.bk)
+	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, *am.keeper, am.ak, am.bk)
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// App Wiring Setup
+
+// IsOnePerModuleType implements the depinject.OnePerModuleType interface.
+func (am AppModule) IsOnePerModuleType() {}
+
+// IsAppModule implements the appmodule.AppModule interface.
+func (am AppModule) IsAppModule() {}
+
+func init() {
+	appmodule.Register(
+		&modulev1.Module{},
+		appmodule.Provide(
+			ProvideModule,
+		),
+	)
+}
+
+type ModuleInputs struct {
+	depinject.In
+
+	Config    *modulev1.Module
+	Cdc       codec.Codec
+	LegacyCdc *codec.LegacyAmino
+	Key       *storetypes.KVStoreKey
+
+	AccountKeeper authkeeper.AccountKeeper
+	BankKeeper    bankkeeper.Keeper
+
+	RelationshipsKeeper relationshipskeeper.Keeper
+
+	// LegacySubspace is used solely for migration of x/params managed parameters
+	LegacySubspace types.ParamsSubspace `optional:"true"`
+}
+
+type ModuleOutputs struct {
+	depinject.Out
+
+	ProfilesKeeper *keeper.Keeper
+	Module         appmodule.AppModule
+}
+
+func ProvideModule(in ModuleInputs) ModuleOutputs {
+
+	// default to governance authority if not provided
+	authority := authtypes.NewModuleAddress(govtypes.ModuleName)
+	if in.Config.Authority != "" {
+		authority = authtypes.NewModuleAddressOrBech32Address(in.Config.Authority)
+	}
+
+	k := keeper.NewKeeper(
+		in.Cdc,
+		in.LegacyCdc,
+		in.Key,
+		in.AccountKeeper,
+		in.RelationshipsKeeper,
+		nil,
+		nil,
+		nil,
+		authority.String(),
+	)
+
+	m := NewAppModule(
+		in.Cdc,
+		in.LegacyCdc,
+		&k,
+		in.AccountKeeper,
+		in.BankKeeper,
+		in.LegacySubspace,
+	)
+
+	return ModuleOutputs{ProfilesKeeper: &k, Module: m}
 }

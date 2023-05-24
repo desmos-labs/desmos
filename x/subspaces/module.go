@@ -4,32 +4,36 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"sort"
 
-	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
-
-	v2 "github.com/desmos-labs/desmos/v5/x/subspaces/legacy/v2"
-
-	"github.com/desmos-labs/desmos/v5/x/subspaces/authz"
-
-	"github.com/desmos-labs/desmos/v5/x/subspaces/simulation"
-
-	"github.com/desmos-labs/desmos/v5/x/subspaces/client/cli"
-
-	"github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
-	"github.com/desmos-labs/desmos/v5/x/subspaces/types"
+	"cosmossdk.io/core/appmodule"
+	"cosmossdk.io/depinject"
 
 	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
+	"golang.org/x/exp/maps"
+
+	modulev1 "github.com/desmos-labs/desmos/v5/api/desmos/subspaces/module/v1"
+
+	v2 "github.com/desmos-labs/desmos/v5/x/subspaces/legacy/v2"
+
+	"github.com/desmos-labs/desmos/v5/x/subspaces/authz"
+	"github.com/desmos-labs/desmos/v5/x/subspaces/client/cli"
+	"github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
+	"github.com/desmos-labs/desmos/v5/x/subspaces/simulation"
+	"github.com/desmos-labs/desmos/v5/x/subspaces/types"
 )
 
 const (
@@ -41,6 +45,8 @@ var (
 	_ module.AppModule           = AppModule{}
 	_ module.AppModuleBasic      = AppModuleBasic{}
 	_ module.AppModuleSimulation = AppModule{}
+	_ appmodule.AppModule        = AppModule{}
+	_ depinject.OnePerModuleType = AppModule{}
 )
 
 // AppModuleBasic defines the basic application module used by the subspaces module.
@@ -99,7 +105,10 @@ func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) 
 // AppModule implements an application module for the subspaces module.
 type AppModule struct {
 	AppModuleBasic
-	keeper keeper.Keeper
+
+	// To ensure setting hooks properly, keeper must be a reference as DesmosApp
+	keeper *keeper.Keeper
+
 	authzk authzkeeper.Keeper
 	ak     authkeeper.AccountKeeper
 	bk     bankkeeper.Keeper
@@ -107,10 +116,10 @@ type AppModule struct {
 
 // RegisterServices registers module services.
 func (am AppModule) RegisterServices(cfg module.Configurator) {
-	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
+	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(*am.keeper))
 	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
 
-	m := keeper.NewMigrator(am.keeper, am.authzk, am.ak)
+	m := keeper.NewMigrator(*am.keeper, am.authzk, am.ak)
 	err := cfg.RegisterMigration(types.ModuleName, 1, m.Migrate1to2)
 	if err != nil {
 		panic(err)
@@ -135,7 +144,7 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 
 // NewAppModule creates a new AppModule Object
 func NewAppModule(
-	cdc codec.Codec, keeper keeper.Keeper, authzKeeper authzkeeper.Keeper,
+	cdc codec.Codec, keeper *keeper.Keeper, authzKeeper authzkeeper.Keeper,
 	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) AppModule {
 	return AppModule{
@@ -154,7 +163,7 @@ func (AppModule) Name() string {
 
 // RegisterInvariants performs a no-op.
 func (am AppModule) RegisterInvariants(ir sdk.InvariantRegistry) {
-	keeper.RegisterInvariants(ir, am.keeper)
+	keeper.RegisterInvariants(ir, *am.keeper)
 }
 
 // QuerierRoute returns the subspaces module's querier route name.
@@ -210,5 +219,104 @@ func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
 
 // WeightedOperations returns the all the subspaces module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
-	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.ak, am.bk, am.authzk)
+	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, *am.keeper, am.ak, am.bk, am.authzk)
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// App Wiring Setup
+
+// IsOnePerModuleType implements the depinject.OnePerModuleType interface.
+func (am AppModule) IsOnePerModuleType() {}
+
+// IsAppModule implements the appmodule.AppModule interface.
+func (am AppModule) IsAppModule() {}
+
+func init() {
+	appmodule.Register(
+		&modulev1.Module{},
+		appmodule.Provide(
+			ProvideModule,
+		),
+		appmodule.Invoke(
+			InvokeSetSubspacesHooks,
+		),
+	)
+}
+
+type ModuleInputs struct {
+	depinject.In
+
+	Cdc codec.Codec
+	Key *storetypes.KVStoreKey
+
+	AccountKeeper authkeeper.AccountKeeper
+	BankKeeper    bankkeeper.Keeper
+	AuthzKeeper   authzkeeper.Keeper
+}
+
+type ModuleOutputs struct {
+	depinject.Out
+
+	SubspacesKeeper *keeper.Keeper
+	Module          appmodule.AppModule
+}
+
+func ProvideModule(in ModuleInputs) ModuleOutputs {
+
+	k := keeper.NewKeeper(
+		in.Cdc,
+		in.Key,
+		in.AccountKeeper,
+		in.AuthzKeeper,
+	)
+
+	m := NewAppModule(
+		in.Cdc,
+		&k,
+		in.AuthzKeeper,
+		in.AccountKeeper,
+		in.BankKeeper,
+	)
+
+	return ModuleOutputs{SubspacesKeeper: &k, Module: m}
+}
+
+func InvokeSetSubspacesHooks(
+	config *modulev1.Module,
+	keeper *keeper.Keeper,
+	wrappers map[string]types.SubspacesHooksWrapper,
+) error {
+	// all arguments to invokers are optional
+	if keeper == nil || config == nil {
+		return nil
+	}
+
+	modNames := maps.Keys(wrappers)
+	order := config.HooksOrder
+	if len(order) == 0 {
+		order = modNames
+		sort.Strings(order)
+	}
+
+	if len(order) != len(modNames) {
+		return fmt.Errorf("len(hooks_order: %v) != len(hooks modules: %v)", order, modNames)
+	}
+
+	if len(modNames) == 0 {
+		return nil
+	}
+
+	var multiHooks types.MultiSubspacesHooks
+	for _, modName := range order {
+		wrapper, ok := wrappers[modName]
+		if !ok {
+			return fmt.Errorf("can't find subspaces hooks for module %s", modName)
+		}
+
+		multiHooks = append(multiHooks, wrapper.Hooks)
+	}
+
+	keeper.SetHooks(multiHooks)
+	return nil
 }

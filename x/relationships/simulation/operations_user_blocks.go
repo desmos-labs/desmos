@@ -5,11 +5,6 @@ package simulation
 import (
 	"math/rand"
 
-	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
-	subspacessim "github.com/desmos-labs/desmos/v5/x/subspaces/simulation"
-
-	"github.com/desmos-labs/desmos/v5/testutil/simtesting"
-
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -17,13 +12,17 @@ import (
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
+	"github.com/desmos-labs/desmos/v5/testutil/simtesting"
+
+	subspacessim "github.com/desmos-labs/desmos/v5/x/subspaces/simulation"
+
 	"github.com/desmos-labs/desmos/v5/x/relationships/keeper"
 	"github.com/desmos-labs/desmos/v5/x/relationships/types"
 )
 
 // SimulateMsgBlockUser tests and runs a single MsgBlockUser
 func SimulateMsgBlockUser(
-	k keeper.Keeper, sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k keeper.Keeper, sk types.SubspacesKeeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context, accs []simtypes.Account, chainID string,
@@ -40,7 +39,7 @@ func SimulateMsgBlockUser(
 
 // randomUserBlocksFields returns the data used to build a random MsgBlockUser
 func randomUserBlocksFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk subspaceskeeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk types.SubspacesKeeper,
 ) (blocker simtypes.Account, blockedAddr string, subspaceID uint64, skip bool) {
 	// Get a random blocker
 	if len(accs) == 0 {

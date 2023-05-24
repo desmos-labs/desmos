@@ -5,9 +5,6 @@ package simulation
 import (
 	"math/rand"
 
-	postskeeper "github.com/desmos-labs/desmos/v5/x/posts/keeper"
-	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
@@ -16,6 +13,7 @@ import (
 
 	"github.com/desmos-labs/desmos/v5/app/params"
 	"github.com/desmos-labs/desmos/v5/x/reports/keeper"
+	"github.com/desmos-labs/desmos/v5/x/reports/types"
 )
 
 // Simulation operation weights constants
@@ -33,7 +31,7 @@ const (
 // WeightedOperations returns all the operations from the module with their respective weights
 func WeightedOperations(
 	appParams simtypes.AppParams, cdc codec.JSONCodec,
-	k keeper.Keeper, sk subspaceskeeper.Keeper, pk postskeeper.Keeper,
+	k keeper.Keeper, sk types.SubspacesKeeper, pk types.PostsKeeper,
 	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) sim.WeightedOperations {
 

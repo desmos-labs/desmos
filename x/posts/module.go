@@ -4,29 +4,42 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"sort"
 
-	v2 "github.com/desmos-labs/desmos/v5/x/posts/legacy/v2"
-	v4 "github.com/desmos-labs/desmos/v5/x/posts/legacy/v4"
-
-	"github.com/desmos-labs/desmos/v5/x/posts/simulation"
-	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
-
-	"github.com/desmos-labs/desmos/v5/x/posts/client/cli"
-	"github.com/desmos-labs/desmos/v5/x/posts/keeper"
-	"github.com/desmos-labs/desmos/v5/x/posts/types"
+	"cosmossdk.io/core/appmodule"
+	"cosmossdk.io/depinject"
 
 	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
+	"golang.org/x/exp/maps"
+
+	modulev1 "github.com/desmos-labs/desmos/v5/api/desmos/posts/module/v1"
+
+	profileskeeper "github.com/desmos-labs/desmos/v5/x/profiles/keeper"
+	relationshipskeeper "github.com/desmos-labs/desmos/v5/x/relationships/keeper"
+	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
+	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
+
+	v2 "github.com/desmos-labs/desmos/v5/x/posts/legacy/v2"
+	v4 "github.com/desmos-labs/desmos/v5/x/posts/legacy/v4"
+
+	"github.com/desmos-labs/desmos/v5/x/posts/client/cli"
+	"github.com/desmos-labs/desmos/v5/x/posts/keeper"
+	"github.com/desmos-labs/desmos/v5/x/posts/simulation"
+	"github.com/desmos-labs/desmos/v5/x/posts/types"
 )
 
 const (
@@ -38,6 +51,8 @@ var (
 	_ module.AppModule           = AppModule{}
 	_ module.AppModuleBasic      = AppModuleBasic{}
 	_ module.AppModuleSimulation = AppModule{}
+	_ appmodule.AppModule        = AppModule{}
+	_ depinject.OnePerModuleType = AppModule{}
 )
 
 // AppModuleBasic defines the basic application module used by the posts module.
@@ -96,10 +111,13 @@ func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) 
 // AppModule implements an application module for the posts module.
 type AppModule struct {
 	AppModuleBasic
-	keeper keeper.Keeper
-	ak     authkeeper.AccountKeeper
-	bk     bankkeeper.Keeper
-	sk     subspaceskeeper.Keeper
+
+	// To ensure setting hooks properly, keeper must be a reference as DesmosApp
+	keeper *keeper.Keeper
+
+	ak authkeeper.AccountKeeper
+	bk bankkeeper.Keeper
+	sk types.SubspacesKeeper
 
 	// legacySubspace is used solely for migration of x/params managed parameters
 	legacySubspace types.ParamsSubspace
@@ -107,10 +125,10 @@ type AppModule struct {
 
 // RegisterServices registers module services.
 func (am AppModule) RegisterServices(cfg module.Configurator) {
-	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
+	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(*am.keeper))
 	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
 
-	m := keeper.NewMigrator(am.keeper, am.sk, am.legacySubspace)
+	m := keeper.NewMigrator(*am.keeper, am.sk, am.legacySubspace)
 	err := cfg.RegisterMigration(types.ModuleName, 1, m.Migrate1to2)
 	if err != nil {
 		panic(err)
@@ -135,7 +153,7 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 
 // NewAppModule creates a new AppModule Object
 func NewAppModule(
-	cdc codec.Codec, keeper keeper.Keeper, sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, legacySubspace types.ParamsSubspace,
+	cdc codec.Codec, keeper *keeper.Keeper, sk types.SubspacesKeeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, legacySubspace types.ParamsSubspace,
 ) AppModule {
 	return AppModule{
 		AppModuleBasic: AppModuleBasic{cdc: cdc},
@@ -155,7 +173,7 @@ func (AppModule) Name() string {
 
 // RegisterInvariants registers the module invariants
 func (am AppModule) RegisterInvariants(ir sdk.InvariantRegistry) {
-	keeper.RegisterInvariants(ir, am.keeper)
+	keeper.RegisterInvariants(ir, *am.keeper)
 }
 
 // QuerierRoute returns the posts module's querier route name.
@@ -190,7 +208,7 @@ func (am AppModule) BeginBlock(_ sdk.Context, _ abci.RequestBeginBlock) {}
 // EndBlock returns the end blocker for the posts module. It returns no validator
 // updates.
 func (am AppModule) EndBlock(ctx sdk.Context, _ abci.RequestEndBlock) []abci.ValidatorUpdate {
-	EndBlocker(ctx, am.keeper)
+	EndBlocker(ctx, *am.keeper)
 	return []abci.ValidatorUpdate{}
 }
 
@@ -216,5 +234,126 @@ func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
 
 // WeightedOperations returns the all the posts module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
-	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.sk, am.ak, am.bk)
+	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, *am.keeper, am.sk, am.ak, am.bk)
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// App Wiring Setup
+
+// IsOnePerModuleType implements the depinject.OnePerModuleType interface.
+func (am AppModule) IsOnePerModuleType() {}
+
+// IsAppModule implements the appmodule.AppModule interface.
+func (am AppModule) IsAppModule() {}
+
+func init() {
+	appmodule.Register(
+		&modulev1.Module{},
+		appmodule.Provide(
+			ProvideModule,
+		),
+		appmodule.Invoke(
+			InvokeSetPostsHooks,
+		),
+	)
+}
+
+type ModuleInputs struct {
+	depinject.In
+
+	Config *modulev1.Module
+	Cdc    codec.Codec
+	Key    *storetypes.KVStoreKey
+
+	AccountKeeper authkeeper.AccountKeeper
+	BankKeeper    bankkeeper.Keeper
+
+	ProfilesKeeper      *profileskeeper.Keeper
+	SubspacesKeeper     *subspaceskeeper.Keeper
+	RelationshipsKeeper relationshipskeeper.Keeper
+
+	// LegacySubspace is used solely for migration of x/params managed parameters
+	LegacySubspace types.ParamsSubspace `optional:"true"`
+}
+
+type ModuleOutputs struct {
+	depinject.Out
+
+	PostsKeeper *keeper.Keeper
+	Module      appmodule.AppModule
+
+	SubspacesHooks subspacestypes.SubspacesHooksWrapper
+}
+
+func ProvideModule(in ModuleInputs) ModuleOutputs {
+
+	// default to governance authority if not provided
+	authority := authtypes.NewModuleAddress(govtypes.ModuleName)
+	if in.Config.Authority != "" {
+		authority = authtypes.NewModuleAddressOrBech32Address(in.Config.Authority)
+	}
+
+	k := keeper.NewKeeper(
+		in.Cdc,
+		in.Key,
+		in.ProfilesKeeper,
+		in.SubspacesKeeper,
+		in.RelationshipsKeeper,
+		authority.String(),
+	)
+
+	m := NewAppModule(
+		in.Cdc,
+		&k,
+		in.SubspacesKeeper,
+		in.AccountKeeper,
+		in.BankKeeper,
+		in.LegacySubspace,
+	)
+
+	return ModuleOutputs{
+		PostsKeeper:    &k,
+		Module:         m,
+		SubspacesHooks: subspacestypes.SubspacesHooksWrapper{Hooks: k.Hooks()},
+	}
+}
+
+func InvokeSetPostsHooks(
+	config *modulev1.Module,
+	keeper *keeper.Keeper,
+	wrappers map[string]types.PostsHooksWrapper,
+) error {
+	// all arguments to invokers are optional
+	if keeper == nil || config == nil {
+		return nil
+	}
+
+	modNames := maps.Keys(wrappers)
+	order := config.HooksOrder
+	if len(order) == 0 {
+		order = modNames
+		sort.Strings(order)
+	}
+
+	if len(order) != len(modNames) {
+		return fmt.Errorf("len(hooks_order: %v) != len(hooks modules: %v)", order, modNames)
+	}
+
+	if len(modNames) == 0 {
+		return nil
+	}
+
+	var multiHooks types.MultiPostsHooks
+	for _, modName := range order {
+		wrapper, ok := wrappers[modName]
+		if !ok {
+			return fmt.Errorf("can't find posts hooks for module %s", modName)
+		}
+
+		multiHooks = append(multiHooks, wrapper.Hooks)
+	}
+
+	keeper.SetHooks(multiHooks)
+	return nil
 }

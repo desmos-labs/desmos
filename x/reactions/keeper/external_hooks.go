@@ -7,8 +7,10 @@ import (
 	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 )
 
+// Hooks represents a wrapper struct
 type Hooks struct {
-	k Keeper
+	// Keeper must be the same reference as the original
+	k *Keeper
 }
 
 var (
@@ -16,7 +18,7 @@ var (
 )
 
 // Hooks creates a new reports hooks
-func (k Keeper) Hooks() Hooks { return Hooks{k} }
+func (k *Keeper) Hooks() Hooks { return Hooks{k} }
 
 // AfterSubspaceSaved implements subspacestypes.Hooks
 func (h Hooks) AfterSubspaceSaved(ctx sdk.Context, subspaceID uint64) {

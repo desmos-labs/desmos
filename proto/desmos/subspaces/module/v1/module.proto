@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package desmos.subspaces.module.v1;
+
+import "cosmos/app/v1alpha1/module.proto";
+
+// Module is the config object of the subspaces module.
+message Module {
+  option (cosmos.app.v1alpha1.module) = {
+    go_import : "github.com/desmos-labs/desmos/x/subspaces"
+  };
+
+  // hooks_order specifies the order of subspaces hooks and should be a list
+  // of module names which provide a subspaces hooks instance. If no order is
+  // provided, then hooks will be applied in alphabetical order of module names.
+  repeated string hooks_order = 1;
+}

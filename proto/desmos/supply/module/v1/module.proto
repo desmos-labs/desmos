@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package desmos.supply.module.v1;
+
+import "cosmos/app/v1alpha1/module.proto";
+
+// Module is the config object of the supply module.
+message Module {
+  option (cosmos.app.v1alpha1.module) = {
+    go_import : "github.com/desmos-labs/desmos/x/supply"
+  };
+}

@@ -4,17 +4,25 @@ import (
 	"context"
 	"encoding/json"
 
+	"cosmossdk.io/core/appmodule"
+	"cosmossdk.io/depinject"
 	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
+	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+	distributionkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
 	"github.com/gorilla/mux"
 
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
+
+	modulev1 "github.com/desmos-labs/desmos/v5/api/desmos/supply/module/v1"
 
 	"github.com/desmos-labs/desmos/v5/x/supply/client/cli"
 	"github.com/desmos-labs/desmos/v5/x/supply/keeper"
@@ -25,12 +33,13 @@ var (
 	_ module.AppModule           = AppModule{}
 	_ module.AppModuleBasic      = AppModuleBasic{}
 	_ module.AppModuleSimulation = AppModule{}
+	_ appmodule.AppModule        = AppModule{}
+	_ depinject.OnePerModuleType = AppModule{}
 )
 
 // AppModuleBasic defines the basic application module used by the supply module.
 type AppModuleBasic struct {
-	cdc    codec.Codec
-	legacy *codec.LegacyAmino
+	cdc codec.Codec
 }
 
 var _ module.AppModuleBasic = AppModuleBasic{}
@@ -83,9 +92,9 @@ type AppModule struct {
 }
 
 // NewAppModule creates a new AppModule object
-func NewAppModule(cdc codec.Codec, legacyCdc *codec.LegacyAmino, keeper keeper.Keeper) AppModule {
+func NewAppModule(cdc codec.Codec, keeper keeper.Keeper) AppModule {
 	return AppModule{
-		AppModuleBasic: AppModuleBasic{cdc: cdc, legacy: legacyCdc},
+		AppModuleBasic: AppModuleBasic{cdc: cdc},
 		keeper:         keeper,
 	}
 }
@@ -145,4 +154,56 @@ func (am AppModule) RegisterStoreDecoder(_ sdk.StoreDecoderRegistry) {}
 // WeightedOperations returns the all the supply module operations with their respective weights.
 func (am AppModule) WeightedOperations(_ module.SimulationState) []simtypes.WeightedOperation {
 	return nil
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// App Wiring Setup
+
+// IsOnePerModuleType implements the depinject.OnePerModuleType interface.
+func (am AppModule) IsOnePerModuleType() {}
+
+// IsAppModule implements the appmodule.AppModule interface.
+func (am AppModule) IsAppModule() {}
+
+func init() {
+	appmodule.Register(
+		&modulev1.Module{},
+		appmodule.Provide(
+			ProvideModule,
+		),
+	)
+}
+
+type ModuleInputs struct {
+	depinject.In
+
+	Config *modulev1.Module
+	Cdc    codec.Codec
+	Key    *storetypes.KVStoreKey
+
+	AccountKeeper      authkeeper.AccountKeeper
+	BankKeeper         bankkeeper.Keeper
+	DistributionKeeper distributionkeeper.Keeper
+}
+
+type ModuleOutputs struct {
+	depinject.Out
+
+	SupplyKeeper keeper.Keeper
+	Module       appmodule.AppModule
+}
+
+func ProvideModule(in ModuleInputs) ModuleOutputs {
+
+	k := keeper.NewKeeper(
+		in.Cdc,
+		in.AccountKeeper,
+		in.BankKeeper,
+		in.DistributionKeeper,
+	)
+
+	m := NewAppModule(in.Cdc, k)
+
+	return ModuleOutputs{SupplyKeeper: k, Module: m}
 }

@@ -5,26 +5,24 @@ package simulation
 import (
 	"math/rand"
 
-	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
-
-	subspacessim "github.com/desmos-labs/desmos/v5/x/subspaces/simulation"
-
-	"github.com/desmos-labs/desmos/v5/testutil/simtesting"
-
-	"github.com/desmos-labs/desmos/v5/x/relationships/keeper"
-	"github.com/desmos-labs/desmos/v5/x/relationships/types"
-
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/desmos-labs/desmos/v5/testutil/simtesting"
+
+	subspacessim "github.com/desmos-labs/desmos/v5/x/subspaces/simulation"
+
+	"github.com/desmos-labs/desmos/v5/x/relationships/keeper"
+	"github.com/desmos-labs/desmos/v5/x/relationships/types"
 )
 
 // SimulateMsgCreateRelationship tests and runs a single MsgCreateRelationship
 func SimulateMsgCreateRelationship(
-	k keeper.Keeper, sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k keeper.Keeper, sk types.SubspacesKeeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -42,7 +40,7 @@ func SimulateMsgCreateRelationship(
 
 // randomCreateRelationshipFields returns the data used to build a random MsgCreateRelationship
 func randomCreateRelationshipFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk subspaceskeeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk types.SubspacesKeeper,
 ) (sender simtypes.Account, relationship types.Relationship, skip bool) {
 	// Get a sender
 	if len(accs) == 0 {

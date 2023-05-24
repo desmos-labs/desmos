@@ -28,12 +28,14 @@ var (
 
 // IBCModule implements the ICS26 interface for transfer given the transfer keeper.
 type IBCModule struct {
-	cdc    codec.Codec
-	keeper keeper.Keeper
+	cdc codec.Codec
+
+	// To ensure setting IBC keepers properly, keeper must be a reference as DesmosApp
+	keeper *keeper.Keeper
 }
 
 // NewIBCModule creates a new IBCModule given the keeper
-func NewIBCModule(cdc codec.Codec, k keeper.Keeper) IBCModule {
+func NewIBCModule(cdc codec.Codec, k *keeper.Keeper) IBCModule {
 	return IBCModule{
 		cdc:    cdc,
 		keeper: k,
@@ -45,7 +47,7 @@ func NewIBCModule(cdc codec.Codec, k keeper.Keeper) IBCModule {
 // supported version. Only 2^32 channels are allowed to be created.
 func ValidateProfilesChannelParams(
 	ctx sdk.Context,
-	keeper keeper.Keeper,
+	keeper *keeper.Keeper,
 	order channeltypes.Order,
 	portID string,
 	channelID string,

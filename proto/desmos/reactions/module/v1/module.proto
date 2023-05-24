@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package desmos.reactions.module.v1;
+
+import "cosmos/app/v1alpha1/module.proto";
+
+// Module is the config object of the reactions module.
+message Module {
+  option (cosmos.app.v1alpha1.module) = {
+    go_import : "github.com/desmos-labs/desmos/x/reactions"
+  };
+
+  // hooks_order specifies the order of reactions hooks and should be a list
+  // of module names which provide a reactions hooks instance. If no order is
+  // provided, then hooks will be applied in alphabetical order of module names.
+  repeated string hooks_order = 1;
+}

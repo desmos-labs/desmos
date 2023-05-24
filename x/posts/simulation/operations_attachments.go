@@ -14,10 +14,11 @@ import (
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
 	"github.com/desmos-labs/desmos/v5/testutil/simtesting"
+
+	subspacessim "github.com/desmos-labs/desmos/v5/x/subspaces/simulation"
+
 	"github.com/desmos-labs/desmos/v5/x/posts/keeper"
 	"github.com/desmos-labs/desmos/v5/x/posts/types"
-	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
-	subspacessim "github.com/desmos-labs/desmos/v5/x/subspaces/simulation"
 )
 
 // SimulateMsgAddPostAttachment tests and runs a single msg add post attachment
@@ -85,7 +86,7 @@ func randomAddPostAttachmentFields(
 
 // SimulateMsgRemovePostAttachment tests and runs a single msg remove post attachment
 func SimulateMsgRemovePostAttachment(
-	k keeper.Keeper, sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k keeper.Keeper, sk types.SubspacesKeeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -105,7 +106,7 @@ func SimulateMsgRemovePostAttachment(
 
 // randomRemovePostAttachmentFields returns the data needed to remove an attachment from an existing post
 func randomRemovePostAttachmentFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk subspaceskeeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk types.SubspacesKeeper,
 ) (subspaceID uint64, postID uint64, attachmentID uint32, editor simtypes.Account, skip bool) {
 	if len(accs) == 0 {
 		// Skip because there are no accounts

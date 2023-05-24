@@ -5,28 +5,25 @@ package simulation
 import (
 	"math/rand"
 
-	postskeeper "github.com/desmos-labs/desmos/v5/x/posts/keeper"
-	postssim "github.com/desmos-labs/desmos/v5/x/posts/simulation"
-	"github.com/desmos-labs/desmos/v5/x/reactions/keeper"
-
-	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
-	subspacessim "github.com/desmos-labs/desmos/v5/x/subspaces/simulation"
-	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
-
-	"github.com/desmos-labs/desmos/v5/testutil/simtesting"
-
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
+	"github.com/desmos-labs/desmos/v5/testutil/simtesting"
+
+	postssim "github.com/desmos-labs/desmos/v5/x/posts/simulation"
+	subspacessim "github.com/desmos-labs/desmos/v5/x/subspaces/simulation"
+	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
+
+	"github.com/desmos-labs/desmos/v5/x/reactions/keeper"
 	"github.com/desmos-labs/desmos/v5/x/reactions/types"
 )
 
 // SimulateMsgAddReaction tests and runs a single MsgAddReaction
 func SimulateMsgAddReaction(
-	k keeper.Keeper, profilesKeeper types.ProfilesKeeper, sk subspaceskeeper.Keeper, pk postskeeper.Keeper,
+	k keeper.Keeper, profilesKeeper types.ProfilesKeeper, sk types.SubspacesKeeper, pk types.PostsKeeper,
 	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
@@ -56,7 +53,7 @@ func SimulateMsgAddReaction(
 // randomAddReactionFields returns the data used to build a random MsgAddReaction
 func randomAddReactionFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account,
-	k keeper.Keeper, profilesKeeper types.ProfilesKeeper, sk subspaceskeeper.Keeper, pk postskeeper.Keeper,
+	k keeper.Keeper, profilesKeeper types.ProfilesKeeper, sk types.SubspacesKeeper, pk types.PostsKeeper,
 ) (reaction types.Reaction, user simtypes.Account, skip bool) {
 	// Get the user
 	if len(accs) == 0 {
@@ -152,7 +149,7 @@ func randomAddReactionFields(
 
 // SimulateMsgRemoveReaction tests and runs a single MsgRemoveReaction
 func SimulateMsgRemoveReaction(
-	k keeper.Keeper, sk subspaceskeeper.Keeper, pk types.PostsKeeper,
+	k keeper.Keeper, sk types.SubspacesKeeper, pk types.PostsKeeper,
 	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
@@ -182,7 +179,7 @@ func SimulateMsgRemoveReaction(
 // randomRemoveReactionFields returns the data used to build a random MsgRemoveReaction
 func randomRemoveReactionFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account,
-	k keeper.Keeper, sk subspaceskeeper.Keeper, pk types.PostsKeeper,
+	k keeper.Keeper, sk types.SubspacesKeeper, pk types.PostsKeeper,
 ) (reaction types.Reaction, user simtypes.Account, skip bool) {
 	// Get the user
 	if len(accs) == 0 {

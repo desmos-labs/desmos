@@ -5,12 +5,12 @@ import (
 	"encoding/json"
 	"fmt"
 
-	profilesv4 "github.com/desmos-labs/desmos/v5/x/profiles/legacy/v4"
-
-	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
+	"cosmossdk.io/core/appmodule"
+	"cosmossdk.io/depinject"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -22,6 +22,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 
 	"github.com/spf13/cobra"
+
+	modulev1 "github.com/desmos-labs/desmos/v5/api/desmos/relationships/module/v1"
+
+	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
+	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 
 	"github.com/desmos-labs/desmos/v5/x/relationships/client/cli"
 	"github.com/desmos-labs/desmos/v5/x/relationships/keeper"
@@ -38,6 +43,8 @@ var (
 	_ module.AppModule           = AppModule{}
 	_ module.AppModuleBasic      = AppModuleBasic{}
 	_ module.AppModuleSimulation = AppModule{}
+	_ appmodule.AppModule        = AppModule{}
+	_ depinject.OnePerModuleType = AppModule{}
 )
 
 // AppModuleBasic defines the basic application module used by the relationships module.
@@ -95,8 +102,7 @@ func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) 
 type AppModule struct {
 	AppModuleBasic
 	keeper keeper.Keeper
-	pk     profilesv4.Keeper
-	sk     subspaceskeeper.Keeper
+	sk     types.SubspacesKeeper
 	ak     authkeeper.AccountKeeper
 	bk     bankkeeper.Keeper
 }
@@ -106,12 +112,8 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
 	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
 
-	m := keeper.NewMigrator(am.keeper, am.pk)
-	err := cfg.RegisterMigration(types.ModuleName, 1, m.Migrate1To2)
-	if err != nil {
-		panic(err)
-	}
-	err = cfg.RegisterMigration(types.ModuleName, 2, m.Migrate2To3)
+	m := keeper.NewMigrator(am.keeper)
+	err := cfg.RegisterMigration(types.ModuleName, 2, m.Migrate2To3)
 	if err != nil {
 		panic(err)
 	}
@@ -120,7 +122,7 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 // NewAppModule creates a new AppModule Object
 func NewAppModule(
 	cdc codec.Codec,
-	k keeper.Keeper, sk subspaceskeeper.Keeper, pk profilesv4.Keeper,
+	k keeper.Keeper, sk types.SubspacesKeeper,
 	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) AppModule {
 	return AppModule{
@@ -129,7 +131,6 @@ func NewAppModule(
 		ak:             ak,
 		bk:             bk,
 		sk:             sk,
-		pk:             pk,
 	}
 }
 
@@ -197,4 +198,67 @@ func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
 // WeightedOperations returns the all the relationships module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
 	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.sk, am.ak, am.bk)
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// App Wiring Setup
+
+// IsOnePerModuleType implements the depinject.OnePerModuleType interface.
+func (am AppModule) IsOnePerModuleType() {}
+
+// IsAppModule implements the appmodule.AppModule interface.
+func (am AppModule) IsAppModule() {}
+
+func init() {
+	appmodule.Register(
+		&modulev1.Module{},
+		appmodule.Provide(
+			ProvideModule,
+		),
+	)
+}
+
+type ModuleInputs struct {
+	depinject.In
+
+	Cdc codec.Codec
+	Key *storetypes.KVStoreKey
+
+	AccountKeeper authkeeper.AccountKeeper
+	BankKeeper    bankkeeper.Keeper
+
+	SubspacesKeeper *subspaceskeeper.Keeper
+}
+
+type ModuleOutputs struct {
+	depinject.Out
+
+	RelationshipsKeeper keeper.Keeper
+	Module              appmodule.AppModule
+
+	SubspacesHooks subspacestypes.SubspacesHooksWrapper
+}
+
+func ProvideModule(in ModuleInputs) ModuleOutputs {
+
+	k := keeper.NewKeeper(
+		in.Cdc,
+		in.Key,
+		in.SubspacesKeeper,
+	)
+
+	m := NewAppModule(
+		in.Cdc,
+		k,
+		in.SubspacesKeeper,
+		in.AccountKeeper,
+		in.BankKeeper,
+	)
+
+	return ModuleOutputs{
+		RelationshipsKeeper: k,
+		Module:              m,
+		SubspacesHooks:      subspacestypes.SubspacesHooksWrapper{Hooks: k.Hooks()},
+	}
 }

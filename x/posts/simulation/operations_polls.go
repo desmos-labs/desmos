@@ -13,16 +13,17 @@ import (
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
 	"github.com/desmos-labs/desmos/v5/testutil/simtesting"
-	"github.com/desmos-labs/desmos/v5/x/posts/keeper"
-	"github.com/desmos-labs/desmos/v5/x/posts/types"
-	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
+
 	subspacessim "github.com/desmos-labs/desmos/v5/x/subspaces/simulation"
 	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
+
+	"github.com/desmos-labs/desmos/v5/x/posts/keeper"
+	"github.com/desmos-labs/desmos/v5/x/posts/types"
 )
 
 // SimulateMsgAnswerPoll tests and runs a single msg answer poll post
 func SimulateMsgAnswerPoll(
-	k keeper.Keeper, sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k keeper.Keeper, sk types.SubspacesKeeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -42,7 +43,7 @@ func SimulateMsgAnswerPoll(
 
 // randomAnswerPollFields returns the data needed to answer a user poll
 func randomAnswerPollFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk subspaceskeeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk types.SubspacesKeeper,
 ) (answer types.UserAnswer, user simtypes.Account, skip bool) {
 	if len(accs) == 0 {
 		// Skip because there are no accounts
