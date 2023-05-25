@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
+## Version 5.0.1
+### Dependencies
+- Updated `ibc-go` to `v7.0.1`
+
 ## Version 5.0.0
 ### Breaking changes
 With this version, the Proto version of the `posts` module has been bumped from `v2` to `v3`. For this reason, the following changes have been made:
