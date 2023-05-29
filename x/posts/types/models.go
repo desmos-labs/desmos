@@ -252,23 +252,23 @@ func NewPostMove(subspaceID uint64, sectionID uint32, postID uint64, updateTime 
 	}
 }
 
-// Move updates the fields of a moved post without validating it.
+// Update updates the fields of a moved post without validating it.
 // Before storing the updated post, a validation with keeper.ValidatePost should
 // be performed.
-func (p Post) Move(update PostMove) Post {
+func (update PostMove) Update(post Post) Post {
 	return NewPost(
 		update.SubspaceID,
 		update.SectionID,
 		update.PostID,
-		p.ExternalID,
-		p.Text,
-		p.Author,
+		post.ExternalID,
+		post.Text,
+		post.Author,
 		0,
-		p.Entities,
-		p.Tags,
-		p.ReferencedPosts,
-		p.ReplySettings,
-		p.CreationDate,
+		post.Entities,
+		post.Tags,
+		post.ReferencedPosts,
+		post.ReplySettings,
+		post.CreationDate,
 		&update.UpdateTime,
 	)
 }
@@ -496,6 +496,39 @@ func (a *Attachment) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 
 // --------------------------------------------------------------------------------------------------------------------
 
+// AttachmentMove contains data related to a attachment that can be updated after it has been moved.
+type AttachmentMove struct {
+	// Move's subspace id will always replace the existing ones
+	SubspaceID uint64
+
+	// Move's post id will always replace the existing ones
+	PostID uint64
+
+	// Move's id will always replace the existing ones
+	AttachmentID uint32
+}
+
+// NewAttachmentMove returns a new AttachmentMove instance
+func NewAttachmentMove(subspaceID uint64, postID uint64, attachmentID uint32) AttachmentMove {
+	return AttachmentMove{
+		SubspaceID:   subspaceID,
+		PostID:       postID,
+		AttachmentID: attachmentID,
+	}
+}
+
+// Update updates the fields of a moved attachment.
+func (update AttachmentMove) Update(attachment Attachment) Attachment {
+	return Attachment{
+		update.SubspaceID,
+		update.PostID,
+		update.AttachmentID,
+		attachment.Content,
+	}
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
 // AttachmentContent represents an attachment content
 type AttachmentContent interface {
 	proto.Message
@@ -629,6 +662,15 @@ func (p *Poll) Validate() error {
 func IsPoll(attachment Attachment) bool {
 	_, ok := attachment.Content.GetCachedValue().(*Poll)
 	return ok
+}
+
+// IsActivePoll tells whether the given attachment represents a active poll or not
+func IsActivePoll(attachment Attachment) bool {
+	poll, ok := attachment.Content.GetCachedValue().(*Poll)
+	if !ok {
+		return false
+	}
+	return poll.FinalTallyResults == nil
 }
 
 // UnpackInterfaces implements codectypes.UnpackInterfacesMessage

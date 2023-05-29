@@ -525,18 +525,16 @@ func (k msgServer) MovePost(goCtx context.Context, msg *types.MsgMovePost) (*typ
 		return nil, errors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot move this post")
 	}
 
-	k.Keeper.DeletePost(ctx, msg.SubspaceID, msg.PostID)
-
 	// Get the next post id
-	postID, err := k.GetNextPostID(ctx, msg.TargetSubspaceID)
+	newPostID, err := k.GetNextPostID(ctx, msg.TargetSubspaceID)
 	if err != nil {
 		return nil, err
 	}
 
 	// Update the post and validate it
 	updateTime := ctx.BlockTime()
-	update := types.NewPostMove(msg.TargetSubspaceID, msg.TargetSectionID, postID, updateTime)
-	updatedPost := post.Move(update)
+	postMove := types.NewPostMove(msg.TargetSubspaceID, msg.TargetSectionID, newPostID, updateTime)
+	updatedPost := postMove.Update(post)
 	err = k.ValidatePost(ctx, updatedPost)
 	if err != nil {
 		return nil, err
@@ -546,6 +544,26 @@ func (k msgServer) MovePost(goCtx context.Context, msg *types.MsgMovePost) (*typ
 
 	// Update the id for the next post
 	k.SetNextPostID(ctx, msg.TargetSubspaceID, post.ID+1)
+
+	// Move all post attachments
+	newAttachmentID := uint32(0)
+	k.IteratePostAttachments(ctx, post.SubspaceID, post.ID, func(attachment types.Attachment) (stop bool) {
+		newAttachmentID++
+		attachmentMove := types.NewAttachmentMove(msg.TargetSubspaceID, newPostID, newAttachmentID)
+		updatedAttachment := attachmentMove.Update(attachment)
+		k.SaveAttachment(ctx, updatedAttachment)
+
+		if types.IsActivePoll(updatedAttachment) {
+			k.InsertActivePollQueue(ctx, updatedAttachment)
+		}
+		return false
+	})
+
+	// Update the id for the next attachment
+	k.SetNextAttachmentID(ctx, msg.TargetSubspaceID, newPostID, newAttachmentID+1)
+
+	// Delete the post
+	k.Keeper.DeletePost(ctx, msg.SubspaceID, msg.PostID)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(

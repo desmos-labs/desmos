@@ -1157,7 +1157,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddPostAttachment() {
 					gomock.Any(),
 					uint64(1),
 					uint32(0),
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 					subspacestypes.NewPermission(types.PermissionEditOwnContent),
 				).Return(false)
 			},
@@ -1231,13 +1231,13 @@ func (suite *KeeperTestSuite) TestMsgServer_AddPostAttachment() {
 			setup: func() {
 				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
 
-				// suite.sk.EXPECT().HasPermission(
-				// 	gomock.Any(),
-				// 	uint64(1),
-				// 	uint32(0),
-				// 	"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-				// 	subspacestypes.NewPermission(types.PermissionEditOwnContent),
-				// ).Return(true)
+				suite.sk.EXPECT().HasPermission(
+					gomock.Any(),
+					uint64(1),
+					uint32(0),
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					subspacestypes.NewPermission(types.PermissionEditOwnContent),
+				).Return(true)
 			},
 			setupCtx: func(ctx sdk.Context) sdk.Context {
 				return ctx.WithBlockTime(time.Date(2021, 1, 1, 12, 00, 00, 000, time.UTC))
@@ -2709,6 +2709,32 @@ func (suite *KeeperTestSuite) TestMsgServer_MovePost() {
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
 				))
+
+				// Save a media
+				suite.k.SaveAttachment(ctx, types.NewAttachment(
+					1,
+					1,
+					2,
+					types.NewMedia("ftp://user:password@host:post/media.png", "media/png"),
+				))
+
+				// Save a active poll
+				suite.k.SaveAttachment(ctx, types.NewAttachment(
+					1,
+					1,
+					4,
+					types.NewPoll(
+						"What animal is best?",
+						[]types.Poll_ProvidedAnswer{
+							types.NewProvidedAnswer("Cat", nil),
+							types.NewProvidedAnswer("Dog", nil),
+						},
+						time.Date(2100, 1, 1, 12, 00, 00, 000, time.UTC),
+						false,
+						false,
+						nil,
+					),
+				))
 			},
 			msg: types.NewMsgMovePost(
 				1,
@@ -2742,10 +2768,10 @@ func (suite *KeeperTestSuite) TestMsgServer_MovePost() {
 				// Check old post id is deleted
 				suite.Require().False(suite.k.HasPost(ctx, 1, 1))
 
-				// Check post id is moved properly
-				updateTime := time.Date(2021, 1, 1, 12, 00, 00, 000, time.UTC)
+				// Check post is moved properly
 				post, found := suite.k.GetPost(ctx, 2, 1)
 				suite.Require().True(found)
+				updateTime := ctx.BlockTime()
 				suite.Require().Equal(types.NewPost(
 					2,
 					1,
@@ -2761,6 +2787,50 @@ func (suite *KeeperTestSuite) TestMsgServer_MovePost() {
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					&updateTime,
 				), post)
+
+				// Check old attachments are deleted
+				suite.Require().False(suite.k.HasAttachment(ctx, 1, 1, 2))
+				suite.Require().False(suite.k.HasAttachment(ctx, 1, 1, 4))
+
+				// Check media active moved properly
+				media, found := suite.k.GetAttachment(ctx, 2, 1, 1)
+				suite.Require().True(found)
+				suite.Require().Equal(types.NewAttachment(
+					2,
+					1,
+					1,
+					types.NewMedia("ftp://user:password@host:post/media.png", "media/png"),
+				), media)
+
+				// Check active poll is moved properly
+				poll, found := suite.k.GetAttachment(ctx, 2, 1, 2)
+				suite.Require().True(found)
+				suite.Require().Equal(types.NewAttachment(
+					2,
+					1,
+					2,
+					types.NewPoll(
+						"What animal is best?",
+						[]types.Poll_ProvidedAnswer{
+							types.NewProvidedAnswer("Cat", nil),
+							types.NewProvidedAnswer("Dog", nil),
+						},
+						time.Date(2100, 1, 1, 12, 00, 00, 000, time.UTC),
+						false,
+						false,
+						nil,
+					),
+				), poll)
+
+				// Check active poll is inside the queue
+				suite.Require().True(ctx.KVStore(suite.storeKey).Has(
+					types.ActivePollQueueKey(2, 1, 2, time.Date(2100, 1, 1, 12, 00, 00, 000, time.UTC))),
+				)
+
+				// Check next attachment id is set
+				nextAttachmentID, err := suite.k.GetNextAttachmentID(ctx, 2, 1)
+				suite.Require().NoError(err)
+				suite.Require().Equal(uint32(3), nextAttachmentID)
 			},
 		},
 	}

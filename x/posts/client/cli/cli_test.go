@@ -1,3 +1,4 @@
+// go:build norace
 //go:build norace
 // +build norace
 
