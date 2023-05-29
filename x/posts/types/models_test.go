@@ -1037,3 +1037,78 @@ func TestPollTallyResults_Validate(t *testing.T) {
 		})
 	}
 }
+
+func TestPostMove(t *testing.T) {
+	updateTime := time.Date(2100, 12, 1, 0, 0, 0, 0, time.UTC)
+	update := types.NewPostMove(2, 2, 2, updateTime)
+
+	post := types.NewPost(
+		1,
+		0,
+		1,
+		"External id",
+		"This is a post text that does not contain any useful information",
+		"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+		1,
+		types.NewEntities(
+			[]types.TextTag{
+				types.NewTextTag(1, 3, "tag"),
+			},
+			[]types.TextTag{
+				types.NewTextTag(4, 6, "tag"),
+			},
+			[]types.Url{
+				types.NewURL(7, 9, "URL", "Display URL"),
+			},
+		),
+		[]string{"general"},
+		[]types.PostReference{
+			types.NewPostReference(types.POST_REFERENCE_TYPE_QUOTE, 1, 0),
+		},
+		types.REPLY_SETTING_EVERYONE,
+		time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+		nil,
+	)
+
+	updated := update.Update(post)
+	require.Equal(t, types.NewPost(
+		2,
+		2,
+		2,
+		"External id",
+		"This is a post text that does not contain any useful information",
+		"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+		0,
+		types.NewEntities(
+			[]types.TextTag{
+				types.NewTextTag(1, 3, "tag"),
+			},
+			[]types.TextTag{
+				types.NewTextTag(4, 6, "tag"),
+			},
+			[]types.Url{
+				types.NewURL(7, 9, "URL", "Display URL"),
+			},
+		),
+		[]string{"general"},
+		nil,
+		types.REPLY_SETTING_EVERYONE,
+		time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+		&updateTime,
+	), updated)
+}
+
+func TestAttachmentMove(t *testing.T) {
+	update := types.NewAttachmentMove(2, 2, 2)
+
+	attachment := types.NewAttachment(1, 1, 1, types.NewMedia(
+		"ftp://user:password@example.com/image.png",
+		"image/png",
+	))
+
+	updated := update.Update(attachment)
+	require.Equal(t, types.NewAttachment(2, 2, 2, types.NewMedia(
+		"ftp://user:password@example.com/image.png",
+		"image/png",
+	)), updated)
+}

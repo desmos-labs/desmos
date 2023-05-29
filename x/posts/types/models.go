@@ -266,7 +266,7 @@ func (update PostMove) Update(post Post) Post {
 		0,
 		post.Entities,
 		post.Tags,
-		post.ReferencedPosts,
+		nil,
 		post.ReplySettings,
 		post.CreationDate,
 		&update.UpdateTime,
