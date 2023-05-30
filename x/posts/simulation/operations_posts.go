@@ -237,3 +237,77 @@ func randomPostDeleteFields(
 
 	return subspaceID, postID, user, false
 }
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// SimulateMsgMovePost tests and runs a single msg move post
+func SimulateMsgMovePost(
+	k keeper.Keeper, sk types.SubspacesKeeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+) simtypes.Operation {
+	return func(
+		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
+		accs []simtypes.Account, _ string,
+	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
+
+		subspaceID, postID, targetSubspaceID, targetSectionID, signer, skip := randomPostMoveFields(r, ctx, accs, k, sk)
+		if skip {
+			return simtypes.NoOpMsg(types.RouterKey, "move post", "skip"), nil, nil
+		}
+
+		msg := types.NewMsgMovePost(subspaceID, postID, targetSubspaceID, targetSectionID, signer.Address.String())
+		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, signer)
+	}
+}
+
+// randomPostMoveFields returns the data needed to move a post
+func randomPostMoveFields(
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk types.SubspacesKeeper,
+) (subspaceID uint64, postID uint64, targetSubspaceID uint64, sectionID uint32, user simtypes.Account, skip bool) {
+	if len(accs) == 0 {
+		// Skip because there are no accounts
+		skip = true
+		return
+	}
+
+	// Get a section
+	sections := sk.GetAllSections(ctx)
+	if len(sections) == 0 {
+		// Skip because there are no sections
+		skip = true
+		return
+	}
+	section := subspacessim.RandomSection(r, sections)
+
+	// Get a random post
+	posts := k.GetPosts(ctx)
+	if len(posts) == 0 {
+		// Skip because there are no posts
+		skip = true
+		return
+	}
+	post := RandomPost(r, posts)
+
+	if post.SubspaceID == section.SubspaceID {
+		// Skip because moved post is already inside the subspace
+		skip = true
+		return
+	}
+
+	// Get the user
+	authorAddr := post.Author
+	if !sk.HasPermission(ctx, section.SubspaceID, section.ID, authorAddr, types.PermissionWrite) {
+		// Skip because the user has not the permissions
+		skip = true
+		return
+	}
+
+	userAcc := subspacessim.GetAccount(authorAddr, accs)
+	if userAcc == nil {
+		// Skip because the author is not an account we have access to
+		skip = true
+		return
+	}
+	user = *userAcc
+
+	return post.SubspaceID, post.ID, section.SubspaceID, section.ID, user, false
+}

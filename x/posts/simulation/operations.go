@@ -12,7 +12,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
 
-	"github.com/desmos-labs/desmos/v5/app/params"
 	"github.com/desmos-labs/desmos/v5/x/posts/keeper"
 	"github.com/desmos-labs/desmos/v5/x/posts/types"
 )
@@ -21,12 +20,21 @@ import (
 //
 //nolint:gosec // These are not hardcoded credentials
 const (
+	DefaultWeightMsgCreatePost           int = 80
+	DefaultWeightMsgEditPost             int = 40
+	DefaultWeightMsgDeletePost           int = 20
+	DefaultWeightMsgAddPostAttachment    int = 50
+	DefaultWeightMsgRemovePostAttachment int = 50
+	DefaultWeightMsgAnswerPoll           int = 50
+	DefaultWeightMsgMovePost             int = 10
+
 	OpWeightMsgCreatePost           = "op_weight_msg_create_post"
 	OpWeightMsgEditPost             = "op_weight_msg_edit_post"
 	OpWeightMsgDeletePost           = "op_weight_msg_delete_post"
 	OpWeightMsgAddPostAttachment    = "op_weight_msg_add_post_attachment"
 	OpWeightMsgRemovePostAttachment = "op_weight_msg_remove_post_attachment"
 	OpWeightMsgAnswerPoll           = "op_weight_msg_answer_poll"
+	OpWeightMsgMovePost             = "op_weight_msg_move_post"
 
 	DefaultGasValue = 200000
 )
@@ -39,42 +47,49 @@ func WeightedOperations(
 	var weightMsgCreatePost int
 	appParams.GetOrGenerate(cdc, OpWeightMsgCreatePost, &weightMsgCreatePost, nil,
 		func(_ *rand.Rand) {
-			weightMsgCreatePost = params.DefaultWeightMsgCreatePost
+			weightMsgCreatePost = DefaultWeightMsgCreatePost
 		},
 	)
 
 	var weightMsgEditPost int
 	appParams.GetOrGenerate(cdc, OpWeightMsgEditPost, &weightMsgEditPost, nil,
 		func(_ *rand.Rand) {
-			weightMsgEditPost = params.DefaultWeightMsgEditPost
+			weightMsgEditPost = DefaultWeightMsgEditPost
 		},
 	)
 
 	var weightMsgDeletePost int
 	appParams.GetOrGenerate(cdc, OpWeightMsgDeletePost, &weightMsgDeletePost, nil,
 		func(_ *rand.Rand) {
-			weightMsgDeletePost = params.DefaultWeightMsgDeletePost
+			weightMsgDeletePost = DefaultWeightMsgDeletePost
 		},
 	)
 
 	var weightMsgAddPostAttachment int
 	appParams.GetOrGenerate(cdc, OpWeightMsgAddPostAttachment, &weightMsgAddPostAttachment, nil,
 		func(_ *rand.Rand) {
-			weightMsgAddPostAttachment = params.DefaultWeightMsgAddPostAttachment
+			weightMsgAddPostAttachment = DefaultWeightMsgAddPostAttachment
 		},
 	)
 
 	var weightMsgRemovePostAttachment int
 	appParams.GetOrGenerate(cdc, OpWeightMsgRemovePostAttachment, &weightMsgRemovePostAttachment, nil,
-		func(r *rand.Rand) {
-			weightMsgRemovePostAttachment = params.DefaultWeightMsgRemovePostAttachment
+		func(_ *rand.Rand) {
+			weightMsgRemovePostAttachment = DefaultWeightMsgRemovePostAttachment
 		},
 	)
 
 	var weightMsgAnswerPoll int
 	appParams.GetOrGenerate(cdc, OpWeightMsgAnswerPoll, &weightMsgAnswerPoll, nil,
-		func(r *rand.Rand) {
-			weightMsgAnswerPoll = params.DefaultWeightMsgAnswerPoll
+		func(_ *rand.Rand) {
+			weightMsgAnswerPoll = DefaultWeightMsgAnswerPoll
+		},
+	)
+
+	var weightMsgMovePost int
+	appParams.GetOrGenerate(cdc, OpWeightMsgMovePost, &weightMsgMovePost, nil,
+		func(_ *rand.Rand) {
+			weightMsgMovePost = DefaultWeightMsgMovePost
 		},
 	)
 
@@ -102,6 +117,10 @@ func WeightedOperations(
 		sim.NewWeightedOperation(
 			weightMsgAnswerPoll,
 			SimulateMsgAnswerPoll(k, sk, ak, bk),
+		),
+		sim.NewWeightedOperation(
+			weightMsgMovePost,
+			SimulateMsgMovePost(k, sk, ak, bk),
 		),
 	}
 }
