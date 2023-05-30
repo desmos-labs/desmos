@@ -2693,7 +2693,7 @@ func (suite *KeeperTestSuite) TestMsgServer_MovePost() {
 			},
 			store: func(ctx sdk.Context) {
 				suite.k.SetParams(ctx, types.DefaultParams())
-				suite.k.SetNextPostID(ctx, 2, 1)
+				suite.k.SetNextPostID(ctx, 2, 2)
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					0,
@@ -2756,26 +2756,26 @@ func (suite *KeeperTestSuite) TestMsgServer_MovePost() {
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyPostID, "1"),
 					sdk.NewAttribute(types.AttributeKeyNewSubspaceID, "2"),
-					sdk.NewAttribute(types.AttributeKeyNewPostID, "1"),
+					sdk.NewAttribute(types.AttributeKeyNewPostID, "2"),
 				),
 			},
 			check: func(ctx sdk.Context) {
 				// Check next id is updated
 				nextID, err := suite.k.GetNextPostID(ctx, 2)
 				suite.Require().NoError(err)
-				suite.Require().Equal(uint64(2), nextID)
+				suite.Require().Equal(uint64(3), nextID)
 
 				// Check old post id is deleted
 				suite.Require().False(suite.k.HasPost(ctx, 1, 1))
 
 				// Check post is moved properly
-				post, found := suite.k.GetPost(ctx, 2, 1)
+				post, found := suite.k.GetPost(ctx, 2, 2)
 				suite.Require().True(found)
 				updateTime := ctx.BlockTime()
 				suite.Require().Equal(types.NewPost(
 					2,
 					1,
-					1,
+					2,
 					"External ID",
 					"This is a text",
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
@@ -2793,21 +2793,21 @@ func (suite *KeeperTestSuite) TestMsgServer_MovePost() {
 				suite.Require().False(suite.k.HasAttachment(ctx, 1, 1, 4))
 
 				// Check media active moved properly
-				media, found := suite.k.GetAttachment(ctx, 2, 1, 1)
+				media, found := suite.k.GetAttachment(ctx, 2, 2, 1)
 				suite.Require().True(found)
 				suite.Require().Equal(types.NewAttachment(
 					2,
-					1,
+					2,
 					1,
 					types.NewMedia("ftp://user:password@host:post/media.png", "media/png"),
 				), media)
 
 				// Check active poll is moved properly
-				poll, found := suite.k.GetAttachment(ctx, 2, 1, 2)
+				poll, found := suite.k.GetAttachment(ctx, 2, 2, 2)
 				suite.Require().True(found)
 				suite.Require().Equal(types.NewAttachment(
 					2,
-					1,
+					2,
 					2,
 					types.NewPoll(
 						"What animal is best?",
@@ -2824,11 +2824,11 @@ func (suite *KeeperTestSuite) TestMsgServer_MovePost() {
 
 				// Check active poll is inside the queue
 				suite.Require().True(ctx.KVStore(suite.storeKey).Has(
-					types.ActivePollQueueKey(2, 1, 2, time.Date(2100, 1, 1, 12, 00, 00, 000, time.UTC))),
+					types.ActivePollQueueKey(2, 2, 2, time.Date(2100, 1, 1, 12, 00, 00, 000, time.UTC))),
 				)
 
 				// Check next attachment id is set
-				nextAttachmentID, err := suite.k.GetNextAttachmentID(ctx, 2, 1)
+				nextAttachmentID, err := suite.k.GetNextAttachmentID(ctx, 2, 2)
 				suite.Require().NoError(err)
 				suite.Require().Equal(uint32(3), nextAttachmentID)
 			},
