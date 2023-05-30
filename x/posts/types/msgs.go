@@ -482,6 +482,10 @@ func (msg MsgMovePost) ValidateBasic() error {
 		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid target subspace id: %d", msg.TargetSubspaceID)
 	}
 
+	if msg.SubspaceID == msg.TargetSubspaceID {
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "can not move to the current subspace with id %d", msg.TargetSectionID)
+	}
+
 	_, err := sdk.AccAddressFromBech32(msg.Owner)
 	if err != nil {
 		return fmt.Errorf("invalid owner address: %s", err)

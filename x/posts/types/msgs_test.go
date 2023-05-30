@@ -746,7 +746,7 @@ func TestMsgAnswerPoll_GetSigners(t *testing.T) {
 var msgMovePost = types.NewMsgMovePost(
 	1,
 	1,
-	1,
+	2,
 	0,
 	"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 )
@@ -799,6 +799,17 @@ func TestMsgMovePost_ValidateBasic(t *testing.T) {
 			shouldErr: true,
 		},
 		{
+			name: "target subspace id matches current subspace id returns error",
+			msg: types.NewMsgMovePost(
+				msgMovePost.SubspaceID,
+				msgMovePost.PostID,
+				msgMovePost.SubspaceID,
+				msgMovePost.TargetSectionID,
+				msgMovePost.Owner,
+			),
+			shouldErr: true,
+		},
+		{
 			name: "invalid owner returns error",
 			msg: types.NewMsgMovePost(
 				msgMovePost.SubspaceID,
@@ -829,7 +840,7 @@ func TestMsgMovePost_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgMovePost_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgMovePost","value":{"owner":"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd","post_id":"1","subspace_id":"1","target_subspace_id":"1"}}`
+	expected := `{"type":"desmos/MsgMovePost","value":{"owner":"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd","post_id":"1","subspace_id":"1","target_subspace_id":"2"}}`
 	require.Equal(t, expected, string(msgMovePost.GetSignBytes()))
 }
 
