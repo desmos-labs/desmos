@@ -35,6 +35,7 @@ func NewTxCmd() *cobra.Command {
 		GetCmdAddPostAttachment(),
 		GetCmdRemovePostAttachment(),
 		GetCmdAnswerPoll(),
+		GetCmdMovePost(),
 	)
 
 	return subspacesTxCmd
@@ -335,6 +336,55 @@ Then, the "Cat" answer has index 0 and and the "Dog" answer has index 1.
 			signer := clientCtx.FromAddress.String()
 
 			msg := types.NewMsgAnswerPoll(subspaceID, postID, pollID, answers, signer)
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// GetCmdMovePost returns the command allowing to move an existing post to another subspace
+func GetCmdMovePost() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "move-post [subspace-id] [post-id] [target-subspace-id] [target-section-id]",
+		Args:    cobra.ExactArgs(4),
+		Short:   "Move an existing post to another subspace",
+		Example: fmt.Sprintf(`%s tx posts move-post 1 1 2 1 --from alice`, version.AppName),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			subspaceID, err := subspacestypes.ParseSubspaceID(args[0])
+			if err != nil {
+				return err
+			}
+
+			postID, err := types.ParsePostID(args[1])
+			if err != nil {
+				return err
+			}
+
+			targetSubspaceID, err := subspacestypes.ParseSubspaceID(args[2])
+			if err != nil {
+				return err
+			}
+
+			targetSectionID, err := subspacestypes.ParseSectionID(args[2])
+			if err != nil {
+				return err
+			}
+
+			signer := clientCtx.FromAddress.String()
+
+			msg := types.NewMsgMovePost(subspaceID, postID, targetSubspaceID, targetSectionID, signer)
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}
