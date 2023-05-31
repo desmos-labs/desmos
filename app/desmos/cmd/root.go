@@ -5,14 +5,14 @@ import (
 	"io"
 	"os"
 
+	simappparams "cosmossdk.io/simapp/params"
 	"github.com/CosmWasm/wasmd/x/wasm"
 	serverconfig "github.com/cosmos/cosmos-sdk/server/config"
 
+	"github.com/cosmos/cosmos-sdk/client/config"
+
 	"github.com/desmos-labs/desmos/v5/app/desmos/cmd/chainlink"
 	"github.com/desmos-labs/desmos/v5/app/desmos/cmd/sign"
-	"github.com/desmos-labs/desmos/v5/app/params"
-
-	"github.com/cosmos/cosmos-sdk/client/config"
 
 	"github.com/cosmos/cosmos-sdk/x/crisis"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
@@ -47,7 +47,7 @@ import (
 
 // NewRootCmd creates a new root command for desmos. It is called once in the
 // main function.
-func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
+func NewRootCmd() (*cobra.Command, simappparams.EncodingConfig) {
 	encodingConfig := app.MakeEncodingConfig()
 	initClientCtx := client.Context{}.
 		WithCodec(encodingConfig.Codec).
@@ -161,7 +161,7 @@ lru_size = 0`
 	return customAppTemplate, customAppConfig
 }
 
-func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
+func initRootCmd(rootCmd *cobra.Command, encodingConfig simappparams.EncodingConfig) {
 	// Read in the configuration file for the sdk
 	cfg := sdk.GetConfig()
 	app.SetupConfig(cfg)
