@@ -403,7 +403,7 @@ func SetupConfig(config *sdk.Config) {
 // full DesmosApp
 func MakeCodecs() (codec.Codec, *codec.LegacyAmino) {
 	cfg := MakeEncodingConfig()
-	return cfg.Marshaler, cfg.Amino
+	return cfg.Codec, cfg.Amino
 }
 
 // GetMaccPerms returns a copy of the module account permissions

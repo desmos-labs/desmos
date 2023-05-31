@@ -6,12 +6,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"net/http"
 	"os"
 	"path/filepath"
 
 	"github.com/gorilla/mux"
 	"github.com/rakyll/statik/fs"
-	"net/http"
 
 	"github.com/desmos-labs/desmos/v5/x/reactions"
 	reactionstypes "github.com/desmos-labs/desmos/v5/x/reactions/types"
@@ -241,7 +241,7 @@ func NewDesmosApp(
 
 	encodingConfig := MakeEncodingConfig()
 
-	appCodec, legacyAmino := encodingConfig.Marshaler, encodingConfig.Amino
+	appCodec, legacyAmino := encodingConfig.Codec, encodingConfig.Amino
 	interfaceRegistry := encodingConfig.InterfaceRegistry
 	txConfig := encodingConfig.TxConfig
 
