@@ -64,7 +64,7 @@ Providing an invalid transaction (either with an account-number or sequence not 
 			}
 
 			// Marshal the chain link JSON
-			bz, err := app.MakeEncodingConfig().Marshaler.MarshalJSON(&chainLinkJSON)
+			bz, err := app.MakeEncodingConfig().Codec.MarshalJSON(&chainLinkJSON)
 			if err != nil {
 				return err
 			}

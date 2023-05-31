@@ -10,13 +10,12 @@ import (
 
 	"github.com/desmos-labs/desmos/v5/app/desmos/cmd/chainlink"
 	"github.com/desmos-labs/desmos/v5/app/desmos/cmd/sign"
+	"github.com/desmos-labs/desmos/v5/app/params"
 
 	"github.com/cosmos/cosmos-sdk/client/config"
 
 	"github.com/cosmos/cosmos-sdk/x/crisis"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
-
-	"github.com/desmos-labs/desmos/v5/app/params"
 
 	"github.com/desmos-labs/desmos/v5/app"
 
@@ -51,7 +50,7 @@ import (
 func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 	encodingConfig := app.MakeEncodingConfig()
 	initClientCtx := client.Context{}.
-		WithCodec(encodingConfig.Marshaler).
+		WithCodec(encodingConfig.Codec).
 		WithInterfaceRegistry(encodingConfig.InterfaceRegistry).
 		WithTxConfig(encodingConfig.TxConfig).
 		WithLegacyAmino(encodingConfig.Amino).
