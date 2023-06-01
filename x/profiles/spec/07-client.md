@@ -34,7 +34,7 @@ desmos query profiles profile jabbey
 Example Output: 
 ```yaml
 profile:
-  '@type': /desmos.profiles.v2.Profile
+  '@type': /desmos.profiles.v3.Profile
   account:
     '@type': /cosmos.auth.v1beta1.BaseAccount
     account_number: "203491"
@@ -95,7 +95,7 @@ Example Output:
 ```yaml
 links:
 - address:
-    '@type': /desmos.profiles.v2.Bech32Address
+    '@type': /desmos.profiles.v3.Bech32Address
     prefix: cosmos
     value: cosmos1jjectp30f5cp29nudaau94v87tkdxu5n2dvsdy
   chain_config:
@@ -107,7 +107,7 @@ links:
       '@type': /cosmos.crypto.secp256k1.PubKey
       key: AmSl9tkQOEkT2LvcdReB/tHS1JQESJ6NeFkDEujwWcQz
     signature:
-      '@type': /desmos.profiles.v2.SingleSignatureData
+      '@type': /desmos.profiles.v3.SingleSignatureData
       mode: SIGN_MODE_LEGACY_AMINO_JSON
       signature: rt0E4vQpX/gDI4I8OFykuJCsYyuPlVVUqSpFsCzU8FcbG02kDcDQ+AipVvEBmV1LrDV0/U23Jwi6L8AnMdo1Zw==
   user: desmos16c60y8t8vra27zjg2arlcd58dck9cwn7p6fwtd
@@ -381,20 +381,20 @@ A user can query the `profiles` module gRPC endpoints.
 The `Profile` endpoint allows users to query for a profile based on the given address or DTag. 
 
 ```bash
-desmos.profiles.v2.Query/Profile
+desmos.profiles.v3.Query/Profile
 ```
 
 Example:
 ```bash
 grpcurl -plaintext \
-  -d '{"user": "jack"}' localhost:9090 desmos.profiles.v2.Query/Profile
+  -d '{"user": "jack"}' localhost:9090 desmos.profiles.v3.Query/Profile
 ```
 
 Example Output: 
 ```json
 {
   "profile": {
-    "@type": "/desmos.profiles.v2.Profile",
+    "@type": "/desmos.profiles.v3.Profile",
     "account": {
       "@type": "/cosmos.auth.v1beta1.BaseAccount",
       "address": "desmos13yp2fq3tslq6mmtq4628q38xzj75ethzela9uu",
@@ -415,13 +415,13 @@ Example Output:
 The `IncomingDTagTransferRequests` endpoint allows users to query for incoming DTag transfer requests. 
 
 ```bash
-desmos.profiles.v2.Query/IncomingDTagTransferRequests
+desmos.profiles.v3.Query/IncomingDTagTransferRequests
 ```
 
 Example: 
 ```bash
 grpcurl -plaintext \
-  -d '{"receiver": "desmos13yp2fq3tslq6mmtq4628q38xzj75ethzela9uu"}' localhost:9090 desmos.profiles.v2.Query/IncomingDTagTransferRequests
+  -d '{"receiver": "desmos13yp2fq3tslq6mmtq4628q38xzj75ethzela9uu"}' localhost:9090 desmos.profiles.v3.Query/IncomingDTagTransferRequests
 ```
 
 Example Output: 
@@ -444,7 +444,7 @@ Example Output:
 The `ChainLinks` endpoint allows users to query for chain links specifying an optional user, chain name and target. 
 
 ```bash
-desmos.profiles.v2.Query/ChainLinks
+desmos.profiles.v3.Query/ChainLinks
 ```
 
 **Note**
@@ -455,7 +455,7 @@ desmos.profiles.v2.Query/ChainLinks
 Example:
 ```bash
 grpcurl -plaintext \
-  -d '{"user": "desmos16c60y8t8vra27zjg2arlcd58dck9cwn7p6fwtd", "chain_name": "osmosis"}' localhost:9090 desmos.profiles.v2.Query/ChainLinks
+  -d '{"user": "desmos16c60y8t8vra27zjg2arlcd58dck9cwn7p6fwtd", "chain_name": "osmosis"}' localhost:9090 desmos.profiles.v3.Query/ChainLinks
 ```
 
 Example Output:
@@ -465,7 +465,7 @@ Example Output:
     {
       "user": "desmos16c60y8t8vra27zjg2arlcd58dck9cwn7p6fwtd",
       "address": {
-        "@type": "/desmos.profiles.v2.Bech32Address",
+        "@type": "/desmos.profiles.v3.Bech32Address",
         "prefix": "osmo",
         "value": "osmo1kdl9888p5ez2mt7w59anugx7z0ek927gvdvk7p"
       },
@@ -475,7 +475,7 @@ Example Output:
           "key": "Av/eQ32q7EerWFX7CIxxguthkmlShmR+LIeOmIE+4Qm0"
         },
         "signature": {
-          "@type": "/desmos.profiles.v2.SingleSignatureData",
+          "@type": "/desmos.profiles.v3.SingleSignatureData",
           "mode": "SIGN_MODE_TEXTUAL",
           "signature": "b8EYBePyOGDdLautzdiEXj2CR/0gpWyHMwoQfUizrG4q6qTX2ZivWf/NiKsmx9h2YHZq4OOxIwZV/vgf8J7ZLA=="
         },
@@ -497,7 +497,7 @@ Example Output:
 The `ChainLinkOwners` endpoint allows users to query for chain link owners given an optional chain name and target address.
 
 ```bash
-desmos.profiles.v2.Query/ChainLinkOwners
+desmos.profiles.v3.Query/ChainLinkOwners
 ```
 
 **Note** 
@@ -506,7 +506,7 @@ The `target` parameter will be used only if the `chain_name` is specified as wel
 Example:
 ```bash
 grpcurl -plaintext \
-  -d '{"chain_name": "osmosis", "target": "osmo1kdl9888p5ez2mt7w59anugx7z0ek927gvdvk7p"}' localhost:9090 desmos.profiles.v2.Query/ChainLinkOwners
+  -d '{"chain_name": "osmosis", "target": "osmo1kdl9888p5ez2mt7w59anugx7z0ek927gvdvk7p"}' localhost:9090 desmos.profiles.v3.Query/ChainLinkOwners
 ```
 
 Example Output: 
@@ -529,7 +529,7 @@ Example Output:
 The `DefaultExternalAddresses` endpoint allows to query for external default addresses optionally specifying an owner and chain name.
 
 ```bash
-desmos.profiles.v2.Query/desmos.profiles.v3.Query/DefaultExternalAddresses
+desmos.profiles.v3.Query/desmos.profiles.v3.Query/DefaultExternalAddresses
 ```
 
 **Notes**
@@ -569,7 +569,7 @@ Example Output:
 The `ApplicationLinks` endpoint allows users to query for application links optionally specifying a user, application name and username. 
 
 ```bash
-desmos.profiles.v2.Query/ApplicationLinks
+desmos.profiles.v3.Query/ApplicationLinks
 ```
 
 **Notes**
@@ -579,7 +579,7 @@ desmos.profiles.v2.Query/ApplicationLinks
 Example:
 ```bash
 grpcurl -plaintext \
-  -d '{"user": "desmos16c60y8t8vra27zjg2arlcd58dck9cwn7p6fwtd", "application": "twitter"}' localhost:9090 desmos.profiles.v2.Query/ApplicationLinks
+  -d '{"user": "desmos16c60y8t8vra27zjg2arlcd58dck9cwn7p6fwtd", "application": "twitter"}' localhost:9090 desmos.profiles.v3.Query/ApplicationLinks
 ```
 
 Example Output: 
@@ -621,13 +621,13 @@ Example Output:
 The `ApplicationLinkByClientID` endpoint allows users to query an application link given a client id. 
 
 ```bash
-desmos.profiles.v2.Query/ApplicationLinkByClientID
+desmos.profiles.v3.Query/ApplicationLinkByClientID
 ```
 
 Example:
 ```bash
 grpcurl -plaintext \
-  -d '{"client_id": "desmos16c60y8t8vra27zjg2arlcd58dck9cwn7p6fwtd-twitter-lucagraziotti"}' localhost:9090 desmos.profiles.v2.Query/ApplicationLinkByClientID
+  -d '{"client_id": "desmos16c60y8t8vra27zjg2arlcd58dck9cwn7p6fwtd-twitter-lucagraziotti"}' localhost:9090 desmos.profiles.v3.Query/ApplicationLinkByClientID
 ```
 
 Example Output: 
@@ -664,7 +664,7 @@ Example Output:
 The `ApplicationLinkOwners` endpoint allows users to query the application link owners given an optional application name and username. 
 
 ```bash
-desmos.profiles.v2.Query/ApplicationLinkOwners
+desmos.profiles.v3.Query/ApplicationLinkOwners
 ```
 
 **Note**
@@ -673,7 +673,7 @@ The `user` parameter will be used only if the `application` one is specified as 
 Example:
 ```bash
 grpcurl -plaintext \
-  -d '{"application": "twitter", "user": "lucagraziotti"}' localhost:9090 desmos.profiles.v2.Query/ApplicationLinkOwners
+  -d '{"application": "twitter", "user": "lucagraziotti"}' localhost:9090 desmos.profiles.v3.Query/ApplicationLinkOwners
 ```
 
 Example Output:
@@ -696,12 +696,12 @@ Example Output:
 The `Params` endpoint allows users to query the current params of the `profiles` module. 
 
 ```bash
-desmos.profiles.v2.Query/Params
+desmos.profiles.v3.Query/Params
 ```
 
 Example:
 ```bash
-grpcurl localhost:9090 desmos.profiles.v2.Query/Params
+grpcurl localhost:9090 desmos.profiles.v3.Query/Params
 ```
 
 Example Output:
@@ -738,21 +738,21 @@ A user can query the `profiles` module using REST endpoints.
 The `profile` endpoint allows users to query for a Desmos profile using a DTag or an address. 
 
 ```
-/desmos/profiles/v2/profiles/{DTag or address}
+/desmos/profiles/v3/profiles/{DTag or address}
 ```
 
 ### Incoming DTag Transfer Requests
 The `dtag-transfer-requests` endpoint allows users to query for incoming DTag transfer requests given an optional user address.
 
 ```
-/desmos/profiles/v2/dtag-transfer-requests?receiver={address}
+/desmos/profiles/v3/dtag-transfer-requests?receiver={address}
 ```
 
 ### Chain Links
 The `chain-links` endpoint allows users to query for chain links given an optional user, chain name and target. 
 
 ```
-/desmos/profiles/v2/chain-links?user={user}&chain_name={chainName}&target={target}
+/desmos/profiles/v3/chain-links?user={user}&chain_name={chainName}&target={target}
 ```
 
 **Note**
@@ -763,7 +763,7 @@ The `chain-links` endpoint allows users to query for chain links given an option
 The `chain-links/owners` endpoint allows users to query for chain link owners given an optional chain name and target. 
 
 ```
-/desmos/profiles/v2/chain-links/owners?chain_name={chainName}&target={target}
+/desmos/profiles/v3/chain-links/owners?chain_name={chainName}&target={target}
 ```
 
 **Note**
@@ -783,7 +783,7 @@ The `default-external-addresses` endpoint allows users to query for default exte
 The `app-links` endpoint allows users to query for application links given an optional user, application name and username. 
 
 ```
-/desmos/profiles/v2/app-links?user={user}&application={application}&username={username}
+/desmos/profiles/v3/app-links?user={user}&application={application}&username={username}
 ```
 
 **Notes**
@@ -794,14 +794,14 @@ The `app-links` endpoint allows users to query for application links given an op
 The `app-links/clients` endpoint allows users to get application links given a client id. 
 
 ```
-/desmos/profiles/v2/app-links/clients/{client_id}
+/desmos/profiles/v3/app-links/clients/{client_id}
 ```
 
 ### Application Links Owners
 The `app-links/owners` endpoint allows users to query for application link owners specifying an optional application and username. 
 
 ```
-/desmos/profiles/v2/app-links/owners?application={applicationName}&username={username}
+/desmos/profiles/v3/app-links/owners?application={applicationName}&username={username}
 ```
 
 **Note**
@@ -811,5 +811,5 @@ The `user` parameter will be used only if the `application` one is specified as 
 The `params` endpoint allows users to query for the module parameters. 
 
 ```
-/desmos/profiles/v2/params
+/desmos/profiles/v3/params
 ```
