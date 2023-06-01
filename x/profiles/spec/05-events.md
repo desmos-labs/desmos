@@ -19,7 +19,7 @@ The profiles module emits the following events:
 | save_profile | profile_creator       | {userAddress}                     |
 | save_profile | profile_creation_time | {profileCreationTime}             |
 | message      | module                | profiles                          |
-| message      | action                | desmos.profiles.v2.MsgSaveProfile |
+| message      | action                | desmos.profiles.v3.MsgSaveProfile |
 | message      | sender                | {userAddress}                     |
 
 ## MsgDeleteProfile
@@ -28,7 +28,7 @@ The profiles module emits the following events:
 |:---------------|:------------------|:------------------------------------|
 | delete_profile | profile_creator   | {userAddress}                       |
 | message        | module            | profiles                            | 
-| message        | action            | desmos.profiles.v2.MsgDeleteProfile |
+| message        | action            | desmos.profiles.v3.MsgDeleteProfile |
 | message        | sender            | {userAddress}                       |
 
 ## MsgRequestDTagTransfer
@@ -39,7 +39,7 @@ The profiles module emits the following events:
 | create_dtag_transfer_request | request_sender    | {requestSenderAddress}                    | 
 | create_dtag_transfer_request | request_receiver  | {requestReceiverAddress}                  |
 | message                      | module            | profiles                                  | 
-| message                      | action            | desmos.profiles.v2.MsgRequestDTagTransfer |
+| message                      | action            | desmos.profiles.v3.MsgRequestDTagTransfer |
 | message                      | sender            | {requestSenderAddress}                    |
 
 ## MsgCancelDTagTransferRequest
@@ -49,7 +49,7 @@ The profiles module emits the following events:
 | cancel_dtag_transfer_request | request_sender    | {requestSenderAddress}                          | 
 | cancel_dtag_transfer_request | request_receiver  | {requestReceiverAddress}                        |
 | message                      | module            | profiles                                        | 
-| message                      | action            | desmos.profiles.v2.MsgCancelDTagTransferRequest |
+| message                      | action            | desmos.profiles.v3.MsgCancelDTagTransferRequest |
 | message                      | sender            | {userAddress}                                   |
 
 ## MsgAcceptDTagTransferRequest
@@ -61,7 +61,7 @@ The profiles module emits the following events:
 | accept_dtag_transfer_request | request_sender    | {requestSenderAddress}                          | 
 | accept_dtag_transfer_request | request_receiver  | {requestReceiverAddress}                        |
 | message                      | module            | profiles                                        | 
-| message                      | action            | desmos.profiles.v2.MsgAcceptDTagTransferRequest |
+| message                      | action            | desmos.profiles.v3.MsgAcceptDTagTransferRequest |
 | message                      | sender            | {userAddress}                                   |
 
 ## MsgRefuseDTagTransferRequest
@@ -71,7 +71,7 @@ The profiles module emits the following events:
 | refuse_dtag_transfer_request | request_sender    | {requestSenderAddress}                          | 
 | refuse_dtag_transfer_request | request_receiver  | {requestReceiverAddress}                        |
 | message                      | module            | profiles                                        | 
-| message                      | action            | desmos.profiles.v2.MsgRefuseDTagTransferRequest |
+| message                      | action            | desmos.profiles.v3.MsgRefuseDTagTransferRequest |
 | message                      | sender            | {userAddress}                                   |
 
 ## MsgLinkChainAccount
@@ -83,7 +83,7 @@ The profiles module emits the following events:
 | link_chain_account | chain_link_account_owner     | {userAddress}                          |
 | link_chain_account | chain_link_creation_time     | {creationTime}                         |
 | message            | module                       | profiles                               | 
-| message            | action                       | desmos.profiles.v2.MsgLinkChainAccount |
+| message            | action                       | desmos.profiles.v3.MsgLinkChainAccount |
 | message            | sender                       | {userAddress}                          |
 
 ## MsgUnlinkChainAccount
@@ -94,7 +94,7 @@ The profiles module emits the following events:
 | unlink_chain_account | chain_link_source_chain_name | {chainName}                              | 
 | unlink_chain_account | chain_link_account_owner     | {userAddress}                            |
 | message              | module                       | profiles                                 | 
-| message              | action                       | desmos.profiles.v2.MsgUnlinkChainAccount |
+| message              | action                       | desmos.profiles.v3.MsgUnlinkChainAccount |
 | message              | sender                       | {userAddress}                            |
 
 ## MsgSetDefaultExternalAddress
@@ -117,7 +117,7 @@ The profiles module emits the following events:
 | link_application | application_username           | {applicationUsername}                 |
 | link_application | application_link_creation_time | {creationTime}                        |
 | message          | module                         | profiles                              | 
-| message          | action                         | desmos.profiles.v2.MsgLinkApplication |
+| message          | action                         | desmos.profiles.v3.MsgLinkApplication |
 | message          | sender                         | {userAddress}                         |
 
 ## MsgUnlinkApplication
@@ -128,7 +128,7 @@ The profiles module emits the following events:
 | unlink_application | application_name     | {applicationName}                       | 
 | unlink_application | application_username | {applicationUsername}                   |
 | message            | module               | profiles                                | 
-| message            | action               | desmos.profiles.v2.MsgUnlinkApplication |
+| message            | action               | desmos.profiles.v3.MsgUnlinkApplication |
 | message            | sender               | {userAddress}                           |
 
 ## Keeper
