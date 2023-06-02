@@ -65,6 +65,7 @@ import (
 	ibc "github.com/cosmos/ibc-go/v7/modules/core"
 	ibcclientclient "github.com/cosmos/ibc-go/v7/modules/core/02-client/client"
 	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
+	solomachine "github.com/cosmos/ibc-go/v7/modules/light-clients/06-solomachine"
 	ibctm "github.com/cosmos/ibc-go/v7/modules/light-clients/07-tendermint"
 
 	ica "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts"
@@ -183,6 +184,7 @@ var (
 
 		// IBC modules
 		ibc.AppModuleBasic{},
+		solomachine.AppModuleBasic{},
 		ibctm.AppModuleBasic{},
 		ibctransfer.AppModuleBasic{},
 		ibcfee.AppModuleBasic{},
