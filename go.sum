@@ -460,8 +460,8 @@ github.com/desmos-labs/cosmos-sdk v0.47.2-desmos h1:vZApJFAGmrB8osk3YuDfHNb2L8YL
 github.com/desmos-labs/cosmos-sdk v0.47.2-desmos/go.mod h1:zYzgI8w8hhotXTSoGbbSOAKfpJTx4wOy4XgbaKhtRtc=
 github.com/desmos-labs/ledger-desmos-go v0.12.1-desmos h1:uYU67f1pZ7Jht/q9cn5sTdeto0J+lRUHIJgmedDGEVM=
 github.com/desmos-labs/ledger-desmos-go v0.12.1-desmos/go.mod h1:dhO6kj+Y+AHIOgAe4L9HL/6NDdyyth4q238I9yFpD2g=
-github.com/desmos-labs/wasmd v0.40.0-rc.1-desmos h1:kMD6Z0bw5kmi9t59y6smn1xoHEz/k3atXOI2Eyd10iI=
-github.com/desmos-labs/wasmd v0.40.0-rc.1-desmos/go.mod h1:AgWQP8z5NQ71tqboXvmA5WaCJuoNj+rZA4tNwvAaGBw=
+github.com/desmos-labs/wasmd v0.40.0-desmos h1:ybKyP0PNrMm/oNeeeqO5KBnbj0HSacsPh7ghpHYgDCY=
+github.com/desmos-labs/wasmd v0.40.0-desmos/go.mod h1:Pfl5fKCEMTUEWKQkXL0HplDr39joJBzDhzN9uFoYfhk=
 github.com/dgraph-io/badger/v2 v2.2007.4 h1:TRWBQg8UrlUhaFdco01nO2uXwzKS7zd+HVdwV/GHc4o=
 github.com/dgraph-io/badger/v2 v2.2007.4/go.mod h1:vSw/ax2qojzbN6eXHIx6KPKtCSHJN/Uz0X0VPruTIhk=
 github.com/dgraph-io/ristretto v0.0.3-0.20200630154024-f66de99634de/go.mod h1:KPxhHT9ZxKefz+PCeOGsrHpl1qZ7i70dGTu2u+Ahh6E=
@@ -475,8 +475,8 @@ github.com/dgryski/go-sip13 v0.0.0-20181026042036-e10d5fee7954/go.mod h1:vAd38F8
 github.com/dlclark/regexp2 v1.4.1-0.20201116162257-a2a8dda75c91/go.mod h1:2pZnwuY/m+8K6iRw6wQdMtk+rH5tNGR1i55kozfMjCc=
 github.com/dnaeon/go-vcr v1.1.0/go.mod h1:M7tiix8f0r6mKKJ3Yq/kqU1OYf3MnfmBWVbPx/yU9ko=
 github.com/dnaeon/go-vcr v1.2.0/go.mod h1:R4UdLID7HZT3taECzJs4YgbbH6PIGXB6W/sc5OLb6RQ=
-github.com/docker/distribution v2.8.1+incompatible h1:Q50tZOPR6T/hjNsyc9g8/syEs6bk8XXApsHjKukMl68=
-github.com/docker/distribution v2.8.1+incompatible/go.mod h1:J2gT2udsDAN96Uj4KfcMRqY0/ypR+oyYUYmja8H+y+w=
+github.com/docker/distribution v2.8.2+incompatible h1:T3de5rq0dB1j30rp0sA2rER+m322EBzniBPB6ZIzuh8=
+github.com/docker/distribution v2.8.2+incompatible/go.mod h1:J2gT2udsDAN96Uj4KfcMRqY0/ypR+oyYUYmja8H+y+w=
 github.com/docker/docker v1.6.2/go.mod h1:eEKB0N0r5NX/I1kEveEz05bcu8tLC/8azJZsviup8Sk=
 github.com/docker/go-connections v0.4.0 h1:El9xVISelRB7BuFusrZozjnkIM5YnzCViNKohAFqRJQ=
 github.com/docker/go-units v0.5.0 h1:69rxXcBk27SvSaaxTtLh/8llcHD8vYHT7WSdRZ/jvr4=

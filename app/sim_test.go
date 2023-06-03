@@ -39,6 +39,8 @@ import (
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
+	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
+
 	dbm "github.com/cometbft/cometbft-db"
 	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cometbft/cometbft/libs/log"
@@ -256,6 +258,8 @@ func TestAppImportExport(t *testing.T) {
 		{app.GetKey(poststypes.StoreKey), newApp.GetKey(poststypes.StoreKey), [][]byte{}},
 		{app.GetKey(reportstypes.StoreKey), newApp.GetKey(reportstypes.StoreKey), [][]byte{}},
 		{app.GetKey(reactionstypes.StoreKey), newApp.GetKey(reactionstypes.StoreKey), [][]byte{}},
+
+		{app.GetKey(wasmtypes.StoreKey), newApp.GetKey(wasmtypes.StoreKey), [][]byte{wasmtypes.TXCounterPrefix}},
 	}
 
 	for _, skp := range storeKeysPrefixes {
