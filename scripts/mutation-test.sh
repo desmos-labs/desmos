@@ -37,7 +37,7 @@ echo "### WARNING! This test will take hours to complete!"
 echo "################################################################################"
 
 echo "running mutation tests for the following module(s): $MODULE_NAMES"
-OUTPUT=$(go run github.com/osmosis-labs/go-mutesting/cmd/go-mutesting --disable=$DISABLED_MUTATORS $MUTATION_SOURCES | tee /dev/tty)
+OUTPUT=$(go run github.com/osmosis-labs/go-mutesting/cmd/go-mutesting --disable=$DISABLED_MUTATORS $MUTATION_SOURCES)
 
 # Fetch the final result output and the overall mutation testing score
 RESULT=$(echo "$OUTPUT" | grep 'The mutation score')
