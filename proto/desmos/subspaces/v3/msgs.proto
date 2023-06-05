@@ -83,6 +83,8 @@ service Msg {
   rpc RevokeAllowance(MsgRevokeAllowance) returns (MsgRevokeAllowanceResponse);
 
   // UpdateSubspaceFeeTokens allows subspace admins to update the list of fee tokens inside the subspace via a governance proposal
+  //
+  // Since: Desmos 6.0.0
   rpc UpdateSubspaceFeeTokens(MsgUpdateSubspaceFeeTokens) returns (MsgUpdateSubspaceFeeTokensResponse);
 }
 
@@ -502,6 +504,8 @@ message MsgSetUserPermissionsResponse {}
 // --------------------------------------------------------------------------------------------------------------------
 
 // MsgUpdateSubspaceFeeTokens represents the message to be used to update a subspace fee tokens by governance
+//
+// Since: Desmos 6.0.0
 message MsgUpdateSubspaceFeeTokens {
   option (cosmos.msg.v1.signer) = "authority";
 
@@ -523,4 +527,6 @@ message MsgUpdateSubspaceFeeTokens {
 }
 
 // MsgUpdateSubspaceFeeTokensResponse represents the Msg/UpdateSubspaceFeeTokens response type
+//
+// Since: Desmos 6.0.0
 message MsgUpdateSubspaceFeeTokensResponse {}

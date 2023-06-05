@@ -1761,6 +1761,8 @@ func (m *MsgSetUserPermissionsResponse) XXX_DiscardUnknown() {
 var xxx_messageInfo_MsgSetUserPermissionsResponse proto.InternalMessageInfo
 
 // MsgUpdateSubspaceFeeTokens represents the message to be used to update a subspace fee tokens by governance
+//
+// Since: Desmos 6.0.0
 type MsgUpdateSubspaceFeeTokens struct {
 	// Id of the subspace where the list of allowed fee tokens will be updated
 	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
@@ -1825,6 +1827,8 @@ func (m *MsgUpdateSubspaceFeeTokens) GetAuthority() string {
 }
 
 // MsgUpdateSubspaceFeeTokensResponse represents the Msg/UpdateSubspaceFeeTokens response type
+//
+// Since: Desmos 6.0.0
 type MsgUpdateSubspaceFeeTokensResponse struct {
 }
 
@@ -2055,6 +2059,8 @@ type MsgClient interface {
 	// that has been granted to the grantee
 	RevokeAllowance(ctx context.Context, in *MsgRevokeAllowance, opts ...grpc.CallOption) (*MsgRevokeAllowanceResponse, error)
 	// UpdateSubspaceFeeTokens allows subspace admins to update the list of fee tokens inside the subspace via a governance proposal
+	//
+	// Since: Desmos 6.0.0
 	UpdateSubspaceFeeTokens(ctx context.Context, in *MsgUpdateSubspaceFeeTokens, opts ...grpc.CallOption) (*MsgUpdateSubspaceFeeTokensResponse, error)
 }
 
@@ -2292,6 +2298,8 @@ type MsgServer interface {
 	// that has been granted to the grantee
 	RevokeAllowance(context.Context, *MsgRevokeAllowance) (*MsgRevokeAllowanceResponse, error)
 	// UpdateSubspaceFeeTokens allows subspace admins to update the list of fee tokens inside the subspace via a governance proposal
+	//
+	// Since: Desmos 6.0.0
 	UpdateSubspaceFeeTokens(context.Context, *MsgUpdateSubspaceFeeTokens) (*MsgUpdateSubspaceFeeTokensResponse, error)
 }
 
