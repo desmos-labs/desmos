@@ -1,6 +1,0 @@
-type: feat
-module: other
-pull_request: 1126
-description: Setup app wiring
-backward_compatible: true
-date: 2023-05-09T11:23:38.5165403Z
