@@ -519,9 +519,13 @@ func (k msgServer) MovePost(goCtx context.Context, msg *types.MsgMovePost) (*typ
 		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace section with id %d not found", msg.TargetSectionID)
 	}
 
+	// Check the sender is the owner of the post
+	if post.Author != msg.Owner {
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "you are not the owner of the post")
+	}
+
 	// Check the permission to move the post
-	canMove := post.Author == msg.Owner && k.HasPermission(ctx, msg.TargetSubspaceID, msg.TargetSectionID, msg.Owner, types.PermissionWrite)
-	if !canMove {
+	if !k.HasPermission(ctx, msg.TargetSubspaceID, msg.TargetSectionID, msg.Owner, types.PermissionWrite) {
 		return nil, errors.Wrap(subspacestypes.ErrPermissionDenied, "you don't have write permission on the target section")
 	}
 

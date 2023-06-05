@@ -936,7 +936,9 @@ func (m *MsgUpdateParamsResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgUpdateParamsResponse proto.InternalMessageInfo
 
-// MsgMovePost move a post to another subspace
+// MsgMovePost moves a post to another subspace
+//
+// Since: Desmos 6.0.0
 type MsgMovePost struct {
 	// Id of the subspace where the post is currently located
 	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
@@ -1019,6 +1021,8 @@ func (m *MsgMovePost) GetOwner() string {
 }
 
 // MsgMovePostResponse defines the Msg/MsgMovePost response type
+//
+// Since: Desmos 6.0.0
 type MsgMovePostResponse struct {
 	// New id of the post in the target subspace
 	PostID uint64 `protobuf:"varint,1,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty" yaml:"post_id"`
@@ -1205,6 +1209,8 @@ type MsgClient interface {
 	// Since: Desmos 5.0.0
 	UpdateParams(ctx context.Context, in *MsgUpdateParams, opts ...grpc.CallOption) (*MsgUpdateParamsResponse, error)
 	// MovePost allows users to move their own posts to another subspace
+	//
+	// Since: Desmos 6.0.0
 	MovePost(ctx context.Context, in *MsgMovePost, opts ...grpc.CallOption) (*MsgMovePostResponse, error)
 }
 
@@ -1309,6 +1315,8 @@ type MsgServer interface {
 	// Since: Desmos 5.0.0
 	UpdateParams(context.Context, *MsgUpdateParams) (*MsgUpdateParamsResponse, error)
 	// MovePost allows users to move their own posts to another subspace
+	//
+	// Since: Desmos 6.0.0
 	MovePost(context.Context, *MsgMovePost) (*MsgMovePostResponse, error)
 }
 
