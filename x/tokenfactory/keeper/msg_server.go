@@ -37,7 +37,7 @@ func (k msgServer) CreateDenom(goCtx context.Context, msg *types.MsgCreateDenom)
 		return nil, errors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot manage the subspace tokens inside this subspace")
 	}
 
-	denom, err := k.tkfk.CreateDenom(ctx, subspace.Treasury, msg.Subdenom)
+	denom, err := k.tfk.CreateDenom(ctx, subspace.Treasury, msg.Subdenom)
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +67,7 @@ func (k msgServer) Mint(goCtx context.Context, msg *types.MsgMint) (*types.MsgMi
 		return nil, tokenfactorytypes.ErrDenomDoesNotExist.Wrapf("denom: %s", msg.Amount.Denom)
 	}
 
-	authorityMetadata, err := k.tkfk.GetAuthorityMetadata(ctx, msg.Amount.GetDenom())
+	authorityMetadata, err := k.tfk.GetAuthorityMetadata(ctx, msg.Amount.GetDenom())
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +77,7 @@ func (k msgServer) Mint(goCtx context.Context, msg *types.MsgMint) (*types.MsgMi
 		return nil, tokenfactorytypes.ErrUnauthorized
 	}
 
-	err = k.tkfk.MintTo(ctx, msg.Amount, msg.MintToAddress)
+	err = k.tfk.MintTo(ctx, msg.Amount, msg.MintToAddress)
 	if err != nil {
 		return nil, err
 	}
@@ -99,7 +99,7 @@ func (k msgServer) Burn(goCtx context.Context, msg *types.MsgBurn) (*types.MsgBu
 		return nil, errors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot manage the subspace tokens inside this subspace")
 	}
 
-	authorityMetadata, err := k.tkfk.GetAuthorityMetadata(ctx, msg.Amount.GetDenom())
+	authorityMetadata, err := k.tfk.GetAuthorityMetadata(ctx, msg.Amount.GetDenom())
 	if err != nil {
 		return nil, err
 	}
@@ -115,7 +115,7 @@ func (k msgServer) Burn(goCtx context.Context, msg *types.MsgBurn) (*types.MsgBu
 		return nil, tokenfactorytypes.ErrBurnFromModuleAccount
 	}
 
-	err = k.tkfk.BurnFrom(ctx, msg.Amount, msg.BurnFromAddress)
+	err = k.tfk.BurnFrom(ctx, msg.Amount, msg.BurnFromAddress)
 	if err != nil {
 		return nil, err
 	}
@@ -137,7 +137,7 @@ func (k msgServer) SetDenomMetadata(goCtx context.Context, msg *types.MsgSetDeno
 		return nil, errors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot manage the subspace tokens inside this subspace")
 	}
 
-	authorityMetadata, err := k.tkfk.GetAuthorityMetadata(ctx, msg.Metadata.Base)
+	authorityMetadata, err := k.tfk.GetAuthorityMetadata(ctx, msg.Metadata.Base)
 	if err != nil {
 		return nil, err
 	}
@@ -159,7 +159,7 @@ func (k msgServer) UpdateParams(goCtx context.Context, msg *types.MsgUpdateParam
 	}
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	k.tkfk.SetParams(ctx, msg.Params.ToOsmosisTokenFactoryParams())
+	k.tfk.SetParams(ctx, msg.Params.ToOsmosisTokenFactoryParams())
 
 	return &types.MsgUpdateParamsResponse{}, nil
 }
