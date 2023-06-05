@@ -6,7 +6,6 @@ import (
 	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	tokenfactorytypes "github.com/osmosis-labs/osmosis/v15/x/tokenfactory/types"
 
@@ -109,13 +108,7 @@ func (k msgServer) Burn(goCtx context.Context, msg *types.MsgBurn) (*types.MsgBu
 		return nil, tokenfactorytypes.ErrUnauthorized
 	}
 
-	accountI := k.ak.GetAccount(ctx, sdk.AccAddress(msg.BurnFromAddress))
-	_, ok := accountI.(authtypes.ModuleAccountI)
-	if ok {
-		return nil, tokenfactorytypes.ErrBurnFromModuleAccount
-	}
-
-	err = k.tfk.BurnFrom(ctx, msg.Amount, msg.BurnFromAddress)
+	err = k.tfk.BurnFrom(ctx, msg.Amount, subspace.Treasury)
 	if err != nil {
 		return nil, err
 	}

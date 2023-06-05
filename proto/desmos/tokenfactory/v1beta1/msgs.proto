@@ -26,10 +26,9 @@ service Msg {
   rpc CreateDenom(MsgCreateDenom) returns (MsgCreateDenomResponse);
 
   // Mint allows subspace admins to mint more of a token.
-  // For now, we only support minting to the treasury account.
   rpc Mint(MsgMint) returns (MsgMintResponse);
 
-  // Burn allows an admin account to burn a token.
+  // Burn allows subspace admins to burn a token.
   // For now, we only support burning from the treasury account.
   rpc Burn(MsgBurn) returns (MsgBurnResponse);
 
@@ -72,7 +71,7 @@ message MsgMint {
     (gogoproto.nullable) = false
   ];
 
-  string mintToAddress = 3 [ (gogoproto.moretags) = "yaml:\"mint_to_address\"" ];
+  string mint_to_address = 3 [ (gogoproto.moretags) = "yaml:\"mint_to_address\"" ];
 
   uint64 subspace_id = 4 [
     (gogoproto.customname) = "SubspaceID",
@@ -94,9 +93,7 @@ message MsgBurn {
     (gogoproto.nullable) = false
   ];
 
-  string burnFromAddress = 3 [ (gogoproto.moretags) = "yaml:\"burn_from_address\"" ];
-
-  uint64 subspace_id = 4 [
+  uint64 subspace_id = 3 [
     (gogoproto.customname) = "SubspaceID",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];

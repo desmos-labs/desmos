@@ -11,7 +11,6 @@ import (
 type Keeper struct {
 	sk  types.SubspacesKeeper
 	tfk types.TokenFactoryKeeper
-	ak  types.AccountKeeper
 	bk  types.BankKeeper
 
 	// the address capable of executing a MsgUpdateParams message. Typically, this
@@ -21,16 +20,12 @@ type Keeper struct {
 
 // NewKeeper returns a new instance of the x/tokenfactory keeper
 func NewKeeper(
-	ak types.AccountKeeper,
 	bk types.BankKeeper,
-
 	sk types.SubspacesKeeper,
 	tfk keeper.Keeper,
-
 	authority string,
 ) Keeper {
 	return Keeper{
-		ak:  ak,
 		bk:  bk,
 		sk:  sk,
 		tfk: tfk,

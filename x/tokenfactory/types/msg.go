@@ -120,12 +120,11 @@ var (
 )
 
 // NewMsgCreateDenom creates a new MsgBurn instance
-func NewMsgBurn(subspaceID uint64, sender string, amount sdk.Coin, burnFromAddress string) *MsgBurn {
+func NewMsgBurn(subspaceID uint64, sender string, amount sdk.Coin) *MsgBurn {
 	return &MsgBurn{
-		SubspaceID:      subspaceID,
-		Sender:          sender,
-		Amount:          amount,
-		BurnFromAddress: burnFromAddress,
+		SubspaceID: subspaceID,
+		Sender:     sender,
+		Amount:     amount,
 	}
 }
 
@@ -138,11 +137,6 @@ func (msg MsgBurn) ValidateBasic() error {
 
 	if !msg.Amount.IsValid() || msg.Amount.Amount.Equal(sdk.ZeroInt()) {
 		return errors.Wrap(sdkerrors.ErrInvalidCoins, msg.Amount.String())
-	}
-
-	_, err = sdk.AccAddressFromBech32(msg.BurnFromAddress)
-	if err != nil {
-		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid burn from address: %s", err)
 	}
 
 	return nil
