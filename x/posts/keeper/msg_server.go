@@ -522,7 +522,7 @@ func (k msgServer) MovePost(goCtx context.Context, msg *types.MsgMovePost) (*typ
 	// Check the permission to move the post
 	canMove := post.Author == msg.Owner && k.HasPermission(ctx, msg.TargetSubspaceID, msg.TargetSectionID, msg.Owner, types.PermissionWrite)
 	if !canMove {
-		return nil, errors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot move this post")
+		return nil, errors.Wrap(subspacestypes.ErrPermissionDenied, "you don't have write permission on the target section")
 	}
 
 	// Get the next post id
