@@ -18,8 +18,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
@@ -214,7 +216,7 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 
 // ProposalMsgs returns msgs used for governance proposals for simulations.
 func (am AppModule) ProposalMsgs(simState module.SimulationState) []simtypes.WeightedProposalMsg {
-	return simulation.ProposalMsgs(am.keeper)
+	return simulation.ProposalMsgs(*am.keeper)
 }
 
 // RegisterStoreDecoder performs a no-op.
@@ -252,8 +254,9 @@ func init() {
 type ModuleInputs struct {
 	depinject.In
 
-	Cdc codec.Codec
-	Key *storetypes.KVStoreKey
+	Config *modulev1.Module
+	Cdc    codec.Codec
+	Key    *storetypes.KVStoreKey
 
 	AccountKeeper authkeeper.AccountKeeper
 	BankKeeper    bankkeeper.Keeper
@@ -269,11 +272,18 @@ type ModuleOutputs struct {
 
 func ProvideModule(in ModuleInputs) ModuleOutputs {
 
+	// default to governance authority if not provided
+	authority := authtypes.NewModuleAddress(govtypes.ModuleName)
+	if in.Config.Authority != "" {
+		authority = authtypes.NewModuleAddressOrBech32Address(in.Config.Authority)
+	}
+
 	k := keeper.NewKeeper(
 		in.Cdc,
 		in.Key,
 		in.AccountKeeper,
 		in.AuthzKeeper,
+		authority.String(),
 	)
 
 	m := NewAppModule(
