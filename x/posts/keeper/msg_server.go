@@ -547,11 +547,11 @@ func (k msgServer) MovePost(goCtx context.Context, msg *types.MsgMovePost) (*typ
 	k.Keeper.SavePost(ctx, updatedPost)
 
 	// Update the id for the next post
-	k.SetNextPostID(ctx, msg.TargetSubspaceID, updatedPost.ID+1)
+	k.SetNextPostID(ctx, msg.TargetSubspaceID, newPostID+1)
 
 	// Move all post attachments
 	newAttachmentID := uint32(0)
-	k.IteratePostAttachments(ctx, post.SubspaceID, post.ID, func(attachment types.Attachment) (stop bool) {
+	k.IteratePostAttachments(ctx, msg.SubspaceID, msg.PostID, func(attachment types.Attachment) (stop bool) {
 		newAttachmentID++
 		attachmentMove := types.NewAttachmentMove(msg.TargetSubspaceID, newPostID, newAttachmentID)
 		updatedAttachment := attachmentMove.Update(attachment)
