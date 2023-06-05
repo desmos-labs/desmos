@@ -308,7 +308,7 @@ message MsgUpdateParams {
 // Since: Desmos 5.0.0
 message MsgUpdateParamsResponse {}
 
-// MsgMovePost move a post to another subspace
+// MsgMovePost moves a post to another subspace
 message MsgMovePost {
   // Id of the subspace where the post is currently located
   uint64 subspace_id = 1 [
