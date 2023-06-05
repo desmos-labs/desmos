@@ -62,16 +62,70 @@ func (msg MsgCreateDenom) GetSignBytes() []byte {
 // --------------------------------------------------------------------------------------------------------------------
 
 var (
+	_ sdk.Msg            = &MsgMint{}
+	_ legacytx.LegacyMsg = &MsgMint{}
+)
+
+// NewMsgMint creates a new MsgMint instance
+func NewMsgMint(subspaceID uint64, sender string, amount sdk.Coin, mintToAddress string) *MsgMint {
+	return &MsgMint{
+		SubspaceID:    subspaceID,
+		Sender:        sender,
+		Amount:        amount,
+		MintToAddress: mintToAddress,
+	}
+}
+
+// ValidateBasic implements sdk.Msg
+func (msg MsgMint) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Sender)
+	if err != nil {
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid sender address: %s", err)
+	}
+
+	if !msg.Amount.IsValid() || msg.Amount.Amount.Equal(sdk.ZeroInt()) {
+		return errors.Wrap(sdkerrors.ErrInvalidCoins, msg.Amount.String())
+	}
+
+	_, err = sdk.AccAddressFromBech32(msg.MintToAddress)
+	if err != nil {
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid mint to address: %s", err)
+	}
+
+	return nil
+}
+
+// GetSigners implements sdk.Msg
+func (msg MsgMint) GetSigners() []sdk.AccAddress {
+	sender, _ := sdk.AccAddressFromBech32(msg.Sender)
+	return []sdk.AccAddress{sender}
+}
+
+// implements legacytx.LegacyMsg
+func (msg MsgMint) Route() string { return RouterKey }
+
+// implements legacytx.LegacyMsg
+func (msg MsgMint) Type() string { return ActionMint }
+
+// implements legacytx.LegacyMsg
+func (msg MsgMint) GetSignBytes() []byte {
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+var (
 	_ sdk.Msg            = &MsgBurn{}
 	_ legacytx.LegacyMsg = &MsgBurn{}
 )
 
 // NewMsgCreateDenom creates a new MsgBurn instance
-func NewMsgBurn(subspaceID uint64, sender string, amount sdk.Coin) *MsgBurn {
+func NewMsgBurn(subspaceID uint64, sender string, amount sdk.Coin, burnFromAddress string) *MsgBurn {
 	return &MsgBurn{
-		SubspaceID: subspaceID,
-		Sender:     sender,
-		Amount:     amount,
+		SubspaceID:      subspaceID,
+		Sender:          sender,
+		Amount:          amount,
+		BurnFromAddress: burnFromAddress,
 	}
 }
 
@@ -84,6 +138,11 @@ func (msg MsgBurn) ValidateBasic() error {
 
 	if !msg.Amount.IsValid() || msg.Amount.Amount.Equal(sdk.ZeroInt()) {
 		return errors.Wrap(sdkerrors.ErrInvalidCoins, msg.Amount.String())
+	}
+
+	_, err = sdk.AccAddressFromBech32(msg.BurnFromAddress)
+	if err != nil {
+		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid burn from address: %s", err)
 	}
 
 	return nil

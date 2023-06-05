@@ -65,13 +65,16 @@ message MsgCreateDenomResponse {
 // account
 message MsgMint {
   string sender = 1 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
+
   cosmos.base.v1beta1.Coin amount = 2 [
     (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
     (gogoproto.moretags) = "yaml:\"amount\"",
     (gogoproto.nullable) = false
   ];
 
-  uint64 subspace_id = 3 [
+  string mintToAddress = 3 [ (gogoproto.moretags) = "yaml:\"mint_to_address\"" ];
+
+  uint64 subspace_id = 4 [
     (gogoproto.customname) = "SubspaceID",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
@@ -84,13 +87,16 @@ message MsgMintResponse {}
 // treasury account
 message MsgBurn {
   string sender = 1 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
+
   cosmos.base.v1beta1.Coin amount = 2 [
     (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
     (gogoproto.moretags) = "yaml:\"amount\"",
     (gogoproto.nullable) = false
   ];
 
-  uint64 subspace_id = 3 [
+  string burnFromAddress = 3 [ (gogoproto.moretags) = "yaml:\"burn_from_address\"" ];
+
+  uint64 subspace_id = 4 [
     (gogoproto.customname) = "SubspaceID",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
