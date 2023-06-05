@@ -409,6 +409,7 @@ message MsgRequestPostOwnerTransfer {
     (cosmos_proto.scalar) = "cosmos.AddressString"
   ];
 }
+
 // MsgRequestPostOwnerTransferResponse defines the Msg/RequestPostOwnerTransfer response type
 //
 // Since: Desmos 6.0.0
