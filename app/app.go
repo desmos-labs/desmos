@@ -81,8 +81,8 @@ import (
 	relationshipskeeper "github.com/desmos-labs/desmos/v5/x/relationships/keeper"
 	reportskeeper "github.com/desmos-labs/desmos/v5/x/reports/keeper"
 	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
-
 	supplykeeper "github.com/desmos-labs/desmos/v5/x/supply/keeper"
+	tokenfactorykeeper "github.com/desmos-labs/desmos/v5/x/tokenfactory/keeper"
 
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -171,6 +171,7 @@ type DesmosApp struct {
 	ReportsKeeper       reportskeeper.Keeper
 	ReactionsKeeper     reactionskeeper.Keeper
 	SupplyKeeper        supplykeeper.Keeper
+	TokenFactoryKeeper  tokenfactorykeeper.Keeper
 
 	// Simulation manager
 	sm *module.SimulationManager
@@ -248,6 +249,7 @@ func NewDesmosApp(
 		&app.ReportsKeeper,
 		&app.ReactionsKeeper,
 		&app.SupplyKeeper,
+		&app.TokenFactoryKeeper,
 	); err != nil {
 		panic(err)
 	}

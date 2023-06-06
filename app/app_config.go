@@ -4,15 +4,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/desmos-labs/desmos/v5/x/reactions"
-	supplytypes "github.com/desmos-labs/desmos/v5/x/supply/types"
-
-	postskeeper "github.com/desmos-labs/desmos/v5/x/posts/keeper"
-	poststypes "github.com/desmos-labs/desmos/v5/x/posts/types"
-
-	"github.com/desmos-labs/desmos/v5/x/posts"
-	"github.com/desmos-labs/desmos/v5/x/relationships"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
@@ -75,11 +66,16 @@ import (
 	upgradeclient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 
+	"github.com/desmos-labs/desmos/v5/x/posts"
+	postskeeper "github.com/desmos-labs/desmos/v5/x/posts/keeper"
+	poststypes "github.com/desmos-labs/desmos/v5/x/posts/types"
 	"github.com/desmos-labs/desmos/v5/x/profiles"
 	profileskeeper "github.com/desmos-labs/desmos/v5/x/profiles/keeper"
 	profilestypes "github.com/desmos-labs/desmos/v5/x/profiles/types"
+	"github.com/desmos-labs/desmos/v5/x/reactions"
 	reactionskeeper "github.com/desmos-labs/desmos/v5/x/reactions/keeper"
 	reactionstypes "github.com/desmos-labs/desmos/v5/x/reactions/types"
+	"github.com/desmos-labs/desmos/v5/x/relationships"
 	relationshipskeeper "github.com/desmos-labs/desmos/v5/x/relationships/keeper"
 	relationshipstypes "github.com/desmos-labs/desmos/v5/x/relationships/types"
 	"github.com/desmos-labs/desmos/v5/x/reports"
@@ -88,6 +84,9 @@ import (
 	"github.com/desmos-labs/desmos/v5/x/subspaces"
 	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
 	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
+	supplytypes "github.com/desmos-labs/desmos/v5/x/supply/types"
+	"github.com/desmos-labs/desmos/v5/x/tokenfactory"
+	tokenfactorytypes "github.com/desmos-labs/desmos/v5/x/tokenfactory/types"
 
 	"github.com/desmos-labs/desmos/v5/x/supply"
 
@@ -198,6 +197,7 @@ var (
 		reports.AppModuleBasic{},
 		reactions.AppModuleBasic{},
 		supply.AppModuleBasic{},
+		tokenfactory.AppModuleBasic{},
 	)
 
 	// Module account permissions
@@ -212,6 +212,7 @@ var (
 		{Account: wasm.ModuleName, Permissions: []string{authtypes.Burner}},
 		{Account: ibcfeetypes.ModuleName},
 		{Account: icatypes.ModuleName},
+		{Account: tokenfactorytypes.ModuleName, Permissions: []string{authtypes.Minter, authtypes.Burner}},
 	}
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -252,6 +253,7 @@ var (
 		reportstypes.ModuleName,
 		reactionstypes.ModuleName,
 		supplytypes.ModuleName,
+		tokenfactorytypes.ModuleName,
 
 		wasm.ModuleName,
 	}
@@ -289,6 +291,7 @@ var (
 		reportstypes.ModuleName,
 		reactionstypes.ModuleName,
 		supplytypes.ModuleName,
+		tokenfactorytypes.ModuleName,
 
 		wasm.ModuleName,
 	}
@@ -333,6 +336,7 @@ var (
 		reportstypes.ModuleName,
 		reactionstypes.ModuleName,
 		supplytypes.ModuleName,
+		tokenfactorytypes.ModuleName,
 
 		// wasm module should be at the end of app modules
 		wasm.ModuleName,
@@ -374,6 +378,7 @@ var (
 		reportstypes.ModuleName,
 		reactionstypes.ModuleName,
 		supplytypes.ModuleName,
+		tokenfactorytypes.ModuleName,
 
 		wasm.ModuleName,
 		crisistypes.ModuleName,
