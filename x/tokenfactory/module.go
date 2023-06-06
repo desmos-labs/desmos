@@ -33,6 +33,7 @@ import (
 
 	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
 
+	"github.com/desmos-labs/desmos/v5/x/tokenfactory/client/cli"
 	"github.com/desmos-labs/desmos/v5/x/tokenfactory/keeper"
 	"github.com/desmos-labs/desmos/v5/x/tokenfactory/types"
 )
@@ -86,12 +87,12 @@ func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *r
 
 // GetTxCmd returns the root tx command for the tokenfactory module.
 func (ab AppModuleBasic) GetTxCmd() *cobra.Command {
-	return nil
+	return cli.GetTxCmd()
 }
 
 // GetQueryCmd returns the root query command for the tokenfactory module.
 func (AppModuleBasic) GetQueryCmd() *cobra.Command {
-	return nil
+	return cli.GetQueryCmd()
 }
 
 // RegisterInterfaces registers interfaces and implementations of the tokenfactory module.
