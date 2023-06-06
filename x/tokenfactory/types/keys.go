@@ -7,7 +7,6 @@ const (
 	StoreKey     = ModuleName
 	RouterKey    = ModuleName
 	QuerierRoute = ModuleName
-	MemStoreKey  = types.MemStoreKey
 
 	ActionCreateDenom      = "create_denom"
 	ActionMint             = "tf_mint"

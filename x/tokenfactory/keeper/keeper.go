@@ -3,7 +3,6 @@ package keeper
 import (
 	"github.com/cometbft/cometbft/libs/log"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/osmosis-labs/osmosis/v15/x/tokenfactory/keeper"
 
 	"github.com/desmos-labs/desmos/v5/x/tokenfactory/types"
 )
@@ -20,9 +19,9 @@ type Keeper struct {
 
 // NewKeeper returns a new instance of the x/tokenfactory keeper
 func NewKeeper(
-	bk types.BankKeeper,
 	sk types.SubspacesKeeper,
-	tfk keeper.Keeper,
+	tfk types.TokenFactoryKeeper,
+	bk types.BankKeeper,
 	authority string,
 ) Keeper {
 	return Keeper{

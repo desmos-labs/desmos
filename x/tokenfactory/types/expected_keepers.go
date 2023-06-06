@@ -20,6 +20,8 @@ type TokenFactoryKeeper interface {
 	GetParams(ctx sdk.Context) (params tokenfactorytypes.Params)
 	SetParams(ctx sdk.Context, params tokenfactorytypes.Params)
 	GetDenomsFromCreator(ctx sdk.Context, creator string) []string
+	InitGenesis(ctx sdk.Context, genState tokenfactorytypes.GenesisState)
+	ExportGenesis(ctx sdk.Context) *tokenfactorytypes.GenesisState
 }
 
 type SubspacesKeeper interface {
