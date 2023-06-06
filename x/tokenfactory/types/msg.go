@@ -224,7 +224,7 @@ func (msg MsgUpdateParams) ValidateBasic() error {
 		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid authority address: %s", err)
 	}
 
-	return msg.Params.ToOsmosisTokenFactoryParams().Validate()
+	return ToOsmosisTokenFactoryParams(msg.Params).Validate()
 }
 
 // GetSigners implements sdk.Msg

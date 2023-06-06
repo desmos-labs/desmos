@@ -19,6 +19,7 @@ type TokenFactoryKeeper interface {
 	MintTo(ctx sdk.Context, amount sdk.Coin, mintTo string) error
 	GetParams(ctx sdk.Context) (params tokenfactorytypes.Params)
 	SetParams(ctx sdk.Context, params tokenfactorytypes.Params)
+	GetDenomsFromCreator(ctx sdk.Context, creator string) []string
 }
 
 type SubspacesKeeper interface {

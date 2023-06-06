@@ -464,8 +464,8 @@ github.com/desmos-labs/cosmos-sdk v0.47.3-desmos h1:/MKKvyu+tPhYk4MPzoELc2KFeUZ7
 github.com/desmos-labs/cosmos-sdk v0.47.3-desmos/go.mod h1:c4OfLdAykA9zsj1CqrxBRqXzVz48I++JSvIMPSPcEmk=
 github.com/desmos-labs/ledger-desmos-go v0.12.1-desmos h1:uYU67f1pZ7Jht/q9cn5sTdeto0J+lRUHIJgmedDGEVM=
 github.com/desmos-labs/ledger-desmos-go v0.12.1-desmos/go.mod h1:dhO6kj+Y+AHIOgAe4L9HL/6NDdyyth4q238I9yFpD2g=
-github.com/desmos-labs/osmosis/v15 v15.0.0-20230605100153-b86f98034583 h1:a/hUofSuiv8RY3YniefKCHEQUmpUqOkrAa2/tpLp7GE=
-github.com/desmos-labs/osmosis/v15 v15.0.0-20230605100153-b86f98034583/go.mod h1:5r2J194hYw+2uKU5KA7NsVeW02NtlQ2Q7VKBwTIMIxQ=
+github.com/desmos-labs/osmosis/v15 v15.0.0-20230606102214-369d28cbe7bc h1:jBRib82UzcMJgsCpd3dZip1o4+mIStBXACIA505WDv8=
+github.com/desmos-labs/osmosis/v15 v15.0.0-20230606102214-369d28cbe7bc/go.mod h1:5r2J194hYw+2uKU5KA7NsVeW02NtlQ2Q7VKBwTIMIxQ=
 github.com/desmos-labs/wasmd v0.40.0-desmos h1:ybKyP0PNrMm/oNeeeqO5KBnbj0HSacsPh7ghpHYgDCY=
 github.com/desmos-labs/wasmd v0.40.0-desmos/go.mod h1:Pfl5fKCEMTUEWKQkXL0HplDr39joJBzDhzN9uFoYfhk=
 github.com/dgraph-io/badger/v2 v2.2007.4 h1:TRWBQg8UrlUhaFdco01nO2uXwzKS7zd+HVdwV/GHc4o=

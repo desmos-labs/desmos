@@ -12,8 +12,15 @@ func NewParams(denomCreationFee sdk.Coins, denomCreationGasConsume uint64) Param
 	}
 }
 
-func (p Params) ToOsmosisTokenFactoryParams() tokenfactorytypes.Params {
+func ToOsmosisTokenFactoryParams(p Params) tokenfactorytypes.Params {
 	return tokenfactorytypes.Params{
+		DenomCreationFee:        p.DenomCreationFee,
+		DenomCreationGasConsume: p.DenomCreationGasConsume,
+	}
+}
+
+func FromOsmosisTokenFactoryParams(p tokenfactorytypes.Params) Params {
+	return Params{
 		DenomCreationFee:        p.DenomCreationFee,
 		DenomCreationGasConsume: p.DenomCreationGasConsume,
 	}

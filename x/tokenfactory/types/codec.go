@@ -11,11 +11,13 @@ import (
 )
 
 func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
-	cdc.RegisterConcrete(&MsgCreateDenom{}, "desmos/tokenfactory/MsgCreateDenom", nil)
-	cdc.RegisterConcrete(&MsgMint{}, "desmos/tokenfactory/MsgMint", nil)
-	cdc.RegisterConcrete(&MsgBurn{}, "desmos/tokenfactory/MsgBurn", nil)
-	cdc.RegisterConcrete(&MsgSetDenomMetadata{}, "desmos/tokenfactory/MsgSetDenomMetadata", nil)
-	cdc.RegisterConcrete(&MsgUpdateParams{}, "desmos/tokenfactory/MsgUpdateParams", nil)
+	cdc.RegisterConcrete(&MsgCreateDenom{}, "desmos/x/tokenfactory/MsgCreateDenom", nil)
+	cdc.RegisterConcrete(&MsgMint{}, "desmos/x/tokenfactory/MsgMint", nil)
+	cdc.RegisterConcrete(&MsgBurn{}, "desmos/x/tokenfactory/MsgBurn", nil)
+	cdc.RegisterConcrete(&MsgSetDenomMetadata{}, "desmos/x/tokenfactory/MsgSetDenomMetadata", nil)
+	cdc.RegisterConcrete(&MsgUpdateParams{}, "desmos/x/tokenfactory/MsgUpdateParams", nil)
+
+	cdc.RegisterConcrete(&Params{}, "desmos/x/tokenfactory/Params", nil)
 }
 
 func RegisterInterfaces(registry codectypes.InterfaceRegistry) {

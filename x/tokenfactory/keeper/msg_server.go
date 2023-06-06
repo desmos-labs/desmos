@@ -22,6 +22,7 @@ func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 	return &msgServer{Keeper: keeper}
 }
 
+// CreateDenom defines a rpc method for MsgCreateDenom
 func (k msgServer) CreateDenom(goCtx context.Context, msg *types.MsgCreateDenom) (*types.MsgCreateDenomResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -46,6 +47,7 @@ func (k msgServer) CreateDenom(goCtx context.Context, msg *types.MsgCreateDenom)
 	}, nil
 }
 
+// Mint defines a rpc method for MsgMint
 func (k msgServer) Mint(goCtx context.Context, msg *types.MsgMint) (*types.MsgMintResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -84,6 +86,7 @@ func (k msgServer) Mint(goCtx context.Context, msg *types.MsgMint) (*types.MsgMi
 	return &types.MsgMintResponse{}, nil
 }
 
+// Burn defines a rpc method for MsgBurn
 func (k msgServer) Burn(goCtx context.Context, msg *types.MsgBurn) (*types.MsgBurnResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -116,6 +119,7 @@ func (k msgServer) Burn(goCtx context.Context, msg *types.MsgBurn) (*types.MsgBu
 	return &types.MsgBurnResponse{}, nil
 }
 
+// SetDenomMetadata defines a rpc method for MsgSetDenomMetadata
 func (k msgServer) SetDenomMetadata(goCtx context.Context, msg *types.MsgSetDenomMetadata) (*types.MsgSetDenomMetadataResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -145,6 +149,7 @@ func (k msgServer) SetDenomMetadata(goCtx context.Context, msg *types.MsgSetDeno
 	return &types.MsgSetDenomMetadataResponse{}, nil
 }
 
+// UpdateParams defines a rpc method for MsgUpdateParams
 func (k msgServer) UpdateParams(goCtx context.Context, msg *types.MsgUpdateParams) (*types.MsgUpdateParamsResponse, error) {
 	authority := k.authority
 	if authority != msg.Authority {
@@ -152,7 +157,7 @@ func (k msgServer) UpdateParams(goCtx context.Context, msg *types.MsgUpdateParam
 	}
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	k.tfk.SetParams(ctx, msg.Params.ToOsmosisTokenFactoryParams())
+	k.tfk.SetParams(ctx, types.ToOsmosisTokenFactoryParams(msg.Params))
 
 	return &types.MsgUpdateParamsResponse{}, nil
 }
