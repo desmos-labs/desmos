@@ -7,11 +7,13 @@ import (
 	tokenfactorytypes "github.com/osmosis-labs/osmosis/v15/x/tokenfactory/types"
 )
 
+// BankKeeper represents a keeper that deals with x/bank
 type BankKeeper interface {
 	GetDenomMetaData(ctx sdk.Context, denom string) (banktypes.Metadata, bool)
 	SetDenomMetaData(ctx sdk.Context, denomMetaData banktypes.Metadata)
 }
 
+// TokenFactoryKeeper represents a keeper that deals with osmosis x/tokenfactroy
 type TokenFactoryKeeper interface {
 	CreateDenom(ctx sdk.Context, creatorAddr string, subdenom string) (newTokenDenom string, err error)
 	GetAuthorityMetadata(ctx sdk.Context, denom string) (tokenfactorytypes.DenomAuthorityMetadata, error)
@@ -24,6 +26,7 @@ type TokenFactoryKeeper interface {
 	ExportGenesis(ctx sdk.Context) *tokenfactorytypes.GenesisState
 }
 
+// SubspacesKeeper represents a keeper that deals with x/subspaces
 type SubspacesKeeper interface {
 	GetSubspace(ctx sdk.Context, subspaceID uint64) (subspace subspacestypes.Subspace, found bool)
 	HasPermission(ctx sdk.Context, subspaceID uint64, sectionID uint32, user string, permission subspacestypes.Permission) bool

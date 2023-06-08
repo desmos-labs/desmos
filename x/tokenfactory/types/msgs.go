@@ -78,6 +78,10 @@ func NewMsgMint(subspaceID uint64, sender string, amount sdk.Coin, mintToAddress
 
 // ValidateBasic implements sdk.Msg
 func (msg MsgMint) ValidateBasic() error {
+	if msg.SubspaceID == 0 {
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+	}
+
 	_, err := sdk.AccAddressFromBech32(msg.Sender)
 	if err != nil {
 		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid sender address: %s", err)
@@ -109,7 +113,7 @@ func (msg MsgMint) Type() string { return ActionMint }
 
 // implements legacytx.LegacyMsg
 func (msg MsgMint) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -130,6 +134,10 @@ func NewMsgBurn(subspaceID uint64, sender string, amount sdk.Coin) *MsgBurn {
 
 // ValidateBasic implements sdk.Msg
 func (msg MsgBurn) ValidateBasic() error {
+	if msg.SubspaceID == 0 {
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+	}
+
 	_, err := sdk.AccAddressFromBech32(msg.Sender)
 	if err != nil {
 		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid sender address: %s", err)
@@ -156,7 +164,7 @@ func (msg MsgBurn) Type() string { return ActionBurn }
 
 // implements legacytx.LegacyMsg
 func (msg MsgBurn) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -177,6 +185,10 @@ func NewMsgSetDenomMetadata(subspaceID uint64, sender string, metadata banktypes
 
 // ValidateBasic implements sdk.Msg
 func (msg MsgSetDenomMetadata) ValidateBasic() error {
+	if msg.SubspaceID == 0 {
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+	}
+
 	_, err := sdk.AccAddressFromBech32(msg.Sender)
 	if err != nil {
 		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid sender address: %s", err)
@@ -205,7 +217,7 @@ func (msg MsgSetDenomMetadata) Type() string { return ActionSetDenomMetadata }
 
 // implements legacytx.LegacyMsg
 func (msg MsgSetDenomMetadata) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -241,5 +253,5 @@ func (msg MsgUpdateParams) Type() string { return ActionUpdateParams }
 
 // implements legacytx.LegacyMsg
 func (msg MsgUpdateParams) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
 }

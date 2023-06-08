@@ -43,8 +43,6 @@ var (
 	// The actual codec used for serialization should be provided to x/tokenfactory and
 	// defined at the application level.
 	AminoCdc = codec.NewAminoCodec(amino)
-
-	ModuleCdc = codec.NewProtoCodec(codectypes.NewInterfaceRegistry())
 )
 
 func init() {

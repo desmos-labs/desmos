@@ -214,7 +214,7 @@ func GetDraftDenomMetadataCmd() *cobra.Command {
 				return err
 			}
 
-			return os.WriteFile(output, bz, 0666)
+			return os.WriteFile(output, bz, 0644)
 		},
 	}
 
