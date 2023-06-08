@@ -227,7 +227,13 @@ var (
 	_ legacytx.LegacyMsg = &MsgUpdateParams{}
 )
 
-// NewMsgCreateDenom creates a new MsgSetDenomMetadata instance
+// NewMsgUpdateParams creates a new MsgUpdateParams instance
+func NewMsgUpdateParams(params Params, authority string) *MsgUpdateParams {
+	return &MsgUpdateParams{
+		Params:    params,
+		Authority: authority,
+	}
+}
 
 // ValidateBasic implements sdk.Msg
 func (msg MsgUpdateParams) ValidateBasic() error {

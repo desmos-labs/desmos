@@ -13,6 +13,14 @@ func NewParams(denomCreationFee sdk.Coins, denomCreationGasConsume uint64) Param
 	}
 }
 
+// DefaultParams creates a default params instance
+func DefaultParams() Params {
+	return Params{
+		DenomCreationFee:        sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 10_000_000)), // 10 DSM
+		DenomCreationGasConsume: 0,
+	}
+}
+
 // ToOsmosisTokenFactoryParams converts desmos tokenfactory Params into osmosis tokenfactory Params
 func ToOsmosisTokenFactoryParams(p Params) tokenfactorytypes.Params {
 	return tokenfactorytypes.Params{

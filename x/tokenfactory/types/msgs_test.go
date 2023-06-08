@@ -91,7 +91,7 @@ func TestMsgCreateDenom_GetSigners(t *testing.T) {
 var msgMint = types.NewMsgMint(
 	1,
 	"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-	sdk.NewCoin("minttoken", sdk.NewInt(100)),
+	sdk.NewCoin("uminttoken", sdk.NewInt(100)),
 	"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 )
 
@@ -169,7 +169,7 @@ func TestMsgMint_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgMint_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/x/tokenfactory/MsgMint","value":{"amount":{"amount":"100","denom":"minttoken"},"mint_to_address":"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69","sender":"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69","subspace_id":"1"}}`
+	expected := `{"type":"desmos/x/tokenfactory/MsgMint","value":{"amount":{"amount":"100","denom":"uminttoken"},"mint_to_address":"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69","sender":"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69","subspace_id":"1"}}`
 	require.Equal(t, expected, string(msgMint.GetSignBytes()))
 }
 
@@ -183,7 +183,7 @@ func TestMsgMint_GetSigners(t *testing.T) {
 var msgBurn = types.NewMsgBurn(
 	1,
 	"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-	sdk.NewCoin("minttoken", sdk.NewInt(100)),
+	sdk.NewCoin("uminttoken", sdk.NewInt(100)),
 )
 
 func TestMsgBurn_Route(t *testing.T) {
@@ -247,7 +247,7 @@ func TestMsgBurn_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgBurn_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/x/tokenfactory/MsgBurn","value":{"amount":{"amount":"100","denom":"minttoken"},"sender":"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69","subspace_id":"1"}}`
+	expected := `{"type":"desmos/x/tokenfactory/MsgBurn","value":{"amount":{"amount":"100","denom":"uminttoken"},"sender":"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69","subspace_id":"1"}}`
 	require.Equal(t, expected, string(msgBurn.GetSignBytes()))
 }
 
@@ -263,13 +263,13 @@ var msgSetDenomMetadata = types.NewMsgSetDenomMetadata(
 	"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 	banktypes.Metadata{
 		Name:        "Mint Token",
-		Symbol:      "MINTTOKEN",
-		Description: "The native staking token of the Cosmos Hub.",
+		Symbol:      "MTK",
+		Description: "The custom token of the test subspace.",
 		DenomUnits: []*banktypes.DenomUnit{
-			{Denom: "factory/cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69/uminttoken", Exponent: uint32(0), Aliases: nil},
+			{Denom: "factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", Exponent: uint32(0), Aliases: nil},
 			{Denom: "minttoken", Exponent: uint32(6), Aliases: []string{"minttoken"}},
 		},
-		Base:    "factory/cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69/uminttoken",
+		Base:    "factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken",
 		Display: "minttoken",
 	},
 )
@@ -323,7 +323,7 @@ func TestMsgSetDenomMetadata_ValidateBasic(t *testing.T) {
 				banktypes.Metadata{
 					Name:        "Mint Token",
 					Symbol:      "MINTTOKEN",
-					Description: "The native staking token of the Cosmos Hub.",
+					Description: "The custom token of the test subspace.",
 					DenomUnits: []*banktypes.DenomUnit{
 						{Denom: "uminttoken", Exponent: uint32(0), Aliases: nil},
 					},
@@ -353,11 +353,69 @@ func TestMsgSetDenomMetadata_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgSetDenomMetadata_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/x/tokenfactory/MsgSetDenomMetadata","value":{"metadata":{"base":"factory/cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69/uminttoken","denom_units":[{"denom":"factory/cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69/uminttoken"},{"aliases":["minttoken"],"denom":"minttoken","exponent":6}],"description":"The native staking token of the Cosmos Hub.","display":"minttoken","name":"Mint Token","symbol":"MINTTOKEN"},"sender":"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69","subspace_id":"1"}}`
+	expected := `{"type":"desmos/x/tokenfactory/MsgSetDenomMetadata","value":{"metadata":{"base":"factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken","denom_units":[{"denom":"factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken"},{"aliases":["minttoken"],"denom":"minttoken","exponent":6}],"description":"The custom token of the test subspace.","display":"minttoken","name":"Mint Token","symbol":"MTK"},"sender":"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69","subspace_id":"1"}}`
 	require.Equal(t, expected, string(msgSetDenomMetadata.GetSignBytes()))
 }
 
 func TestMsgSetDenomMetadata_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgSetDenomMetadata.Sender)
 	require.Equal(t, []sdk.AccAddress{addr}, msgSetDenomMetadata.GetSigners())
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+var msgUpdateParams = types.NewMsgUpdateParams(
+	types.DefaultParams(),
+	"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+)
+
+func TestMsgUpdateParams_Route(t *testing.T) {
+	require.Equal(t, types.RouterKey, msgUpdateParams.Route())
+}
+
+func TestMsgUpdateParams_Type(t *testing.T) {
+	require.Equal(t, types.ActionUpdateParams, msgUpdateParams.Type())
+}
+
+func TestMsgUpdateParams_ValidateBasic(t *testing.T) {
+	testCases := []struct {
+		name      string
+		msg       *types.MsgUpdateParams
+		shouldErr bool
+	}{
+		{
+			name: "invalid authority returns error",
+			msg: types.NewMsgUpdateParams(
+				types.DefaultParams(),
+				"invalid",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "valid message returns no error",
+			msg:  msgUpdateParams,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.msg.ValidateBasic()
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestMsgUpdateParams_GetSignBytes(t *testing.T) {
+	expected := `{"type":"desmos/x/tokenfactory/MsgUpdateParams","value":{"authority":"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd","params":{"denom_creation_fee":[{"amount":"10000000","denom":"stake"}]}}}`
+	require.Equal(t, expected, string(msgUpdateParams.GetSignBytes()))
+}
+
+func TestMsgUpdateParams_GetSigners(t *testing.T) {
+	addr, _ := sdk.AccAddressFromBech32(msgUpdateParams.Authority)
+	require.Equal(t, []sdk.AccAddress{addr}, msgUpdateParams.GetSigners())
 }
