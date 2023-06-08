@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"fmt"
 
 	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -41,6 +42,21 @@ func (k msgServer) CreateDenom(goCtx context.Context, msg *types.MsgCreateDenom)
 	if err != nil {
 		return nil, err
 	}
+
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Sender),
+		),
+		sdk.NewEvent(
+			types.EventTypeCreateDenom,
+			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			sdk.NewAttribute(types.AttributeCreator, msg.Sender),
+			sdk.NewAttribute(types.AttributeNewTokenDenom, denom),
+		),
+	})
 
 	return &types.MsgCreateDenomResponse{
 		NewTokenDenom: denom,
@@ -83,6 +99,21 @@ func (k msgServer) Mint(goCtx context.Context, msg *types.MsgMint) (*types.MsgMi
 		return nil, err
 	}
 
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Sender),
+		),
+		sdk.NewEvent(
+			types.EventTypeMint,
+			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			sdk.NewAttribute(types.AttributeMintToAddress, msg.MintToAddress),
+			sdk.NewAttribute(types.AttributeAmount, msg.Amount.String()),
+		),
+	})
+
 	return &types.MsgMintResponse{}, nil
 }
 
@@ -116,6 +147,21 @@ func (k msgServer) Burn(goCtx context.Context, msg *types.MsgBurn) (*types.MsgBu
 		return nil, err
 	}
 
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Sender),
+		),
+		sdk.NewEvent(
+			types.EventTypeBurn,
+			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			sdk.NewAttribute(types.AttributeBurnFromAddress, subspace.Treasury),
+			sdk.NewAttribute(types.AttributeAmount, msg.Amount.String()),
+		),
+	})
+
 	return &types.MsgBurnResponse{}, nil
 }
 
@@ -146,6 +192,21 @@ func (k msgServer) SetDenomMetadata(goCtx context.Context, msg *types.MsgSetDeno
 
 	k.bk.SetDenomMetaData(ctx, msg.Metadata)
 
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Sender),
+		),
+		sdk.NewEvent(
+			types.ActionSetDenomMetadata,
+			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			sdk.NewAttribute(types.AttributeDenom, msg.Metadata.Base),
+			sdk.NewAttribute(types.AttributeDenomMetadata, msg.Metadata.String()),
+		),
+	})
+
 	return &types.MsgSetDenomMetadataResponse{}, nil
 }
 
@@ -158,6 +219,15 @@ func (k msgServer) UpdateParams(goCtx context.Context, msg *types.MsgUpdateParam
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	k.tfk.SetParams(ctx, types.ToOsmosisTokenFactoryParams(msg.Params))
+
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Authority),
+		),
+	})
 
 	return &types.MsgUpdateParamsResponse{}, nil
 }
