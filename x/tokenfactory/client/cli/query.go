@@ -35,7 +35,7 @@ func GetCmdSubspaceDenoms() *cobra.Command {
 		Use:     "subspace-denoms [subspace-id]",
 		Short:   "Query the denoms owned by the subspace",
 		Example: fmt.Sprintf(`%s query tokenfactory subspace-denom 1`, version.AppName),
-		Args:    cobra.NoArgs,
+		Args:    cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
