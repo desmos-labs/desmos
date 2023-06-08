@@ -374,7 +374,7 @@ func NewDesmosApp(
 
 	encodingConfig := MakeEncodingConfig()
 
-	appCodec, legacyAmino := encodingConfig.Marshaler, encodingConfig.Amino
+	appCodec, legacyAmino := encodingConfig.Codec, encodingConfig.Amino
 	interfaceRegistry := encodingConfig.InterfaceRegistry
 	txConfig := encodingConfig.TxConfig
 
@@ -1081,7 +1081,7 @@ func SetupConfig(config *sdk.Config) {
 // full DesmosApp
 func MakeCodecs() (codec.Codec, *codec.LegacyAmino) {
 	cfg := MakeEncodingConfig()
-	return cfg.Marshaler, cfg.Amino
+	return cfg.Codec, cfg.Amino
 }
 
 // Name returns the name of the App

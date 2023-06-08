@@ -39,14 +39,14 @@ func TestParseLinkAccountJSON(t *testing.T) {
 	)
 
 	params := app.MakeEncodingConfig()
-	jsonBz := params.Marshaler.MustMarshalJSON(&jsonData)
+	jsonBz := params.Codec.MustMarshalJSON(&jsonData)
 
 	// Write the JSON to a temp file
 	filePath := path.Join(t.TempDir(), t.Name())
 	require.NoError(t, ioutil.WriteFile(filePath, jsonBz, 0666))
 
 	// Read the temp file and check for equality
-	data, err := utils.ParseChainLinkJSON(params.Marshaler, filePath)
+	data, err := utils.ParseChainLinkJSON(params.Codec, filePath)
 	require.NoError(t, err)
 	require.True(t, jsonData.Equal(data))
 
