@@ -156,7 +156,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateDenom() {
 					types.EventTypeCreateDenom,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeCreator, "cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69"),
-					sdk.NewAttribute(types.AttributeNewTokenDenom, "factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken"),
+					sdk.NewAttribute(types.AttributeNewDenom, "factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken"),
 				),
 			},
 		},

@@ -1,6 +1,7 @@
 package types
 
-// event types
+// DONTCOVER
+
 const (
 	EventTypeCreateDenom      = "create_denom"
 	EventTypeMint             = "tf_mint"
@@ -12,7 +13,7 @@ const (
 	AttributeAmount          = "amount"
 	AttributeCreator         = "creator"
 	AttributeSubdenom        = "subdenom"
-	AttributeNewTokenDenom   = "new_token_denom"
+	AttributeNewDenom        = "new_denom"
 	AttributeMintToAddress   = "mint_to_address"
 	AttributeBurnFromAddress = "burn_from_address"
 	AttributeDenom           = "denom"

@@ -54,7 +54,7 @@ func (k msgServer) CreateDenom(goCtx context.Context, msg *types.MsgCreateDenom)
 			types.EventTypeCreateDenom,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeCreator, msg.Sender),
-			sdk.NewAttribute(types.AttributeNewTokenDenom, denom),
+			sdk.NewAttribute(types.AttributeNewDenom, denom),
 		),
 	})
 
