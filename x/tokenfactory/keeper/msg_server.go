@@ -8,7 +8,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	tokenfactorytypes "github.com/osmosis-labs/osmosis/v15/x/tokenfactory/types"
 
 	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 	"github.com/desmos-labs/desmos/v5/x/tokenfactory/types"
@@ -73,25 +72,9 @@ func (k msgServer) Mint(goCtx context.Context, msg *types.MsgMint) (*types.MsgMi
 		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 
-	// Check the permission to manage the subspace tokens
-	if !k.sk.HasPermission(ctx, msg.SubspaceID, subspacestypes.RootSectionID, msg.Sender, types.PermissionManageSubspaceTokens) {
-		return nil, errors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot manage the subspace tokens inside this subspace")
-	}
-
-	// Check if the denom exists
-	_, denomExists := k.bk.GetDenomMetaData(ctx, msg.Amount.Denom)
-	if !denomExists {
-		return nil, tokenfactorytypes.ErrDenomDoesNotExist.Wrapf("denom: %s", msg.Amount.Denom)
-	}
-
-	authorityMetadata, err := k.tfk.GetAuthorityMetadata(ctx, msg.Amount.GetDenom())
+	err := k.ValidateManageTokenPermission(ctx, subspace, msg.Sender, msg.Amount.Denom)
 	if err != nil {
 		return nil, err
-	}
-
-	// Check if the subspace treasury is the admin of the denom
-	if subspace.Treasury != authorityMetadata.GetAdmin() {
-		return nil, tokenfactorytypes.ErrUnauthorized
 	}
 
 	err = k.tfk.MintTo(ctx, msg.Amount, msg.MintToAddress)
@@ -127,25 +110,9 @@ func (k msgServer) Burn(goCtx context.Context, msg *types.MsgBurn) (*types.MsgBu
 		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 
-	// Check the permission to manage the subspace tokens
-	if !k.sk.HasPermission(ctx, msg.SubspaceID, subspacestypes.RootSectionID, msg.Sender, types.PermissionManageSubspaceTokens) {
-		return nil, errors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot manage the subspace tokens inside this subspace")
-	}
-
-	// Check if the denom exists
-	_, denomExists := k.bk.GetDenomMetaData(ctx, msg.Amount.Denom)
-	if !denomExists {
-		return nil, tokenfactorytypes.ErrDenomDoesNotExist.Wrapf("denom: %s", msg.Amount.Denom)
-	}
-
-	authorityMetadata, err := k.tfk.GetAuthorityMetadata(ctx, msg.Amount.GetDenom())
+	err := k.ValidateManageTokenPermission(ctx, subspace, msg.Sender, msg.Amount.Denom)
 	if err != nil {
 		return nil, err
-	}
-
-	// Check if the subspace treasury is the admin of the denom
-	if subspace.Treasury != authorityMetadata.GetAdmin() {
-		return nil, tokenfactorytypes.ErrUnauthorized
 	}
 
 	err = k.tfk.BurnFrom(ctx, msg.Amount, subspace.Treasury)
@@ -181,25 +148,9 @@ func (k msgServer) SetDenomMetadata(goCtx context.Context, msg *types.MsgSetDeno
 		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 
-	// Check the permission to manage the subspace tokens
-	if !k.sk.HasPermission(ctx, msg.SubspaceID, subspacestypes.RootSectionID, msg.Sender, types.PermissionManageSubspaceTokens) {
-		return nil, errors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot manage the subspace tokens inside this subspace")
-	}
-
-	// Check if the denom exists
-	_, denomExists := k.bk.GetDenomMetaData(ctx, msg.Metadata.Base)
-	if !denomExists {
-		return nil, tokenfactorytypes.ErrDenomDoesNotExist.Wrapf("denom: %s", msg.Metadata.Base)
-	}
-
-	authorityMetadata, err := k.tfk.GetAuthorityMetadata(ctx, msg.Metadata.Base)
+	err := k.ValidateManageTokenPermission(ctx, subspace, msg.Sender, msg.Metadata.Base)
 	if err != nil {
 		return nil, err
-	}
-
-	// Check if the subspace treasury is the admin of the denom
-	if subspace.Treasury != authorityMetadata.GetAdmin() {
-		return nil, tokenfactorytypes.ErrUnauthorized
 	}
 
 	k.bk.SetDenomMetaData(ctx, msg.Metadata)
