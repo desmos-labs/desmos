@@ -35,6 +35,7 @@ import (
 
 	"github.com/desmos-labs/desmos/v5/x/tokenfactory/client/cli"
 	"github.com/desmos-labs/desmos/v5/x/tokenfactory/keeper"
+	"github.com/desmos-labs/desmos/v5/x/tokenfactory/simulation"
 	"github.com/desmos-labs/desmos/v5/x/tokenfactory/types"
 )
 
@@ -108,9 +109,10 @@ type AppModule struct {
 
 	keeper keeper.Keeper
 
+	sk  types.SubspacesKeeper
+	tfk types.TokenFactoryKeeper
 	ak  authkeeper.AccountKeeper
 	bk  bankkeeper.Keeper
-	tfk types.TokenFactoryKeeper
 }
 
 // RegisterServices registers module services.
@@ -121,12 +123,13 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 
 // NewAppModule creates a new AppModule Object
 func NewAppModule(
-	cdc codec.Codec, keeper keeper.Keeper, tfk types.TokenFactoryKeeper,
+	cdc codec.Codec, keeper keeper.Keeper, sk types.SubspacesKeeper, tfk types.TokenFactoryKeeper,
 	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) AppModule {
 	return AppModule{
 		AppModuleBasic: AppModuleBasic{cdc: cdc},
 		keeper:         keeper,
+		sk:             sk,
 		tfk:            tfk,
 		ak:             ak,
 		bk:             bk,
@@ -180,20 +183,19 @@ func (am AppModule) EndBlock(_ sdk.Context, _ abci.RequestEndBlock) []abci.Valid
 // --------------------------------------------------------------------------------------------------------------------
 
 // AppModuleSimulation defines the module simulation functions used by the tokenfactory module.
-type AppModuleSimulation struct {
-}
+type AppModuleSimulation struct{}
 
 // GenerateGenesisState creates a randomized GenState of the bank module.
 func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
+	simulation.RandomizeGenState(simState)
 }
 
 // RegisterStoreDecoder performs a no-op.
-func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
-}
+func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {}
 
 // WeightedOperations returns the all the tokenfactory module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
-	return nil
+	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.sk, am.tfk, am.ak, am.bk)
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -264,6 +266,7 @@ func ProvideModule(in ModuleInputs) ModuleOutputs {
 	m := NewAppModule(
 		in.Cdc,
 		k,
+		in.SubspacesKeeper,
 		tfk,
 		in.AccountKeeper,
 		bk,

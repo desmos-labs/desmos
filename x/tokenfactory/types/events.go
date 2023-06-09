@@ -2,6 +2,7 @@ package types
 
 // DONTCOVER
 
+// #nosec G101 -- This is a false positive
 const (
 	EventTypeCreateDenom      = "create_denom"
 	EventTypeMint             = "tf_mint"
@@ -13,7 +14,7 @@ const (
 	AttributeAmount          = "amount"
 	AttributeCreator         = "creator"
 	AttributeSubdenom        = "subdenom"
-	AttributeNewDenom        = "new_denom"
+	AttributeNewTokenDenom   = "new_token_denom"
 	AttributeMintToAddress   = "mint_to_address"
 	AttributeBurnFromAddress = "burn_from_address"
 	AttributeDenom           = "denom"

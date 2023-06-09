@@ -28,6 +28,8 @@ type TokenFactoryKeeper interface {
 
 // SubspacesKeeper represents a keeper that deals with x/subspaces
 type SubspacesKeeper interface {
+	GetAllSubspaces(ctx sdk.Context) []subspacestypes.Subspace
 	GetSubspace(ctx sdk.Context, subspaceID uint64) (subspace subspacestypes.Subspace, found bool)
 	HasPermission(ctx sdk.Context, subspaceID uint64, sectionID uint32, user string, permission subspacestypes.Permission) bool
+	GetUsersWithRootPermissions(ctx sdk.Context, subspaceID uint64, permission subspacestypes.Permissions) []string
 }

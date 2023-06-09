@@ -97,7 +97,7 @@ func GetCmdMint() *cobra.Command {
 			}
 
 			sender := clientCtx.FromAddress
-			msg := types.NewMsgMint(subspaceID, sender.String(), amount, args[1])
+			msg := types.NewMsgMint(subspaceID, sender.String(), args[1], amount)
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}

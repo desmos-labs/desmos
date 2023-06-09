@@ -67,7 +67,7 @@ var (
 )
 
 // NewMsgMint creates a new MsgMint instance
-func NewMsgMint(subspaceID uint64, sender string, amount sdk.Coin, mintToAddress string) *MsgMint {
+func NewMsgMint(subspaceID uint64, sender string, mintToAddress string, amount sdk.Coin) *MsgMint {
 	return &MsgMint{
 		SubspaceID:    subspaceID,
 		Sender:        sender,
@@ -87,13 +87,13 @@ func (msg MsgMint) ValidateBasic() error {
 		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid sender address: %s", err)
 	}
 
-	if !msg.Amount.IsValid() || msg.Amount.Amount.Equal(sdk.ZeroInt()) {
-		return errors.Wrap(sdkerrors.ErrInvalidCoins, msg.Amount.String())
-	}
-
 	_, err = sdk.AccAddressFromBech32(msg.MintToAddress)
 	if err != nil {
 		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid mint to address: %s", err)
+	}
+
+	if !msg.Amount.IsValid() || msg.Amount.Amount.Equal(sdk.ZeroInt()) {
+		return errors.Wrap(sdkerrors.ErrInvalidCoins, msg.Amount.String())
 	}
 
 	return nil

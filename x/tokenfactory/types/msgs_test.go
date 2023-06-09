@@ -91,8 +91,8 @@ func TestMsgCreateDenom_GetSigners(t *testing.T) {
 var msgMint = types.NewMsgMint(
 	1,
 	"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-	sdk.NewCoin("uminttoken", sdk.NewInt(100)),
 	"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+	sdk.NewCoin("uminttoken", sdk.NewInt(100)),
 )
 
 func TestMsgMint_Route(t *testing.T) {
@@ -114,8 +114,8 @@ func TestMsgMint_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgMint(
 				0,
 				msgMint.Sender,
-				msgMint.Amount,
 				msgMint.MintToAddress,
+				msgMint.Amount,
 			),
 			shouldErr: true,
 		},
@@ -124,18 +124,8 @@ func TestMsgMint_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgMint(
 				msgMint.SubspaceID,
 				"",
+				msgMint.MintToAddress,
 				msgMint.Amount,
-				msgMint.MintToAddress,
-			),
-			shouldErr: true,
-		},
-		{
-			name: "invalid amount returns error",
-			msg: types.NewMsgMint(
-				msgMint.SubspaceID,
-				msgMint.Sender,
-				sdk.Coin{Denom: "%invalid%", Amount: sdk.NewInt(100)},
-				msgMint.MintToAddress,
 			),
 			shouldErr: true,
 		},
@@ -144,8 +134,18 @@ func TestMsgMint_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgMint(
 				msgMint.SubspaceID,
 				msgMint.Sender,
-				msgMint.Amount,
 				"",
+				msgMint.Amount,
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid amount returns error",
+			msg: types.NewMsgMint(
+				msgMint.SubspaceID,
+				msgMint.Sender,
+				msgMint.MintToAddress,
+				sdk.Coin{Denom: "%invalid%", Amount: sdk.NewInt(100)},
 			),
 			shouldErr: true,
 		},

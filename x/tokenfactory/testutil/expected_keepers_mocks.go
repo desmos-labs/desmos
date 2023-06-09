@@ -234,6 +234,20 @@ func (m *MockSubspacesKeeper) EXPECT() *MockSubspacesKeeperMockRecorder {
 	return m.recorder
 }
 
+// GetAllSubspaces mocks base method.
+func (m *MockSubspacesKeeper) GetAllSubspaces(ctx types.Context) []types1.Subspace {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAllSubspaces", ctx)
+	ret0, _ := ret[0].([]types1.Subspace)
+	return ret0
+}
+
+// GetAllSubspaces indicates an expected call of GetAllSubspaces.
+func (mr *MockSubspacesKeeperMockRecorder) GetAllSubspaces(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllSubspaces", reflect.TypeOf((*MockSubspacesKeeper)(nil).GetAllSubspaces), ctx)
+}
+
 // GetSubspace mocks base method.
 func (m *MockSubspacesKeeper) GetSubspace(ctx types.Context, subspaceID uint64) (types1.Subspace, bool) {
 	m.ctrl.T.Helper()
@@ -247,6 +261,20 @@ func (m *MockSubspacesKeeper) GetSubspace(ctx types.Context, subspaceID uint64) 
 func (mr *MockSubspacesKeeperMockRecorder) GetSubspace(ctx, subspaceID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSubspace", reflect.TypeOf((*MockSubspacesKeeper)(nil).GetSubspace), ctx, subspaceID)
+}
+
+// GetUsersWithRootPermissions mocks base method.
+func (m *MockSubspacesKeeper) GetUsersWithRootPermissions(ctx types.Context, subspaceID uint64, permission types1.Permissions) []string {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUsersWithRootPermissions", ctx, subspaceID, permission)
+	ret0, _ := ret[0].([]string)
+	return ret0
+}
+
+// GetUsersWithRootPermissions indicates an expected call of GetUsersWithRootPermissions.
+func (mr *MockSubspacesKeeperMockRecorder) GetUsersWithRootPermissions(ctx, subspaceID, permission interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUsersWithRootPermissions", reflect.TypeOf((*MockSubspacesKeeper)(nil).GetUsersWithRootPermissions), ctx, subspaceID, permission)
 }
 
 // HasPermission mocks base method.
