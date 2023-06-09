@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	FlagOutputFilePath = "output-file-path"
+	FlagOutputPath = "output-path"
 )
 
 // DONTCOVER
@@ -32,18 +32,18 @@ func GetTxCmd() *cobra.Command {
 	}
 
 	txCmd.AddCommand(
-		GetCreateDenomCmd(),
-		GetMintCmd(),
-		GetBurnCmd(),
-		GetSetDenomMetadataCmd(),
-		GetDraftDenomMetadataCmd(),
+		GetCmdCreateDenom(),
+		GetCmdMint(),
+		GetCmdBurn(),
+		GetCmdSetDenomMetadata(),
+		GetCmdDraftDenomMetadata(),
 	)
 
 	return txCmd
 }
 
-// GetCreateDenomCmd returns the command used to create a denom
-func GetCreateDenomCmd() *cobra.Command {
+// GetCmdCreateDenom returns the command used to create a denom
+func GetCmdCreateDenom() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-denom [subspace-id] [subdenom]",
 		Short: fmt.Sprintf("create a new denom from an account. (Costs %s though!)", sdk.DefaultBondDenom),
@@ -74,10 +74,10 @@ func GetCreateDenomCmd() *cobra.Command {
 	return cmd
 }
 
-// GetMintCmd returns the command used to mint a denom to an address
-func GetMintCmd() *cobra.Command {
+// GetCmdMint returns the command used to mint a denom to an address
+func GetCmdMint() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "mint [subspace-id] [amount] [to-address]",
+		Use:   "mint [subspace-id] [to-address] [amount]",
 		Short: "Mint a denom to an address. Must have permissions to do so.",
 		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -91,13 +91,13 @@ func GetMintCmd() *cobra.Command {
 				return err
 			}
 
-			amount, err := sdk.ParseCoinNormalized(args[1])
+			amount, err := sdk.ParseCoinNormalized(args[2])
 			if err != nil {
 				return err
 			}
 
 			sender := clientCtx.FromAddress
-			msg := types.NewMsgMint(subspaceID, sender.String(), amount, args[2])
+			msg := types.NewMsgMint(subspaceID, sender.String(), amount, args[1])
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}
@@ -111,8 +111,8 @@ func GetMintCmd() *cobra.Command {
 	return cmd
 }
 
-// GetBurnCmd returns the command used to burn a denom from the treasury account
-func GetBurnCmd() *cobra.Command {
+// GetCmdBurn returns the command used to burn a denom from the treasury account
+func GetCmdBurn() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "burn [subspace-id] [amount]",
 		Short: "Burn tokens from the treasury account. Must have permissions to do so.",
@@ -148,8 +148,8 @@ func GetBurnCmd() *cobra.Command {
 	return cmd
 }
 
-// GetSetDenomMetadataCmd returns the command used to set the metadata of the denom
-func GetSetDenomMetadataCmd() *cobra.Command {
+// GetCmdSetDenomMetadata returns the command used to set the metadata of the denom
+func GetCmdSetDenomMetadata() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "set-denom-metadata [subspace-id] [json-path]",
 		Short: "Set a subspace token metadata. Must have permissions to do so.",
@@ -191,10 +191,10 @@ func GetSetDenomMetadataCmd() *cobra.Command {
 	return cmd
 }
 
-// GetDraftDenomMetadataCmd returns the command used to draft a denom metadata
-func GetDraftDenomMetadataCmd() *cobra.Command {
+// GetCmdDraftDenomMetadata returns the command used to draft a denom metadata
+func GetCmdDraftDenomMetadata() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "draft-denom-metadata ",
+		Use:   "draft-denom-metadata",
 		Short: "Draft a subspace token metadata for setting denom metadata",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
@@ -203,7 +203,7 @@ func GetDraftDenomMetadataCmd() *cobra.Command {
 				return err
 			}
 
-			output, err := cmd.Flags().GetString(FlagOutputFilePath)
+			output, err := cmd.Flags().GetString(FlagOutputPath)
 			if err != nil {
 				return err
 			}
@@ -218,7 +218,7 @@ func GetDraftDenomMetadataCmd() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().String(FlagOutputFilePath, "metadata.json", "output file path of the draft metadata")
+	cmd.Flags().String(FlagOutputPath, "metadata.json", "output file path of the draft metadata")
 	flags.AddTxFlagsToCmd(cmd)
 
 	return cmd

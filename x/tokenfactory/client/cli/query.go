@@ -24,13 +24,13 @@ func GetQueryCmd() *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 	queryCmd.AddCommand(
-		GetCmdSubspaceDenoms(),
+		GetCmdQuerySubspaceDenoms(),
 		GetCmdQueryParams(),
 	)
 	return queryCmd
 }
 
-func GetCmdSubspaceDenoms() *cobra.Command {
+func GetCmdQuerySubspaceDenoms() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "subspace-denoms [subspace-id]",
 		Short:   "Query the denoms owned by the subspace",
