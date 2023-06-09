@@ -32,12 +32,10 @@ const (
 	OpWeightMsgBurn             = "op_weight_msg_burn"
 	OpWeightMsgSetDenomMetadata = "op_weight_msg_set_denom_metadata"
 
-	DefaultWeightMsgCreateDenom      = 10
-	DefaultWeightMsgMint             = 40
-	DefaultWeightMsgBurn             = 10
+	DefaultWeightMsgCreateDenom      = 30
+	DefaultWeightMsgMint             = 70
+	DefaultWeightMsgBurn             = 40
 	DefaultWeightMsgSetDenomMetadata = 10
-
-	DefaultGasValue = 200_000
 )
 
 // WeightedOperations returns all the operations from the module with their respective weights

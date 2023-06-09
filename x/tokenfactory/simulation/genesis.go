@@ -38,8 +38,13 @@ func randomFactoryDenoms(r *rand.Rand, subspaces []subspacestypes.Subspace) []to
 	for i := 0; i < denomsNumber; i++ {
 		subspace := subspacessim.RandomSubspace(r, subspaces)
 
+		denom, err := tokenfactorytypes.GetTokenDenom(subspace.Treasury, simtypes.RandStringOfLength(r, 6))
+		if err != nil {
+			panic(err)
+		}
+
 		denoms[i] = tokenfactorytypes.GenesisDenom{
-			Denom: simtypes.RandStringOfLength(r, 6),
+			Denom: denom,
 			AuthorityMetadata: tokenfactorytypes.DenomAuthorityMetadata{
 				Admin: subspace.Treasury,
 			},
