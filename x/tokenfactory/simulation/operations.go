@@ -299,7 +299,7 @@ func SimulateMsgSetDenomMetadata(
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 
 		// Get the data
-		subspaceID, metadata, signer, skip := randomSetDenomMetadataFields(r, ctx, accs, sk, tfk, bk)
+		subspaceID, metadata, signer, skip := randomSetDenomMetadataFields(r, ctx, accs, sk, tfk)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, "MsgSetDenomMetadata", "skip"), nil, nil
 		}
@@ -313,7 +313,7 @@ func SimulateMsgSetDenomMetadata(
 
 // randomSetDenomMetadataFields returns the data used to build a random MsgSetDenomMetadata
 func randomSetDenomMetadataFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, sk types.SubspacesKeeper, tfk types.TokenFactoryKeeper, bk bankkeeper.ViewKeeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, sk types.SubspacesKeeper, tfk types.TokenFactoryKeeper,
 ) (subspaceID uint64, metadata banktypes.Metadata, signer simtypes.Account, skip bool) {
 
 	// Get a subspace id
