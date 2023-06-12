@@ -498,13 +498,13 @@ func (a *Attachment) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 
 // AttachmentMove contains data related to a attachment that can be updated after it has been moved.
 type AttachmentMove struct {
-	// Move's subspace id will always replace the existing ones
+	// ID of the subspace inside which the attachment should be moved
 	SubspaceID uint64
 
-	// Move's post id will always replace the existing ones
+	// ID of the post to which the attachment should be associated within the new subspace 
 	PostID uint64
 
-	// Move's id will always replace the existing ones
+	// ID of the attachment within the new subspace
 	AttachmentID uint32
 }
 
