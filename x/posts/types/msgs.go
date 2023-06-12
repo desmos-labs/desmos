@@ -441,6 +441,73 @@ func (msg MsgAnswerPoll) GetSigners() []sdk.AccAddress {
 // --------------------------------------------------------------------------------------------------------------------
 
 var (
+	_ sdk.Msg            = &MsgMovePost{}
+	_ legacytx.LegacyMsg = &MsgMovePost{}
+)
+
+// NewMsgMovePost returns a new MsgMovePost instance
+func NewMsgMovePost(
+	subspaceID uint64,
+	postID uint64,
+	targetSubspaceID uint64,
+	targetSectionID uint32,
+	owner string,
+) *MsgMovePost {
+	return &MsgMovePost{
+		SubspaceID:       subspaceID,
+		PostID:           postID,
+		TargetSubspaceID: targetSubspaceID,
+		TargetSectionID:  targetSectionID,
+		Owner:            owner,
+	}
+}
+
+// Route implements sdk.Msg
+func (msg MsgMovePost) Route() string { return RouterKey }
+
+// Type implements sdk.Msg
+func (msg MsgMovePost) Type() string { return ActionMovePost }
+
+// ValidateBasic implements sdk.Msg
+func (msg MsgMovePost) ValidateBasic() error {
+	if msg.SubspaceID == 0 {
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+	}
+
+	if msg.PostID == 0 {
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id: %d", msg.PostID)
+	}
+
+	if msg.TargetSubspaceID == 0 {
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid target subspace id: %d", msg.TargetSubspaceID)
+	}
+
+	if msg.SubspaceID == msg.TargetSubspaceID {
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "can not move to the current subspace with id %d", msg.TargetSectionID)
+	}
+
+	_, err := sdk.AccAddressFromBech32(msg.Owner)
+	if err != nil {
+		return fmt.Errorf("invalid owner address: %s", err)
+	}
+
+	return nil
+}
+
+// GetSignBytes implements sdk.Msg
+func (msg MsgMovePost) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
+}
+
+// GetSigners implements sdk.Msg
+func (msg MsgMovePost) GetSigners() []sdk.AccAddress {
+	addr, _ := sdk.AccAddressFromBech32(msg.Owner)
+	return []sdk.AccAddress{addr}
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+var (
 	_ sdk.Msg            = &MsgUpdateParams{}
 	_ legacytx.LegacyMsg = &MsgUpdateParams{}
 )

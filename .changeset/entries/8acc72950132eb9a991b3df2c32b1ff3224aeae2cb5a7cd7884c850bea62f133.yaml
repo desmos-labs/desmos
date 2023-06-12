@@ -1,0 +1,6 @@
+type: feat
+module: x/posts
+pull_request: 1157
+description: Implement post migration feature
+backward_compatible: true
+date: 2023-05-30T09:39:24.240589985Z

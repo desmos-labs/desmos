@@ -879,3 +879,81 @@ func (s *IntegrationTestSuite) TestCmdAnswerPoll() {
 		})
 	}
 }
+
+func (s *IntegrationTestSuite) TestCmdMovePost() {
+	val := s.network.Validators[0]
+	testCases := []struct {
+		name      string
+		args      []string
+		shouldErr bool
+		respType  proto.Message
+	}{
+		{
+			name: "invalid subspace id returns error",
+			args: []string{
+				"X", "1", "2", "1",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+			},
+			shouldErr: true,
+		},
+		{
+			name: "invalid post id returns error",
+			args: []string{
+				"1", "X", "2", "1",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+			},
+			shouldErr: true,
+		},
+		{
+			name: "invalid target subspace id returns error",
+			args: []string{
+				"1", "1", "X", "1",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+			},
+			shouldErr: true,
+		},
+		{
+			name: "invalid target section id returns error",
+			args: []string{
+				"1", "1", "2", "X",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+			},
+			shouldErr: true,
+		},
+		{
+			name: "invalid signer returns error",
+			args: []string{
+				"1", "1", "2", "1",
+			},
+			shouldErr: true,
+		},
+		{
+			name: "valid data returns no error",
+			args: []string{
+				"1", "1", "2", "1",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
+				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+			},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdMovePost()
+			clientCtx := val.ClientCtx
+
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+			if tc.shouldErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+			}
+		})
+	}
+}

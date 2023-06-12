@@ -228,6 +228,53 @@ func (p Post) Update(update PostUpdate) Post {
 
 // --------------------------------------------------------------------------------------------------------------------
 
+// PostMove contains data related to a post that can be updated after it has been moved.
+type PostMove struct {
+	// ID of the subspace where the post should be moved to
+	SubspaceID uint64
+
+	// ID of the section where the post should be moved to
+	SectionID uint32
+
+	// ID of the post within the new subspace
+	PostID uint64
+
+	UpdateTime time.Time
+}
+
+// NewPostMove returns a new PostMove instance
+func NewPostMove(subspaceID uint64, sectionID uint32, postID uint64, updateTime time.Time) PostMove {
+	return PostMove{
+		SubspaceID: subspaceID,
+		SectionID:  sectionID,
+		PostID:     postID,
+		UpdateTime: updateTime,
+	}
+}
+
+// Update updates the fields of a moved post without validating it.
+// Before storing the updated post, a validation with keeper.ValidatePost should
+// be performed.
+func (update PostMove) Update(post Post) Post {
+	return NewPost(
+		update.SubspaceID,
+		update.SectionID,
+		update.PostID,
+		post.ExternalID,
+		post.Text,
+		post.Author,
+		0,
+		post.Entities,
+		post.Tags,
+		nil,
+		post.ReplySettings,
+		post.CreationDate,
+		&update.UpdateTime,
+	)
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
 // NewEntities returns a new Entities instance
 func NewEntities(hashtags []TextTag, mentions []TextTag, urls []Url) *Entities {
 	return &Entities{
@@ -445,6 +492,35 @@ func (a Attachment) Validate() error {
 func (a *Attachment) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 	var content AttachmentContent
 	return unpacker.UnpackAny(a.Content, &content)
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// AttachmentMove contains data related to a attachment that can be updated after it has been moved.
+type AttachmentMove struct {
+	// ID of the subspace inside which the attachment should be moved
+	SubspaceID uint64
+
+	// ID of the post to which the attachment should be associated within the new subspace
+	PostID uint64
+}
+
+// NewAttachmentMove returns a new AttachmentMove instance
+func NewAttachmentMove(subspaceID uint64, postID uint64) AttachmentMove {
+	return AttachmentMove{
+		SubspaceID: subspaceID,
+		PostID:     postID,
+	}
+}
+
+// Update updates the fields of a moved attachment.
+func (update AttachmentMove) Update(attachment Attachment) Attachment {
+	return Attachment{
+		update.SubspaceID,
+		update.PostID,
+		attachment.ID,
+		attachment.Content,
+	}
 }
 
 // --------------------------------------------------------------------------------------------------------------------

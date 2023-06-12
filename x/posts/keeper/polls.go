@@ -106,6 +106,18 @@ func (k Keeper) RemoveFromActivePollQueue(ctx sdk.Context, poll types.Attachment
 	store.Delete(types.ActivePollQueueKey(poll.SubspaceID, poll.PostID, poll.ID, content.EndDate))
 }
 
+// isActivePoll tells whether the given attachment represents a active poll or not
+func (k Keeper) isActivePoll(ctx sdk.Context, attachment types.Attachment) bool {
+	store := ctx.KVStore(k.storeKey)
+
+	poll, ok := attachment.Content.GetCachedValue().(*types.Poll)
+	if !ok {
+		return false
+	}
+
+	return store.Has(types.ActivePollQueueKey(attachment.SubspaceID, attachment.PostID, attachment.ID, poll.EndDate))
+}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 // SaveUserAnswer stores the given poll answer into the current context

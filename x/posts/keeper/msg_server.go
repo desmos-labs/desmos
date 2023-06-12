@@ -498,3 +498,95 @@ func (m msgServer) UpdateParams(goCtx context.Context, msg *types.MsgUpdateParam
 
 	return &types.MsgUpdateParamsResponse{}, nil
 }
+
+// MovePost defines the rpc method for Msg/MovePost
+func (k msgServer) MovePost(goCtx context.Context, msg *types.MsgMovePost) (*types.MsgMovePostResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Make sure the post exists
+	post, found := k.GetPost(ctx, msg.SubspaceID, msg.PostID)
+	if !found {
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %d does not exist", msg.PostID)
+	}
+
+	// Check if the target subspace exists
+	if !k.HasSubspace(ctx, msg.TargetSubspaceID) {
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.TargetSubspaceID)
+	}
+
+	// Check if the target section exists
+	if !k.HasSection(ctx, msg.TargetSubspaceID, msg.TargetSectionID) {
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace section with id %d not found", msg.TargetSectionID)
+	}
+
+	// Check the sender is the owner of the post
+	if post.Author != msg.Owner {
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "you are not the owner of the post")
+	}
+
+	// Check the permission to move the post
+	if !k.HasPermission(ctx, msg.TargetSubspaceID, msg.TargetSectionID, msg.Owner, types.PermissionWrite) {
+		return nil, errors.Wrap(subspacestypes.ErrPermissionDenied, "you don't have write permission on the target section")
+	}
+
+	// Get the post id within the new subspace
+	newPostID, err := k.GetNextPostID(ctx, msg.TargetSubspaceID)
+	if err != nil {
+		return nil, err
+	}
+
+	// Update the post and validate it
+	updateTime := ctx.BlockTime()
+	postMove := types.NewPostMove(msg.TargetSubspaceID, msg.TargetSectionID, newPostID, updateTime)
+	updatedPost := postMove.Update(post)
+	err = k.ValidatePost(ctx, updatedPost)
+	if err != nil {
+		return nil, err
+	}
+
+	k.Keeper.SavePost(ctx, updatedPost)
+
+	// Update the id for the next post
+	k.SetNextPostID(ctx, msg.TargetSubspaceID, newPostID+1)
+
+	// Move all post attachments
+	maxAttachmentID := uint32(0)
+	k.IteratePostAttachments(ctx, msg.SubspaceID, msg.PostID, func(attachment types.Attachment) (stop bool) {
+		attachmentMove := types.NewAttachmentMove(updatedPost.SubspaceID, updatedPost.ID)
+		updatedAttachment := attachmentMove.Update(attachment)
+		k.SaveAttachment(ctx, updatedAttachment)
+
+		if updatedAttachment.ID > maxAttachmentID {
+			maxAttachmentID = updatedAttachment.ID
+		}
+
+		if k.isActivePoll(ctx, attachment) {
+			k.InsertActivePollQueue(ctx, updatedAttachment)
+		}
+		return false
+	})
+
+	// Update the id for the next attachment
+	k.SetNextAttachmentID(ctx, msg.TargetSubspaceID, newPostID, maxAttachmentID+1)
+
+	// Delete the post
+	k.Keeper.DeletePost(ctx, msg.SubspaceID, msg.PostID)
+
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Owner),
+		),
+		sdk.NewEvent(
+			types.EventTypeMovePost,
+			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			sdk.NewAttribute(types.AttributeKeyPostID, fmt.Sprintf("%d", msg.PostID)),
+			sdk.NewAttribute(types.AttributeKeyNewSubspaceID, fmt.Sprintf("%d", msg.TargetSubspaceID)),
+			sdk.NewAttribute(types.AttributeKeyNewPostID, fmt.Sprintf("%d", updatedPost.ID)),
+		),
+	})
+
+	return &types.MsgMovePostResponse{}, nil
+}

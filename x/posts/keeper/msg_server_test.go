@@ -1157,7 +1157,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddPostAttachment() {
 					gomock.Any(),
 					uint64(1),
 					uint32(0),
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 					subspacestypes.NewPermission(types.PermissionEditOwnContent),
 				).Return(false)
 			},
@@ -1231,13 +1231,13 @@ func (suite *KeeperTestSuite) TestMsgServer_AddPostAttachment() {
 			setup: func() {
 				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
 
-				// suite.sk.EXPECT().HasPermission(
-				// 	gomock.Any(),
-				// 	uint64(1),
-				// 	uint32(0),
-				// 	"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-				// 	subspacestypes.NewPermission(types.PermissionEditOwnContent),
-				// ).Return(true)
+				suite.sk.EXPECT().HasPermission(
+					gomock.Any(),
+					uint64(1),
+					uint32(0),
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					subspacestypes.NewPermission(types.PermissionEditOwnContent),
+				).Return(true)
 			},
 			setupCtx: func(ctx sdk.Context) sdk.Context {
 				return ctx.WithBlockTime(time.Date(2021, 1, 1, 12, 00, 00, 000, time.UTC))
@@ -2389,6 +2389,536 @@ func (suite *KeeperTestSuite) TestMsgServer_UpdateParams() {
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.k)
 			_, err := service.UpdateParams(sdk.WrapSDKContext(ctx), tc.msg)
+
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(tc.expEvents, ctx.EventManager().Events())
+
+				if tc.check != nil {
+					tc.check(ctx)
+				}
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestMsgServer_MovePost() {
+	testCases := []struct {
+		name      string
+		setup     func()
+		store     func(ctx sdk.Context)
+		setupCtx  func(ctx sdk.Context) sdk.Context
+		msg       *types.MsgMovePost
+		shouldErr bool
+		expEvents sdk.Events
+		check     func(ctx sdk.Context)
+	}{
+		{
+			name: "post not found returns error",
+			msg: types.NewMsgMovePost(
+				1,
+				1,
+				2,
+				1,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "target subspace not exist returns error",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(2)).
+					Return(false)
+			},
+			store: func(ctx sdk.Context) {
+				suite.k.SavePost(ctx, types.NewPost(
+					1,
+					0,
+					1,
+					"External ID",
+					"This is a text",
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					1,
+					nil,
+					nil,
+					nil,
+					types.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				))
+			},
+			msg: types.NewMsgMovePost(
+				1,
+				1,
+				2,
+				1,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "target section not exist returns error",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(2)).
+					Return(true)
+				suite.sk.EXPECT().
+					HasSection(gomock.Any(), uint64(2), uint32(1)).
+					Return(false)
+			},
+			store: func(ctx sdk.Context) {
+				suite.k.SavePost(ctx, types.NewPost(
+					1,
+					0,
+					1,
+					"External ID",
+					"This is a text",
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					1,
+					nil,
+					nil,
+					nil,
+					types.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				))
+			},
+			msg: types.NewMsgMovePost(
+				1,
+				1,
+				2,
+				1,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "sender does not match post owner returns error",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(2)).
+					Return(true)
+				suite.sk.EXPECT().
+					HasSection(gomock.Any(), uint64(2), uint32(1)).
+					Return(true)
+			},
+			store: func(ctx sdk.Context) {
+				suite.k.SavePost(ctx, types.NewPost(
+					1,
+					0,
+					1,
+					"External ID",
+					"This is a text",
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
+					1,
+					nil,
+					nil,
+					nil,
+					types.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				))
+			},
+			msg: types.NewMsgMovePost(
+				1,
+				1,
+				2,
+				1,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "sender without permission inside target subspace returns error",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(2)).
+					Return(true)
+				suite.sk.EXPECT().
+					HasSection(gomock.Any(), uint64(2), uint32(1)).
+					Return(true)
+				suite.sk.EXPECT().
+					HasPermission(
+						gomock.Any(),
+						uint64(2),
+						uint32(1),
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+						types.PermissionWrite,
+					).
+					Return(false)
+			},
+			store: func(ctx sdk.Context) {
+				suite.k.SavePost(ctx, types.NewPost(
+					1,
+					0,
+					1,
+					"External ID",
+					"This is a text",
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					1,
+					nil,
+					nil,
+					nil,
+					types.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				))
+			},
+			msg: types.NewMsgMovePost(
+				1,
+				1,
+				2,
+				1,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "next id not set returns error",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(2)).
+					Return(true)
+				suite.sk.EXPECT().
+					HasSection(gomock.Any(), uint64(2), uint32(1)).
+					Return(true)
+				suite.sk.EXPECT().
+					HasPermission(
+						gomock.Any(),
+						uint64(2),
+						uint32(1),
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+						types.PermissionWrite,
+					).
+					Return(true)
+			},
+			store: func(ctx sdk.Context) {
+				suite.k.SetParams(ctx, types.NewParams(1))
+				suite.k.SavePost(ctx, types.NewPost(
+					1,
+					0,
+					1,
+					"External ID",
+					"This is a text",
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					1,
+					nil,
+					nil,
+					nil,
+					types.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				))
+			},
+			msg: types.NewMsgMovePost(
+				1,
+				1,
+				2,
+				1,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid post returns error",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(2)).
+					Return(true)
+				suite.sk.EXPECT().
+					HasSection(gomock.Any(), uint64(2), uint32(1)).
+					Return(true)
+				suite.sk.EXPECT().
+					HasPermission(
+						gomock.Any(),
+						uint64(2),
+						uint32(1),
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+						types.PermissionWrite,
+					).
+					Return(true)
+			},
+			store: func(ctx sdk.Context) {
+				suite.k.SetParams(ctx, types.NewParams(1))
+				suite.k.SetNextPostID(ctx, 2, 1)
+				suite.k.SavePost(ctx, types.NewPost(
+					1,
+					0,
+					1,
+					"External ID",
+					"This is a text",
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					1,
+					nil,
+					nil,
+					nil,
+					types.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				))
+			},
+			msg: types.NewMsgMovePost(
+				1,
+				1,
+				2,
+				1,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "post moved properly",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(2)).
+					Return(true)
+				suite.sk.EXPECT().
+					HasSection(gomock.Any(), uint64(2), uint32(1)).
+					Return(true)
+				suite.sk.EXPECT().
+					HasPermission(
+						gomock.Any(),
+						uint64(2),
+						uint32(1),
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+						types.PermissionWrite,
+					).
+					Return(true)
+			},
+			setupCtx: func(ctx sdk.Context) sdk.Context {
+				return ctx.WithBlockTime(time.Date(2021, 1, 1, 12, 00, 00, 000, time.UTC))
+			},
+			store: func(ctx sdk.Context) {
+				suite.k.SetParams(ctx, types.DefaultParams())
+				suite.k.SetNextPostID(ctx, 2, 2)
+				suite.k.SavePost(ctx, types.NewPost(
+					1,
+					0,
+					1,
+					"External ID",
+					"This is a text",
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					1,
+					nil,
+					nil,
+					nil,
+					types.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				))
+
+				// Save a media
+				suite.k.SaveAttachment(ctx, types.NewAttachment(
+					1,
+					1,
+					2,
+					types.NewMedia("ftp://user:password@host:post/media.png", "media/png"),
+				))
+
+				// Save a tallied poll
+				suite.k.SaveAttachment(ctx, types.NewAttachment(
+					1,
+					1,
+					3,
+					types.NewPoll(
+						"What animal is best?",
+						[]types.Poll_ProvidedAnswer{
+							types.NewProvidedAnswer("Cat", nil),
+							types.NewProvidedAnswer("Dog", nil),
+						},
+						time.Date(2100, 1, 1, 12, 00, 00, 000, time.UTC),
+						false,
+						false,
+						nil,
+					),
+				))
+
+				// Save a tallied poll
+				suite.k.SaveAttachment(ctx, types.NewAttachment(
+					1,
+					1,
+					3,
+					types.NewPoll(
+						"What animal is best?",
+						[]types.Poll_ProvidedAnswer{
+							types.NewProvidedAnswer("Cat", nil),
+							types.NewProvidedAnswer("Dog", nil),
+						},
+						time.Date(2000, 1, 1, 12, 00, 00, 000, time.UTC),
+						false,
+						false,
+						types.NewPollTallyResults([]types.PollTallyResults_AnswerResult{
+							types.NewAnswerResult(1, 100),
+							types.NewAnswerResult(2, 50),
+						}),
+					),
+				))
+
+				// Save a active poll
+				activePoll := types.NewAttachment(
+					1,
+					1,
+					4,
+					types.NewPoll(
+						"What animal is best?",
+						[]types.Poll_ProvidedAnswer{
+							types.NewProvidedAnswer("Cat", nil),
+							types.NewProvidedAnswer("Dog", nil),
+						},
+						time.Date(2100, 1, 1, 12, 00, 00, 000, time.UTC),
+						false,
+						false,
+						nil,
+					),
+				)
+				suite.k.SaveAttachment(ctx, activePoll)
+				suite.k.InsertActivePollQueue(ctx, activePoll)
+			},
+			msg: types.NewMsgMovePost(
+				1,
+				1,
+				2,
+				1,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+			),
+			shouldErr: false,
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					sdk.EventTypeMessage,
+					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgMovePost{})),
+					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"),
+				),
+				sdk.NewEvent(
+					types.EventTypeMovePost,
+					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					sdk.NewAttribute(types.AttributeKeyPostID, "1"),
+					sdk.NewAttribute(types.AttributeKeyNewSubspaceID, "2"),
+					sdk.NewAttribute(types.AttributeKeyNewPostID, "2"),
+				),
+			},
+			check: func(ctx sdk.Context) {
+				// Check next id is updated
+				nextID, err := suite.k.GetNextPostID(ctx, 2)
+				suite.Require().NoError(err)
+				suite.Require().Equal(uint64(3), nextID)
+
+				// Check old post id is deleted
+				suite.Require().False(suite.k.HasPost(ctx, 1, 1))
+
+				// Check post is moved properly
+				post, found := suite.k.GetPost(ctx, 2, 2)
+				suite.Require().True(found)
+				updateTime := ctx.BlockTime()
+				suite.Require().Equal(types.NewPost(
+					2,
+					1,
+					2,
+					"External ID",
+					"This is a text",
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					0,
+					nil,
+					nil,
+					nil,
+					types.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					&updateTime,
+				), post)
+
+				// Check old attachments are deleted
+				suite.Require().False(suite.k.HasAttachment(ctx, 1, 1, 2))
+				suite.Require().False(suite.k.HasAttachment(ctx, 1, 1, 4))
+
+				// Check media active moved properly
+				media, found := suite.k.GetAttachment(ctx, 2, 2, 2)
+				suite.Require().True(found)
+				suite.Require().Equal(types.NewAttachment(
+					2,
+					2,
+					2,
+					types.NewMedia("ftp://user:password@host:post/media.png", "media/png"),
+				), media)
+
+				// Check tallied poll is moved properly
+				talliedPoll, found := suite.k.GetAttachment(ctx, 2, 2, 3)
+				suite.Require().True(found)
+				suite.Require().Equal(types.NewAttachment(
+					2,
+					2,
+					3,
+					types.NewPoll(
+						"What animal is best?",
+						[]types.Poll_ProvidedAnswer{
+							types.NewProvidedAnswer("Cat", nil),
+							types.NewProvidedAnswer("Dog", nil),
+						},
+						time.Date(2000, 1, 1, 12, 00, 00, 000, time.UTC),
+						false,
+						false,
+						types.NewPollTallyResults([]types.PollTallyResults_AnswerResult{
+							types.NewAnswerResult(1, 100),
+							types.NewAnswerResult(2, 50),
+						}),
+					),
+				), talliedPoll)
+
+				// Check active poll is moved properly
+				activePoll, found := suite.k.GetAttachment(ctx, 2, 2, 4)
+				suite.Require().True(found)
+				suite.Require().Equal(types.NewAttachment(
+					2,
+					2,
+					4,
+					types.NewPoll(
+						"What animal is best?",
+						[]types.Poll_ProvidedAnswer{
+							types.NewProvidedAnswer("Cat", nil),
+							types.NewProvidedAnswer("Dog", nil),
+						},
+						time.Date(2100, 1, 1, 12, 00, 00, 000, time.UTC),
+						false,
+						false,
+						nil,
+					),
+				), activePoll)
+
+				// Check active poll is inside the queue
+				suite.Require().True(ctx.KVStore(suite.storeKey).Has(
+					types.ActivePollQueueKey(2, 2, 4, time.Date(2100, 1, 1, 12, 00, 00, 000, time.UTC))),
+				)
+
+				// Check next attachment id is set
+				nextAttachmentID, err := suite.k.GetNextAttachmentID(ctx, 2, 2)
+				suite.Require().NoError(err)
+				suite.Require().Equal(uint32(5), nextAttachmentID)
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup()
+			}
+			if tc.setupCtx != nil {
+				ctx = tc.setupCtx(ctx)
+			}
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			// Reset any event that might have been emitted during the setup
+			ctx = ctx.WithEventManager(sdk.NewEventManager())
+
+			// Run the message
+			service := keeper.NewMsgServerImpl(suite.k)
+			_, err := service.MovePost(sdk.WrapSDKContext(ctx), tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)

@@ -41,6 +41,11 @@ service Msg {
   //
   // Since: Desmos 5.0.0
   rpc UpdateParams(MsgUpdateParams) returns (MsgUpdateParamsResponse);
+
+  // MovePost allows users to move their own posts to another subspace
+  //
+  // Since: Desmos 6.0.0
+  rpc MovePost(MsgMovePost) returns (MsgMovePostResponse);
 }
 
 // MsgCreatePost represents the message to be used to create a post.
@@ -304,3 +309,49 @@ message MsgUpdateParams {
 //
 // Since: Desmos 5.0.0
 message MsgUpdateParamsResponse {}
+
+// MsgMovePost moves a post to another subspace
+//
+// Since: Desmos 6.0.0
+message MsgMovePost {
+  // Id of the subspace where the post is currently located
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+    
+  // Id of the post to be moved
+  uint64 post_id = 2 [
+    (gogoproto.customname) = "PostID",
+    (gogoproto.moretags) = "yaml:\"post_id\""
+  ];
+
+  // Id of the target subspace to which the post will be moved
+  uint64 target_subspace_id = 3 [
+    (gogoproto.customname) = "TargetSubspaceID",
+    (gogoproto.moretags) = "yaml:\"target_subspace_id\""
+  ];
+    
+  // Id of the target section to which the post will be moved
+  uint32 target_section_id = 4 [
+    (gogoproto.customname) = "TargetSectionID",
+    (gogoproto.moretags) = "yaml:\"target_section_id\""
+  ];
+
+  // Address of the post owner
+  string owner = 5 [ 
+    (cosmos_proto.scalar) = "cosmos.AddressString",
+    (gogoproto.moretags) = "yaml:\"owner\""
+  ];
+}
+
+// MsgMovePostResponse defines the Msg/MsgMovePost response type
+//
+// Since: Desmos 6.0.0
+message MsgMovePostResponse {
+  // New id of the post in the target subspace
+  uint64 post_id = 1 [
+    (gogoproto.customname) = "PostID",
+    (gogoproto.moretags) = "yaml:\"post_id\""
+  ];
+}
