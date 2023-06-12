@@ -2718,8 +2718,47 @@ func (suite *KeeperTestSuite) TestMsgServer_MovePost() {
 					types.NewMedia("ftp://user:password@host:post/media.png", "media/png"),
 				))
 
-				// Save a active poll
+				// Save a tallied poll
 				suite.k.SaveAttachment(ctx, types.NewAttachment(
+					1,
+					1,
+					3,
+					types.NewPoll(
+						"What animal is best?",
+						[]types.Poll_ProvidedAnswer{
+							types.NewProvidedAnswer("Cat", nil),
+							types.NewProvidedAnswer("Dog", nil),
+						},
+						time.Date(2100, 1, 1, 12, 00, 00, 000, time.UTC),
+						false,
+						false,
+						nil,
+					),
+				))
+
+				// Save a tallied poll
+				suite.k.SaveAttachment(ctx, types.NewAttachment(
+					1,
+					1,
+					3,
+					types.NewPoll(
+						"What animal is best?",
+						[]types.Poll_ProvidedAnswer{
+							types.NewProvidedAnswer("Cat", nil),
+							types.NewProvidedAnswer("Dog", nil),
+						},
+						time.Date(2000, 1, 1, 12, 00, 00, 000, time.UTC),
+						false,
+						false,
+						types.NewPollTallyResults([]types.PollTallyResults_AnswerResult{
+							types.NewAnswerResult(1, 100),
+							types.NewAnswerResult(2, 50),
+						}),
+					),
+				))
+
+				// Save a active poll
+				activePoll := types.NewAttachment(
 					1,
 					1,
 					4,
@@ -2734,7 +2773,9 @@ func (suite *KeeperTestSuite) TestMsgServer_MovePost() {
 						false,
 						nil,
 					),
-				))
+				)
+				suite.k.SaveAttachment(ctx, activePoll)
+				suite.k.InsertActivePollQueue(ctx, activePoll)
 			},
 			msg: types.NewMsgMovePost(
 				1,
@@ -2793,22 +2834,45 @@ func (suite *KeeperTestSuite) TestMsgServer_MovePost() {
 				suite.Require().False(suite.k.HasAttachment(ctx, 1, 1, 4))
 
 				// Check media active moved properly
-				media, found := suite.k.GetAttachment(ctx, 2, 2, 1)
+				media, found := suite.k.GetAttachment(ctx, 2, 2, 2)
 				suite.Require().True(found)
 				suite.Require().Equal(types.NewAttachment(
 					2,
 					2,
-					1,
+					2,
 					types.NewMedia("ftp://user:password@host:post/media.png", "media/png"),
 				), media)
 
-				// Check active poll is moved properly
-				poll, found := suite.k.GetAttachment(ctx, 2, 2, 2)
+				// Check tallied poll is moved properly
+				talliedPoll, found := suite.k.GetAttachment(ctx, 2, 2, 3)
 				suite.Require().True(found)
 				suite.Require().Equal(types.NewAttachment(
 					2,
 					2,
+					3,
+					types.NewPoll(
+						"What animal is best?",
+						[]types.Poll_ProvidedAnswer{
+							types.NewProvidedAnswer("Cat", nil),
+							types.NewProvidedAnswer("Dog", nil),
+						},
+						time.Date(2000, 1, 1, 12, 00, 00, 000, time.UTC),
+						false,
+						false,
+						types.NewPollTallyResults([]types.PollTallyResults_AnswerResult{
+							types.NewAnswerResult(1, 100),
+							types.NewAnswerResult(2, 50),
+						}),
+					),
+				), talliedPoll)
+
+				// Check active poll is moved properly
+				activePoll, found := suite.k.GetAttachment(ctx, 2, 2, 4)
+				suite.Require().True(found)
+				suite.Require().Equal(types.NewAttachment(
 					2,
+					2,
+					4,
 					types.NewPoll(
 						"What animal is best?",
 						[]types.Poll_ProvidedAnswer{
@@ -2820,17 +2884,17 @@ func (suite *KeeperTestSuite) TestMsgServer_MovePost() {
 						false,
 						nil,
 					),
-				), poll)
+				), activePoll)
 
 				// Check active poll is inside the queue
 				suite.Require().True(ctx.KVStore(suite.storeKey).Has(
-					types.ActivePollQueueKey(2, 2, 2, time.Date(2100, 1, 1, 12, 00, 00, 000, time.UTC))),
+					types.ActivePollQueueKey(2, 2, 4, time.Date(2100, 1, 1, 12, 00, 00, 000, time.UTC))),
 				)
 
 				// Check next attachment id is set
 				nextAttachmentID, err := suite.k.GetNextAttachmentID(ctx, 2, 2)
 				suite.Require().NoError(err)
-				suite.Require().Equal(uint32(3), nextAttachmentID)
+				suite.Require().Equal(uint32(5), nextAttachmentID)
 			},
 		},
 	}

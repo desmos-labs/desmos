@@ -501,19 +501,15 @@ type AttachmentMove struct {
 	// ID of the subspace inside which the attachment should be moved
 	SubspaceID uint64
 
-	// ID of the post to which the attachment should be associated within the new subspace 
+	// ID of the post to which the attachment should be associated within the new subspace
 	PostID uint64
-
-	// ID of the attachment within the new subspace
-	AttachmentID uint32
 }
 
 // NewAttachmentMove returns a new AttachmentMove instance
-func NewAttachmentMove(subspaceID uint64, postID uint64, attachmentID uint32) AttachmentMove {
+func NewAttachmentMove(subspaceID uint64, postID uint64) AttachmentMove {
 	return AttachmentMove{
-		SubspaceID:   subspaceID,
-		PostID:       postID,
-		AttachmentID: attachmentID,
+		SubspaceID: subspaceID,
+		PostID:     postID,
 	}
 }
 
@@ -522,7 +518,7 @@ func (update AttachmentMove) Update(attachment Attachment) Attachment {
 	return Attachment{
 		update.SubspaceID,
 		update.PostID,
-		update.AttachmentID,
+		attachment.ID,
 		attachment.Content,
 	}
 }
@@ -662,15 +658,6 @@ func (p *Poll) Validate() error {
 func IsPoll(attachment Attachment) bool {
 	_, ok := attachment.Content.GetCachedValue().(*Poll)
 	return ok
-}
-
-// IsActivePoll tells whether the given attachment represents a active poll or not
-func IsActivePoll(attachment Attachment) bool {
-	poll, ok := attachment.Content.GetCachedValue().(*Poll)
-	if !ok {
-		return false
-	}
-	return poll.FinalTallyResults == nil
 }
 
 // UnpackInterfaces implements codectypes.UnpackInterfacesMessage

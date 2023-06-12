@@ -1099,7 +1099,7 @@ func TestPostMove(t *testing.T) {
 }
 
 func TestAttachmentMove(t *testing.T) {
-	update := types.NewAttachmentMove(2, 2, 2)
+	update := types.NewAttachmentMove(2, 2)
 
 	attachment := types.NewAttachment(1, 1, 1, types.NewMedia(
 		"ftp://user:password@example.com/image.png",
@@ -1107,7 +1107,7 @@ func TestAttachmentMove(t *testing.T) {
 	))
 
 	updated := update.Update(attachment)
-	require.Equal(t, types.NewAttachment(2, 2, 2, types.NewMedia(
+	require.Equal(t, types.NewAttachment(2, 2, 1, types.NewMedia(
 		"ftp://user:password@example.com/image.png",
 		"image/png",
 	)), updated)

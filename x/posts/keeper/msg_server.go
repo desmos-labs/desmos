@@ -550,21 +550,24 @@ func (k msgServer) MovePost(goCtx context.Context, msg *types.MsgMovePost) (*typ
 	k.SetNextPostID(ctx, msg.TargetSubspaceID, newPostID+1)
 
 	// Move all post attachments
-	newAttachmentID := uint32(0)
+	maxAttachmentID := uint32(0)
 	k.IteratePostAttachments(ctx, msg.SubspaceID, msg.PostID, func(attachment types.Attachment) (stop bool) {
-		newAttachmentID++
-		attachmentMove := types.NewAttachmentMove(updatedPost.SubspaceID, updatedPost.ID, newAttachmentID)
+		attachmentMove := types.NewAttachmentMove(updatedPost.SubspaceID, updatedPost.ID)
 		updatedAttachment := attachmentMove.Update(attachment)
 		k.SaveAttachment(ctx, updatedAttachment)
 
-		if types.IsActivePoll(updatedAttachment) {
+		if updatedAttachment.ID > maxAttachmentID {
+			maxAttachmentID = updatedAttachment.ID
+		}
+
+		if k.isActivePoll(ctx, attachment) {
 			k.InsertActivePollQueue(ctx, updatedAttachment)
 		}
 		return false
 	})
 
 	// Update the id for the next attachment
-	k.SetNextAttachmentID(ctx, msg.TargetSubspaceID, newPostID, newAttachmentID+1)
+	k.SetNextAttachmentID(ctx, msg.TargetSubspaceID, newPostID, maxAttachmentID+1)
 
 	// Delete the post
 	k.Keeper.DeletePost(ctx, msg.SubspaceID, msg.PostID)
