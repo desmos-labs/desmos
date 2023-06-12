@@ -529,7 +529,7 @@ func (k msgServer) MovePost(goCtx context.Context, msg *types.MsgMovePost) (*typ
 		return nil, errors.Wrap(subspacestypes.ErrPermissionDenied, "you don't have write permission on the target section")
 	}
 
-	// Get the next post id
+	// Get the post id within the new subspace
 	newPostID, err := k.GetNextPostID(ctx, msg.TargetSubspaceID)
 	if err != nil {
 		return nil, err
