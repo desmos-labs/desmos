@@ -377,7 +377,7 @@ func GetCmdMovePost() *cobra.Command {
 				return err
 			}
 
-			targetSectionID, err := subspacestypes.ParseSectionID(args[2])
+			targetSectionID, err := subspacestypes.ParseSectionID(args[3])
 			if err != nil {
 				return err
 			}
