@@ -6,7 +6,7 @@ import (
 )
 
 // NewParams creates a new params instance
-func NewParams(denomCreationFee sdk.Coins, denomCreationGasConsume uint64) Params {
+func NewParams(denomCreationFee sdk.Coins) Params {
 	return Params{
 		DenomCreationFee: denomCreationFee,
 	}

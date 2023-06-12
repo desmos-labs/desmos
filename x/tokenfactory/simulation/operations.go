@@ -109,7 +109,7 @@ func SimulateMsgCreateDenom(
 			return simtypes.NoOpMsg(types.RouterKey, "MsgCreateDenom", "skip"), nil, nil
 		}
 
-		msg := types.NewMsgCreateDenom(subspaceID, subdenom, signer.Address.String())
+		msg := types.NewMsgCreateDenom(subspaceID, signer.Address.String(), subdenom)
 
 		// Send the message
 		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, signer)
@@ -202,6 +202,11 @@ func randomMintFields(
 	}
 	denom := RandomDenom(r, denoms)
 	amount = sdk.NewCoin(denom, simtypes.RandomAmount(r, math.NewInt(1000)))
+	if amount.Amount.Equal(sdk.NewInt(0)) {
+		// Skip because amount with zero is invalid
+		skip = true
+		return
+	}
 
 	// 50% mint to subspace treasury
 	if r.Intn(2)%2 == 0 {
@@ -263,7 +268,7 @@ func randomBurnFields(
 	subspace := subspacessim.RandomSubspace(r, subspaces)
 	subspaceID = subspace.ID
 
-	// Get an amount
+	// Get a denom
 	denoms := tfk.GetDenomsFromCreator(ctx, subspace.Treasury)
 	if len(denoms) == 0 {
 		// Skip because there are no denoms
@@ -271,14 +276,21 @@ func randomBurnFields(
 		return
 	}
 	denom := RandomDenom(r, denoms)
-	balance := bk.GetBalance(ctx, sdk.MustAccAddressFromBech32(subspace.Treasury), denom)
+
+	// Get a amount to burn
+	balance := bk.SpendableCoin(ctx, sdk.MustAccAddressFromBech32(subspace.Treasury), denom)
 	amount = sdk.NewCoin(denom, simtypes.RandomAmount(r, balance.Amount))
+	if amount.Amount.Equal(sdk.NewInt(0)) {
+		// Skip because amount with zero is invalid
+		skip = true
+		return
+	}
 
 	// Get a signer
 	admins := sk.GetUsersWithRootPermissions(ctx, subspace.ID, subspacestypes.NewPermissions(types.PermissionManageSubspaceTokens))
 	acc := subspacessim.GetAccount(subspacessim.RandomAddress(r, admins), accs)
 	if acc == nil {
-		// Skip because the account is not valid
+		// Skip because the account is invalid
 		skip = true
 		return
 	}
@@ -342,8 +354,9 @@ func randomSetDenomMetadataFields(
 			{Denom: display, Exponent: 3, Aliases: nil},
 		},
 		Base:    denom,
-		Display: simtypes.RandStringOfLength(r, 5),
+		Display: display,
 		Name:    simtypes.RandStringOfLength(r, 5),
+		Symbol:  simtypes.RandStringOfLength(r, 5),
 	}
 
 	// Get a signer

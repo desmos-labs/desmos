@@ -335,8 +335,8 @@ replace (
 	// TODO Remove it: https://github.com/cosmos/cosmos-sdk/issues/10409
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.8.1
 
-	// Our cosmos-sdk branch is: https://github.com/desmos-labs/cosmos-sdk v0.47.x-desmos
-	github.com/osmosis-labs/osmosis/v15 => github.com/desmos-labs/osmosis/v15 v15.1.2-desmos
+	// Our cosmos-sdk branch is: https://github.com/desmos-labs/osmosis v15.1.x-desmos
+	github.com/osmosis-labs/osmosis/v15 => github.com/desmos-labs/osmosis/v15 v15.1.2-desmos.1
 
 	// Downgraded to avoid bugs in following commits which caused simulations to fail.
 	github.com/syndtr/goleveldb => github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7
