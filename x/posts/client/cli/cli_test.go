@@ -891,28 +891,32 @@ func (s *IntegrationTestSuite) TestCmdMovePost() {
 		{
 			name: "invalid subspace id returns error",
 			args: []string{
-				"", "1", "2", "1",
+				"X", "1", "2", "1",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
 			shouldErr: true,
 		},
 		{
 			name: "invalid post id returns error",
 			args: []string{
-				"1", "", "2", "1",
+				"1", "X", "2", "1",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
 			shouldErr: true,
 		},
 		{
 			name: "invalid target subspace id returns error",
 			args: []string{
-				"1", "1", "", "1",
+				"1", "1", "X", "1",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
 			shouldErr: true,
 		},
 		{
 			name: "invalid target section id returns error",
 			args: []string{
-				"1", "1", "2", "",
+				"1", "1", "2", "X",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
 			shouldErr: true,
 		},
