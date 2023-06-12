@@ -230,13 +230,13 @@ func (p Post) Update(update PostUpdate) Post {
 
 // PostMove contains data related to a post that can be updated after it has been moved.
 type PostMove struct {
-	// Move's subspace id will always replace the existing ones
+	// ID of the subspace where the post should be moved to
 	SubspaceID uint64
 
-	// Move's section id will always replace the existing ones
+	// ID of the section where the post should be moved to
 	SectionID uint32
 
-	// Move's post id will always replace the existing ones
+	// ID of the post within the new subspace
 	PostID uint64
 
 	UpdateTime time.Time
