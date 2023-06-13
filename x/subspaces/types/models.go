@@ -87,7 +87,7 @@ func (sub Subspace) Validate() error {
 
 	err = sub.AdditionalFeeTokens.Validate()
 	if err != nil {
-		return fmt.Errorf("invalid allowed fee tokens: %s", sub.AdditionalFeeTokens)
+		return fmt.Errorf("invalid additional fee tokens: %s", sub.AdditionalFeeTokens)
 	}
 
 	return nil

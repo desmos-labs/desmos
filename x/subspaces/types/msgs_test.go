@@ -1305,7 +1305,7 @@ func TestMsgUpdateSubspaceFeeTokens_ValidateBasic(t *testing.T) {
 			shouldErr: true,
 		},
 		{
-			name: "invalid allowed fee tokens returns error",
+			name: "invalid additional fee tokens returns error",
 			msg: types.NewMsgUpdateSubspaceFeeTokens(
 				1,
 				sdk.Coins{{Denom: "minttoken", Amount: sdk.NewInt(-10)}},
@@ -1342,7 +1342,7 @@ func TestMsgUpdateSubspaceFeeTokens_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgUpdateSubspaceFeeTokens_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgUpdateSubspaceFeeTokens","value":{"allowed_fee_tokens":[{"amount":"10","denom":"minttoken"}],"authority":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","subspace_id":"1"}}`
+	expected := `{"type":"desmos/MsgUpdateSubspaceFeeTokens","value":{"additional_fee_tokens":[{"amount":"10","denom":"minttoken"}],"authority":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","subspace_id":"1"}}`
 	require.Equal(t, expected, string(msgUpdateSubspaceFeeTokens.GetSignBytes()))
 }
 

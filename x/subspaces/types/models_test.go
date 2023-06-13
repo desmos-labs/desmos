@@ -145,6 +145,20 @@ func TestSubspace_Validate(t *testing.T) {
 			shouldErr: true,
 		},
 		{
+			name: "invalid subspace fee tokens returns no error",
+			subspace: types.NewSubspace(
+				1,
+				"Test subspace",
+				"This is a test subspace",
+				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				sdk.Coins{{Denom: "minttoken", Amount: sdk.NewInt(-10)}},
+			),
+			shouldErr: true,
+		},
+		{
 			name: "valid subspace returns no error",
 			subspace: types.NewSubspace(
 				1,

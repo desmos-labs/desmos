@@ -853,13 +853,13 @@ var (
 // NewMsgUpdateSubspaceFeeTokens creates a new MsgUpdateSubspaceFeeTokens instance
 func NewMsgUpdateSubspaceFeeTokens(
 	subspaceID uint64,
-	allowedFeeTokens sdk.Coins,
+	additionalFeeTokens sdk.Coins,
 	authority string,
 ) *MsgUpdateSubspaceFeeTokens {
 	return &MsgUpdateSubspaceFeeTokens{
-		SubspaceID:       subspaceID,
-		AllowedFeeTokens: allowedFeeTokens,
-		Authority:        authority,
+		SubspaceID:          subspaceID,
+		AdditionalFeeTokens: additionalFeeTokens,
+		Authority:           authority,
 	}
 }
 
@@ -875,7 +875,7 @@ func (msg MsgUpdateSubspaceFeeTokens) ValidateBasic() error {
 		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
-	err := msg.AllowedFeeTokens.Validate()
+	err := msg.AdditionalFeeTokens.Validate()
 	if err != nil {
 		return err
 	}

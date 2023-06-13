@@ -848,7 +848,7 @@ func (k msgServer) UpdateSubspaceFeeTokens(goCtx context.Context, msg *types.Msg
 	}
 
 	// Update the subspace and validate it
-	updated := types.NewAdditionalFeeTokensUpdate(msg.AllowedFeeTokens...).Update(subspace)
+	updated := types.NewAdditionalFeeTokensUpdate(msg.AdditionalFeeTokens...).Update(subspace)
 	err := updated.Validate()
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
