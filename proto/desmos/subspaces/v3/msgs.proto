@@ -516,7 +516,7 @@ message MsgUpdateSubspaceFeeTokens {
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
     
-  // List of the allowed tokens to be fee token inside the subspace along with their default minimum prices
+  // List of tokens allowed to be fee tokens inside the given subspace, represented as their gas prices
   repeated cosmos.base.v1beta1.Coin allowed_fee_tokens = 2 [
     (gogoproto.nullable) = false,
     (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
