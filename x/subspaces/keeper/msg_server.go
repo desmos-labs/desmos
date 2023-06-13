@@ -835,9 +835,8 @@ func (k msgServer) SetUserPermissions(goCtx context.Context, msg *types.MsgSetUs
 
 // UpdateSubspaceFeeTokens defines a rpc method for MsgUpdateSubspaceFeeTokens
 func (k msgServer) UpdateSubspaceFeeTokens(goCtx context.Context, msg *types.MsgUpdateSubspaceFeeTokens) (*types.MsgUpdateSubspaceFeeTokensResponse, error) {
-	authority := k.authority
-	if authority != msg.Authority {
-		return nil, errors.Wrapf(govtypes.ErrInvalidSigner, "invalid authority; expected %s, got %s", authority, msg.Authority)
+	if msg.Authority != k.authority {
+		return nil, errors.Wrapf(govtypes.ErrInvalidSigner, "invalid authority; expected %s, got %s", k.authority, msg.Authority)
 	}
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
