@@ -1760,13 +1760,14 @@ func (m *MsgSetUserPermissionsResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgSetUserPermissionsResponse proto.InternalMessageInfo
 
-// MsgUpdateSubspaceFeeTokens represents the message to be used to update a subspace fee tokens by governance
+// MsgUpdateSubspaceFeeTokens represents the message to be used to update the accepted fee tokens
+// inside a given subspace, using an on-chain governance proposal
 //
 // Since: Desmos 6.0.0
 type MsgUpdateSubspaceFeeTokens struct {
 	// Id of the subspace where the list of allowed fee tokens will be updated
 	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
-	// List of the allowed tokens to be fee token inside the subspace along with their default minimum prices
+	// List of tokens allowed to be fee tokens inside the given subspace, represented as their gas prices
 	AllowedFeeTokens github_com_cosmos_cosmos_sdk_types.Coins `protobuf:"bytes,2,rep,name=allowed_fee_tokens,json=allowedFeeTokens,proto3,castrepeated=github.com/cosmos/cosmos-sdk/types.Coins" json:"allowed_fee_tokens" yaml:"allowed_fee_tokens"`
 	// authority is the address that controls the module (defaults to x/gov unless overwritten).
 	Authority string `protobuf:"bytes,3,opt,name=authority,proto3" json:"authority,omitempty"`

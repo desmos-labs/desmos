@@ -40,10 +40,10 @@ message Subspace {
   ];
 
   // List of fee token denoms with default minimum gas prices allowed inside the subspace
-  repeated cosmos.base.v1beta1.Coin allowed_fee_tokens = 8 [
+  repeated cosmos.base.v1beta1.Coin additional_fee_tokens = 8 [
     (gogoproto.nullable) = false,
     (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
-    (gogoproto.moretags) = "yaml:\"allowed_fee_tokens\""
+    (gogoproto.moretags) = "yaml:\"additional_fee_tokens\""
   ];
 }
 
