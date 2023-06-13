@@ -294,14 +294,14 @@ func randomPostMoveFields(
 	}
 
 	// Get the user
-	authorAddr := post.Author
-	if !sk.HasPermission(ctx, section.SubspaceID, section.ID, authorAddr, types.PermissionWrite) {
+	ownerAddr := post.Owner
+	if !sk.HasPermission(ctx, section.SubspaceID, section.ID, ownerAddr, types.PermissionWrite) {
 		// Skip because the user has not the permissions
 		skip = true
 		return
 	}
 
-	userAcc := subspacessim.GetAccount(authorAddr, accs)
+	userAcc := subspacessim.GetAccount(ownerAddr, accs)
 	if userAcc == nil {
 		// Skip because the author is not an account we have access to
 		skip = true
