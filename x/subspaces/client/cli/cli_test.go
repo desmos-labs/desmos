@@ -64,6 +64,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				nil,
 			),
 			types.NewSubspace(
 				2,
@@ -73,6 +74,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 				"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
 				"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
 				time.Date(2020, 1, 2, 12, 00, 00, 000, time.UTC),
+				nil,
 			),
 			types.NewSubspace(
 				3,
@@ -82,6 +84,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 				"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
 				"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
 				time.Date(2020, 1, 2, 12, 00, 00, 000, time.UTC),
+				nil,
 			),
 		},
 		[]types.Section{
@@ -195,7 +198,8 @@ func (s *IntegrationTestSuite) TestCmdQuerySubspace() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				).SetAllowedFeeTokens(sdk.Coins{}),
+					sdk.Coins{},
+				),
 			},
 		},
 	}
@@ -247,7 +251,8 @@ func (s *IntegrationTestSuite) TestCmdQuerySubspaces() {
 						"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 						"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					).SetAllowedFeeTokens(sdk.Coins{}),
+						sdk.Coins{},
+					),
 				},
 			},
 		},

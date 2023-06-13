@@ -19,7 +19,7 @@ func CheckTxFeeWithSubspaceMinPrices(txFeeChecker ante.TxFeeChecker, sk antetype
 			return txFeeChecker(ctx, tx)
 		}
 
-		newMinPrices := MergeMinPrices(ctx.MinGasPrices(), sdk.NewDecCoinsFromCoins(subspace.AllowedFeeTokens...))
+		newMinPrices := MergeMinPrices(ctx.MinGasPrices(), sdk.NewDecCoinsFromCoins(subspace.AdditionalFeeTokens...))
 		newCtx := ctx.WithMinGasPrices(newMinPrices)
 		return txFeeChecker(newCtx, tx)
 	}

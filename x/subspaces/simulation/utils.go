@@ -44,6 +44,7 @@ func GenerateRandomSubspace(r *rand.Rand, accs []simtypes.Account) types.Subspac
 		creator,
 		creator,
 		RandomDate(r),
+		GenerateRandomFeeTokens(r),
 	)
 }
 

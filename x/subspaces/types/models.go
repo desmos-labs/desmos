@@ -41,15 +41,16 @@ func ParseSubspacesIDs(value string) (ids []uint64, err error) {
 }
 
 // NewSubspace is a constructor for the Subspace type
-func NewSubspace(subspaceID uint64, name, description, treasury, owner, creator string, creationTime time.Time) Subspace {
+func NewSubspace(subspaceID uint64, name, description, treasury, owner, creator string, creationTime time.Time, additionalFeeTokens sdk.Coins) Subspace {
 	return Subspace{
-		ID:           subspaceID,
-		Name:         name,
-		Description:  description,
-		Treasury:     treasury,
-		Owner:        owner,
-		Creator:      creator,
-		CreationTime: creationTime,
+		ID:                  subspaceID,
+		Name:                name,
+		Description:         description,
+		Treasury:            treasury,
+		Owner:               owner,
+		Creator:             creator,
+		CreationTime:        creationTime,
+		AdditionalFeeTokens: additionalFeeTokens,
 	}
 }
 
@@ -84,9 +85,9 @@ func (sub Subspace) Validate() error {
 		return fmt.Errorf("invalid subspace creation time: %s", sub.CreationTime)
 	}
 
-	err = sub.AllowedFeeTokens.Validate()
+	err = sub.AdditionalFeeTokens.Validate()
 	if err != nil {
-		return fmt.Errorf("invalid allowed fee tokens: %s", sub.AllowedFeeTokens)
+		return fmt.Errorf("invalid allowed fee tokens: %s", sub.AdditionalFeeTokens)
 	}
 
 	return nil
@@ -95,8 +96,8 @@ func (sub Subspace) Validate() error {
 // Set allowed fee tokens without validating it.
 // Before storing the updated subspace, a validation with Validate() should
 // be performed.
-func (sub Subspace) SetAllowedFeeTokens(feeTokens sdk.Coins) Subspace {
-	sub.AllowedFeeTokens = feeTokens
+func (sub Subspace) SetAdditionalFeeTokens(feeTokens sdk.Coins) Subspace {
+	sub.AdditionalFeeTokens = feeTokens
 	return sub
 }
 
@@ -124,6 +125,7 @@ func (sub Subspace) Update(update SubspaceUpdate) Subspace {
 		update.Owner,
 		sub.Creator,
 		sub.CreationTime,
+		nil,
 	)
 }
 

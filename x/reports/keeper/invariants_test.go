@@ -29,6 +29,7 @@ func (suite *KeeperTestSuite) TestValidSubspacesInvariant() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+nil,
 				))
 			},
 			expBroken: true,
@@ -44,6 +45,7 @@ func (suite *KeeperTestSuite) TestValidSubspacesInvariant() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+nil,
 				))
 				suite.k.SetNextReasonID(ctx, 1, 1)
 
@@ -61,6 +63,7 @@ func (suite *KeeperTestSuite) TestValidSubspacesInvariant() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+nil,
 				))
 				suite.k.SetNextReasonID(ctx, 1, 1)
 				suite.k.SetNextReportID(ctx, 1, 1)
@@ -112,6 +115,7 @@ func (suite *KeeperTestSuite) TestValidReasonsInvariant() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+nil,
 				))
 
 				suite.k.SaveReason(ctx, types.NewReason(
@@ -134,6 +138,7 @@ func (suite *KeeperTestSuite) TestValidReasonsInvariant() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+nil,
 				))
 				suite.k.SetNextReasonID(ctx, 1, 1)
 
@@ -157,6 +162,7 @@ func (suite *KeeperTestSuite) TestValidReasonsInvariant() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+nil,
 				))
 				suite.k.SetNextReasonID(ctx, 1, 2)
 
@@ -180,6 +186,7 @@ func (suite *KeeperTestSuite) TestValidReasonsInvariant() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+nil,
 				))
 				suite.k.SetNextReasonID(ctx, 1, 2)
 
@@ -240,6 +247,7 @@ func (suite *KeeperTestSuite) TestValidReportsInvariant() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+nil,
 				))
 
 				suite.k.SaveReport(ctx, types.NewReport(
@@ -265,6 +273,7 @@ func (suite *KeeperTestSuite) TestValidReportsInvariant() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+nil,
 				))
 
 				suite.k.SaveReason(ctx, types.NewReason(
@@ -297,6 +306,7 @@ func (suite *KeeperTestSuite) TestValidReportsInvariant() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+nil,
 				))
 				suite.k.SetNextReportID(ctx, 1, 1)
 
@@ -330,6 +340,7 @@ func (suite *KeeperTestSuite) TestValidReportsInvariant() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+nil,
 				))
 				suite.k.SetNextReportID(ctx, 1, 2)
 
@@ -363,6 +374,7 @@ func (suite *KeeperTestSuite) TestValidReportsInvariant() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+nil,
 				))
 				suite.k.SetNextReportID(ctx, 1, 2)
 
@@ -396,6 +408,7 @@ func (suite *KeeperTestSuite) TestValidReportsInvariant() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+nil,
 				))
 				suite.k.SetNextReportID(ctx, 1, 2)
 

@@ -37,6 +37,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Subspaces() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.SaveSubspace(ctx, types.NewSubspace(
 					2,
@@ -46,6 +47,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Subspaces() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 			},
 			req: &types.QuerySubspacesRequest{
@@ -64,6 +66,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Subspaces() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				),
 			},
 		},
@@ -108,6 +111,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Subspace() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 			},
 			request:   types.NewQuerySubspaceRequest(1),
@@ -121,6 +125,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Subspace() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				),
 			},
 		},
@@ -169,6 +174,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Sections() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 
 				suite.k.SaveSection(ctx, types.NewSection(
@@ -218,6 +224,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Sections() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 
 				suite.k.SaveSection(ctx, types.NewSection(
@@ -296,6 +303,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Section() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 			},
 			req:       types.NewQuerySectionRequest(1, 1),
@@ -312,6 +320,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Section() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 
 				suite.k.SaveSection(ctx, types.NewSection(
@@ -377,6 +386,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserGroups() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
@@ -428,6 +438,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserGroups() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
@@ -524,6 +535,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserGroup() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
@@ -591,6 +603,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserGroupMembers() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 			},
 			req:       types.NewQueryUserGroupMembersRequest(1, 1, nil),
@@ -607,6 +620,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserGroupMembers() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
@@ -678,6 +692,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserPermissions() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 			},
 			req: types.NewQueryUserPermissionsRequest(
@@ -704,6 +719,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserPermissions() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
@@ -796,7 +812,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserAllowances() {
 		{
 			name: "user grants query without grantee returns the correct data",
 			store: func(ctx sdk.Context) {
-				suite.k.SaveSubspace(ctx, types.NewSubspace(1, "test", "test", "owner", "treasury", "creator", time.Now()))
+				suite.k.SaveSubspace(ctx, types.NewSubspace(1, "test", "test", "owner", "treasury", "creator", time.Now(), nil))
 
 				suite.k.SaveGrant(ctx, types.NewGrant(
 					1,
@@ -832,7 +848,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserAllowances() {
 		{
 			name: "valid query returns the correct data",
 			store: func(ctx sdk.Context) {
-				suite.k.SaveSubspace(ctx, types.NewSubspace(1, "test", "test", "owner", "treasury", "creator", time.Now()))
+				suite.k.SaveSubspace(ctx, types.NewSubspace(1, "test", "test", "owner", "treasury", "creator", time.Now(), nil))
 
 				suite.k.SaveGrant(ctx, types.NewGrant(1,
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -900,7 +916,7 @@ func (suite *KeeperTestSuite) TestQueryServer_GroupAllowances() {
 		{
 			name: "group grants query without group id returns the correct data",
 			store: func(ctx sdk.Context) {
-				suite.k.SaveSubspace(ctx, types.NewSubspace(1, "test", "test", "owner", "treasury", "creator", time.Now()))
+				suite.k.SaveSubspace(ctx, types.NewSubspace(1, "test", "test", "owner", "treasury", "creator", time.Now(), nil))
 
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(1, 0, 1, "test", "tets", nil))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(1, 0, 2, "test", "tets", nil))
@@ -936,7 +952,7 @@ func (suite *KeeperTestSuite) TestQueryServer_GroupAllowances() {
 		{
 			name: "valid group grants query returns the correct data",
 			store: func(ctx sdk.Context) {
-				suite.k.SaveSubspace(ctx, types.NewSubspace(1, "test", "test", "owner", "treasury", "creator", time.Now()))
+				suite.k.SaveSubspace(ctx, types.NewSubspace(1, "test", "test", "owner", "treasury", "creator", time.Now(), nil))
 
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(1, 0, 1, "test", "tets", nil))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(1, 0, 2, "test", "tets", nil))

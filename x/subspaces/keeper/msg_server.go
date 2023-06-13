@@ -36,7 +36,7 @@ func (k msgServer) CreateSubspace(goCtx context.Context, msg *types.MsgCreateSub
 	}
 
 	// Create and validate the subspace
-	subspace := types.NewSubspace(subspaceID, msg.Name, msg.Description, types.GetTreasuryAddress(subspaceID).String(), msg.Owner, msg.Creator, ctx.BlockTime())
+	subspace := types.NewSubspace(subspaceID, msg.Name, msg.Description, types.GetTreasuryAddress(subspaceID).String(), msg.Owner, msg.Creator, ctx.BlockTime(), nil)
 	if err := subspace.Validate(); err != nil {
 		return nil, err
 	}
@@ -848,7 +848,7 @@ func (k msgServer) UpdateSubspaceFeeTokens(goCtx context.Context, msg *types.Msg
 	}
 
 	// Update the subspace and validate it
-	updated := subspace.SetAllowedFeeTokens(msg.AllowedFeeTokens)
+	updated := subspace.SetAdditionalFeeTokens(msg.AllowedFeeTokens)
 	err := updated.Validate()
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())

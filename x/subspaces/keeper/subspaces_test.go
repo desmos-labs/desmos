@@ -106,6 +106,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveSubspace() {
 				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				nil,
 			),
 			check: func(ctx sdk.Context) {
 				subspace, found := suite.k.GetSubspace(ctx, 1)
@@ -118,6 +119,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveSubspace() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				), subspace)
 
 				store := ctx.KVStore(suite.storeKey)
@@ -137,6 +139,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveSubspace() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 			},
 			subspace: types.NewSubspace(
@@ -147,6 +150,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveSubspace() {
 				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				nil,
 			),
 			check: func(ctx sdk.Context) {
 				subspace, found := suite.k.GetSubspace(ctx, 1)
@@ -159,6 +163,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveSubspace() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				), subspace)
 			},
 		},
@@ -204,6 +209,7 @@ func (suite *KeeperTestSuite) TestKeeper_HasSubspace() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 			},
 			subspaceID: 1,
@@ -249,6 +255,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetSubspace() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 			},
 			id:       1,
@@ -261,6 +268,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetSubspace() {
 				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				nil,
 			),
 		},
 	}
@@ -308,6 +316,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteSubspace() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
