@@ -31,7 +31,7 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-nil,
+						nil,
 					),
 					subspacestypes.NewSubspace(
 						2,
@@ -41,7 +41,7 @@ nil,
 						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-nil,
+						nil,
 					),
 				}
 
@@ -308,7 +308,7 @@ func (suite *KeeperTestSuite) TestKeeper_ImportGenesis() {
 						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-nil,
+						nil,
 					),
 				}
 
@@ -342,7 +342,7 @@ nil,
 						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-nil,
+						nil,
 					),
 				}
 
@@ -406,7 +406,7 @@ nil,
 						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-nil,
+						nil,
 					),
 				}
 
@@ -440,7 +440,7 @@ nil,
 						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-nil,
+						nil,
 					),
 				}
 
@@ -498,7 +498,7 @@ nil,
 						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-nil,
+						nil,
 					),
 				}
 

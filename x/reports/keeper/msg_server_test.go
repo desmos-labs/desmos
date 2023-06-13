@@ -66,7 +66,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateReport() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-nil,
+					nil,
 				))
 				suite.k.SetNextReportID(ctx, 1, 1)
 			},
@@ -93,7 +93,7 @@ nil,
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-nil,
+					nil,
 				))
 				suite.k.SetNextReportID(ctx, 1, 1)
 
@@ -130,7 +130,7 @@ nil,
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-nil,
+					nil,
 				))
 				suite.k.SetNextReportID(ctx, 1, 1)
 
@@ -174,7 +174,7 @@ nil,
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-nil,
+					nil,
 				))
 				suite.k.SetNextReportID(ctx, 1, 1)
 
@@ -228,7 +228,7 @@ nil,
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-nil,
+					nil,
 				))
 				suite.k.SetNextReportID(ctx, 1, 1)
 
@@ -302,7 +302,7 @@ nil,
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-nil,
+					nil,
 				))
 				suite.k.SetNextReportID(ctx, 1, 1)
 
@@ -434,7 +434,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteReport() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-nil,
+					nil,
 				))
 			},
 			msg: types.NewMsgDeleteReport(
@@ -455,7 +455,7 @@ nil,
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-nil,
+					nil,
 				))
 
 				suite.k.SaveReport(ctx, types.NewReport(
@@ -486,7 +486,7 @@ nil,
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-nil,
+					nil,
 				))
 
 				suite.k.SaveReport(ctx, types.NewReport(
@@ -517,7 +517,7 @@ nil,
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-nil,
+					nil,
 				))
 
 				suite.sk.SetUserPermissions(ctx,
@@ -568,7 +568,7 @@ nil,
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-nil,
+					nil,
 				))
 
 				suite.sk.SetUserPermissions(ctx,
@@ -659,7 +659,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SupportStandardReason() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-nil,
+					nil,
 				))
 
 				suite.k.SetParams(ctx, types.NewParams(nil))
@@ -682,7 +682,7 @@ nil,
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-nil,
+					nil,
 				))
 
 				suite.k.SetParams(ctx, types.NewParams([]types.StandardReason{
@@ -707,7 +707,7 @@ nil,
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-nil,
+					nil,
 				))
 
 				suite.sk.SetUserPermissions(ctx,
@@ -739,7 +739,7 @@ nil,
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-nil,
+					nil,
 				))
 				suite.k.SetNextReasonID(ctx, 1, 1)
 
@@ -841,7 +841,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddReason() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-nil,
+					nil,
 				))
 			},
 			msg: types.NewMsgAddReason(
@@ -863,7 +863,7 @@ nil,
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-nil,
+					nil,
 				))
 
 				suite.sk.SetUserPermissions(ctx,
@@ -892,7 +892,7 @@ nil,
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-nil,
+					nil,
 				))
 				suite.k.SetNextReasonID(ctx, 1, 1)
 
@@ -922,7 +922,7 @@ nil,
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-nil,
+					nil,
 				))
 				suite.k.SetNextReasonID(ctx, 1, 1)
 
@@ -1013,7 +1013,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RemoveReason() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-nil,
+					nil,
 				))
 			},
 			msg: types.NewMsgRemoveReason(
@@ -1034,7 +1034,7 @@ nil,
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-nil,
+					nil,
 				))
 
 				suite.k.SaveReason(ctx, types.NewReason(
@@ -1062,7 +1062,7 @@ nil,
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-nil,
+					nil,
 				))
 
 				suite.k.SaveReason(ctx, types.NewReason(
