@@ -3109,7 +3109,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UpdateSubspaceFeeTokens() {
 			shouldErr: true,
 		},
 		{
-			name: "subspace are updated correctly",
+			name: "subspace is updated correctly",
 			store: func(ctx sdk.Context) {
 				suite.k.SaveSubspace(ctx, types.NewSubspace(
 					1,
