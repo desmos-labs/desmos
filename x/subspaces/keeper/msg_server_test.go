@@ -3150,7 +3150,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UpdateSubspaceFeeTokens() {
 			msg: types.NewMsgUpdateSubspaceFeeTokens(
 				1,
 				sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(10))),
-				"authority",
+				authtypes.NewModuleAddress("gov").String(),
 			),
 			shouldErr: true,
 		},
@@ -3171,7 +3171,28 @@ func (suite *KeeperTestSuite) TestMsgServer_UpdateSubspaceFeeTokens() {
 			msg: types.NewMsgUpdateSubspaceFeeTokens(
 				1,
 				sdk.Coins{{Denom: "minttoken", Amount: sdk.NewInt(-10)}},
-				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				authtypes.NewModuleAddress("gov").String(),
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid subspace returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					0,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				))
+			},
+			msg: types.NewMsgUpdateSubspaceFeeTokens(
+				1,
+				sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(10))),
+				authtypes.NewModuleAddress("gov").String(),
 			),
 			shouldErr: true,
 		},
