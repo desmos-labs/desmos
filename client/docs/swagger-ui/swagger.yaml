@@ -4696,7 +4696,7 @@ paths:
                       type: string
                       format: date-time
                       title: the creation time of the subspace
-                    allowed_fee_tokens:
+                    additional_fee_tokens:
                       type: array
                       items:
                         type: object
@@ -5044,7 +5044,7 @@ paths:
                     type: string
                     format: date-time
                     title: the creation time of the subspace
-                  allowed_fee_tokens:
+                  additional_fee_tokens:
                     type: array
                     items:
                       type: object
@@ -19574,7 +19574,7 @@ definitions:
             type: string
             format: date-time
             title: the creation time of the subspace
-          allowed_fee_tokens:
+          additional_fee_tokens:
             type: array
             items:
               type: object
@@ -19631,7 +19631,7 @@ definitions:
               type: string
               format: date-time
               title: the creation time of the subspace
-            allowed_fee_tokens:
+            additional_fee_tokens:
               type: array
               items:
                 type: object
@@ -20314,7 +20314,7 @@ definitions:
         type: string
         format: date-time
         title: the creation time of the subspace
-      allowed_fee_tokens:
+      additional_fee_tokens:
         type: array
         items:
           type: object
