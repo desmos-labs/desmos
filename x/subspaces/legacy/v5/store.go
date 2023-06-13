@@ -43,7 +43,7 @@ func migrateSubspaces(ctx sdk.Context, storeKey storetypes.StoreKey, cdc codec.B
 			oldSubspace.Owner,
 			oldSubspace.Creator,
 			oldSubspace.CreationTime,
-			nil,
+			oldSubspace.AdditionalFeeTokens,
 		)
 		store.Set(types.SubspaceStoreKey(oldSubspace.ID), cdc.MustMarshal(&newSubspace))
 	}

@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	"github.com/desmos-labs/desmos/v5/x/subspaces/types"
@@ -623,4 +624,36 @@ func getRandomSubspaceIDs(size int) []uint64 {
 		}
 	}
 	return subspaceIDs
+}
+
+func TestAdditionalFeeTokensUpdate_Update(t *testing.T) {
+	subspace := types.NewSubspace(
+		1,
+		"Test subspace",
+		"This is a test subspace",
+		"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+		"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+		"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+		time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+		nil,
+	)
+
+	updated := types.NewAdditionalFeeTokensUpdate(
+		sdk.NewCoin("minttoken", sdk.NewInt(10)),
+		sdk.NewCoin("ustar", sdk.NewInt(10)),
+	).Update(subspace)
+
+	require.Equal(t, types.NewSubspace(
+		1,
+		"Test subspace",
+		"This is a test subspace",
+		"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+		"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+		"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+		time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+		sdk.NewCoins(
+			sdk.NewCoin("minttoken", sdk.NewInt(10)),
+			sdk.NewCoin("ustar", sdk.NewInt(10)),
+		),
+	), updated)
 }

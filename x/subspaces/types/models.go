@@ -93,14 +93,6 @@ func (sub Subspace) Validate() error {
 	return nil
 }
 
-// Set allowed fee tokens without validating it.
-// Before storing the updated subspace, a validation with Validate() should
-// be performed.
-func (sub Subspace) SetAdditionalFeeTokens(feeTokens sdk.Coins) Subspace {
-	sub.AdditionalFeeTokens = feeTokens
-	return sub
-}
-
 // Update updates the fields of a given subspace without validating it.
 // Before storing the updated subspace, a validation with Validate() should
 // be performed.
@@ -125,7 +117,7 @@ func (sub Subspace) Update(update SubspaceUpdate) Subspace {
 		update.Owner,
 		sub.Creator,
 		sub.CreationTime,
-		nil,
+		sub.AdditionalFeeTokens,
 	)
 }
 
@@ -144,6 +136,35 @@ func NewSubspaceUpdate(name, description, owner string) SubspaceUpdate {
 		Description: description,
 		Owner:       owner,
 	}
+}
+
+// AdditionalFeeTokensUpdate contains data related to a subspace that can be updated after update addition fee tokens proposal performed.
+type AdditionalFeeTokensUpdate struct {
+	// Additional fee tokens of the subspace
+	AdditionalFeeTokens sdk.Coins
+}
+
+// NewAdditionalFeeTokensUpdate returns a new AdditionalFeeTokensUpdate instance
+func NewAdditionalFeeTokensUpdate(tokens ...sdk.Coin) AdditionalFeeTokensUpdate {
+	return AdditionalFeeTokensUpdate{
+		AdditionalFeeTokens: tokens,
+	}
+}
+
+// Update updates the additional fee tokens field of a subspace without validating it.
+// Before storing the updated subspace, a validation with Validate() should
+// be performed.
+func (update AdditionalFeeTokensUpdate) Update(sub Subspace) Subspace {
+	return NewSubspace(
+		sub.ID,
+		sub.Name,
+		sub.Description,
+		sub.Treasury,
+		sub.Owner,
+		sub.Creator,
+		sub.CreationTime,
+		update.AdditionalFeeTokens,
+	)
 }
 
 // --------------------------------------------------------------------------------------------------------------------

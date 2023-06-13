@@ -101,7 +101,9 @@ func (suite *AnteTestSuite) TestCheckTxFeeWithSubspaceMinPrices() {
 				suite.sk.EXPECT().
 					GetSubspace(gomock.Any(), uint64(1)).
 					Return(
-						types.Subspace{}.SetAdditionalFeeTokens(sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(1)))),
+						types.Subspace{
+							AdditionalFeeTokens: sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(1))),
+						},
 						true,
 					)
 			},
@@ -121,7 +123,9 @@ func (suite *AnteTestSuite) TestCheckTxFeeWithSubspaceMinPrices() {
 				suite.sk.EXPECT().
 					GetSubspace(gomock.Any(), uint64(1)).
 					Return(
-						types.Subspace{}.SetAdditionalFeeTokens(sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(1)))),
+						types.Subspace{
+							AdditionalFeeTokens: sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(1))),
+						},
 						true,
 					)
 			},
@@ -141,7 +145,9 @@ func (suite *AnteTestSuite) TestCheckTxFeeWithSubspaceMinPrices() {
 				suite.sk.EXPECT().
 					GetSubspace(gomock.Any(), uint64(1)).
 					Return(
-						types.Subspace{}.SetAdditionalFeeTokens(sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(1)))),
+						types.Subspace{
+							AdditionalFeeTokens: sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(1))),
+						},
 						true,
 					)
 			},
