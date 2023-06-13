@@ -521,7 +521,7 @@ func (k msgServer) MovePost(goCtx context.Context, msg *types.MsgMovePost) (*typ
 	}
 
 	// Check the sender is the owner of the post
-	if post.Author != msg.Owner {
+	if post.Owner != msg.Owner {
 		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "you are not the owner of the post")
 	}
 

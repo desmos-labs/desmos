@@ -183,15 +183,6 @@ func (r PostReference) Validate() error {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// UpdateOwner set the owner field of a given post without validating it.
-// Before storing the updated post, a validation with Validate should
-// be performed.
-func (p Post) UpdateOwner(owner string, updateTime *time.Time) Post {
-	p.Owner = owner
-	p.LastEditedDate = updateTime
-	return p
-}
-
 // PostUpdate contains all the data that can be updated about a post.
 // When performing an update, if a text field should not be edited then it must be set to types.DoNotModify.
 type PostUpdate struct {
@@ -287,6 +278,47 @@ func (update PostMove) Update(post Post) Post {
 		post.ReplySettings,
 		post.CreationDate,
 		&update.UpdateTime,
+		post.Owner,
+	)
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// OwnerTransfer contains data related to a post that can be updated after the owner of it has been transferred.
+type OwnerTransfer struct {
+	// Address of the user who will be the new owner of the post
+	NewOwner string
+
+	UpdateTime *time.Time
+}
+
+// NewOwnerTransfer returns a new OwnerTransfer instance
+func NewOwnerTransfer(newOwner string, updateTime *time.Time) OwnerTransfer {
+	return OwnerTransfer{
+		NewOwner:   newOwner,
+		UpdateTime: updateTime,
+	}
+}
+
+// Update updates the fields of a owner transferred post without validating it.
+// Before storing the updated post, a validation with keeper.ValidatePost should
+// be performed.
+func (update OwnerTransfer) Update(post Post) Post {
+	return NewPost(
+		post.SubspaceID,
+		post.SectionID,
+		post.ID,
+		post.ExternalID,
+		post.Text,
+		post.Author,
+		post.ConversationID,
+		post.Entities,
+		post.Tags,
+		post.ReferencedPosts,
+		post.ReplySettings,
+		post.CreationDate,
+		update.UpdateTime,
+		update.NewOwner,
 	)
 }
 

@@ -2469,7 +2469,7 @@ func (suite *KeeperTestSuite) TestMsgServer_MovePost() {
 					1,
 					"External ID",
 					"This is a text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 					1,
 					nil,
 					nil,
@@ -2477,6 +2477,7 @@ func (suite *KeeperTestSuite) TestMsgServer_MovePost() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 				))
 			},
 			msg: types.NewMsgMovePost(
@@ -2505,7 +2506,7 @@ func (suite *KeeperTestSuite) TestMsgServer_MovePost() {
 					1,
 					"External ID",
 					"This is a text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 					1,
 					nil,
 					nil,
@@ -2513,6 +2514,7 @@ func (suite *KeeperTestSuite) TestMsgServer_MovePost() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 				))
 			},
 			msg: types.NewMsgMovePost(
@@ -2549,6 +2551,7 @@ func (suite *KeeperTestSuite) TestMsgServer_MovePost() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 			},
 			msg: types.NewMsgMovePost(
@@ -2586,7 +2589,7 @@ func (suite *KeeperTestSuite) TestMsgServer_MovePost() {
 					1,
 					"External ID",
 					"This is a text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 					1,
 					nil,
 					nil,
@@ -2594,6 +2597,7 @@ func (suite *KeeperTestSuite) TestMsgServer_MovePost() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 				))
 			},
 			msg: types.NewMsgMovePost(
@@ -2632,7 +2636,7 @@ func (suite *KeeperTestSuite) TestMsgServer_MovePost() {
 					1,
 					"External ID",
 					"This is a text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 					1,
 					nil,
 					nil,
@@ -2640,6 +2644,7 @@ func (suite *KeeperTestSuite) TestMsgServer_MovePost() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 				))
 			},
 			msg: types.NewMsgMovePost(
@@ -2679,7 +2684,7 @@ func (suite *KeeperTestSuite) TestMsgServer_MovePost() {
 					1,
 					"External ID",
 					"This is a text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 					1,
 					nil,
 					nil,
@@ -2687,6 +2692,7 @@ func (suite *KeeperTestSuite) TestMsgServer_MovePost() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 				))
 			},
 			msg: types.NewMsgMovePost(
@@ -2729,7 +2735,7 @@ func (suite *KeeperTestSuite) TestMsgServer_MovePost() {
 					1,
 					"External ID",
 					"This is a text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 					1,
 					nil,
 					nil,
@@ -2737,6 +2743,7 @@ func (suite *KeeperTestSuite) TestMsgServer_MovePost() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 				))
 
 				// Save a media
@@ -2848,7 +2855,7 @@ func (suite *KeeperTestSuite) TestMsgServer_MovePost() {
 					2,
 					"External ID",
 					"This is a text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 					0,
 					nil,
 					nil,
@@ -2856,6 +2863,7 @@ func (suite *KeeperTestSuite) TestMsgServer_MovePost() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					&updateTime,
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 				), post)
 
 				// Check old attachments are deleted

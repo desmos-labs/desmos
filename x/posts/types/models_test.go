@@ -1113,6 +1113,7 @@ func TestPostMove(t *testing.T) {
 		types.REPLY_SETTING_EVERYONE,
 		time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 		nil,
+		"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 	)
 
 	updated := update.Update(post)
@@ -1140,6 +1141,7 @@ func TestPostMove(t *testing.T) {
 		types.REPLY_SETTING_EVERYONE,
 		time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 		&updateTime,
+		"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 	), updated)
 }
 
@@ -1156,6 +1158,44 @@ func TestAttachmentMove(t *testing.T) {
 		"ftp://user:password@example.com/image.png",
 		"image/png",
 	)), updated)
+}
+
+func TestOwnerTransfer_Update(t *testing.T) {
+	post := types.NewPost(
+		1,
+		0,
+		1,
+		"External ID",
+		"This is a text",
+		"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+		1,
+		nil,
+		nil,
+		nil,
+		types.REPLY_SETTING_EVERYONE,
+		time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+		nil,
+		"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+	)
+
+	editedTime := time.Date(2022, 1, 1, 12, 00, 00, 000, time.UTC)
+	updated := types.NewOwnerTransfer("cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg", &editedTime).Update(post)
+	require.Equal(t, types.NewPost(
+		1,
+		0,
+		1,
+		"External ID",
+		"This is a text",
+		"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+		1,
+		nil,
+		nil,
+		nil,
+		types.REPLY_SETTING_EVERYONE,
+		time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+		&editedTime,
+		"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+	), updated)
 }
 
 func TestPostOwnerTransferRequest_Validate(t *testing.T) {
