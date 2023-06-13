@@ -503,7 +503,8 @@ message MsgSetUserPermissionsResponse {}
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// MsgUpdateSubspaceFeeTokens represents the message to be used to update a subspace fee tokens by governance
+// MsgUpdateSubspaceFeeTokens represents the message to be used to update the accepted fee tokens
+// inside a given subspace, using an on-chain governance proposal
 //
 // Since: Desmos 6.0.0
 message MsgUpdateSubspaceFeeTokens {
