@@ -1037,21 +1037,24 @@ func (s *IntegrationTestSuite) TestCmdRequestPostOwnerTransfer() {
 		{
 			name: "invalid subspace id returns error",
 			args: []string{
-				"0", "1", "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st",
+				"X", "1", "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
 			shouldErr: true,
 		},
 		{
 			name: "invalid post id returns error",
 			args: []string{
-				"1", "0", "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st",
+				"1", "X", "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
 			shouldErr: true,
 		},
 		{
 			name: "invalid receiver returns error",
 			args: []string{
-				"1", "1", "",
+				"1", "1", "X",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
 			shouldErr: true,
 		},
@@ -1097,14 +1100,16 @@ func (s *IntegrationTestSuite) TestCmdCancelPostOwnerTransfer() {
 		{
 			name: "invalid subspace id returns error",
 			args: []string{
-				"0", "1",
+				"X", "1",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
 			shouldErr: true,
 		},
 		{
 			name: "invalid post id returns error",
 			args: []string{
-				"1", "0",
+				"1", "X",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
 			shouldErr: true,
 		},
@@ -1150,14 +1155,16 @@ func (s *IntegrationTestSuite) TestCmdAcceptPostOwnerTransfer() {
 		{
 			name: "invalid subspace id returns error",
 			args: []string{
-				"0", "1",
+				"X", "1",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
 			shouldErr: true,
 		},
 		{
 			name: "invalid post id returns error",
 			args: []string{
-				"1", "0",
+				"1", "X",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
 			shouldErr: true,
 		},
@@ -1203,14 +1210,16 @@ func (s *IntegrationTestSuite) TestCmdRefusePostOwnerTransfer() {
 		{
 			name: "invalid subspace id returns error",
 			args: []string{
-				"0", "1",
+				"X", "1",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
 			shouldErr: true,
 		},
 		{
 			name: "invalid post id returns error",
 			args: []string{
-				"1", "0",
+				"1", "X",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
 			shouldErr: true,
 		},
