@@ -46,6 +46,26 @@ service Msg {
   //
   // Since: Desmos 6.0.0
   rpc MovePost(MsgMovePost) returns (MsgMovePostResponse);
+
+  // RequestPostOwnerTransfer allows sender to send a request to transfer a post ownership to receiver
+  //
+  // Since: Desmos 6.0.0
+  rpc RequestPostOwnerTransfer(MsgRequestPostOwnerTransfer) returns (MsgRequestPostOwnerTransferResponse);
+
+  // CancelPostOwnerTransferRequest allows sender to cancel an outgoing post owner transfer request
+  //
+  // Since: Desmos 6.0.0
+  rpc CancelPostOwnerTransferRequest(MsgCancelPostOwnerTransferRequest) returns (MsgCancelPostOwnerTransferRequestResponse);
+
+  // AcceptPostOwnerTransferRequest allows receiver to accept an incoming post transfer request
+  //
+  // Since: Desmos 6.0.0
+  rpc AcceptPostOwnerTransferRequest(MsgAcceptPostOwnerTransferRequest) returns (MsgAcceptPostOwnerTransferRequestResponse);
+
+  // RefusePostOwnerTransferRequest allows receiver to refuse an incoming post transfer request
+  //
+  // Since: Desmos 6.0.0
+  rpc RefusePostOwnerTransferRequest(MsgRefusePostOwnerTransferRequest) returns (MsgRefusePostOwnerTransferRequestResponse);
 }
 
 // MsgCreatePost represents the message to be used to create a post.
@@ -296,7 +316,10 @@ message MsgUpdateParams {
 
   // authority is the address that controls the module (defaults to x/gov unless
   // overwritten).
-  string authority = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  string authority = 1 [ 
+    (gogoproto.moretags) = "yaml:\"authority\"",  
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 
   // params defines the parameters to update.
   //
@@ -355,3 +378,129 @@ message MsgMovePostResponse {
     (gogoproto.moretags) = "yaml:\"post_id\""
   ];
 }
+
+// MsgRequestPostOwnerTransfer represent a message used to transfer a post ownership to receiver
+//
+// Since: Desmos 6.0.0
+message MsgRequestPostOwnerTransfer {
+  option (cosmos.msg.v1.signer) = "sender";
+
+  // Id of the subspace that holds the post which ownership should be transfered
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+    
+  // Id of the post which will be transferred
+  uint64 post_id = 2[
+    (gogoproto.customname) = "PostID",
+    (gogoproto.moretags) = "yaml:\"post_id\""
+  ];
+
+  // Address of the post ownership receiver
+  string receiver = 3 [
+    (gogoproto.moretags) = "yaml:\"receiver\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
+    
+  // Address of the sender who is creating a transfer request
+  string sender = 4 [
+    (gogoproto.moretags) = "yaml:\"sender\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
+}
+
+// MsgRequestPostOwnerTransferResponse defines the Msg/RequestPostOwnerTransfer response type
+//
+// Since: Desmos 6.0.0
+message MsgRequestPostOwnerTransferResponse {}
+
+// MsgCancelPostOwnerTransferRequest represents a message used to cancel a outgoing post transfer request
+//
+// Since: Desmos 6.0.0
+message MsgCancelPostOwnerTransferRequest {
+  option (cosmos.msg.v1.signer) = "sender";
+
+  // Id of the subspace that holds the post for which the request should be canceled
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+    
+  // Id of the post for which the request will be cancelled
+  uint64 post_id = 2 [
+    (gogoproto.customname) = "PostID",
+    (gogoproto.moretags) = "yaml:\"post_id\""
+  ];
+
+  // Address of the transfer request sender
+  string sender = 3 [
+    (gogoproto.moretags) = "yaml:\"sender\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
+}
+
+// MsgCancelPostOwnerTransferRequestResponse defines the Msg/CancelPostOwnerTransferRequest response type
+//
+// Since: Desmos 6.0.0
+message MsgCancelPostOwnerTransferRequestResponse {}
+
+// MsgAcceptPostOwnerTransferRequest represents a message used to accept a incoming post transfer request
+//
+// Since: Desmos 6.0.0
+message MsgAcceptPostOwnerTransferRequest {
+  option (cosmos.msg.v1.signer) = "receiver";
+
+  // Id of the subspace holding the post for which the request will be accepted
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+    
+  // Id of the post for which the request will be accepted
+  uint64 post_id = 2 [
+    (gogoproto.customname) = "PostID",
+    (gogoproto.moretags) = "yaml:\"post_id\""
+  ];
+
+  // Address of the request receiver
+  string receiver = 3 [
+    (gogoproto.moretags) = "yaml:\"receiver\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
+}
+
+// MsgAcceptPostOwnerTransferRequestResponse defines the Msg/AcceptPostOwnerTransferRequest response type
+//
+// Since: Desmos 6.0.0
+message MsgAcceptPostOwnerTransferRequestResponse {}
+
+// MsgRefusePostOwnerTransferRequest represents a message used to refuse a incoming post transfer request
+//
+// Since: Desmos 6.0.0
+message MsgRefusePostOwnerTransferRequest {
+  option (cosmos.msg.v1.signer) = "receiver";
+
+  // Id of the subspace holding the post for which the request will be refused
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+    
+  // Id of the post for which the request will be refused
+  uint64 post_id = 2 [
+    (gogoproto.customname) = "PostID",
+    (gogoproto.moretags) = "yaml:\"post_id\""
+  ];
+
+  // Address of the request receiver
+  string receiver = 3 [
+    (gogoproto.moretags) = "yaml:\"receiver\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
+}
+
+// MsgRefusePostOwnerTransferRequest defines the Msg/RefusePostOwnerTransferRequest response type
+//
+// Since: Desmos 6.0.0
+message MsgRefusePostOwnerTransferRequestResponse {}

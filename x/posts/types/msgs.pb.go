@@ -842,7 +842,7 @@ var xxx_messageInfo_MsgAnswerPollResponse proto.InternalMessageInfo
 type MsgUpdateParams struct {
 	// authority is the address that controls the module (defaults to x/gov unless
 	// overwritten).
-	Authority string `protobuf:"bytes,1,opt,name=authority,proto3" json:"authority,omitempty"`
+	Authority string `protobuf:"bytes,1,opt,name=authority,proto3" json:"authority,omitempty" yaml:"authority"`
 	// params defines the parameters to update.
 	//
 	// NOTE: All parameters must be supplied.
@@ -1068,6 +1068,447 @@ func (m *MsgMovePostResponse) GetPostID() uint64 {
 	return 0
 }
 
+// MsgRequestPostOwnerTransfer represent a message used to transfer a post ownership to receiver
+//
+// Since: Desmos 6.0.0
+type MsgRequestPostOwnerTransfer struct {
+	// Id of the subspace that holds the post which ownership should be transfered
+	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
+	// Id of the post which will be transferred
+	PostID uint64 `protobuf:"varint,2,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty" yaml:"post_id"`
+	// Address of the post ownership receiver
+	Receiver string `protobuf:"bytes,3,opt,name=receiver,proto3" json:"receiver,omitempty" yaml:"receiver"`
+	// Address of the sender who is creating a transfer request
+	Sender string `protobuf:"bytes,4,opt,name=sender,proto3" json:"sender,omitempty" yaml:"sender"`
+}
+
+func (m *MsgRequestPostOwnerTransfer) Reset()         { *m = MsgRequestPostOwnerTransfer{} }
+func (m *MsgRequestPostOwnerTransfer) String() string { return proto.CompactTextString(m) }
+func (*MsgRequestPostOwnerTransfer) ProtoMessage()    {}
+func (*MsgRequestPostOwnerTransfer) Descriptor() ([]byte, []int) {
+	return fileDescriptor_c5bb13e2c778488f, []int{16}
+}
+func (m *MsgRequestPostOwnerTransfer) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgRequestPostOwnerTransfer) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgRequestPostOwnerTransfer.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgRequestPostOwnerTransfer) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgRequestPostOwnerTransfer.Merge(m, src)
+}
+func (m *MsgRequestPostOwnerTransfer) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgRequestPostOwnerTransfer) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgRequestPostOwnerTransfer.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgRequestPostOwnerTransfer proto.InternalMessageInfo
+
+func (m *MsgRequestPostOwnerTransfer) GetSubspaceID() uint64 {
+	if m != nil {
+		return m.SubspaceID
+	}
+	return 0
+}
+
+func (m *MsgRequestPostOwnerTransfer) GetPostID() uint64 {
+	if m != nil {
+		return m.PostID
+	}
+	return 0
+}
+
+func (m *MsgRequestPostOwnerTransfer) GetReceiver() string {
+	if m != nil {
+		return m.Receiver
+	}
+	return ""
+}
+
+func (m *MsgRequestPostOwnerTransfer) GetSender() string {
+	if m != nil {
+		return m.Sender
+	}
+	return ""
+}
+
+// MsgRequestPostOwnerTransferResponse defines the Msg/RequestPostOwnerTransfer response type
+//
+// Since: Desmos 6.0.0
+type MsgRequestPostOwnerTransferResponse struct {
+}
+
+func (m *MsgRequestPostOwnerTransferResponse) Reset()         { *m = MsgRequestPostOwnerTransferResponse{} }
+func (m *MsgRequestPostOwnerTransferResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgRequestPostOwnerTransferResponse) ProtoMessage()    {}
+func (*MsgRequestPostOwnerTransferResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_c5bb13e2c778488f, []int{17}
+}
+func (m *MsgRequestPostOwnerTransferResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgRequestPostOwnerTransferResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgRequestPostOwnerTransferResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgRequestPostOwnerTransferResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgRequestPostOwnerTransferResponse.Merge(m, src)
+}
+func (m *MsgRequestPostOwnerTransferResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgRequestPostOwnerTransferResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgRequestPostOwnerTransferResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgRequestPostOwnerTransferResponse proto.InternalMessageInfo
+
+// MsgCancelPostOwnerTransferRequest represents a message used to cancel a outgoing post transfer request
+//
+// Since: Desmos 6.0.0
+type MsgCancelPostOwnerTransferRequest struct {
+	// Id of the subspace that holds the post for which the request should be canceled
+	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
+	// Id of the post for which the request will be cancelled
+	PostID uint64 `protobuf:"varint,2,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty" yaml:"post_id"`
+	// Address of the transfer request sender
+	Sender string `protobuf:"bytes,3,opt,name=sender,proto3" json:"sender,omitempty" yaml:"sender"`
+}
+
+func (m *MsgCancelPostOwnerTransferRequest) Reset()         { *m = MsgCancelPostOwnerTransferRequest{} }
+func (m *MsgCancelPostOwnerTransferRequest) String() string { return proto.CompactTextString(m) }
+func (*MsgCancelPostOwnerTransferRequest) ProtoMessage()    {}
+func (*MsgCancelPostOwnerTransferRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_c5bb13e2c778488f, []int{18}
+}
+func (m *MsgCancelPostOwnerTransferRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgCancelPostOwnerTransferRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgCancelPostOwnerTransferRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgCancelPostOwnerTransferRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgCancelPostOwnerTransferRequest.Merge(m, src)
+}
+func (m *MsgCancelPostOwnerTransferRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgCancelPostOwnerTransferRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgCancelPostOwnerTransferRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgCancelPostOwnerTransferRequest proto.InternalMessageInfo
+
+func (m *MsgCancelPostOwnerTransferRequest) GetSubspaceID() uint64 {
+	if m != nil {
+		return m.SubspaceID
+	}
+	return 0
+}
+
+func (m *MsgCancelPostOwnerTransferRequest) GetPostID() uint64 {
+	if m != nil {
+		return m.PostID
+	}
+	return 0
+}
+
+func (m *MsgCancelPostOwnerTransferRequest) GetSender() string {
+	if m != nil {
+		return m.Sender
+	}
+	return ""
+}
+
+// MsgCancelPostOwnerTransferRequestResponse defines the Msg/CancelPostOwnerTransferRequest response type
+//
+// Since: Desmos 6.0.0
+type MsgCancelPostOwnerTransferRequestResponse struct {
+}
+
+func (m *MsgCancelPostOwnerTransferRequestResponse) Reset() {
+	*m = MsgCancelPostOwnerTransferRequestResponse{}
+}
+func (m *MsgCancelPostOwnerTransferRequestResponse) String() string {
+	return proto.CompactTextString(m)
+}
+func (*MsgCancelPostOwnerTransferRequestResponse) ProtoMessage() {}
+func (*MsgCancelPostOwnerTransferRequestResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_c5bb13e2c778488f, []int{19}
+}
+func (m *MsgCancelPostOwnerTransferRequestResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgCancelPostOwnerTransferRequestResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgCancelPostOwnerTransferRequestResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgCancelPostOwnerTransferRequestResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgCancelPostOwnerTransferRequestResponse.Merge(m, src)
+}
+func (m *MsgCancelPostOwnerTransferRequestResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgCancelPostOwnerTransferRequestResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgCancelPostOwnerTransferRequestResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgCancelPostOwnerTransferRequestResponse proto.InternalMessageInfo
+
+// MsgAcceptPostOwnerTransferRequest represents a message used to accept a incoming post transfer request
+//
+// Since: Desmos 6.0.0
+type MsgAcceptPostOwnerTransferRequest struct {
+	// Id of the subspace holding the post for which the request will be accepted
+	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
+	// Id of the post for which the request will be accepted
+	PostID uint64 `protobuf:"varint,2,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty" yaml:"post_id"`
+	// Address of the request receiver
+	Receiver string `protobuf:"bytes,3,opt,name=receiver,proto3" json:"receiver,omitempty" yaml:"receiver"`
+}
+
+func (m *MsgAcceptPostOwnerTransferRequest) Reset()         { *m = MsgAcceptPostOwnerTransferRequest{} }
+func (m *MsgAcceptPostOwnerTransferRequest) String() string { return proto.CompactTextString(m) }
+func (*MsgAcceptPostOwnerTransferRequest) ProtoMessage()    {}
+func (*MsgAcceptPostOwnerTransferRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_c5bb13e2c778488f, []int{20}
+}
+func (m *MsgAcceptPostOwnerTransferRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgAcceptPostOwnerTransferRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgAcceptPostOwnerTransferRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgAcceptPostOwnerTransferRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgAcceptPostOwnerTransferRequest.Merge(m, src)
+}
+func (m *MsgAcceptPostOwnerTransferRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgAcceptPostOwnerTransferRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgAcceptPostOwnerTransferRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgAcceptPostOwnerTransferRequest proto.InternalMessageInfo
+
+func (m *MsgAcceptPostOwnerTransferRequest) GetSubspaceID() uint64 {
+	if m != nil {
+		return m.SubspaceID
+	}
+	return 0
+}
+
+func (m *MsgAcceptPostOwnerTransferRequest) GetPostID() uint64 {
+	if m != nil {
+		return m.PostID
+	}
+	return 0
+}
+
+func (m *MsgAcceptPostOwnerTransferRequest) GetReceiver() string {
+	if m != nil {
+		return m.Receiver
+	}
+	return ""
+}
+
+// MsgAcceptPostOwnerTransferRequestResponse defines the Msg/AcceptPostOwnerTransferRequest response type
+//
+// Since: Desmos 6.0.0
+type MsgAcceptPostOwnerTransferRequestResponse struct {
+}
+
+func (m *MsgAcceptPostOwnerTransferRequestResponse) Reset() {
+	*m = MsgAcceptPostOwnerTransferRequestResponse{}
+}
+func (m *MsgAcceptPostOwnerTransferRequestResponse) String() string {
+	return proto.CompactTextString(m)
+}
+func (*MsgAcceptPostOwnerTransferRequestResponse) ProtoMessage() {}
+func (*MsgAcceptPostOwnerTransferRequestResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_c5bb13e2c778488f, []int{21}
+}
+func (m *MsgAcceptPostOwnerTransferRequestResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgAcceptPostOwnerTransferRequestResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgAcceptPostOwnerTransferRequestResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgAcceptPostOwnerTransferRequestResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgAcceptPostOwnerTransferRequestResponse.Merge(m, src)
+}
+func (m *MsgAcceptPostOwnerTransferRequestResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgAcceptPostOwnerTransferRequestResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgAcceptPostOwnerTransferRequestResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgAcceptPostOwnerTransferRequestResponse proto.InternalMessageInfo
+
+// MsgRefusePostOwnerTransferRequest represents a message used to refuse a incoming post transfer request
+//
+// Since: Desmos 6.0.0
+type MsgRefusePostOwnerTransferRequest struct {
+	// Id of the subspace holding the post for which the request will be refused
+	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
+	// Id of the post for which the request will be refused
+	PostID uint64 `protobuf:"varint,2,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty" yaml:"post_id"`
+	// Address of the request receiver
+	Receiver string `protobuf:"bytes,3,opt,name=receiver,proto3" json:"receiver,omitempty" yaml:"receiver"`
+}
+
+func (m *MsgRefusePostOwnerTransferRequest) Reset()         { *m = MsgRefusePostOwnerTransferRequest{} }
+func (m *MsgRefusePostOwnerTransferRequest) String() string { return proto.CompactTextString(m) }
+func (*MsgRefusePostOwnerTransferRequest) ProtoMessage()    {}
+func (*MsgRefusePostOwnerTransferRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_c5bb13e2c778488f, []int{22}
+}
+func (m *MsgRefusePostOwnerTransferRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgRefusePostOwnerTransferRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgRefusePostOwnerTransferRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgRefusePostOwnerTransferRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgRefusePostOwnerTransferRequest.Merge(m, src)
+}
+func (m *MsgRefusePostOwnerTransferRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgRefusePostOwnerTransferRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgRefusePostOwnerTransferRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgRefusePostOwnerTransferRequest proto.InternalMessageInfo
+
+func (m *MsgRefusePostOwnerTransferRequest) GetSubspaceID() uint64 {
+	if m != nil {
+		return m.SubspaceID
+	}
+	return 0
+}
+
+func (m *MsgRefusePostOwnerTransferRequest) GetPostID() uint64 {
+	if m != nil {
+		return m.PostID
+	}
+	return 0
+}
+
+func (m *MsgRefusePostOwnerTransferRequest) GetReceiver() string {
+	if m != nil {
+		return m.Receiver
+	}
+	return ""
+}
+
+// MsgRefusePostOwnerTransferRequest defines the Msg/RefusePostOwnerTransferRequest response type
+//
+// Since: Desmos 6.0.0
+type MsgRefusePostOwnerTransferRequestResponse struct {
+}
+
+func (m *MsgRefusePostOwnerTransferRequestResponse) Reset() {
+	*m = MsgRefusePostOwnerTransferRequestResponse{}
+}
+func (m *MsgRefusePostOwnerTransferRequestResponse) String() string {
+	return proto.CompactTextString(m)
+}
+func (*MsgRefusePostOwnerTransferRequestResponse) ProtoMessage() {}
+func (*MsgRefusePostOwnerTransferRequestResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_c5bb13e2c778488f, []int{23}
+}
+func (m *MsgRefusePostOwnerTransferRequestResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgRefusePostOwnerTransferRequestResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgRefusePostOwnerTransferRequestResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgRefusePostOwnerTransferRequestResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgRefusePostOwnerTransferRequestResponse.Merge(m, src)
+}
+func (m *MsgRefusePostOwnerTransferRequestResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgRefusePostOwnerTransferRequestResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgRefusePostOwnerTransferRequestResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgRefusePostOwnerTransferRequestResponse proto.InternalMessageInfo
+
 func init() {
 	proto.RegisterType((*MsgCreatePost)(nil), "desmos.posts.v3.MsgCreatePost")
 	proto.RegisterType((*MsgCreatePostResponse)(nil), "desmos.posts.v3.MsgCreatePostResponse")
@@ -1085,97 +1526,119 @@ func init() {
 	proto.RegisterType((*MsgUpdateParamsResponse)(nil), "desmos.posts.v3.MsgUpdateParamsResponse")
 	proto.RegisterType((*MsgMovePost)(nil), "desmos.posts.v3.MsgMovePost")
 	proto.RegisterType((*MsgMovePostResponse)(nil), "desmos.posts.v3.MsgMovePostResponse")
+	proto.RegisterType((*MsgRequestPostOwnerTransfer)(nil), "desmos.posts.v3.MsgRequestPostOwnerTransfer")
+	proto.RegisterType((*MsgRequestPostOwnerTransferResponse)(nil), "desmos.posts.v3.MsgRequestPostOwnerTransferResponse")
+	proto.RegisterType((*MsgCancelPostOwnerTransferRequest)(nil), "desmos.posts.v3.MsgCancelPostOwnerTransferRequest")
+	proto.RegisterType((*MsgCancelPostOwnerTransferRequestResponse)(nil), "desmos.posts.v3.MsgCancelPostOwnerTransferRequestResponse")
+	proto.RegisterType((*MsgAcceptPostOwnerTransferRequest)(nil), "desmos.posts.v3.MsgAcceptPostOwnerTransferRequest")
+	proto.RegisterType((*MsgAcceptPostOwnerTransferRequestResponse)(nil), "desmos.posts.v3.MsgAcceptPostOwnerTransferRequestResponse")
+	proto.RegisterType((*MsgRefusePostOwnerTransferRequest)(nil), "desmos.posts.v3.MsgRefusePostOwnerTransferRequest")
+	proto.RegisterType((*MsgRefusePostOwnerTransferRequestResponse)(nil), "desmos.posts.v3.MsgRefusePostOwnerTransferRequestResponse")
 }
 
 func init() { proto.RegisterFile("desmos/posts/v3/msgs.proto", fileDescriptor_c5bb13e2c778488f) }
 
 var fileDescriptor_c5bb13e2c778488f = []byte{
-	// 1350 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xcc, 0x58, 0xcd, 0x6f, 0x1b, 0x45,
-	0x14, 0xcf, 0xfa, 0xab, 0xf1, 0x38, 0xb6, 0x93, 0xad, 0x4b, 0x1c, 0x2b, 0x78, 0xcd, 0x50, 0x90,
-	0x5b, 0x11, 0x9b, 0xa6, 0x2a, 0x48, 0x45, 0x42, 0xf2, 0xa6, 0x91, 0x30, 0xc2, 0x28, 0xda, 0xa4,
-	0x97, 0x72, 0xb0, 0x36, 0xde, 0xe9, 0x66, 0xd1, 0x7a, 0xd7, 0xda, 0x99, 0xb8, 0xf1, 0x0d, 0x71,
-	0xe3, 0x16, 0xfe, 0x0b, 0x8e, 0x45, 0xca, 0x01, 0x71, 0xe6, 0x50, 0x21, 0x0e, 0x15, 0x27, 0x4e,
-	0x0b, 0x72, 0x0e, 0x15, 0x57, 0xff, 0x05, 0x68, 0x67, 0x67, 0x77, 0xc7, 0xf6, 0xe6, 0xa3, 0x34,
-	0x28, 0x9c, 0xe2, 0x79, 0xef, 0xf7, 0x3e, 0xe6, 0x7d, 0xcd, 0xdb, 0x80, 0x8a, 0x86, 0x70, 0xdf,
-	0xc6, 0xcd, 0x81, 0x8d, 0x09, 0x6e, 0x0e, 0xef, 0x37, 0xfb, 0x58, 0xc7, 0x8d, 0x81, 0x63, 0x13,
-	0x5b, 0x2c, 0xfa, 0xbc, 0x06, 0xe5, 0x35, 0x86, 0xf7, 0x2b, 0x25, 0xdd, 0xd6, 0x6d, 0xca, 0x6b,
-	0x7a, 0xbf, 0x7c, 0x58, 0x65, 0x4d, 0xb7, 0x6d, 0xdd, 0x44, 0x4d, 0x7a, 0xda, 0x3f, 0x7c, 0xda,
-	0x54, 0xad, 0x11, 0x63, 0x49, 0xb3, 0x2c, 0x62, 0xf4, 0x11, 0x26, 0x6a, 0x7f, 0x10, 0xc8, 0xf6,
-	0x6c, 0xcf, 0x44, 0xd7, 0x57, 0xea, 0x1f, 0x18, 0x6b, 0xd5, 0x3f, 0x79, 0x0e, 0x35, 0x87, 0xf7,
-	0xbc, 0x3f, 0x8c, 0xb1, 0x3e, 0xe7, 0xb2, 0xad, 0x21, 0x93, 0x89, 0xc1, 0x9f, 0x33, 0x20, 0xdf,
-	0xc1, 0xfa, 0x96, 0x83, 0x54, 0x82, 0x76, 0x6c, 0x4c, 0xc4, 0x6d, 0x90, 0xc3, 0x87, 0xfb, 0x78,
-	0xa0, 0xf6, 0x50, 0xd7, 0xd0, 0xca, 0x42, 0x4d, 0xa8, 0xa7, 0xe4, 0xdb, 0x63, 0x57, 0x02, 0xbb,
-	0x8c, 0xdc, 0x7e, 0x34, 0x71, 0x25, 0x71, 0xa4, 0xf6, 0xcd, 0x87, 0x90, 0x83, 0x42, 0x05, 0x04,
-	0xa7, 0xb6, 0x26, 0xb6, 0x00, 0xc0, 0xa8, 0x47, 0x0c, 0xdb, 0xf2, 0xb4, 0x24, 0x6a, 0x42, 0x3d,
-	0x2f, 0xc3, 0xb1, 0x2b, 0x65, 0x77, 0x7d, 0x2a, 0x55, 0xb2, 0xc2, 0x94, 0x84, 0x40, 0xa8, 0x64,
-	0xd9, 0xa1, 0xad, 0x79, 0x9e, 0xa0, 0x23, 0x82, 0x1c, 0x4b, 0x35, 0x3d, 0x1d, 0xc9, 0x9a, 0x50,
-	0xcf, 0xfa, 0x9e, 0x6c, 0x33, 0x32, 0xef, 0x09, 0x07, 0x85, 0x0a, 0x08, 0x4e, 0x6d, 0x4d, 0x7c,
-	0x17, 0xa4, 0x08, 0x3a, 0x22, 0xe5, 0x14, 0x95, 0x2f, 0x4e, 0x5c, 0x29, 0xe7, 0x4b, 0x78, 0x54,
-	0xa8, 0x50, 0xa6, 0xf8, 0x39, 0x58, 0x44, 0x16, 0x31, 0x88, 0x81, 0x70, 0x39, 0x5d, 0x13, 0xea,
-	0xb9, 0xcd, 0xb5, 0xc6, 0x4c, 0x3e, 0x1b, 0xdb, 0x0c, 0x20, 0xdf, 0x9c, 0xb8, 0x52, 0x91, 0x59,
-	0x65, 0x34, 0xa8, 0x84, 0xf2, 0xd4, 0xa0, 0xaa, 0xe3, 0x72, 0xa6, 0x96, 0x9c, 0x31, 0xa8, 0xea,
-	0xd8, 0x33, 0xa8, 0xea, 0x58, 0xc4, 0x20, 0xa7, 0x12, 0xa2, 0xf6, 0x0e, 0xfa, 0xc8, 0x22, 0xb8,
-	0x7c, 0xa3, 0x96, 0xac, 0xe7, 0x36, 0x4b, 0x0d, 0xbf, 0x02, 0x1a, 0x41, 0x05, 0x34, 0x5a, 0xd6,
-	0x48, 0xfe, 0x24, 0xba, 0x24, 0x27, 0x02, 0x7f, 0x3d, 0xd9, 0x78, 0x67, 0xd6, 0xc5, 0x56, 0xc8,
-	0xdf, 0xb2, 0x2d, 0x82, 0x2c, 0xa2, 0xf0, 0x56, 0xc4, 0x3b, 0x20, 0xa3, 0x1e, 0x92, 0x03, 0xdb,
-	0x29, 0x2f, 0xd2, 0x60, 0xac, 0x4c, 0x5c, 0x29, 0xcf, 0x34, 0x53, 0x3a, 0x54, 0x18, 0x40, 0x7c,
-	0x0c, 0x8a, 0x3d, 0xdb, 0x1a, 0x22, 0x07, 0xab, 0x41, 0x12, 0xb3, 0xb4, 0x14, 0x3e, 0x18, 0xbb,
-	0x52, 0x61, 0x8b, 0x63, 0xd1, 0x24, 0xbc, 0xe5, 0x6b, 0x99, 0x11, 0x81, 0x4a, 0x81, 0xa7, 0xb4,
-	0x35, 0xb1, 0x0b, 0x0a, 0x0e, 0x1a, 0x98, 0xa3, 0x2e, 0x46, 0x84, 0x18, 0x96, 0x8e, 0xcb, 0xa0,
-	0x26, 0xd4, 0x0b, 0x9b, 0x6f, 0xcf, 0x45, 0x5b, 0xf1, 0x60, 0xbb, 0x3e, 0x4a, 0x5e, 0x9b, 0xb8,
-	0xd2, 0x2d, 0xdf, 0xc4, 0xb4, 0x38, 0x54, 0xf2, 0x0e, 0x07, 0xc4, 0xe2, 0xd7, 0x60, 0xd9, 0x41,
-	0x4f, 0x91, 0x83, 0xac, 0x1e, 0xd2, 0xba, 0x54, 0x5b, 0x39, 0x47, 0x83, 0x5b, 0x9d, 0x33, 0xe1,
-	0xd5, 0xbb, 0x12, 0x80, 0x65, 0xe9, 0x85, 0x2b, 0x2d, 0x4c, 0x5c, 0x69, 0x35, 0xb0, 0x33, 0xad,
-	0x05, 0x2a, 0xc5, 0x88, 0xb4, 0x43, 0x29, 0x3f, 0x0a, 0xe0, 0xd6, 0x54, 0xf3, 0x28, 0x08, 0x0f,
-	0x6c, 0x0b, 0x23, 0xf1, 0x01, 0xb8, 0xe1, 0x09, 0x45, 0x0d, 0xb4, 0x3e, 0x76, 0xa5, 0x8c, 0x07,
-	0xa1, 0xd1, 0x2a, 0xf8, 0x26, 0x18, 0x04, 0x2a, 0x19, 0xef, 0x57, 0x5b, 0x13, 0x55, 0x90, 0xef,
-	0x79, 0xca, 0xbc, 0xe8, 0x69, 0x2a, 0x41, 0xb4, 0x6f, 0x72, 0x9b, 0x95, 0xb9, 0xb2, 0xd8, 0x0b,
-	0x06, 0x83, 0x5c, 0x63, 0x5e, 0x97, 0x58, 0x02, 0x78, 0x71, 0x78, 0xfc, 0xa7, 0x24, 0x28, 0x4b,
-	0x01, 0xed, 0x91, 0x47, 0xfa, 0x2d, 0x01, 0x72, 0x1d, 0xac, 0x6f, 0x6b, 0x06, 0xb9, 0xca, 0x76,
-	0xe7, 0x2e, 0x9c, 0x78, 0x8d, 0x0b, 0x07, 0xbd, 0x99, 0xbc, 0x6c, 0x6f, 0xa6, 0xae, 0xa8, 0x37,
-	0xd3, 0xe7, 0xf5, 0xe6, 0x1d, 0x90, 0x41, 0x9a, 0x41, 0x6c, 0xa7, 0x9c, 0x99, 0x6d, 0x13, 0x9f,
-	0x0e, 0x15, 0x06, 0x80, 0x26, 0xb8, 0xc9, 0x45, 0x33, 0xcc, 0xff, 0x63, 0x90, 0xf5, 0x00, 0x7e,
-	0x12, 0x85, 0x0b, 0x93, 0xb8, 0xce, 0x92, 0xb8, 0x1c, 0x19, 0xe1, 0x12, 0xb8, 0xe8, 0x9d, 0x69,
-	0xf2, 0x7e, 0x12, 0xe8, 0xb4, 0x7e, 0x84, 0x4c, 0x74, 0xb5, 0xd3, 0xfa, 0x5f, 0xa6, 0xef, 0x0e,
-	0xc8, 0x60, 0x43, 0xb7, 0x90, 0xc3, 0x12, 0xc8, 0x05, 0xca, 0xa7, 0x43, 0x85, 0x01, 0xe0, 0x2a,
-	0x6d, 0x95, 0xc8, 0xf3, 0x20, 0x54, 0xf0, 0x87, 0x04, 0x28, 0x75, 0xb0, 0xde, 0xd2, 0x68, 0x53,
-	0x45, 0x03, 0xec, 0x9a, 0xaf, 0xa6, 0x83, 0x1b, 0x3d, 0x7f, 0x84, 0xd2, 0xbb, 0x9d, 0x35, 0x9b,
-	0x3f, 0x8e, 0x54, 0x30, 0xf8, 0x25, 0xe7, 0x72, 0xa0, 0x9d, 0x2b, 0xb6, 0xd4, 0x45, 0xc5, 0xf6,
-	0x8b, 0x00, 0xd6, 0xe3, 0x42, 0x15, 0x96, 0x5d, 0x07, 0xe4, 0xa3, 0x71, 0x1f, 0x04, 0x2d, 0x2f,
-	0xd7, 0xc7, 0xae, 0xb4, 0x14, 0xc1, 0xe9, 0xbd, 0x4b, 0xb3, 0x0f, 0x0a, 0xbd, 0xfd, 0x52, 0x74,
-	0x6e, 0x6b, 0xd3, 0x55, 0x9c, 0xb8, 0xb2, 0x2a, 0xfe, 0x3e, 0x01, 0x56, 0x3b, 0x58, 0x57, 0x50,
-	0xdf, 0x1e, 0xa2, 0xff, 0x55, 0xd2, 0xe7, 0xe2, 0x97, 0x7c, 0xa3, 0xf8, 0xbd, 0x46, 0x6a, 0x8f,
-	0x80, 0x74, 0x46, 0x48, 0xfe, 0xeb, 0x99, 0x72, 0x92, 0xa0, 0x33, 0xa5, 0x65, 0xe1, 0x67, 0xc8,
-	0xd9, 0xb1, 0x4d, 0xf3, 0x9a, 0x73, 0x40, 0xc5, 0x4c, 0x33, 0x8a, 0x3e, 0x13, 0x33, 0xcd, 0x69,
-	0x31, 0xd3, 0x0c, 0xc4, 0x4c, 0x6f, 0xcb, 0xdb, 0x02, 0x45, 0x95, 0x5e, 0x01, 0x77, 0x0d, 0x4b,
-	0x43, 0x47, 0xf4, 0xad, 0x48, 0xd6, 0xf3, 0x72, 0x25, 0xda, 0x4e, 0x66, 0x00, 0x50, 0x29, 0x30,
-	0x4a, 0xdb, 0x27, 0x70, 0xf3, 0x2c, 0x7d, 0xb9, 0x79, 0x16, 0x45, 0x2d, 0x9c, 0x67, 0xc7, 0x02,
-	0x28, 0x76, 0xb0, 0xfe, 0x78, 0xe0, 0x05, 0x7b, 0x47, 0x75, 0xd4, 0x3e, 0x16, 0x3f, 0x02, 0x59,
-	0x7f, 0xad, 0x32, 0xc8, 0x88, 0xc6, 0x33, 0x2b, 0x97, 0x7f, 0x3f, 0xd9, 0x28, 0xb1, 0x0d, 0xbe,
-	0xa5, 0x69, 0x0e, 0xc2, 0x78, 0x97, 0x38, 0x86, 0xa5, 0x2b, 0x11, 0x54, 0x7c, 0x00, 0x32, 0x03,
-	0xaa, 0x81, 0x75, 0xdf, 0xea, 0xfc, 0x0a, 0x43, 0xd9, 0x72, 0xca, 0x4b, 0xb6, 0xc2, 0xc0, 0x0f,
-	0x0b, 0xdf, 0xbe, 0x7a, 0x7e, 0x37, 0x52, 0x03, 0xd7, 0x68, 0xbf, 0xf1, 0x1e, 0x85, 0xde, 0x7e,
-	0x97, 0xa4, 0xeb, 0x40, 0x87, 0x95, 0xdd, 0x35, 0xe7, 0xbe, 0x0b, 0x44, 0xa2, 0x3a, 0x3a, 0x22,
-	0x5d, 0xde, 0x89, 0x24, 0xd5, 0x70, 0x6f, 0xec, 0x4a, 0xcb, 0x7b, 0x94, 0x3b, 0xe5, 0xca, 0x5a,
-	0xf0, 0x7e, 0xcf, 0xca, 0x41, 0x65, 0x99, 0x4c, 0xc3, 0x35, 0xf1, 0x2b, 0xb0, 0x12, 0x00, 0xa3,
-	0x8f, 0x93, 0x14, 0x2d, 0xb3, 0xe6, 0xd8, 0x95, 0x8a, 0x4c, 0x3f, 0xf7, 0x89, 0x52, 0x9e, 0x56,
-	0xcf, 0x7d, 0xa9, 0x14, 0xc9, 0x14, 0x58, 0x13, 0x3f, 0x05, 0x69, 0xfb, 0x59, 0x54, 0x3c, 0xf5,
-	0x89, 0x2b, 0x2d, 0xf9, 0xd2, 0x94, 0x0c, 0xcf, 0xcc, 0xb8, 0x2f, 0x06, 0xbf, 0xa0, 0xbb, 0x44,
-	0x90, 0x8a, 0x37, 0xdc, 0x25, 0x37, 0xff, 0x4e, 0x83, 0x64, 0x07, 0xeb, 0xe2, 0x1e, 0x00, 0xdc,
-	0xd7, 0xdd, 0xfc, 0x12, 0x3c, 0xb5, 0xc0, 0x56, 0xde, 0x3f, 0x9f, 0x1f, 0x3a, 0xf5, 0x25, 0x58,
-	0x0c, 0x57, 0xc8, 0xf5, 0x38, 0x99, 0x80, 0x5b, 0xb9, 0x7d, 0x1e, 0x37, 0xd4, 0xb7, 0x07, 0x00,
-	0xb7, 0xd5, 0xc4, 0x7a, 0x19, 0xf1, 0xe3, 0xbd, 0x9c, 0xdf, 0x2d, 0x44, 0x03, 0xac, 0xcc, 0xef,
-	0x15, 0xef, 0xc5, 0x09, 0xcf, 0xc1, 0x2a, 0x1b, 0x97, 0x82, 0x85, 0xa6, 0x1c, 0x50, 0x8a, 0x7d,
-	0xd0, 0xea, 0x71, 0x6a, 0xe2, 0x90, 0x95, 0x0f, 0x2f, 0x8b, 0xe4, 0x83, 0xc6, 0x8d, 0xed, 0xd8,
-	0xa0, 0x45, 0xfc, 0xf8, 0xa0, 0xcd, 0x0f, 0x30, 0xf1, 0x09, 0x58, 0x9a, 0x1a, 0x5e, 0xb5, 0x38,
-	0x39, 0x1e, 0x51, 0xa9, 0x5f, 0x84, 0xe0, 0xcb, 0x26, 0x1c, 0x35, 0xb1, 0x65, 0x13, 0x70, 0xe3,
-	0xcb, 0x66, 0xb6, 0x37, 0x2a, 0xe9, 0x6f, 0x5e, 0x3d, 0xbf, 0x2b, 0xc8, 0x9f, 0xbd, 0x18, 0x57,
-	0x85, 0x97, 0xe3, 0xaa, 0xf0, 0xd7, 0xb8, 0x2a, 0x1c, 0x9f, 0x56, 0x17, 0x5e, 0x9e, 0x56, 0x17,
-	0xfe, 0x38, 0xad, 0x2e, 0x3c, 0x69, 0xe8, 0x06, 0x39, 0x38, 0xdc, 0x6f, 0xf4, 0xec, 0x7e, 0xd3,
-	0x57, 0xb8, 0x61, 0xaa, 0xfb, 0x98, 0xfd, 0x6e, 0x0e, 0x1f, 0x34, 0x8f, 0xd8, 0x7f, 0x46, 0xc8,
-	0x68, 0x80, 0xf0, 0x7e, 0x86, 0xbe, 0xa4, 0xf7, 0xff, 0x09, 0x00, 0x00, 0xff, 0xff, 0x37, 0x14,
-	0x4a, 0x62, 0xe9, 0x11, 0x00, 0x00,
+	// 1575 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe4, 0x59, 0xcf, 0x6f, 0x1b, 0xc5,
+	0x17, 0xcf, 0xda, 0x8e, 0x1b, 0x8f, 0x63, 0x3b, 0xd9, 0xba, 0xdf, 0x38, 0xfe, 0x06, 0xaf, 0xbb,
+	0x6d, 0x91, 0xd3, 0x36, 0x36, 0x75, 0xa9, 0x90, 0x82, 0x84, 0x64, 0xa7, 0x11, 0xb8, 0xc2, 0x10,
+	0x6d, 0xd2, 0x4b, 0x39, 0x58, 0x1b, 0xef, 0x64, 0xbb, 0x68, 0xbd, 0x6b, 0x76, 0x26, 0x6e, 0x72,
+	0x41, 0x88, 0x1b, 0xb7, 0xf2, 0x2f, 0x20, 0x0e, 0x1c, 0x8b, 0xd4, 0x03, 0xe2, 0xcc, 0xa1, 0x42,
+	0x1c, 0x2a, 0x4e, 0x9c, 0x16, 0xe4, 0x1e, 0x7a, 0xc6, 0x37, 0x6e, 0x68, 0x66, 0x67, 0x7f, 0xd8,
+	0xde, 0xd8, 0x0e, 0x0d, 0x4a, 0x25, 0x4e, 0xf5, 0xbc, 0xf7, 0x79, 0x6f, 0xde, 0x7c, 0xde, 0x8f,
+	0x9d, 0x69, 0x40, 0x5e, 0x81, 0xa8, 0x63, 0xa2, 0x4a, 0xd7, 0x44, 0x18, 0x55, 0x7a, 0xb7, 0x2b,
+	0x1d, 0xa4, 0xa2, 0x72, 0xd7, 0x32, 0xb1, 0xc9, 0x67, 0x1c, 0x5d, 0x99, 0xea, 0xca, 0xbd, 0xdb,
+	0xf9, 0xac, 0x6a, 0xaa, 0x26, 0xd5, 0x55, 0xc8, 0x2f, 0x07, 0x96, 0x5f, 0x55, 0x4d, 0x53, 0xd5,
+	0x61, 0x85, 0xae, 0xf6, 0x0f, 0x0f, 0x2a, 0xb2, 0x71, 0xcc, 0x54, 0xc2, 0xa8, 0x0a, 0x6b, 0x1d,
+	0x88, 0xb0, 0xdc, 0xe9, 0xba, 0xb6, 0x6d, 0x93, 0x6c, 0xd1, 0x72, 0x9c, 0x3a, 0x0b, 0xa6, 0x5a,
+	0x71, 0x56, 0x24, 0xa0, 0x4a, 0xef, 0x16, 0xf9, 0x87, 0x29, 0xd6, 0xc6, 0x42, 0x36, 0x15, 0xa8,
+	0x33, 0x33, 0xf1, 0xc7, 0x38, 0x48, 0x35, 0x91, 0xba, 0x65, 0x41, 0x19, 0xc3, 0x1d, 0x13, 0x61,
+	0x7e, 0x1b, 0x24, 0xd1, 0xe1, 0x3e, 0xea, 0xca, 0x6d, 0xd8, 0xd2, 0x94, 0x1c, 0x57, 0xe4, 0x4a,
+	0xb1, 0xfa, 0xd5, 0xbe, 0x2d, 0x80, 0x5d, 0x26, 0x6e, 0xdc, 0x1d, 0xd8, 0x02, 0x7f, 0x2c, 0x77,
+	0xf4, 0x4d, 0x31, 0x00, 0x15, 0x25, 0xe0, 0xae, 0x1a, 0x0a, 0x5f, 0x03, 0x00, 0xc1, 0x36, 0xd6,
+	0x4c, 0x83, 0x78, 0x89, 0x14, 0xb9, 0x52, 0xaa, 0x2e, 0xf6, 0x6d, 0x21, 0xb1, 0xeb, 0x48, 0xa9,
+	0x93, 0x65, 0xe6, 0xc4, 0x03, 0x8a, 0x52, 0x82, 0x2d, 0x1a, 0x0a, 0x89, 0x04, 0x1e, 0x61, 0x68,
+	0x19, 0xb2, 0x4e, 0x7c, 0x44, 0x8b, 0x5c, 0x29, 0xe1, 0x44, 0xb2, 0xcd, 0xc4, 0xc1, 0x48, 0x02,
+	0x50, 0x51, 0x02, 0xee, 0xaa, 0xa1, 0xf0, 0x57, 0x40, 0x0c, 0xc3, 0x23, 0x9c, 0x8b, 0x51, 0xfb,
+	0xcc, 0xc0, 0x16, 0x92, 0x8e, 0x05, 0x91, 0x8a, 0x12, 0x55, 0xf2, 0xf7, 0xc0, 0x02, 0x34, 0xb0,
+	0x86, 0x35, 0x88, 0x72, 0xf3, 0x45, 0xae, 0x94, 0xac, 0xae, 0x96, 0x47, 0xf2, 0x59, 0xde, 0x66,
+	0x80, 0xfa, 0xc5, 0x81, 0x2d, 0x64, 0xd8, 0xae, 0x4c, 0x26, 0x4a, 0x9e, 0x3d, 0xdd, 0x50, 0x56,
+	0x51, 0x2e, 0x5e, 0x8c, 0x8e, 0x6c, 0x28, 0xab, 0x88, 0x6c, 0x28, 0xab, 0x88, 0x47, 0x20, 0x29,
+	0x63, 0x2c, 0xb7, 0x1f, 0x76, 0xa0, 0x81, 0x51, 0xee, 0x42, 0x31, 0x5a, 0x4a, 0x56, 0xb3, 0x65,
+	0xa7, 0x02, 0xca, 0x6e, 0x05, 0x94, 0x6b, 0xc6, 0x71, 0xfd, 0x5d, 0xff, 0x90, 0x01, 0x13, 0xf1,
+	0xe7, 0xa7, 0x1b, 0x97, 0x47, 0x43, 0xac, 0x79, 0xfa, 0x2d, 0xd3, 0xc0, 0xd0, 0xc0, 0x52, 0x70,
+	0x17, 0x7e, 0x1d, 0xc4, 0xe5, 0x43, 0xfc, 0xd0, 0xb4, 0x72, 0x0b, 0x94, 0x8c, 0xe5, 0x81, 0x2d,
+	0xa4, 0x98, 0x67, 0x2a, 0x17, 0x25, 0x06, 0xe0, 0xef, 0x83, 0x4c, 0xdb, 0x34, 0x7a, 0xd0, 0x42,
+	0xb2, 0x9b, 0xc4, 0x04, 0x2d, 0x85, 0x9b, 0x7d, 0x5b, 0x48, 0x6f, 0x05, 0x54, 0x34, 0x09, 0xff,
+	0x73, 0xbc, 0x8c, 0x98, 0x88, 0x52, 0x3a, 0x28, 0x69, 0x28, 0x7c, 0x0b, 0xa4, 0x2d, 0xd8, 0xd5,
+	0x8f, 0x5b, 0x08, 0x62, 0xac, 0x19, 0x2a, 0xca, 0x81, 0x22, 0x57, 0x4a, 0x57, 0xdf, 0x18, 0x63,
+	0x5b, 0x22, 0xb0, 0x5d, 0x07, 0x55, 0x5f, 0x1d, 0xd8, 0xc2, 0x25, 0x67, 0x8b, 0x61, 0x73, 0x51,
+	0x4a, 0x59, 0x01, 0x20, 0xe2, 0x3f, 0x05, 0x4b, 0x16, 0x3c, 0x80, 0x16, 0x34, 0xda, 0x50, 0x69,
+	0x51, 0x6f, 0xb9, 0x24, 0x25, 0xb7, 0x30, 0xb6, 0x05, 0xa9, 0x77, 0xc9, 0x05, 0xd7, 0x85, 0x67,
+	0xb6, 0x30, 0x37, 0xb0, 0x85, 0x15, 0x77, 0x9f, 0x61, 0x2f, 0xa2, 0x94, 0xf1, 0x45, 0x3b, 0x54,
+	0xf2, 0x3d, 0x07, 0x2e, 0x0d, 0x35, 0x8f, 0x04, 0x51, 0xd7, 0x34, 0x10, 0xe4, 0xef, 0x80, 0x0b,
+	0xc4, 0xc8, 0x6f, 0xa0, 0xb5, 0xbe, 0x2d, 0xc4, 0x09, 0x84, 0xb2, 0x95, 0x76, 0xb6, 0x60, 0x10,
+	0x51, 0x8a, 0x93, 0x5f, 0x0d, 0x85, 0x97, 0x41, 0xaa, 0x4d, 0x9c, 0x11, 0xf6, 0x14, 0x19, 0x43,
+	0xda, 0x37, 0xc9, 0x6a, 0x7e, 0xac, 0x2c, 0xf6, 0xdc, 0xc1, 0x50, 0x2f, 0xb2, 0xa8, 0xb3, 0x2c,
+	0x01, 0x41, 0x73, 0xf1, 0xf1, 0xef, 0x02, 0x27, 0x2d, 0xba, 0xb2, 0xbb, 0x44, 0xf4, 0x4b, 0x04,
+	0x24, 0x9b, 0x48, 0xdd, 0x56, 0x34, 0x7c, 0x96, 0xed, 0x1e, 0x38, 0x70, 0xe4, 0x14, 0x07, 0x76,
+	0x7b, 0x33, 0x3a, 0x6b, 0x6f, 0xc6, 0xce, 0xa8, 0x37, 0xe7, 0x27, 0xf5, 0xe6, 0x3a, 0x88, 0x43,
+	0x45, 0xc3, 0xa6, 0x95, 0x8b, 0x8f, 0xb6, 0x89, 0x23, 0x17, 0x25, 0x06, 0x10, 0x75, 0x70, 0x31,
+	0xc0, 0xa6, 0x97, 0xff, 0xfb, 0x20, 0x41, 0x00, 0x4e, 0x12, 0xb9, 0xa9, 0x49, 0x5c, 0x63, 0x49,
+	0x5c, 0xf2, 0x37, 0x09, 0x24, 0x70, 0x81, 0xac, 0x69, 0xf2, 0x7e, 0xe0, 0xe8, 0xb4, 0xbe, 0x0b,
+	0x75, 0x78, 0xb6, 0xd3, 0xfa, 0x1f, 0xa6, 0x6f, 0x1d, 0xc4, 0x91, 0xa6, 0x1a, 0xd0, 0x62, 0x09,
+	0x0c, 0x10, 0xe5, 0xc8, 0x45, 0x89, 0x01, 0xc4, 0x15, 0xda, 0x2a, 0x7e, 0xe4, 0x2e, 0x55, 0xe2,
+	0x77, 0x11, 0x90, 0x6d, 0x22, 0xb5, 0xa6, 0xd0, 0xa6, 0xf2, 0x07, 0xd8, 0x39, 0x1f, 0x4d, 0x05,
+	0x17, 0xda, 0xce, 0x08, 0xa5, 0x67, 0x3b, 0x69, 0x36, 0xbf, 0xe3, 0xbb, 0x60, 0xf0, 0x19, 0xe7,
+	0xb2, 0xeb, 0x3d, 0x50, 0x6c, 0xb1, 0x69, 0xc5, 0xf6, 0x13, 0x07, 0xd6, 0xc2, 0xa8, 0xf2, 0xca,
+	0xae, 0x09, 0x52, 0xfe, 0xb8, 0x77, 0x49, 0x4b, 0xd5, 0x4b, 0x7d, 0x5b, 0x58, 0xf4, 0xe1, 0xf4,
+	0xdc, 0xd9, 0xd1, 0x0f, 0x0a, 0x3d, 0xfd, 0xa2, 0xbf, 0x6e, 0x28, 0xc3, 0x55, 0x1c, 0x39, 0xb3,
+	0x2a, 0xfe, 0x3a, 0x02, 0x56, 0x9a, 0x48, 0x95, 0x60, 0xc7, 0xec, 0xc1, 0xd7, 0x2a, 0xe9, 0x63,
+	0xfc, 0x45, 0x5f, 0x89, 0xbf, 0x53, 0xa4, 0xf6, 0x08, 0x08, 0x27, 0x50, 0xf2, 0x6f, 0xcf, 0x94,
+	0xa7, 0x11, 0x3a, 0x53, 0x6a, 0x06, 0x7a, 0x04, 0xad, 0x1d, 0x53, 0xd7, 0xcf, 0x39, 0x07, 0xd4,
+	0x4c, 0xd7, 0x7d, 0xf6, 0x99, 0x99, 0xae, 0x0f, 0x9b, 0xe9, 0xba, 0x6b, 0xa6, 0x93, 0x5b, 0xde,
+	0x16, 0xc8, 0xc8, 0xf4, 0x08, 0xa8, 0xa5, 0x19, 0x0a, 0x3c, 0xa2, 0xdf, 0x8a, 0x68, 0x29, 0x55,
+	0xcf, 0xfb, 0xb7, 0x93, 0x11, 0x80, 0x28, 0xa5, 0x99, 0xa4, 0xe1, 0x08, 0x02, 0xf3, 0x6c, 0x7e,
+	0xb6, 0x79, 0xe6, 0xb3, 0xe6, 0xcd, 0xb3, 0x6f, 0x39, 0x90, 0x69, 0x22, 0xf5, 0x7e, 0x97, 0x90,
+	0xbd, 0x23, 0x5b, 0x72, 0x07, 0xf1, 0xf7, 0x40, 0xc2, 0xb9, 0x56, 0x69, 0xf8, 0x98, 0xf2, 0x99,
+	0xa8, 0xdf, 0xf4, 0x53, 0xe3, 0xa9, 0xc4, 0x5f, 0x9f, 0x6e, 0x64, 0xd9, 0xad, 0xbe, 0xa6, 0x28,
+	0x16, 0x44, 0x68, 0x17, 0x5b, 0x9a, 0xa1, 0x4a, 0xbe, 0x39, 0x7f, 0x07, 0xc4, 0xbb, 0xd4, 0x2b,
+	0xeb, 0xc8, 0x95, 0xf1, 0x6b, 0x0d, 0x55, 0xd7, 0x63, 0xa4, 0x00, 0x24, 0x06, 0xde, 0x4c, 0x7f,
+	0xf9, 0xf2, 0xc9, 0x75, 0xdf, 0x8d, 0xb8, 0x4a, 0x7b, 0x30, 0x18, 0xa5, 0x77, 0x82, 0xaf, 0xa2,
+	0xf4, 0x8a, 0xd0, 0x64, 0xa5, 0x78, 0xce, 0xf5, 0xd0, 0x02, 0x3c, 0x96, 0x2d, 0x15, 0xe2, 0x56,
+	0x30, 0x88, 0x28, 0xf5, 0x70, 0xab, 0x6f, 0x0b, 0x4b, 0x7b, 0x54, 0x3b, 0x14, 0xca, 0xaa, 0xfb,
+	0x4d, 0x1f, 0xb5, 0x13, 0xa5, 0x25, 0x3c, 0x0c, 0x57, 0xf8, 0x4f, 0xc0, 0xb2, 0x0b, 0xf4, 0x1f,
+	0x2c, 0x31, 0x5a, 0x7a, 0x95, 0xbe, 0x2d, 0x64, 0x98, 0xff, 0xc0, 0xb3, 0x25, 0x37, 0xec, 0x3e,
+	0xf0, 0x7a, 0xc9, 0xe0, 0x21, 0xb0, 0xc2, 0xbf, 0x07, 0xe6, 0xcd, 0x47, 0x7e, 0x41, 0x95, 0x06,
+	0xb6, 0xb0, 0xe8, 0x58, 0x53, 0xf1, 0xc9, 0x19, 0x77, 0xcc, 0xc4, 0x0f, 0xe9, 0xfd, 0xc2, 0x4d,
+	0xc5, 0x2b, 0xde, 0x2f, 0x49, 0xaf, 0xff, 0x9f, 0x8e, 0x99, 0xcf, 0x0e, 0x21, 0xa2, 0x37, 0x96,
+	0x8f, 0xc9, 0x2e, 0x7b, 0x96, 0x6c, 0xa0, 0x03, 0x68, 0x9d, 0x73, 0xa6, 0xdf, 0x07, 0x0b, 0x16,
+	0x6c, 0x43, 0xad, 0xe7, 0xdd, 0x27, 0x6e, 0xf8, 0x97, 0x39, 0x57, 0x73, 0x32, 0x63, 0x9e, 0x31,
+	0x5f, 0x03, 0x71, 0x04, 0x0d, 0x05, 0xba, 0x73, 0x77, 0x3d, 0xd0, 0xc6, 0x54, 0x7e, 0xb2, 0x13,
+	0x66, 0xb8, 0x99, 0x24, 0xed, 0xc2, 0x16, 0xe2, 0x35, 0x70, 0x65, 0x02, 0x6b, 0x5e, 0xdf, 0xfc,
+	0xc9, 0x81, 0xcb, 0xe4, 0x39, 0x20, 0x1b, 0x6d, 0xa8, 0x87, 0xc0, 0xa8, 0xf9, 0x39, 0x73, 0xec,
+	0x53, 0x13, 0x3d, 0x13, 0x6a, 0x6e, 0x80, 0xf5, 0xa9, 0x47, 0xf6, 0x08, 0xfa, 0xcb, 0x21, 0xa8,
+	0xd6, 0x6e, 0xc3, 0x2e, 0x7e, 0x4d, 0x09, 0x3a, 0xab, 0x22, 0xdc, 0x4c, 0x11, 0x9a, 0xbc, 0x25,
+	0x23, 0x6a, 0xf2, 0xd1, 0x47, 0x89, 0x92, 0xe0, 0xc1, 0x21, 0x82, 0xff, 0x49, 0xa2, 0x26, 0x1f,
+	0xdd, 0x25, 0xaa, 0xfa, 0x0d, 0x00, 0xd1, 0x26, 0x52, 0xf9, 0x3d, 0x00, 0x02, 0xff, 0x85, 0x35,
+	0xfe, 0xd2, 0x1f, 0x7a, 0xa5, 0xe7, 0xdf, 0x9c, 0xac, 0xf7, 0xa6, 0xec, 0x47, 0x60, 0xc1, 0x7b,
+	0x27, 0xaf, 0x85, 0xd9, 0xb8, 0xda, 0xfc, 0xd5, 0x49, 0x5a, 0xcf, 0xdf, 0x1e, 0x00, 0x81, 0xa7,
+	0x5b, 0x68, 0x94, 0xbe, 0x3e, 0x3c, 0xca, 0xf1, 0x07, 0x14, 0xaf, 0x81, 0xe5, 0xf1, 0xc7, 0xd3,
+	0xb5, 0x30, 0xe3, 0x31, 0x58, 0x7e, 0x63, 0x26, 0x98, 0xb7, 0x95, 0x05, 0xb2, 0xa1, 0xb7, 0xf6,
+	0x52, 0x98, 0x9b, 0x30, 0x64, 0xfe, 0xad, 0x59, 0x91, 0x41, 0xd2, 0x02, 0x77, 0xd3, 0x50, 0xd2,
+	0x7c, 0x7d, 0x38, 0x69, 0xe3, 0xb7, 0x34, 0xfe, 0x01, 0x58, 0x1c, 0xba, 0xa1, 0x15, 0xc3, 0xec,
+	0x82, 0x88, 0x7c, 0x69, 0x1a, 0x22, 0x58, 0x36, 0xde, 0xdd, 0x29, 0xb4, 0x6c, 0x5c, 0x6d, 0x78,
+	0xd9, 0x8c, 0x7d, 0xec, 0x3f, 0x07, 0xb9, 0x13, 0xbf, 0xd8, 0x37, 0xc3, 0xf9, 0x0c, 0x47, 0xe7,
+	0xdf, 0x3e, 0x0d, 0xda, 0xdb, 0xff, 0x31, 0x07, 0x0a, 0x53, 0x3e, 0x6a, 0xd5, 0xd0, 0x8e, 0x9a,
+	0x68, 0x93, 0xdf, 0x3c, 0xbd, 0xcd, 0x50, 0x48, 0x53, 0x3e, 0x23, 0xa1, 0x21, 0x4d, 0xb6, 0x09,
+	0x0f, 0x69, 0xb6, 0x99, 0x4d, 0x43, 0x9a, 0x32, 0xb0, 0xab, 0xe1, 0xf4, 0x4f, 0xb2, 0x09, 0x0f,
+	0x69, 0xb6, 0xe9, 0x98, 0x9f, 0xff, 0xe2, 0xe5, 0x93, 0xeb, 0x5c, 0xfd, 0x83, 0x67, 0xfd, 0x02,
+	0xf7, 0xbc, 0x5f, 0xe0, 0xfe, 0xe8, 0x17, 0xb8, 0xc7, 0x2f, 0x0a, 0x73, 0xcf, 0x5f, 0x14, 0xe6,
+	0x7e, 0x7b, 0x51, 0x98, 0x7b, 0x50, 0x56, 0x35, 0xfc, 0xf0, 0x70, 0xbf, 0xdc, 0x36, 0x3b, 0x15,
+	0x67, 0x9b, 0x0d, 0x5d, 0xde, 0x47, 0xec, 0x77, 0xa5, 0x77, 0xa7, 0x72, 0xc4, 0xfe, 0x6e, 0x80,
+	0x8f, 0xbb, 0x10, 0xed, 0xc7, 0xe9, 0x3b, 0xf3, 0xf6, 0xdf, 0x01, 0x00, 0x00, 0xff, 0xff, 0x4f,
+	0xef, 0xe5, 0x86, 0x07, 0x19, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -1212,6 +1675,22 @@ type MsgClient interface {
 	//
 	// Since: Desmos 6.0.0
 	MovePost(ctx context.Context, in *MsgMovePost, opts ...grpc.CallOption) (*MsgMovePostResponse, error)
+	// RequestPostOwnerTransfer allows sender to send a request to transfer a post ownership to receiver
+	//
+	// Since: Desmos 6.0.0
+	RequestPostOwnerTransfer(ctx context.Context, in *MsgRequestPostOwnerTransfer, opts ...grpc.CallOption) (*MsgRequestPostOwnerTransferResponse, error)
+	// CancelPostOwnerTransferRequest allows sender to cancel an outgoing post owner transfer request
+	//
+	// Since: Desmos 6.0.0
+	CancelPostOwnerTransferRequest(ctx context.Context, in *MsgCancelPostOwnerTransferRequest, opts ...grpc.CallOption) (*MsgCancelPostOwnerTransferRequestResponse, error)
+	// AcceptPostOwnerTransferRequest allows receiver to accept an incoming post transfer request
+	//
+	// Since: Desmos 6.0.0
+	AcceptPostOwnerTransferRequest(ctx context.Context, in *MsgAcceptPostOwnerTransferRequest, opts ...grpc.CallOption) (*MsgAcceptPostOwnerTransferRequestResponse, error)
+	// RefusePostOwnerTransferRequest allows receiver to refuse an incoming post transfer request
+	//
+	// Since: Desmos 6.0.0
+	RefusePostOwnerTransferRequest(ctx context.Context, in *MsgRefusePostOwnerTransferRequest, opts ...grpc.CallOption) (*MsgRefusePostOwnerTransferRequestResponse, error)
 }
 
 type msgClient struct {
@@ -1294,6 +1773,42 @@ func (c *msgClient) MovePost(ctx context.Context, in *MsgMovePost, opts ...grpc.
 	return out, nil
 }
 
+func (c *msgClient) RequestPostOwnerTransfer(ctx context.Context, in *MsgRequestPostOwnerTransfer, opts ...grpc.CallOption) (*MsgRequestPostOwnerTransferResponse, error) {
+	out := new(MsgRequestPostOwnerTransferResponse)
+	err := c.cc.Invoke(ctx, "/desmos.posts.v3.Msg/RequestPostOwnerTransfer", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) CancelPostOwnerTransferRequest(ctx context.Context, in *MsgCancelPostOwnerTransferRequest, opts ...grpc.CallOption) (*MsgCancelPostOwnerTransferRequestResponse, error) {
+	out := new(MsgCancelPostOwnerTransferRequestResponse)
+	err := c.cc.Invoke(ctx, "/desmos.posts.v3.Msg/CancelPostOwnerTransferRequest", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) AcceptPostOwnerTransferRequest(ctx context.Context, in *MsgAcceptPostOwnerTransferRequest, opts ...grpc.CallOption) (*MsgAcceptPostOwnerTransferRequestResponse, error) {
+	out := new(MsgAcceptPostOwnerTransferRequestResponse)
+	err := c.cc.Invoke(ctx, "/desmos.posts.v3.Msg/AcceptPostOwnerTransferRequest", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) RefusePostOwnerTransferRequest(ctx context.Context, in *MsgRefusePostOwnerTransferRequest, opts ...grpc.CallOption) (*MsgRefusePostOwnerTransferRequestResponse, error) {
+	out := new(MsgRefusePostOwnerTransferRequestResponse)
+	err := c.cc.Invoke(ctx, "/desmos.posts.v3.Msg/RefusePostOwnerTransferRequest", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
 	// CreatePost allows to create a new post
@@ -1318,6 +1833,22 @@ type MsgServer interface {
 	//
 	// Since: Desmos 6.0.0
 	MovePost(context.Context, *MsgMovePost) (*MsgMovePostResponse, error)
+	// RequestPostOwnerTransfer allows sender to send a request to transfer a post ownership to receiver
+	//
+	// Since: Desmos 6.0.0
+	RequestPostOwnerTransfer(context.Context, *MsgRequestPostOwnerTransfer) (*MsgRequestPostOwnerTransferResponse, error)
+	// CancelPostOwnerTransferRequest allows sender to cancel an outgoing post owner transfer request
+	//
+	// Since: Desmos 6.0.0
+	CancelPostOwnerTransferRequest(context.Context, *MsgCancelPostOwnerTransferRequest) (*MsgCancelPostOwnerTransferRequestResponse, error)
+	// AcceptPostOwnerTransferRequest allows receiver to accept an incoming post transfer request
+	//
+	// Since: Desmos 6.0.0
+	AcceptPostOwnerTransferRequest(context.Context, *MsgAcceptPostOwnerTransferRequest) (*MsgAcceptPostOwnerTransferRequestResponse, error)
+	// RefusePostOwnerTransferRequest allows receiver to refuse an incoming post transfer request
+	//
+	// Since: Desmos 6.0.0
+	RefusePostOwnerTransferRequest(context.Context, *MsgRefusePostOwnerTransferRequest) (*MsgRefusePostOwnerTransferRequestResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
@@ -1347,6 +1878,18 @@ func (*UnimplementedMsgServer) UpdateParams(ctx context.Context, req *MsgUpdateP
 }
 func (*UnimplementedMsgServer) MovePost(ctx context.Context, req *MsgMovePost) (*MsgMovePostResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MovePost not implemented")
+}
+func (*UnimplementedMsgServer) RequestPostOwnerTransfer(ctx context.Context, req *MsgRequestPostOwnerTransfer) (*MsgRequestPostOwnerTransferResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RequestPostOwnerTransfer not implemented")
+}
+func (*UnimplementedMsgServer) CancelPostOwnerTransferRequest(ctx context.Context, req *MsgCancelPostOwnerTransferRequest) (*MsgCancelPostOwnerTransferRequestResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CancelPostOwnerTransferRequest not implemented")
+}
+func (*UnimplementedMsgServer) AcceptPostOwnerTransferRequest(ctx context.Context, req *MsgAcceptPostOwnerTransferRequest) (*MsgAcceptPostOwnerTransferRequestResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AcceptPostOwnerTransferRequest not implemented")
+}
+func (*UnimplementedMsgServer) RefusePostOwnerTransferRequest(ctx context.Context, req *MsgRefusePostOwnerTransferRequest) (*MsgRefusePostOwnerTransferRequestResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RefusePostOwnerTransferRequest not implemented")
 }
 
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
@@ -1497,6 +2040,78 @@ func _Msg_MovePost_Handler(srv interface{}, ctx context.Context, dec func(interf
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_RequestPostOwnerTransfer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgRequestPostOwnerTransfer)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).RequestPostOwnerTransfer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/desmos.posts.v3.Msg/RequestPostOwnerTransfer",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).RequestPostOwnerTransfer(ctx, req.(*MsgRequestPostOwnerTransfer))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_CancelPostOwnerTransferRequest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgCancelPostOwnerTransferRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).CancelPostOwnerTransferRequest(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/desmos.posts.v3.Msg/CancelPostOwnerTransferRequest",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).CancelPostOwnerTransferRequest(ctx, req.(*MsgCancelPostOwnerTransferRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_AcceptPostOwnerTransferRequest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgAcceptPostOwnerTransferRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).AcceptPostOwnerTransferRequest(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/desmos.posts.v3.Msg/AcceptPostOwnerTransferRequest",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).AcceptPostOwnerTransferRequest(ctx, req.(*MsgAcceptPostOwnerTransferRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_RefusePostOwnerTransferRequest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgRefusePostOwnerTransferRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).RefusePostOwnerTransferRequest(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/desmos.posts.v3.Msg/RefusePostOwnerTransferRequest",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).RefusePostOwnerTransferRequest(ctx, req.(*MsgRefusePostOwnerTransferRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Msg_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "desmos.posts.v3.Msg",
 	HandlerType: (*MsgServer)(nil),
@@ -1532,6 +2147,22 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "MovePost",
 			Handler:    _Msg_MovePost_Handler,
+		},
+		{
+			MethodName: "RequestPostOwnerTransfer",
+			Handler:    _Msg_RequestPostOwnerTransfer_Handler,
+		},
+		{
+			MethodName: "CancelPostOwnerTransferRequest",
+			Handler:    _Msg_CancelPostOwnerTransferRequest_Handler,
+		},
+		{
+			MethodName: "AcceptPostOwnerTransferRequest",
+			Handler:    _Msg_AcceptPostOwnerTransferRequest_Handler,
+		},
+		{
+			MethodName: "RefusePostOwnerTransferRequest",
+			Handler:    _Msg_RefusePostOwnerTransferRequest_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -2240,6 +2871,265 @@ func (m *MsgMovePostResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *MsgRequestPostOwnerTransfer) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgRequestPostOwnerTransfer) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgRequestPostOwnerTransfer) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Sender) > 0 {
+		i -= len(m.Sender)
+		copy(dAtA[i:], m.Sender)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Sender)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if len(m.Receiver) > 0 {
+		i -= len(m.Receiver)
+		copy(dAtA[i:], m.Receiver)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Receiver)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.PostID != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.PostID))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.SubspaceID != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.SubspaceID))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgRequestPostOwnerTransferResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgRequestPostOwnerTransferResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgRequestPostOwnerTransferResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgCancelPostOwnerTransferRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgCancelPostOwnerTransferRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgCancelPostOwnerTransferRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Sender) > 0 {
+		i -= len(m.Sender)
+		copy(dAtA[i:], m.Sender)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Sender)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.PostID != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.PostID))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.SubspaceID != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.SubspaceID))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgCancelPostOwnerTransferRequestResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgCancelPostOwnerTransferRequestResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgCancelPostOwnerTransferRequestResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgAcceptPostOwnerTransferRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgAcceptPostOwnerTransferRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgAcceptPostOwnerTransferRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Receiver) > 0 {
+		i -= len(m.Receiver)
+		copy(dAtA[i:], m.Receiver)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Receiver)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.PostID != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.PostID))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.SubspaceID != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.SubspaceID))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgAcceptPostOwnerTransferRequestResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgAcceptPostOwnerTransferRequestResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgAcceptPostOwnerTransferRequestResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgRefusePostOwnerTransferRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgRefusePostOwnerTransferRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgRefusePostOwnerTransferRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Receiver) > 0 {
+		i -= len(m.Receiver)
+		copy(dAtA[i:], m.Receiver)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Receiver)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.PostID != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.PostID))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.SubspaceID != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.SubspaceID))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgRefusePostOwnerTransferRequestResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgRefusePostOwnerTransferRequestResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgRefusePostOwnerTransferRequestResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintMsgs(dAtA []byte, offset int, v uint64) int {
 	offset -= sovMsgs(v)
 	base := offset
@@ -2558,6 +3448,122 @@ func (m *MsgMovePostResponse) Size() (n int) {
 	if m.PostID != 0 {
 		n += 1 + sovMsgs(uint64(m.PostID))
 	}
+	return n
+}
+
+func (m *MsgRequestPostOwnerTransfer) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.SubspaceID != 0 {
+		n += 1 + sovMsgs(uint64(m.SubspaceID))
+	}
+	if m.PostID != 0 {
+		n += 1 + sovMsgs(uint64(m.PostID))
+	}
+	l = len(m.Receiver)
+	if l > 0 {
+		n += 1 + l + sovMsgs(uint64(l))
+	}
+	l = len(m.Sender)
+	if l > 0 {
+		n += 1 + l + sovMsgs(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgRequestPostOwnerTransferResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgCancelPostOwnerTransferRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.SubspaceID != 0 {
+		n += 1 + sovMsgs(uint64(m.SubspaceID))
+	}
+	if m.PostID != 0 {
+		n += 1 + sovMsgs(uint64(m.PostID))
+	}
+	l = len(m.Sender)
+	if l > 0 {
+		n += 1 + l + sovMsgs(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgCancelPostOwnerTransferRequestResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgAcceptPostOwnerTransferRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.SubspaceID != 0 {
+		n += 1 + sovMsgs(uint64(m.SubspaceID))
+	}
+	if m.PostID != 0 {
+		n += 1 + sovMsgs(uint64(m.PostID))
+	}
+	l = len(m.Receiver)
+	if l > 0 {
+		n += 1 + l + sovMsgs(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgAcceptPostOwnerTransferRequestResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgRefusePostOwnerTransferRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.SubspaceID != 0 {
+		n += 1 + sovMsgs(uint64(m.SubspaceID))
+	}
+	if m.PostID != 0 {
+		n += 1 + sovMsgs(uint64(m.PostID))
+	}
+	l = len(m.Receiver)
+	if l > 0 {
+		n += 1 + l + sovMsgs(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgRefusePostOwnerTransferRequestResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
 	return n
 }
 
@@ -4616,6 +5622,718 @@ func (m *MsgMovePostResponse) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMsgs(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgRequestPostOwnerTransfer) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMsgs
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgRequestPostOwnerTransfer: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgRequestPostOwnerTransfer: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SubspaceID", wireType)
+			}
+			m.SubspaceID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SubspaceID |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PostID", wireType)
+			}
+			m.PostID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.PostID |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Receiver", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Receiver = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Sender", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Sender = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMsgs(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgRequestPostOwnerTransferResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMsgs
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgRequestPostOwnerTransferResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgRequestPostOwnerTransferResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMsgs(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgCancelPostOwnerTransferRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMsgs
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgCancelPostOwnerTransferRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgCancelPostOwnerTransferRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SubspaceID", wireType)
+			}
+			m.SubspaceID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SubspaceID |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PostID", wireType)
+			}
+			m.PostID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.PostID |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Sender", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Sender = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMsgs(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgCancelPostOwnerTransferRequestResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMsgs
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgCancelPostOwnerTransferRequestResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgCancelPostOwnerTransferRequestResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMsgs(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgAcceptPostOwnerTransferRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMsgs
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgAcceptPostOwnerTransferRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgAcceptPostOwnerTransferRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SubspaceID", wireType)
+			}
+			m.SubspaceID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SubspaceID |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PostID", wireType)
+			}
+			m.PostID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.PostID |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Receiver", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Receiver = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMsgs(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgAcceptPostOwnerTransferRequestResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMsgs
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgAcceptPostOwnerTransferRequestResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgAcceptPostOwnerTransferRequestResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMsgs(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgRefusePostOwnerTransferRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMsgs
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgRefusePostOwnerTransferRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgRefusePostOwnerTransferRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SubspaceID", wireType)
+			}
+			m.SubspaceID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SubspaceID |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PostID", wireType)
+			}
+			m.PostID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.PostID |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Receiver", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Receiver = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMsgs(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgRefusePostOwnerTransferRequestResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMsgs
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgRefusePostOwnerTransferRequestResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgRefusePostOwnerTransferRequestResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
 		default:
 			iNdEx = preIndex
 			skippy, err := skipMsgs(dAtA[iNdEx:])

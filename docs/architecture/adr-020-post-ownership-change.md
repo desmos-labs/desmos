@@ -68,10 +68,10 @@ message PostOwnerTransferRequest {
 To simplify the management of post owner transfer requests, we will store each request using the following key format:
 
 ```
-IncomingPostOwnerTransferRequestPrefix | SubspaceID | ReceiverAddress | PostID | -> Protobuf(PostOwnerTransferRequest)
+PostOwnerTransferRequestPrefix | SubspaceID | PostID | -> Protobuf(PostOwnerTransferRequest)
 ```
 
-This structure enables the receiver to easily manage incoming requests by iterating over all requests with a given subspace ID and receiver address, which will be the most frequently used query.
+This structure enables Desmos to easily manage requests by iterating over all requests with a given subspace ID and post ID when a post is moved or deleted.
 
 ### `Msg` Service
 
@@ -202,8 +202,8 @@ message QueryIncomingPostOwnerTransferRequestsResponse {
 
 ### Backwards Compatibility
 
-The solution outlined above is **not** backwards compatible and will require a migration script to update all existing posts to the new version. This script will handle the following tasks:
-- migrate all posts to have a new __owner__ field.
+The solution outlined above is fully backwards compatible since it introduces a new __owner__ field for post, but it will require a migration script to update all existing posts. This script will handle the following tasks:
+- migrate all posts to set a new __owner__ field to its __author__.
 
 ### Positive
 

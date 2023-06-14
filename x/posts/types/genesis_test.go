@@ -19,7 +19,7 @@ func TestValidateGenesis(t *testing.T) {
 			name: "invalid subspace data entry returns error",
 			data: types.NewGenesisState([]types.SubspaceDataEntry{
 				types.NewSubspaceDataEntry(0, 0),
-			}, nil, nil, nil, nil, nil, types.Params{}),
+			}, nil, nil, nil, nil, nil, types.Params{}, nil),
 			shouldErr: true,
 		},
 		{
@@ -27,7 +27,7 @@ func TestValidateGenesis(t *testing.T) {
 			data: types.NewGenesisState([]types.SubspaceDataEntry{
 				types.NewSubspaceDataEntry(1, 2),
 				types.NewSubspaceDataEntry(1, 3),
-			}, nil, nil, nil, nil, nil, types.Params{}),
+			}, nil, nil, nil, nil, nil, types.Params{}, nil),
 			shouldErr: true,
 		},
 		{
@@ -51,6 +51,7 @@ func TestValidateGenesis(t *testing.T) {
 						types.REPLY_SETTING_EVERYONE,
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 						nil,
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 					),
 				},
 				nil,
@@ -58,6 +59,7 @@ func TestValidateGenesis(t *testing.T) {
 				nil,
 				nil,
 				types.Params{},
+				nil,
 			),
 			shouldErr: true,
 		},
@@ -82,6 +84,7 @@ func TestValidateGenesis(t *testing.T) {
 						types.REPLY_SETTING_EVERYONE,
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 						nil,
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 					),
 					types.NewPost(
 						1,
@@ -97,6 +100,7 @@ func TestValidateGenesis(t *testing.T) {
 						types.REPLY_SETTING_EVERYONE,
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 						nil,
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 					),
 				},
 				nil,
@@ -104,6 +108,7 @@ func TestValidateGenesis(t *testing.T) {
 				nil,
 				nil,
 				types.Params{},
+				nil,
 			),
 			shouldErr: true,
 		},
@@ -111,7 +116,7 @@ func TestValidateGenesis(t *testing.T) {
 			name: "invalid post data entry returns error",
 			data: types.NewGenesisState(nil, nil, []types.PostDataEntry{
 				types.NewPostDataEntry(0, 1, 1),
-			}, nil, nil, nil, types.Params{}),
+			}, nil, nil, nil, types.Params{}, nil),
 			shouldErr: true,
 		},
 		{
@@ -119,7 +124,7 @@ func TestValidateGenesis(t *testing.T) {
 			data: types.NewGenesisState(nil, nil, []types.PostDataEntry{
 				types.NewPostDataEntry(1, 1, 1),
 				types.NewPostDataEntry(1, 1, 1),
-			}, nil, nil, nil, types.Params{}),
+			}, nil, nil, nil, types.Params{}, nil),
 			shouldErr: true,
 		},
 		{
@@ -143,6 +148,7 @@ func TestValidateGenesis(t *testing.T) {
 						types.REPLY_SETTING_EVERYONE,
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 						nil,
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 					),
 				},
 				nil,
@@ -159,6 +165,7 @@ func TestValidateGenesis(t *testing.T) {
 				nil,
 				nil,
 				types.Params{},
+				nil,
 			),
 			shouldErr: true,
 		},
@@ -183,6 +190,7 @@ func TestValidateGenesis(t *testing.T) {
 						types.REPLY_SETTING_EVERYONE,
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 						nil,
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 					),
 				},
 				nil,
@@ -195,6 +203,7 @@ func TestValidateGenesis(t *testing.T) {
 				nil,
 				nil,
 				types.Params{},
+				nil,
 			),
 			shouldErr: true,
 		},
@@ -202,7 +211,7 @@ func TestValidateGenesis(t *testing.T) {
 			name: "invalid poll data returns error",
 			data: types.NewGenesisState(nil, nil, nil, nil, []types.ActivePollData{
 				types.NewActivePollData(0, 1, 1, time.Now()),
-			}, nil, types.Params{}),
+			}, nil, types.Params{}, nil),
 			shouldErr: true,
 		},
 		{
@@ -210,14 +219,14 @@ func TestValidateGenesis(t *testing.T) {
 			data: types.NewGenesisState(nil, nil, nil, nil, []types.ActivePollData{
 				types.NewActivePollData(1, 1, 1, time.Now()),
 				types.NewActivePollData(1, 1, 1, time.Now()),
-			}, nil, types.Params{}),
+			}, nil, types.Params{}, nil),
 			shouldErr: true,
 		},
 		{
 			name: "invalid user answer returns error",
 			data: types.NewGenesisState(nil, nil, nil, nil, nil, []types.UserAnswer{
 				types.NewUserAnswer(1, 1, 1, []uint32{}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"),
-			}, types.Params{}),
+			}, types.Params{}, nil),
 			shouldErr: true,
 		},
 		{
@@ -225,7 +234,22 @@ func TestValidateGenesis(t *testing.T) {
 			data: types.NewGenesisState(nil, nil, nil, nil, nil, []types.UserAnswer{
 				types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"),
 				types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"),
-			}, types.Params{}),
+			}, types.Params{}, nil),
+			shouldErr: true,
+		},
+		{
+			name: "invalid post owner transfer requests returns error",
+			data: types.NewGenesisState(nil, nil, nil, nil, nil, nil, types.Params{}, []types.PostOwnerTransferRequest{
+				types.NewPostOwnerTransferRequest(0, 1, "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd", "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"),
+			}),
+			shouldErr: true,
+		},
+		{
+			name: "duplicated post owner transfer requests return error",
+			data: types.NewGenesisState(nil, nil, nil, nil, nil, nil, types.Params{}, []types.PostOwnerTransferRequest{
+				types.NewPostOwnerTransferRequest(1, 1, "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd", "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"),
+				types.NewPostOwnerTransferRequest(1, 1, "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd", "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"),
+			}),
 			shouldErr: true,
 		},
 		{
@@ -254,6 +278,7 @@ func TestValidateGenesis(t *testing.T) {
 						types.REPLY_SETTING_EVERYONE,
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 						nil,
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 					),
 				},
 				[]types.PostDataEntry{
@@ -277,6 +302,10 @@ func TestValidateGenesis(t *testing.T) {
 					types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"),
 				},
 				types.NewParams(100),
+				[]types.PostOwnerTransferRequest{
+					types.NewPostOwnerTransferRequest(1, 1, "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd", "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"),
+					types.NewPostOwnerTransferRequest(1, 2, "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd", "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"),
+				},
 			),
 			shouldErr: false,
 		},

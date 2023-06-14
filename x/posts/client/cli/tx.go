@@ -397,3 +397,151 @@ func GetCmdMovePost() *cobra.Command {
 
 	return cmd
 }
+
+// GetCmdRequestPostOwnerTransfer returns the command to create a post owner transfer request
+func GetCmdRequestPostOwnerTransfer() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "request-post-owner-transfer [subspace-id] [post-id] [receiver]",
+		Short:   "Make a request to transfer the owner of the post to the receiver",
+		Example: fmt.Sprintf(`%s tx posts request-post-owner-transfer 1 1 desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud`, version.AppName),
+		Args:    cobra.ExactArgs(3),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			subspaceID, err := subspacestypes.ParseSubspaceID(args[0])
+			if err != nil {
+				return err
+			}
+
+			postID, err := types.ParsePostID(args[1])
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgRequestPostOwnerTransfer(subspaceID, postID, args[2], clientCtx.FromAddress.String())
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// GetCmdCancelPostOwnerTransfer returns the command to cancel an outgoing post owner transfer request
+func GetCmdCancelPostOwnerTransfer() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "cancel-post-owner-transfer-request [subspace-id] [post-id]",
+		Short:   "Cancel a post owner transfer request with the given post id",
+		Example: fmt.Sprintf(`%s tx posts cancel-dtag-transfer-request 1, 1`, version.AppName),
+		Args:    cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			subspaceID, err := subspacestypes.ParseSubspaceID(args[0])
+			if err != nil {
+				return err
+			}
+
+			postID, err := types.ParsePostID(args[1])
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgCancelPostOwnerTransferRequest(subspaceID, postID, clientCtx.FromAddress.String())
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// GetCmdAcceptPostOwnerTransfer returns the command to accept a post owner transfer request
+func GetCmdAcceptPostOwnerTransfer() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "accept-post-owner-transfer-request [subspace-id] [post-id]",
+		Short:   `Accept a post owner transfer request with the given post id`,
+		Example: fmt.Sprintf(`%s tx posts accept-dtag-transfer-request 1 1`, version.AppName),
+		Args:    cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			subspaceID, err := subspacestypes.ParseSubspaceID(args[0])
+			if err != nil {
+				return err
+			}
+
+			postID, err := types.ParsePostID(args[1])
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgAcceptPostOwnerTransferRequest(subspaceID, postID, clientCtx.FromAddress.String())
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// GetCmdRefusePostOwnerTransfer returns the command to refuse an incoming post owner transfer request
+func GetCmdRefusePostOwnerTransfer() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "refuse-post-owner-transfer-request [subspace-id] [post-id]",
+		Short:   "Refuse a post owner transfer request with the given post id",
+		Example: fmt.Sprintf(`%s tx posts refuse-dtag-transfer-request 1 1`, version.AppName),
+		Args:    cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			subspaceID, err := subspacestypes.ParseSubspaceID(args[0])
+			if err != nil {
+				return err
+			}
+
+			postID, err := types.ParsePostID(args[1])
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgRefusePostOwnerTransferRequest(subspaceID, postID, clientCtx.FromAddress.String())
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}

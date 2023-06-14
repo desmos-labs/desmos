@@ -32,6 +32,7 @@ func TestPost_Validate(t *testing.T) {
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				nil,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 			),
 			shouldErr: true,
 		},
@@ -51,6 +52,7 @@ func TestPost_Validate(t *testing.T) {
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				nil,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 			),
 			shouldErr: true,
 		},
@@ -80,6 +82,7 @@ func TestPost_Validate(t *testing.T) {
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				nil,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 			),
 			shouldErr: true,
 		},
@@ -99,6 +102,7 @@ func TestPost_Validate(t *testing.T) {
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				nil,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 			),
 			shouldErr: true,
 		},
@@ -118,6 +122,7 @@ func TestPost_Validate(t *testing.T) {
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				nil,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 			),
 			shouldErr: true,
 		},
@@ -137,6 +142,7 @@ func TestPost_Validate(t *testing.T) {
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				nil,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 			),
 			shouldErr: true,
 		},
@@ -158,6 +164,7 @@ func TestPost_Validate(t *testing.T) {
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				nil,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 			),
 			shouldErr: true,
 		},
@@ -179,6 +186,7 @@ func TestPost_Validate(t *testing.T) {
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				nil,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 			),
 			shouldErr: true,
 		},
@@ -198,6 +206,7 @@ func TestPost_Validate(t *testing.T) {
 				types.REPLY_SETTING_UNSPECIFIED,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				nil,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 			),
 			shouldErr: true,
 		},
@@ -217,6 +226,7 @@ func TestPost_Validate(t *testing.T) {
 				types.REPLY_SETTING_EVERYONE,
 				time.Time{},
 				nil,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 			),
 			shouldErr: true,
 		},
@@ -236,6 +246,7 @@ func TestPost_Validate(t *testing.T) {
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				&time.Time{},
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 			),
 			shouldErr: true,
 		},
@@ -255,6 +266,39 @@ func TestPost_Validate(t *testing.T) {
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				&invalidEditDate,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid owner returns error",
+			post: types.NewPost(
+				1,
+				0,
+				2,
+				"External id",
+				"This is a post text that does not contain any useful information",
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+				1,
+				types.NewEntities(
+					[]types.TextTag{
+						types.NewTextTag(1, 3, "tag"),
+					},
+					[]types.TextTag{
+						types.NewTextTag(4, 6, "tag"),
+					},
+					[]types.Url{
+						types.NewURL(7, 9, "URL", "Display URL"),
+					},
+				),
+				[]string{"general"},
+				[]types.PostReference{
+					types.NewPostReference(types.POST_REFERENCE_TYPE_QUOTE, 1, 0),
+				},
+				types.REPLY_SETTING_EVERYONE,
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				nil,
+				"",
 			),
 			shouldErr: true,
 		},
@@ -286,6 +330,7 @@ func TestPost_Validate(t *testing.T) {
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				nil,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 			),
 			shouldErr: false,
 		},
@@ -1068,6 +1113,7 @@ func TestPostMove(t *testing.T) {
 		types.REPLY_SETTING_EVERYONE,
 		time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 		nil,
+		"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 	)
 
 	updated := update.Update(post)
@@ -1095,6 +1141,7 @@ func TestPostMove(t *testing.T) {
 		types.REPLY_SETTING_EVERYONE,
 		time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 		&updateTime,
+		"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 	), updated)
 }
 
@@ -1111,4 +1158,123 @@ func TestAttachmentMove(t *testing.T) {
 		"ftp://user:password@example.com/image.png",
 		"image/png",
 	)), updated)
+}
+
+func TestOwnerTransfer_Update(t *testing.T) {
+	post := types.NewPost(
+		1,
+		0,
+		1,
+		"External ID",
+		"This is a text",
+		"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+		1,
+		nil,
+		nil,
+		nil,
+		types.REPLY_SETTING_EVERYONE,
+		time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+		nil,
+		"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+	)
+
+	editedTime := time.Date(2022, 1, 1, 12, 00, 00, 000, time.UTC)
+	updated := types.NewOwnerTransfer("cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg", editedTime).Update(post)
+	require.Equal(t, types.NewPost(
+		1,
+		0,
+		1,
+		"External ID",
+		"This is a text",
+		"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+		1,
+		nil,
+		nil,
+		nil,
+		types.REPLY_SETTING_EVERYONE,
+		time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+		&editedTime,
+		"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+	), updated)
+}
+
+func TestPostOwnerTransferRequest_Validate(t *testing.T) {
+	testCases := []struct {
+		name      string
+		request   types.PostOwnerTransferRequest
+		shouldErr bool
+	}{
+		{
+			name: "invalid subspace id returns error",
+			request: types.NewPostOwnerTransferRequest(
+				0,
+				1,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid post id returns error",
+			request: types.NewPostOwnerTransferRequest(
+				1,
+				0,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "receiver equals to sender returns error",
+			request: types.NewPostOwnerTransferRequest(
+				1,
+				1,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid receiver returns error",
+			request: types.NewPostOwnerTransferRequest(
+				1,
+				1,
+				"",
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid sender returns error",
+			request: types.NewPostOwnerTransferRequest(
+				1,
+				1,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+				"",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "valid request returns no error",
+			request: types.NewPostOwnerTransferRequest(
+				1,
+				1,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+			),
+			shouldErr: false,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.request.Validate()
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
 }

@@ -60,7 +60,7 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 			expGenesis: types.NewGenesisState([]types.SubspaceDataEntry{
 				types.NewSubspaceDataEntry(1, 1),
 				types.NewSubspaceDataEntry(2, 2),
-			}, nil, nil, nil, nil, nil, types.Params{}),
+			}, nil, nil, nil, nil, nil, types.Params{}, nil),
 		},
 		{
 			name: "posts are exported properly",
@@ -84,6 +84,7 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 
 				suite.k.SetNextAttachmentID(ctx, 1, 2, 3)
@@ -101,6 +102,7 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 			},
 			expGenesis: types.NewGenesisState(
@@ -120,6 +122,7 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 						types.REPLY_SETTING_EVERYONE,
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 						nil,
+						"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 					),
 					types.NewPost(
 						1,
@@ -135,12 +138,13 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 						types.REPLY_SETTING_EVERYONE,
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 						nil,
+						"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 					),
 				},
 				[]types.PostDataEntry{
 					types.NewPostDataEntry(1, 1, 1),
 					types.NewPostDataEntry(1, 2, 3),
-				}, nil, nil, nil, types.Params{}),
+				}, nil, nil, nil, types.Params{}, nil),
 		},
 		{
 			name: "attachments are exported properly",
@@ -167,7 +171,7 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 					"ftp://user:password@example.com/image.png",
 					"image/png",
 				)),
-			}, nil, nil, types.Params{}),
+			}, nil, nil, types.Params{}, nil),
 		},
 		{
 			name: "active polls are exported properly",
@@ -220,7 +224,9 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 					types.NewActivePollData(1, 1, 2, time.Date(2100, 1, 1, 12, 00, 00, 000, time.UTC)),
 				},
 				nil,
-				types.Params{}),
+				types.Params{},
+				nil,
+			),
 		},
 		{
 			name: "user answers are exported properly",
@@ -235,7 +241,7 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 			expGenesis: types.NewGenesisState(nil, nil, nil, nil, nil, []types.UserAnswer{
 				types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"),
 				types.NewUserAnswer(1, 1, 2, []uint32{1, 2, 3}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"),
-			}, types.Params{}),
+			}, types.Params{}, nil),
 		},
 		{
 			name: "params are exported properly",
@@ -245,7 +251,21 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 			store: func(ctx sdk.Context) {
 				suite.k.SetParams(ctx, types.NewParams(20))
 			},
-			expGenesis: types.NewGenesisState(nil, nil, nil, nil, nil, nil, types.NewParams(20)),
+			expGenesis: types.NewGenesisState(nil, nil, nil, nil, nil, nil, types.NewParams(20), nil),
+		},
+		{
+			name: "post owner transfer requests are exported properly",
+			setup: func() {
+				suite.sk.EXPECT().IterateSubspaces(gomock.Any(), gomock.Any())
+			},
+			store: func(ctx sdk.Context) {
+				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(1, 1, "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd", "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"))
+				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(1, 2, "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd", "cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg"))
+			},
+			expGenesis: types.NewGenesisState(nil, nil, nil, nil, nil, nil, types.Params{}, []types.PostOwnerTransferRequest{
+				types.NewPostOwnerTransferRequest(1, 1, "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd", "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"),
+				types.NewPostOwnerTransferRequest(1, 2, "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd", "cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg"),
+			}),
 		},
 	}
 
@@ -345,6 +365,7 @@ func (suite *KeeperTestSuite) TestKeeper_ImportGenesis() {
 						types.REPLY_SETTING_EVERYONE,
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 						nil,
+						"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 					),
 				},
 			},
@@ -365,6 +386,7 @@ func (suite *KeeperTestSuite) TestKeeper_ImportGenesis() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				), post)
 			},
 		},
@@ -438,6 +460,7 @@ func (suite *KeeperTestSuite) TestKeeper_ImportGenesis() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 			},
 			data: types.GenesisState{
@@ -494,6 +517,7 @@ func (suite *KeeperTestSuite) TestKeeper_ImportGenesis() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 
 				suite.k.SaveAttachment(ctx, types.NewAttachment(1, 1, 1, types.NewPoll(
@@ -545,6 +569,23 @@ func (suite *KeeperTestSuite) TestKeeper_ImportGenesis() {
 			check: func(ctx sdk.Context) {
 				stored := suite.k.GetParams(ctx)
 				suite.Require().Equal(types.NewParams(200), stored)
+			},
+		},
+		{
+			name: "post transfer owner requests are imported properly",
+			setup: func() {
+				suite.sk.EXPECT().IterateSubspaces(gomock.Any(), gomock.Any())
+			},
+			data: types.GenesisState{
+				PostOwnerTransferRequests: []types.PostOwnerTransferRequest{
+					types.NewPostOwnerTransferRequest(1, 1, "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd", "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"),
+				},
+			},
+			check: func(ctx sdk.Context) {
+				stored, found := suite.k.GetPostOwnerTransferRequest(ctx, 1, 1)
+				suite.Require().True(found)
+				suite.Require().Equal(types.NewPostOwnerTransferRequest(1, 1, "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd", "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"),
+					stored)
 			},
 		},
 	}

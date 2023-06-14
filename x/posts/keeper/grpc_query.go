@@ -187,3 +187,44 @@ func (k Keeper) Params(ctx context.Context, _ *types.QueryParamsRequest) (*types
 	params := k.GetParams(sdkCtx)
 	return &types.QueryParamsResponse{Params: params}, nil
 }
+
+// IncomingPostOwnerTransferRequests implements the QueryIncomingPostOwnerTransferRequests gRPC method
+func (k Keeper) IncomingPostOwnerTransferRequests(ctx context.Context, request *types.QueryIncomingPostOwnerTransferRequestsRequest) (*types.QueryIncomingPostOwnerTransferRequestsResponse, error) {
+	if request.SubspaceId == 0 {
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id")
+	}
+
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+
+	store := sdkCtx.KVStore(k.storeKey)
+	transferRequestsPrefix := types.SubspacePostOwnerTransferRequestPrefix(request.SubspaceId)
+	transferRequestsStore := prefix.NewStore(store, transferRequestsPrefix)
+
+	var transferRequests []types.PostOwnerTransferRequest
+	pageRes, err := query.FilteredPaginate(transferRequestsStore, request.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
+		var transferRequest types.PostOwnerTransferRequest
+		if err := k.cdc.Unmarshal(value, &transferRequest); err != nil {
+			return false, status.Error(codes.Internal, err.Error())
+		}
+
+		// Filter out the request whose receiver does not match the given receiver
+		if request.Receiver != "" && request.Receiver != transferRequest.Receiver {
+			return false, nil
+		}
+
+		if accumulate {
+			transferRequests = append(transferRequests, transferRequest)
+		}
+
+		return true, nil
+	})
+
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &types.QueryIncomingPostOwnerTransferRequestsResponse{
+		Requests:   transferRequests,
+		Pagination: pageRes,
+	}, nil
+}

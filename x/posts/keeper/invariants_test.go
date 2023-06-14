@@ -117,6 +117,7 @@ func (suite *KeeperTestSuite) TestValidPostsInvariant() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 			},
 			expBroken: true,
@@ -142,6 +143,7 @@ func (suite *KeeperTestSuite) TestValidPostsInvariant() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 			},
 			expBroken: true,
@@ -167,6 +169,7 @@ func (suite *KeeperTestSuite) TestValidPostsInvariant() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 			},
 			expBroken: true,
@@ -194,6 +197,7 @@ func (suite *KeeperTestSuite) TestValidPostsInvariant() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 			},
 			expBroken: true,
@@ -221,6 +225,7 @@ func (suite *KeeperTestSuite) TestValidPostsInvariant() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 				suite.k.DeleteNextAttachmentID(ctx, 1, 1)
 			},
@@ -249,6 +254,7 @@ func (suite *KeeperTestSuite) TestValidPostsInvariant() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 				suite.k.SetNextAttachmentID(ctx, 1, 1, 1)
 			},
@@ -277,6 +283,7 @@ func (suite *KeeperTestSuite) TestValidPostsInvariant() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 				suite.k.SetNextAttachmentID(ctx, 1, 1, 1)
 			},
@@ -352,6 +359,7 @@ func (suite *KeeperTestSuite) TestValidAttachmentsInvariant() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 
 				suite.k.SaveAttachment(ctx, types.NewAttachment(1, 1, 1,
@@ -380,6 +388,7 @@ func (suite *KeeperTestSuite) TestValidAttachmentsInvariant() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 				suite.k.SetNextAttachmentID(ctx, 1, 1, 1)
 
@@ -409,6 +418,7 @@ func (suite *KeeperTestSuite) TestValidAttachmentsInvariant() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 				suite.k.SetNextAttachmentID(ctx, 1, 1, 2)
 
@@ -438,6 +448,7 @@ func (suite *KeeperTestSuite) TestValidAttachmentsInvariant() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 				suite.k.SetNextAttachmentID(ctx, 1, 1, 2)
 
@@ -513,6 +524,7 @@ func (suite *KeeperTestSuite) TestValidUserAnswersInvariant() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 
 				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"))
@@ -539,6 +551,7 @@ func (suite *KeeperTestSuite) TestValidUserAnswersInvariant() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 
 				suite.k.SaveAttachment(ctx, types.NewAttachment(1, 1, 1, types.NewPoll(
@@ -577,6 +590,7 @@ func (suite *KeeperTestSuite) TestValidUserAnswersInvariant() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 
 				suite.k.SaveAttachment(ctx, types.NewAttachment(1, 1, 1, types.NewPoll(
@@ -671,6 +685,134 @@ func (suite *KeeperTestSuite) TestValidActivePollsInvariant() {
 			}
 
 			_, broken := keeper.ValidActivePollsInvariant(suite.k)(ctx)
+			suite.Require().Equal(tc.expBroken, broken)
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestValidPostOwnerTransferRequestsInvariant() {
+	testCases := []struct {
+		name      string
+		setup     func()
+		store     func(ctx sdk.Context)
+		expBroken bool
+	}{
+		{
+			name: "not found subspace breaks invariant",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(false)
+			},
+			store: func(ctx sdk.Context) {
+				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(1, 1, "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd", "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"))
+			},
+			expBroken: true,
+		},
+		{
+			name: "not found post breaks invariant",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+			},
+			store: func(ctx sdk.Context) {
+				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(1, 1, "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd", "cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4"))
+			},
+			expBroken: true,
+		},
+		{
+			name: "post owner does not match the sender breaks invariant",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+			},
+			store: func(ctx sdk.Context) {
+				suite.k.SavePost(ctx, types.NewPost(
+					1,
+					0,
+					1,
+					"External id",
+					"Text",
+					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+					0,
+					nil,
+					nil,
+					nil,
+					types.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
+				))
+
+				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(1, 1, "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd", "invalid_sender"))
+			},
+			expBroken: true,
+		},
+		{
+			name: "invalid post owner transfer request breaks invariant",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+			},
+			store: func(ctx sdk.Context) {
+				suite.k.SavePost(ctx, types.NewPost(
+					1,
+					0,
+					1,
+					"External id",
+					"Text",
+					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+					0,
+					nil,
+					nil,
+					nil,
+					types.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
+				))
+
+				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(1, 1, "invalid_receiver", "cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4"))
+			},
+			expBroken: true,
+		},
+
+		{
+			name: "valid data does not break invariant",
+			setup: func() {
+				suite.sk.EXPECT().HasSubspace(gomock.Any(), uint64(1)).Return(true)
+			},
+			store: func(ctx sdk.Context) {
+				suite.k.SavePost(ctx, types.NewPost(
+					1,
+					0,
+					1,
+					"External id",
+					"Text",
+					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+					0,
+					nil,
+					nil,
+					nil,
+					types.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
+				))
+
+				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(1, 1, "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd", "cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4"))
+			},
+			expBroken: false,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup()
+			}
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			_, broken := keeper.ValidPostOwnerTransferRequestsInvariant(suite.k)(ctx)
 			suite.Require().Equal(tc.expBroken, broken)
 		})
 	}

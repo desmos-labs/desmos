@@ -86,6 +86,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 				poststypes.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				nil,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 			),
 		},
 		[]poststypes.PostDataEntry{
@@ -95,6 +96,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 		nil,
 		nil,
 		poststypes.DefaultParams(),
+		nil,
 	)
 	postsDataBz, err := cfg.Codec.MarshalJSON(postsGenesis)
 	s.Require().NoError(err)

@@ -29,6 +29,7 @@ var (
 // GenerateRandomPost generates a random post
 func GenerateRandomPost(r *rand.Rand, accounts []simtypes.Account, subspaceID uint64, sectionID uint32, postID uint64, params types.Params) types.Post {
 	author, _ := simtypes.RandomAcc(r, accounts)
+	owner, _ := simtypes.RandomAcc(r, accounts)
 	return types.NewPost(
 		subspaceID,
 		sectionID,
@@ -43,6 +44,7 @@ func GenerateRandomPost(r *rand.Rand, accounts []simtypes.Account, subspaceID ui
 		RandomReplySettings(r),
 		time.Now(),
 		nil,
+		owner.Address.String(),
 	)
 }
 
@@ -155,4 +157,9 @@ func RandomAnswersIndexes(r *rand.Rand, poll *types.Poll) (answersIndexes []uint
 // RandomMaxTextLength returns a random max text length in the [30, 999] range
 func RandomMaxTextLength(r *rand.Rand) uint32 {
 	return uint32(r.Intn(950)) + 30
+}
+
+// RandomPostOwnerTransferRequest returns a random post owner transfer request from the ones given
+func RandomPostOwnerTransferRequest(r *rand.Rand, requests []types.PostOwnerTransferRequest) types.PostOwnerTransferRequest {
+	return requests[r.Intn(len(requests))]
 }

@@ -73,3 +73,14 @@ func NewQueryPollAnswersRequest(
 func NewQueryParamsRequest() *QueryParamsRequest {
 	return &QueryParamsRequest{}
 }
+
+// QueryIncomingPostOwnerTransferRequestsRequest returns a new QueryIncomingPostOwnerTransferRequestsRequest instance
+func NewQueryIncomingPostOwnerTransferRequestsRequest(
+	subspaceID uint64, receiver string, pagination *query.PageRequest,
+) *QueryIncomingPostOwnerTransferRequestsRequest {
+	return &QueryIncomingPostOwnerTransferRequestsRequest{
+		SubspaceId: subspaceID,
+		Receiver:   receiver,
+		Pagination: pagination,
+	}
+}

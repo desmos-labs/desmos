@@ -41,6 +41,7 @@ func NewPost(
 	replySetting ReplySetting,
 	creationDate time.Time,
 	lastEditedDate *time.Time,
+	owner string,
 ) Post {
 	return Post{
 		SubspaceID:      subspaceID,
@@ -56,6 +57,7 @@ func NewPost(
 		ReplySettings:   replySetting,
 		CreationDate:    creationDate,
 		LastEditedDate:  lastEditedDate,
+		Owner:           owner,
 	}
 }
 
@@ -120,6 +122,11 @@ func (p Post) Validate() error {
 		if p.LastEditedDate.Before(p.CreationDate) {
 			return fmt.Errorf("last edited date cannot be before the creation date")
 		}
+	}
+
+	_, err = sdk.AccAddressFromBech32(p.Owner)
+	if err != nil {
+		return fmt.Errorf("invalid owner address: %s", err)
 	}
 
 	return nil
@@ -223,6 +230,7 @@ func (p Post) Update(update PostUpdate) Post {
 		p.ReplySettings,
 		p.CreationDate,
 		&update.UpdateTime,
+		p.Owner,
 	)
 }
 
@@ -270,6 +278,47 @@ func (update PostMove) Update(post Post) Post {
 		post.ReplySettings,
 		post.CreationDate,
 		&update.UpdateTime,
+		post.Owner,
+	)
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// OwnerTransfer contains data related to a post that can be updated after the owner of it has been transferred.
+type OwnerTransfer struct {
+	// Address of the user who will be the new owner of the post
+	NewOwner string
+
+	UpdateTime time.Time
+}
+
+// NewOwnerTransfer returns a new OwnerTransfer instance
+func NewOwnerTransfer(newOwner string, updateTime time.Time) OwnerTransfer {
+	return OwnerTransfer{
+		NewOwner:   newOwner,
+		UpdateTime: updateTime,
+	}
+}
+
+// Update updates the fields of a owner transferred post without validating it.
+// Before storing the updated post, a validation with keeper.ValidatePost should
+// be performed.
+func (update OwnerTransfer) Update(post Post) Post {
+	return NewPost(
+		post.SubspaceID,
+		post.SectionID,
+		post.ID,
+		post.ExternalID,
+		post.Text,
+		post.Author,
+		post.ConversationID,
+		post.Entities,
+		post.Tags,
+		post.ReferencedPosts,
+		post.ReplySettings,
+		post.CreationDate,
+		&update.UpdateTime,
+		update.NewOwner,
 	)
 }
 
@@ -819,4 +868,43 @@ func NewAnswerResult(answerIndex uint32, votes uint64) PollTallyResults_AnswerRe
 		AnswerIndex: answerIndex,
 		Votes:       votes,
 	}
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// NewPostOwnerTransferRequest returns a new PostOwnerTransferRequest instance
+func NewPostOwnerTransferRequest(subspaceID uint64, postID uint64, receiver string, sender string) PostOwnerTransferRequest {
+	return PostOwnerTransferRequest{
+		SubspaceID: subspaceID,
+		PostID:     postID,
+		Receiver:   receiver,
+		Sender:     sender,
+	}
+}
+
+// Validate checks the request validity
+func (request PostOwnerTransferRequest) Validate() error {
+	if request.SubspaceID == 0 {
+		return fmt.Errorf("invalid subspace id: %d", request.SubspaceID)
+	}
+
+	if request.PostID == 0 {
+		return fmt.Errorf("invalid post id: %d", request.PostID)
+	}
+
+	if request.Sender == request.Receiver {
+		return fmt.Errorf("receiver cannot be the same as sender")
+	}
+
+	_, err := sdk.AccAddressFromBech32(request.Sender)
+	if err != nil {
+		return fmt.Errorf("invalid sender address: %s", request.Sender)
+	}
+
+	_, err = sdk.AccAddressFromBech32(request.Receiver)
+	if err != nil {
+		return fmt.Errorf("invalid receiver address: %s", request.Receiver)
+	}
+
+	return nil
 }

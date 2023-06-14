@@ -39,6 +39,7 @@ func (suite *KeeperTestSuite) TestQueryServer_SubspacePosts() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
@@ -54,6 +55,7 @@ func (suite *KeeperTestSuite) TestQueryServer_SubspacePosts() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 13, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 			},
 			request:   types.NewQuerySubspacePostsRequest(1, nil),
@@ -73,6 +75,7 @@ func (suite *KeeperTestSuite) TestQueryServer_SubspacePosts() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				),
 				types.NewPost(
 					1,
@@ -88,6 +91,7 @@ func (suite *KeeperTestSuite) TestQueryServer_SubspacePosts() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 13, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				),
 			},
 		},
@@ -108,6 +112,7 @@ func (suite *KeeperTestSuite) TestQueryServer_SubspacePosts() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
@@ -123,6 +128,7 @@ func (suite *KeeperTestSuite) TestQueryServer_SubspacePosts() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 13, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 			},
 			request: types.NewQuerySubspacePostsRequest(1, &query.PageRequest{
@@ -144,6 +150,7 @@ func (suite *KeeperTestSuite) TestQueryServer_SubspacePosts() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				),
 			},
 		},
@@ -198,6 +205,7 @@ func (suite *KeeperTestSuite) TestQueryServer_SectionPosts() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
@@ -213,6 +221,7 @@ func (suite *KeeperTestSuite) TestQueryServer_SectionPosts() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 13, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 			},
 			request:   types.NewQuerySectionPostsRequest(1, 1, nil),
@@ -232,6 +241,7 @@ func (suite *KeeperTestSuite) TestQueryServer_SectionPosts() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				),
 				types.NewPost(
 					1,
@@ -247,6 +257,7 @@ func (suite *KeeperTestSuite) TestQueryServer_SectionPosts() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 13, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				),
 			},
 		},
@@ -267,6 +278,7 @@ func (suite *KeeperTestSuite) TestQueryServer_SectionPosts() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
@@ -282,6 +294,7 @@ func (suite *KeeperTestSuite) TestQueryServer_SectionPosts() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 13, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 			},
 			request: types.NewQuerySectionPostsRequest(1, 1, &query.PageRequest{
@@ -303,6 +316,7 @@ func (suite *KeeperTestSuite) TestQueryServer_SectionPosts() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				),
 			},
 		},
@@ -367,6 +381,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Post() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 				))
 			},
 			request:   types.NewQueryPostRequest(1, 1),
@@ -385,6 +400,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Post() {
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				nil,
+				"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 			),
 		},
 	}
@@ -626,6 +642,100 @@ func (suite *KeeperTestSuite) TestQueryServer_Params() {
 			res, err := suite.k.Params(sdk.WrapSDKContext(ctx), tc.request)
 			suite.Require().NoError(err)
 			suite.Require().Equal(tc.expParams, res.Params)
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestQueryServer_IncomingPostOwnerTransferRequests() {
+	testCases := []struct {
+		name        string
+		store       func(ctx sdk.Context)
+		request     *types.QueryIncomingPostOwnerTransferRequestsRequest
+		shouldErr   bool
+		expRequests []types.PostOwnerTransferRequest
+	}{
+		{
+			name:      "invalid subspace id returns error",
+			request:   types.NewQueryIncomingPostOwnerTransferRequestsRequest(0, "", nil),
+			shouldErr: true,
+		},
+		{
+			name: "valid request without receiver and without pagination returns properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(1, 1, "other_receiver", "sender"))
+				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(1, 2, "receiver", "sender"))
+				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(1, 3, "other_receiver", "sender"))
+				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(1, 4, "receiver", "sender"))
+			},
+			request:   types.NewQueryIncomingPostOwnerTransferRequestsRequest(1, "", nil),
+			shouldErr: false,
+			expRequests: []types.PostOwnerTransferRequest{
+				types.NewPostOwnerTransferRequest(1, 1, "other_receiver", "sender"),
+				types.NewPostOwnerTransferRequest(1, 2, "receiver", "sender"),
+				types.NewPostOwnerTransferRequest(1, 3, "other_receiver", "sender"),
+				types.NewPostOwnerTransferRequest(1, 4, "receiver", "sender"),
+			},
+		},
+		{
+			name: "valid request with receiver and without pagination returns properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(1, 1, "other_receiver", "sender"))
+				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(1, 2, "receiver", "sender"))
+				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(1, 3, "other_receiver", "sender"))
+				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(1, 4, "receiver", "sender"))
+			},
+			request:   types.NewQueryIncomingPostOwnerTransferRequestsRequest(1, "receiver", nil),
+			shouldErr: false,
+			expRequests: []types.PostOwnerTransferRequest{
+				types.NewPostOwnerTransferRequest(1, 2, "receiver", "sender"),
+				types.NewPostOwnerTransferRequest(1, 4, "receiver", "sender"),
+			},
+		},
+		{
+			name: "valid request without receiver and with pagination returns properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(1, 1, "other_receiver", "sender"))
+				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(1, 2, "receiver", "sender"))
+				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(1, 3, "other_receiver", "sender"))
+				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(1, 4, "receiver", "sender"))
+			},
+			request:   types.NewQueryIncomingPostOwnerTransferRequestsRequest(1, "", &query.PageRequest{Limit: 1}),
+			shouldErr: false,
+			expRequests: []types.PostOwnerTransferRequest{
+				types.NewPostOwnerTransferRequest(1, 1, "other_receiver", "sender"),
+			},
+		},
+		{
+			name: "valid request with receiver and with pagination returns properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(1, 1, "other_receiver", "sender"))
+				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(1, 2, "receiver", "sender"))
+				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(1, 3, "other_receiver", "sender"))
+				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(1, 4, "receiver", "sender"))
+			},
+			request:   types.NewQueryIncomingPostOwnerTransferRequestsRequest(1, "receiver", &query.PageRequest{Limit: 1}),
+			shouldErr: false,
+			expRequests: []types.PostOwnerTransferRequest{
+				types.NewPostOwnerTransferRequest(1, 2, "receiver", "sender"),
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			res, err := suite.k.IncomingPostOwnerTransferRequests(sdk.WrapSDKContext(ctx), tc.request)
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(tc.expRequests, res.Requests)
+			}
 		})
 	}
 }

@@ -41,17 +41,17 @@ func (k Keeper) DeleteNextPostID(ctx sdk.Context, subspaceID uint64) {
 // --------------------------------------------------------------------------------------------------------------------
 
 // ValidatePostReference checks the post reference to make sure that the referenced
-// post's author has not blocked the user referencing the post
-func (k Keeper) ValidatePostReference(ctx sdk.Context, postAuthor string, subspaceID uint64, referenceID uint64) error {
+// post's owner has not blocked the user referencing the post
+func (k Keeper) ValidatePostReference(ctx sdk.Context, postOwner string, subspaceID uint64, referenceID uint64) error {
 	// Make sure the referenced post exists
 	referencedPost, found := k.GetPost(ctx, subspaceID, referenceID)
 	if !found {
 		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %d does not exist", referenceID)
 	}
 
-	// Make sure the original author has not blocked the post author
-	if k.HasUserBlocked(ctx, referencedPost.Author, postAuthor, subspaceID) {
-		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "author of post %d has blocked you", referenceID)
+	// Make sure the original owner has not blocked the post owner
+	if k.HasUserBlocked(ctx, referencedPost.Owner, postOwner, subspaceID) {
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "owner of post %d has blocked you", referenceID)
 	}
 
 	return nil
@@ -59,7 +59,7 @@ func (k Keeper) ValidatePostReference(ctx sdk.Context, postAuthor string, subspa
 
 // ValidatePostReply checks the original post reply settings to make sure that
 // only specified users can answer to the post
-func (k Keeper) ValidatePostReply(ctx sdk.Context, postAuthor string, subspaceID uint64, referenceID uint64) error {
+func (k Keeper) ValidatePostReply(ctx sdk.Context, postOwner string, subspaceID uint64, referenceID uint64) error {
 	replyPost, found := k.GetPost(ctx, subspaceID, referenceID)
 	if !found {
 		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %d does not exist", referenceID)
@@ -67,20 +67,20 @@ func (k Keeper) ValidatePostReply(ctx sdk.Context, postAuthor string, subspaceID
 
 	switch replyPost.ReplySettings {
 	case types.REPLY_SETTING_FOLLOWERS:
-		// We need to make sure that a relationship between post author -> original author exists
-		if !k.HasRelationship(ctx, postAuthor, replyPost.Author, subspaceID) {
-			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "only followers of the author can reply to this post")
+		// We need to make sure that a relationship between post owner -> original owner exists
+		if !k.HasRelationship(ctx, postOwner, replyPost.Owner, subspaceID) {
+			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "only followers of the owner can reply to this post")
 		}
 
 	case types.REPLY_SETTING_MUTUAL:
-		// We need to make sure that both relationships exist (post author -> original author and original author -> post author)
-		if !k.HasRelationship(ctx, postAuthor, replyPost.Author, subspaceID) || !k.HasRelationship(ctx, replyPost.Author, postAuthor, subspaceID) {
-			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "only mutual connections of the author can reply to this post")
+		// We need to make sure that both relationships exist (post owner -> original owner and original owner -> post owner)
+		if !k.HasRelationship(ctx, postOwner, replyPost.Owner, subspaceID) || !k.HasRelationship(ctx, replyPost.Owner, postOwner, subspaceID) {
+			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "only mutual connections of the owner can reply to this post")
 		}
 
 	case types.REPLY_SETTING_MENTIONS:
 		// We need to check each mention of the original post
-		if !replyPost.IsUserMentioned(postAuthor) {
+		if !replyPost.IsUserMentioned(postOwner) {
 			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "only mentioned users can reply to this post")
 		}
 	}
@@ -94,7 +94,7 @@ func (k Keeper) ValidatePost(ctx sdk.Context, post types.Post) error {
 
 	// Validate the conversation reference
 	if post.ConversationID != 0 {
-		err := k.ValidatePostReference(ctx, post.Author, post.SubspaceID, post.ConversationID)
+		err := k.ValidatePostReference(ctx, post.Owner, post.SubspaceID, post.ConversationID)
 		if err != nil {
 			return err
 		}
@@ -102,13 +102,13 @@ func (k Keeper) ValidatePost(ctx sdk.Context, post types.Post) error {
 
 	// Validate the post references
 	for _, reference := range post.ReferencedPosts {
-		err := k.ValidatePostReference(ctx, post.Author, post.SubspaceID, reference.PostID)
+		err := k.ValidatePostReference(ctx, post.Owner, post.SubspaceID, reference.PostID)
 		if err != nil {
 			return err
 		}
 
 		if reference.Type == types.POST_REFERENCE_TYPE_REPLY {
-			err = k.ValidatePostReply(ctx, post.Author, post.SubspaceID, reference.PostID)
+			err = k.ValidatePostReply(ctx, post.Owner, post.SubspaceID, reference.PostID)
 			if err != nil {
 				return err
 			}
@@ -191,6 +191,9 @@ func (k Keeper) DeletePost(ctx sdk.Context, subspaceID uint64, postID uint64) {
 
 	// Delete the attachment id key
 	k.DeleteNextAttachmentID(ctx, post.SubspaceID, post.ID)
+
+	// Delete the post owner transfer request
+	k.DeletePostOwnerTransferRequest(ctx, post.SubspaceID, post.ID)
 
 	k.AfterPostDeleted(ctx, post.SubspaceID, post.ID)
 }

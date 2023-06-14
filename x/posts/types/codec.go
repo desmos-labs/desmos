@@ -25,6 +25,11 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgAnswerPoll{}, "desmos/MsgAnswerPoll", nil)
 	cdc.RegisterConcrete(&MsgMovePost{}, "desmos/MsgMovePost", nil)
 
+	cdc.Amino.RegisterConcrete(&MsgRequestPostOwnerTransfer{}, "desmos/MsgRequestPostOwnerTransfer", nil)
+	cdc.Amino.RegisterConcrete(&MsgCancelPostOwnerTransferRequest{}, "desmos/MsgCancelPostOwnerTransferRequest", nil)
+	cdc.Amino.RegisterConcrete(&MsgAcceptPostOwnerTransferRequest{}, "desmos/MsgAcceptPostOwnerTransferRequest", nil)
+	cdc.Amino.RegisterConcrete(&MsgRefusePostOwnerTransferRequest{}, "desmos/MsgRefusePostOwnerTransferRequest", nil)
+
 	cdc.RegisterConcrete(&Params{}, "desmos/x/posts/Params", nil)
 	cdc.RegisterConcrete(&MsgUpdateParams{}, "desmos/x/posts/MsgUpdateParams", nil)
 }
@@ -46,6 +51,10 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 		&MsgAnswerPoll{},
 		&MsgUpdateParams{},
 		&MsgMovePost{},
+		&MsgRequestPostOwnerTransfer{},
+		&MsgCancelPostOwnerTransferRequest{},
+		&MsgAcceptPostOwnerTransferRequest{},
+		&MsgRefusePostOwnerTransferRequest{},
 	)
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)

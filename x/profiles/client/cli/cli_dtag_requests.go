@@ -148,9 +148,9 @@ func GetCmdQueryDTagRequests() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "incoming-dtag-transfer-requests [[receiver]]",
 		Short: "Retrieve the DTag transfer requests with optional address and pagination",
-		Example: fmt.Sprintf(`%s tx profiles incoming-dtag-transfer-requests
-%s tx profiles incoming-dtag-transfer-requests --page=2 --limit=100
-%s tx profiles incoming-dtag-transfer-requests desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud
+		Example: fmt.Sprintf(`%s query profiles incoming-dtag-transfer-requests
+%s query profiles incoming-dtag-transfer-requests --page=2 --limit=100
+%s query profiles incoming-dtag-transfer-requests desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud
 `, version.AppName, version.AppName, version.AppName),
 		Args: cobra.RangeArgs(0, 1),
 		RunE: func(cmd *cobra.Command, args []string) error {

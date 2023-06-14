@@ -98,6 +98,7 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 						poststypes.REPLY_SETTING_EVERYONE,
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 						nil,
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 					),
 				}
 				suite.pk.EXPECT().

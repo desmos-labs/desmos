@@ -22,6 +22,8 @@ func RegisterInvariants(ir sdk.InvariantRegistry, keeper Keeper) {
 		ValidUserAnswersInvariant(keeper))
 	ir.RegisterRoute(types.ModuleName, "valid-active-polls",
 		ValidActivePollsInvariant(keeper))
+	ir.RegisterRoute(types.ModuleName, "valid-post-owner-transfer-requests",
+		ValidPostOwnerTransferRequestsInvariant(keeper))
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -254,6 +256,58 @@ func formatOutputActivePolls(polls []types.Attachment) (output string) {
 	for _, poll := range polls {
 		output += fmt.Sprintf("SubspaceID: %d, PostID: %d, PollID: %d",
 			poll.SubspaceID, poll.PostID, poll.ID)
+	}
+	return output
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+func ValidPostOwnerTransferRequestsInvariant(k Keeper) sdk.Invariant {
+	return func(ctx sdk.Context) (message string, broken bool) {
+		var invalidPostOwnerTransferRequests []types.PostOwnerTransferRequest
+		k.IteratePostOwnerTransferRequests(ctx, func(request types.PostOwnerTransferRequest) (stop bool) {
+			invalid := false
+
+			// Check subspace
+			if !k.HasSubspace(ctx, request.SubspaceID) {
+				invalid = true
+			}
+
+			// Check post
+			post, found := k.GetPost(ctx, request.SubspaceID, request.PostID)
+			if !found {
+				invalid = true
+			}
+
+			// Check the sender
+			if post.Owner != request.Sender {
+				invalid = true
+			}
+
+			// Validate the request
+			err := request.Validate()
+			if err != nil {
+				invalid = true
+			}
+
+			if invalid {
+				invalidPostOwnerTransferRequests = append(invalidPostOwnerTransferRequests, request)
+			}
+
+			return false
+		})
+
+		return sdk.FormatInvariant(types.ModuleName, "invalid post owner transfer requests",
+			fmt.Sprintf("the following post owner transfer requests are invalid:\n%s", formatOutputPostOwnerTransferRequests(invalidPostOwnerTransferRequests)),
+		), invalidPostOwnerTransferRequests != nil
+	}
+}
+
+// formatOutputActivePolls concatenates the given polls information into a string
+func formatOutputPostOwnerTransferRequests(requests []types.PostOwnerTransferRequest) (output string) {
+	for _, request := range requests {
+		output += fmt.Sprintf("SubspaceID: %d, PostID: %d",
+			request.SubspaceID, request.PostID)
 	}
 	return output
 }

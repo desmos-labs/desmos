@@ -18,6 +18,7 @@ func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 		k.getAllActivePollsData(ctx),
 		k.getAllUserAnswers(ctx),
 		k.GetParams(ctx),
+		k.GetAllPostOwnerTransferRequests(ctx),
 	)
 }
 
@@ -122,4 +123,9 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) {
 
 	// Initialize the params
 	k.SetParams(ctx, data.Params)
+
+	// Initialize the post owner transfer requests
+	for _, request := range data.PostOwnerTransferRequests {
+		k.SavePostOwnerTransferRequest(ctx, request)
+	}
 }

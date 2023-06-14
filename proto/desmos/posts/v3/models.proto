@@ -45,7 +45,10 @@ message Post {
   repeated string tags = 7 [ (gogoproto.moretags) = "yaml:\"tags\"" ];
 
   // Author of the post
-  string author = 8 [ (gogoproto.moretags) = "yaml:\"author\"" ];
+  string author = 8 [ 
+    (gogoproto.moretags) = "yaml:\"author\"", 
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 
   // (optional) Id of the original post of the conversation
   uint64 conversation_id = 9 [
@@ -74,6 +77,12 @@ message Post {
   google.protobuf.Timestamp last_edited_date = 13 [
     (gogoproto.stdtime) = true,
     (gogoproto.moretags) = "yaml:\"last_edited_date\""
+  ];
+
+  // Owner of the post
+  string owner = 14 [
+    (gogoproto.moretags) = "yaml:\"owner\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
   ];
 }
 
@@ -341,4 +350,34 @@ message Params {
   // Maximum length of the post text
   uint32 max_text_length = 1
       [ (gogoproto.moretags) = "yaml:\"max_text_length\"" ];
+}
+
+// PostOwnerTransferRequest represents a request to transfer the ownership of a post from the sender to the receiver
+message PostOwnerTransferRequest {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  // Id of the subspace that holds the post to transfer
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+  
+  // Id of the post which will be transferred
+  uint64 post_id = 2 [
+    (gogoproto.customname) = "PostID",
+    (gogoproto.moretags) = "yaml:\"post_id\""
+  ];
+
+  // Address of the sender
+  string sender = 3 [
+    (gogoproto.moretags) = "yaml:\"sender\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
+
+  // Address of the receiver
+  string receiver = 4 [
+    (gogoproto.moretags) = "yaml:\"receiver\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 }

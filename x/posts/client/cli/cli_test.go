@@ -93,6 +93,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				nil,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 			),
 			types.NewPost(
 				1,
@@ -108,6 +109,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				nil,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 			),
 		},
 		[]types.PostDataEntry{
@@ -133,6 +135,10 @@ func (s *IntegrationTestSuite) SetupSuite() {
 			types.NewUserAnswer(1, 1, 1, []uint32{0, 1}, "cosmos1u65w3xnhga8ngyg44eudh07zdxmkzny6uaudfc"),
 		},
 		types.DefaultParams(),
+		[]types.PostOwnerTransferRequest{
+			types.NewPostOwnerTransferRequest(1, 1, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st", "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"),
+			types.NewPostOwnerTransferRequest(1, 2, "cosmos1u65w3xnhga8ngyg44eudh07zdxmkzny6uaudfc", "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"),
+		},
 	)
 	postsDataBz, err := cfg.Codec.MarshalJSON(postsGenesis)
 	s.Require().NoError(err)
@@ -194,6 +200,7 @@ func (s *IntegrationTestSuite) TestCmdQueryPost() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 				),
 			},
 		},
@@ -253,6 +260,7 @@ func (s *IntegrationTestSuite) TestCmdQueryPosts() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 				),
 			},
 		},
@@ -281,6 +289,7 @@ func (s *IntegrationTestSuite) TestCmdQueryPosts() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 				),
 			},
 		},
@@ -459,6 +468,65 @@ func (s *IntegrationTestSuite) TestCmdQueryParams() {
 				var response types.QueryParamsResponse
 				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(tc.expResponse.Params, response.Params)
+			}
+		})
+	}
+}
+
+func (s *IntegrationTestSuite) TestCmdQueryPostOwnerTransferRequests() {
+	val := s.network.Validators[0]
+	testCases := []struct {
+		name        string
+		args        []string
+		shouldErr   bool
+		expResponse types.QueryIncomingPostOwnerTransferRequestsResponse
+	}{
+		{
+			name: "requests are returned correctly if no user is specified",
+			args: []string{
+				"1",
+				fmt.Sprintf("--%s=%d", flags.FlagLimit, 2),
+				fmt.Sprintf("--%s=%d", flags.FlagPage, 1),
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			shouldErr: false,
+			expResponse: types.QueryIncomingPostOwnerTransferRequestsResponse{
+				Requests: []types.PostOwnerTransferRequest{
+					types.NewPostOwnerTransferRequest(1, 1, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st", "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"),
+					types.NewPostOwnerTransferRequest(1, 2, "cosmos1u65w3xnhga8ngyg44eudh07zdxmkzny6uaudfc", "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"),
+				},
+			},
+		},
+		{
+			name: "answer is returned correctly if a user is specified",
+			args: []string{
+				"1", "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st",
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			shouldErr: false,
+			expResponse: types.QueryIncomingPostOwnerTransferRequestsResponse{
+				Requests: []types.PostOwnerTransferRequest{
+					types.NewPostOwnerTransferRequest(1, 1, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st", "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"),
+				},
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdQueryPostOwnerTransferRequests()
+			clientCtx := val.ClientCtx
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+
+			if tc.shouldErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+
+				var response types.QueryIncomingPostOwnerTransferRequestsResponse
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().Equal(tc.expResponse.Requests, response.Requests)
 			}
 		})
 	}
@@ -945,6 +1013,234 @@ func (s *IntegrationTestSuite) TestCmdMovePost() {
 		tc := tc
 		s.Run(tc.name, func() {
 			cmd := cli.GetCmdMovePost()
+			clientCtx := val.ClientCtx
+
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+			if tc.shouldErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+			}
+		})
+	}
+}
+
+func (s *IntegrationTestSuite) TestCmdRequestPostOwnerTransfer() {
+	val := s.network.Validators[0]
+	testCases := []struct {
+		name      string
+		args      []string
+		shouldErr bool
+		respType  proto.Message
+	}{
+		{
+			name: "invalid subspace id returns error",
+			args: []string{
+				"X", "1", "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+			},
+			shouldErr: true,
+		},
+		{
+			name: "invalid post id returns error",
+			args: []string{
+				"1", "X", "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+			},
+			shouldErr: true,
+		},
+		{
+			name: "invalid receiver returns error",
+			args: []string{
+				"1", "1", "X",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+			},
+			shouldErr: true,
+		},
+		{
+			name: "valid data returns no error",
+			args: []string{
+				"1", "1", "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
+				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+			},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdRequestPostOwnerTransfer()
+			clientCtx := val.ClientCtx
+
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+			if tc.shouldErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+			}
+		})
+	}
+}
+
+func (s *IntegrationTestSuite) TestCmdCancelPostOwnerTransfer() {
+	val := s.network.Validators[0]
+	testCases := []struct {
+		name      string
+		args      []string
+		shouldErr bool
+		respType  proto.Message
+	}{
+		{
+			name: "invalid subspace id returns error",
+			args: []string{
+				"X", "1",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+			},
+			shouldErr: true,
+		},
+		{
+			name: "invalid post id returns error",
+			args: []string{
+				"1", "X",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+			},
+			shouldErr: true,
+		},
+		{
+			name: "valid data returns no error",
+			args: []string{
+				"1", "1",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
+				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+			},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdCancelPostOwnerTransfer()
+			clientCtx := val.ClientCtx
+
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+			if tc.shouldErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+			}
+		})
+	}
+}
+
+func (s *IntegrationTestSuite) TestCmdAcceptPostOwnerTransfer() {
+	val := s.network.Validators[0]
+	testCases := []struct {
+		name      string
+		args      []string
+		shouldErr bool
+		respType  proto.Message
+	}{
+		{
+			name: "invalid subspace id returns error",
+			args: []string{
+				"X", "1",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+			},
+			shouldErr: true,
+		},
+		{
+			name: "invalid post id returns error",
+			args: []string{
+				"1", "X",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+			},
+			shouldErr: true,
+		},
+		{
+			name: "valid data returns no error",
+			args: []string{
+				"1", "1",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
+				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+			},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdAcceptPostOwnerTransfer()
+			clientCtx := val.ClientCtx
+
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+			if tc.shouldErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+			}
+		})
+	}
+}
+
+func (s *IntegrationTestSuite) TestCmdRefusePostOwnerTransfer() {
+	val := s.network.Validators[0]
+	testCases := []struct {
+		name      string
+		args      []string
+		shouldErr bool
+		respType  proto.Message
+	}{
+		{
+			name: "invalid subspace id returns error",
+			args: []string{
+				"X", "1",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+			},
+			shouldErr: true,
+		},
+		{
+			name: "invalid post id returns error",
+			args: []string{
+				"1", "X",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+			},
+			shouldErr: true,
+		},
+		{
+			name: "valid data returns no error",
+			args: []string{
+				"1", "1",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
+				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+			},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdRefusePostOwnerTransfer()
 			clientCtx := val.ClientCtx
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)

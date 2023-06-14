@@ -7,7 +7,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	subspacetypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
+	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 
 	"github.com/desmos-labs/desmos/v5/x/posts/types"
 )
@@ -28,7 +28,7 @@ func (k Keeper) HasSection(ctx sdk.Context, subspaceID uint64, sectionID uint32)
 }
 
 // HasPermission checks whether the given user has the provided permissions or not
-func (k Keeper) HasPermission(ctx sdk.Context, subspaceID uint64, sectionID uint32, user string, permission subspacetypes.Permission) bool {
+func (k Keeper) HasPermission(ctx sdk.Context, subspaceID uint64, sectionID uint32, user string, permission subspacestypes.Permission) bool {
 	return k.sk.HasPermission(ctx, subspaceID, sectionID, user, permission)
 }
 
@@ -51,7 +51,7 @@ func (k Keeper) IteratePostIDs(ctx sdk.Context, fn func(subspaceID uint64, postI
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
-		subspaceID := subspacetypes.GetSubspaceIDFromBytes(bytes.TrimPrefix(iterator.Key(), types.NextPostIDPrefix))
+		subspaceID := subspacestypes.GetSubspaceIDFromBytes(bytes.TrimPrefix(iterator.Key(), types.NextPostIDPrefix))
 		postID := types.GetPostIDFromBytes(iterator.Value())
 		stop := fn(subspaceID, postID)
 		if stop {
@@ -261,4 +261,32 @@ func (k Keeper) GetPollUserAnswers(ctx sdk.Context, subspaceID uint64, postID ui
 		return false
 	})
 	return answers
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// GetAllPostOwnerTransferRequests returns all the post owner transfer requests stored inside the given context
+func (k Keeper) GetAllPostOwnerTransferRequests(ctx sdk.Context) []types.PostOwnerTransferRequest {
+	var requests []types.PostOwnerTransferRequest
+	k.IteratePostOwnerTransferRequests(ctx, func(request types.PostOwnerTransferRequest) (stop bool) {
+		requests = append(requests, request)
+		return false
+	})
+	return requests
+}
+
+// IteratePostOwnerTransferRequests iterates through the post owner transfer requests and performs the provided function
+func (k Keeper) IteratePostOwnerTransferRequests(ctx sdk.Context, fn func(request types.PostOwnerTransferRequest) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.PostOwnerTransferRequestPrefix)
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		var request types.PostOwnerTransferRequest
+		k.cdc.MustUnmarshal(iterator.Value(), &request)
+		stop := fn(request)
+		if stop {
+			break
+		}
+	}
 }
