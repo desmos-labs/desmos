@@ -55,7 +55,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RequestPostOwnerTransfer() {
 			shouldErr: true,
 		},
 		{
-			name: "receiver has blocked receiver returns error",
+			name: "receiver has blocked sender returns error",
 			setup: func() {
 				suite.ak.EXPECT().
 					HasProfile(gomock.Any(), "cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg").
