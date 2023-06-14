@@ -157,7 +157,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RequestPostOwnerTransfer() {
 			shouldErr: true,
 		},
 		{
-			name: "request has already existed returns error",
+			name: "request already exists returns error",
 			setup: func() {
 				suite.ak.EXPECT().
 					HasProfile(gomock.Any(), "cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg").
