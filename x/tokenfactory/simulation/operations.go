@@ -35,7 +35,7 @@ const (
 	DefaultWeightMsgCreateDenom      = 30
 	DefaultWeightMsgMint             = 70
 	DefaultWeightMsgBurn             = 40
-	DefaultWeightMsgSetDenomMetadata = 10
+	DefaultWeightMsgSetDenomMetadata = 20
 )
 
 // WeightedOperations returns all the operations from the module with their respective weights
@@ -346,7 +346,7 @@ func randomSetDenomMetadataFields(
 		return
 	}
 	denom := RandomDenom(r, denoms)
-	display := simtypes.RandStringOfLength(r, 5)
+	display := simtypes.RandStringOfLength(r, 3)
 	metadata = banktypes.Metadata{
 		Description: simtypes.RandStringOfLength(r, 15),
 		DenomUnits: []*banktypes.DenomUnit{
