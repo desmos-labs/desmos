@@ -732,7 +732,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RefusePostOwnerTransfer() {
 			shouldErr: true,
 		},
 		{
-			name: "correct data is performed properly",
+			name: "correct request is performed properly",
 			setup: func() {
 				suite.ak.EXPECT().
 					HasProfile(gomock.Any(), "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd").
