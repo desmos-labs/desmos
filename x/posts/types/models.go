@@ -289,11 +289,11 @@ type OwnerTransfer struct {
 	// Address of the user who will be the new owner of the post
 	NewOwner string
 
-	UpdateTime *time.Time
+	UpdateTime time.Time
 }
 
 // NewOwnerTransfer returns a new OwnerTransfer instance
-func NewOwnerTransfer(newOwner string, updateTime *time.Time) OwnerTransfer {
+func NewOwnerTransfer(newOwner string, updateTime time.Time) OwnerTransfer {
 	return OwnerTransfer{
 		NewOwner:   newOwner,
 		UpdateTime: updateTime,
@@ -317,7 +317,7 @@ func (update OwnerTransfer) Update(post Post) Post {
 		post.ReferencedPosts,
 		post.ReplySettings,
 		post.CreationDate,
-		update.UpdateTime,
+		&update.UpdateTime,
 		update.NewOwner,
 	)
 }

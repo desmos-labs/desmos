@@ -27,10 +27,10 @@ func MigrateStore(ctx sdk.Context, storeKey storetypes.StoreKey, cdc codec.Binar
 
 	// Set the owner to its author for posts
 	for _, post := range posts {
-		newPost := types.NewOwnerTransfer(post.Author, post.LastEditedDate).Update(post)
+		post.Owner = post.Author
 
 		// Save the post
-		store.Set(types.PostStoreKey(post.SubspaceID, post.ID), cdc.MustMarshal(&newPost))
+		store.Set(types.PostStoreKey(post.SubspaceID, post.ID), cdc.MustMarshal(&post))
 	}
 
 	return nil

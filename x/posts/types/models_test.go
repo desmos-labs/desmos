@@ -1179,7 +1179,7 @@ func TestOwnerTransfer_Update(t *testing.T) {
 	)
 
 	editedTime := time.Date(2022, 1, 1, 12, 00, 00, 000, time.UTC)
-	updated := types.NewOwnerTransfer("cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg", &editedTime).Update(post)
+	updated := types.NewOwnerTransfer("cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg", editedTime).Update(post)
 	require.Equal(t, types.NewPost(
 		1,
 		0,

@@ -140,8 +140,7 @@ func (k msgServer) AcceptPostOwnerTransferRequest(goCtx context.Context, msg *ty
 	}
 
 	// Update the post and validate it
-	updateTime := ctx.BlockTime()
-	newPost := types.NewOwnerTransfer(msg.Receiver, &updateTime).Update(post)
+	newPost := types.NewOwnerTransfer(msg.Receiver, ctx.BlockTime()).Update(post)
 	err := newPost.Validate()
 	if err != nil {
 		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
