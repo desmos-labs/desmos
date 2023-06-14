@@ -134,7 +134,7 @@ func randomCreateDenomFields(
 	// Check treasury balances
 	balances := bk.SpendableCoins(ctx, sdk.MustAccAddressFromBech32(subspace.Treasury))
 	creationFees := tfk.GetParams(ctx).DenomCreationFee
-	if balances.IsAllLT(creationFees) {
+	if !balances.IsAllGT(creationFees) {
 		// Skip because treasury does not have enough coins
 		skip = true
 		return
