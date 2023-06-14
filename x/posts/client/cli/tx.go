@@ -438,7 +438,7 @@ func GetCmdRequestPostOwnerTransfer() *cobra.Command {
 // GetCmdCancelPostOwnerTransfer returns the command to cancel an outgoing post owner transfer request
 func GetCmdCancelPostOwnerTransfer() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "cancel-post-owner-transfer [subspace-id] [post-id]",
+		Use:     "cancel-post-owner-transfer-request [subspace-id] [post-id]",
 		Short:   "Cancel a post owner transfer request with the given post id",
 		Example: fmt.Sprintf(`%s tx posts cancel-dtag-transfer-request 1, 1`, version.AppName),
 		Args:    cobra.ExactArgs(2),
@@ -475,7 +475,7 @@ func GetCmdCancelPostOwnerTransfer() *cobra.Command {
 // GetCmdAcceptPostOwnerTransfer returns the command to accept a post owner transfer request
 func GetCmdAcceptPostOwnerTransfer() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "accept-post-owner-transfer [subspace-id] [post-id]",
+		Use:     "accept-post-owner-transfer-request [subspace-id] [post-id]",
 		Short:   `Accept a post owner transfer request with the given post id`,
 		Example: fmt.Sprintf(`%s tx posts accept-dtag-transfer-request 1 1`, version.AppName),
 		Args:    cobra.ExactArgs(2),

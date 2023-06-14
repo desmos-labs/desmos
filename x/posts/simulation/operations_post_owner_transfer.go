@@ -17,7 +17,7 @@ import (
 
 // DONTCOVER
 
-// SimulateMsgRequestPostOwnerTransfer tests and runs a single msg request post owner transfer
+// SimulateMsgRequestPostOwnerTransfer tests and runs a single msg request post owner transfer request
 func SimulateMsgRequestPostOwnerTransfer(
 	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
@@ -40,7 +40,7 @@ func SimulateMsgRequestPostOwnerTransfer(
 	}
 }
 
-// randomRequestPostOwnerTransferFields returns the data needed to request a post owner transfer
+// randomRequestPostOwnerTransferFields returns the data needed to request a post owner transfer request
 func randomRequestPostOwnerTransferFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
 ) (request types.PostOwnerTransferRequest, signer simtypes.Account, skip bool) {
@@ -100,7 +100,7 @@ func randomRequestPostOwnerTransferFields(
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// SimulateMsgCancelPostOwnerTransferRequest tests and runs a single msg cancel post owner transfer
+// SimulateMsgCancelPostOwnerTransferRequest tests and runs a single msg cancel post owner transfer request
 func SimulateMsgCancelPostOwnerTransferRequest(
 	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
@@ -122,7 +122,7 @@ func SimulateMsgCancelPostOwnerTransferRequest(
 	}
 }
 
-// randomCancelPostOwnerTransferFields returns the data needed to cancel a post owner transfer
+// randomCancelPostOwnerTransferFields returns the data needed to cancel a post owner transfer request
 func randomCancelPostOwnerTransferFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
 ) (request types.PostOwnerTransferRequest, signer simtypes.Account, skip bool) {
@@ -137,12 +137,6 @@ func randomCancelPostOwnerTransferFields(
 
 	request = RandomPostOwnerTransferRequest(r, requests)
 
-	if !k.HasProfile(ctx, request.Sender) {
-		// Skip because the sender has no profile
-		skip = true
-		return
-	}
-
 	acc := subspacessim.GetAccount(request.Sender, accs)
 	if acc == nil {
 		// Skip because the sender is not an account we have access to
@@ -156,7 +150,7 @@ func randomCancelPostOwnerTransferFields(
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// SimulateMsgAcceptPostOwnerTransferRequest tests and runs a single msg accept post owner transfer
+// SimulateMsgAcceptPostOwnerTransferRequest tests and runs a single msg accept post owner transfer request
 func SimulateMsgAcceptPostOwnerTransferRequest(
 	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
@@ -178,7 +172,7 @@ func SimulateMsgAcceptPostOwnerTransferRequest(
 	}
 }
 
-// randomAcceptPostOwnerTransferFields returns the data needed to accept a post owner transfer
+// randomAcceptPostOwnerTransferFields returns the data needed to accept a post owner transfer request
 func randomAcceptPostOwnerTransferFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
 ) (request types.PostOwnerTransferRequest, signer simtypes.Account, skip bool) {
@@ -211,7 +205,7 @@ func randomAcceptPostOwnerTransferFields(
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// SimulateMsgRefusePostOwnerTransferRequest tests and runs a single msg refuse post owner transfer
+// SimulateMsgRefusePostOwnerTransferRequest tests and runs a single msg refuse post owner transfer request
 func SimulateMsgRefusePostOwnerTransferRequest(
 	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
@@ -233,7 +227,7 @@ func SimulateMsgRefusePostOwnerTransferRequest(
 	}
 }
 
-// randomRefusePostOwnerTransferFields returns the data needed to refuse a post owner transfer
+// randomRefusePostOwnerTransferFields returns the data needed to refuse a post owner transfer request
 func randomRefusePostOwnerTransferFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
 ) (request types.PostOwnerTransferRequest, signer simtypes.Account, skip bool) {
@@ -247,12 +241,6 @@ func randomRefusePostOwnerTransferFields(
 	}
 
 	request = RandomPostOwnerTransferRequest(r, requests)
-
-	if !k.HasProfile(ctx, request.Receiver) {
-		// Skip because the sender has no profile
-		skip = true
-		return
-	}
 
 	acc := subspacessim.GetAccount(request.Receiver, accs)
 	if acc == nil {
