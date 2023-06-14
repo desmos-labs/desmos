@@ -76,11 +76,6 @@ func (k msgServer) RequestPostOwnerTransfer(goCtx context.Context, msg *types.Ms
 func (k msgServer) CancelPostOwnerTransferRequest(goCtx context.Context, msg *types.MsgCancelPostOwnerTransferRequest) (*types.MsgCancelPostOwnerTransferRequestResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Check if the sender has profile
-	if !k.HasProfile(ctx, msg.Sender) {
-		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "you cannot cancel a post owner transfer request without having a profile")
-	}
-
 	// Get the post owner transfer request
 	request, found := k.GetPostOwnerTransferRequest(ctx, msg.SubspaceID, msg.PostID)
 	if !found {
@@ -179,11 +174,6 @@ func (k msgServer) AcceptPostOwnerTransferRequest(goCtx context.Context, msg *ty
 // RefusePostOwnerTransfer defines the rpc method for Msg/RefusePostOwnerTransfer
 func (k msgServer) RefusePostOwnerTransferRequest(goCtx context.Context, msg *types.MsgRefusePostOwnerTransferRequest) (*types.MsgRefusePostOwnerTransferRequestResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	// Check if the receiver has profile
-	if !k.HasProfile(ctx, msg.Receiver) {
-		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "you cannot refuse a post owner transfer request without having a profile")
-	}
 
 	// Get the post owner transfer request
 	request, found := k.GetPostOwnerTransferRequest(ctx, msg.SubspaceID, msg.PostID)

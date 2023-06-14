@@ -329,20 +329,6 @@ func (suite *KeeperTestSuite) TestMsgServer_CancelPostOwnerTransfer() {
 		check       func(ctx sdk.Context)
 	}{
 		{
-			name: "sender has no profile returns error",
-			setup: func() {
-				suite.ak.EXPECT().
-					HasProfile(gomock.Any(), "cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg").
-					Return(false)
-			},
-			msg: types.NewMsgCancelPostOwnerTransferRequest(
-				1,
-				1,
-				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
-			),
-			shouldErr: true,
-		},
-		{
 			name: "request does not exist returns error",
 			setup: func() {
 				suite.ak.EXPECT().
@@ -709,20 +695,6 @@ func (suite *KeeperTestSuite) TestMsgServer_RefusePostOwnerTransfer() {
 		expEvents   sdk.Events
 		check       func(ctx sdk.Context)
 	}{
-		{
-			name: "receiver has no profile returns error",
-			setup: func() {
-				suite.ak.EXPECT().
-					HasProfile(gomock.Any(), "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd").
-					Return(false)
-			},
-			msg: types.NewMsgRefusePostOwnerTransferRequest(
-				1,
-				1,
-				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-			),
-			shouldErr: true,
-		},
 		{
 			name: "request does not exist returns error",
 			setup: func() {
