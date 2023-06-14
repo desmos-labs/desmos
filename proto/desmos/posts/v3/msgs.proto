@@ -52,20 +52,20 @@ service Msg {
   // Since: Desmos 6.0.0
   rpc RequestPostOwnerTransfer(MsgRequestPostOwnerTransfer) returns (MsgRequestPostOwnerTransferResponse);
 
-  // CancelPostOwnerTransfer allows sender to cancel an outgoing post owner transfer request
+  // CancelPostOwnerTransferRequest allows sender to cancel an outgoing post owner transfer request
   //
   // Since: Desmos 6.0.0
-  rpc CancelPostOwnerTransfer(MsgCancelPostOwnerTransfer) returns (MsgCancelPostOwnerTransferResponse);
+  rpc CancelPostOwnerTransferRequest(MsgCancelPostOwnerTransferRequest) returns (MsgCancelPostOwnerTransferRequestResponse);
 
-  // AcceptPostOwnerTransfer allows receiver to accept an incoming post transfer request
+  // AcceptPostOwnerTransferRequest allows receiver to accept an incoming post transfer request
   //
   // Since: Desmos 6.0.0
-  rpc AcceptPostOwnerTransfer(MsgAcceptPostOwnerTransfer) returns (MsgAcceptPostOwnerTransferResponse);
+  rpc AcceptPostOwnerTransferRequest(MsgAcceptPostOwnerTransferRequest) returns (MsgAcceptPostOwnerTransferRequestResponse);
 
-  // RefusePostOwnerTransfer allows receiver to refuse an incoming post transfer request
+  // RefusePostOwnerTransferRequest allows receiver to refuse an incoming post transfer request
   //
   // Since: Desmos 6.0.0
-  rpc RefusePostOwnerTransfer(MsgRefusePostOwnerTransfer) returns (MsgRefusePostOwnerTransferResponse);
+  rpc RefusePostOwnerTransferRequest(MsgRefusePostOwnerTransferRequest) returns (MsgRefusePostOwnerTransferRequestResponse);
 }
 
 // MsgCreatePost represents the message to be used to create a post.
@@ -415,10 +415,10 @@ message MsgRequestPostOwnerTransfer {
 // Since: Desmos 6.0.0
 message MsgRequestPostOwnerTransferResponse {}
 
-// MsgCancelPostOwnerTransfer represents a message used to cancel a outgoing post transfer request
+// MsgCancelPostOwnerTransferRequest represents a message used to cancel a outgoing post transfer request
 //
 // Since: Desmos 6.0.0
-message MsgCancelPostOwnerTransfer {
+message MsgCancelPostOwnerTransferRequest {
   option (cosmos.msg.v1.signer) = "sender";
 
   // Id of the subspace that holds the post for which the request should be canceled
@@ -440,15 +440,15 @@ message MsgCancelPostOwnerTransfer {
   ];
 }
 
-// MsgCancelPostOwnerTransferResponse defines the Msg/CancelPostOwnerTransfer response type
+// MsgCancelPostOwnerTransferRequestResponse defines the Msg/CancelPostOwnerTransferRequest response type
 //
 // Since: Desmos 6.0.0
-message MsgCancelPostOwnerTransferResponse {}
+message MsgCancelPostOwnerTransferRequestResponse {}
 
-// MsgAcceptPostOwnerTransfer represents a message used to accept a incoming post transfer request
+// MsgAcceptPostOwnerTransferRequest represents a message used to accept a incoming post transfer request
 //
 // Since: Desmos 6.0.0
-message MsgAcceptPostOwnerTransfer {
+message MsgAcceptPostOwnerTransferRequest {
   option (cosmos.msg.v1.signer) = "receiver";
 
   // Id of the subspace holding the post for which the request will be accepted
@@ -470,15 +470,15 @@ message MsgAcceptPostOwnerTransfer {
   ];
 }
 
-// MsgAcceptPostOwnerTransferResponse defines the Msg/AcceptPostOwnerTransfer response type
+// MsgAcceptPostOwnerTransferRequestResponse defines the Msg/AcceptPostOwnerTransferRequest response type
 //
 // Since: Desmos 6.0.0
-message MsgAcceptPostOwnerTransferResponse {}
+message MsgAcceptPostOwnerTransferRequestResponse {}
 
-// MsgRefusePostOwnerTransfer represents a message used to refuse a incoming post transfer request
+// MsgRefusePostOwnerTransferRequest represents a message used to refuse a incoming post transfer request
 //
 // Since: Desmos 6.0.0
-message MsgRefusePostOwnerTransfer {
+message MsgRefusePostOwnerTransferRequest {
   option (cosmos.msg.v1.signer) = "receiver";
 
   // Id of the subspace holding the post for which the request will be refused
@@ -500,7 +500,7 @@ message MsgRefusePostOwnerTransfer {
   ];
 }
 
-// MsgRefusePostOwnerTransfer defines the Msg/RefusePostOwnerTransfer response type
+// MsgRefusePostOwnerTransferRequest defines the Msg/RefusePostOwnerTransferRequest response type
 //
 // Since: Desmos 6.0.0
-message MsgRefusePostOwnerTransferResponse {}
+message MsgRefusePostOwnerTransferRequestResponse {}

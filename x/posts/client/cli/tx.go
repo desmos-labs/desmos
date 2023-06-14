@@ -458,7 +458,7 @@ func GetCmdCancelPostOwnerTransfer() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgCancelPostOwnerTransfer(subspaceID, postID, clientCtx.FromAddress.String())
+			msg := types.NewMsgCancelPostOwnerTransferRequest(subspaceID, postID, clientCtx.FromAddress.String())
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}
@@ -495,7 +495,7 @@ func GetCmdAcceptPostOwnerTransfer() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgAcceptPostOwnerTransfer(subspaceID, postID, clientCtx.FromAddress.String())
+			msg := types.NewMsgAcceptPostOwnerTransferRequest(subspaceID, postID, clientCtx.FromAddress.String())
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}
@@ -532,7 +532,7 @@ func GetCmdRefusePostOwnerTransfer() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgRefusePostOwnerTransfer(subspaceID, postID, clientCtx.FromAddress.String())
+			msg := types.NewMsgRefusePostOwnerTransferRequest(subspaceID, postID, clientCtx.FromAddress.String())
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}

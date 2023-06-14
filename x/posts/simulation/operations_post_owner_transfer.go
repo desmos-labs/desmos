@@ -100,8 +100,8 @@ func randomRequestPostOwnerTransferFields(
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// SimulateMsgCancelPostOwnerTransfer tests and runs a single msg cancel post owner transfer
-func SimulateMsgCancelPostOwnerTransfer(
+// SimulateMsgCancelPostOwnerTransferRequest tests and runs a single msg cancel post owner transfer
+func SimulateMsgCancelPostOwnerTransferRequest(
 	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
@@ -110,10 +110,10 @@ func SimulateMsgCancelPostOwnerTransfer(
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 		data, signer, skip := randomCancelPostOwnerTransferFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, "MsgCancelPostOwnerTransfer", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgCancelPostOwnerTransferRequest", "skip"), nil, nil
 		}
 
-		msg := types.NewMsgCancelPostOwnerTransfer(
+		msg := types.NewMsgCancelPostOwnerTransferRequest(
 			data.SubspaceID,
 			data.PostID,
 			data.Sender,
@@ -156,8 +156,8 @@ func randomCancelPostOwnerTransferFields(
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// SimulateMsgAcceptPostOwnerTransfer tests and runs a single msg accept post owner transfer
-func SimulateMsgAcceptPostOwnerTransfer(
+// SimulateMsgAcceptPostOwnerTransferRequest tests and runs a single msg accept post owner transfer
+func SimulateMsgAcceptPostOwnerTransferRequest(
 	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
@@ -166,10 +166,10 @@ func SimulateMsgAcceptPostOwnerTransfer(
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 		data, signer, skip := randomAcceptPostOwnerTransferFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, "MsgAcceptPostOwnerTransfer", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgAcceptPostOwnerTransferRequest", "skip"), nil, nil
 		}
 
-		msg := types.NewMsgAcceptPostOwnerTransfer(
+		msg := types.NewMsgAcceptPostOwnerTransferRequest(
 			data.SubspaceID,
 			data.PostID,
 			data.Receiver,
@@ -211,8 +211,8 @@ func randomAcceptPostOwnerTransferFields(
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// SimulateMsgRefusePostOwnerTransfer tests and runs a single msg refuse post owner transfer
-func SimulateMsgRefusePostOwnerTransfer(
+// SimulateMsgRefusePostOwnerTransferRequest tests and runs a single msg refuse post owner transfer
+func SimulateMsgRefusePostOwnerTransferRequest(
 	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
@@ -221,10 +221,10 @@ func SimulateMsgRefusePostOwnerTransfer(
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 		data, signer, skip := randomRefusePostOwnerTransferFields(r, ctx, accs, k)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, "MsgRefusePostOwnerTransfer", "skip"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, "MsgRefusePostOwnerTransferRequest", "skip"), nil, nil
 		}
 
-		msg := types.NewMsgRefusePostOwnerTransfer(
+		msg := types.NewMsgRefusePostOwnerTransferRequest(
 			data.SubspaceID,
 			data.PostID,
 			data.Receiver,

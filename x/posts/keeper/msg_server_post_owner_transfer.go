@@ -73,7 +73,7 @@ func (k msgServer) RequestPostOwnerTransfer(goCtx context.Context, msg *types.Ms
 }
 
 // CancelPostOwnerTransfer defines the rpc method for Msg/CancelPostOwnerTransfer
-func (k msgServer) CancelPostOwnerTransfer(goCtx context.Context, msg *types.MsgCancelPostOwnerTransfer) (*types.MsgCancelPostOwnerTransferResponse, error) {
+func (k msgServer) CancelPostOwnerTransferRequest(goCtx context.Context, msg *types.MsgCancelPostOwnerTransferRequest) (*types.MsgCancelPostOwnerTransferRequestResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Check if the sender has profile
@@ -110,11 +110,11 @@ func (k msgServer) CancelPostOwnerTransfer(goCtx context.Context, msg *types.Msg
 		),
 	})
 
-	return &types.MsgCancelPostOwnerTransferResponse{}, nil
+	return &types.MsgCancelPostOwnerTransferRequestResponse{}, nil
 }
 
 // AcceptPostOwnerTransfer defines the rpc method for Msg/AcceptPostOwnerTransfer
-func (k msgServer) AcceptPostOwnerTransfer(goCtx context.Context, msg *types.MsgAcceptPostOwnerTransfer) (*types.MsgAcceptPostOwnerTransferResponse, error) {
+func (k msgServer) AcceptPostOwnerTransferRequest(goCtx context.Context, msg *types.MsgAcceptPostOwnerTransferRequest) (*types.MsgAcceptPostOwnerTransferRequestResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Check if the receiver has profile
@@ -173,11 +173,11 @@ func (k msgServer) AcceptPostOwnerTransfer(goCtx context.Context, msg *types.Msg
 		),
 	})
 
-	return &types.MsgAcceptPostOwnerTransferResponse{}, nil
+	return &types.MsgAcceptPostOwnerTransferRequestResponse{}, nil
 }
 
 // RefusePostOwnerTransfer defines the rpc method for Msg/RefusePostOwnerTransfer
-func (k msgServer) RefusePostOwnerTransfer(goCtx context.Context, msg *types.MsgRefusePostOwnerTransfer) (*types.MsgRefusePostOwnerTransferResponse, error) {
+func (k msgServer) RefusePostOwnerTransferRequest(goCtx context.Context, msg *types.MsgRefusePostOwnerTransferRequest) (*types.MsgRefusePostOwnerTransferRequestResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Check if the receiver has profile
@@ -214,5 +214,5 @@ func (k msgServer) RefusePostOwnerTransfer(goCtx context.Context, msg *types.Msg
 		),
 	})
 
-	return &types.MsgRefusePostOwnerTransferResponse{}, nil
+	return &types.MsgRefusePostOwnerTransferRequestResponse{}, nil
 }

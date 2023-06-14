@@ -110,29 +110,29 @@ func TestMsgRequestPostOwnerTransfer_GetSigners(t *testing.T) {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-var msgCancelPostOwnerTransfer = types.NewMsgCancelPostOwnerTransfer(
+var msgCancelPostOwnerTransferRequest = types.NewMsgCancelPostOwnerTransferRequest(
 	1,
 	1,
 	"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 )
 
-func TestMsgCancelPostOwnerTransfer_Route(t *testing.T) {
-	require.Equal(t, types.RouterKey, msgCancelPostOwnerTransfer.Route())
+func TestMsgCancelPostOwnerTransferRequest_Route(t *testing.T) {
+	require.Equal(t, types.RouterKey, msgCancelPostOwnerTransferRequest.Route())
 }
 
-func TestMsgCancelPostOwnerTransfer_Type(t *testing.T) {
-	require.Equal(t, types.ActionCancelPostOwnerTransfer, msgCancelPostOwnerTransfer.Type())
+func TestMsgCancelPostOwnerTransferRequest_Type(t *testing.T) {
+	require.Equal(t, types.ActionCancelPostOwnerTransfer, msgCancelPostOwnerTransferRequest.Type())
 }
 
-func TestMsgCancelPostOwnerTransfer_ValidateBasic(t *testing.T) {
+func TestMsgCancelPostOwnerTransferRequest_ValidateBasic(t *testing.T) {
 	testCases := []struct {
 		name      string
-		msg       *types.MsgCancelPostOwnerTransfer
+		msg       *types.MsgCancelPostOwnerTransferRequest
 		shouldErr bool
 	}{
 		{
 			name: "invalid subspace id returns error",
-			msg: types.NewMsgCancelPostOwnerTransfer(
+			msg: types.NewMsgCancelPostOwnerTransferRequest(
 				0,
 				1,
 				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
@@ -141,7 +141,7 @@ func TestMsgCancelPostOwnerTransfer_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "invalid post id returns error",
-			msg: types.NewMsgCancelPostOwnerTransfer(
+			msg: types.NewMsgCancelPostOwnerTransferRequest(
 				1,
 				0,
 				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
@@ -150,7 +150,7 @@ func TestMsgCancelPostOwnerTransfer_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "invalid sender returns error",
-			msg: types.NewMsgCancelPostOwnerTransfer(
+			msg: types.NewMsgCancelPostOwnerTransferRequest(
 				1,
 				1,
 				"",
@@ -159,7 +159,7 @@ func TestMsgCancelPostOwnerTransfer_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "valid message returns no error",
-			msg:  msgCancelPostOwnerTransfer,
+			msg:  msgCancelPostOwnerTransferRequest,
 		},
 	}
 
@@ -176,41 +176,41 @@ func TestMsgCancelPostOwnerTransfer_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgCancelPostOwnerTransfer_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgCancelPostOwnerTransfer","value":{"post_id":"1","sender":"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg","subspace_id":"1"}}`
-	require.Equal(t, expected, string(msgCancelPostOwnerTransfer.GetSignBytes()))
+func TestMsgCancelPostOwnerTransferRequest_GetSignBytes(t *testing.T) {
+	expected := `{"type":"desmos/MsgCancelPostOwnerTransferRequest","value":{"post_id":"1","sender":"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg","subspace_id":"1"}}`
+	require.Equal(t, expected, string(msgCancelPostOwnerTransferRequest.GetSignBytes()))
 }
 
-func TestMsgCancelPostOwnerTransfer_GetSigners(t *testing.T) {
-	addr, _ := sdk.AccAddressFromBech32(msgCancelPostOwnerTransfer.Sender)
-	require.Equal(t, []sdk.AccAddress{addr}, msgCancelPostOwnerTransfer.GetSigners())
+func TestMsgCancelPostOwnerTransferRequest_GetSigners(t *testing.T) {
+	addr, _ := sdk.AccAddressFromBech32(msgCancelPostOwnerTransferRequest.Sender)
+	require.Equal(t, []sdk.AccAddress{addr}, msgCancelPostOwnerTransferRequest.GetSigners())
 }
 
 // --------------------------------------------------------------------------------------------------------------------
 
-var msgAcceptPostOwnerTransfer = types.NewMsgAcceptPostOwnerTransfer(
+var msgAcceptPostOwnerTransferRequest = types.NewMsgAcceptPostOwnerTransferRequest(
 	1,
 	1,
 	"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 )
 
-func TestMsgAcceptPostOwnerTransfer_Route(t *testing.T) {
-	require.Equal(t, types.RouterKey, msgAcceptPostOwnerTransfer.Route())
+func TestMsgAcceptPostOwnerTransferRequest_Route(t *testing.T) {
+	require.Equal(t, types.RouterKey, msgAcceptPostOwnerTransferRequest.Route())
 }
 
-func TestMsgAcceptPostOwnerTransfer_Type(t *testing.T) {
-	require.Equal(t, types.ActionAcceptPostOwnerTransfer, msgAcceptPostOwnerTransfer.Type())
+func TestMsgAcceptPostOwnerTransferRequest_Type(t *testing.T) {
+	require.Equal(t, types.ActionAcceptPostOwnerTransfer, msgAcceptPostOwnerTransferRequest.Type())
 }
 
-func TestMsgAcceptPostOwnerTransfer_ValidateBasic(t *testing.T) {
+func TestMsgAcceptPostOwnerTransferRequest_ValidateBasic(t *testing.T) {
 	testCases := []struct {
 		name      string
-		msg       *types.MsgAcceptPostOwnerTransfer
+		msg       *types.MsgAcceptPostOwnerTransferRequest
 		shouldErr bool
 	}{
 		{
 			name: "invalid subspace id returns error",
-			msg: types.NewMsgAcceptPostOwnerTransfer(
+			msg: types.NewMsgAcceptPostOwnerTransferRequest(
 				0,
 				1,
 				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
@@ -219,7 +219,7 @@ func TestMsgAcceptPostOwnerTransfer_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "invalid post id returns error",
-			msg: types.NewMsgAcceptPostOwnerTransfer(
+			msg: types.NewMsgAcceptPostOwnerTransferRequest(
 				1,
 				0,
 				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
@@ -228,7 +228,7 @@ func TestMsgAcceptPostOwnerTransfer_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "invalid receiver returns error",
-			msg: types.NewMsgAcceptPostOwnerTransfer(
+			msg: types.NewMsgAcceptPostOwnerTransferRequest(
 				1,
 				1,
 				"",
@@ -237,7 +237,7 @@ func TestMsgAcceptPostOwnerTransfer_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "valid message returns no error",
-			msg:  msgAcceptPostOwnerTransfer,
+			msg:  msgAcceptPostOwnerTransferRequest,
 		},
 	}
 
@@ -254,41 +254,41 @@ func TestMsgAcceptPostOwnerTransfer_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgAcceptPostOwnerTransfer_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgAcceptPostOwnerTransfer","value":{"post_id":"1","receiver":"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg","subspace_id":"1"}}`
-	require.Equal(t, expected, string(msgAcceptPostOwnerTransfer.GetSignBytes()))
+func TestMsgAcceptPostOwnerTransferRequest_GetSignBytes(t *testing.T) {
+	expected := `{"type":"desmos/MsgAcceptPostOwnerTransferRequest","value":{"post_id":"1","receiver":"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg","subspace_id":"1"}}`
+	require.Equal(t, expected, string(msgAcceptPostOwnerTransferRequest.GetSignBytes()))
 }
 
-func TestMsgAcceptPostOwnerTransfer_GetSigners(t *testing.T) {
-	addr, _ := sdk.AccAddressFromBech32(msgAcceptPostOwnerTransfer.Receiver)
-	require.Equal(t, []sdk.AccAddress{addr}, msgAcceptPostOwnerTransfer.GetSigners())
+func TestMsgAcceptPostOwnerTransferRequest_GetSigners(t *testing.T) {
+	addr, _ := sdk.AccAddressFromBech32(msgAcceptPostOwnerTransferRequest.Receiver)
+	require.Equal(t, []sdk.AccAddress{addr}, msgAcceptPostOwnerTransferRequest.GetSigners())
 }
 
 // --------------------------------------------------------------------------------------------------------------------
 
-var msgRefusePostOwnerTransfer = types.NewMsgRefusePostOwnerTransfer(
+var msgRefusePostOwnerTransferRequest = types.NewMsgRefusePostOwnerTransferRequest(
 	1,
 	1,
 	"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 )
 
-func TestMsgRefusePostOwnerTransfer_Route(t *testing.T) {
-	require.Equal(t, types.RouterKey, msgRefusePostOwnerTransfer.Route())
+func TestMsgRefusePostOwnerTransferRequest_Route(t *testing.T) {
+	require.Equal(t, types.RouterKey, msgRefusePostOwnerTransferRequest.Route())
 }
 
-func TestMsgRefusePostOwnerTransfer_Type(t *testing.T) {
-	require.Equal(t, types.ActionRefusePostOwnerTransfer, msgRefusePostOwnerTransfer.Type())
+func TestMsgRefusePostOwnerTransferRequest_Type(t *testing.T) {
+	require.Equal(t, types.ActionRefusePostOwnerTransfer, msgRefusePostOwnerTransferRequest.Type())
 }
 
-func TestMsgRefusePostOwnerTransfer_ValidateBasic(t *testing.T) {
+func TestMsgRefusePostOwnerTransferRequest_ValidateBasic(t *testing.T) {
 	testCases := []struct {
 		name      string
-		msg       *types.MsgRefusePostOwnerTransfer
+		msg       *types.MsgRefusePostOwnerTransferRequest
 		shouldErr bool
 	}{
 		{
 			name: "invalid subspace id returns error",
-			msg: types.NewMsgRefusePostOwnerTransfer(
+			msg: types.NewMsgRefusePostOwnerTransferRequest(
 				0,
 				1,
 				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
@@ -297,7 +297,7 @@ func TestMsgRefusePostOwnerTransfer_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "invalid post id returns error",
-			msg: types.NewMsgRefusePostOwnerTransfer(
+			msg: types.NewMsgRefusePostOwnerTransferRequest(
 				1,
 				0,
 				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
@@ -306,7 +306,7 @@ func TestMsgRefusePostOwnerTransfer_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "invalid receiver returns error",
-			msg: types.NewMsgRefusePostOwnerTransfer(
+			msg: types.NewMsgRefusePostOwnerTransferRequest(
 				1,
 				1,
 				"",
@@ -315,7 +315,7 @@ func TestMsgRefusePostOwnerTransfer_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "valid message returns no error",
-			msg:  msgRefusePostOwnerTransfer,
+			msg:  msgRefusePostOwnerTransferRequest,
 		},
 	}
 
@@ -332,12 +332,12 @@ func TestMsgRefusePostOwnerTransfer_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgRefusePostOwnerTransfer_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgRefusePostOwnerTransfer","value":{"post_id":"1","receiver":"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg","subspace_id":"1"}}`
-	require.Equal(t, expected, string(msgRefusePostOwnerTransfer.GetSignBytes()))
+func TestMsgRefusePostOwnerTransferRequest_GetSignBytes(t *testing.T) {
+	expected := `{"type":"desmos/MsgRefusePostOwnerTransferRequest","value":{"post_id":"1","receiver":"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg","subspace_id":"1"}}`
+	require.Equal(t, expected, string(msgRefusePostOwnerTransferRequest.GetSignBytes()))
 }
 
-func TestMsgRefusePostOwnerTransfer_GetSigners(t *testing.T) {
-	addr, _ := sdk.AccAddressFromBech32(msgRefusePostOwnerTransfer.Receiver)
-	require.Equal(t, []sdk.AccAddress{addr}, msgRefusePostOwnerTransfer.GetSigners())
+func TestMsgRefusePostOwnerTransferRequest_GetSigners(t *testing.T) {
+	addr, _ := sdk.AccAddressFromBech32(msgRefusePostOwnerTransferRequest.Receiver)
+	require.Equal(t, []sdk.AccAddress{addr}, msgRefusePostOwnerTransferRequest.GetSigners())
 }

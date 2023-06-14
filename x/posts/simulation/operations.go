@@ -20,29 +20,29 @@ import (
 //
 //nolint:gosec // These are not hardcoded credentials
 const (
-	DefaultWeightMsgCreatePost               int = 80
-	DefaultWeightMsgEditPost                 int = 40
-	DefaultWeightMsgDeletePost               int = 20
-	DefaultWeightMsgAddPostAttachment        int = 50
-	DefaultWeightMsgRemovePostAttachment     int = 50
-	DefaultWeightMsgAnswerPoll               int = 50
-	DefaultWeightMsgMovePost                 int = 10
-	DefaultWeightMsgRequestPostOwnerTransfer int = 10
-	DefaultWeightMsgCancelPostOwnerTransfer  int = 10
-	DefaultWeightMsgAcceptPostOwnerTransfer  int = 10
-	DefaultWeightMsgRefusePostOwnerTransfer  int = 10
+	DefaultWeightMsgCreatePost                     int = 80
+	DefaultWeightMsgEditPost                       int = 40
+	DefaultWeightMsgDeletePost                     int = 20
+	DefaultWeightMsgAddPostAttachment              int = 50
+	DefaultWeightMsgRemovePostAttachment           int = 50
+	DefaultWeightMsgAnswerPoll                     int = 50
+	DefaultWeightMsgMovePost                       int = 10
+	DefaultWeightMsgRequestPostOwnerTransfer       int = 10
+	DefaultWeightMsgCancelPostOwnerTransferRequest int = 10
+	DefaultWeightMsgAcceptPostOwnerTransferRequest int = 10
+	DefaultWeightMsgRefusePostOwnerTransferRequest int = 10
 
-	OpWeightMsgCreatePost               = "op_weight_msg_create_post"
-	OpWeightMsgEditPost                 = "op_weight_msg_edit_post"
-	OpWeightMsgDeletePost               = "op_weight_msg_delete_post"
-	OpWeightMsgAddPostAttachment        = "op_weight_msg_add_post_attachment"
-	OpWeightMsgRemovePostAttachment     = "op_weight_msg_remove_post_attachment"
-	OpWeightMsgAnswerPoll               = "op_weight_msg_answer_poll"
-	OpWeightMsgMovePost                 = "op_weight_msg_move_post"
-	OpWeightMsgRequestPostOwnerTransfer = "op_weight_msg_request_post_owner_transfer"
-	OpWeightMsgCancelPostOwnerTransfer  = "op_weight_msg_cancel_post_owner_transfer"
-	OpWeightMsgAcceptPostOwnerTransfer  = "op_weight_msg_accept_post_owner_transfer"
-	OpWeightMsgRefusePostOwnerTransfer  = "op_weight_msg_refuse_post_owner_transfer"
+	OpWeightMsgCreatePost                     = "op_weight_msg_create_post"
+	OpWeightMsgEditPost                       = "op_weight_msg_edit_post"
+	OpWeightMsgDeletePost                     = "op_weight_msg_delete_post"
+	OpWeightMsgAddPostAttachment              = "op_weight_msg_add_post_attachment"
+	OpWeightMsgRemovePostAttachment           = "op_weight_msg_remove_post_attachment"
+	OpWeightMsgAnswerPoll                     = "op_weight_msg_answer_poll"
+	OpWeightMsgMovePost                       = "op_weight_msg_move_post"
+	OpWeightMsgRequestPostOwnerTransfer       = "op_weight_msg_request_post_owner_transfer"
+	OpWeightMsgCancelPostOwnerTransferRequest = "op_weight_msg_cancel_post_owner_transfer_request"
+	OpWeightMsgAcceptPostOwnerTransferRequest = "op_weight_msg_accept_post_owner_transfer_request"
+	OpWeightMsgRefusePostOwnerTransferRequest = "op_weight_msg_refuse_post_owner_transfer_request"
 
 	DefaultGasValue = 200000
 )
@@ -108,24 +108,24 @@ func WeightedOperations(
 		},
 	)
 
-	var weightMsgCancelPostOwnerTransfer int
-	appParams.GetOrGenerate(cdc, OpWeightMsgCancelPostOwnerTransfer, &weightMsgCancelPostOwnerTransfer, nil,
+	var weightMsgCancelPostOwnerTransferRequest int
+	appParams.GetOrGenerate(cdc, OpWeightMsgCancelPostOwnerTransferRequest, &weightMsgCancelPostOwnerTransferRequest, nil,
 		func(r *rand.Rand) {
-			weightMsgCancelPostOwnerTransfer = DefaultWeightMsgCancelPostOwnerTransfer
+			weightMsgCancelPostOwnerTransferRequest = DefaultWeightMsgCancelPostOwnerTransferRequest
 		},
 	)
 
-	var weightMsgAcceptPostOwnerTransfer int
-	appParams.GetOrGenerate(cdc, OpWeightMsgAcceptPostOwnerTransfer, &weightMsgAcceptPostOwnerTransfer, nil,
+	var weightMsgAcceptPostOwnerTransferRequest int
+	appParams.GetOrGenerate(cdc, OpWeightMsgAcceptPostOwnerTransferRequest, &weightMsgAcceptPostOwnerTransferRequest, nil,
 		func(r *rand.Rand) {
-			weightMsgAcceptPostOwnerTransfer = DefaultWeightMsgAcceptPostOwnerTransfer
+			weightMsgAcceptPostOwnerTransferRequest = DefaultWeightMsgAcceptPostOwnerTransferRequest
 		},
 	)
 
-	var weightMsgRefusePostOwnerTransfer int
-	appParams.GetOrGenerate(cdc, OpWeightMsgRefusePostOwnerTransfer, &weightMsgRefusePostOwnerTransfer, nil,
+	var weightMsgRefusePostOwnerTransferRequest int
+	appParams.GetOrGenerate(cdc, OpWeightMsgRefusePostOwnerTransferRequest, &weightMsgRefusePostOwnerTransferRequest, nil,
 		func(r *rand.Rand) {
-			weightMsgRefusePostOwnerTransfer = DefaultWeightMsgRefusePostOwnerTransfer
+			weightMsgRefusePostOwnerTransferRequest = DefaultWeightMsgRefusePostOwnerTransferRequest
 		},
 	)
 
@@ -163,16 +163,16 @@ func WeightedOperations(
 			SimulateMsgRequestPostOwnerTransfer(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
-			weightMsgCancelPostOwnerTransfer,
-			SimulateMsgCancelPostOwnerTransfer(k, ak, bk),
+			weightMsgCancelPostOwnerTransferRequest,
+			SimulateMsgCancelPostOwnerTransferRequest(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
-			weightMsgAcceptPostOwnerTransfer,
-			SimulateMsgAcceptPostOwnerTransfer(k, ak, bk),
+			weightMsgAcceptPostOwnerTransferRequest,
+			SimulateMsgAcceptPostOwnerTransferRequest(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
-			weightMsgRefusePostOwnerTransfer,
-			SimulateMsgRefusePostOwnerTransfer(k, ak, bk),
+			weightMsgRefusePostOwnerTransferRequest,
+			SimulateMsgRefusePostOwnerTransferRequest(k, ak, bk),
 		),
 	}
 }

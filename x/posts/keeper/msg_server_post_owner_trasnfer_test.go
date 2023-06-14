@@ -322,9 +322,9 @@ func (suite *KeeperTestSuite) TestMsgServer_CancelPostOwnerTransfer() {
 		name        string
 		setup       func()
 		store       func(ctx sdk.Context)
-		msg         *types.MsgCancelPostOwnerTransfer
+		msg         *types.MsgCancelPostOwnerTransferRequest
 		shouldErr   bool
-		expResponse *types.MsgCancelPostOwnerTransferResponse
+		expResponse *types.MsgCancelPostOwnerTransferRequestResponse
 		expEvents   sdk.Events
 		check       func(ctx sdk.Context)
 	}{
@@ -335,7 +335,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CancelPostOwnerTransfer() {
 					HasProfile(gomock.Any(), "cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg").
 					Return(false)
 			},
-			msg: types.NewMsgCancelPostOwnerTransfer(
+			msg: types.NewMsgCancelPostOwnerTransferRequest(
 				1,
 				1,
 				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
@@ -349,7 +349,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CancelPostOwnerTransfer() {
 					HasProfile(gomock.Any(), "cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg").
 					Return(true)
 			},
-			msg: types.NewMsgCancelPostOwnerTransfer(
+			msg: types.NewMsgCancelPostOwnerTransferRequest(
 				1,
 				1,
 				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
@@ -371,7 +371,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CancelPostOwnerTransfer() {
 					"other_sender",
 				))
 			},
-			msg: types.NewMsgCancelPostOwnerTransfer(
+			msg: types.NewMsgCancelPostOwnerTransferRequest(
 				1,
 				1,
 				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
@@ -393,17 +393,17 @@ func (suite *KeeperTestSuite) TestMsgServer_CancelPostOwnerTransfer() {
 					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 				))
 			},
-			msg: types.NewMsgCancelPostOwnerTransfer(
+			msg: types.NewMsgCancelPostOwnerTransferRequest(
 				1,
 				1,
 				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 			),
-			expResponse: &types.MsgCancelPostOwnerTransferResponse{},
+			expResponse: &types.MsgCancelPostOwnerTransferRequestResponse{},
 			expEvents: sdk.Events{
 				sdk.NewEvent(
 					sdk.EventTypeMessage,
 					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgCancelPostOwnerTransfer{})),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgCancelPostOwnerTransferRequest{})),
 					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg"),
 				),
 				sdk.NewEvent(
@@ -433,7 +433,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CancelPostOwnerTransfer() {
 			}
 
 			msgServer := keeper.NewMsgServerImpl(suite.k)
-			res, err := msgServer.CancelPostOwnerTransfer(sdk.WrapSDKContext(ctx), tc.msg)
+			res, err := msgServer.CancelPostOwnerTransferRequest(sdk.WrapSDKContext(ctx), tc.msg)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -455,9 +455,9 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptPostOwnerTransfer() {
 		setup       func()
 		store       func(ctx sdk.Context)
 		setupCtx    func(ctx sdk.Context) sdk.Context
-		msg         *types.MsgAcceptPostOwnerTransfer
+		msg         *types.MsgAcceptPostOwnerTransferRequest
 		shouldErr   bool
-		expResponse *types.MsgAcceptPostOwnerTransferResponse
+		expResponse *types.MsgAcceptPostOwnerTransferRequestResponse
 		expEvents   sdk.Events
 		check       func(ctx sdk.Context)
 	}{
@@ -468,7 +468,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptPostOwnerTransfer() {
 					HasProfile(gomock.Any(), "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd").
 					Return(false)
 			},
-			msg: types.NewMsgAcceptPostOwnerTransfer(
+			msg: types.NewMsgAcceptPostOwnerTransferRequest(
 				1,
 				1,
 				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
@@ -482,7 +482,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptPostOwnerTransfer() {
 					HasProfile(gomock.Any(), "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd").
 					Return(true)
 			},
-			msg: types.NewMsgAcceptPostOwnerTransfer(
+			msg: types.NewMsgAcceptPostOwnerTransferRequest(
 				1,
 				1,
 				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
@@ -504,7 +504,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptPostOwnerTransfer() {
 					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 				))
 			},
-			msg: types.NewMsgAcceptPostOwnerTransfer(
+			msg: types.NewMsgAcceptPostOwnerTransferRequest(
 				1,
 				1,
 				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
@@ -526,7 +526,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptPostOwnerTransfer() {
 					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 				))
 			},
-			msg: types.NewMsgAcceptPostOwnerTransfer(
+			msg: types.NewMsgAcceptPostOwnerTransferRequest(
 				1,
 				1,
 				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
@@ -564,7 +564,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptPostOwnerTransfer() {
 					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 				))
 			},
-			msg: types.NewMsgAcceptPostOwnerTransfer(
+			msg: types.NewMsgAcceptPostOwnerTransferRequest(
 				1,
 				1,
 				"invalid_receiver",
@@ -602,7 +602,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptPostOwnerTransfer() {
 					"other_owner",
 				))
 			},
-			msg: types.NewMsgAcceptPostOwnerTransfer(
+			msg: types.NewMsgAcceptPostOwnerTransferRequest(
 				1,
 				1,
 				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
@@ -643,17 +643,17 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptPostOwnerTransfer() {
 					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 				))
 			},
-			msg: types.NewMsgAcceptPostOwnerTransfer(
+			msg: types.NewMsgAcceptPostOwnerTransferRequest(
 				1,
 				1,
 				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 			),
-			expResponse: &types.MsgAcceptPostOwnerTransferResponse{},
+			expResponse: &types.MsgAcceptPostOwnerTransferRequestResponse{},
 			expEvents: sdk.Events{
 				sdk.NewEvent(
 					sdk.EventTypeMessage,
 					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgAcceptPostOwnerTransfer{})),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgAcceptPostOwnerTransferRequest{})),
 					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"),
 				),
 				sdk.NewEvent(
@@ -682,7 +682,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptPostOwnerTransfer() {
 			}
 
 			msgServer := keeper.NewMsgServerImpl(suite.k)
-			res, err := msgServer.AcceptPostOwnerTransfer(sdk.WrapSDKContext(ctx), tc.msg)
+			res, err := msgServer.AcceptPostOwnerTransferRequest(sdk.WrapSDKContext(ctx), tc.msg)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -703,9 +703,9 @@ func (suite *KeeperTestSuite) TestMsgServer_RefusePostOwnerTransfer() {
 		name        string
 		setup       func()
 		store       func(ctx sdk.Context)
-		msg         *types.MsgRefusePostOwnerTransfer
+		msg         *types.MsgRefusePostOwnerTransferRequest
 		shouldErr   bool
-		expResponse *types.MsgRefusePostOwnerTransferResponse
+		expResponse *types.MsgRefusePostOwnerTransferRequestResponse
 		expEvents   sdk.Events
 		check       func(ctx sdk.Context)
 	}{
@@ -716,7 +716,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RefusePostOwnerTransfer() {
 					HasProfile(gomock.Any(), "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd").
 					Return(false)
 			},
-			msg: types.NewMsgRefusePostOwnerTransfer(
+			msg: types.NewMsgRefusePostOwnerTransferRequest(
 				1,
 				1,
 				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
@@ -730,7 +730,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RefusePostOwnerTransfer() {
 					HasProfile(gomock.Any(), "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd").
 					Return(true)
 			},
-			msg: types.NewMsgRefusePostOwnerTransfer(
+			msg: types.NewMsgRefusePostOwnerTransferRequest(
 				1,
 				1,
 				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
@@ -752,7 +752,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RefusePostOwnerTransfer() {
 					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 				))
 			},
-			msg: types.NewMsgRefusePostOwnerTransfer(
+			msg: types.NewMsgRefusePostOwnerTransferRequest(
 				1,
 				1,
 				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
@@ -774,17 +774,17 @@ func (suite *KeeperTestSuite) TestMsgServer_RefusePostOwnerTransfer() {
 					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 				))
 			},
-			msg: types.NewMsgRefusePostOwnerTransfer(
+			msg: types.NewMsgRefusePostOwnerTransferRequest(
 				1,
 				1,
 				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 			),
-			expResponse: &types.MsgRefusePostOwnerTransferResponse{},
+			expResponse: &types.MsgRefusePostOwnerTransferRequestResponse{},
 			expEvents: sdk.Events{
 				sdk.NewEvent(
 					sdk.EventTypeMessage,
 					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgRefusePostOwnerTransfer{})),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgRefusePostOwnerTransferRequest{})),
 					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"),
 				),
 				sdk.NewEvent(
@@ -814,7 +814,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RefusePostOwnerTransfer() {
 			}
 
 			msgServer := keeper.NewMsgServerImpl(suite.k)
-			res, err := msgServer.RefusePostOwnerTransfer(sdk.WrapSDKContext(ctx), tc.msg)
+			res, err := msgServer.RefusePostOwnerTransferRequest(sdk.WrapSDKContext(ctx), tc.msg)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {

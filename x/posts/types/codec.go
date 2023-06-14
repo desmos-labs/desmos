@@ -26,9 +26,9 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgMovePost{}, "desmos/MsgMovePost", nil)
 
 	cdc.Amino.RegisterConcrete(&MsgRequestPostOwnerTransfer{}, "desmos/MsgRequestPostOwnerTransfer", nil)
-	cdc.Amino.RegisterConcrete(&MsgCancelPostOwnerTransfer{}, "desmos/MsgCancelPostOwnerTransfer", nil)
-	cdc.Amino.RegisterConcrete(&MsgAcceptPostOwnerTransfer{}, "desmos/MsgAcceptPostOwnerTransfer", nil)
-	cdc.Amino.RegisterConcrete(&MsgRefusePostOwnerTransfer{}, "desmos/MsgRefusePostOwnerTransfer", nil)
+	cdc.Amino.RegisterConcrete(&MsgCancelPostOwnerTransferRequest{}, "desmos/MsgCancelPostOwnerTransferRequest", nil)
+	cdc.Amino.RegisterConcrete(&MsgAcceptPostOwnerTransferRequest{}, "desmos/MsgAcceptPostOwnerTransferRequest", nil)
+	cdc.Amino.RegisterConcrete(&MsgRefusePostOwnerTransferRequest{}, "desmos/MsgRefusePostOwnerTransferRequest", nil)
 
 	cdc.RegisterConcrete(&Params{}, "desmos/x/posts/Params", nil)
 	cdc.RegisterConcrete(&MsgUpdateParams{}, "desmos/x/posts/MsgUpdateParams", nil)
@@ -52,9 +52,9 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 		&MsgUpdateParams{},
 		&MsgMovePost{},
 		&MsgRequestPostOwnerTransfer{},
-		&MsgCancelPostOwnerTransfer{},
-		&MsgAcceptPostOwnerTransfer{},
-		&MsgRefusePostOwnerTransfer{},
+		&MsgCancelPostOwnerTransferRequest{},
+		&MsgAcceptPostOwnerTransferRequest{},
+		&MsgRefusePostOwnerTransferRequest{},
 	)
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
