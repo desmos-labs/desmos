@@ -75,7 +75,7 @@ func WeightedOperations(
 	return sim.WeightedOperations{
 		sim.NewWeightedOperation(
 			weightMsgCreateDenom,
-			SimulateMsgCreateDenom(sk, ak, bk),
+			SimulateMsgCreateDenom(sk, tfk, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgMint,
@@ -96,7 +96,7 @@ func WeightedOperations(
 
 // SimulateMsgCreateDenom tests and runs a single MsgCreateDenom
 func SimulateMsgCreateDenom(
-	sk types.SubspacesKeeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	sk types.SubspacesKeeper, tfk types.TokenFactoryKeeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -104,7 +104,7 @@ func SimulateMsgCreateDenom(
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 
 		// Get the data
-		subspaceID, subdenom, signer, skip := randomCreateDenomFields(r, ctx, accs, sk, bk)
+		subspaceID, subdenom, signer, skip := randomCreateDenomFields(r, ctx, accs, sk, tfk, bk)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, "MsgCreateDenom", "skip"), nil, nil
 		}
@@ -118,7 +118,7 @@ func SimulateMsgCreateDenom(
 
 // randomCreateDenomFields returns the data used to build a random MsgCreateDenom
 func randomCreateDenomFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, sk types.SubspacesKeeper, bk types.BankKeeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, sk types.SubspacesKeeper, tfk types.TokenFactoryKeeper, bk bankkeeper.Keeper,
 ) (subspaceID uint64, subdenom string, signer simtypes.Account, skip bool) {
 
 	// Get a subspace id
@@ -130,6 +130,15 @@ func randomCreateDenomFields(
 	}
 	subspace := subspacessim.RandomSubspace(r, subspaces)
 	subspaceID = subspace.ID
+
+	// Check treasury balances
+	balances := bk.SpendableCoins(ctx, sdk.MustAccAddressFromBech32(subspace.Treasury))
+	creationFees := tfk.GetParams(ctx).DenomCreationFee
+	if balances.IsAllLT(creationFees) {
+		// Skip because treasury does not have enough coins
+		skip = true
+		return
+	}
 
 	// Get a denom
 	subdenom = simtypes.RandStringOfLength(r, 6)
