@@ -20,6 +20,9 @@ var (
 	_ legacytx.LegacyMsg = &MsgGrantTreasuryAuthorization{}
 	_ legacytx.LegacyMsg = &MsgRevokeTreasuryAuthorization{}
 
+	_ ManageSubspaceMsg = &MsgGrantTreasuryAuthorization{}
+	_ ManageSubspaceMsg = &MsgRevokeTreasuryAuthorization{}
+
 	_ codectypes.UnpackInterfacesMessage = &MsgGrantTreasuryAuthorization{}
 )
 
@@ -77,6 +80,9 @@ func (msg MsgGrantTreasuryAuthorization) UnpackInterfaces(unpacker codectypes.An
 	return msg.Grant.UnpackInterfaces(unpacker)
 }
 
+// IsManageSubspaceMsg implements subspacestypes.ManageSubspaceMsg
+func (msg MsgGrantTreasuryAuthorization) IsManageSubspaceMsg() {}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 func NewMsgRevokeTreasuryAuthorization(subspaceID uint64, granter string, grantee string, msgTypeUrl string) *MsgRevokeTreasuryAuthorization {
@@ -127,3 +133,6 @@ func (msg MsgRevokeTreasuryAuthorization) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Granter)
 	return []sdk.AccAddress{addr}
 }
+
+// IsManageSubspaceMsg implements subspacestypes.ManageSubspaceMsg
+func (msg MsgRevokeTreasuryAuthorization) IsManageSubspaceMsg() {}

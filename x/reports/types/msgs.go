@@ -6,6 +6,8 @@ import (
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
+	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 )
 
 var (
@@ -14,6 +16,10 @@ var (
 	_ sdk.Msg = &MsgSupportStandardReason{}
 	_ sdk.Msg = &MsgAddReason{}
 	_ sdk.Msg = &MsgRemoveReason{}
+
+	_ subspacestypes.ManageSubspaceMsg = &MsgSupportStandardReason{}
+	_ subspacestypes.ManageSubspaceMsg = &MsgAddReason{}
+	_ subspacestypes.ManageSubspaceMsg = &MsgRemoveReason{}
 )
 
 // NewMsgCreateReport returns a new MsgCreateReport instance
@@ -183,6 +189,9 @@ func (msg MsgSupportStandardReason) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sender}
 }
 
+// IsManageSubspaceMsg implements subspacestypes.ManageSubspaceMsg
+func (msg MsgSupportStandardReason) IsManageSubspaceMsg() {}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewMsgAddReason returns a new MsgAddReason instance
@@ -232,6 +241,9 @@ func (msg MsgAddReason) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sender}
 }
 
+// IsManageSubspaceMsg implements subspacestypes.ManageSubspaceMsg
+func (msg MsgAddReason) IsManageSubspaceMsg() {}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewMsgRemoveReason returns a new MsgRemoveReason instance
@@ -279,6 +291,9 @@ func (msg MsgRemoveReason) GetSigners() []sdk.AccAddress {
 	sender, _ := sdk.AccAddressFromBech32(msg.Signer)
 	return []sdk.AccAddress{sender}
 }
+
+// IsManageSubspaceMsg implements subspacestypes.ManageSubspaceMsg
+func (msg MsgRemoveReason) IsManageSubspaceMsg() {}
 
 // --------------------------------------------------------------------------------------------------------------------
 

@@ -18,6 +18,13 @@ type SubspaceMsg interface {
 	GetSubspaceID() uint64
 }
 
+// ManageSubspaceMsg represents a generic message that is related to a management purpose
+type ManageSubspaceMsg interface {
+	SubspaceMsg
+
+	IsManageSubspaceMsg()
+}
+
 var (
 	_ sdk.Msg = &MsgCreateSubspace{}
 	_ sdk.Msg = &MsgEditSubspace{}
@@ -34,7 +41,21 @@ var (
 	_ sdk.Msg = &MsgAddUserToUserGroup{}
 	_ sdk.Msg = &MsgRemoveUserFromUserGroup{}
 	_ sdk.Msg = &MsgSetUserPermissions{}
-	_ sdk.Msg = &MsgGrantTreasuryAuthorization{}
+
+	_ ManageSubspaceMsg = &MsgEditSubspace{}
+	_ ManageSubspaceMsg = &MsgDeleteSubspace{}
+	_ ManageSubspaceMsg = &MsgCreateSection{}
+	_ ManageSubspaceMsg = &MsgEditSection{}
+	_ ManageSubspaceMsg = &MsgMoveSection{}
+	_ ManageSubspaceMsg = &MsgDeleteSection{}
+	_ ManageSubspaceMsg = &MsgCreateUserGroup{}
+	_ ManageSubspaceMsg = &MsgEditUserGroup{}
+	_ ManageSubspaceMsg = &MsgMoveUserGroup{}
+	_ ManageSubspaceMsg = &MsgSetUserGroupPermissions{}
+	_ ManageSubspaceMsg = &MsgDeleteUserGroup{}
+	_ ManageSubspaceMsg = &MsgAddUserToUserGroup{}
+	_ ManageSubspaceMsg = &MsgRemoveUserFromUserGroup{}
+	_ ManageSubspaceMsg = &MsgSetUserPermissions{}
 )
 
 // NewMsgCreateSubspace creates a new MsgCreateSubspace instance
@@ -143,6 +164,9 @@ func (msg MsgEditSubspace) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{addr}
 }
 
+// IsManageSubspaceMsg implements subspacestypes.ManageSubspaceMsg
+func (msg MsgEditSubspace) IsManageSubspaceMsg() {}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewMsgDeleteSubspace returns a new MsgDeleteSubspace instance
@@ -183,6 +207,9 @@ func (msg MsgDeleteSubspace) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Signer)
 	return []sdk.AccAddress{addr}
 }
+
+// IsManageSubspaceMsg implements subspacestypes.ManageSubspaceMsg
+func (msg MsgDeleteSubspace) IsManageSubspaceMsg() {}
 
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -238,6 +265,9 @@ func (msg MsgCreateSection) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{addr}
 }
 
+// IsManageSubspaceMsg implements subspacestypes.ManageSubspaceMsg
+func (msg MsgCreateSection) IsManageSubspaceMsg() {}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewMsgEditSection returns a new MsgEditSection instance
@@ -292,6 +322,9 @@ func (msg MsgEditSection) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{addr}
 }
 
+// IsManageSubspaceMsg implements subspacestypes.ManageSubspaceMsg
+func (msg MsgEditSection) IsManageSubspaceMsg() {}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewMsgMoveSection returns a new MsgMoveSection instance
@@ -344,6 +377,9 @@ func (msg MsgMoveSection) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{addr}
 }
 
+// IsManageSubspaceMsg implements subspacestypes.ManageSubspaceMsg
+func (msg MsgMoveSection) IsManageSubspaceMsg() {}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewMsgDeleteSection returns a new MsgDeleteSection instance
@@ -389,6 +425,9 @@ func (msg MsgDeleteSection) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Signer)
 	return []sdk.AccAddress{addr}
 }
+
+// IsManageSubspaceMsg implements subspacestypes.ManageSubspaceMsg
+func (msg MsgDeleteSection) IsManageSubspaceMsg() {}
 
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -459,6 +498,9 @@ func (msg MsgCreateUserGroup) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{addr}
 }
 
+// IsManageSubspaceMsg implements subspacestypes.ManageSubspaceMsg
+func (msg MsgCreateUserGroup) IsManageSubspaceMsg() {}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewMsgEditUserGroup returns a new NewMsgEditUserGroup instance
@@ -508,6 +550,9 @@ func (msg MsgEditUserGroup) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Signer)
 	return []sdk.AccAddress{addr}
 }
+
+// IsManageSubspaceMsg implements subspacestypes.ManageSubspaceMsg
+func (msg MsgEditUserGroup) IsManageSubspaceMsg() {}
 
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -561,6 +606,9 @@ func (msg MsgMoveUserGroup) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{addr}
 }
 
+// IsManageSubspaceMsg implements subspacestypes.ManageSubspaceMsg
+func (msg MsgMoveUserGroup) IsManageSubspaceMsg() {}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewMsgSetUserGroupPermissions returns a new MsgSetUserGroupPermissions instance
@@ -613,6 +661,9 @@ func (msg MsgSetUserGroupPermissions) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{addr}
 }
 
+// IsManageSubspaceMsg implements subspacestypes.ManageSubspaceMsg
+func (msg MsgSetUserGroupPermissions) IsManageSubspaceMsg() {}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewMsgDeleteUserGroup creates a new MsgDeleteUserGroup instance
@@ -658,6 +709,9 @@ func (msg MsgDeleteUserGroup) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Signer)
 	return []sdk.AccAddress{addr}
 }
+
+// IsManageSubspaceMsg implements subspacestypes.ManageSubspaceMsg
+func (msg MsgDeleteUserGroup) IsManageSubspaceMsg() {}
 
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -716,6 +770,9 @@ func (msg MsgAddUserToUserGroup) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{addr}
 }
 
+// IsManageSubspaceMsg implements subspacestypes.ManageSubspaceMsg
+func (msg MsgAddUserToUserGroup) IsManageSubspaceMsg() {}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewMsgRemoveUserFromUserGroup creates a new MsgRemoveUserFromUserGroup instance
@@ -772,6 +829,9 @@ func (msg MsgRemoveUserFromUserGroup) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Signer)
 	return []sdk.AccAddress{addr}
 }
+
+// IsManageSubspaceMsg implements subspacestypes.ManageSubspaceMsg
+func (msg MsgRemoveUserFromUserGroup) IsManageSubspaceMsg() {}
 
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -835,6 +895,9 @@ func (msg MsgSetUserPermissions) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Signer)
 	return []sdk.AccAddress{addr}
 }
+
+// IsManageSubspaceMsg implements subspacestypes.ManageSubspaceMsg
+func (msg MsgSetUserPermissions) IsManageSubspaceMsg() {}
 
 // --------------------------------------------------------------------------------------------------------------------
 

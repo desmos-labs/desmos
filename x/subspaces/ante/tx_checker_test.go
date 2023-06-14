@@ -6,15 +6,18 @@ import (
 	"github.com/cosmos/cosmos-sdk/testutil/testdata"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
-	subspacesante "github.com/desmos-labs/desmos/v5/x/subspaces/ante"
-	"github.com/desmos-labs/desmos/v5/x/subspaces/types"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
+
+	relationshipstypes "github.com/desmos-labs/desmos/v5/x/relationships/types"
+	subspacesante "github.com/desmos-labs/desmos/v5/x/subspaces/ante"
+	"github.com/desmos-labs/desmos/v5/x/subspaces/types"
 )
 
 func (suite *AnteTestSuite) TestCheckTxFeeWithSubspaceMinPrices() {
 	signer := sdk.MustAccAddressFromBech32("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
-	subspaceMsg := types.NewMsgAddUserToUserGroup(1, 1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
+	msg := relationshipstypes.NewMsgCreateRelationship("cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5", 1)
+	manageSubspaceMsg := types.NewMsgAddUserToUserGroup(1, 1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
 	nonSubspaceMsg := testdata.NewTestMsg(signer)
 
 	testCases := []struct {
@@ -62,7 +65,7 @@ func (suite *AnteTestSuite) TestCheckTxFeeWithSubspaceMinPrices() {
 			shouldErr: true,
 		},
 		{
-			name: "non-existing subspace tx returns no error",
+			name: "subspace not found returns no error",
 			setup: func() {
 				suite.sk.EXPECT().
 					GetSubspace(gomock.Any(), uint64(1)).
@@ -71,7 +74,7 @@ func (suite *AnteTestSuite) TestCheckTxFeeWithSubspaceMinPrices() {
 			fees: sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(100))),
 			buildTx: func(fees sdk.Coins) sdk.Tx {
 				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
-				txBuilder.SetMsgs(subspaceMsg)
+				txBuilder.SetMsgs(msg)
 				txBuilder.SetFeeAmount(fees)
 				txBuilder.SetGasLimit(100)
 				return txBuilder.GetTx()
@@ -79,7 +82,7 @@ func (suite *AnteTestSuite) TestCheckTxFeeWithSubspaceMinPrices() {
 			shouldErr: false,
 		},
 		{
-			name: "non-existing subspace tx with subspace fees returns error",
+			name: "subspace not found returns error - with subspace fee token",
 			setup: func() {
 				suite.sk.EXPECT().
 					GetSubspace(gomock.Any(), uint64(1)).
@@ -88,7 +91,7 @@ func (suite *AnteTestSuite) TestCheckTxFeeWithSubspaceMinPrices() {
 			fees: sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(100))),
 			buildTx: func(fees sdk.Coins) sdk.Tx {
 				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
-				txBuilder.SetMsgs(subspaceMsg)
+				txBuilder.SetMsgs(msg)
 				txBuilder.SetFeeAmount(fees)
 				txBuilder.SetGasLimit(100)
 				return txBuilder.GetTx()
@@ -96,29 +99,7 @@ func (suite *AnteTestSuite) TestCheckTxFeeWithSubspaceMinPrices() {
 			shouldErr: true,
 		},
 		{
-			name: "existing subspace tx returns no error",
-			setup: func() {
-				suite.sk.EXPECT().
-					GetSubspace(gomock.Any(), uint64(1)).
-					Return(
-						types.Subspace{
-							AdditionalFeeTokens: sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(1))),
-						},
-						true,
-					)
-			},
-			fees: sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(100))),
-			buildTx: func(fees sdk.Coins) sdk.Tx {
-				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
-				txBuilder.SetMsgs(subspaceMsg)
-				txBuilder.SetFeeAmount(fees)
-				txBuilder.SetGasLimit(100)
-				return txBuilder.GetTx()
-			},
-			shouldErr: false,
-		},
-		{
-			name: "existing subspace tx with subspace fees returns no error",
+			name: "manage subspace tx with subspace fees returns error",
 			setup: func() {
 				suite.sk.EXPECT().
 					GetSubspace(gomock.Any(), uint64(1)).
@@ -132,15 +113,15 @@ func (suite *AnteTestSuite) TestCheckTxFeeWithSubspaceMinPrices() {
 			fees: sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(100))),
 			buildTx: func(fees sdk.Coins) sdk.Tx {
 				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
-				txBuilder.SetMsgs(subspaceMsg)
+				txBuilder.SetMsgs(manageSubspaceMsg)
 				txBuilder.SetFeeAmount(fees)
-				txBuilder.SetGasLimit(1)
+				txBuilder.SetGasLimit(100)
 				return txBuilder.GetTx()
 			},
-			shouldErr: false,
+			shouldErr: true,
 		},
 		{
-			name: "existing subspace tx with insufficient subspace fees returns error",
+			name: "manage subspace tx returns no error",
 			setup: func() {
 				suite.sk.EXPECT().
 					GetSubspace(gomock.Any(), uint64(1)).
@@ -151,15 +132,81 @@ func (suite *AnteTestSuite) TestCheckTxFeeWithSubspaceMinPrices() {
 						true,
 					)
 			},
-			fees: sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(10))),
+			fees: sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(100))),
 			buildTx: func(fees sdk.Coins) sdk.Tx {
 				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
-				txBuilder.SetMsgs(subspaceMsg)
+				txBuilder.SetMsgs(manageSubspaceMsg)
+				txBuilder.SetFeeAmount(fees)
+				txBuilder.SetGasLimit(100)
+				return txBuilder.GetTx()
+			},
+			shouldErr: false,
+		},
+		{
+			name: "non manage subspace tx with insufficient subspace fees returns error",
+			setup: func() {
+				suite.sk.EXPECT().
+					GetSubspace(gomock.Any(), uint64(1)).
+					Return(
+						types.Subspace{
+							AdditionalFeeTokens: sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(1))),
+						},
+						true,
+					)
+			},
+			fees: sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(100))),
+			buildTx: func(fees sdk.Coins) sdk.Tx {
+				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
+				txBuilder.SetMsgs(msg)
 				txBuilder.SetFeeAmount(fees)
 				txBuilder.SetGasLimit(1000)
 				return txBuilder.GetTx()
 			},
 			shouldErr: true,
+		},
+		{
+			name: "non manage subspace tx returns no error",
+			setup: func() {
+				suite.sk.EXPECT().
+					GetSubspace(gomock.Any(), uint64(1)).
+					Return(
+						types.Subspace{
+							AdditionalFeeTokens: sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(1))),
+						},
+						true,
+					)
+			},
+			fees: sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(100))),
+			buildTx: func(fees sdk.Coins) sdk.Tx {
+				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
+				txBuilder.SetMsgs(msg)
+				txBuilder.SetFeeAmount(fees)
+				txBuilder.SetGasLimit(100)
+				return txBuilder.GetTx()
+			},
+			shouldErr: false,
+		},
+		{
+			name: "non manage subspace tx with subspace fees returns no error",
+			setup: func() {
+				suite.sk.EXPECT().
+					GetSubspace(gomock.Any(), uint64(1)).
+					Return(
+						types.Subspace{
+							AdditionalFeeTokens: sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(1))),
+						},
+						true,
+					)
+			},
+			fees: sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(100))),
+			buildTx: func(fees sdk.Coins) sdk.Tx {
+				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
+				txBuilder.SetMsgs(msg)
+				txBuilder.SetFeeAmount(fees)
+				txBuilder.SetGasLimit(1)
+				return txBuilder.GetTx()
+			},
+			shouldErr: false,
 		},
 	}
 
