@@ -44,14 +44,15 @@ service Msg {
 // MsgCreateDenom represents the message to be used to create a denom for
 // subspace
 message MsgCreateDenom {
-  string sender = 1 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
-  // subdenom can be up to 44 "alphanumeric" characters long.
-  string subdenom = 2 [ (gogoproto.moretags) = "yaml:\"subdenom\"" ];
-
-  uint64 subspace_id = 3 [
+  uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
+
+  string sender = 2 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
+
+  // subdenom can be up to 44 "alphanumeric" characters long.
+  string subdenom = 3 [ (gogoproto.moretags) = "yaml:\"subdenom\"" ];
 }
 
 // MsgCreateDenomResponse represents the Msg/CreateDenom response type
@@ -63,20 +64,20 @@ message MsgCreateDenomResponse {
 // MsgMint represents the message to be used to mint subspace tokens to treasury
 // account
 message MsgMint {
-  string sender = 1 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
 
-  cosmos.base.v1beta1.Coin amount = 2 [
+  string sender = 2 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
+
+  cosmos.base.v1beta1.Coin amount = 3 [
     (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
     (gogoproto.moretags) = "yaml:\"amount\"",
     (gogoproto.nullable) = false
   ];
 
-  string mint_to_address = 3 [ (gogoproto.moretags) = "yaml:\"mint_to_address\"" ];
-
-  uint64 subspace_id = 4 [
-    (gogoproto.customname) = "SubspaceID",
-    (gogoproto.moretags) = "yaml:\"subspace_id\""
-  ];
+  string mint_to_address = 4 [ (gogoproto.moretags) = "yaml:\"mint_to_address\"" ];
 }
 
 // MsgMintResponse represents the Msg/Mint response type
@@ -85,17 +86,17 @@ message MsgMintResponse {}
 // MsgBurn represents the message to be used to burn subspace tokens from
 // treasury account
 message MsgBurn {
-  string sender = 1 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
 
-  cosmos.base.v1beta1.Coin amount = 2 [
+  string sender = 2 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
+
+  cosmos.base.v1beta1.Coin amount = 3 [
     (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
     (gogoproto.moretags) = "yaml:\"amount\"",
     (gogoproto.nullable) = false
-  ];
-
-  uint64 subspace_id = 3 [
-    (gogoproto.customname) = "SubspaceID",
-    (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
 }
 
@@ -105,16 +106,16 @@ message MsgBurnResponse {}
 // MsgSetDenomMetadata represents the message to be used to set the subspace
 // token's bank metadata
 message MsgSetDenomMetadata {
-  string sender = 1 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
-  
-  cosmos.bank.v1beta1.Metadata metadata = 2 [
-    (gogoproto.moretags) = "yaml:\"metadata\"",
-    (gogoproto.nullable) = false
-  ];
-
-  uint64 subspace_id = 3 [
+  uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+
+  string sender = 2 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
+  
+  cosmos.bank.v1beta1.Metadata metadata = 3 [
+    (gogoproto.moretags) = "yaml:\"metadata\"",
+    (gogoproto.nullable) = false
   ];
 }
 
