@@ -6,8 +6,6 @@ import (
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-
-	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 )
 
 var (
@@ -16,9 +14,6 @@ var (
 	_ sdk.Msg = &MsgSupportStandardReason{}
 	_ sdk.Msg = &MsgAddReason{}
 	_ sdk.Msg = &MsgRemoveReason{}
-
-	_ subspacestypes.SocialMsg = &MsgCreateReport{}
-	_ subspacestypes.SocialMsg = &MsgDeleteReport{}
 )
 
 // NewMsgCreateReport returns a new MsgCreateReport instance
@@ -92,9 +87,6 @@ func (msg MsgCreateReport) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sender}
 }
 
-// IsSocialMsg implements subspacestypes.SocialMsg
-func (msg MsgCreateReport) IsSocialMsg() {}
-
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewMsgDeleteReport returns a new MsgDeleteReport instance
@@ -142,9 +134,6 @@ func (msg MsgDeleteReport) GetSigners() []sdk.AccAddress {
 	sender, _ := sdk.AccAddressFromBech32(msg.Signer)
 	return []sdk.AccAddress{sender}
 }
-
-// IsSocialMsg implements subspacestypes.SocialMsg
-func (msg MsgDeleteReport) IsSocialMsg() {}
 
 // --------------------------------------------------------------------------------------------------------------------
 

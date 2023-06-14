@@ -7,8 +7,6 @@ import (
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-
-	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 )
 
 var (
@@ -18,9 +16,6 @@ var (
 	_ sdk.Msg = &MsgEditRegisteredReaction{}
 	_ sdk.Msg = &MsgRemoveRegisteredReaction{}
 	_ sdk.Msg = &MsgSetReactionsParams{}
-
-	_ subspacestypes.SocialMsg = &MsgAddReaction{}
-	_ subspacestypes.SocialMsg = &MsgRemoveReaction{}
 )
 
 // NewMsgAddReaction returns a new MsgAddReaction instance
@@ -88,9 +83,6 @@ func (msg MsgAddReaction) UnpackInterfaces(unpacker codectypes.AnyUnpacker) erro
 	return unpacker.UnpackAny(msg.Value, &target)
 }
 
-// IsSocialMsg implements subspacestypes.SocialMsg
-func (msg MsgAddReaction) IsSocialMsg() {}
-
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewMsgRemoveReaction returns a new MsgRemoveReaction instance
@@ -141,9 +133,6 @@ func (msg MsgRemoveReaction) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.User)
 	return []sdk.AccAddress{addr}
 }
-
-// IsSocialMsg implements subspacestypes.SocialMsg
-func (msg MsgRemoveReaction) IsSocialMsg() {}
 
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -200,9 +189,6 @@ func (msg MsgAddRegisteredReaction) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.User)
 	return []sdk.AccAddress{addr}
 }
-
-// IsSocialMsg implements subspacestypes.SocialMsg
-func (msg MsgAddRegisteredReaction) IsSocialMsg() {}
 
 // --------------------------------------------------------------------------------------------------------------------
 

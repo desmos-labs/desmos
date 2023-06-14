@@ -4,15 +4,6 @@ import (
 	errors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/cosmos/cosmos-sdk/x/auth/migrations/legacytx"
-
-	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
-)
-
-var (
-	_ sdk.Msg                  = &MsgCreateRelationship{}
-	_ legacytx.LegacyMsg       = &MsgCreateRelationship{}
-	_ subspacestypes.SocialMsg = &MsgCreateRelationship{}
 )
 
 // NewMsgCreateRelationship returns a new MsgCreateRelationship instance
@@ -66,16 +57,7 @@ func (msg MsgCreateRelationship) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sender}
 }
 
-// IsSocialMsg implements subspacestypes.SocialMsg
-func (msg MsgCreateRelationship) IsSocialMsg() {}
-
 // --------------------------------------------------------------------------------------------------------------------
-
-var (
-	_ sdk.Msg                  = &MsgDeleteRelationship{}
-	_ legacytx.LegacyMsg       = &MsgDeleteRelationship{}
-	_ subspacestypes.SocialMsg = &MsgDeleteRelationship{}
-)
 
 // NewMsgDeleteRelationship returns a new MsgDeleteRelationship instance
 func NewMsgDeleteRelationship(signer, counterparty string, subspaceID uint64) *MsgDeleteRelationship {
@@ -128,16 +110,7 @@ func (msg MsgDeleteRelationship) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sender}
 }
 
-// IsSocialMsg implements subspacestypes.SocialMsg
-func (msg MsgDeleteRelationship) IsSocialMsg() {}
-
 // --------------------------------------------------------------------------------------------------------------------
-
-var (
-	_ sdk.Msg                  = &MsgBlockUser{}
-	_ legacytx.LegacyMsg       = &MsgBlockUser{}
-	_ subspacestypes.SocialMsg = &MsgBlockUser{}
-)
 
 // NewMsgBlockUser returns a new MsgBlockUser instance
 func NewMsgBlockUser(blocker, blocked, reason string, subspaceID uint64) *MsgBlockUser {
@@ -187,16 +160,7 @@ func (msg MsgBlockUser) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{blocker}
 }
 
-// IsSocialMsg implements subspacestypes.SocialMsg
-func (msg MsgBlockUser) IsSocialMsg() {}
-
 // --------------------------------------------------------------------------------------------------------------------
-
-var (
-	_ sdk.Msg                  = &MsgUnblockUser{}
-	_ legacytx.LegacyMsg       = &MsgUnblockUser{}
-	_ subspacestypes.SocialMsg = &MsgUnblockUser{}
-)
 
 // NewMsgUnblockUser returns a new MsgUnblockUser instance
 func NewMsgUnblockUser(blocker, blocked string, subspaceID uint64) *MsgUnblockUser {
@@ -244,6 +208,3 @@ func (msg MsgUnblockUser) GetSigners() []sdk.AccAddress {
 	blocker, _ := sdk.AccAddressFromBech32(msg.Blocker)
 	return []sdk.AccAddress{blocker}
 }
-
-// IsSocialMsg implements subspacestypes.SocialMsg
-func (msg MsgUnblockUser) IsSocialMsg() {}

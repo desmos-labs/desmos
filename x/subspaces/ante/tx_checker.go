@@ -4,34 +4,13 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
 	antetypes "github.com/desmos-labs/desmos/v5/x/subspaces/ante/types"
-
-	"github.com/desmos-labs/desmos/v5/x/subspaces/types"
 )
-
-// GetSocialTxSubspaceID returns the valid subspace id, returns false if it is invalid
-func GetSocialTxSubspaceID(tx sdk.Tx) (uint64, bool) {
-	subspaceID := uint64(0)
-	for _, msg := range tx.GetMsgs() {
-		if socialMsg, ok := msg.(types.SocialMsg); ok {
-			if subspaceID == 0 {
-				subspaceID = socialMsg.GetSubspaceID()
-			}
-
-			if socialMsg.GetSubspaceID() == subspaceID {
-				continue
-			}
-		}
-
-		return 0, false
-	}
-	return subspaceID, true
-}
 
 // CheckTxFeeWithSubspaceMinPrices returns the tx checker that including the subspace allowed tokens into minimum prices list
 func CheckTxFeeWithSubspaceMinPrices(txFeeChecker ante.TxFeeChecker, sk antetypes.SubspacesKeeper) ante.TxFeeChecker {
 	return func(ctx sdk.Context, tx sdk.Tx) (sdk.Coins, int64, error) {
-		subspaceID, isSocialTx := GetSocialTxSubspaceID(tx)
-		if !isSocialTx {
+		subspaceID, isSubspaceTx := GetTxSubspaceID(tx)
+		if !isSubspaceTx {
 			return txFeeChecker(ctx, tx)
 		}
 

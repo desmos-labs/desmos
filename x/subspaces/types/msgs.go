@@ -18,13 +18,6 @@ type SubspaceMsg interface {
 	GetSubspaceID() uint64
 }
 
-// SubspaceMsg represents a generic message that is related to a social purpose
-type SocialMsg interface {
-	SubspaceMsg
-
-	IsSocialMsg()
-}
-
 var (
 	_ sdk.Msg = &MsgCreateSubspace{}
 	_ sdk.Msg = &MsgEditSubspace{}
