@@ -209,6 +209,7 @@ func randomMoveSectionFields(
 
 	// Get a random new parent
 	parent := RandomSection(r, sections)
+	newParentID = parent.ID
 	if parent.ID == sectionID {
 		// Skip because we can't move the section to itself
 		skip = true
