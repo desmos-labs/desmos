@@ -27,6 +27,7 @@ func (suite *KeeperTestSuite) TestValidSubspacesInvariant() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 			},
 			expBroken: true,
@@ -43,6 +44,7 @@ func (suite *KeeperTestSuite) TestValidSubspacesInvariant() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 			},
 			expBroken: true,
@@ -59,6 +61,7 @@ func (suite *KeeperTestSuite) TestValidSubspacesInvariant() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.DeleteNextSectionID(ctx, 1)
 			},
@@ -76,6 +79,7 @@ func (suite *KeeperTestSuite) TestValidSubspacesInvariant() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.DeleteNextGroupID(ctx, 1)
 			},
@@ -93,6 +97,7 @@ func (suite *KeeperTestSuite) TestValidSubspacesInvariant() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Time{},
+					nil,
 				))
 				suite.k.SetNextSectionID(ctx, 1, 1)
 				suite.k.SetNextGroupID(ctx, 1, 1)
@@ -111,6 +116,7 @@ func (suite *KeeperTestSuite) TestValidSubspacesInvariant() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.SetNextSectionID(ctx, 1, 1)
 				suite.k.SetNextGroupID(ctx, 1, 1)
@@ -163,6 +169,7 @@ func (suite *KeeperTestSuite) TestValidSectionsInvariant() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 
 				suite.k.SaveSection(ctx, types.NewSection(
@@ -186,6 +193,7 @@ func (suite *KeeperTestSuite) TestValidSectionsInvariant() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.SetNextSectionID(ctx, 1, 1)
 
@@ -210,6 +218,7 @@ func (suite *KeeperTestSuite) TestValidSectionsInvariant() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.SetNextSectionID(ctx, 1, 2)
 
@@ -234,6 +243,7 @@ func (suite *KeeperTestSuite) TestValidSectionsInvariant() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.SetNextSectionID(ctx, 1, 2)
 
@@ -258,6 +268,7 @@ func (suite *KeeperTestSuite) TestValidSectionsInvariant() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.SetNextSectionID(ctx, 1, 2)
 
@@ -318,6 +329,7 @@ func (suite *KeeperTestSuite) TestValidUserGroupsInvariant() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
@@ -342,6 +354,7 @@ func (suite *KeeperTestSuite) TestValidUserGroupsInvariant() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 
 				suite.k.SaveSection(ctx, types.NewSection(
@@ -374,6 +387,7 @@ func (suite *KeeperTestSuite) TestValidUserGroupsInvariant() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.SetNextGroupID(ctx, 1, 1)
 
@@ -407,6 +421,7 @@ func (suite *KeeperTestSuite) TestValidUserGroupsInvariant() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.SetNextGroupID(ctx, 1, 2)
 
@@ -440,6 +455,7 @@ func (suite *KeeperTestSuite) TestValidUserGroupsInvariant() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.SetNextGroupID(ctx, 1, 2)
 
@@ -502,6 +518,7 @@ func (suite *KeeperTestSuite) TestValidUserGroupMembersInvariant() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 
 				suite.k.AddUserToGroup(ctx, 1, 1, "cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4")
@@ -519,6 +536,7 @@ func (suite *KeeperTestSuite) TestValidUserGroupMembersInvariant() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 
 				suite.k.AddUserToGroup(ctx, 1, 0, "cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4")
@@ -536,6 +554,7 @@ func (suite *KeeperTestSuite) TestValidUserGroupMembersInvariant() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
@@ -596,6 +615,7 @@ func (suite *KeeperTestSuite) TestValidUserPermissionsInvariant() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 
 				suite.k.SetUserPermissions(ctx,
@@ -618,6 +638,7 @@ func (suite *KeeperTestSuite) TestValidUserPermissionsInvariant() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 
 				suite.k.SaveSection(ctx, types.NewSection(
@@ -643,6 +664,7 @@ func (suite *KeeperTestSuite) TestValidUserPermissionsInvariant() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 
 				suite.k.SaveSection(ctx, types.NewSection(
@@ -707,6 +729,7 @@ func (suite *KeeperTestSuite) TestValidUserGrantsInvariant() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.SaveGrant(ctx, types.NewGrant(
 					1,
@@ -728,6 +751,7 @@ func (suite *KeeperTestSuite) TestValidUserGrantsInvariant() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.SaveGrant(ctx, types.NewGrant(
 					1,
@@ -781,6 +805,7 @@ func (suite *KeeperTestSuite) TestValidGroupGrantsInvariant() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.SaveGrant(ctx, types.NewGrant(1,
 					"cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4",
@@ -801,6 +826,7 @@ func (suite *KeeperTestSuite) TestValidGroupGrantsInvariant() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
@@ -830,6 +856,7 @@ func (suite *KeeperTestSuite) TestValidGroupGrantsInvariant() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,

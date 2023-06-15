@@ -4,6 +4,7 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	"github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
 	"github.com/desmos-labs/desmos/v5/x/subspaces/types"
@@ -85,6 +86,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateSubspace() {
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				), subspace)
 
 				// Make sure the default group has been created
@@ -139,6 +141,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateSubspace() {
 					"cosmos17qcf9sv5yk0ly5vt3ztev70nwf6c5sprkwfh8t",
 					"cosmos18atyyv6zycryhvnhpr2mjxgusdcah6kdpkffq0",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				), subspace)
 
 				// Make sure the subspace id has increased
@@ -198,6 +201,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateSubspace() {
 					"cosmos1y4emx0mm4ncva9mnv9yvjrm7nrq3psvmwhk9ll",
 					"cosmos1y4emx0mm4ncva9mnv9yvjrm7nrq3psvmwhk9ll",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				), subspace)
 
 				// Make sure the subspace id has increased
@@ -276,6 +280,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditSubspace() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					blockTime,
+					nil,
 				))
 			},
 			msg: types.NewMsgEditSubspace(
@@ -297,6 +302,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditSubspace() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					blockTime,
+					nil,
 				), subspace)
 			},
 		},
@@ -311,6 +317,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditSubspace() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					blockTime,
+					nil,
 				))
 			},
 			msg: types.NewMsgEditSubspace(
@@ -332,6 +339,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditSubspace() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					blockTime,
+					nil,
 				), subspace)
 			},
 		},
@@ -346,6 +354,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditSubspace() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					blockTime,
+					nil,
 				))
 
 				suite.k.SetUserPermissions(ctx,
@@ -386,6 +395,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditSubspace() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					blockTime,
+					nil,
 				), subspace)
 			},
 		},
@@ -448,6 +458,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteSubspace() {
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 			},
 			msg:       types.NewMsgDeleteSubspace(1, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
@@ -463,6 +474,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteSubspace() {
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				), subspace)
 			},
 		},
@@ -477,6 +489,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteSubspace() {
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 
 				suite.k.SetUserPermissions(ctx,
@@ -565,6 +578,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateSection() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 			},
 			msg: types.NewMsgCreateSection(
@@ -587,6 +601,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateSection() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 
 				suite.k.SaveSection(ctx, types.NewSection(
@@ -617,6 +632,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateSection() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.DeleteNextSectionID(ctx, 1)
 
@@ -655,6 +671,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateSection() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.SetNextSectionID(ctx, 1, 2)
 
@@ -693,6 +710,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateSection() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.SetNextSectionID(ctx, 1, 2)
 
@@ -808,6 +826,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditSection() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 			},
 			msg: types.NewMsgEditSection(
@@ -830,6 +849,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditSection() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 
 				suite.k.SaveSection(ctx, types.NewSection(
@@ -860,6 +880,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditSection() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 
 				suite.k.SaveSection(ctx, types.NewSection(
@@ -897,6 +918,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditSection() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 
 				suite.k.SaveSection(ctx, types.NewSection(
@@ -1002,6 +1024,7 @@ func (suite *KeeperTestSuite) TestMsgServer_MoveSection() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 			},
 			msg: types.NewMsgMoveSection(
@@ -1023,6 +1046,7 @@ func (suite *KeeperTestSuite) TestMsgServer_MoveSection() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 
 				suite.k.SaveSection(ctx, types.NewSection(
@@ -1052,6 +1076,7 @@ func (suite *KeeperTestSuite) TestMsgServer_MoveSection() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.SaveSection(ctx, types.NewSection(1, 1, 0, "Child section", ""))
 
@@ -1082,6 +1107,7 @@ func (suite *KeeperTestSuite) TestMsgServer_MoveSection() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 
 				suite.k.SaveSection(ctx, types.NewSection(
@@ -1111,6 +1137,7 @@ func (suite *KeeperTestSuite) TestMsgServer_MoveSection() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 
 				// Create the following subspaces sections
@@ -1152,6 +1179,7 @@ func (suite *KeeperTestSuite) TestMsgServer_MoveSection() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.SaveSection(ctx, types.NewSection(1, 1, 0, "Child section", ""))
 
@@ -1256,6 +1284,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteSection() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 			},
 			msg: types.NewMsgDeleteSection(
@@ -1276,6 +1305,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteSection() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 
 				suite.k.SaveSection(ctx, types.NewSection(
@@ -1304,6 +1334,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteSection() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 
 				suite.k.SaveSection(ctx, types.NewSection(
@@ -1404,6 +1435,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateUserGroup() {
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 			},
 			msg: types.NewMsgCreateUserGroup(
@@ -1428,6 +1460,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateUserGroup() {
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 			},
 			msg: types.NewMsgCreateUserGroup(
@@ -1452,6 +1485,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateUserGroup() {
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 
 				suite.k.SetUserPermissions(ctx,
@@ -1483,6 +1517,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateUserGroup() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
@@ -1524,6 +1559,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateUserGroup() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
@@ -1639,6 +1675,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditUserGroup() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 			},
 			msg: types.NewMsgEditUserGroup(
@@ -1661,6 +1698,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditUserGroup() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
@@ -1691,6 +1729,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditUserGroup() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
@@ -1728,6 +1767,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditUserGroup() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
@@ -1838,6 +1878,7 @@ func (suite *KeeperTestSuite) TestMsgServer_MoveUserGroup() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 			},
 			msg: types.NewMsgMoveUserGroup(
@@ -1859,6 +1900,7 @@ func (suite *KeeperTestSuite) TestMsgServer_MoveUserGroup() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
@@ -1888,6 +1930,7 @@ func (suite *KeeperTestSuite) TestMsgServer_MoveUserGroup() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.SaveSection(ctx, types.NewSection(
 					1,
@@ -1924,6 +1967,7 @@ func (suite *KeeperTestSuite) TestMsgServer_MoveUserGroup() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.SaveSection(ctx, types.NewSection(
 					1,
@@ -1967,6 +2011,7 @@ func (suite *KeeperTestSuite) TestMsgServer_MoveUserGroup() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.SaveSection(ctx, types.NewSection(
 					1,
@@ -2017,6 +2062,7 @@ func (suite *KeeperTestSuite) TestMsgServer_MoveUserGroup() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.SaveSection(ctx, types.NewSection(
 					1,
@@ -2145,6 +2191,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SetUserGroupPermissions() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 			},
 			msg: types.NewMsgSetUserGroupPermissions(
@@ -2166,6 +2213,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SetUserGroupPermissions() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
@@ -2195,6 +2243,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SetUserGroupPermissions() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
@@ -2231,6 +2280,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SetUserGroupPermissions() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
@@ -2262,6 +2312,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SetUserGroupPermissions() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
@@ -2312,6 +2363,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SetUserGroupPermissions() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
@@ -2413,6 +2465,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteUserGroup() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 			},
 			msg: types.NewMsgDeleteUserGroup(
@@ -2433,6 +2486,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteUserGroup() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
@@ -2461,6 +2515,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteUserGroup() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
@@ -2560,6 +2615,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddUserToGroup() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 			},
 			msg: types.NewMsgAddUserToUserGroup(
@@ -2581,6 +2637,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddUserToGroup() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
@@ -2610,6 +2667,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddUserToGroup() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
@@ -2641,6 +2699,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddUserToGroup() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
@@ -2742,6 +2801,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RemoveUserFromGroup() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 			},
 			msg: types.NewMsgRemoveUserFromUserGroup(
@@ -2763,6 +2823,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RemoveUserFromGroup() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
@@ -2792,6 +2853,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RemoveUserFromGroup() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
@@ -2821,6 +2883,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RemoveUserFromGroup() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
@@ -2924,6 +2987,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SetUserPermissions() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 			},
 			msg: types.NewMsgSetUserPermissions(
@@ -2946,6 +3010,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SetUserPermissions() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 			},
 			msg: types.NewMsgSetUserPermissions(
@@ -2968,6 +3033,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SetUserPermissions() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 
 				suite.k.SetUserPermissions(ctx,
@@ -2997,6 +3063,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SetUserPermissions() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 
 				suite.k.SetUserPermissions(ctx,
@@ -3045,6 +3112,152 @@ func (suite *KeeperTestSuite) TestMsgServer_SetUserPermissions() {
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.k)
 			_, err := service.SetUserPermissions(sdk.WrapSDKContext(ctx), tc.msg)
+
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(tc.expEvents, ctx.EventManager().Events())
+
+				if tc.check != nil {
+					tc.check(ctx)
+				}
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestMsgServer_UpdateSubspaceFeeTokens() {
+	testCases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		msg       *types.MsgUpdateSubspaceFeeTokens
+		shouldErr bool
+		expEvents sdk.Events
+		check     func(ctx sdk.Context)
+	}{
+		{
+			name: "invalid authority return error",
+			msg: types.NewMsgUpdateSubspaceFeeTokens(
+				1,
+				sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(10))),
+				"invalid",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "subspace not found returns error",
+			msg: types.NewMsgUpdateSubspaceFeeTokens(
+				1,
+				sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(10))),
+				authtypes.NewModuleAddress("gov").String(),
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid allowed fee tokens returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				))
+			},
+			msg: types.NewMsgUpdateSubspaceFeeTokens(
+				1,
+				sdk.Coins{{Denom: "minttoken", Amount: sdk.NewInt(-10)}},
+				authtypes.NewModuleAddress("gov").String(),
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid subspace returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					0,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				))
+			},
+			msg: types.NewMsgUpdateSubspaceFeeTokens(
+				1,
+				sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(10))),
+				authtypes.NewModuleAddress("gov").String(),
+			),
+			shouldErr: true,
+		},
+		{
+			name: "subspace is updated correctly",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				))
+			},
+			msg: types.NewMsgUpdateSubspaceFeeTokens(
+				1,
+				sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(10))),
+				authtypes.NewModuleAddress("gov").String(),
+			),
+			shouldErr: false,
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					sdk.EventTypeMessage,
+					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgUpdateSubspaceFeeTokens{})),
+					sdk.NewAttribute(sdk.AttributeKeySender, authtypes.NewModuleAddress("gov").String()),
+				),
+				sdk.NewEvent(
+					types.EventTypeUpdateSubspaceFeeToken,
+					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					sdk.NewAttribute(types.AttributeKeyUser, authtypes.NewModuleAddress("gov").String()),
+				),
+			},
+			check: func(ctx sdk.Context) {
+				subspace, _ := suite.k.GetSubspace(ctx, 1)
+				expected := types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(10))),
+				)
+
+				suite.Require().Equal(expected, subspace)
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			// Run the message
+			service := keeper.NewMsgServerImpl(suite.k)
+			_, err := service.UpdateSubspaceFeeTokens(sdk.WrapSDKContext(ctx), tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)

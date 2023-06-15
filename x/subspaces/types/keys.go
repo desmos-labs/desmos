@@ -28,6 +28,7 @@ const (
 	ActionAddUserToUserGroup      = "add_user_to_user_group"
 	ActionRemoveUserFromUserGroup = "remove_user_from_user_group"
 	ActionSetUserPermissions      = "set_user_permissions"
+	ActionUpdateSubspaceFeeTokens = "update_subspace_fee_tokens"
 
 	ActionGrantTreasuryAuthorization  = "grant_treasury_authorization"
 	ActionRevokeTreasuryAuthorization = "revoke_treasury_authorization"

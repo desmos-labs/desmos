@@ -95,6 +95,7 @@ func (suite *KeeperTestSuite) TestKeeper_HasPermission() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 			},
 			subspaceID: 1,
@@ -114,6 +115,7 @@ func (suite *KeeperTestSuite) TestKeeper_HasPermission() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
@@ -149,6 +151,7 @@ func (suite *KeeperTestSuite) TestKeeper_HasPermission() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
@@ -412,6 +415,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetUsersWithRootPermissions() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
@@ -442,6 +446,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetUsersWithRootPermissions() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 
 				suite.k.SetUserPermissions(ctx,
@@ -469,6 +474,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetUsersWithRootPermissions() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(

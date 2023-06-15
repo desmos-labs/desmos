@@ -46,6 +46,7 @@ func randomSubspaces(r *rand.Rand, accs []simtypes.Account) (subspaces []types.S
 			randData.Owner,
 			randData.Creator,
 			time.Now(),
+			randData.AdditionalFeeTokens,
 		)
 	}
 	return subspaces

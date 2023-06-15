@@ -46,6 +46,7 @@ func (suite *TestSuite) TestSubspacesWasmQuerier_QueryCustom() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 			},
 			shouldErr: false,
@@ -60,6 +61,7 @@ func (suite *TestSuite) TestSubspacesWasmQuerier_QueryCustom() {
 							"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 							"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 							time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+							nil,
 						),
 					},
 					Pagination: &query.PageResponse{NextKey: nil, Total: 1},
@@ -78,6 +80,7 @@ func (suite *TestSuite) TestSubspacesWasmQuerier_QueryCustom() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 			},
 			shouldErr: false,
@@ -91,6 +94,7 @@ func (suite *TestSuite) TestSubspacesWasmQuerier_QueryCustom() {
 						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						nil,
 					),
 				},
 			),
@@ -110,6 +114,7 @@ func (suite *TestSuite) TestSubspacesWasmQuerier_QueryCustom() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
@@ -150,6 +155,7 @@ func (suite *TestSuite) TestSubspacesWasmQuerier_QueryCustom() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
@@ -187,6 +193,7 @@ func (suite *TestSuite) TestSubspacesWasmQuerier_QueryCustom() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
@@ -221,6 +228,7 @@ func (suite *TestSuite) TestSubspacesWasmQuerier_QueryCustom() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 			},
 			shouldErr: false,
@@ -249,6 +257,7 @@ func (suite *TestSuite) TestSubspacesWasmQuerier_QueryCustom() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.SaveGrant(ctx, types.NewGrant(
 					1,
@@ -288,6 +297,7 @@ func (suite *TestSuite) TestSubspacesWasmQuerier_QueryCustom() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.SaveGrant(ctx, types.NewGrant(
 					1,

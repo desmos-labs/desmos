@@ -28,6 +28,7 @@ func (suite *KeeperTestSuite) TestKeeper_AfterSubspaceSaved() {
 				"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
 				"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
 				time.Date(2020, 1, 2, 12, 00, 00, 000, time.UTC),
+				nil,
 			),
 			check: func(ctx sdk.Context) {
 				storedReasonID, err := suite.k.GetNextReasonID(ctx, 1)
@@ -50,6 +51,7 @@ func (suite *KeeperTestSuite) TestKeeper_AfterSubspaceSaved() {
 					"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
 					"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
 					time.Date(2020, 1, 2, 12, 00, 00, 000, time.UTC),
+					nil,
 				))
 				suite.k.SetNextReportID(ctx, 1, 2)
 				suite.k.SetNextReasonID(ctx, 1, 2)
@@ -62,6 +64,7 @@ func (suite *KeeperTestSuite) TestKeeper_AfterSubspaceSaved() {
 				"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
 				"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
 				time.Date(2020, 1, 2, 12, 00, 00, 000, time.UTC),
+				nil,
 			),
 			check: func(ctx sdk.Context) {
 				storedReasonID, err := suite.k.GetNextReasonID(ctx, 1)

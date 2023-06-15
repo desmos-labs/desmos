@@ -3,6 +3,7 @@ package desmos.subspaces.v3;
 
 import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";
+import "cosmos/base/v1beta1/coin.proto";
 
 option go_package = "github.com/desmos-labs/desmos/v5/x/subspaces/types";
 
@@ -36,6 +37,13 @@ message Subspace {
     (gogoproto.nullable) = false,
     (gogoproto.stdtime) = true,
     (gogoproto.moretags) = "yaml:\"creation_time\""
+  ];
+
+  // List of fee token denoms with default minimum gas prices allowed inside the subspace
+  repeated cosmos.base.v1beta1.Coin additional_fee_tokens = 8 [
+    (gogoproto.nullable) = false,
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
+    (gogoproto.moretags) = "yaml:\"additional_fee_tokens\""
   ];
 }
 

@@ -10,6 +10,7 @@ import (
 	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 )
 
 type msgServer struct {
@@ -35,7 +36,7 @@ func (k msgServer) CreateSubspace(goCtx context.Context, msg *types.MsgCreateSub
 	}
 
 	// Create and validate the subspace
-	subspace := types.NewSubspace(subspaceID, msg.Name, msg.Description, types.GetTreasuryAddress(subspaceID).String(), msg.Owner, msg.Creator, ctx.BlockTime())
+	subspace := types.NewSubspace(subspaceID, msg.Name, msg.Description, types.GetTreasuryAddress(subspaceID).String(), msg.Owner, msg.Creator, ctx.BlockTime(), nil)
 	if err := subspace.Validate(); err != nil {
 		return nil, err
 	}
@@ -830,4 +831,44 @@ func (k msgServer) SetUserPermissions(goCtx context.Context, msg *types.MsgSetUs
 	})
 
 	return &types.MsgSetUserPermissionsResponse{}, nil
+}
+
+// UpdateSubspaceFeeTokens defines a rpc method for MsgUpdateSubspaceFeeTokens
+func (k msgServer) UpdateSubspaceFeeTokens(goCtx context.Context, msg *types.MsgUpdateSubspaceFeeTokens) (*types.MsgUpdateSubspaceFeeTokensResponse, error) {
+	if msg.Authority != k.authority {
+		return nil, errors.Wrapf(govtypes.ErrInvalidSigner, "invalid authority; expected %s, got %s", k.authority, msg.Authority)
+	}
+
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Check if the subspace exists
+	subspace, exists := k.GetSubspace(ctx, msg.SubspaceID)
+	if !exists {
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+	}
+
+	// Update the subspace and validate it
+	updated := types.NewAdditionalFeeTokensUpdate(msg.AdditionalFeeTokens...).Update(subspace)
+	err := updated.Validate()
+	if err != nil {
+		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+
+	k.SaveSubspace(ctx, updated)
+
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Authority),
+		),
+		sdk.NewEvent(
+			types.EventTypeUpdateSubspaceFeeToken,
+			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", updated.ID)),
+			sdk.NewAttribute(types.AttributeKeyUser, msg.Authority),
+		),
+	})
+
+	return &types.MsgUpdateSubspaceFeeTokensResponse{}, nil
 }

@@ -21,6 +21,7 @@ const (
 	EventTypeRevokeTreasuryAuthorization = "revoke_treasury_authorization"
 	EventTypeGrantAllowance              = "grant_allowance"
 	EventTypeRevokeAllowance             = "revoke_allowance"
+	EventTypeUpdateSubspaceFeeToken      = "update_subspace_fee_token"
 
 	AttributeValueCategory      = ModuleName
 	AttributeKeySubspaceID      = "subspace_id"

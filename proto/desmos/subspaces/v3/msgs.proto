@@ -2,6 +2,9 @@ syntax = "proto3";
 package desmos.subspaces.v3;
 
 import "gogoproto/gogo.proto";
+import "cosmos/base/v1beta1/coin.proto";
+import "cosmos_proto/cosmos.proto";
+import "cosmos/msg/v1/msg.proto";
 
 import "desmos/subspaces/v3/msgs_treasury.proto";
 import "desmos/subspaces/v3/msgs_feegrant.proto";
@@ -78,6 +81,11 @@ service Msg {
   // RevokeAllowance allows a granter to revoke any existing treasury allowance
   // that has been granted to the grantee
   rpc RevokeAllowance(MsgRevokeAllowance) returns (MsgRevokeAllowanceResponse);
+
+  // UpdateSubspaceFeeTokens allows subspace admins to update the list of fee tokens inside the subspace via a governance proposal
+  //
+  // Since: Desmos 6.0.0
+  rpc UpdateSubspaceFeeTokens(MsgUpdateSubspaceFeeTokens) returns (MsgUpdateSubspaceFeeTokensResponse);
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -492,3 +500,34 @@ message MsgSetUserPermissions {
 // MsgSetUserPermissionsResponse defines the Msg/SetPermissionsResponse
 // response type
 message MsgSetUserPermissionsResponse {}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// MsgUpdateSubspaceFeeTokens represents the message to be used to update the accepted fee tokens
+// inside a given subspace, using an on-chain governance proposal
+//
+// Since: Desmos 6.0.0
+message MsgUpdateSubspaceFeeTokens {
+  option (cosmos.msg.v1.signer) = "authority";
+
+  // Id of the subspace where the list of allowed fee tokens will be updated
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+    
+  // List of tokens allowed to be fee tokens inside the given subspace, represented as their gas prices
+  repeated cosmos.base.v1beta1.Coin additional_fee_tokens = 2 [
+    (gogoproto.nullable) = false,
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
+    (gogoproto.moretags) = "yaml:\"additional_fee_tokens\""
+  ];
+    
+  // authority is the address that controls the module (defaults to x/gov unless overwritten).
+  string authority = 3  [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+}
+
+// MsgUpdateSubspaceFeeTokensResponse represents the Msg/UpdateSubspaceFeeTokens response type
+//
+// Since: Desmos 6.0.0
+message MsgUpdateSubspaceFeeTokensResponse {}

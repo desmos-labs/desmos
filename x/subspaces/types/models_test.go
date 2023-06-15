@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	"github.com/desmos-labs/desmos/v5/x/subspaces/types"
@@ -69,6 +70,7 @@ func TestSubspace_Validate(t *testing.T) {
 				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				nil,
 			),
 			shouldErr: true,
 		},
@@ -82,6 +84,7 @@ func TestSubspace_Validate(t *testing.T) {
 				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				nil,
 			),
 			shouldErr: true,
 		},
@@ -95,6 +98,7 @@ func TestSubspace_Validate(t *testing.T) {
 				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				nil,
 			),
 			shouldErr: true,
 		},
@@ -108,6 +112,7 @@ func TestSubspace_Validate(t *testing.T) {
 				"cosmos1s0he0z3g92zwsxdj83",
 				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				nil,
 			),
 			shouldErr: true,
 		},
@@ -121,6 +126,7 @@ func TestSubspace_Validate(t *testing.T) {
 				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 				"cosmos1s0he0z3g92zw",
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				nil,
 			),
 			shouldErr: true,
 		},
@@ -134,6 +140,21 @@ func TestSubspace_Validate(t *testing.T) {
 				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 				time.Time{},
+				nil,
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid subspace fee tokens returns no error",
+			subspace: types.NewSubspace(
+				1,
+				"Test subspace",
+				"This is a test subspace",
+				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				sdk.Coins{{Denom: "minttoken", Amount: sdk.NewInt(-10)}},
 			),
 			shouldErr: true,
 		},
@@ -147,6 +168,7 @@ func TestSubspace_Validate(t *testing.T) {
 				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				nil,
 			),
 			shouldErr: false,
 		},
@@ -182,6 +204,7 @@ func TestSubspace_Update(t *testing.T) {
 				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				nil,
 			),
 			update: types.NewSubspaceUpdate(
 				types.DoNotModify,
@@ -196,6 +219,7 @@ func TestSubspace_Update(t *testing.T) {
 				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				nil,
 			),
 		},
 		{
@@ -208,6 +232,7 @@ func TestSubspace_Update(t *testing.T) {
 				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				nil,
 			),
 			update: types.NewSubspaceUpdate(
 				"New subspace name",
@@ -222,6 +247,7 @@ func TestSubspace_Update(t *testing.T) {
 				"cosmos10ya9y35qkf4puaklx5fs07sxfxqncx9usgsnz6",
 				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				nil,
 			),
 		},
 	}
@@ -612,4 +638,36 @@ func getRandomSubspaceIDs(size int) []uint64 {
 		}
 	}
 	return subspaceIDs
+}
+
+func TestAdditionalFeeTokensUpdate_Update(t *testing.T) {
+	subspace := types.NewSubspace(
+		1,
+		"Test subspace",
+		"This is a test subspace",
+		"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+		"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+		"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+		time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+		nil,
+	)
+
+	updated := types.NewAdditionalFeeTokensUpdate(
+		sdk.NewCoin("minttoken", sdk.NewInt(10)),
+		sdk.NewCoin("ustar", sdk.NewInt(10)),
+	).Update(subspace)
+
+	require.Equal(t, types.NewSubspace(
+		1,
+		"Test subspace",
+		"This is a test subspace",
+		"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+		"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+		"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+		time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+		sdk.NewCoins(
+			sdk.NewCoin("minttoken", sdk.NewInt(10)),
+			sdk.NewCoin("ustar", sdk.NewInt(10)),
+		),
+	), updated)
 }

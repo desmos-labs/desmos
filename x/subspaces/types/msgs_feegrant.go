@@ -19,6 +19,9 @@ var (
 	_ legacytx.LegacyMsg = &MsgGrantAllowance{}
 	_ legacytx.LegacyMsg = &MsgRevokeAllowance{}
 
+	_ ManageSubspaceMsg = &MsgGrantAllowance{}
+	_ ManageSubspaceMsg = &MsgRevokeAllowance{}
+
 	_ codectypes.UnpackInterfacesMessage = &MsgGrantAllowance{}
 	_ codectypes.UnpackInterfacesMessage = &MsgRevokeAllowance{}
 )
@@ -123,6 +126,9 @@ func (msg MsgGrantAllowance) UnpackInterfaces(unpacker codectypes.AnyUnpacker) e
 	return unpacker.UnpackAny(msg.Grantee, &grantee)
 }
 
+// IsManageSubspaceMsg implements subspacestypes.ManageSubspaceMsg
+func (msg MsgGrantAllowance) IsManageSubspaceMsg() {}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewMsgRevokeAllowance creates a new MsgRevokeAllowance instance
@@ -182,3 +188,6 @@ func (msg MsgRevokeAllowance) UnpackInterfaces(unpacker codectypes.AnyUnpacker) 
 	var grantee Grantee
 	return unpacker.UnpackAny(msg.Grantee, &grantee)
 }
+
+// IsManageSubspaceMsg implements subspacestypes.ManageSubspaceMsg
+func (msg MsgRevokeAllowance) IsManageSubspaceMsg() {}

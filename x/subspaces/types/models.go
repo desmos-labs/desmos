@@ -41,15 +41,16 @@ func ParseSubspacesIDs(value string) (ids []uint64, err error) {
 }
 
 // NewSubspace is a constructor for the Subspace type
-func NewSubspace(subspaceID uint64, name, description, treasury, owner, creator string, creationTime time.Time) Subspace {
+func NewSubspace(subspaceID uint64, name, description, treasury, owner, creator string, creationTime time.Time, additionalFeeTokens sdk.Coins) Subspace {
 	return Subspace{
-		ID:           subspaceID,
-		Name:         name,
-		Description:  description,
-		Treasury:     treasury,
-		Owner:        owner,
-		Creator:      creator,
-		CreationTime: creationTime,
+		ID:                  subspaceID,
+		Name:                name,
+		Description:         description,
+		Treasury:            treasury,
+		Owner:               owner,
+		Creator:             creator,
+		CreationTime:        creationTime,
+		AdditionalFeeTokens: additionalFeeTokens,
 	}
 }
 
@@ -84,6 +85,11 @@ func (sub Subspace) Validate() error {
 		return fmt.Errorf("invalid subspace creation time: %s", sub.CreationTime)
 	}
 
+	err = sub.AdditionalFeeTokens.Validate()
+	if err != nil {
+		return fmt.Errorf("invalid additional fee tokens: %s", sub.AdditionalFeeTokens)
+	}
+
 	return nil
 }
 
@@ -111,6 +117,7 @@ func (sub Subspace) Update(update SubspaceUpdate) Subspace {
 		update.Owner,
 		sub.Creator,
 		sub.CreationTime,
+		sub.AdditionalFeeTokens,
 	)
 }
 
@@ -129,6 +136,35 @@ func NewSubspaceUpdate(name, description, owner string) SubspaceUpdate {
 		Description: description,
 		Owner:       owner,
 	}
+}
+
+// AdditionalFeeTokensUpdate contains data related to a subspace that can be updated after update addition fee tokens proposal performed.
+type AdditionalFeeTokensUpdate struct {
+	// Additional fee tokens of the subspace
+	AdditionalFeeTokens sdk.Coins
+}
+
+// NewAdditionalFeeTokensUpdate returns a new AdditionalFeeTokensUpdate instance
+func NewAdditionalFeeTokensUpdate(tokens ...sdk.Coin) AdditionalFeeTokensUpdate {
+	return AdditionalFeeTokensUpdate{
+		AdditionalFeeTokens: tokens,
+	}
+}
+
+// Update updates the additional fee tokens field of a subspace without validating it.
+// Before storing the updated subspace, a validation with Validate() should
+// be performed.
+func (update AdditionalFeeTokensUpdate) Update(sub Subspace) Subspace {
+	return NewSubspace(
+		sub.ID,
+		sub.Name,
+		sub.Description,
+		sub.Treasury,
+		sub.Owner,
+		sub.Creator,
+		sub.CreationTime,
+		update.AdditionalFeeTokens,
+	)
 }
 
 // --------------------------------------------------------------------------------------------------------------------

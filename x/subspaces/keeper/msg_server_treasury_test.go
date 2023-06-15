@@ -43,7 +43,8 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantTreasuryAuthorization() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC)),
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil),
 				)
 			},
 			msg: types.NewMsgGrantTreasuryAuthorization(
@@ -64,7 +65,8 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantTreasuryAuthorization() {
 					"",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC)),
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil),
 				)
 
 				suite.k.SetUserPermissions(ctx,
@@ -92,7 +94,8 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantTreasuryAuthorization() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC)),
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil),
 				)
 
 				suite.k.SetUserPermissions(ctx,
@@ -120,7 +123,8 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantTreasuryAuthorization() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC)),
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil),
 				)
 
 				suite.k.SetUserPermissions(ctx,
@@ -231,7 +235,8 @@ func (suite *KeeperTestSuite) TestMsgServer_RevokeTreasuryAuthorization() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC)),
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil),
 				)
 			},
 			msg: types.NewMsgRevokeTreasuryAuthorization(
@@ -251,7 +256,8 @@ func (suite *KeeperTestSuite) TestMsgServer_RevokeTreasuryAuthorization() {
 					"",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC)),
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil),
 				)
 
 				suite.k.SetUserPermissions(ctx,
@@ -278,7 +284,8 @@ func (suite *KeeperTestSuite) TestMsgServer_RevokeTreasuryAuthorization() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC)),
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil),
 				)
 
 				suite.k.SetUserPermissions(ctx,
@@ -305,7 +312,8 @@ func (suite *KeeperTestSuite) TestMsgServer_RevokeTreasuryAuthorization() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC)),
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil),
 				)
 
 				suite.k.SetUserPermissions(ctx,
@@ -332,7 +340,8 @@ func (suite *KeeperTestSuite) TestMsgServer_RevokeTreasuryAuthorization() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC)),
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil),
 				)
 
 				suite.k.SetUserPermissions(ctx,

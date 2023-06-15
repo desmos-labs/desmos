@@ -46,6 +46,7 @@ func TestMigrateStore(t *testing.T) {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
 				)
 				kvStore.Set(types.SubspaceStoreKey(1), cdc.MustMarshal(&subspace))
 			},

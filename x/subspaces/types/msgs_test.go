@@ -1272,3 +1272,81 @@ func TestMsgSetUserPermissions_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgSetUserPermissions.Signer)
 	require.Equal(t, []sdk.AccAddress{addr}, msgSetUserPermissions.GetSigners())
 }
+
+// --------------------------------------------------------------------------------------------------------------------
+
+var msgUpdateSubspaceFeeTokens = types.NewMsgUpdateSubspaceFeeTokens(
+	1,
+	sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(10))),
+	"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+)
+
+func TestMsgUpdateSubspaceFeeTokens_Route(t *testing.T) {
+	require.Equal(t, types.RouterKey, msgUpdateSubspaceFeeTokens.Route())
+}
+
+func TestMsgUpdateSubspaceFeeTokens_Type(t *testing.T) {
+	require.Equal(t, types.ActionUpdateSubspaceFeeTokens, msgUpdateSubspaceFeeTokens.Type())
+}
+
+func TestMsgUpdateSubspaceFeeTokens_ValidateBasic(t *testing.T) {
+	testCases := []struct {
+		name      string
+		msg       *types.MsgUpdateSubspaceFeeTokens
+		shouldErr bool
+	}{
+		{
+			name: "invalid subspace id returns error",
+			msg: types.NewMsgUpdateSubspaceFeeTokens(
+				0,
+				sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(10))),
+				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid additional fee tokens returns error",
+			msg: types.NewMsgUpdateSubspaceFeeTokens(
+				1,
+				sdk.Coins{{Denom: "minttoken", Amount: sdk.NewInt(-10)}},
+				"cosmos1m0czrla04f7rp3zg7d",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid authority returns error",
+			msg: types.NewMsgUpdateSubspaceFeeTokens(
+				1,
+				sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(10))),
+				"cosmos1m0czrla04f7rp3zg7d",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "valid message returns no error",
+			msg:  msgUpdateSubspaceFeeTokens,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.msg.ValidateBasic()
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestMsgUpdateSubspaceFeeTokens_GetSignBytes(t *testing.T) {
+	expected := `{"type":"desmos/MsgUpdateSubspaceFeeTokens","value":{"additional_fee_tokens":[{"amount":"10","denom":"minttoken"}],"authority":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","subspace_id":"1"}}`
+	require.Equal(t, expected, string(msgUpdateSubspaceFeeTokens.GetSignBytes()))
+}
+
+func TestMsgUpdateSubspaceFeeTokens_GetSigners(t *testing.T) {
+	addr, _ := sdk.AccAddressFromBech32(msgUpdateSubspaceFeeTokens.Authority)
+	require.Equal(t, []sdk.AccAddress{addr}, msgUpdateSubspaceFeeTokens.GetSigners())
+}

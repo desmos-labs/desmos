@@ -10,6 +10,7 @@ import (
 
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
 	"github.com/desmos-labs/desmos/v5/x/subspaces/types"
@@ -43,6 +44,7 @@ func GenerateRandomSubspace(r *rand.Rand, accs []simtypes.Account) types.Subspac
 		creator,
 		creator,
 		RandomDate(r),
+		GenerateRandomFeeTokens(r),
 	)
 }
 
@@ -119,4 +121,15 @@ func GetAccount(address string, accs []simtypes.Account) *simtypes.Account {
 // RandomGrant returns a random user grant from the slice given
 func RandomGrant(r *rand.Rand, grants []types.Grant) types.Grant {
 	return grants[r.Intn(len(grants))]
+}
+
+// GenerateRandomFeeTokens generates a list of fee tokens
+func GenerateRandomFeeTokens(r *rand.Rand) sdk.Coins {
+	coins := make(sdk.Coins, r.Intn(10))
+
+	for i := range coins {
+		coins[i] = sdk.NewCoin(simtypes.RandStringOfLength(r, 10), sdk.NewInt(r.Int63n(1000000)))
+	}
+
+	return coins.Sort()
 }

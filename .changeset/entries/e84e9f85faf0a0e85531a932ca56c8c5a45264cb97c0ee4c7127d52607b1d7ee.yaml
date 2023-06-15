@@ -1,0 +1,6 @@
+type: feat
+module: x/subspaces
+pull_request: 1138
+description: implement subspace specific custom fee tokens
+backward_compatible: true
+date: 2023-05-12T08:32:20.5983359Z

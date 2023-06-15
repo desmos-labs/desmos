@@ -191,7 +191,7 @@ func (suite *TestSuite) SetupTest() {
 		"cosmos",
 		authtypes.NewModuleAddress("gov").String(),
 	)
-	suite.k = keeper.NewKeeper(suite.cdc, suite.storeKey, suite.ak, nil)
+	suite.k = keeper.NewKeeper(suite.cdc, suite.storeKey, suite.ak, nil, "authority")
 }
 
 func TestKeeperTestSuite(t *testing.T) {

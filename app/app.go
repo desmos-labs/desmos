@@ -430,7 +430,7 @@ func NewDesmosApp(
 	)
 
 	// Create subspaces keeper and module
-	subspacesKeeper := subspaceskeeper.NewKeeper(app.appCodec, keys[subspacestypes.StoreKey], app.AccountKeeper, app.AuthzKeeper)
+	subspacesKeeper := subspaceskeeper.NewKeeper(app.appCodec, keys[subspacestypes.StoreKey], app.AccountKeeper, app.AuthzKeeper, authtypes.NewModuleAddress(govtypes.ModuleName).String())
 
 	// Create the relationships keeper
 	app.RelationshipsKeeper = relationshipskeeper.NewKeeper(

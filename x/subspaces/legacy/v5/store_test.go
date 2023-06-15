@@ -53,6 +53,7 @@ func TestMigrateStore(t *testing.T) {
 					"cosmos10ya9y35qkf4puaklx5fs07sxfxqncx9usgsnz6",
 					"cosmos10ya9y35qkf4puaklx5fs07sxfxqncx9usgsnz6",
 					time.Date(2023, 1, 11, 1, 1, 1, 1, time.UTC),
+					nil,
 				)
 				ctx.KVStore(keys[types.StoreKey]).Set(types.SubspaceStoreKey(1), cdc.MustMarshal(&oldSubspace))
 			},
@@ -68,6 +69,7 @@ func TestMigrateStore(t *testing.T) {
 					"cosmos10ya9y35qkf4puaklx5fs07sxfxqncx9usgsnz6",
 					"cosmos10ya9y35qkf4puaklx5fs07sxfxqncx9usgsnz6",
 					time.Date(2023, 1, 11, 1, 1, 1, 1, time.UTC),
+					nil,
 				), newSubspace)
 			},
 		},

@@ -3,6 +3,7 @@ package types
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	"github.com/desmos-labs/desmos/v5/x/subspaces/types"
 )
 
 // DONTCOVER
@@ -27,6 +28,7 @@ type BankKeeper interface {
 // SubspacesKeeper represents the expected keeper used to interact with x/subspaces
 type SubspacesKeeper interface {
 	UseGrantedFees(ctx sdk.Context, subspaceID uint64, grantee sdk.AccAddress, fees sdk.Coins, msgs []sdk.Msg) bool
+	GetSubspace(ctx sdk.Context, subspaceID uint64) (types.Subspace, bool)
 }
 
 // AuthDeductFeeDecorator represents the expected keeper used to interact with auth.DeductFeeDecorator

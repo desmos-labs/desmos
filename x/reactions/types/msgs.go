@@ -190,6 +190,9 @@ func (msg MsgAddRegisteredReaction) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{addr}
 }
 
+// IsManageSubspaceMsg implements subspacestypes.ManageSubspaceMsg
+func (msg MsgAddRegisteredReaction) IsManageSubspaceMsg() {}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewMsgEditRegisteredReaction returns a new MsgEditRegisteredReaction instance
@@ -252,6 +255,9 @@ func (msg MsgEditRegisteredReaction) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{addr}
 }
 
+// IsManageSubspaceMsg implements subspacestypes.ManageSubspaceMsg
+func (msg MsgEditRegisteredReaction) IsManageSubspaceMsg() {}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewMsgRemoveRegisteredReaction returns a new MsgRemoveRegisteredReaction instance
@@ -301,6 +307,9 @@ func (msg MsgRemoveRegisteredReaction) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.User)
 	return []sdk.AccAddress{addr}
 }
+
+// IsManageSubspaceMsg implements subspacestypes.ManageSubspaceMsg
+func (msg MsgRemoveRegisteredReaction) IsManageSubspaceMsg() {}
 
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -354,3 +363,6 @@ func (msg MsgSetReactionsParams) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.User)
 	return []sdk.AccAddress{addr}
 }
+
+// IsManageSubspaceMsg implements subspacestypes.ManageSubspaceMsg
+func (msg MsgSetReactionsParams) IsManageSubspaceMsg() {}
