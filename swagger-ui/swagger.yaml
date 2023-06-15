@@ -4696,6 +4696,27 @@ paths:
                       type: string
                       format: date-time
                       title: the creation time of the subspace
+                    additional_fee_tokens:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          denom:
+                            type: string
+                          amount:
+                            type: string
+                        description: >-
+                          Coin defines a token with a denomination and an
+                          amount.
+
+
+                          NOTE: The amount field is an Int which implements the
+                          custom method
+
+                          signatures required by gogoproto.
+                      title: >-
+                        List of fee token denoms with default minimum gas prices
+                        allowed inside the subspace
                   title: Subspace contains all the data of a Desmos subspace
               pagination:
                 type: object
@@ -5023,6 +5044,26 @@ paths:
                     type: string
                     format: date-time
                     title: the creation time of the subspace
+                  additional_fee_tokens:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        denom:
+                          type: string
+                        amount:
+                          type: string
+                      description: >-
+                        Coin defines a token with a denomination and an amount.
+
+
+                        NOTE: The amount field is an Int which implements the
+                        custom method
+
+                        signatures required by gogoproto.
+                    title: >-
+                      List of fee token denoms with default minimum gas prices
+                      allowed inside the subspace
                 title: Subspace contains all the data of a Desmos subspace
             title: >-
               QuerySubspaceResponse is the response type for the Query/Subspace
@@ -19533,6 +19574,26 @@ definitions:
             type: string
             format: date-time
             title: the creation time of the subspace
+          additional_fee_tokens:
+            type: array
+            items:
+              type: object
+              properties:
+                denom:
+                  type: string
+                amount:
+                  type: string
+              description: >-
+                Coin defines a token with a denomination and an amount.
+
+
+                NOTE: The amount field is an Int which implements the custom
+                method
+
+                signatures required by gogoproto.
+            title: >-
+              List of fee token denoms with default minimum gas prices allowed
+              inside the subspace
         title: Subspace contains all the data of a Desmos subspace
     title: QuerySubspaceResponse is the response type for the Query/Subspace method
   desmos.subspaces.v3.QuerySubspacesResponse:
@@ -19570,6 +19631,26 @@ definitions:
               type: string
               format: date-time
               title: the creation time of the subspace
+            additional_fee_tokens:
+              type: array
+              items:
+                type: object
+                properties:
+                  denom:
+                    type: string
+                  amount:
+                    type: string
+                description: >-
+                  Coin defines a token with a denomination and an amount.
+
+
+                  NOTE: The amount field is an Int which implements the custom
+                  method
+
+                  signatures required by gogoproto.
+              title: >-
+                List of fee token denoms with default minimum gas prices allowed
+                inside the subspace
           title: Subspace contains all the data of a Desmos subspace
       pagination:
         type: object
@@ -20233,6 +20314,23 @@ definitions:
         type: string
         format: date-time
         title: the creation time of the subspace
+      additional_fee_tokens:
+        type: array
+        items:
+          type: object
+          properties:
+            denom:
+              type: string
+            amount:
+              type: string
+          description: |-
+            Coin defines a token with a denomination and an amount.
+
+            NOTE: The amount field is an Int which implements the custom method
+            signatures required by gogoproto.
+        title: >-
+          List of fee token denoms with default minimum gas prices allowed
+          inside the subspace
     title: Subspace contains all the data of a Desmos subspace
   desmos.subspaces.v3.UserGroup:
     type: object
