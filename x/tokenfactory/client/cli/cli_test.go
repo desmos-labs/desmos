@@ -271,30 +271,23 @@ func (s *IntegrationTestSuite) TestCmdMint() {
 			shouldErr: true,
 		},
 		{
-			name: "invalid to address returns no error",
+			name: "invalid amount returns no error",
 			args: []string{
 				"1", "X",
 			},
 			shouldErr: true,
 		},
 		{
-			name: "invalid amount returns no error",
-			args: []string{
-				"1", "cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn", "X",
-			},
-			shouldErr: true,
-		},
-		{
 			name: "invalid sender returns no error",
 			args: []string{
-				"1", "cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn", "10factory/cosmos1cyjzgj9j7d2gdqk78pa0fgvfnlzradat97aek9/uminttoken",
+				"1", "10factory/cosmos1cyjzgj9j7d2gdqk78pa0fgvfnlzradat97aek9/uminttoken",
 			},
 			shouldErr: true,
 		},
 		{
 			name: "valid request returns no error",
 			args: []string{
-				"1", "cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn", "10factory/cosmos1cyjzgj9j7d2gdqk78pa0fgvfnlzradat97aek9/uminttoken",
+				"1", "10factory/cosmos1cyjzgj9j7d2gdqk78pa0fgvfnlzradat97aek9/uminttoken",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),

@@ -91,7 +91,6 @@ func TestMsgCreateDenom_GetSigners(t *testing.T) {
 var msgMint = types.NewMsgMint(
 	1,
 	"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-	"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 	sdk.NewCoin("uminttoken", sdk.NewInt(100)),
 )
 
@@ -114,7 +113,6 @@ func TestMsgMint_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgMint(
 				0,
 				msgMint.Sender,
-				msgMint.MintToAddress,
 				msgMint.Amount,
 			),
 			shouldErr: true,
@@ -123,17 +121,6 @@ func TestMsgMint_ValidateBasic(t *testing.T) {
 			name: "invalid sender returns error",
 			msg: types.NewMsgMint(
 				msgMint.SubspaceID,
-				"",
-				msgMint.MintToAddress,
-				msgMint.Amount,
-			),
-			shouldErr: true,
-		},
-		{
-			name: "invalid mint to address returns error",
-			msg: types.NewMsgMint(
-				msgMint.SubspaceID,
-				msgMint.Sender,
 				"",
 				msgMint.Amount,
 			),
@@ -144,7 +131,6 @@ func TestMsgMint_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgMint(
 				msgMint.SubspaceID,
 				msgMint.Sender,
-				msgMint.MintToAddress,
 				sdk.Coin{Denom: "%invalid%", Amount: sdk.NewInt(100)},
 			),
 			shouldErr: true,
@@ -169,7 +155,7 @@ func TestMsgMint_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgMint_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/x/tokenfactory/MsgMint","value":{"amount":{"amount":"100","denom":"uminttoken"},"mint_to_address":"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69","sender":"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69","subspace_id":"1"}}`
+	expected := `{"type":"desmos/x/tokenfactory/MsgMint","value":{"amount":{"amount":"100","denom":"uminttoken"},"sender":"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69","subspace_id":"1"}}`
 	require.Equal(t, expected, string(msgMint.GetSignBytes()))
 }
 

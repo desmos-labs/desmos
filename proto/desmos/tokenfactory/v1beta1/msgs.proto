@@ -103,9 +103,6 @@ message MsgMint {
     (gogoproto.moretags) = "yaml:\"amount\"",
     (gogoproto.nullable) = false
   ];
-
-  // Address receving the minted tokens
-  string mint_to_address = 4 [ (gogoproto.moretags) = "yaml:\"mint_to_address\"" ];
 }
 
 // MsgMintResponse represents the Msg/Mint response type

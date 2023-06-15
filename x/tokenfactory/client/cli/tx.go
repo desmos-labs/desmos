@@ -77,9 +77,9 @@ func GetCmdCreateDenom() *cobra.Command {
 // GetCmdMint returns the command used to mint a denom to an address
 func GetCmdMint() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "mint [subspace-id] [to-address] [amount]",
+		Use:   "mint [subspace-id] [amount]",
 		Short: "Mint a denom to an address. Must have permissions to do so.",
-		Args:  cobra.ExactArgs(3),
+		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -91,13 +91,13 @@ func GetCmdMint() *cobra.Command {
 				return err
 			}
 
-			amount, err := sdk.ParseCoinNormalized(args[2])
+			amount, err := sdk.ParseCoinNormalized(args[1])
 			if err != nil {
 				return err
 			}
 
 			sender := clientCtx.FromAddress
-			msg := types.NewMsgMint(subspaceID, sender.String(), args[1], amount)
+			msg := types.NewMsgMint(subspaceID, sender.String(), amount)
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}

@@ -175,12 +175,12 @@ func SimulateMsgMint(
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 
 		// Get the data
-		subspaceID, toAddress, amount, signer, skip := randomMintFields(r, ctx, accs, sk, tfk)
+		subspaceID, amount, signer, skip := randomMintFields(r, ctx, accs, sk, tfk)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, "MsgMint", "skip"), nil, nil
 		}
 
-		msg := types.NewMsgMint(subspaceID, signer.Address.String(), toAddress, amount)
+		msg := types.NewMsgMint(subspaceID, signer.Address.String(), amount)
 
 		// Send the message
 		return simtesting.SendMsg(r, app, ak, bk, msg, ctx, signer)
@@ -190,7 +190,7 @@ func SimulateMsgMint(
 // randomMintFields returns the data used to build a random MsgMint
 func randomMintFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, sk types.SubspacesKeeper, tfk types.TokenFactoryKeeper,
-) (subspaceID uint64, toAddress string, amount sdk.Coin, signer simtypes.Account, skip bool) {
+) (subspaceID uint64, amount sdk.Coin, signer simtypes.Account, skip bool) {
 
 	// Get a subspace id
 	subspaces := sk.GetAllSubspaces(ctx)
@@ -217,14 +217,6 @@ func randomMintFields(
 		return
 	}
 
-	// 50% mint to subspace treasury
-	if r.Intn(2)%2 == 0 {
-		toAddress = subspace.Treasury
-	} else {
-		toAccount, _ := simtypes.RandomAcc(r, accs)
-		toAddress = toAccount.Address.String()
-	}
-
 	// Get a signer
 	admins := sk.GetUsersWithRootPermissions(ctx, subspace.ID, subspacestypes.NewPermissions(types.PermissionManageSubspaceTokens))
 	acc := subspacessim.GetAccount(subspacessim.RandomAddress(r, admins), accs)
@@ -235,7 +227,7 @@ func randomMintFields(
 	}
 	signer = *acc
 
-	return subspaceID, toAddress, amount, signer, false
+	return subspaceID, amount, signer, false
 }
 
 // --------------------------------------------------------------------------------------------------------------------

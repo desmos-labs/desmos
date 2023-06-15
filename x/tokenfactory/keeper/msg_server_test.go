@@ -203,7 +203,6 @@ func (suite *KeeperTestSuite) TestMsgServer_Mint() {
 			msg: types.NewMsgMint(
 				1,
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 				sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", sdk.NewInt(100)),
 			),
 			shouldErr: true,
@@ -235,7 +234,6 @@ func (suite *KeeperTestSuite) TestMsgServer_Mint() {
 			},
 			msg: types.NewMsgMint(
 				1,
-				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 				sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", sdk.NewInt(100)),
 			),
@@ -278,13 +276,12 @@ func (suite *KeeperTestSuite) TestMsgServer_Mint() {
 					MintTo(
 						gomock.Any(),
 						sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken",
-							sdk.NewInt(100)), "cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+							sdk.NewInt(100)), "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					).
 					Return(fmt.Errorf("error"))
 			},
 			msg: types.NewMsgMint(
 				1,
-				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 				sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", sdk.NewInt(100)),
 			),
@@ -327,13 +324,12 @@ func (suite *KeeperTestSuite) TestMsgServer_Mint() {
 					MintTo(
 						gomock.Any(),
 						sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", sdk.NewInt(100)),
-						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					).
 					Return(nil)
 			},
 			msg: types.NewMsgMint(
 				1,
-				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 				sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", sdk.NewInt(100)),
 			),
@@ -348,7 +344,7 @@ func (suite *KeeperTestSuite) TestMsgServer_Mint() {
 				sdk.NewEvent(
 					types.EventTypeMint,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
-					sdk.NewAttribute(types.AttributeMintToAddress, "cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69"),
+					sdk.NewAttribute(types.AttributeMintToAddress, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 					sdk.NewAttribute(types.AttributeAmount, sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", sdk.NewInt(100)).String()),
 				),
 			},

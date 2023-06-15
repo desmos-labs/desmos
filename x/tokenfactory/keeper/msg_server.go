@@ -77,7 +77,7 @@ func (k msgServer) Mint(goCtx context.Context, msg *types.MsgMint) (*types.MsgMi
 		return nil, err
 	}
 
-	err = k.tfk.MintTo(ctx, msg.Amount, msg.MintToAddress)
+	err = k.tfk.MintTo(ctx, msg.Amount, subspace.Treasury)
 	if err != nil {
 		return nil, err
 	}
@@ -92,7 +92,7 @@ func (k msgServer) Mint(goCtx context.Context, msg *types.MsgMint) (*types.MsgMi
 		sdk.NewEvent(
 			types.EventTypeMint,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
-			sdk.NewAttribute(types.AttributeMintToAddress, msg.MintToAddress),
+			sdk.NewAttribute(types.AttributeMintToAddress, subspace.Treasury),
 			sdk.NewAttribute(types.AttributeAmount, msg.Amount.String()),
 		),
 	})
