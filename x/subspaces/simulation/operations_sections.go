@@ -207,18 +207,17 @@ func randomMoveSectionFields(
 		return
 	}
 
-	// Get a random new parent
-	parent := RandomSection(r, sections)
-	newParentID = parent.ID
-	if newParentID == sectionID {
+	// Get a random new newParent
+	newParent := RandomSection(r, sections)
+	newParentID = newParent.ID
+	if newParent.ID == sectionID {
 		// Skip because we can't move the section to itself
 		skip = true
 		return
 	}
 
-	section.ParentID = newParentID
-	if parent.ParentID == sectionID {
-		// Skip because the new section path is invalid
+	if isChildSection(ctx, k, section, newParent) {
+		// Skip because we can't move the section to its child section
 		skip = true
 		return
 	}
@@ -234,6 +233,19 @@ func randomMoveSectionFields(
 	account = *acc
 
 	return subspaceID, sectionID, newParentID, account, false
+}
+
+// isChildSection tells whether the given section is the child of the given parent section or not.
+func isChildSection(ctx sdk.Context, k keeper.Keeper, parent types.Section, section types.Section) bool {
+	visitsCount := 0
+	k.IterateSectionChildren(ctx, parent.SubspaceID, parent.ID, func(node types.Section) (stop bool) {
+		if node.SubspaceID == section.SubspaceID && node.ID == section.ID {
+			visitsCount++
+		}
+		return visitsCount > 1
+	})
+
+	return visitsCount == 1
 }
 
 // --------------------------------------------------------------------------------------------------------------------
