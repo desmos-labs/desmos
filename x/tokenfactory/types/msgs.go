@@ -99,13 +99,13 @@ func (msg MsgMint) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sender}
 }
 
-// implements legacytx.LegacyMsg
+// Route implements legacytx.LegacyMsg
 func (msg MsgMint) Route() string { return RouterKey }
 
-// implements legacytx.LegacyMsg
+// Type implements legacytx.LegacyMsg
 func (msg MsgMint) Type() string { return ActionMint }
 
-// implements legacytx.LegacyMsg
+// MsgMint implements legacytx.LegacyMsg
 func (msg MsgMint) GetSignBytes() []byte {
 	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
 }
@@ -150,13 +150,13 @@ func (msg MsgBurn) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sender}
 }
 
-// implements legacytx.LegacyMsg
+// Route implements legacytx.LegacyMsg
 func (msg MsgBurn) Route() string { return RouterKey }
 
-// implements legacytx.LegacyMsg
+// Type implements legacytx.LegacyMsg
 func (msg MsgBurn) Type() string { return ActionBurn }
 
-// implements legacytx.LegacyMsg
+// GetSignBytes implements legacytx.LegacyMsg
 func (msg MsgBurn) GetSignBytes() []byte {
 	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
 }
@@ -203,13 +203,13 @@ func (msg MsgSetDenomMetadata) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sender}
 }
 
-// implements legacytx.LegacyMsg
+// Route implements legacytx.LegacyMsg
 func (msg MsgSetDenomMetadata) Route() string { return RouterKey }
 
-// implements legacytx.LegacyMsg
+// Type implements legacytx.LegacyMsg
 func (msg MsgSetDenomMetadata) Type() string { return ActionSetDenomMetadata }
 
-// implements legacytx.LegacyMsg
+// GetSignBytes implements legacytx.LegacyMsg
 func (msg MsgSetDenomMetadata) GetSignBytes() []byte {
 	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
 }
@@ -245,13 +245,13 @@ func (msg MsgUpdateParams) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sender}
 }
 
-// implements legacytx.LegacyMsg
+// Route implements legacytx.LegacyMsg
 func (msg MsgUpdateParams) Route() string { return RouterKey }
 
-// implements legacytx.LegacyMsg
+// Type implements legacytx.LegacyMsg
 func (msg MsgUpdateParams) Type() string { return ActionUpdateParams }
 
-// implements legacytx.LegacyMsg
+// GetSignBytes implements legacytx.LegacyMsg
 func (msg MsgUpdateParams) GetSignBytes() []byte {
 	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
 }
