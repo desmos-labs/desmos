@@ -1,7 +1,7 @@
 package types
 
 import (
-	errors "cosmossdk.io/errors"
+	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/auth/migrations/legacytx"
@@ -23,17 +23,17 @@ func NewMsgRequestPostOwnerTransfer(subspaceID uint64, postID uint64, receiver s
 }
 
 // Route implements legacytx.LegacyMsg
-func (msg MsgRequestPostOwnerTransfer) Route() string {
+func (msg *MsgRequestPostOwnerTransfer) Route() string {
 	return RouterKey
 }
 
 // Type implements legacytx.LegacyMsg
-func (msg MsgRequestPostOwnerTransfer) Type() string {
+func (msg *MsgRequestPostOwnerTransfer) Type() string {
 	return ActionRequestPostOwnerTransfer
 }
 
 // ValidateBasic implements sdk.Msg
-func (msg MsgRequestPostOwnerTransfer) ValidateBasic() error {
+func (msg *MsgRequestPostOwnerTransfer) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
 		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
@@ -60,14 +60,14 @@ func (msg MsgRequestPostOwnerTransfer) ValidateBasic() error {
 }
 
 // GetSignBytes implements sdk.Msg
-func (msg MsgRequestPostOwnerTransfer) GetSigners() []sdk.AccAddress {
+func (msg *MsgRequestPostOwnerTransfer) GetSigners() []sdk.AccAddress {
 	sender := sdk.MustAccAddressFromBech32(msg.Sender)
 	return []sdk.AccAddress{sender}
 }
 
 // GetSigners implements legacytx.LegacyMsg
-func (msg MsgRequestPostOwnerTransfer) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
+func (msg *MsgRequestPostOwnerTransfer) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -87,17 +87,17 @@ func NewMsgCancelPostOwnerTransferRequest(subspaceID uint64, postID uint64, send
 }
 
 // Route implements legacytx.LegacyMsg
-func (msg MsgCancelPostOwnerTransferRequest) Route() string {
+func (msg *MsgCancelPostOwnerTransferRequest) Route() string {
 	return RouterKey
 }
 
 // Type implements legacytx.LegacyMsg
-func (msg MsgCancelPostOwnerTransferRequest) Type() string {
+func (msg *MsgCancelPostOwnerTransferRequest) Type() string {
 	return ActionCancelPostOwnerTransfer
 }
 
 // ValidateBasic implements sdk.Msg
-func (msg MsgCancelPostOwnerTransferRequest) ValidateBasic() error {
+func (msg *MsgCancelPostOwnerTransferRequest) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
 		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
@@ -115,14 +115,14 @@ func (msg MsgCancelPostOwnerTransferRequest) ValidateBasic() error {
 }
 
 // GetSignBytes implements sdk.Msg
-func (msg MsgCancelPostOwnerTransferRequest) GetSigners() []sdk.AccAddress {
+func (msg *MsgCancelPostOwnerTransferRequest) GetSigners() []sdk.AccAddress {
 	sender := sdk.MustAccAddressFromBech32(msg.Sender)
 	return []sdk.AccAddress{sender}
 }
 
 // GetSigners implements legacytx.LegacyMsg
-func (msg MsgCancelPostOwnerTransferRequest) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
+func (msg *MsgCancelPostOwnerTransferRequest) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -142,17 +142,17 @@ func NewMsgAcceptPostOwnerTransferRequest(subspaceID uint64, postID uint64, rece
 }
 
 // Route implements legacytx.LegacyMsg
-func (msg MsgAcceptPostOwnerTransferRequest) Route() string {
+func (msg *MsgAcceptPostOwnerTransferRequest) Route() string {
 	return RouterKey
 }
 
 // Type implements legacytx.LegacyMsg
-func (msg MsgAcceptPostOwnerTransferRequest) Type() string {
+func (msg *MsgAcceptPostOwnerTransferRequest) Type() string {
 	return ActionAcceptPostOwnerTransfer
 }
 
 // ValidateBasic implements sdk.Msg
-func (msg MsgAcceptPostOwnerTransferRequest) ValidateBasic() error {
+func (msg *MsgAcceptPostOwnerTransferRequest) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
 		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
@@ -170,14 +170,14 @@ func (msg MsgAcceptPostOwnerTransferRequest) ValidateBasic() error {
 }
 
 // GetSignBytes implements sdk.Msg
-func (msg MsgAcceptPostOwnerTransferRequest) GetSigners() []sdk.AccAddress {
+func (msg *MsgAcceptPostOwnerTransferRequest) GetSigners() []sdk.AccAddress {
 	receiver := sdk.MustAccAddressFromBech32(msg.Receiver)
 	return []sdk.AccAddress{receiver}
 }
 
 // GetSigners implements legacytx.LegacyMsg
-func (msg MsgAcceptPostOwnerTransferRequest) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
+func (msg *MsgAcceptPostOwnerTransferRequest) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -197,17 +197,17 @@ func NewMsgRefusePostOwnerTransferRequest(subspaceID uint64, postID uint64, rece
 }
 
 // Route implements legacytx.LegacyMsg
-func (msg MsgRefusePostOwnerTransferRequest) Route() string {
+func (msg *MsgRefusePostOwnerTransferRequest) Route() string {
 	return RouterKey
 }
 
 // Type implements legacytx.LegacyMsg
-func (msg MsgRefusePostOwnerTransferRequest) Type() string {
+func (msg *MsgRefusePostOwnerTransferRequest) Type() string {
 	return ActionRefusePostOwnerTransfer
 }
 
 // ValidateBasic implements sdk.Msg
-func (msg MsgRefusePostOwnerTransferRequest) ValidateBasic() error {
+func (msg *MsgRefusePostOwnerTransferRequest) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
 		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
@@ -225,12 +225,12 @@ func (msg MsgRefusePostOwnerTransferRequest) ValidateBasic() error {
 }
 
 // GetSignBytes implements sdk.Msg
-func (msg MsgRefusePostOwnerTransferRequest) GetSigners() []sdk.AccAddress {
+func (msg *MsgRefusePostOwnerTransferRequest) GetSigners() []sdk.AccAddress {
 	receiver := sdk.MustAccAddressFromBech32(msg.Receiver)
 	return []sdk.AccAddress{receiver}
 }
 
 // GetSigners implements legacytx.LegacyMsg
-func (msg MsgRefusePostOwnerTransferRequest) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
+func (msg *MsgRefusePostOwnerTransferRequest) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
 }

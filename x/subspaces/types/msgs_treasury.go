@@ -2,15 +2,14 @@ package types
 
 import (
 	"fmt"
-	"time"
-
 	"strings"
+	"time"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/auth/migrations/legacytx"
-	authz "github.com/cosmos/cosmos-sdk/x/authz"
+	"github.com/cosmos/cosmos-sdk/x/authz"
 )
 
 var (
@@ -40,13 +39,13 @@ func NewMsgGrantTreasuryAuthorization(subspaceID uint64, granter string, grantee
 }
 
 // Route implements legacytx.LegacyMsg
-func (msg MsgGrantTreasuryAuthorization) Route() string { return RouterKey }
+func (msg *MsgGrantTreasuryAuthorization) Route() string { return RouterKey }
 
 // Type implements legacytx.LegacyMsg
-func (msg MsgGrantTreasuryAuthorization) Type() string { return ActionGrantTreasuryAuthorization }
+func (msg *MsgGrantTreasuryAuthorization) Type() string { return ActionGrantTreasuryAuthorization }
 
 // ValidateBasic implements sdk.Msg
-func (msg MsgGrantTreasuryAuthorization) ValidateBasic() error {
+func (msg *MsgGrantTreasuryAuthorization) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
 		return sdkerrors.ErrInvalidRequest.Wrap("invalid subspace id")
 	}
@@ -65,23 +64,23 @@ func (msg MsgGrantTreasuryAuthorization) ValidateBasic() error {
 }
 
 // GetSignBytes implements legacytx.LegacyMsg
-func (msg MsgGrantTreasuryAuthorization) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
+func (msg *MsgGrantTreasuryAuthorization) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
 }
 
 // GetSigners implements sdk.Msg
-func (msg MsgGrantTreasuryAuthorization) GetSigners() []sdk.AccAddress {
+func (msg *MsgGrantTreasuryAuthorization) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Granter)
 	return []sdk.AccAddress{addr}
 }
 
 // UnpackInterfaces implements codectypes.UnpackInterfacesMessage
-func (msg MsgGrantTreasuryAuthorization) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
+func (msg *MsgGrantTreasuryAuthorization) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 	return msg.Grant.UnpackInterfaces(unpacker)
 }
 
 // IsManageSubspaceMsg implements subspacestypes.ManageSubspaceMsg
-func (msg MsgGrantTreasuryAuthorization) IsManageSubspaceMsg() {}
+func (msg *MsgGrantTreasuryAuthorization) IsManageSubspaceMsg() {}
 
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -95,13 +94,13 @@ func NewMsgRevokeTreasuryAuthorization(subspaceID uint64, granter string, grante
 }
 
 // GetSignBytes implements legacytx.LegacyMsg
-func (msg MsgRevokeTreasuryAuthorization) Route() string { return RouterKey }
+func (msg *MsgRevokeTreasuryAuthorization) Route() string { return RouterKey }
 
 // GetSignBytes implements legacytx.LegacyMsg
-func (msg MsgRevokeTreasuryAuthorization) Type() string { return ActionRevokeTreasuryAuthorization }
+func (msg *MsgRevokeTreasuryAuthorization) Type() string { return ActionRevokeTreasuryAuthorization }
 
 // ValidateBasic implements sdk.Msg
-func (msg MsgRevokeTreasuryAuthorization) ValidateBasic() error {
+func (msg *MsgRevokeTreasuryAuthorization) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
 		return fmt.Errorf("invalid subspace id")
 	}
@@ -124,15 +123,15 @@ func (msg MsgRevokeTreasuryAuthorization) ValidateBasic() error {
 }
 
 // GetSignBytes implements legacytx.LegacyMsg
-func (msg MsgRevokeTreasuryAuthorization) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
+func (msg *MsgRevokeTreasuryAuthorization) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
 }
 
 // GetSigners implements sdk.Msg
-func (msg MsgRevokeTreasuryAuthorization) GetSigners() []sdk.AccAddress {
+func (msg *MsgRevokeTreasuryAuthorization) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Granter)
 	return []sdk.AccAddress{addr}
 }
 
 // IsManageSubspaceMsg implements subspacestypes.ManageSubspaceMsg
-func (msg MsgRevokeTreasuryAuthorization) IsManageSubspaceMsg() {}
+func (msg *MsgRevokeTreasuryAuthorization) IsManageSubspaceMsg() {}

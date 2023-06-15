@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	errors "cosmossdk.io/errors"
+	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -22,12 +22,12 @@ func NewMsgRequestDTagTransfer(sender, receiver string) *MsgRequestDTagTransfer 
 }
 
 // Route should return the name of the module
-func (msg MsgRequestDTagTransfer) Route() string { return RouterKey }
+func (msg *MsgRequestDTagTransfer) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgRequestDTagTransfer) Type() string { return ActionRequestDTag }
+func (msg *MsgRequestDTagTransfer) Type() string { return ActionRequestDTag }
 
-func (msg MsgRequestDTagTransfer) ValidateBasic() error {
+func (msg *MsgRequestDTagTransfer) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Receiver)
 	if err != nil {
 		return errors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid receiver address: %s", msg.Receiver))
@@ -46,12 +46,12 @@ func (msg MsgRequestDTagTransfer) ValidateBasic() error {
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgRequestDTagTransfer) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
+func (msg *MsgRequestDTagTransfer) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required
-func (msg MsgRequestDTagTransfer) GetSigners() []sdk.AccAddress {
+func (msg *MsgRequestDTagTransfer) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Sender)
 	return []sdk.AccAddress{addr}
 }
@@ -67,12 +67,12 @@ func NewMsgCancelDTagTransferRequest(sender, receiver string) *MsgCancelDTagTran
 }
 
 // Route should return the name of the module
-func (msg MsgCancelDTagTransferRequest) Route() string { return RouterKey }
+func (msg *MsgCancelDTagTransferRequest) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgCancelDTagTransferRequest) Type() string { return ActionCancelDTagTransferRequest }
+func (msg *MsgCancelDTagTransferRequest) Type() string { return ActionCancelDTagTransferRequest }
 
-func (msg MsgCancelDTagTransferRequest) ValidateBasic() error {
+func (msg *MsgCancelDTagTransferRequest) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Receiver)
 	if err != nil {
 		return errors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid receiver address: %s", msg.Receiver))
@@ -91,12 +91,12 @@ func (msg MsgCancelDTagTransferRequest) ValidateBasic() error {
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgCancelDTagTransferRequest) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
+func (msg *MsgCancelDTagTransferRequest) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required
-func (msg MsgCancelDTagTransferRequest) GetSigners() []sdk.AccAddress {
+func (msg *MsgCancelDTagTransferRequest) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Sender)
 	return []sdk.AccAddress{addr}
 }
@@ -113,12 +113,12 @@ func NewMsgAcceptDTagTransferRequest(newDTag string, sender, receiver string) *M
 }
 
 // Route should return the name of the module
-func (msg MsgAcceptDTagTransferRequest) Route() string { return RouterKey }
+func (msg *MsgAcceptDTagTransferRequest) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgAcceptDTagTransferRequest) Type() string { return ActionAcceptDTagTransfer }
+func (msg *MsgAcceptDTagTransferRequest) Type() string { return ActionAcceptDTagTransfer }
 
-func (msg MsgAcceptDTagTransferRequest) ValidateBasic() error {
+func (msg *MsgAcceptDTagTransferRequest) ValidateBasic() error {
 	if strings.TrimSpace(msg.NewDTag) == "" {
 		return errors.Wrap(sdkerrors.ErrInvalidRequest, "new DTag can't be empty")
 	}
@@ -141,12 +141,12 @@ func (msg MsgAcceptDTagTransferRequest) ValidateBasic() error {
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgAcceptDTagTransferRequest) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
+func (msg *MsgAcceptDTagTransferRequest) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required
-func (msg MsgAcceptDTagTransferRequest) GetSigners() []sdk.AccAddress {
+func (msg *MsgAcceptDTagTransferRequest) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Receiver)
 	return []sdk.AccAddress{addr}
 }
@@ -162,12 +162,12 @@ func NewMsgRefuseDTagTransferRequest(sender, receiver string) *MsgRefuseDTagTran
 }
 
 // Route should return the name of the module
-func (msg MsgRefuseDTagTransferRequest) Route() string { return RouterKey }
+func (msg *MsgRefuseDTagTransferRequest) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgRefuseDTagTransferRequest) Type() string { return ActionRefuseDTagTransferRequest }
+func (msg *MsgRefuseDTagTransferRequest) Type() string { return ActionRefuseDTagTransferRequest }
 
-func (msg MsgRefuseDTagTransferRequest) ValidateBasic() error {
+func (msg *MsgRefuseDTagTransferRequest) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Sender)
 	if err != nil {
 		return errors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid sender address: %s", msg.Sender))
@@ -186,12 +186,12 @@ func (msg MsgRefuseDTagTransferRequest) ValidateBasic() error {
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgRefuseDTagTransferRequest) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
+func (msg *MsgRefuseDTagTransferRequest) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required
-func (msg MsgRefuseDTagTransferRequest) GetSigners() []sdk.AccAddress {
+func (msg *MsgRefuseDTagTransferRequest) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Receiver)
 	return []sdk.AccAddress{addr}
 }

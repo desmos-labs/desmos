@@ -4,9 +4,10 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/golang/mock/gomock"
+
 	"github.com/desmos-labs/desmos/v5/x/posts/keeper"
 	"github.com/desmos-labs/desmos/v5/x/posts/types"
-	"github.com/golang/mock/gomock"
 )
 
 func (suite *KeeperTestSuite) TestMsgServer_RequestPostOwnerTransfer() {

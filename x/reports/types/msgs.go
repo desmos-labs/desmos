@@ -51,15 +51,15 @@ func (msg *MsgCreateReport) UnpackInterfaces(unpacker codectypes.AnyUnpacker) er
 }
 
 // Route should return the name of the module
-func (msg MsgCreateReport) Route() string { return RouterKey }
+func (msg *MsgCreateReport) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgCreateReport) Type() string {
+func (msg *MsgCreateReport) Type() string {
 	return ActionCreateReport
 }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgCreateReport) ValidateBasic() error {
+func (msg *MsgCreateReport) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
 		return fmt.Errorf("invalid subspace id: %d", msg.SubspaceID)
 	}
@@ -83,12 +83,12 @@ func (msg MsgCreateReport) ValidateBasic() error {
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgCreateReport) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
+func (msg *MsgCreateReport) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required
-func (msg MsgCreateReport) GetSigners() []sdk.AccAddress {
+func (msg *MsgCreateReport) GetSigners() []sdk.AccAddress {
 	sender, _ := sdk.AccAddressFromBech32(msg.Reporter)
 	return []sdk.AccAddress{sender}
 }
@@ -105,15 +105,15 @@ func NewMsgDeleteReport(subspaceID uint64, reportID uint64, signer string) *MsgD
 }
 
 // Route should return the name of the module
-func (msg MsgDeleteReport) Route() string { return RouterKey }
+func (msg *MsgDeleteReport) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgDeleteReport) Type() string {
+func (msg *MsgDeleteReport) Type() string {
 	return ActionDeleteReport
 }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgDeleteReport) ValidateBasic() error {
+func (msg *MsgDeleteReport) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
 		return fmt.Errorf("invalid subspace id: %d", msg.SubspaceID)
 	}
@@ -131,12 +131,12 @@ func (msg MsgDeleteReport) ValidateBasic() error {
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgDeleteReport) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
+func (msg *MsgDeleteReport) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required
-func (msg MsgDeleteReport) GetSigners() []sdk.AccAddress {
+func (msg *MsgDeleteReport) GetSigners() []sdk.AccAddress {
 	sender, _ := sdk.AccAddressFromBech32(msg.Signer)
 	return []sdk.AccAddress{sender}
 }
@@ -153,15 +153,15 @@ func NewMsgSupportStandardReason(subspaceID uint64, standardReasonID uint32, sig
 }
 
 // Route should return the name of the module
-func (msg MsgSupportStandardReason) Route() string { return RouterKey }
+func (msg *MsgSupportStandardReason) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgSupportStandardReason) Type() string {
+func (msg *MsgSupportStandardReason) Type() string {
 	return ActionSupportStandardReason
 }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgSupportStandardReason) ValidateBasic() error {
+func (msg *MsgSupportStandardReason) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
 		return fmt.Errorf("invalid subspace id: %d", msg.SubspaceID)
 	}
@@ -179,18 +179,18 @@ func (msg MsgSupportStandardReason) ValidateBasic() error {
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgSupportStandardReason) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
+func (msg *MsgSupportStandardReason) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required
-func (msg MsgSupportStandardReason) GetSigners() []sdk.AccAddress {
+func (msg *MsgSupportStandardReason) GetSigners() []sdk.AccAddress {
 	sender, _ := sdk.AccAddressFromBech32(msg.Signer)
 	return []sdk.AccAddress{sender}
 }
 
 // IsManageSubspaceMsg implements subspacestypes.ManageSubspaceMsg
-func (msg MsgSupportStandardReason) IsManageSubspaceMsg() {}
+func (msg *MsgSupportStandardReason) IsManageSubspaceMsg() {}
 
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -205,15 +205,15 @@ func NewMsgAddReason(subspaceID uint64, title string, description string, signer
 }
 
 // Route should return the name of the module
-func (msg MsgAddReason) Route() string { return RouterKey }
+func (msg *MsgAddReason) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgAddReason) Type() string {
+func (msg *MsgAddReason) Type() string {
 	return ActionAddReason
 }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgAddReason) ValidateBasic() error {
+func (msg *MsgAddReason) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
 		return fmt.Errorf("invalid subspace id: %d", msg.SubspaceID)
 	}
@@ -231,18 +231,18 @@ func (msg MsgAddReason) ValidateBasic() error {
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgAddReason) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
+func (msg *MsgAddReason) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required
-func (msg MsgAddReason) GetSigners() []sdk.AccAddress {
+func (msg *MsgAddReason) GetSigners() []sdk.AccAddress {
 	sender, _ := sdk.AccAddressFromBech32(msg.Signer)
 	return []sdk.AccAddress{sender}
 }
 
 // IsManageSubspaceMsg implements subspacestypes.ManageSubspaceMsg
-func (msg MsgAddReason) IsManageSubspaceMsg() {}
+func (msg *MsgAddReason) IsManageSubspaceMsg() {}
 
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -256,15 +256,15 @@ func NewMsgRemoveReason(subspaceID uint64, reasonID uint32, signer string) *MsgR
 }
 
 // Route should return the name of the module
-func (msg MsgRemoveReason) Route() string { return RouterKey }
+func (msg *MsgRemoveReason) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgRemoveReason) Type() string {
+func (msg *MsgRemoveReason) Type() string {
 	return ActionRemoveReason
 }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgRemoveReason) ValidateBasic() error {
+func (msg *MsgRemoveReason) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
 		return fmt.Errorf("invalid subspace id: %d", msg.SubspaceID)
 	}
@@ -282,18 +282,18 @@ func (msg MsgRemoveReason) ValidateBasic() error {
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgRemoveReason) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
+func (msg *MsgRemoveReason) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required
-func (msg MsgRemoveReason) GetSigners() []sdk.AccAddress {
+func (msg *MsgRemoveReason) GetSigners() []sdk.AccAddress {
 	sender, _ := sdk.AccAddressFromBech32(msg.Signer)
 	return []sdk.AccAddress{sender}
 }
 
 // IsManageSubspaceMsg implements subspacestypes.ManageSubspaceMsg
-func (msg MsgRemoveReason) IsManageSubspaceMsg() {}
+func (msg *MsgRemoveReason) IsManageSubspaceMsg() {}
 
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -305,17 +305,17 @@ func NewMsgUpdateParams(params Params, authority string) *MsgUpdateParams {
 }
 
 // Route implements legacytx.LegacyMsg
-func (msg MsgUpdateParams) Route() string {
+func (msg *MsgUpdateParams) Route() string {
 	return RouterKey
 }
 
 // Type implements legacytx.LegacyMsg
-func (msg MsgUpdateParams) Type() string {
+func (msg *MsgUpdateParams) Type() string {
 	return ActionUpdateParams
 }
 
 // ValidateBasic implements sdk.Msg
-func (msg MsgUpdateParams) ValidateBasic() error {
+func (msg *MsgUpdateParams) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Authority)
 	if err != nil {
 		return err
@@ -325,12 +325,12 @@ func (msg MsgUpdateParams) ValidateBasic() error {
 }
 
 // GetSignBytes implements sdk.Msg
-func (msg MsgUpdateParams) GetSigners() []sdk.AccAddress {
+func (msg *MsgUpdateParams) GetSigners() []sdk.AccAddress {
 	authority := sdk.MustAccAddressFromBech32(msg.Authority)
 	return []sdk.AccAddress{authority}
 }
 
 // GetSigners implements legacytx.LegacyMsg
-func (msg MsgUpdateParams) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
+func (msg *MsgUpdateParams) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
 }

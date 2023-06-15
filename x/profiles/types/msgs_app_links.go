@@ -4,7 +4,7 @@ import (
 	"encoding/hex"
 	"strings"
 
-	errors "cosmossdk.io/errors"
+	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	clienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
@@ -41,7 +41,7 @@ func (MsgLinkApplication) Type() string {
 
 // ValidateBasic performs a basic check of the MsgLinkApplication fields.
 // NOTE: timeout height or timestamp values can be 0 to disable the timeout.
-func (msg MsgLinkApplication) ValidateBasic() error {
+func (msg *MsgLinkApplication) ValidateBasic() error {
 	err := msg.LinkData.Validate()
 	if err != nil {
 		return errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
@@ -70,12 +70,12 @@ func (msg MsgLinkApplication) ValidateBasic() error {
 }
 
 // GetSignBytes implements sdk.Msg.
-func (msg MsgLinkApplication) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
+func (msg *MsgLinkApplication) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners implements sdk.Msg
-func (msg MsgLinkApplication) GetSigners() []sdk.AccAddress {
+func (msg *MsgLinkApplication) GetSigners() []sdk.AccAddress {
 	valAddr, err := sdk.AccAddressFromBech32(msg.Sender)
 	if err != nil {
 		panic(err)
@@ -108,7 +108,7 @@ func (MsgUnlinkApplication) Type() string {
 
 // ValidateBasic performs a basic check of the MsgUnlinkApplication fields.
 // NOTE: timeout height or timestamp values can be 0 to disable the timeout.
-func (msg MsgUnlinkApplication) ValidateBasic() error {
+func (msg *MsgUnlinkApplication) ValidateBasic() error {
 	if len(strings.TrimSpace(msg.Application)) == 0 {
 		return errors.Wrap(sdkerrors.ErrInvalidRequest, "application cannot be empty or blank")
 	}
@@ -127,12 +127,12 @@ func (msg MsgUnlinkApplication) ValidateBasic() error {
 }
 
 // GetSignBytes implements sdk.Msg.
-func (msg MsgUnlinkApplication) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
+func (msg *MsgUnlinkApplication) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners implements sdk.Msg
-func (msg MsgUnlinkApplication) GetSigners() []sdk.AccAddress {
+func (msg *MsgUnlinkApplication) GetSigners() []sdk.AccAddress {
 	valAddr, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
 		panic(err)

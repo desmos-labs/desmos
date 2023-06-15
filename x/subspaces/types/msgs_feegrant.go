@@ -3,13 +3,13 @@ package types
 import (
 	"fmt"
 
-	errors "cosmossdk.io/errors"
+	"cosmossdk.io/errors"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/auth/migrations/legacytx"
 	feegranttypes "github.com/cosmos/cosmos-sdk/x/feegrant"
-	proto "github.com/gogo/protobuf/proto"
+	"github.com/gogo/protobuf/proto"
 )
 
 var (
@@ -52,7 +52,7 @@ func NewMsgGrantAllowance(subspaceID uint64, granter string, grantee Grantee, al
 }
 
 // ValidateBasic implements sdk.Msg
-func (msg MsgGrantAllowance) ValidateBasic() error {
+func (msg *MsgGrantAllowance) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
 		return fmt.Errorf("invalid subspace id: %d", msg.SubspaceID)
 	}
@@ -83,7 +83,7 @@ func (msg MsgGrantAllowance) ValidateBasic() error {
 }
 
 // GetSigners implements sdk.Msg
-func (msg MsgGrantAllowance) GetSigners() []sdk.AccAddress {
+func (msg *MsgGrantAllowance) GetSigners() []sdk.AccAddress {
 	granter, err := sdk.AccAddressFromBech32(msg.Granter)
 	if err != nil {
 		panic(err)
@@ -92,22 +92,22 @@ func (msg MsgGrantAllowance) GetSigners() []sdk.AccAddress {
 }
 
 // Type implements legacytx.LegacyMsg
-func (msg MsgGrantAllowance) Type() string {
+func (msg *MsgGrantAllowance) Type() string {
 	return ActionGrantAllowance
 }
 
 // Route implements legacytx.LegacyMsg
-func (msg MsgGrantAllowance) Route() string {
+func (msg *MsgGrantAllowance) Route() string {
 	return RouterKey
 }
 
 // GetSignBytes implements legacytx.LegacyMsg
-func (msg MsgGrantAllowance) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
+func (msg *MsgGrantAllowance) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
 }
 
 // GetUnpackedAllowance gets the unpacked allowance from the cached value of the allowance
-func (msg MsgGrantAllowance) GetUnpackedAllowance() (feegranttypes.FeeAllowanceI, error) {
+func (msg *MsgGrantAllowance) GetUnpackedAllowance() (feegranttypes.FeeAllowanceI, error) {
 	allowance, ok := msg.Allowance.GetCachedValue().(feegranttypes.FeeAllowanceI)
 	if !ok {
 		return nil, errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid allowance type %T", allowance)
@@ -116,7 +116,7 @@ func (msg MsgGrantAllowance) GetUnpackedAllowance() (feegranttypes.FeeAllowanceI
 }
 
 // UnpackInterfaces implements codectypes.UnpackInterfacesMessage
-func (msg MsgGrantAllowance) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
+func (msg *MsgGrantAllowance) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 	var allowance feegranttypes.FeeAllowanceI
 	err := unpacker.UnpackAny(msg.Allowance, &allowance)
 	if err != nil {
@@ -127,7 +127,7 @@ func (msg MsgGrantAllowance) UnpackInterfaces(unpacker codectypes.AnyUnpacker) e
 }
 
 // IsManageSubspaceMsg implements subspacestypes.ManageSubspaceMsg
-func (msg MsgGrantAllowance) IsManageSubspaceMsg() {}
+func (msg *MsgGrantAllowance) IsManageSubspaceMsg() {}
 
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -146,7 +146,7 @@ func NewMsgRevokeAllowance(subspaceID uint64, granter string, grantee Grantee) *
 }
 
 // ValidateBasic implements sdk.Msg
-func (msg MsgRevokeAllowance) ValidateBasic() error {
+func (msg *MsgRevokeAllowance) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
 		return fmt.Errorf("invalid subspace id: %d", msg.SubspaceID)
 	}
@@ -160,7 +160,7 @@ func (msg MsgRevokeAllowance) ValidateBasic() error {
 }
 
 // GetSigners implements sdk.Msg
-func (msg MsgRevokeAllowance) GetSigners() []sdk.AccAddress {
+func (msg *MsgRevokeAllowance) GetSigners() []sdk.AccAddress {
 	granter, err := sdk.AccAddressFromBech32(msg.Granter)
 	if err != nil {
 		panic(err)
@@ -169,25 +169,25 @@ func (msg MsgRevokeAllowance) GetSigners() []sdk.AccAddress {
 }
 
 // Type implements legacytx.LegacyMsg
-func (msg MsgRevokeAllowance) Type() string {
+func (msg *MsgRevokeAllowance) Type() string {
 	return ActionRevokeAllowance
 }
 
 // Route implements legacytx.LegacyMsg
-func (msg MsgRevokeAllowance) Route() string {
+func (msg *MsgRevokeAllowance) Route() string {
 	return RouterKey
 }
 
 // GetSignBytes implements legacytx.LegacyMsg
-func (msg MsgRevokeAllowance) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
+func (msg *MsgRevokeAllowance) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
 }
 
 // UnpackInterfaces implements codectypes.UnpackInterfacesMessage
-func (msg MsgRevokeAllowance) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
+func (msg *MsgRevokeAllowance) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 	var grantee Grantee
 	return unpacker.UnpackAny(msg.Grantee, &grantee)
 }
 
 // IsManageSubspaceMsg implements subspacestypes.ManageSubspaceMsg
-func (msg MsgRevokeAllowance) IsManageSubspaceMsg() {}
+func (msg *MsgRevokeAllowance) IsManageSubspaceMsg() {}

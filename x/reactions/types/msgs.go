@@ -3,7 +3,7 @@ package types
 import (
 	"strings"
 
-	errors "cosmossdk.io/errors"
+	"cosmossdk.io/errors"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -34,13 +34,13 @@ func NewMsgAddReaction(subspaceID uint64, postID uint64, value ReactionValue, us
 }
 
 // Route implements sdk.Msg
-func (msg MsgAddReaction) Route() string { return RouterKey }
+func (msg *MsgAddReaction) Route() string { return RouterKey }
 
 // Type implements sdk.Msg
-func (msg MsgAddReaction) Type() string { return ActionAddReaction }
+func (msg *MsgAddReaction) Type() string { return ActionAddReaction }
 
 // ValidateBasic implements sdk.Msg
-func (msg MsgAddReaction) ValidateBasic() error {
+func (msg *MsgAddReaction) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
 		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
@@ -67,18 +67,18 @@ func (msg MsgAddReaction) ValidateBasic() error {
 }
 
 // GetSignBytes implements sdk.Msg
-func (msg MsgAddReaction) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
+func (msg *MsgAddReaction) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners implements sdk.Msg
-func (msg MsgAddReaction) GetSigners() []sdk.AccAddress {
+func (msg *MsgAddReaction) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.User)
 	return []sdk.AccAddress{addr}
 }
 
 // UnpackInterfaces implements codectypes.UnpackInterfacesMessage
-func (msg MsgAddReaction) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
+func (msg *MsgAddReaction) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 	var target ReactionValue
 	return unpacker.UnpackAny(msg.Value, &target)
 }
@@ -96,13 +96,13 @@ func NewMsgRemoveReaction(subspaceID uint64, postID uint64, reactionID uint32, u
 }
 
 // Route implements sdk.Msg
-func (msg MsgRemoveReaction) Route() string { return RouterKey }
+func (msg *MsgRemoveReaction) Route() string { return RouterKey }
 
 // Type implements sdk.Msg
-func (msg MsgRemoveReaction) Type() string { return ActionRemoveReaction }
+func (msg *MsgRemoveReaction) Type() string { return ActionRemoveReaction }
 
 // ValidateBasic implements sdk.Msg
-func (msg MsgRemoveReaction) ValidateBasic() error {
+func (msg *MsgRemoveReaction) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
 		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
@@ -124,12 +124,12 @@ func (msg MsgRemoveReaction) ValidateBasic() error {
 }
 
 // GetSignBytes implements sdk.Msg
-func (msg MsgRemoveReaction) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
+func (msg *MsgRemoveReaction) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners implements sdk.Msg
-func (msg MsgRemoveReaction) GetSigners() []sdk.AccAddress {
+func (msg *MsgRemoveReaction) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.User)
 	return []sdk.AccAddress{addr}
 }
@@ -152,13 +152,13 @@ func NewMsgAddRegisteredReaction(
 }
 
 // Route implements sdk.Msg
-func (msg MsgAddRegisteredReaction) Route() string { return RouterKey }
+func (msg *MsgAddRegisteredReaction) Route() string { return RouterKey }
 
 // Type implements sdk.Msg
-func (msg MsgAddRegisteredReaction) Type() string { return ActionAddRegisteredReaction }
+func (msg *MsgAddRegisteredReaction) Type() string { return ActionAddRegisteredReaction }
 
 // ValidateBasic implements sdk.Msg
-func (msg MsgAddRegisteredReaction) ValidateBasic() error {
+func (msg *MsgAddRegisteredReaction) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
 		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
@@ -180,18 +180,18 @@ func (msg MsgAddRegisteredReaction) ValidateBasic() error {
 }
 
 // GetSignBytes implements sdk.Msg
-func (msg MsgAddRegisteredReaction) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
+func (msg *MsgAddRegisteredReaction) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners implements sdk.Msg
-func (msg MsgAddRegisteredReaction) GetSigners() []sdk.AccAddress {
+func (msg *MsgAddRegisteredReaction) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.User)
 	return []sdk.AccAddress{addr}
 }
 
 // IsManageSubspaceMsg implements subspacestypes.ManageSubspaceMsg
-func (msg MsgAddRegisteredReaction) IsManageSubspaceMsg() {}
+func (msg *MsgAddRegisteredReaction) IsManageSubspaceMsg() {}
 
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -213,13 +213,13 @@ func NewMsgEditRegisteredReaction(
 }
 
 // Route implements sdk.Msg
-func (msg MsgEditRegisteredReaction) Route() string { return RouterKey }
+func (msg *MsgEditRegisteredReaction) Route() string { return RouterKey }
 
 // Type implements sdk.Msg
-func (msg MsgEditRegisteredReaction) Type() string { return ActionEditRegisteredReaction }
+func (msg *MsgEditRegisteredReaction) Type() string { return ActionEditRegisteredReaction }
 
 // ValidateBasic implements sdk.Msg
-func (msg MsgEditRegisteredReaction) ValidateBasic() error {
+func (msg *MsgEditRegisteredReaction) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
 		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
@@ -245,18 +245,18 @@ func (msg MsgEditRegisteredReaction) ValidateBasic() error {
 }
 
 // GetSignBytes implements sdk.Msg
-func (msg MsgEditRegisteredReaction) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
+func (msg *MsgEditRegisteredReaction) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners implements sdk.Msg
-func (msg MsgEditRegisteredReaction) GetSigners() []sdk.AccAddress {
+func (msg *MsgEditRegisteredReaction) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.User)
 	return []sdk.AccAddress{addr}
 }
 
 // IsManageSubspaceMsg implements subspacestypes.ManageSubspaceMsg
-func (msg MsgEditRegisteredReaction) IsManageSubspaceMsg() {}
+func (msg *MsgEditRegisteredReaction) IsManageSubspaceMsg() {}
 
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -274,13 +274,13 @@ func NewMsgRemoveRegisteredReaction(
 }
 
 // Route implements sdk.Msg
-func (msg MsgRemoveRegisteredReaction) Route() string { return RouterKey }
+func (msg *MsgRemoveRegisteredReaction) Route() string { return RouterKey }
 
 // Type implements sdk.Msg
-func (msg MsgRemoveRegisteredReaction) Type() string { return ActionRemoveRegisteredReaction }
+func (msg *MsgRemoveRegisteredReaction) Type() string { return ActionRemoveRegisteredReaction }
 
 // ValidateBasic implements sdk.Msg
-func (msg MsgRemoveRegisteredReaction) ValidateBasic() error {
+func (msg *MsgRemoveRegisteredReaction) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
 		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
@@ -298,18 +298,18 @@ func (msg MsgRemoveRegisteredReaction) ValidateBasic() error {
 }
 
 // GetSignBytes implements sdk.Msg
-func (msg MsgRemoveRegisteredReaction) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
+func (msg *MsgRemoveRegisteredReaction) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners implements sdk.Msg
-func (msg MsgRemoveRegisteredReaction) GetSigners() []sdk.AccAddress {
+func (msg *MsgRemoveRegisteredReaction) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.User)
 	return []sdk.AccAddress{addr}
 }
 
 // IsManageSubspaceMsg implements subspacestypes.ManageSubspaceMsg
-func (msg MsgRemoveRegisteredReaction) IsManageSubspaceMsg() {}
+func (msg *MsgRemoveRegisteredReaction) IsManageSubspaceMsg() {}
 
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -329,13 +329,13 @@ func NewMsgSetReactionsParams(
 }
 
 // Route implements sdk.Msg
-func (msg MsgSetReactionsParams) Route() string { return RouterKey }
+func (msg *MsgSetReactionsParams) Route() string { return RouterKey }
 
 // Type implements sdk.Msg
-func (msg MsgSetReactionsParams) Type() string { return ActionSetReactionParams }
+func (msg *MsgSetReactionsParams) Type() string { return ActionSetReactionParams }
 
 // ValidateBasic implements sdk.Msg
-func (msg MsgSetReactionsParams) ValidateBasic() error {
+func (msg *MsgSetReactionsParams) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
 		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
@@ -354,15 +354,15 @@ func (msg MsgSetReactionsParams) ValidateBasic() error {
 }
 
 // GetSignBytes implements sdk.Msg
-func (msg MsgSetReactionsParams) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
+func (msg *MsgSetReactionsParams) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners implements sdk.Msg
-func (msg MsgSetReactionsParams) GetSigners() []sdk.AccAddress {
+func (msg *MsgSetReactionsParams) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.User)
 	return []sdk.AccAddress{addr}
 }
 
 // IsManageSubspaceMsg implements subspacestypes.ManageSubspaceMsg
-func (msg MsgSetReactionsParams) IsManageSubspaceMsg() {}
+func (msg *MsgSetReactionsParams) IsManageSubspaceMsg() {}

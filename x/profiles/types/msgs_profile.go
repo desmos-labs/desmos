@@ -3,7 +3,7 @@ package types
 import (
 	"fmt"
 
-	errors "cosmossdk.io/errors"
+	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -25,13 +25,13 @@ func NewMsgSaveProfile(dTag string, nickname, bio, profilePic, coverPic string, 
 }
 
 // Route should return the name of the module
-func (msg MsgSaveProfile) Route() string { return RouterKey }
+func (msg *MsgSaveProfile) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgSaveProfile) Type() string { return ActionSaveProfile }
+func (msg *MsgSaveProfile) Type() string { return ActionSaveProfile }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgSaveProfile) ValidateBasic() error {
+func (msg *MsgSaveProfile) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return errors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid creator: %s", msg.Creator))
@@ -41,12 +41,12 @@ func (msg MsgSaveProfile) ValidateBasic() error {
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgSaveProfile) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
+func (msg *MsgSaveProfile) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required
-func (msg MsgSaveProfile) GetSigners() []sdk.AccAddress {
+func (msg *MsgSaveProfile) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Creator)
 	return []sdk.AccAddress{addr}
 }
@@ -61,13 +61,13 @@ func NewMsgDeleteProfile(creator string) *MsgDeleteProfile {
 }
 
 // Route should return the name of the module
-func (msg MsgDeleteProfile) Route() string { return RouterKey }
+func (msg *MsgDeleteProfile) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgDeleteProfile) Type() string { return ActionDeleteProfile }
+func (msg *MsgDeleteProfile) Type() string { return ActionDeleteProfile }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgDeleteProfile) ValidateBasic() error {
+func (msg *MsgDeleteProfile) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return errors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid creator: %s", msg.Creator))
@@ -77,12 +77,12 @@ func (msg MsgDeleteProfile) ValidateBasic() error {
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgDeleteProfile) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
+func (msg *MsgDeleteProfile) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required
-func (msg MsgDeleteProfile) GetSigners() []sdk.AccAddress {
+func (msg *MsgDeleteProfile) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Creator)
 	return []sdk.AccAddress{addr}
 }

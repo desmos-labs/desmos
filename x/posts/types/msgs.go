@@ -7,7 +7,7 @@ import (
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/migrations/legacytx"
 
-	errors "cosmossdk.io/errors"
+	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -60,13 +60,13 @@ func NewMsgCreatePost(
 }
 
 // Route implements sdk.Msg
-func (msg MsgCreatePost) Route() string { return RouterKey }
+func (msg *MsgCreatePost) Route() string { return RouterKey }
 
 // Type implements sdk.Msg
-func (msg MsgCreatePost) Type() string { return ActionCreatePost }
+func (msg *MsgCreatePost) Type() string { return ActionCreatePost }
 
 // ValidateBasic implements sdk.Msg
-func (msg MsgCreatePost) ValidateBasic() error {
+func (msg *MsgCreatePost) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
 		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
@@ -111,12 +111,12 @@ func (msg MsgCreatePost) ValidateBasic() error {
 }
 
 // GetSignBytes implements sdk.Msg
-func (msg MsgCreatePost) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
+func (msg *MsgCreatePost) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
 }
 
 // GetSigners implements sdk.Msg
-func (msg MsgCreatePost) GetSigners() []sdk.AccAddress {
+func (msg *MsgCreatePost) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Author)
 	return []sdk.AccAddress{addr}
 }
@@ -156,13 +156,13 @@ func NewMsgEditPost(
 }
 
 // Route implements sdk.Msg
-func (msg MsgEditPost) Route() string { return RouterKey }
+func (msg *MsgEditPost) Route() string { return RouterKey }
 
 // Type implements sdk.Msg
-func (msg MsgEditPost) Type() string { return ActionEditPost }
+func (msg *MsgEditPost) Type() string { return ActionEditPost }
 
 // ValidateBasic implements sdk.Msg
-func (msg MsgEditPost) ValidateBasic() error {
+func (msg *MsgEditPost) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
 		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
@@ -193,12 +193,12 @@ func (msg MsgEditPost) ValidateBasic() error {
 }
 
 // GetSignBytes implements sdk.Msg
-func (msg MsgEditPost) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
+func (msg *MsgEditPost) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
 }
 
 // GetSigners implements sdk.Msg
-func (msg MsgEditPost) GetSigners() []sdk.AccAddress {
+func (msg *MsgEditPost) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Editor)
 	return []sdk.AccAddress{addr}
 }
@@ -226,13 +226,13 @@ func NewMsgAddPostAttachment(
 }
 
 // Route implements sdk.Msg
-func (msg MsgAddPostAttachment) Route() string { return RouterKey }
+func (msg *MsgAddPostAttachment) Route() string { return RouterKey }
 
 // Type implements sdk.Msg
-func (msg MsgAddPostAttachment) Type() string { return ActionAddPostAttachment }
+func (msg *MsgAddPostAttachment) Type() string { return ActionAddPostAttachment }
 
 // ValidateBasic implements sdk.Msg
-func (msg MsgAddPostAttachment) ValidateBasic() error {
+func (msg *MsgAddPostAttachment) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
 		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
@@ -254,12 +254,12 @@ func (msg MsgAddPostAttachment) ValidateBasic() error {
 }
 
 // GetSignBytes implements sdk.Msg
-func (msg MsgAddPostAttachment) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
+func (msg *MsgAddPostAttachment) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
 }
 
 // GetSigners implements sdk.Msg
-func (msg MsgAddPostAttachment) GetSigners() []sdk.AccAddress {
+func (msg *MsgAddPostAttachment) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Editor)
 	return []sdk.AccAddress{addr}
 }
@@ -283,13 +283,13 @@ func NewMsgRemovePostAttachment(subspaceID uint64, postID uint64, attachmentID u
 }
 
 // Route implements sdk.Msg
-func (msg MsgRemovePostAttachment) Route() string { return RouterKey }
+func (msg *MsgRemovePostAttachment) Route() string { return RouterKey }
 
 // Type implements sdk.Msg
-func (msg MsgRemovePostAttachment) Type() string { return ActionRemovePostAttachment }
+func (msg *MsgRemovePostAttachment) Type() string { return ActionRemovePostAttachment }
 
 // ValidateBasic implements sdk.Msg
-func (msg MsgRemovePostAttachment) ValidateBasic() error {
+func (msg *MsgRemovePostAttachment) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
 		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
@@ -311,12 +311,12 @@ func (msg MsgRemovePostAttachment) ValidateBasic() error {
 }
 
 // GetSignBytes implements sdk.Msg
-func (msg MsgRemovePostAttachment) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
+func (msg *MsgRemovePostAttachment) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
 }
 
 // GetSigners implements sdk.Msg
-func (msg MsgRemovePostAttachment) GetSigners() []sdk.AccAddress {
+func (msg *MsgRemovePostAttachment) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Editor)
 	return []sdk.AccAddress{addr}
 }
@@ -333,13 +333,13 @@ func NewMsgDeletePost(subspaceID uint64, postID uint64, signer string) *MsgDelet
 }
 
 // Route implements sdk.Msg
-func (msg MsgDeletePost) Route() string { return RouterKey }
+func (msg *MsgDeletePost) Route() string { return RouterKey }
 
 // Type implements sdk.Msg
-func (msg MsgDeletePost) Type() string { return ActionDeletePost }
+func (msg *MsgDeletePost) Type() string { return ActionDeletePost }
 
 // ValidateBasic implements sdk.Msg
-func (msg MsgDeletePost) ValidateBasic() error {
+func (msg *MsgDeletePost) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
 		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
@@ -357,12 +357,12 @@ func (msg MsgDeletePost) ValidateBasic() error {
 }
 
 // GetSignBytes implements sdk.Msg
-func (msg MsgDeletePost) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
+func (msg *MsgDeletePost) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
 }
 
 // GetSigners implements sdk.Msg
-func (msg MsgDeletePost) GetSigners() []sdk.AccAddress {
+func (msg *MsgDeletePost) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Signer)
 	return []sdk.AccAddress{addr}
 }
@@ -387,13 +387,13 @@ func NewMsgAnswerPoll(
 }
 
 // Route implements sdk.Msg
-func (msg MsgAnswerPoll) Route() string { return RouterKey }
+func (msg *MsgAnswerPoll) Route() string { return RouterKey }
 
 // Type implements sdk.Msg
-func (msg MsgAnswerPoll) Type() string { return ActionAnswerPoll }
+func (msg *MsgAnswerPoll) Type() string { return ActionAnswerPoll }
 
 // ValidateBasic implements sdk.Msg
-func (msg MsgAnswerPoll) ValidateBasic() error {
+func (msg *MsgAnswerPoll) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
 		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
@@ -428,12 +428,12 @@ func (msg MsgAnswerPoll) ValidateBasic() error {
 }
 
 // GetSignBytes implements sdk.Msg
-func (msg MsgAnswerPoll) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
+func (msg *MsgAnswerPoll) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
 }
 
 // GetSigners implements sdk.Msg
-func (msg MsgAnswerPoll) GetSigners() []sdk.AccAddress {
+func (msg *MsgAnswerPoll) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Signer)
 	return []sdk.AccAddress{addr}
 }
@@ -463,13 +463,13 @@ func NewMsgMovePost(
 }
 
 // Route implements sdk.Msg
-func (msg MsgMovePost) Route() string { return RouterKey }
+func (msg *MsgMovePost) Route() string { return RouterKey }
 
 // Type implements sdk.Msg
-func (msg MsgMovePost) Type() string { return ActionMovePost }
+func (msg *MsgMovePost) Type() string { return ActionMovePost }
 
 // ValidateBasic implements sdk.Msg
-func (msg MsgMovePost) ValidateBasic() error {
+func (msg *MsgMovePost) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
 		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
@@ -495,12 +495,12 @@ func (msg MsgMovePost) ValidateBasic() error {
 }
 
 // GetSignBytes implements sdk.Msg
-func (msg MsgMovePost) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
+func (msg *MsgMovePost) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
 }
 
 // GetSigners implements sdk.Msg
-func (msg MsgMovePost) GetSigners() []sdk.AccAddress {
+func (msg *MsgMovePost) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Owner)
 	return []sdk.AccAddress{addr}
 }
@@ -520,17 +520,17 @@ func NewMsgUpdateParams(params Params, authority string) *MsgUpdateParams {
 }
 
 // Route implements legacytx.LegacyMsg
-func (msg MsgUpdateParams) Route() string {
+func (msg *MsgUpdateParams) Route() string {
 	return RouterKey
 }
 
 // Type implements legacytx.LegacyMsg
-func (msg MsgUpdateParams) Type() string {
+func (msg *MsgUpdateParams) Type() string {
 	return ActionUpdateParams
 }
 
 // ValidateBasic implements sdk.Msg
-func (msg MsgUpdateParams) ValidateBasic() error {
+func (msg *MsgUpdateParams) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Authority)
 	if err != nil {
 		return err
@@ -540,12 +540,12 @@ func (msg MsgUpdateParams) ValidateBasic() error {
 }
 
 // GetSignBytes implements sdk.Msg
-func (msg MsgUpdateParams) GetSigners() []sdk.AccAddress {
+func (msg *MsgUpdateParams) GetSigners() []sdk.AccAddress {
 	authority := sdk.MustAccAddressFromBech32(msg.Authority)
 	return []sdk.AccAddress{authority}
 }
 
 // GetSigners implements legacytx.LegacyMsg
-func (msg MsgUpdateParams) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
+func (msg *MsgUpdateParams) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
 }

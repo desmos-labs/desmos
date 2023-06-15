@@ -3,6 +3,7 @@ package ante
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
+
 	antetypes "github.com/desmos-labs/desmos/v5/x/subspaces/ante/types"
 
 	"github.com/desmos-labs/desmos/v5/x/subspaces/types"

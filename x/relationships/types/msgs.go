@@ -1,7 +1,7 @@
 package types
 
 import (
-	errors "cosmossdk.io/errors"
+	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -16,15 +16,15 @@ func NewMsgCreateRelationship(signer, counterparty string, subspaceID uint64) *M
 }
 
 // Route should return the name of the module
-func (msg MsgCreateRelationship) Route() string { return RouterKey }
+func (msg *MsgCreateRelationship) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgCreateRelationship) Type() string {
+func (msg *MsgCreateRelationship) Type() string {
 	return ActionCreateRelationship
 }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgCreateRelationship) ValidateBasic() error {
+func (msg *MsgCreateRelationship) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
 		return errors.Wrap(sdkerrors.ErrInvalidAddress, "invalid signer address")
@@ -47,12 +47,12 @@ func (msg MsgCreateRelationship) ValidateBasic() error {
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgCreateRelationship) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
+func (msg *MsgCreateRelationship) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required
-func (msg MsgCreateRelationship) GetSigners() []sdk.AccAddress {
+func (msg *MsgCreateRelationship) GetSigners() []sdk.AccAddress {
 	sender, _ := sdk.AccAddressFromBech32(msg.Signer)
 	return []sdk.AccAddress{sender}
 }
@@ -69,15 +69,15 @@ func NewMsgDeleteRelationship(signer, counterparty string, subspaceID uint64) *M
 }
 
 // Route should return the name of the module
-func (msg MsgDeleteRelationship) Route() string { return RouterKey }
+func (msg *MsgDeleteRelationship) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgDeleteRelationship) Type() string {
+func (msg *MsgDeleteRelationship) Type() string {
 	return ActionDeleteRelationship
 }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgDeleteRelationship) ValidateBasic() error {
+func (msg *MsgDeleteRelationship) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
 		return errors.Wrap(sdkerrors.ErrInvalidAddress, "invalid user address")
@@ -100,12 +100,12 @@ func (msg MsgDeleteRelationship) ValidateBasic() error {
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgDeleteRelationship) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
+func (msg *MsgDeleteRelationship) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required
-func (msg MsgDeleteRelationship) GetSigners() []sdk.AccAddress {
+func (msg *MsgDeleteRelationship) GetSigners() []sdk.AccAddress {
 	sender, _ := sdk.AccAddressFromBech32(msg.Signer)
 	return []sdk.AccAddress{sender}
 }
@@ -123,15 +123,15 @@ func NewMsgBlockUser(blocker, blocked, reason string, subspaceID uint64) *MsgBlo
 }
 
 // Route should return the name of the module
-func (msg MsgBlockUser) Route() string { return RouterKey }
+func (msg *MsgBlockUser) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgBlockUser) Type() string {
+func (msg *MsgBlockUser) Type() string {
 	return ActionBlockUser
 }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgBlockUser) ValidateBasic() error {
+func (msg *MsgBlockUser) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Blocker)
 	if err != nil {
 		return errors.Wrap(sdkerrors.ErrInvalidAddress, "invalid blocker address")
@@ -150,12 +150,12 @@ func (msg MsgBlockUser) ValidateBasic() error {
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgBlockUser) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
+func (msg *MsgBlockUser) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required
-func (msg MsgBlockUser) GetSigners() []sdk.AccAddress {
+func (msg *MsgBlockUser) GetSigners() []sdk.AccAddress {
 	blocker, _ := sdk.AccAddressFromBech32(msg.Blocker)
 	return []sdk.AccAddress{blocker}
 }
@@ -172,15 +172,15 @@ func NewMsgUnblockUser(blocker, blocked string, subspaceID uint64) *MsgUnblockUs
 }
 
 // Route should return the name of the module
-func (msg MsgUnblockUser) Route() string { return RouterKey }
+func (msg *MsgUnblockUser) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgUnblockUser) Type() string {
+func (msg *MsgUnblockUser) Type() string {
 	return ActionUnblockUser
 }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgUnblockUser) ValidateBasic() error {
+func (msg *MsgUnblockUser) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Blocker)
 	if err != nil {
 		return errors.Wrap(sdkerrors.ErrInvalidAddress, "invalid blocker")
@@ -199,12 +199,12 @@ func (msg MsgUnblockUser) ValidateBasic() error {
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgUnblockUser) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
+func (msg *MsgUnblockUser) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required
-func (msg MsgUnblockUser) GetSigners() []sdk.AccAddress {
+func (msg *MsgUnblockUser) GetSigners() []sdk.AccAddress {
 	blocker, _ := sdk.AccAddressFromBech32(msg.Blocker)
 	return []sdk.AccAddress{blocker}
 }

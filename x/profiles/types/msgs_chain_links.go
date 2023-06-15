@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	errors "cosmossdk.io/errors"
+	"cosmossdk.io/errors"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -30,15 +30,15 @@ func NewMsgLinkChainAccount(
 }
 
 // Route should return the name of the module
-func (msg MsgLinkChainAccount) Route() string { return RouterKey }
+func (msg *MsgLinkChainAccount) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgLinkChainAccount) Type() string {
+func (msg *MsgLinkChainAccount) Type() string {
 	return ActionLinkChainAccount
 }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgLinkChainAccount) ValidateBasic() error {
+func (msg *MsgLinkChainAccount) ValidateBasic() error {
 	if msg.ChainAddress == nil {
 		return fmt.Errorf("source address cannot be nil")
 	}
@@ -56,8 +56,8 @@ func (msg MsgLinkChainAccount) ValidateBasic() error {
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgLinkChainAccount) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
+func (msg *MsgLinkChainAccount) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
 }
 
 // UnpackInterfaces implements codectypes.UnpackInterfacesMessage
@@ -74,7 +74,7 @@ func (msg *MsgLinkChainAccount) UnpackInterfaces(unpacker codectypes.AnyUnpacker
 }
 
 // GetSigners defines whose signature is required
-func (msg MsgLinkChainAccount) GetSigners() []sdk.AccAddress {
+func (msg *MsgLinkChainAccount) GetSigners() []sdk.AccAddress {
 	signer, _ := sdk.AccAddressFromBech32(msg.Signer)
 	return []sdk.AccAddress{signer}
 }
@@ -90,15 +90,15 @@ func NewMsgUnlinkChainAccount(owner, chainName, target string) *MsgUnlinkChainAc
 }
 
 // Route should return the name of the module
-func (msg MsgUnlinkChainAccount) Route() string { return RouterKey }
+func (msg *MsgUnlinkChainAccount) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgUnlinkChainAccount) Type() string {
+func (msg *MsgUnlinkChainAccount) Type() string {
 	return ActionUnlinkChainAccount
 }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgUnlinkChainAccount) ValidateBasic() error {
+func (msg *MsgUnlinkChainAccount) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Owner)
 	if err != nil {
 		return errors.Wrap(sdkerrors.ErrInvalidAddress, "invalid owner")
@@ -115,12 +115,12 @@ func (msg MsgUnlinkChainAccount) ValidateBasic() error {
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgUnlinkChainAccount) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
+func (msg *MsgUnlinkChainAccount) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required
-func (msg MsgUnlinkChainAccount) GetSigners() []sdk.AccAddress {
+func (msg *MsgUnlinkChainAccount) GetSigners() []sdk.AccAddress {
 	signer, _ := sdk.AccAddressFromBech32(msg.Owner)
 	return []sdk.AccAddress{signer}
 }
@@ -136,15 +136,15 @@ func NewMsgSetDefaultExternalAddress(chainName, target, signer string) *MsgSetDe
 }
 
 // Route should return the name of the module
-func (msg MsgSetDefaultExternalAddress) Route() string { return RouterKey }
+func (msg *MsgSetDefaultExternalAddress) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgSetDefaultExternalAddress) Type() string {
+func (msg *MsgSetDefaultExternalAddress) Type() string {
 	return ActionSetDefaultExternalAddress
 }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgSetDefaultExternalAddress) ValidateBasic() error {
+func (msg *MsgSetDefaultExternalAddress) ValidateBasic() error {
 	if strings.TrimSpace(msg.ChainName) == "" {
 		return errors.Wrap(sdkerrors.ErrInvalidRequest, "chain name cannot be empty or blank")
 	}
@@ -162,12 +162,12 @@ func (msg MsgSetDefaultExternalAddress) ValidateBasic() error {
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgSetDefaultExternalAddress) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
+func (msg *MsgSetDefaultExternalAddress) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required
-func (msg MsgSetDefaultExternalAddress) GetSigners() []sdk.AccAddress {
+func (msg *MsgSetDefaultExternalAddress) GetSigners() []sdk.AccAddress {
 	signer, _ := sdk.AccAddressFromBech32(msg.Signer)
 	return []sdk.AccAddress{signer}
 }
