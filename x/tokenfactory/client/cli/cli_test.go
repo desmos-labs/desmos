@@ -214,6 +214,7 @@ func (s *IntegrationTestSuite) TestCmdCreateDenom() {
 			name: "invalid subspace id returns error",
 			args: []string{
 				"X", "utrytoken",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
 			shouldErr: true,
 		},
@@ -221,6 +222,7 @@ func (s *IntegrationTestSuite) TestCmdCreateDenom() {
 			name: "invalid subdenom returns no error",
 			args: []string{
 				"1", "",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
 			shouldErr: true,
 		},
@@ -267,6 +269,7 @@ func (s *IntegrationTestSuite) TestCmdMint() {
 			name: "invalid subspace id returns error",
 			args: []string{
 				"X",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
 			shouldErr: true,
 		},
@@ -274,6 +277,7 @@ func (s *IntegrationTestSuite) TestCmdMint() {
 			name: "invalid amount returns no error",
 			args: []string{
 				"1", "X",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
 			shouldErr: true,
 		},
@@ -281,6 +285,7 @@ func (s *IntegrationTestSuite) TestCmdMint() {
 			name: "invalid sender returns no error",
 			args: []string{
 				"1", "10factory/cosmos1cyjzgj9j7d2gdqk78pa0fgvfnlzradat97aek9/uminttoken",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
 			shouldErr: true,
 		},
@@ -327,6 +332,7 @@ func (s *IntegrationTestSuite) TestCmdBurn() {
 			name: "invalid subspace id returns error",
 			args: []string{
 				"X",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
 			shouldErr: true,
 		},
@@ -334,6 +340,7 @@ func (s *IntegrationTestSuite) TestCmdBurn() {
 			name: "invalid amount returns no error",
 			args: []string{
 				"1", "X",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
 			shouldErr: true,
 		},
@@ -341,6 +348,7 @@ func (s *IntegrationTestSuite) TestCmdBurn() {
 			name: "invalid sender returns no error",
 			args: []string{
 				"1", "10factory/cosmos1cyjzgj9j7d2gdqk78pa0fgvfnlzradat97aek9/uminttoken",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
 			shouldErr: true,
 		},
@@ -388,6 +396,7 @@ func (s *IntegrationTestSuite) TestCmdSetDenomMetadata() {
 			name: "invalid subspace id returns error",
 			args: []string{
 				"X",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
 			shouldErr: true,
 		},
@@ -395,6 +404,7 @@ func (s *IntegrationTestSuite) TestCmdSetDenomMetadata() {
 			name: "invalid path returns error",
 			args: []string{
 				"1", "X",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
 			shouldErr: true,
 		},
@@ -406,6 +416,7 @@ func (s *IntegrationTestSuite) TestCmdSetDenomMetadata() {
 			},
 			args: []string{
 				"1", path.Join(os.TempDir(), "metadata.json"),
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
 			shouldErr: true,
 		},
