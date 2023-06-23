@@ -1,0 +1,6 @@
+type: deps
+module: none
+pull_request: 1180
+description: Updated `ibc-go` to `v7.2.0`
+backward_compatible: false
+date: 2023-06-23T13:49:09.374287582Z
