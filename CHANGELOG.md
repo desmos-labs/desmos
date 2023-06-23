@@ -2,6 +2,14 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
+## Version 5.1.0
+### Dependencies
+- Updated `cosmos-sdk` to `v0.47.3`
+
+### Features
+#### Others
+- ([\#1163](https://github.com/desmos-labs/desmos/pull/1163)) Changed `params.MakeEncodingConfig` return type to `simappparams.EncodingConfig`
+
 ## Version 5.0.1
 ### Dependencies
 - Updated `ibc-go` to `v7.0.1`
