@@ -3,33 +3,21 @@ package keeper_test
 import (
 	"time"
 
-	poststypes "github.com/desmos-labs/desmos/v5/x/posts/types"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/v5/x/reports/types"
-	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 )
 
 func (suite *KeeperTestSuite) TestKeeper_AfterSubspaceSaved() {
 	testCases := []struct {
-		name     string
-		store    func(ctx sdk.Context)
-		subspace subspacestypes.Subspace
-		check    func(ctx sdk.Context)
+		name       string
+		store      func(ctx sdk.Context)
+		subspaceID uint64
+		check      func(ctx sdk.Context)
 	}{
 		{
-			name: "saving a subspaces adds the correct keys",
-			subspace: subspacestypes.NewSubspace(
-				1,
-				"Test subspace",
-				"This is a test subspace",
-				"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-				"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-				"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-				time.Date(2020, 1, 2, 12, 00, 00, 000, time.UTC),
-				nil,
-			),
+			name:       "saving a subspaces adds the correct keys",
+			subspaceID: 1,
 			check: func(ctx sdk.Context) {
 				storedReasonID, err := suite.k.GetNextReasonID(ctx, 1)
 				suite.Require().NoError(err)
@@ -43,29 +31,10 @@ func (suite *KeeperTestSuite) TestKeeper_AfterSubspaceSaved() {
 		{
 			name: "reason and report ids are not overwritten",
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-					"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-					"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-					time.Date(2020, 1, 2, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
 				suite.k.SetNextReportID(ctx, 1, 2)
 				suite.k.SetNextReasonID(ctx, 1, 2)
 			},
-			subspace: subspacestypes.NewSubspace(
-				1,
-				"Test subspace",
-				"This is a test subspace",
-				"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-				"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-				"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-				time.Date(2020, 1, 2, 12, 00, 00, 000, time.UTC),
-				nil,
-			),
+			subspaceID: 1,
 			check: func(ctx sdk.Context) {
 				storedReasonID, err := suite.k.GetNextReasonID(ctx, 1)
 				suite.Require().NoError(err)
@@ -78,9 +47,6 @@ func (suite *KeeperTestSuite) TestKeeper_AfterSubspaceSaved() {
 		},
 	}
 
-	// Set the hooks
-	suite.sk.SetHooks(suite.k.Hooks())
-
 	for _, tc := range testCases {
 		tc := tc
 		suite.Run(tc.name, func() {
@@ -89,7 +55,7 @@ func (suite *KeeperTestSuite) TestKeeper_AfterSubspaceSaved() {
 				tc.store(ctx)
 			}
 
-			suite.sk.SaveSubspace(ctx, tc.subspace)
+			suite.k.Hooks().AfterSubspaceSaved(ctx, tc.subspaceID)
 			if tc.check != nil {
 				tc.check(ctx)
 			}
@@ -141,9 +107,6 @@ func (suite *KeeperTestSuite) TestKeeper_AfterSubspaceDeleted() {
 		},
 	}
 
-	// Set the hooks
-	suite.sk.SetHooks(suite.k.Hooks())
-
 	for _, tc := range testCases {
 		tc := tc
 		suite.Run(tc.name, func() {
@@ -152,7 +115,7 @@ func (suite *KeeperTestSuite) TestKeeper_AfterSubspaceDeleted() {
 				tc.store(ctx)
 			}
 
-			suite.sk.DeleteSubspace(ctx, tc.subspaceID)
+			suite.k.Hooks().AfterSubspaceDeleted(ctx, tc.subspaceID)
 			if tc.check != nil {
 				tc.check(ctx)
 			}
@@ -171,23 +134,6 @@ func (suite *KeeperTestSuite) TestKeeper_AfterPostDeleted() {
 		{
 			name: "deleting a post removes all the associated reports",
 			store: func(ctx sdk.Context) {
-				suite.pk.SavePost(ctx, poststypes.NewPost(
-					1,
-					0,
-					1,
-					"External ID",
-					"This is a text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					1,
-					nil,
-					nil,
-					nil,
-					poststypes.REPLY_SETTING_EVERYONE,
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-				))
-
 				suite.k.SaveReport(ctx, types.NewReport(
 					1,
 					1,
@@ -209,9 +155,6 @@ func (suite *KeeperTestSuite) TestKeeper_AfterPostDeleted() {
 		},
 	}
 
-	// Set the hooks
-	suite.pk.SetHooks(suite.k.Hooks())
-
 	for _, tc := range testCases {
 		tc := tc
 		suite.Run(tc.name, func() {
@@ -220,7 +163,7 @@ func (suite *KeeperTestSuite) TestKeeper_AfterPostDeleted() {
 				tc.store(ctx)
 			}
 
-			suite.pk.DeletePost(ctx, tc.subspaceID, tc.postID)
+			suite.k.Hooks().AfterPostDeleted(ctx, tc.subspaceID, tc.postID)
 			if tc.check != nil {
 				tc.check(ctx)
 			}

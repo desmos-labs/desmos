@@ -3,7 +3,7 @@ package keeper_test
 import (
 	"time"
 
-	"github.com/desmos-labs/desmos/v5/testutil/profilestesting"
+	"github.com/golang/mock/gomock"
 
 	poststypes "github.com/desmos-labs/desmos/v5/x/posts/types"
 
@@ -18,6 +18,7 @@ import (
 func (suite *KeeperTestSuite) TestMsgServer_CreateReport() {
 	testCases := []struct {
 		name        string
+		setup       func()
 		setupCtx    func(ctx sdk.Context) sdk.Context
 		store       func(ctx sdk.Context)
 		msg         *types.MsgCreateReport
@@ -28,6 +29,11 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateReport() {
 	}{
 		{
 			name: "user without profile returns error",
+			setup: func() {
+				suite.ak.EXPECT().
+					HasProfile(gomock.Any(), "cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh").
+					Return(false)
+			},
 			msg: types.NewMsgCreateReport(
 				1,
 				[]uint32{1},
@@ -39,9 +45,14 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateReport() {
 		},
 		{
 			name: "non existing subspace returns error",
-			store: func(ctx sdk.Context) {
-				err := suite.ak.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh"))
-				suite.Require().NoError(err)
+			setup: func() {
+				suite.ak.EXPECT().
+					HasProfile(gomock.Any(), "cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh").
+					Return(true)
+
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(false)
 			},
 			msg: types.NewMsgCreateReport(
 				1,
@@ -54,20 +65,16 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateReport() {
 		},
 		{
 			name: "non existing reason returns error",
-			store: func(ctx sdk.Context) {
-				err := suite.ak.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh"))
-				suite.Require().NoError(err)
+			setup: func() {
+				suite.ak.EXPECT().
+					HasProfile(gomock.Any(), "cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh").
+					Return(true)
 
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+			},
+			store: func(ctx sdk.Context) {
 				suite.k.SetNextReportID(ctx, 1, 1)
 			},
 			msg: types.NewMsgCreateReport(
@@ -81,20 +88,26 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateReport() {
 		},
 		{
 			name: "no permission returns error",
-			store: func(ctx sdk.Context) {
-				err := suite.ak.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh"))
-				suite.Require().NoError(err)
+			setup: func() {
+				suite.ak.EXPECT().
+					HasProfile(gomock.Any(), "cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh").
+					Return(true)
 
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+
+				suite.sk.EXPECT().
+					HasPermission(
+						gomock.Any(),
+						uint64(1),
+						uint32(subspacestypes.RootSectionID),
+						"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
+						types.PermissionReportContent,
+					).
+					Return(false)
+			},
+			store: func(ctx sdk.Context) {
 				suite.k.SetNextReportID(ctx, 1, 1)
 
 				suite.k.SaveReason(ctx, types.NewReason(
@@ -115,31 +128,30 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateReport() {
 		},
 		{
 			name: "invalid report data returns error",
+			setup: func() {
+				suite.ak.EXPECT().
+					HasProfile(gomock.Any(), "cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh").
+					Return(true)
+
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+
+				suite.sk.EXPECT().
+					HasPermission(
+						gomock.Any(),
+						uint64(1),
+						uint32(subspacestypes.RootSectionID),
+						"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
+						types.PermissionReportContent,
+					).
+					Return(true)
+			},
 			setupCtx: func(ctx sdk.Context) sdk.Context {
 				return ctx.WithBlockTime(time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC))
 			},
 			store: func(ctx sdk.Context) {
-				err := suite.ak.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh"))
-				suite.Require().NoError(err)
-
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
 				suite.k.SetNextReportID(ctx, 1, 1)
-
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
-					subspacestypes.NewPermissions(types.PermissionReportContent),
-				)
 
 				suite.k.SaveReason(ctx, types.NewReason(
 					1,
@@ -159,31 +171,30 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateReport() {
 		},
 		{
 			name: "duplicated report returns error",
+			setup: func() {
+				suite.ak.EXPECT().
+					HasProfile(gomock.Any(), "cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh").
+					Return(true)
+
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+
+				suite.sk.EXPECT().
+					HasPermission(
+						gomock.Any(),
+						uint64(1),
+						uint32(subspacestypes.RootSectionID),
+						"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
+						types.PermissionReportContent,
+					).
+					Return(true)
+			},
 			setupCtx: func(ctx sdk.Context) sdk.Context {
 				return ctx.WithBlockTime(time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC))
 			},
 			store: func(ctx sdk.Context) {
-				err := suite.ak.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh"))
-				suite.Require().NoError(err)
-
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
 				suite.k.SetNextReportID(ctx, 1, 1)
-
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
-					subspacestypes.NewPermissions(types.PermissionReportContent),
-				)
 
 				suite.k.SaveReason(ctx, types.NewReason(
 					1,
@@ -213,31 +224,40 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateReport() {
 		},
 		{
 			name: "valid request works properly - user target",
+			setup: func() {
+				suite.ak.EXPECT().
+					HasProfile(gomock.Any(), "cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh").
+					Return(true)
+
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+
+				suite.sk.EXPECT().
+					HasPermission(
+						gomock.Any(),
+						uint64(1),
+						uint32(subspacestypes.RootSectionID),
+						"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
+						types.PermissionReportContent,
+					).
+					Return(true)
+
+				suite.rk.
+					EXPECT().
+					HasUserBlocked(
+						gomock.Any(),
+						"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
+						"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
+						uint64(1),
+					).
+					Return(false)
+			},
 			setupCtx: func(ctx sdk.Context) sdk.Context {
 				return ctx.WithBlockTime(time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC))
 			},
 			store: func(ctx sdk.Context) {
-				err := suite.ak.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh"))
-				suite.Require().NoError(err)
-
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
 				suite.k.SetNextReportID(ctx, 1, 1)
-
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
-					subspacestypes.NewPermissions(types.PermissionReportContent),
-				)
 
 				suite.k.SaveReason(ctx, types.NewReason(
 					1,
@@ -287,54 +307,65 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateReport() {
 		},
 		{
 			name: "valid request works properly - post target",
+			setup: func() {
+				suite.ak.EXPECT().
+					HasProfile(gomock.Any(), "cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh").
+					Return(true)
+
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+
+				suite.sk.EXPECT().
+					HasPermission(
+						gomock.Any(),
+						uint64(1),
+						uint32(subspacestypes.RootSectionID),
+						"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
+						types.PermissionReportContent,
+					).
+					Return(true)
+
+				suite.pk.EXPECT().
+					GetPost(gomock.Any(), uint64(1), uint64(1)).
+					Return(poststypes.NewPost(
+						1,
+						0,
+						1,
+						"External ID",
+						"This is a text",
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+						1,
+						nil,
+						nil,
+						nil,
+						poststypes.REPLY_SETTING_EVERYONE,
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						nil,
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					), true)
+
+				suite.rk.
+					EXPECT().
+					HasUserBlocked(
+						gomock.Any(),
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+						"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
+						uint64(1),
+					).
+					Return(false)
+			},
 			setupCtx: func(ctx sdk.Context) sdk.Context {
 				return ctx.WithBlockTime(time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC))
 			},
 			store: func(ctx sdk.Context) {
-				err := suite.ak.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh"))
-				suite.Require().NoError(err)
-
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
 				suite.k.SetNextReportID(ctx, 1, 1)
-
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
-					subspacestypes.NewPermissions(types.PermissionReportContent),
-				)
 
 				suite.k.SaveReason(ctx, types.NewReason(
 					1,
 					1,
 					"Spam",
 					"This content is spam, or the user is spamming",
-				))
-
-				suite.pk.SavePost(ctx, poststypes.NewPost(
-					1,
-					0,
-					1,
-					"External ID",
-					"This is a text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					1,
-					nil,
-					nil,
-					nil,
-					poststypes.REPLY_SETTING_EVERYONE,
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 				))
 			},
 			msg: types.NewMsgCreateReport(
@@ -382,6 +413,9 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateReport() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup()
+			}
 			if tc.setupCtx != nil {
 				ctx = tc.setupCtx(ctx)
 			}
@@ -409,6 +443,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateReport() {
 func (suite *KeeperTestSuite) TestMsgServer_DeleteReport() {
 	testCases := []struct {
 		name      string
+		setup     func()
 		store     func(ctx sdk.Context)
 		msg       *types.MsgDeleteReport
 		shouldErr bool
@@ -416,26 +451,10 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteReport() {
 	}{
 		{
 			name: "non existing subspace returns error",
-			msg: types.NewMsgDeleteReport(
-				1,
-				1,
-				"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
-			),
-			shouldErr: true,
-		},
-		{
-			name: "non existing report returns error",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(false)
 			},
 			msg: types.NewMsgDeleteReport(
 				1,
@@ -445,28 +464,11 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteReport() {
 			shouldErr: true,
 		},
 		{
-			name: "no permission returns error",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
-
-				suite.k.SaveReport(ctx, types.NewReport(
-					1,
-					1,
-					[]uint32{1},
-					"This content is spam",
-					types.NewUserTarget("cosmos1pjffdtweghpyxru9alssyqtdkq8mn6sepgstgm"),
-					"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
+			name: "non existing report returns error",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
 			},
 			msg: types.NewMsgDeleteReport(
 				1,
@@ -477,18 +479,22 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteReport() {
 		},
 		{
 			name: "invalid signer returns error",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
 
+				suite.sk.EXPECT().
+					HasPermission(
+						gomock.Any(),
+						uint64(1),
+						uint32(subspacestypes.RootSectionID),
+						"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
+						types.PermissionManageReports,
+					).
+					Return(false)
+			},
+			store: func(ctx sdk.Context) {
 				suite.k.SaveReport(ctx, types.NewReport(
 					1,
 					1,
@@ -507,26 +513,78 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteReport() {
 			shouldErr: true,
 		},
 		{
-			name: "report creator can delete the report properly",
+			name: "no permission returns error",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+
+				suite.sk.EXPECT().
+					HasPermission(
+						gomock.Any(),
+						uint64(1),
+						uint32(subspacestypes.RootSectionID),
+						"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
+						types.PermissionManageReports,
+					).
+					Return(false)
+
+				suite.sk.EXPECT().
+					HasPermission(
+						gomock.Any(),
+						uint64(1),
+						uint32(subspacestypes.RootSectionID),
+						"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
+						types.PermissionDeleteOwnReports,
+					).
+					Return(false)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
+				suite.k.SaveReport(ctx, types.NewReport(
 					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
-
-				suite.sk.SetUserPermissions(ctx,
 					1,
-					0,
+					[]uint32{1},
+					"This content is spam",
+					types.NewUserTarget("cosmos1pjffdtweghpyxru9alssyqtdkq8mn6sepgstgm"),
 					"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
-					subspacestypes.NewPermissions(types.PermissionDeleteOwnReports),
-				)
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+			},
+			msg: types.NewMsgDeleteReport(
+				1,
+				1,
+				"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "report creator can delete the report properly",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
 
+				suite.sk.EXPECT().
+					HasPermission(
+						gomock.Any(),
+						uint64(1),
+						uint32(subspacestypes.RootSectionID),
+						"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
+						types.PermissionManageReports,
+					).
+					Return(false)
+
+				suite.sk.EXPECT().
+					HasPermission(
+						gomock.Any(),
+						uint64(1),
+						uint32(subspacestypes.RootSectionID),
+						"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
+						types.PermissionDeleteOwnReports,
+					).
+					Return(true)
+			},
+			store: func(ctx sdk.Context) {
 				suite.k.SaveReport(ctx, types.NewReport(
 					1,
 					1,
@@ -559,25 +617,22 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteReport() {
 		},
 		{
 			name: "moderator can delete the report properly",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+
+				suite.sk.EXPECT().
+					HasPermission(
+						gomock.Any(),
+						uint64(1),
+						uint32(subspacestypes.RootSectionID),
+						"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
+						types.PermissionManageReports,
+					).
+					Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
-
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
-					subspacestypes.NewPermissions(types.PermissionManageReports),
-				)
-
 				suite.k.SaveReport(ctx, types.NewReport(
 					1,
 					1,
@@ -614,6 +669,9 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteReport() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup()
+			}
 			if tc.store != nil {
 				tc.store(ctx)
 			}
@@ -632,6 +690,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteReport() {
 func (suite *KeeperTestSuite) TestMsgServer_SupportStandardReason() {
 	testCases := []struct {
 		name        string
+		setup       func()
 		store       func(ctx sdk.Context)
 		msg         *types.MsgSupportStandardReason
 		shouldErr   bool
@@ -641,6 +700,11 @@ func (suite *KeeperTestSuite) TestMsgServer_SupportStandardReason() {
 	}{
 		{
 			name: "non existing subspace returns error",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(false)
+			},
 			msg: types.NewMsgSupportStandardReason(
 				1,
 				1,
@@ -650,18 +714,12 @@ func (suite *KeeperTestSuite) TestMsgServer_SupportStandardReason() {
 		},
 		{
 			name: "non existing standard reason returns error",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
-
 				suite.k.SetParams(ctx, types.NewParams(nil))
 			},
 			msg: types.NewMsgSupportStandardReason(
@@ -673,18 +731,22 @@ func (suite *KeeperTestSuite) TestMsgServer_SupportStandardReason() {
 		},
 		{
 			name: "no permission returns error",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
 
+				suite.sk.EXPECT().
+					HasPermission(
+						gomock.Any(),
+						uint64(1),
+						uint32(subspacestypes.RootSectionID),
+						"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
+						types.PermissionManageReasons,
+					).
+					Return(false)
+			},
+			store: func(ctx sdk.Context) {
 				suite.k.SetParams(ctx, types.NewParams([]types.StandardReason{
 					types.NewStandardReason(1, "Spam", "This content is spam"),
 				}))
@@ -698,25 +760,22 @@ func (suite *KeeperTestSuite) TestMsgServer_SupportStandardReason() {
 		},
 		{
 			name: "not found next reason id returns error",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+
+				suite.sk.EXPECT().
+					HasPermission(
+						gomock.Any(),
+						uint64(1),
+						uint32(subspacestypes.RootSectionID),
+						"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
+						types.PermissionManageReasons,
+					).
+					Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
-
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
-					subspacestypes.NewPermissions(types.PermissionManageReasons),
-				)
-
 				suite.k.SetParams(ctx, types.NewParams([]types.StandardReason{
 					types.NewStandardReason(1, "Spam", "This content is spam"),
 				}))
@@ -730,25 +789,23 @@ func (suite *KeeperTestSuite) TestMsgServer_SupportStandardReason() {
 		},
 		{
 			name: "valid request returns no error",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
-				suite.k.SetNextReasonID(ctx, 1, 1)
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
 
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
-					subspacestypes.NewPermissions(types.PermissionManageReasons),
-				)
+				suite.sk.EXPECT().
+					HasPermission(
+						gomock.Any(),
+						uint64(1),
+						uint32(subspacestypes.RootSectionID),
+						"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
+						types.PermissionManageReasons,
+					).
+					Return(true)
+			},
+			store: func(ctx sdk.Context) {
+				suite.k.SetNextReasonID(ctx, 1, 1)
 
 				suite.k.SetParams(ctx, types.NewParams([]types.StandardReason{
 					types.NewStandardReason(1, "Spam", "This content is spam"),
@@ -789,6 +846,9 @@ func (suite *KeeperTestSuite) TestMsgServer_SupportStandardReason() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup()
+			}
 			if tc.store != nil {
 				tc.store(ctx)
 			}
@@ -813,6 +873,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SupportStandardReason() {
 func (suite *KeeperTestSuite) TestMsgServer_AddReason() {
 	testCases := []struct {
 		name        string
+		setup       func()
 		store       func(ctx sdk.Context)
 		msg         *types.MsgAddReason
 		shouldErr   bool
@@ -822,6 +883,11 @@ func (suite *KeeperTestSuite) TestMsgServer_AddReason() {
 	}{
 		{
 			name: "non existing subspace returns error",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(false)
+			},
 			msg: types.NewMsgAddReason(
 				1,
 				"Spam",
@@ -832,17 +898,20 @@ func (suite *KeeperTestSuite) TestMsgServer_AddReason() {
 		},
 		{
 			name: "no permission returns error",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+
+				suite.sk.EXPECT().
+					HasPermission(
+						gomock.Any(),
+						uint64(1),
+						uint32(subspacestypes.RootSectionID),
+						"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
+						types.PermissionManageReasons,
+					).
+					Return(false)
 			},
 			msg: types.NewMsgAddReason(
 				1,
@@ -854,24 +923,20 @@ func (suite *KeeperTestSuite) TestMsgServer_AddReason() {
 		},
 		{
 			name: "no next reason id returns error",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
 
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
-					subspacestypes.NewPermissions(types.PermissionManageReasons),
-				)
+				suite.sk.EXPECT().
+					HasPermission(
+						gomock.Any(),
+						uint64(1),
+						uint32(subspacestypes.RootSectionID),
+						"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
+						types.PermissionManageReasons,
+					).
+					Return(true)
 			},
 			msg: types.NewMsgAddReason(
 				1,
@@ -883,25 +948,23 @@ func (suite *KeeperTestSuite) TestMsgServer_AddReason() {
 		},
 		{
 			name: "invalid reason returns error",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
-				suite.k.SetNextReasonID(ctx, 1, 1)
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
 
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
-					subspacestypes.NewPermissions(types.PermissionManageReasons),
-				)
+				suite.sk.EXPECT().
+					HasPermission(
+						gomock.Any(),
+						uint64(1),
+						uint32(subspacestypes.RootSectionID),
+						"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
+						types.PermissionManageReasons,
+					).
+					Return(true)
+			},
+			store: func(ctx sdk.Context) {
+				suite.k.SetNextReasonID(ctx, 1, 1)
 			},
 			msg: types.NewMsgAddReason(
 				1,
@@ -913,25 +976,23 @@ func (suite *KeeperTestSuite) TestMsgServer_AddReason() {
 		},
 		{
 			name: "correct request returns error",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
-				suite.k.SetNextReasonID(ctx, 1, 1)
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
 
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
-					subspacestypes.NewPermissions(types.PermissionManageReasons),
-				)
+				suite.sk.EXPECT().
+					HasPermission(
+						gomock.Any(),
+						uint64(1),
+						uint32(subspacestypes.RootSectionID),
+						"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
+						types.PermissionManageReasons,
+					).
+					Return(true)
+			},
+			store: func(ctx sdk.Context) {
+				suite.k.SetNextReasonID(ctx, 1, 1)
 			},
 			msg: types.NewMsgAddReason(
 				1,
@@ -968,6 +1029,9 @@ func (suite *KeeperTestSuite) TestMsgServer_AddReason() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup()
+			}
 			if tc.store != nil {
 				tc.store(ctx)
 			}
@@ -988,6 +1052,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddReason() {
 func (suite *KeeperTestSuite) TestMsgServer_RemoveReason() {
 	testCases := []struct {
 		name      string
+		setup     func()
 		store     func(ctx sdk.Context)
 		msg       *types.MsgRemoveReason
 		shouldErr bool
@@ -995,6 +1060,11 @@ func (suite *KeeperTestSuite) TestMsgServer_RemoveReason() {
 	}{
 		{
 			name: "non existing subspace returns error",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(false)
+			},
 			msg: types.NewMsgRemoveReason(
 				1,
 				1,
@@ -1004,17 +1074,10 @@ func (suite *KeeperTestSuite) TestMsgServer_RemoveReason() {
 		},
 		{
 			name: "non existing reason returns error",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
 			},
 			msg: types.NewMsgRemoveReason(
 				1,
@@ -1025,18 +1088,22 @@ func (suite *KeeperTestSuite) TestMsgServer_RemoveReason() {
 		},
 		{
 			name: "no permission returns error",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
 
+				suite.sk.EXPECT().
+					HasPermission(
+						gomock.Any(),
+						uint64(1),
+						uint32(subspacestypes.RootSectionID),
+						"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
+						types.PermissionManageReasons,
+					).
+					Return(false)
+			},
+			store: func(ctx sdk.Context) {
 				suite.k.SaveReason(ctx, types.NewReason(
 					1,
 					1,
@@ -1053,31 +1120,28 @@ func (suite *KeeperTestSuite) TestMsgServer_RemoveReason() {
 		},
 		{
 			name: "valid request works properly",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
 
+				suite.sk.EXPECT().
+					HasPermission(
+						gomock.Any(),
+						uint64(1),
+						uint32(subspacestypes.RootSectionID),
+						"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
+						types.PermissionManageReasons,
+					).
+					Return(true)
+			},
+			store: func(ctx sdk.Context) {
 				suite.k.SaveReason(ctx, types.NewReason(
 					1,
 					1,
 					"Spam",
 					"This content is spam",
 				))
-
-				suite.sk.SetUserPermissions(ctx,
-					1,
-					0,
-					"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
-					subspacestypes.NewPermissions(types.PermissionManageReasons),
-				)
 			},
 			msg: types.NewMsgRemoveReason(
 				1,
@@ -1105,6 +1169,9 @@ func (suite *KeeperTestSuite) TestMsgServer_RemoveReason() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup()
+			}
 			if tc.store != nil {
 				tc.store(ctx)
 			}

@@ -4,7 +4,7 @@ import (
 	"time"
 
 	poststypes "github.com/desmos-labs/desmos/v5/x/posts/types"
-	relationshipstypes "github.com/desmos-labs/desmos/v5/x/relationships/types"
+	"github.com/golang/mock/gomock"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -144,7 +144,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteNextReportID() {
 func (suite *KeeperTestSuite) TestKeeper_ValidateReport() {
 	testCases := []struct {
 		name      string
-		store     func(ctx sdk.Context)
+		setup     func()
 		report    types.Report
 		shouldErr bool
 	}{
@@ -163,13 +163,14 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateReport() {
 		},
 		{
 			name: "UserTarget - blocked reporter returns error",
-			store: func(ctx sdk.Context) {
-				suite.rk.SaveUserBlock(ctx, relationshipstypes.NewUserBlock(
-					"cosmos10s22qjua2n3law0ymstm3txm7764mfk2cjawq5",
-					"cosmos1wprgptc8ktt0eemrn2znpxv8crdxm8tdpkdr7w",
-					"",
-					1,
-				))
+			setup: func() {
+				suite.rk.EXPECT().
+					HasUserBlocked(gomock.Any(),
+						"cosmos10s22qjua2n3law0ymstm3txm7764mfk2cjawq5",
+						"cosmos1wprgptc8ktt0eemrn2znpxv8crdxm8tdpkdr7w",
+						uint64(1),
+					).
+					Return(true)
 			},
 			report: types.NewReport(
 				1,
@@ -184,6 +185,15 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateReport() {
 		},
 		{
 			name: "UserTarget - valid data returns no error",
+			setup: func() {
+				suite.rk.EXPECT().
+					HasUserBlocked(gomock.Any(),
+						"cosmos10s22qjua2n3law0ymstm3txm7764mfk2cjawq5",
+						"cosmos1wprgptc8ktt0eemrn2znpxv8crdxm8tdpkdr7w",
+						uint64(1),
+					).
+					Return(false)
+			},
 			report: types.NewReport(
 				1,
 				1,
@@ -197,6 +207,11 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateReport() {
 		},
 		{
 			name: "PostTarget - not found post returns error",
+			setup: func() {
+				suite.pk.EXPECT().
+					GetPost(gomock.Any(), uint64(1), uint64(1)).
+					Return(poststypes.Post{}, false)
+			},
 			report: types.NewReport(
 				1,
 				1,
@@ -210,30 +225,33 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateReport() {
 		},
 		{
 			name: "PostTarget - blocked user returns error",
-			store: func(ctx sdk.Context) {
-				suite.pk.SavePost(ctx, poststypes.NewPost(
-					1,
-					0,
-					1,
-					"",
-					"This is a new post",
-					"cosmos10s22qjua2n3law0ymstm3txm7764mfk2cjawq5",
-					0,
-					nil,
-					nil,
-					nil,
-					poststypes.REPLY_SETTING_EVERYONE,
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-					"cosmos10s22qjua2n3law0ymstm3txm7764mfk2cjawq5",
-				))
+			setup: func() {
+				suite.pk.EXPECT().
+					GetPost(gomock.Any(), uint64(1), uint64(1)).
+					Return(poststypes.NewPost(
+						1,
+						0,
+						1,
+						"",
+						"This is a new post",
+						"cosmos10s22qjua2n3law0ymstm3txm7764mfk2cjawq5",
+						0,
+						nil,
+						nil,
+						nil,
+						poststypes.REPLY_SETTING_EVERYONE,
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						nil,
+						"cosmos10s22qjua2n3law0ymstm3txm7764mfk2cjawq5",
+					), true)
 
-				suite.rk.SaveUserBlock(ctx, relationshipstypes.NewUserBlock(
-					"cosmos10s22qjua2n3law0ymstm3txm7764mfk2cjawq5",
-					"cosmos1wprgptc8ktt0eemrn2znpxv8crdxm8tdpkdr7w",
-					"",
-					1,
-				))
+				suite.rk.EXPECT().
+					HasUserBlocked(gomock.Any(),
+						"cosmos10s22qjua2n3law0ymstm3txm7764mfk2cjawq5",
+						"cosmos1wprgptc8ktt0eemrn2znpxv8crdxm8tdpkdr7w",
+						uint64(1),
+					).
+					Return(true)
 			},
 			report: types.NewReport(
 				1,
@@ -248,23 +266,33 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateReport() {
 		},
 		{
 			name: "PostsData - valid data returns no error",
-			store: func(ctx sdk.Context) {
-				suite.pk.SavePost(ctx, poststypes.NewPost(
-					1,
-					0,
-					1,
-					"",
-					"This is a new post",
-					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
-					0,
-					nil,
-					nil,
-					nil,
-					poststypes.REPLY_SETTING_EVERYONE,
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-					"cosmos10s22qjua2n3law0ymstm3txm7764mfk2cjawq5",
-				))
+			setup: func() {
+				suite.pk.EXPECT().
+					GetPost(gomock.Any(), uint64(1), uint64(1)).
+					Return(poststypes.NewPost(
+						1,
+						0,
+						1,
+						"",
+						"This is a new post",
+						"cosmos10s22qjua2n3law0ymstm3txm7764mfk2cjawq5",
+						0,
+						nil,
+						nil,
+						nil,
+						poststypes.REPLY_SETTING_EVERYONE,
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						nil,
+						"cosmos10s22qjua2n3law0ymstm3txm7764mfk2cjawq5",
+					), true)
+
+				suite.rk.EXPECT().
+					HasUserBlocked(gomock.Any(),
+						"cosmos10s22qjua2n3law0ymstm3txm7764mfk2cjawq5",
+						"cosmos1wprgptc8ktt0eemrn2znpxv8crdxm8tdpkdr7w",
+						uint64(1),
+					).
+					Return(false)
 			},
 			report: types.NewReport(
 				1,
@@ -283,8 +311,8 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateReport() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
-			if tc.store != nil {
-				tc.store(ctx)
+			if tc.setup != nil {
+				tc.setup()
 			}
 
 			err := suite.k.ValidateReport(ctx, tc.report)

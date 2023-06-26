@@ -3,7 +3,7 @@ package keeper_test
 import (
 	"time"
 
-	poststypes "github.com/desmos-labs/desmos/v5/x/posts/types"
+	"github.com/golang/mock/gomock"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -15,38 +15,59 @@ import (
 func (suite *KeeperTestSuite) TestValidSubspacesInvariant() {
 	testCases := []struct {
 		name      string
+		setup     func()
 		store     func(ctx sdk.Context)
 		expBroken bool
 	}{
 		{
 			name: "non existing next reason id breaks invariant",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
+			setup: func() {
+				subspaces := []subspacestypes.Subspace{
+					subspacestypes.NewSubspace(
+						1,
+						"Test subspace",
+						"This is a test subspace",
+						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						nil,
+					),
+				}
+				suite.sk.EXPECT().
+					IterateSubspaces(gomock.Any(), gomock.Any()).
+					Do(func(ctx sdk.Context, fn func(subspace subspacestypes.Subspace) (stop bool)) {
+						for _, subspace := range subspaces {
+							fn(subspace)
+						}
+					})
 			},
 			expBroken: true,
 		},
 		{
 			name: "non existing next report id breaks invariant",
+			setup: func() {
+				subspaces := []subspacestypes.Subspace{
+					subspacestypes.NewSubspace(
+						1,
+						"Test subspace",
+						"This is a test subspace",
+						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						nil,
+					),
+				}
+				suite.sk.EXPECT().
+					IterateSubspaces(gomock.Any(), gomock.Any()).
+					Do(func(ctx sdk.Context, fn func(subspace subspacestypes.Subspace) (stop bool)) {
+						for _, subspace := range subspaces {
+							fn(subspace)
+						}
+					})
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
 				suite.k.SetNextReasonID(ctx, 1, 1)
 
 			},
@@ -54,17 +75,28 @@ func (suite *KeeperTestSuite) TestValidSubspacesInvariant() {
 		},
 		{
 			name: "valid data does not break invariant",
+			setup: func() {
+				subspaces := []subspacestypes.Subspace{
+					subspacestypes.NewSubspace(
+						1,
+						"Test subspace",
+						"This is a test subspace",
+						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						nil,
+					),
+				}
+				suite.sk.EXPECT().
+					IterateSubspaces(gomock.Any(), gomock.Any()).
+					Do(func(ctx sdk.Context, fn func(subspace subspacestypes.Subspace) (stop bool)) {
+						for _, subspace := range subspaces {
+							fn(subspace)
+						}
+					})
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
 				suite.k.SetNextReasonID(ctx, 1, 1)
 				suite.k.SetNextReportID(ctx, 1, 1)
 			},
@@ -76,6 +108,9 @@ func (suite *KeeperTestSuite) TestValidSubspacesInvariant() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup()
+			}
 			if tc.store != nil {
 				tc.store(ctx)
 			}
@@ -89,11 +124,17 @@ func (suite *KeeperTestSuite) TestValidSubspacesInvariant() {
 func (suite *KeeperTestSuite) TestValidReasonsInvariant() {
 	testCases := []struct {
 		name      string
+		setup     func()
 		store     func(ctx sdk.Context)
 		expBroken bool
 	}{
 		{
 			name: "non existing subspace breaks invariant",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(false)
+			},
 			store: func(ctx sdk.Context) {
 				suite.k.SaveReason(ctx, types.NewReason(
 					1,
@@ -106,18 +147,12 @@ func (suite *KeeperTestSuite) TestValidReasonsInvariant() {
 		},
 		{
 			name: "non existing next reason id breaks invariant",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
-
 				suite.k.SaveReason(ctx, types.NewReason(
 					1,
 					1,
@@ -129,17 +164,12 @@ func (suite *KeeperTestSuite) TestValidReasonsInvariant() {
 		},
 		{
 			name: "invalid reason id compared to next reason id breaks invariant",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
 				suite.k.SetNextReasonID(ctx, 1, 1)
 
 				suite.k.SaveReason(ctx, types.NewReason(
@@ -153,17 +183,12 @@ func (suite *KeeperTestSuite) TestValidReasonsInvariant() {
 		},
 		{
 			name: "invalid reason breaks invariant",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
 				suite.k.SetNextReasonID(ctx, 1, 2)
 
 				suite.k.SaveReason(ctx, types.NewReason(
@@ -177,17 +202,12 @@ func (suite *KeeperTestSuite) TestValidReasonsInvariant() {
 		},
 		{
 			name: "valid data does not break invariant",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
 				suite.k.SetNextReasonID(ctx, 1, 2)
 
 				suite.k.SaveReason(ctx, types.NewReason(
@@ -205,6 +225,9 @@ func (suite *KeeperTestSuite) TestValidReasonsInvariant() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup()
+			}
 			if tc.store != nil {
 				tc.store(ctx)
 			}
@@ -218,11 +241,17 @@ func (suite *KeeperTestSuite) TestValidReasonsInvariant() {
 func (suite *KeeperTestSuite) TestValidReportsInvariant() {
 	testCases := []struct {
 		name      string
+		setup     func()
 		store     func(ctx sdk.Context)
 		expBroken bool
 	}{
 		{
 			name: "missing subspace breaks invariant",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(false)
+			},
 			store: func(ctx sdk.Context) {
 				suite.k.SaveReport(ctx, types.NewReport(
 					1,
@@ -238,18 +267,12 @@ func (suite *KeeperTestSuite) TestValidReportsInvariant() {
 		},
 		{
 			name: "missing reason breaks invariant",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
-
 				suite.k.SaveReport(ctx, types.NewReport(
 					1,
 					1,
@@ -264,18 +287,12 @@ func (suite *KeeperTestSuite) TestValidReportsInvariant() {
 		},
 		{
 			name: "missing next report id breaks invariant",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
-
 				suite.k.SaveReason(ctx, types.NewReason(
 					1,
 					1,
@@ -297,17 +314,12 @@ func (suite *KeeperTestSuite) TestValidReportsInvariant() {
 		},
 		{
 			name: "invalid report id compared to next report id breaks invariant",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
 				suite.k.SetNextReportID(ctx, 1, 1)
 
 				suite.k.SaveReason(ctx, types.NewReason(
@@ -331,17 +343,16 @@ func (suite *KeeperTestSuite) TestValidReportsInvariant() {
 		},
 		{
 			name: "missing post breaks invariant",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+
+				suite.pk.EXPECT().
+					HasPost(gomock.Any(), uint64(1), uint64(1)).
+					Return(false)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
 				suite.k.SetNextReportID(ctx, 1, 2)
 
 				suite.k.SaveReason(ctx, types.NewReason(
@@ -365,17 +376,12 @@ func (suite *KeeperTestSuite) TestValidReportsInvariant() {
 		},
 		{
 			name: "invalid report breaks invariant",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
 				suite.k.SetNextReportID(ctx, 1, 2)
 
 				suite.k.SaveReason(ctx, types.NewReason(
@@ -399,17 +405,16 @@ func (suite *KeeperTestSuite) TestValidReportsInvariant() {
 		},
 		{
 			name: "valid data does not break invariant",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasSubspace(gomock.Any(), uint64(1)).
+					Return(true)
+
+				suite.pk.EXPECT().
+					HasPost(gomock.Any(), uint64(1), uint64(1)).
+					Return(true)
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
 				suite.k.SetNextReportID(ctx, 1, 2)
 
 				suite.k.SaveReason(ctx, types.NewReason(
@@ -417,23 +422,6 @@ func (suite *KeeperTestSuite) TestValidReportsInvariant() {
 					1,
 					"Spam",
 					"This content is spam",
-				))
-
-				suite.pk.SavePost(ctx, poststypes.NewPost(
-					1,
-					0,
-					1,
-					"External ID",
-					"This is a text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					1,
-					nil,
-					nil,
-					nil,
-					poststypes.REPLY_SETTING_EVERYONE,
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 				))
 
 				suite.k.SaveReport(ctx, types.NewReport(
@@ -454,6 +442,9 @@ func (suite *KeeperTestSuite) TestValidReportsInvariant() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup()
+			}
 			if tc.store != nil {
 				tc.store(ctx)
 			}
