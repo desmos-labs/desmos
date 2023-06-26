@@ -25,10 +25,10 @@ jobs:
       - name: Compute diff 📜
         uses: technote-space/get-diff-action@v6.1.2
         with:
-          SUFFIX_FILTER: |
-            .go
-            .mod
-            .sum
+          PATTERNS: |
+            **/*.go
+            go.mod
+            go.sum
 
       - name: Run lint ✅
         if: "env.GIT_DIFF != ''"
