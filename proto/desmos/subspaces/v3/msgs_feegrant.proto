@@ -1,6 +1,7 @@
 syntax = "proto3";
 package desmos.subspaces.v3;
 
+import "amino/amino.proto";
 import "gogoproto/gogo.proto";
 import "google/protobuf/any.proto";
 import "cosmos/msg/v1/msg.proto";
@@ -12,6 +13,7 @@ option go_package = "github.com/desmos-labs/desmos/v5/x/subspaces/types";
 // from the treasury inside the given subspace
 message MsgGrantAllowance {
   option (cosmos.msg.v1.signer) = "granter";
+  option (amino.name)           = "desmos/MsgGrantAllowance";
 
   // Id of the subspace inside which where the allowance should be granted
   uint64 subspace_id = 1 [
@@ -48,6 +50,7 @@ message MsgGrantAllowanceResponse {}
 // subspace
 message MsgRevokeAllowance {
   option (cosmos.msg.v1.signer) = "granter";
+  option (amino.name)           = "desmos/MsgRevokeAllowance";
 
   // If of the subspace inside which the allowance to be deleted is
   uint64 subspace_id = 1 [

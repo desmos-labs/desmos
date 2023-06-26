@@ -1,6 +1,7 @@
 syntax = "proto3";
 package desmos.profiles.v3;
 
+import "amino/amino.proto";
 import "gogoproto/gogo.proto";
 import "cosmos/msg/v1/msg.proto";
 import "cosmos_proto/cosmos.proto";
@@ -11,6 +12,7 @@ option go_package = "github.com/desmos-labs/desmos/v5/x/profiles/types";
 // transfer to another user.
 message MsgRequestDTagTransfer {
   option (cosmos.msg.v1.signer) = "sender";
+  option (amino.name)           = "desmos/MsgRequestDTagTransfer";
 
   // Receiver contains the address of the request receiver that owns the DTag to
   // transfer if the request is accepted
@@ -31,6 +33,7 @@ message MsgRequestDTagTransferResponse {}
 // transfer request.
 message MsgCancelDTagTransferRequest {
   option (cosmos.msg.v1.signer) = "sender";
+  option (amino.name)           = "desmos/MsgCancelDTagTransferRequest";
 
   // Receiver contains the address of the request receiver
   string receiver = 1 [
@@ -55,6 +58,7 @@ message MsgCancelDTagTransferRequestResponse {}
 // transfer request.
 message MsgAcceptDTagTransferRequest {
   option (cosmos.msg.v1.signer) = "receiver";
+  option (amino.name)           = "desmos/MsgAcceptDTagTransferRequest";
 
   // NewDTag represents the DTag that the request receiver will obtain if they
   // accept the request
@@ -86,6 +90,7 @@ message MsgAcceptDTagTransferRequestResponse {}
 // transfer request.
 message MsgRefuseDTagTransferRequest {
   option (cosmos.msg.v1.signer) = "receiver";
+  option (amino.name)           = "desmos/MsgRefuseDTagTransferRequest";
 
   // Sender represents the request sender
   string sender = 1 [

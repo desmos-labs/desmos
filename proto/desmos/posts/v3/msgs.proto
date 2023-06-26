@@ -1,6 +1,7 @@
 syntax = "proto3";
 package desmos.posts.v3;
 
+import "amino/amino.proto";
 import "gogoproto/gogo.proto";
 import "google/protobuf/any.proto";
 import "google/protobuf/timestamp.proto";
@@ -79,6 +80,7 @@ service Msg {
 // MsgCreatePost represents the message to be used to create a post.
 message MsgCreatePost {
   option (cosmos.msg.v1.signer) = "author";
+  option (amino.name)           = "desmos/MsgCreatePost";
 
   // Id of the subspace inside which the post must be created
   uint64 subspace_id = 1 [
@@ -155,6 +157,7 @@ message MsgCreatePostResponse {
 // MsgEditPost represents the message to be used to edit a post.
 message MsgEditPost {
   option (cosmos.msg.v1.signer) = "editor";
+  option (amino.name)           = "desmos/MsgEditPost";
 
   // Id of the subspace inside which the post is
   uint64 subspace_id = 1 [
@@ -200,6 +203,7 @@ message MsgEditPostResponse {
 // MsgDeletePost represents the message used when deleting a post.
 message MsgDeletePost {
   option (cosmos.msg.v1.signer) = "signer";
+  option (amino.name)           = "desmos/MsgDeletePost";
 
   // Id of the subspace containing the post
   uint64 subspace_id = 1 [
@@ -227,6 +231,7 @@ message MsgDeletePostResponse {}
 // used when adding an attachment to post
 message MsgAddPostAttachment {
   option (cosmos.msg.v1.signer) = "editor";
+  option (amino.name)           = "desmos/MsgAddPostAttachment";
 
   // Id of the subspace containing the post
   uint64 subspace_id = 1 [
@@ -273,6 +278,7 @@ message MsgAddPostAttachmentResponse {
 // removing an attachment from a post
 message MsgRemovePostAttachment {
   option (cosmos.msg.v1.signer) = "editor";
+  option (amino.name)           = "desmos/MsgRemovePostAttachment";
 
   // Id of the subspace containing the post
   uint64 subspace_id = 1 [
@@ -313,6 +319,7 @@ message MsgRemovePostAttachmentResponse {
 // MsgAnswerPoll represents the message used to answer a poll
 message MsgAnswerPoll {
   option (cosmos.msg.v1.signer) = "signer";
+  option (amino.name)           = "desmos/MsgAnswerPoll";
 
   // Id of the subspace containing the post
   uint64 subspace_id = 1 [
@@ -351,6 +358,8 @@ message MsgAnswerPollResponse {}
 // Since: Desmos 5.0.0
 message MsgUpdateParams {
   option (cosmos.msg.v1.signer) = "authority";
+  option (amino.name)           = "desmos/x/posts/MsgUpdateParams";
+
 
   // authority is the address that controls the module (defaults to x/gov unless
   // overwritten).
@@ -376,6 +385,7 @@ message MsgUpdateParamsResponse {}
 // Since: Desmos 6.0.0
 message MsgMovePost {
   option (cosmos.msg.v1.signer) = "owner";
+  option (amino.name)           = "desmos/MsgMovePost";
 
   // Id of the subspace where the post is currently located
   uint64 subspace_id = 1 [
@@ -425,6 +435,7 @@ message MsgMovePostResponse {
 // Since: Desmos 6.0.0
 message MsgRequestPostOwnerTransfer {
   option (cosmos.msg.v1.signer) = "sender";
+  option (amino.name)           = "desmos/MsgRequestPostOwnerTransfer";
 
   // Id of the subspace that holds the post which ownership should be transfered
   uint64 subspace_id = 1 [
@@ -463,6 +474,7 @@ message MsgRequestPostOwnerTransferResponse {}
 // Since: Desmos 6.0.0
 message MsgCancelPostOwnerTransferRequest {
   option (cosmos.msg.v1.signer) = "sender";
+  option (amino.name)           = "desmos/MsgCancelPostOwnerTransferRequest";
 
   // Id of the subspace that holds the post for which the request should be
   // canceled
@@ -496,6 +508,7 @@ message MsgCancelPostOwnerTransferRequestResponse {}
 // Since: Desmos 6.0.0
 message MsgAcceptPostOwnerTransferRequest {
   option (cosmos.msg.v1.signer) = "receiver";
+  option (amino.name)           = "desmos/MsgAcceptPostOwnerTransferRequest";
 
   // Id of the subspace holding the post for which the request will be accepted
   uint64 subspace_id = 1 [
@@ -528,6 +541,7 @@ message MsgAcceptPostOwnerTransferRequestResponse {}
 // Since: Desmos 6.0.0
 message MsgRefusePostOwnerTransferRequest {
   option (cosmos.msg.v1.signer) = "receiver";
+  option (amino.name)           = "desmos/MsgRefusePostOwnerTransferRequest";
 
   // Id of the subspace holding the post for which the request will be refused
   uint64 subspace_id = 1 [

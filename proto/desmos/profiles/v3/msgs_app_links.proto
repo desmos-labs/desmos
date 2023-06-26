@@ -5,6 +5,7 @@ option go_package = "github.com/desmos-labs/desmos/v5/x/profiles/types";
 
 import "desmos/profiles/v3/models_app_links.proto";
 
+import "amino/amino.proto";
 import "gogoproto/gogo.proto";
 import "cosmos/msg/v1/msg.proto";
 import "cosmos_proto/cosmos.proto";
@@ -14,6 +15,7 @@ import "ibc/core/client/v1/client.proto";
 // centralized application account (eg. Twitter, GitHub, etc).
 message MsgLinkApplication {
   option (cosmos.msg.v1.signer) = "sender";
+  option (amino.name)           = "desmos/MsgLinkApplication";
 
   // The sender of the connection request
   string sender = 1 [
@@ -61,6 +63,7 @@ message MsgLinkApplicationResponse {}
 // profile
 message MsgUnlinkApplication {
   option (cosmos.msg.v1.signer) = "signer";
+  option (amino.name)           = "desmos/MsgUnlinkApplication";
 
   // Application represents the name of the application to unlink
   string application = 1 [ (gogoproto.moretags) = "yaml:\"application\"" ];

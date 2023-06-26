@@ -2,6 +2,7 @@
 syntax = "proto3";
 package desmos.subspaces.v3;
 
+import "amino/amino.proto";
 import "gogoproto/gogo.proto";
 import "cosmos_proto/cosmos.proto";
 import "cosmos/msg/v1/msg.proto";
@@ -13,6 +14,7 @@ option go_package = "github.com/desmos-labs/desmos/v5/x/subspaces/types";
 // treasury to a user
 message MsgGrantTreasuryAuthorization {
   option (cosmos.msg.v1.signer) = "granter";
+  option (amino.name)           = "desmos/MsgGrantTreasuryAuthorization";
 
   // Id of the subspace where the authorization should be granted
   uint64 subspace_id = 1 [
@@ -45,6 +47,7 @@ message MsgGrantTreasuryAuthorizationResponse {}
 // from a user
 message MsgRevokeTreasuryAuthorization {
   option (cosmos.msg.v1.signer) = "granter";
+  option (amino.name)           = "desmos/MsgRevokeTreasuryAuthorization";
 
   // Id of the subspace from which the authorization should be revoked
   uint64 subspace_id = 1 [
