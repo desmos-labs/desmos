@@ -36,21 +36,21 @@ func (h Hooks) AfterSubspaceSaved(ctx sdk.Context, subspaceID uint64) {
 
 // AfterSubspaceDeleted implements subspacestypes.Hooks
 func (h Hooks) AfterSubspaceDeleted(ctx sdk.Context, subspaceID uint64) {
-	// Delete the reason id key
-	h.k.DeleteNextReasonID(ctx, subspaceID)
-
-	// Delete all the reasons related to this subspace
-	h.k.IterateSubspaceReasons(ctx, subspaceID, func(reason types.Reason) (stop bool) {
-		h.k.DeleteReason(ctx, reason.SubspaceID, reason.ID)
-		return false
-	})
-
 	// Delete the report id key
 	h.k.DeleteNextReportID(ctx, subspaceID)
 
 	// Delete all the reports related to this subspace
 	h.k.IterateSubspaceReports(ctx, subspaceID, func(report types.Report) (stop bool) {
 		h.k.DeleteReport(ctx, report.SubspaceID, report.ID)
+		return false
+	})
+
+	// Delete the reason id key
+	h.k.DeleteNextReasonID(ctx, subspaceID)
+
+	// Delete all the reasons related to this subspace
+	h.k.IterateSubspaceReasons(ctx, subspaceID, func(reason types.Reason) (stop bool) {
+		h.k.DeleteReason(ctx, reason.SubspaceID, reason.ID)
 		return false
 	})
 }

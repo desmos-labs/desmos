@@ -4,6 +4,7 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/golang/mock/gomock"
 
 	"github.com/desmos-labs/desmos/v5/x/reports/types"
 	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
@@ -12,35 +13,47 @@ import (
 func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 	testCases := []struct {
 		name       string
+		setup      func()
 		store      func(ctx sdk.Context)
 		expGenesis *types.GenesisState
 	}{
 		{
 			name: "subspaces data entries are exported properly",
+			setup: func() {
+				subspaces := []subspacestypes.Subspace{
+					subspacestypes.NewSubspace(
+						1,
+						"Test subspace",
+						"This is a test subspace",
+						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						nil,
+					),
+					subspacestypes.NewSubspace(
+						2,
+						"Another test subspace",
+						"This is another test subspace",
+						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						nil,
+					),
+				}
+				suite.sk.EXPECT().
+					IterateSubspaces(gomock.Any(), gomock.Any()).
+					Do(func(ctx sdk.Context, fn func(subspace subspacestypes.Subspace) (stop bool)) {
+						for _, subspace := range subspaces {
+							fn(subspace)
+						}
+					})
+			},
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
 				suite.k.SetNextReasonID(ctx, 1, 1)
 				suite.k.SetNextReportID(ctx, 1, 2)
 
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					2,
-					"Another test subspace",
-					"This is another test subspace",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
 				suite.k.SetNextReasonID(ctx, 2, 3)
 				suite.k.SetNextReportID(ctx, 2, 4)
 
@@ -53,6 +66,16 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 		},
 		{
 			name: "reasons are exported properly",
+			setup: func() {
+				subspaces := []subspacestypes.Subspace{}
+				suite.sk.EXPECT().
+					IterateSubspaces(gomock.Any(), gomock.Any()).
+					Do(func(ctx sdk.Context, fn func(subspace subspacestypes.Subspace) (stop bool)) {
+						for _, subspace := range subspaces {
+							fn(subspace)
+						}
+					})
+			},
 			store: func(ctx sdk.Context) {
 				suite.k.SaveReason(ctx, types.NewReason(
 					1,
@@ -74,6 +97,16 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 		},
 		{
 			name: "reports are exported properly",
+			setup: func() {
+				subspaces := []subspacestypes.Subspace{}
+				suite.sk.EXPECT().
+					IterateSubspaces(gomock.Any(), gomock.Any()).
+					Do(func(ctx sdk.Context, fn func(subspace subspacestypes.Subspace) (stop bool)) {
+						for _, subspace := range subspaces {
+							fn(subspace)
+						}
+					})
+			},
 			store: func(ctx sdk.Context) {
 				suite.k.SaveReport(ctx, types.NewReport(
 					1,
@@ -101,6 +134,16 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 		},
 		{
 			name: "params are exported properly",
+			setup: func() {
+				subspaces := []subspacestypes.Subspace{}
+				suite.sk.EXPECT().
+					IterateSubspaces(gomock.Any(), gomock.Any()).
+					Do(func(ctx sdk.Context, fn func(subspace subspacestypes.Subspace) (stop bool)) {
+						for _, subspace := range subspaces {
+							fn(subspace)
+						}
+					})
+			},
 			store: func(ctx sdk.Context) {
 				suite.k.SetParams(ctx, types.NewParams([]types.StandardReason{
 					types.NewStandardReason(1, "Spam", "This content is spam"),
@@ -116,6 +159,9 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup()
+			}
 			if tc.store != nil {
 				tc.store(ctx)
 			}
