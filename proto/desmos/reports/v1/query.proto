@@ -56,7 +56,10 @@ message QueryReportsRequest {
 
   // (optional) User that reported the target.
   // This is going to be used only if the target is also specified
-  string reporter = 3 [ (gogoproto.moretags) = "yaml:\"reporter\"" ];
+  string reporter = 3 [
+    (gogoproto.moretags) = "yaml:\"reporter\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 
   // pagination defines an optional pagination for the request.
   cosmos.base.query.v1beta1.PageRequest pagination = 4

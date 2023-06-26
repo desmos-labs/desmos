@@ -35,7 +35,10 @@ message Reaction {
   ];
 
   // Author of the reaction
-  string author = 5 [ (gogoproto.moretags) = "yaml:\"author\"" ];
+  string author = 5 [
+    (gogoproto.moretags) = "yaml:\"author\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 }
 
 // RegisteredReactionValue contains the details of a reaction value that

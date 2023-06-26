@@ -2,6 +2,7 @@ syntax = "proto3";
 package desmos.profiles.v3;
 
 import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
 
 option go_package = "github.com/desmos-labs/desmos/v5/x/profiles/types";
 
@@ -27,10 +28,16 @@ message MsgRequestDTagTransferResponse {}
 // transfer request.
 message MsgCancelDTagTransferRequest {
   // Receiver contains the address of the request receiver
-  string receiver = 1 [ (gogoproto.moretags) = "yaml:\"receiver\"" ];
+  string receiver = 1 [
+    (gogoproto.moretags) = "yaml:\"receiver\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 
   // Sender contains the address of the requets sender
-  string sender = 2 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
+  string sender = 2 [
+    (gogoproto.moretags) = "yaml:\"sender\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 }
 
 // MsgCancelDTagTransferRequestResponse represents the
@@ -50,10 +57,16 @@ message MsgAcceptDTagTransferRequest {
   ];
 
   // Sender represents the request sender
-  string sender = 2 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
+  string sender = 2 [
+    (gogoproto.moretags) = "yaml:\"sender\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 
   // Receiver represents the request receiver
-  string receiver = 3 [ (gogoproto.moretags) = "yaml:\"receiver\"" ];
+  string receiver = 3 [
+    (gogoproto.moretags) = "yaml:\"receiver\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 }
 
 // MsgAcceptDTagTransferRequestResponse defines the
@@ -66,10 +79,16 @@ message MsgAcceptDTagTransferRequestResponse {}
 // transfer request.
 message MsgRefuseDTagTransferRequest {
   // Sender represents the request sender
-  string sender = 1 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
+  string sender = 1 [
+    (gogoproto.moretags) = "yaml:\"sender\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 
   // Receiver represents the request receiver
-  string receiver = 2 [ (gogoproto.moretags) = "yaml:\"receiver\"" ];
+  string receiver = 2 [
+    (gogoproto.moretags) = "yaml:\"receiver\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 }
 
 // MsgRefuseDTagTransferRequestResponse defines the

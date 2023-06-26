@@ -2,6 +2,7 @@ syntax = "proto3";
 package desmos.subspaces.v3;
 
 import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
 
 import "desmos/subspaces/v3/models.proto";
 import "desmos/subspaces/v3/models_feegrant.proto";
@@ -49,5 +50,5 @@ message UserGroupMemberEntry {
 
   uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
   uint32 group_id = 2 [ (gogoproto.customname) = "GroupID" ];
-  string user = 3;
+  string user = 3 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
 }

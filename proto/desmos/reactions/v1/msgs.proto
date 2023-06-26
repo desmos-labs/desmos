@@ -55,7 +55,10 @@ message MsgAddReaction {
   ];
 
   // User reacting to the post
-  string user = 4 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+  string user = 4 [
+    (gogoproto.moretags) = "yaml:\"user\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 }
 
 // MsgAddReactionResponse represents the Msg/AddReaction response type
@@ -89,7 +92,10 @@ message MsgRemoveReaction {
   ];
 
   // User removing the reaction
-  string user = 4 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+  string user = 4 [
+    (gogoproto.moretags) = "yaml:\"user\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 }
 
 // MsgRemoveReactionResponse represents the Msg/RemoveReaction response type
@@ -112,7 +118,10 @@ message MsgAddRegisteredReaction {
   string display_value = 3 [ (gogoproto.moretags) = "yaml:\"display_value\"" ];
 
   // User adding the supported reaction
-  string user = 4 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+  string user = 4 [
+    (gogoproto.moretags) = "yaml:\"user\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 }
 
 // MsgAddRegisteredReactionResponse represents the
@@ -148,7 +157,10 @@ message MsgEditRegisteredReaction {
   string display_value = 4 [ (gogoproto.moretags) = "yaml:\"display_value\"" ];
 
   // User editing the registered reaction
-  string user = 5 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+  string user = 5 [
+    (gogoproto.moretags) = "yaml:\"user\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 }
 
 // MsgEditRegisteredReactionResponse represents the Msg/EditRegisteredReaction
@@ -171,7 +183,10 @@ message MsgRemoveRegisteredReaction {
   ];
 
   // User removing the registered reaction
-  string user = 3 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+  string user = 3 [
+    (gogoproto.moretags) = "yaml:\"user\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 }
 
 // MsgRemoveRegisteredReactionResponse represents the
@@ -200,7 +215,10 @@ message MsgSetReactionsParams {
   ];
 
   // User setting the params
-  string user = 4 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+  string user = 4 [
+    (gogoproto.moretags) = "yaml:\"user\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 }
 
 // MsgSetReactionsParamsResponse represents the Msg/SetReactionsParams response

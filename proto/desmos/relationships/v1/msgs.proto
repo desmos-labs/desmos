@@ -2,6 +2,7 @@ syntax = "proto3";
 package desmos.relationships.v1;
 
 import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
 
 option go_package = "github.com/desmos-labs/desmos/v5/x/relationships/types";
 
@@ -26,10 +27,16 @@ service Msg {
 // between two users on a specific subspace.
 message MsgCreateRelationship {
   // User creating the relationship
-  string signer = 1 [ (gogoproto.moretags) = "yaml:\"signer\"" ];
+  string signer = 1 [
+    (gogoproto.moretags) = "yaml:\"signer\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 
   // Counterparty of the relationship (i.e. user to be followed)
-  string counterparty = 2 [ (gogoproto.moretags) = "yaml:\"counterparty\"" ];
+  string counterparty = 2 [
+    (gogoproto.moretags) = "yaml:\"counterparty\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 
   // Subspace id inside which the relationship will be valid
   uint64 subspace_id = 3 [
@@ -48,10 +55,16 @@ message MsgCreateRelationshipResponse {}
 // between two users.
 message MsgDeleteRelationship {
   // User that created the relationship
-  string signer = 1 [ (gogoproto.moretags) = "yaml:\"signer\"" ];
+  string signer = 1 [
+    (gogoproto.moretags) = "yaml:\"signer\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 
   // Counterparty of the relationship that should be deleted
-  string counterparty = 2 [ (gogoproto.moretags) = "yaml:\"counterparty\"" ];
+  string counterparty = 2 [
+    (gogoproto.moretags) = "yaml:\"counterparty\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 
   // Id of the subspace inside which the relationship to delete exists
   uint64 subspace_id = 3 [
@@ -70,10 +83,16 @@ message MsgDeleteRelationshipResponse {}
 // optional reason.
 message MsgBlockUser {
   // Address of the user blocking the other user
-  string blocker = 1 [ (gogoproto.moretags) = "yaml:\"blocker\"" ];
+  string blocker = 1 [
+    (gogoproto.moretags) = "yaml:\"blocker\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 
   // Address of the user that should be blocked
-  string blocked = 2 [ (gogoproto.moretags) = "yaml:\"blocked\"" ];
+  string blocked = 2 [
+    (gogoproto.moretags) = "yaml:\"blocked\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 
   // (optional) Reason why the user has been blocked
   string reason = 3 [ (gogoproto.moretags) = "yaml:\"reason\"" ];
@@ -93,10 +112,16 @@ message MsgBlockUserResponse {}
 // MsgUnblockUser represents a message to unblock a previously blocked user.
 message MsgUnblockUser {
   // Address of the user that blocked another user
-  string blocker = 1 [ (gogoproto.moretags) = "yaml:\"blocker\"" ];
+  string blocker = 1 [
+    (gogoproto.moretags) = "yaml:\"blocker\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 
   // Address of the user that should be unblocked
-  string blocked = 2 [ (gogoproto.moretags) = "yaml:\"blocked\"" ];
+  string blocked = 2 [
+    (gogoproto.moretags) = "yaml:\"blocked\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 
   // Id of the subspace inside which the user should be unblocked
   uint64 subspace_id = 4 [

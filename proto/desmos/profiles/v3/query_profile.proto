@@ -13,7 +13,7 @@ message QueryProfileRequest {
   option (gogoproto.goproto_getters) = false;
 
   // Address or DTag of the user to query the profile for
-  string user = 1;
+  string user = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
 }
 
 // QueryProfileResponse is the response type for the Query/Profile RPC method.

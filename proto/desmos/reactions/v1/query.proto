@@ -3,6 +3,7 @@ package desmos.reactions.v1;
 
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
+import "cosmos_proto/cosmos.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 
 import "desmos/reactions/v1/models.proto";
@@ -56,7 +57,7 @@ message QueryReactionsRequest {
 
   // (optional) User to query the reactions for.
   // This is going to be used only if a post id is specified as well.
-  string user = 3;
+  string user = 3 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
 
   // pagination defines an optional pagination for the request.
   cosmos.base.query.v1beta1.PageRequest pagination = 4;

@@ -82,10 +82,12 @@ service Msg {
   // that has been granted to the grantee
   rpc RevokeAllowance(MsgRevokeAllowance) returns (MsgRevokeAllowanceResponse);
 
-  // UpdateSubspaceFeeTokens allows subspace admins to update the list of fee tokens inside the subspace via a governance proposal
+  // UpdateSubspaceFeeTokens allows subspace admins to update the list of fee
+  // tokens inside the subspace via a governance proposal
   //
   // Since: Desmos 6.0.0
-  rpc UpdateSubspaceFeeTokens(MsgUpdateSubspaceFeeTokens) returns (MsgUpdateSubspaceFeeTokensResponse);
+  rpc UpdateSubspaceFeeTokens(MsgUpdateSubspaceFeeTokens)
+      returns (MsgUpdateSubspaceFeeTokensResponse);
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -100,10 +102,16 @@ message MsgCreateSubspace {
 
   // (optional) Owner of this subspace. If not specified, the creator will be
   // the default owner.
-  string owner = 3 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
+  string owner = 3 [
+    (gogoproto.moretags) = "yaml:\"owner\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 
   // Address creating the subspace
-  string creator = 4 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
+  string creator = 4 [
+    (gogoproto.moretags) = "yaml:\"creator\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 }
 
 // MsgCreateSubspaceResponse defines the Msg/CreateSubspace response type
@@ -133,10 +141,16 @@ message MsgEditSubspace {
 
   // New owner of the subspace. If it shouldn't be changed, use [do-not-modify]
   // instead.
-  string owner = 4 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
+  string owner = 4 [
+    (gogoproto.moretags) = "yaml:\"owner\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 
   // Address of the user editing the subspace
-  string signer = 5 [ (gogoproto.moretags) = "yaml:\"signer\"" ];
+  string signer = 5 [
+    (gogoproto.moretags) = "yaml:\"signer\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 }
 
 // MsgEditSubspaceResponse defines the Msg/EditSubspace response type
@@ -151,7 +165,10 @@ message MsgDeleteSubspace {
   ];
 
   // Address of the user deleting the subspace
-  string signer = 2 [ (gogoproto.moretags) = "yaml:\"signer\"" ];
+  string signer = 2 [
+    (gogoproto.moretags) = "yaml:\"signer\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 }
 
 // MsgDeleteSubspaceResponse defines the Msg/DeleteSubspace response type
@@ -181,7 +198,10 @@ message MsgCreateSection {
   ];
 
   // User creating the section
-  string creator = 5 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
+  string creator = 5 [
+    (gogoproto.moretags) = "yaml:\"creator\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 }
 
 // MsgCreateSectionResponse represents the Msg/CreateSection response type
@@ -215,7 +235,10 @@ message MsgEditSection {
   string description = 4 [ (gogoproto.moretags) = "yaml:\"description\"" ];
 
   // User editing the section
-  string editor = 5 [ (gogoproto.moretags) = "yaml:\"editor\"" ];
+  string editor = 5 [
+    (gogoproto.moretags) = "yaml:\"editor\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 }
 
 // MsgEditSectionResponse represents the Msg/EditSection response type
@@ -243,7 +266,10 @@ message MsgMoveSection {
   ];
 
   // Signer of the message
-  string signer = 4 [ (gogoproto.moretags) = "yaml:\"signer\"" ];
+  string signer = 4 [
+    (gogoproto.moretags) = "yaml:\"signer\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 }
 
 // MsgMoveSectionResponse
@@ -264,7 +290,10 @@ message MsgDeleteSection {
   ];
 
   // User deleting the section
-  string signer = 3 [ (gogoproto.moretags) = "yaml:\"signer\"" ];
+  string signer = 3 [
+    (gogoproto.moretags) = "yaml:\"signer\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 }
 
 // MsgDeleteSectionResponse represents the Msg/DeleteSection response type
@@ -301,7 +330,10 @@ message MsgCreateUserGroup {
       [ (gogoproto.moretags) = "yaml:\"initial_members\"" ];
 
   // Creator of the group
-  string creator = 7 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
+  string creator = 7 [
+    (gogoproto.moretags) = "yaml:\"creator\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 }
 
 // MsgCreateUserGroupResponse defines the Msg/CreateUserGroup response type
@@ -333,7 +365,10 @@ message MsgEditUserGroup {
   string description = 4 [ (gogoproto.moretags) = "yaml:\"description\"" ];
 
   // User editing the group
-  string signer = 5 [ (gogoproto.moretags) = "yaml:\"signer\"" ];
+  string signer = 5 [
+    (gogoproto.moretags) = "yaml:\"signer\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 }
 
 // MsgEditUserGroupResponse defines the Msg/EditUserGroup response type
@@ -361,7 +396,10 @@ message MsgMoveUserGroup {
   ];
 
   // User signing the message
-  string signer = 4 [ (gogoproto.moretags) = "yaml:\"signer\"" ];
+  string signer = 4 [
+    (gogoproto.moretags) = "yaml:\"signer\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 }
 
 // MsgMoveUserGroupResponse defines the Msg/MoveUserGroup response type
@@ -387,7 +425,10 @@ message MsgSetUserGroupPermissions {
       [ (gogoproto.moretags) = "yaml:\"permissions\"" ];
 
   // User setting the new permissions
-  string signer = 4 [ (gogoproto.moretags) = "yaml:\"signer\"" ];
+  string signer = 4 [
+    (gogoproto.moretags) = "yaml:\"signer\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 }
 
 // MsgSetUserGroupPermissionsResponse defines the
@@ -409,7 +450,10 @@ message MsgDeleteUserGroup {
   ];
 
   // User deleting the group
-  string signer = 3 [ (gogoproto.moretags) = "yaml:\"signer\"" ];
+  string signer = 3 [
+    (gogoproto.moretags) = "yaml:\"signer\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 }
 
 // MsgDeleteUserGroupResponse defines the Msg/DeleteUserGroup response type
@@ -433,10 +477,16 @@ message MsgAddUserToUserGroup {
   ];
 
   // User to be added to the group
-  string user = 3 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+  string user = 3 [
+    (gogoproto.moretags) = "yaml:\"user\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 
   // User signing the message
-  string signer = 4 [ (gogoproto.moretags) = "yaml:\"signer\"" ];
+  string signer = 4 [
+    (gogoproto.moretags) = "yaml:\"signer\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 }
 
 // MsgAddUserToUserGroupResponse defines the Msg/AddUserToUserGroupResponse
@@ -459,10 +509,16 @@ message MsgRemoveUserFromUserGroup {
   ];
 
   // User to be removed from the group
-  string user = 3 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+  string user = 3 [
+    (gogoproto.moretags) = "yaml:\"user\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 
   // User signing the message
-  string signer = 4 [ (gogoproto.moretags) = "yaml:\"signer\"" ];
+  string signer = 4 [
+    (gogoproto.moretags) = "yaml:\"signer\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 }
 
 // MsgRemoveUserFromUserGroupResponse defines the
@@ -487,14 +543,20 @@ message MsgSetUserPermissions {
   ];
 
   // User for which to set the permissions
-  string user = 3 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+  string user = 3 [
+    (gogoproto.moretags) = "yaml:\"user\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 
   // Permissions to be set to the user
   repeated string permissions = 4
       [ (gogoproto.moretags) = "yaml:\"permissions\"" ];
 
   // User signing the message
-  string signer = 5 [ (gogoproto.moretags) = "yaml:\"signer\"" ];
+  string signer = 5 [
+    (gogoproto.moretags) = "yaml:\"signer\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 }
 
 // MsgSetUserPermissionsResponse defines the Msg/SetPermissionsResponse
@@ -503,8 +565,9 @@ message MsgSetUserPermissionsResponse {}
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// MsgUpdateSubspaceFeeTokens represents the message to be used to update the accepted fee tokens
-// inside a given subspace, using an on-chain governance proposal
+// MsgUpdateSubspaceFeeTokens represents the message to be used to update the
+// accepted fee tokens inside a given subspace, using an on-chain governance
+// proposal
 //
 // Since: Desmos 6.0.0
 message MsgUpdateSubspaceFeeTokens {
@@ -515,19 +578,22 @@ message MsgUpdateSubspaceFeeTokens {
     (gogoproto.customname) = "SubspaceID",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
-    
-  // List of tokens allowed to be fee tokens inside the given subspace, represented as their gas prices
+
+  // List of tokens allowed to be fee tokens inside the given subspace,
+  // represented as their gas prices
   repeated cosmos.base.v1beta1.Coin additional_fee_tokens = 2 [
     (gogoproto.nullable) = false,
     (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
     (gogoproto.moretags) = "yaml:\"additional_fee_tokens\""
   ];
-    
-  // authority is the address that controls the module (defaults to x/gov unless overwritten).
-  string authority = 3  [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+
+  // authority is the address that controls the module (defaults to x/gov unless
+  // overwritten).
+  string authority = 3 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
 }
 
-// MsgUpdateSubspaceFeeTokensResponse represents the Msg/UpdateSubspaceFeeTokens response type
+// MsgUpdateSubspaceFeeTokensResponse represents the Msg/UpdateSubspaceFeeTokens
+// response type
 //
 // Since: Desmos 6.0.0
 message MsgUpdateSubspaceFeeTokensResponse {}

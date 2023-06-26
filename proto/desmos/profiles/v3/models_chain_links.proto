@@ -17,7 +17,10 @@ message ChainLink {
   option (gogoproto.goproto_stringer) = true;
 
   // User defines the destination profile address to link
-  string user = 1 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+  string user = 1 [
+    (gogoproto.moretags) = "yaml:\"user\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 
   // Address contains the data of the external chain address to be connected
   // with the Desmos profile

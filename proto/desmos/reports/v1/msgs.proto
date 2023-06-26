@@ -58,7 +58,10 @@ message MsgCreateReport {
   string message = 3 [ (gogoproto.moretags) = "yaml:\"message\"" ];
 
   // Address of the reporter
-  string reporter = 4 [ (gogoproto.moretags) = "yaml:\"reporter\"" ];
+  string reporter = 4 [
+    (gogoproto.moretags) = "yaml:\"reporter\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 
   // Target of the report
   google.protobuf.Any target = 5 [
@@ -98,7 +101,10 @@ message MsgDeleteReport {
   ];
 
   // Address of the user deleting the report
-  string signer = 3 [ (gogoproto.moretags) = "yaml:\"signer\"" ];
+  string signer = 3 [
+    (gogoproto.moretags) = "yaml:\"signer\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 }
 
 // MsgDeleteReportResponse represents the Msg/DeleteReport response type
@@ -120,7 +126,10 @@ message MsgSupportStandardReason {
   ];
 
   // Address of the user signing the message
-  string signer = 3 [ (gogoproto.moretags) = "yaml:\"signer\"" ];
+  string signer = 3 [
+    (gogoproto.moretags) = "yaml:\"signer\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 }
 
 // MsgSupportStandardReasonResponse represents the Msg/SupportStandardReason
@@ -149,7 +158,10 @@ message MsgAddReason {
   string description = 3 [ (gogoproto.moretags) = "yaml:\"description\"" ];
 
   // Address of the user adding the supported reason
-  string signer = 4 [ (gogoproto.moretags) = "yaml:\"signer\"" ];
+  string signer = 4 [
+    (gogoproto.moretags) = "yaml:\"signer\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 }
 
 // MsgAddReasonResponse represents the Msg/AddReason response type
@@ -177,7 +189,10 @@ message MsgRemoveReason {
   ];
 
   // Address of the user adding the supported reason
-  string signer = 3 [ (gogoproto.moretags) = "yaml:\"signer\"" ];
+  string signer = 3 [
+    (gogoproto.moretags) = "yaml:\"signer\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 }
 
 // MsgRemoveReasonResponse represents the Msg/RemoveReason response type

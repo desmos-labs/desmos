@@ -2,6 +2,7 @@ syntax = "proto3";
 package desmos.profiles.v3;
 
 import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
 
 option go_package = "github.com/desmos-labs/desmos/v5/x/profiles/types";
 
@@ -32,7 +33,10 @@ message MsgSaveProfile {
   string cover_picture = 5 [ (gogoproto.moretags) = "yaml:\"cover_picture\"" ];
 
   // Address of the user associated to the profile
-  string creator = 6 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
+  string creator = 6 [
+    (gogoproto.moretags) = "yaml:\"creator\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 }
 
 // MsgSaveProfileResponse defines the Msg/SaveProfile response type.
@@ -43,7 +47,10 @@ message MsgSaveProfileResponse {}
 // MsgDeleteProfile represents the message used to delete an existing profile.
 message MsgDeleteProfile {
   // Address associated to the profile to be deleted
-  string creator = 1 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
+  string creator = 1 [
+    (gogoproto.moretags) = "yaml:\"creator\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 }
 
 // MsgDeleteProfileResponse defines the Msg/DeleteProfile response type.

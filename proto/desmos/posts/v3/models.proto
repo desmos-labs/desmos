@@ -45,8 +45,8 @@ message Post {
   repeated string tags = 7 [ (gogoproto.moretags) = "yaml:\"tags\"" ];
 
   // Author of the post
-  string author = 8 [ 
-    (gogoproto.moretags) = "yaml:\"author\"", 
+  string author = 8 [
+    (gogoproto.moretags) = "yaml:\"author\"",
     (cosmos_proto.scalar) = "cosmos.AddressString"
   ];
 
@@ -316,7 +316,10 @@ message UserAnswer {
       [ (gogoproto.moretags) = "yaml:\"answers_indexes\"" ];
 
   // Address of the user answering the poll
-  string user = 5 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+  string user = 5 [
+    (gogoproto.moretags) = "yaml:\"user\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 }
 
 // PollTallyResults contains the tally results for a poll
@@ -352,7 +355,8 @@ message Params {
       [ (gogoproto.moretags) = "yaml:\"max_text_length\"" ];
 }
 
-// PostOwnerTransferRequest represents a request to transfer the ownership of a post from the sender to the receiver
+// PostOwnerTransferRequest represents a request to transfer the ownership of a
+// post from the sender to the receiver
 message PostOwnerTransferRequest {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
@@ -362,7 +366,7 @@ message PostOwnerTransferRequest {
     (gogoproto.customname) = "SubspaceID",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
-  
+
   // Id of the post which will be transferred
   uint64 post_id = 2 [
     (gogoproto.customname) = "PostID",

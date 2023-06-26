@@ -2,6 +2,7 @@ syntax = "proto3";
 package desmos.profiles.v3;
 
 import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
 import "desmos/profiles/v3/models_app_links.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 
@@ -12,7 +13,7 @@ option go_package = "github.com/desmos-labs/desmos/v5/x/profiles/types";
 message QueryApplicationLinksRequest {
   // (Optional) User contains the Desmos profile address associated for which
   // the link should be searched for
-  string user = 1;
+  string user = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
 
   // (Optional) Application represents the application name associated with the
   // link. Used only if user is also set.
@@ -69,7 +70,7 @@ message QueryApplicationLinkOwnersResponse {
   // ApplicationLinkOwnerDetails contains the details of a single application
   // link owner
   message ApplicationLinkOwnerDetails {
-    string user = 1;
+    string user = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
     string application = 2;
     string username = 3;
   }

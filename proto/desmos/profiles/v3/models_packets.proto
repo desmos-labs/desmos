@@ -34,8 +34,10 @@ message LinkChainAccountPacketData {
 
   // DestinationAddress represents the Desmos address of the profile that should
   // be linked with the external account
-  string destination_address = 4
-      [ (gogoproto.moretags) = "yaml:\"destination_address\"" ];
+  string destination_address = 4 [
+    (gogoproto.moretags) = "yaml:\"destination_address\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 
   // DestinationProof contains the proof of ownership of the DestinationAddress
   desmos.profiles.v3.Proof destination_proof = 5 [
