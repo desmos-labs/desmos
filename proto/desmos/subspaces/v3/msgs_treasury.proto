@@ -4,6 +4,7 @@ package desmos.subspaces.v3;
 
 import "gogoproto/gogo.proto";
 import "cosmos_proto/cosmos.proto";
+import "cosmos/msg/v1/msg.proto";
 import "cosmos/authz/v1beta1/authz.proto";
 
 option go_package = "github.com/desmos-labs/desmos/v5/x/subspaces/types";
@@ -11,6 +12,8 @@ option go_package = "github.com/desmos-labs/desmos/v5/x/subspaces/types";
 // MsgGrantTreasuryAuthorization grants an authorization on behalf of the
 // treasury to a user
 message MsgGrantTreasuryAuthorization {
+  option (cosmos.msg.v1.signer) = "granter";
+
   // Id of the subspace where the authorization should be granted
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
@@ -41,6 +44,8 @@ message MsgGrantTreasuryAuthorizationResponse {}
 // MsgRevokeTreasuryAuthorization revokes an existing treasury authorization
 // from a user
 message MsgRevokeTreasuryAuthorization {
+  option (cosmos.msg.v1.signer) = "granter";
+
   // Id of the subspace from which the authorization should be revoked
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",

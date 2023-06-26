@@ -94,6 +94,8 @@ service Msg {
 
 // MsgCreateSubspace represents the message used to create a subspace
 message MsgCreateSubspace {
+  option (cosmos.msg.v1.signer) = "creator";
+
   // Name of the subspace
   string name = 1 [ (gogoproto.moretags) = "yaml:\"name\"" ];
 
@@ -125,6 +127,8 @@ message MsgCreateSubspaceResponse {
 
 // MsgEditSubspace represents the message used to edit a subspace fields
 message MsgEditSubspace {
+  option (cosmos.msg.v1.signer) = "signer";
+
   // Id of the subspace to edit
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
@@ -158,6 +162,8 @@ message MsgEditSubspaceResponse {}
 
 // MsgDeleteSubspace represents the message used to delete a subspace
 message MsgDeleteSubspace {
+  option (cosmos.msg.v1.signer) = "signer";
+
   // Id of the subspace to delete
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
@@ -179,6 +185,8 @@ message MsgDeleteSubspaceResponse {}
 // MsgCreateSection represents the message to be used when creating a subspace
 // section
 message MsgCreateSection {
+  option (cosmos.msg.v1.signer) = "creator";
+
   // Id of the subspace inside which the section will be placed
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
@@ -216,6 +224,8 @@ message MsgCreateSectionResponse {
 // MsgEditSection represents the message to be used when editing a subspace
 // section
 message MsgEditSection {
+  option (cosmos.msg.v1.signer) = "editor";
+
   // Id of the subspace inside which the section to be edited is
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
@@ -247,6 +257,8 @@ message MsgEditSectionResponse {}
 // MsgMoveSection represents the message to be used when moving a section to
 // another parent
 message MsgMoveSection {
+  option (cosmos.msg.v1.signer) = "signer";
+
   // Id of the subspace inside which the section lies
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
@@ -277,6 +289,8 @@ message MsgMoveSectionResponse {}
 
 // MsgDeleteSection represents the message to be used when deleting a section
 message MsgDeleteSection {
+  option (cosmos.msg.v1.signer) = "signer";
+
   // Id of the subspace inside which the section to be deleted is
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
@@ -303,6 +317,8 @@ message MsgDeleteSectionResponse {}
 
 // MsgCreateUserGroup represents the message used to create a user group
 message MsgCreateUserGroup {
+  option (cosmos.msg.v1.signer) = "creator";
+
   // Id of the subspace inside which the group will be created
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
@@ -346,6 +362,8 @@ message MsgCreateUserGroupResponse {
 
 // MsgEditUserGroup represents the message used to edit a user group
 message MsgEditUserGroup {
+  option (cosmos.msg.v1.signer) = "signer";
+
   // Id of the subspace inside which the group to be edited is
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
@@ -377,6 +395,8 @@ message MsgEditUserGroupResponse {}
 // MsgMoveUserGroup represents the message used to move one user group from a
 // section to anoter
 message MsgMoveUserGroup {
+  option (cosmos.msg.v1.signer) = "signer";
+
   // Id of the subspace inside which the group to move is
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
@@ -408,6 +428,8 @@ message MsgMoveUserGroupResponse {}
 // MsgSetUserGroupPermissions represents the message used to set the permissions
 // of a user group
 message MsgSetUserGroupPermissions {
+  option (cosmos.msg.v1.signer) = "signer";
+
   // Id of the subspace inside which the group is
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
@@ -437,6 +459,8 @@ message MsgSetUserGroupPermissionsResponse {}
 
 // MsgDeleteUserGroup represents the message used to delete a user group
 message MsgDeleteUserGroup {
+  option (cosmos.msg.v1.signer) = "signer";
+
   // Id of the subspace inside which the group to delete is
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
@@ -464,6 +488,8 @@ message MsgDeleteUserGroupResponse {}
 // MsgAddUserToUserGroup represents the message used to add a user to a user
 // group
 message MsgAddUserToUserGroup {
+  option (cosmos.msg.v1.signer) = "signer";
+
   // Id of the subspace inside which the group is
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
@@ -496,6 +522,8 @@ message MsgAddUserToUserGroupResponse {}
 // MsgRemoveUserFromUserGroup represents the message used to remove a user from
 // a user group
 message MsgRemoveUserFromUserGroup {
+  option (cosmos.msg.v1.signer) = "signer";
+
   // Id of the subspace inside which the group to remove the user from is
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
@@ -530,6 +558,8 @@ message MsgRemoveUserFromUserGroupResponse {}
 // MsgSetUserPermissions represents the message used to set the permissions of a
 // specific user
 message MsgSetUserPermissions {
+  option (cosmos.msg.v1.signer) = "signer";
+
   // Id of the subspace inside which to set the permissions
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",

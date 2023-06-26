@@ -2,12 +2,15 @@ syntax = "proto3";
 package desmos.profiles.v3;
 
 import "gogoproto/gogo.proto";
+import "cosmos/msg/v1/msg.proto";
 import "cosmos_proto/cosmos.proto";
 
 option go_package = "github.com/desmos-labs/desmos/v5/x/profiles/types";
 
 // MsgSaveProfile represents a message to save a profile.
 message MsgSaveProfile {
+  option (cosmos.msg.v1.signer) = "creator";
+
   // DTag of the profile. If it shouldn't be changed, [do-no-modify] can be used
   // instead.
   string dtag = 1 [
@@ -46,6 +49,8 @@ message MsgSaveProfileResponse {}
 
 // MsgDeleteProfile represents the message used to delete an existing profile.
 message MsgDeleteProfile {
+  option (cosmos.msg.v1.signer) = "creator";
+
   // Address associated to the profile to be deleted
   string creator = 1 [
     (gogoproto.moretags) = "yaml:\"creator\"",

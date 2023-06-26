@@ -78,6 +78,8 @@ service Msg {
 
 // MsgCreatePost represents the message to be used to create a post.
 message MsgCreatePost {
+  option (cosmos.msg.v1.signer) = "author";
+
   // Id of the subspace inside which the post must be created
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
@@ -152,6 +154,8 @@ message MsgCreatePostResponse {
 
 // MsgEditPost represents the message to be used to edit a post.
 message MsgEditPost {
+  option (cosmos.msg.v1.signer) = "editor";
+
   // Id of the subspace inside which the post is
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
@@ -195,6 +199,8 @@ message MsgEditPostResponse {
 
 // MsgDeletePost represents the message used when deleting a post.
 message MsgDeletePost {
+  option (cosmos.msg.v1.signer) = "signer";
+
   // Id of the subspace containing the post
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
@@ -220,6 +226,8 @@ message MsgDeletePostResponse {}
 // MsgAddPostAttachment represents the message that should be
 // used when adding an attachment to post
 message MsgAddPostAttachment {
+  option (cosmos.msg.v1.signer) = "editor";
+
   // Id of the subspace containing the post
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
@@ -264,6 +272,8 @@ message MsgAddPostAttachmentResponse {
 // MsgRemovePostAttachment represents the message to be used when
 // removing an attachment from a post
 message MsgRemovePostAttachment {
+  option (cosmos.msg.v1.signer) = "editor";
+
   // Id of the subspace containing the post
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
@@ -302,6 +312,8 @@ message MsgRemovePostAttachmentResponse {
 
 // MsgAnswerPoll represents the message used to answer a poll
 message MsgAnswerPoll {
+  option (cosmos.msg.v1.signer) = "signer";
+
   // Id of the subspace containing the post
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
@@ -363,6 +375,8 @@ message MsgUpdateParamsResponse {}
 //
 // Since: Desmos 6.0.0
 message MsgMovePost {
+  option (cosmos.msg.v1.signer) = "owner";
+
   // Id of the subspace where the post is currently located
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",

@@ -3,6 +3,7 @@ package desmos.reactions.v1;
 
 import "gogoproto/gogo.proto";
 import "google/protobuf/any.proto";
+import "cosmos/msg/v1/msg.proto";
 import "cosmos_proto/cosmos.proto";
 
 import "desmos/reactions/v1/models.proto";
@@ -36,6 +37,8 @@ service Msg {
 
 // MsgAddReaction represents the message to be used to add a post reaction
 message MsgAddReaction {
+  option (cosmos.msg.v1.signer) = "user";
+
   // Id of the subspace inside which the post to react to is
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
@@ -73,6 +76,8 @@ message MsgAddReactionResponse {
 // MsgRemoveReaction represents the message to be used to remove an
 // existing reaction from a post
 message MsgRemoveReaction {
+  option (cosmos.msg.v1.signer) = "user";
+
   // Id of the subspace inside which the reaction to remove is
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
@@ -104,6 +109,8 @@ message MsgRemoveReactionResponse {}
 // MsgAddRegisteredReaction represents the message to be used to
 // register a new supported reaction
 message MsgAddRegisteredReaction {
+  option (cosmos.msg.v1.signer) = "user";
+
   // Id of the subspace inside which this reaction should be registered
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
@@ -137,6 +144,8 @@ message MsgAddRegisteredReactionResponse {
 // MsgEditRegisteredReaction represents the message to be used to edit a
 // registered reaction
 message MsgEditRegisteredReaction {
+  option (cosmos.msg.v1.signer) = "user";
+
   // Id of the subspace inside which the reaction to edit is
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
@@ -170,6 +179,8 @@ message MsgEditRegisteredReactionResponse {}
 // MsgRemoveRegisteredReaction represents the message to be used to
 // remove an existing registered reaction
 message MsgRemoveRegisteredReaction {
+  option (cosmos.msg.v1.signer) = "user";
+
   // Id of the subspace from which to remove the registered reaction
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
@@ -196,6 +207,8 @@ message MsgRemoveRegisteredReactionResponse {}
 // MsgSetReactionsParams represents the message to be used when setting
 // a subspace reactions params
 message MsgSetReactionsParams {
+  option (cosmos.msg.v1.signer) = "user";
+
   // Id of the subspace for which to set the params
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",

@@ -42,6 +42,8 @@ service Msg {
 
 // MsgCreateReport represents the message to be used to create a report
 message MsgCreateReport {
+  option (cosmos.msg.v1.signer) = "reporter";
+
   // Id of the subspace for which the report should be stored
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
@@ -88,6 +90,8 @@ message MsgCreateReportResponse {
 
 // MsgDeleteReport represents the message to be used when deleting a report
 message MsgDeleteReport {
+  option (cosmos.msg.v1.signer) = "signer";
+
   // Id of the subspace that contains the report to be deleted
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
@@ -113,6 +117,8 @@ message MsgDeleteReportResponse {}
 // MsgSupportStandardReason represents the message to be used when wanting to
 // support one reason from the module params
 message MsgSupportStandardReason {
+  option (cosmos.msg.v1.signer) = "signer";
+
   // Id of the subspace for which to support the reason
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
@@ -145,6 +151,8 @@ message MsgSupportStandardReasonResponse {
 // MsgAddReason represents the message to be used when adding a new supported
 // reason
 message MsgAddReason {
+  option (cosmos.msg.v1.signer) = "signer";
+
   // Id of the subspace for which to add the reason
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
@@ -176,6 +184,8 @@ message MsgAddReasonResponse {
 // MsgRemoveReason represents the message to be used when removing an exiting
 // reporting reason
 message MsgRemoveReason {
+  option (cosmos.msg.v1.signer) = "signer";
+
   // Id of the subspace from which to remove the reason
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",

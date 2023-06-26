@@ -3,6 +3,7 @@ package desmos.subspaces.v3;
 
 import "gogoproto/gogo.proto";
 import "google/protobuf/any.proto";
+import "cosmos/msg/v1/msg.proto";
 import "cosmos_proto/cosmos.proto";
 
 option go_package = "github.com/desmos-labs/desmos/v5/x/subspaces/types";
@@ -10,6 +11,8 @@ option go_package = "github.com/desmos-labs/desmos/v5/x/subspaces/types";
 // MsgGrantAllowance adds grants for the grantee to spend up allowance of fees
 // from the treasury inside the given subspace
 message MsgGrantAllowance {
+  option (cosmos.msg.v1.signer) = "granter";
+
   // Id of the subspace inside which where the allowance should be granted
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
@@ -44,6 +47,8 @@ message MsgGrantAllowanceResponse {}
 // MsgRevokeAllowance removes any existing allowance to the grantee inside the
 // subspace
 message MsgRevokeAllowance {
+  option (cosmos.msg.v1.signer) = "granter";
+
   // If of the subspace inside which the allowance to be deleted is
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",

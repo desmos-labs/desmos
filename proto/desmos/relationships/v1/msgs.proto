@@ -2,6 +2,7 @@ syntax = "proto3";
 package desmos.relationships.v1;
 
 import "gogoproto/gogo.proto";
+import "cosmos/msg/v1/msg.proto";
 import "cosmos_proto/cosmos.proto";
 
 option go_package = "github.com/desmos-labs/desmos/v5/x/relationships/types";
@@ -26,6 +27,8 @@ service Msg {
 // MsgCreateRelationship represents a message to create a relationship
 // between two users on a specific subspace.
 message MsgCreateRelationship {
+  option (cosmos.msg.v1.signer) = "signer";
+
   // User creating the relationship
   string signer = 1 [
     (gogoproto.moretags) = "yaml:\"signer\"",
@@ -54,6 +57,8 @@ message MsgCreateRelationshipResponse {}
 // MsgDeleteRelationship represents a message to delete the relationship
 // between two users.
 message MsgDeleteRelationship {
+  option (cosmos.msg.v1.signer) = "signer";
+
   // User that created the relationship
   string signer = 1 [
     (gogoproto.moretags) = "yaml:\"signer\"",
@@ -82,6 +87,8 @@ message MsgDeleteRelationshipResponse {}
 // MsgBlockUser represents a message to block another user specifying an
 // optional reason.
 message MsgBlockUser {
+  option (cosmos.msg.v1.signer) = "blocker";
+
   // Address of the user blocking the other user
   string blocker = 1 [
     (gogoproto.moretags) = "yaml:\"blocker\"",
@@ -111,6 +118,8 @@ message MsgBlockUserResponse {}
 
 // MsgUnblockUser represents a message to unblock a previously blocked user.
 message MsgUnblockUser {
+  option (cosmos.msg.v1.signer) = "blocker";
+
   // Address of the user that blocked another user
   string blocker = 1 [
     (gogoproto.moretags) = "yaml:\"blocker\"",
