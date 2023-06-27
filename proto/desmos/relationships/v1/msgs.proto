@@ -10,6 +10,8 @@ option go_package = "github.com/desmos-labs/desmos/v5/x/relationships/types";
 
 // Msg defines the relationships Msg service.
 service Msg {
+  option (cosmos.msg.v1.service) = true;
+  
   // CreateRelationship defines a method for creating a new relationship
   rpc CreateRelationship(MsgCreateRelationship)
       returns (MsgCreateRelationshipResponse);

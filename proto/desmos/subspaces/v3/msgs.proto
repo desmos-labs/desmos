@@ -14,7 +14,8 @@ option go_package = "github.com/desmos-labs/desmos/v5/x/subspaces/types";
 
 // Msg defines subspaces Msg service.
 service Msg {
-
+  option (cosmos.msg.v1.service) = true;
+  
   // CreateSubspace allows to create a subspace
   rpc CreateSubspace(MsgCreateSubspace) returns (MsgCreateSubspaceResponse);
 

@@ -13,6 +13,8 @@ option go_package = "github.com/desmos-labs/desmos/v5/x/reactions/types";
 
 // Msg defines the reactions Msg service.
 service Msg {
+  option (cosmos.msg.v1.service) = true;
+  
   // AddReaction allows to add a post reaction
   rpc AddReaction(MsgAddReaction) returns (MsgAddReactionResponse);
 
