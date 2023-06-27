@@ -53,6 +53,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateDenom() {
 						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						nil,
 					), true)
 
 				suite.sk.EXPECT().
@@ -85,6 +86,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateDenom() {
 						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						nil,
 					), true)
 
 				suite.sk.EXPECT().
@@ -121,6 +123,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateDenom() {
 						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						nil,
 					), true)
 
 				suite.sk.EXPECT().
@@ -220,6 +223,7 @@ func (suite *KeeperTestSuite) TestMsgServer_Mint() {
 						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						nil,
 					), true)
 
 				suite.sk.EXPECT().
@@ -252,6 +256,7 @@ func (suite *KeeperTestSuite) TestMsgServer_Mint() {
 						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						nil,
 					), true)
 
 				suite.sk.EXPECT().
@@ -300,6 +305,7 @@ func (suite *KeeperTestSuite) TestMsgServer_Mint() {
 						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						nil,
 					), true)
 
 				suite.sk.EXPECT().
@@ -408,6 +414,7 @@ func (suite *KeeperTestSuite) TestMsgServer_Burn() {
 						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						nil,
 					), true)
 
 				suite.sk.EXPECT().
@@ -440,6 +447,7 @@ func (suite *KeeperTestSuite) TestMsgServer_Burn() {
 						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						nil,
 					), true)
 
 				suite.sk.EXPECT().
@@ -488,6 +496,7 @@ func (suite *KeeperTestSuite) TestMsgServer_Burn() {
 						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						nil,
 					), true)
 
 				suite.sk.EXPECT().
@@ -608,6 +617,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SetDenomMetadata() {
 						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						nil,
 					), true)
 
 				suite.sk.EXPECT().
@@ -640,6 +650,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SetDenomMetadata() {
 						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						nil,
 					), true)
 
 				suite.sk.EXPECT().
