@@ -1,6 +1,7 @@
 syntax = "proto3";
 package desmos.profiles.v3;
 
+import "amino/amino.proto";
 import "gogoproto/gogo.proto";
 import "cosmos/base/v1beta1/coin.proto";
 import "google/protobuf/duration.proto";
@@ -118,7 +119,8 @@ message OracleParams {
   repeated cosmos.base.v1beta1.Coin fee_amount = 6 [
     (gogoproto.nullable) = false,
     (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
-    (gogoproto.moretags) = "yaml:\"fee_amount\""
+    (gogoproto.moretags) = "yaml:\"fee_amount\"",
+    (amino.encoding)         = "legacy_coins"
   ];
 }
 
