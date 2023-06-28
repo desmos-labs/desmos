@@ -23,6 +23,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateDenom() {
 		shouldErr   bool
 		expResponse *types.MsgCreateDenomResponse
 		expEvents   sdk.Events
+		check       func(ctx sdk.Context)
 	}{
 		{
 			name: "subspace does not exist returns error",
@@ -174,6 +175,16 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateDenom() {
 					sdk.NewAttribute(types.AttributeNewTokenDenom, "factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken"),
 				),
 			},
+			check: func(ctx sdk.Context) {
+				suite.Require().Equal(
+					types.DenomAuthorityMetadata{Admin: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
+					suite.k.GetAuthorityMetadata(ctx, "factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken"),
+				)
+				suite.Require().Equal(
+					[]string{"factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken"},
+					suite.k.GetDenomsFromCreator(ctx, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+				)
+			},
 		},
 	}
 
@@ -193,6 +204,9 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateDenom() {
 				suite.Require().NoError(err)
 				suite.Require().Equal(tc.expResponse, res)
 				suite.Require().Equal(tc.expEvents, ctx.EventManager().Events())
+				if tc.check != nil {
+					tc.check(ctx)
+				}
 			}
 		})
 	}
@@ -943,6 +957,9 @@ func (suite *KeeperTestSuite) TestMsgServer_UpdateParams() {
 			} else {
 				suite.Require().NoError(err)
 				suite.Require().Equal(tc.expEvents, ctx.EventManager().Events())
+				if tc.check != nil {
+					tc.check(ctx)
+				}
 			}
 		})
 	}
