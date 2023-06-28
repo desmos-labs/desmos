@@ -186,7 +186,9 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 }
 
 // RegisterStoreDecoder performs a no-op.
-func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {}
+func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
+	sdr[types.ModuleName] = simulation.NewDecodeStore(am.cdc)
+}
 
 // ProposalMsgs returns msgs used for governance proposals for simulations.
 func (AppModule) ProposalMsgs(simState module.SimulationState) []simtypes.WeightedProposalMsg {

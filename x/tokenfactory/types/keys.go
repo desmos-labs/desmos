@@ -22,7 +22,6 @@ var (
 	DenomAuthorityMetadataKey = "authoritymetadata"
 	DenomsPrefixKey           = "denoms"
 	CreatorPrefixKey          = "creator"
-	AdminPrefixKey            = "admin"
 	ParamsPrefixKey           = "params"
 )
 
