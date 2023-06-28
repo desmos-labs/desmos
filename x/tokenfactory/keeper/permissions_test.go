@@ -7,8 +7,6 @@ import (
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 
-	tokenfactorytypes "github.com/osmosis-labs/osmosis/v15/x/tokenfactory/types"
-
 	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 	"github.com/desmos-labs/desmos/v5/x/tokenfactory/types"
 )
@@ -88,7 +86,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateSubspaceTokenPermission() {
 
 				suite.tfk.EXPECT().
 					GetAuthorityMetadata(gomock.Any(), "factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken").
-					Return(tokenfactorytypes.DenomAuthorityMetadata{}, fmt.Errorf("error"))
+					Return(types.DenomAuthorityMetadata{}, fmt.Errorf("error"))
 			},
 			subspace: subspacestypes.Subspace{
 				ID:       1,
@@ -117,7 +115,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateSubspaceTokenPermission() {
 
 				suite.tfk.EXPECT().
 					GetAuthorityMetadata(gomock.Any(), "factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken").
-					Return(tokenfactorytypes.DenomAuthorityMetadata{Admin: "non-treasury-account"}, nil)
+					Return(types.DenomAuthorityMetadata{Admin: "non-treasury-account"}, nil)
 			},
 			subspace: subspacestypes.Subspace{
 				ID:       1,
@@ -146,7 +144,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateSubspaceTokenPermission() {
 
 				suite.tfk.EXPECT().
 					GetAuthorityMetadata(gomock.Any(), "factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken").
-					Return(tokenfactorytypes.DenomAuthorityMetadata{Admin: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"}, nil)
+					Return(types.DenomAuthorityMetadata{Admin: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"}, nil)
 			},
 			subspace: subspacestypes.Subspace{
 				ID:       1,

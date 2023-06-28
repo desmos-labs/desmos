@@ -37,7 +37,7 @@ func (k msgServer) CreateDenom(goCtx context.Context, msg *types.MsgCreateDenom)
 		return nil, errors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot manage the subspace tokens inside this subspace")
 	}
 
-	denom, err := k.tfk.CreateDenom(ctx, subspace.Treasury, msg.Subdenom)
+	denom, err := k.Keeper.CreateDenom(ctx, subspace.Treasury, msg.Subdenom)
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +77,7 @@ func (k msgServer) Mint(goCtx context.Context, msg *types.MsgMint) (*types.MsgMi
 		return nil, err
 	}
 
-	err = k.tfk.MintTo(ctx, msg.Amount, subspace.Treasury)
+	err = k.mintTo(ctx, msg.Amount, subspace.Treasury)
 	if err != nil {
 		return nil, err
 	}
@@ -115,7 +115,7 @@ func (k msgServer) Burn(goCtx context.Context, msg *types.MsgBurn) (*types.MsgBu
 		return nil, err
 	}
 
-	err = k.tfk.BurnFrom(ctx, msg.Amount, subspace.Treasury)
+	err = k.burnFrom(ctx, msg.Amount, subspace.Treasury)
 	if err != nil {
 		return nil, err
 	}
@@ -180,7 +180,7 @@ func (k msgServer) UpdateParams(goCtx context.Context, msg *types.MsgUpdateParam
 	}
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	k.tfk.SetParams(ctx, types.ToOsmosisTokenFactoryParams(msg.Params))
+	k.SetParams(ctx, msg.Params)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(

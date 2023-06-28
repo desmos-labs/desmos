@@ -8,10 +8,10 @@ import (
 	reflect "reflect"
 
 	types "github.com/cosmos/cosmos-sdk/types"
-	types0 "github.com/cosmos/cosmos-sdk/x/bank/types"
-	types1 "github.com/desmos-labs/desmos/v5/x/subspaces/types"
+	types0 "github.com/cosmos/cosmos-sdk/x/auth/types"
+	types1 "github.com/cosmos/cosmos-sdk/x/bank/types"
+	types2 "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 	gomock "github.com/golang/mock/gomock"
-	types2 "github.com/osmosis-labs/osmosis/v15/x/tokenfactory/types"
 )
 
 // MockBankKeeper is a mock of BankKeeper interface.
@@ -37,11 +37,25 @@ func (m *MockBankKeeper) EXPECT() *MockBankKeeperMockRecorder {
 	return m.recorder
 }
 
+// BurnCoins mocks base method.
+func (m *MockBankKeeper) BurnCoins(ctx types.Context, moduleName string, amt types.Coins) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "BurnCoins", ctx, moduleName, amt)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// BurnCoins indicates an expected call of BurnCoins.
+func (mr *MockBankKeeperMockRecorder) BurnCoins(ctx, moduleName, amt interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BurnCoins", reflect.TypeOf((*MockBankKeeper)(nil).BurnCoins), ctx, moduleName, amt)
+}
+
 // GetDenomMetaData mocks base method.
-func (m *MockBankKeeper) GetDenomMetaData(ctx types.Context, denom string) (types0.Metadata, bool) {
+func (m *MockBankKeeper) GetDenomMetaData(ctx types.Context, denom string) (types1.Metadata, bool) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetDenomMetaData", ctx, denom)
-	ret0, _ := ret[0].(types0.Metadata)
+	ret0, _ := ret[0].(types1.Metadata)
 	ret1, _ := ret[1].(bool)
 	return ret0, ret1
 }
@@ -52,8 +66,92 @@ func (mr *MockBankKeeperMockRecorder) GetDenomMetaData(ctx, denom interface{}) *
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDenomMetaData", reflect.TypeOf((*MockBankKeeper)(nil).GetDenomMetaData), ctx, denom)
 }
 
+// HasBalance mocks base method.
+func (m *MockBankKeeper) HasBalance(ctx types.Context, addr types.AccAddress, amt types.Coin) bool {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "HasBalance", ctx, addr, amt)
+	ret0, _ := ret[0].(bool)
+	return ret0
+}
+
+// HasBalance indicates an expected call of HasBalance.
+func (mr *MockBankKeeperMockRecorder) HasBalance(ctx, addr, amt interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasBalance", reflect.TypeOf((*MockBankKeeper)(nil).HasBalance), ctx, addr, amt)
+}
+
+// HasSupply mocks base method.
+func (m *MockBankKeeper) HasSupply(ctx types.Context, denom string) bool {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "HasSupply", ctx, denom)
+	ret0, _ := ret[0].(bool)
+	return ret0
+}
+
+// HasSupply indicates an expected call of HasSupply.
+func (mr *MockBankKeeperMockRecorder) HasSupply(ctx, denom interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasSupply", reflect.TypeOf((*MockBankKeeper)(nil).HasSupply), ctx, denom)
+}
+
+// MintCoins mocks base method.
+func (m *MockBankKeeper) MintCoins(ctx types.Context, moduleName string, amt types.Coins) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "MintCoins", ctx, moduleName, amt)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// MintCoins indicates an expected call of MintCoins.
+func (mr *MockBankKeeperMockRecorder) MintCoins(ctx, moduleName, amt interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MintCoins", reflect.TypeOf((*MockBankKeeper)(nil).MintCoins), ctx, moduleName, amt)
+}
+
+// SendCoins mocks base method.
+func (m *MockBankKeeper) SendCoins(ctx types.Context, fromAddr, toAddr types.AccAddress, amt types.Coins) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SendCoins", ctx, fromAddr, toAddr, amt)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SendCoins indicates an expected call of SendCoins.
+func (mr *MockBankKeeperMockRecorder) SendCoins(ctx, fromAddr, toAddr, amt interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendCoins", reflect.TypeOf((*MockBankKeeper)(nil).SendCoins), ctx, fromAddr, toAddr, amt)
+}
+
+// SendCoinsFromAccountToModule mocks base method.
+func (m *MockBankKeeper) SendCoinsFromAccountToModule(ctx types.Context, senderAddr types.AccAddress, recipientModule string, amt types.Coins) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SendCoinsFromAccountToModule", ctx, senderAddr, recipientModule, amt)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SendCoinsFromAccountToModule indicates an expected call of SendCoinsFromAccountToModule.
+func (mr *MockBankKeeperMockRecorder) SendCoinsFromAccountToModule(ctx, senderAddr, recipientModule, amt interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendCoinsFromAccountToModule", reflect.TypeOf((*MockBankKeeper)(nil).SendCoinsFromAccountToModule), ctx, senderAddr, recipientModule, amt)
+}
+
+// SendCoinsFromModuleToAccount mocks base method.
+func (m *MockBankKeeper) SendCoinsFromModuleToAccount(ctx types.Context, senderModule string, recipientAddr types.AccAddress, amt types.Coins) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SendCoinsFromModuleToAccount", ctx, senderModule, recipientAddr, amt)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SendCoinsFromModuleToAccount indicates an expected call of SendCoinsFromModuleToAccount.
+func (mr *MockBankKeeperMockRecorder) SendCoinsFromModuleToAccount(ctx, senderModule, recipientAddr, amt interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendCoinsFromModuleToAccount", reflect.TypeOf((*MockBankKeeper)(nil).SendCoinsFromModuleToAccount), ctx, senderModule, recipientAddr, amt)
+}
+
 // SetDenomMetaData mocks base method.
-func (m *MockBankKeeper) SetDenomMetaData(ctx types.Context, denomMetaData types0.Metadata) {
+func (m *MockBankKeeper) SetDenomMetaData(ctx types.Context, denomMetaData types1.Metadata) {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "SetDenomMetaData", ctx, denomMetaData)
 }
@@ -64,151 +162,55 @@ func (mr *MockBankKeeperMockRecorder) SetDenomMetaData(ctx, denomMetaData interf
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetDenomMetaData", reflect.TypeOf((*MockBankKeeper)(nil).SetDenomMetaData), ctx, denomMetaData)
 }
 
-// MockTokenFactoryKeeper is a mock of TokenFactoryKeeper interface.
-type MockTokenFactoryKeeper struct {
+// MockAccountKeeper is a mock of AccountKeeper interface.
+type MockAccountKeeper struct {
 	ctrl     *gomock.Controller
-	recorder *MockTokenFactoryKeeperMockRecorder
+	recorder *MockAccountKeeperMockRecorder
 }
 
-// MockTokenFactoryKeeperMockRecorder is the mock recorder for MockTokenFactoryKeeper.
-type MockTokenFactoryKeeperMockRecorder struct {
-	mock *MockTokenFactoryKeeper
+// MockAccountKeeperMockRecorder is the mock recorder for MockAccountKeeper.
+type MockAccountKeeperMockRecorder struct {
+	mock *MockAccountKeeper
 }
 
-// NewMockTokenFactoryKeeper creates a new mock instance.
-func NewMockTokenFactoryKeeper(ctrl *gomock.Controller) *MockTokenFactoryKeeper {
-	mock := &MockTokenFactoryKeeper{ctrl: ctrl}
-	mock.recorder = &MockTokenFactoryKeeperMockRecorder{mock}
+// NewMockAccountKeeper creates a new mock instance.
+func NewMockAccountKeeper(ctrl *gomock.Controller) *MockAccountKeeper {
+	mock := &MockAccountKeeper{ctrl: ctrl}
+	mock.recorder = &MockAccountKeeperMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockTokenFactoryKeeper) EXPECT() *MockTokenFactoryKeeperMockRecorder {
+func (m *MockAccountKeeper) EXPECT() *MockAccountKeeperMockRecorder {
 	return m.recorder
 }
 
-// BurnFrom mocks base method.
-func (m *MockTokenFactoryKeeper) BurnFrom(ctx types.Context, amount types.Coin, burnFrom string) error {
+// GetAccount mocks base method.
+func (m *MockAccountKeeper) GetAccount(arg0 types.Context, arg1 types.AccAddress) types0.AccountI {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "BurnFrom", ctx, amount, burnFrom)
-	ret0, _ := ret[0].(error)
+	ret := m.ctrl.Call(m, "GetAccount", arg0, arg1)
+	ret0, _ := ret[0].(types0.AccountI)
 	return ret0
 }
 
-// BurnFrom indicates an expected call of BurnFrom.
-func (mr *MockTokenFactoryKeeperMockRecorder) BurnFrom(ctx, amount, burnFrom interface{}) *gomock.Call {
+// GetAccount indicates an expected call of GetAccount.
+func (mr *MockAccountKeeperMockRecorder) GetAccount(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BurnFrom", reflect.TypeOf((*MockTokenFactoryKeeper)(nil).BurnFrom), ctx, amount, burnFrom)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAccount", reflect.TypeOf((*MockAccountKeeper)(nil).GetAccount), arg0, arg1)
 }
 
-// CreateDenom mocks base method.
-func (m *MockTokenFactoryKeeper) CreateDenom(ctx types.Context, creatorAddr, subdenom string) (string, error) {
+// GetModuleAccount mocks base method.
+func (m *MockAccountKeeper) GetModuleAccount(ctx types.Context, moduleName string) types0.ModuleAccountI {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateDenom", ctx, creatorAddr, subdenom)
-	ret0, _ := ret[0].(string)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// CreateDenom indicates an expected call of CreateDenom.
-func (mr *MockTokenFactoryKeeperMockRecorder) CreateDenom(ctx, creatorAddr, subdenom interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateDenom", reflect.TypeOf((*MockTokenFactoryKeeper)(nil).CreateDenom), ctx, creatorAddr, subdenom)
-}
-
-// ExportGenesis mocks base method.
-func (m *MockTokenFactoryKeeper) ExportGenesis(ctx types.Context) *types2.GenesisState {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ExportGenesis", ctx)
-	ret0, _ := ret[0].(*types2.GenesisState)
+	ret := m.ctrl.Call(m, "GetModuleAccount", ctx, moduleName)
+	ret0, _ := ret[0].(types0.ModuleAccountI)
 	return ret0
 }
 
-// ExportGenesis indicates an expected call of ExportGenesis.
-func (mr *MockTokenFactoryKeeperMockRecorder) ExportGenesis(ctx interface{}) *gomock.Call {
+// GetModuleAccount indicates an expected call of GetModuleAccount.
+func (mr *MockAccountKeeperMockRecorder) GetModuleAccount(ctx, moduleName interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExportGenesis", reflect.TypeOf((*MockTokenFactoryKeeper)(nil).ExportGenesis), ctx)
-}
-
-// GetAuthorityMetadata mocks base method.
-func (m *MockTokenFactoryKeeper) GetAuthorityMetadata(ctx types.Context, denom string) (types2.DenomAuthorityMetadata, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetAuthorityMetadata", ctx, denom)
-	ret0, _ := ret[0].(types2.DenomAuthorityMetadata)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetAuthorityMetadata indicates an expected call of GetAuthorityMetadata.
-func (mr *MockTokenFactoryKeeperMockRecorder) GetAuthorityMetadata(ctx, denom interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAuthorityMetadata", reflect.TypeOf((*MockTokenFactoryKeeper)(nil).GetAuthorityMetadata), ctx, denom)
-}
-
-// GetDenomsFromCreator mocks base method.
-func (m *MockTokenFactoryKeeper) GetDenomsFromCreator(ctx types.Context, creator string) []string {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetDenomsFromCreator", ctx, creator)
-	ret0, _ := ret[0].([]string)
-	return ret0
-}
-
-// GetDenomsFromCreator indicates an expected call of GetDenomsFromCreator.
-func (mr *MockTokenFactoryKeeperMockRecorder) GetDenomsFromCreator(ctx, creator interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDenomsFromCreator", reflect.TypeOf((*MockTokenFactoryKeeper)(nil).GetDenomsFromCreator), ctx, creator)
-}
-
-// GetParams mocks base method.
-func (m *MockTokenFactoryKeeper) GetParams(ctx types.Context) types2.Params {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetParams", ctx)
-	ret0, _ := ret[0].(types2.Params)
-	return ret0
-}
-
-// GetParams indicates an expected call of GetParams.
-func (mr *MockTokenFactoryKeeperMockRecorder) GetParams(ctx interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetParams", reflect.TypeOf((*MockTokenFactoryKeeper)(nil).GetParams), ctx)
-}
-
-// InitGenesis mocks base method.
-func (m *MockTokenFactoryKeeper) InitGenesis(ctx types.Context, genState types2.GenesisState) {
-	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "InitGenesis", ctx, genState)
-}
-
-// InitGenesis indicates an expected call of InitGenesis.
-func (mr *MockTokenFactoryKeeperMockRecorder) InitGenesis(ctx, genState interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InitGenesis", reflect.TypeOf((*MockTokenFactoryKeeper)(nil).InitGenesis), ctx, genState)
-}
-
-// MintTo mocks base method.
-func (m *MockTokenFactoryKeeper) MintTo(ctx types.Context, amount types.Coin, mintTo string) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "MintTo", ctx, amount, mintTo)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// MintTo indicates an expected call of MintTo.
-func (mr *MockTokenFactoryKeeperMockRecorder) MintTo(ctx, amount, mintTo interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MintTo", reflect.TypeOf((*MockTokenFactoryKeeper)(nil).MintTo), ctx, amount, mintTo)
-}
-
-// SetParams mocks base method.
-func (m *MockTokenFactoryKeeper) SetParams(ctx types.Context, params types2.Params) {
-	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "SetParams", ctx, params)
-}
-
-// SetParams indicates an expected call of SetParams.
-func (mr *MockTokenFactoryKeeperMockRecorder) SetParams(ctx, params interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetParams", reflect.TypeOf((*MockTokenFactoryKeeper)(nil).SetParams), ctx, params)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetModuleAccount", reflect.TypeOf((*MockAccountKeeper)(nil).GetModuleAccount), ctx, moduleName)
 }
 
 // MockSubspacesKeeper is a mock of SubspacesKeeper interface.
@@ -235,10 +237,10 @@ func (m *MockSubspacesKeeper) EXPECT() *MockSubspacesKeeperMockRecorder {
 }
 
 // GetAllSubspaces mocks base method.
-func (m *MockSubspacesKeeper) GetAllSubspaces(ctx types.Context) []types1.Subspace {
+func (m *MockSubspacesKeeper) GetAllSubspaces(ctx types.Context) []types2.Subspace {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAllSubspaces", ctx)
-	ret0, _ := ret[0].([]types1.Subspace)
+	ret0, _ := ret[0].([]types2.Subspace)
 	return ret0
 }
 
@@ -249,10 +251,10 @@ func (mr *MockSubspacesKeeperMockRecorder) GetAllSubspaces(ctx interface{}) *gom
 }
 
 // GetSubspace mocks base method.
-func (m *MockSubspacesKeeper) GetSubspace(ctx types.Context, subspaceID uint64) (types1.Subspace, bool) {
+func (m *MockSubspacesKeeper) GetSubspace(ctx types.Context, subspaceID uint64) (types2.Subspace, bool) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetSubspace", ctx, subspaceID)
-	ret0, _ := ret[0].(types1.Subspace)
+	ret0, _ := ret[0].(types2.Subspace)
 	ret1, _ := ret[1].(bool)
 	return ret0, ret1
 }
@@ -264,7 +266,7 @@ func (mr *MockSubspacesKeeperMockRecorder) GetSubspace(ctx, subspaceID interface
 }
 
 // GetUsersWithRootPermissions mocks base method.
-func (m *MockSubspacesKeeper) GetUsersWithRootPermissions(ctx types.Context, subspaceID uint64, permission types1.Permissions) []string {
+func (m *MockSubspacesKeeper) GetUsersWithRootPermissions(ctx types.Context, subspaceID uint64, permission types2.Permissions) []string {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetUsersWithRootPermissions", ctx, subspaceID, permission)
 	ret0, _ := ret[0].([]string)
@@ -278,7 +280,7 @@ func (mr *MockSubspacesKeeperMockRecorder) GetUsersWithRootPermissions(ctx, subs
 }
 
 // HasPermission mocks base method.
-func (m *MockSubspacesKeeper) HasPermission(ctx types.Context, subspaceID uint64, sectionID uint32, user string, permission types1.Permission) bool {
+func (m *MockSubspacesKeeper) HasPermission(ctx types.Context, subspaceID uint64, sectionID uint32, user string, permission types2.Permission) bool {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "HasPermission", ctx, subspaceID, sectionID, user, permission)
 	ret0, _ := ret[0].(bool)

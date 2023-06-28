@@ -8,8 +8,6 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 
-	tokenfactorytypes "github.com/osmosis-labs/osmosis/v15/x/tokenfactory/types"
-
 	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 
 	"github.com/desmos-labs/desmos/v5/x/tokenfactory/keeper"
@@ -275,7 +273,7 @@ func (suite *KeeperTestSuite) TestMsgServer_Mint() {
 
 				suite.tfk.EXPECT().
 					GetAuthorityMetadata(gomock.Any(), "factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken").
-					Return(tokenfactorytypes.DenomAuthorityMetadata{Admin: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"}, nil)
+					Return(types.DenomAuthorityMetadata{Admin: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"}, nil)
 
 				suite.tfk.EXPECT().
 					MintTo(
@@ -324,7 +322,7 @@ func (suite *KeeperTestSuite) TestMsgServer_Mint() {
 
 				suite.tfk.EXPECT().
 					GetAuthorityMetadata(gomock.Any(), "factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken").
-					Return(tokenfactorytypes.DenomAuthorityMetadata{Admin: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"}, nil)
+					Return(types.DenomAuthorityMetadata{Admin: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"}, nil)
 
 				suite.tfk.EXPECT().
 					MintTo(
@@ -466,7 +464,7 @@ func (suite *KeeperTestSuite) TestMsgServer_Burn() {
 
 				suite.tfk.EXPECT().
 					GetAuthorityMetadata(gomock.Any(), "factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken").
-					Return(tokenfactorytypes.DenomAuthorityMetadata{Admin: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"}, nil)
+					Return(types.DenomAuthorityMetadata{Admin: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"}, nil)
 
 				suite.tfk.EXPECT().
 					BurnFrom(
@@ -515,7 +513,7 @@ func (suite *KeeperTestSuite) TestMsgServer_Burn() {
 
 				suite.tfk.EXPECT().
 					GetAuthorityMetadata(gomock.Any(), "factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken").
-					Return(tokenfactorytypes.DenomAuthorityMetadata{Admin: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"}, nil)
+					Return(types.DenomAuthorityMetadata{Admin: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"}, nil)
 
 				suite.tfk.EXPECT().
 					BurnFrom(
@@ -669,7 +667,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SetDenomMetadata() {
 
 				suite.tfk.EXPECT().
 					GetAuthorityMetadata(gomock.Any(), "factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken").
-					Return(tokenfactorytypes.DenomAuthorityMetadata{Admin: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"}, nil)
+					Return(types.DenomAuthorityMetadata{Admin: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"}, nil)
 
 				suite.bk.EXPECT().
 					SetDenomMetaData(gomock.Any(), metadata)

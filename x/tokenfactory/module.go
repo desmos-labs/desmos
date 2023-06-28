@@ -23,9 +23,6 @@ import (
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
-	tokenfactorykeeper "github.com/osmosis-labs/osmosis/v15/x/tokenfactory/keeper"
-	tokenfactorytypes "github.com/osmosis-labs/osmosis/v15/x/tokenfactory/types"
-
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 
@@ -69,12 +66,12 @@ func (AppModuleBasic) RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 
 // DefaultGenesis returns default genesis state as raw bytes for the tokenfactory module.
 func (AppModuleBasic) DefaultGenesis(cdc codec.JSONCodec) json.RawMessage {
-	return cdc.MustMarshalJSON(tokenfactorytypes.DefaultGenesis())
+	return cdc.MustMarshalJSON(types.DefaultGenesis())
 }
 
 // ValidateGenesis performs genesis state validation for the tokenfactory module.
 func (AppModuleBasic) ValidateGenesis(cdc codec.JSONCodec, _ client.TxEncodingConfig, bz json.RawMessage) error {
-	var data tokenfactorytypes.GenesisState
+	var data types.GenesisState
 	if err := cdc.UnmarshalJSON(bz, &data); err != nil {
 		return fmt.Errorf("failed to unmarshal %s genesis state: %w", types.ModuleName, err)
 	}
@@ -109,10 +106,9 @@ type AppModule struct {
 
 	keeper keeper.Keeper
 
-	sk  types.SubspacesKeeper
-	tfk types.TokenFactoryKeeper
-	ak  authkeeper.AccountKeeper
-	bk  bankkeeper.Keeper
+	sk types.SubspacesKeeper
+	ak authkeeper.AccountKeeper
+	bk bankkeeper.Keeper
 }
 
 // RegisterServices registers module services.
@@ -123,14 +119,13 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 
 // NewAppModule creates a new AppModule Object
 func NewAppModule(
-	cdc codec.Codec, keeper keeper.Keeper, sk types.SubspacesKeeper, tfk types.TokenFactoryKeeper,
+	cdc codec.Codec, keeper keeper.Keeper, sk types.SubspacesKeeper,
 	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) AppModule {
 	return AppModule{
 		AppModuleBasic: AppModuleBasic{cdc: cdc},
 		keeper:         keeper,
 		sk:             sk,
-		tfk:            tfk,
 		ak:             ak,
 		bk:             bk,
 	}
@@ -152,16 +147,16 @@ func (am AppModule) QuerierRoute() string {
 // InitGenesis performs genesis initialization for the tokenfactory module.
 // It returns no validator updates.
 func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.RawMessage) []abci.ValidatorUpdate {
-	var genesisState tokenfactorytypes.GenesisState
+	var genesisState types.GenesisState
 	cdc.MustUnmarshalJSON(data, &genesisState)
-	am.tfk.InitGenesis(ctx, genesisState)
+	am.keeper.InitGenesis(ctx, genesisState)
 	return []abci.ValidatorUpdate{}
 }
 
 // ExportGenesis returns the exported genesis state as raw bytes for the
 // tokenfactory module.
 func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.RawMessage {
-	gs := am.tfk.ExportGenesis(ctx)
+	gs := am.keeper.ExportGenesis(ctx)
 	return cdc.MustMarshalJSON(gs)
 }
 
@@ -200,7 +195,7 @@ func (AppModule) ProposalMsgs(simState module.SimulationState) []simtypes.Weight
 
 // WeightedOperations returns the all the tokenfactory module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
-	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.sk, am.tfk, am.ak, am.bk)
+	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.sk, am.ak, am.bk)
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -252,18 +247,13 @@ func ProvideModule(in ModuleInputs) ModuleOutputs {
 		authority = authtypes.NewModuleAddressOrBech32Address(in.Config.Authority)
 	}
 
-	bk := in.BankKeeper.WithMintCoinsRestriction(tokenfactorytypes.NewTokenFactoryDenomMintCoinsRestriction())
-	tfk := tokenfactorykeeper.NewKeeper(
-		in.Key,
-		in.LegacySubspace,
-		in.AccountKeeper,
-		bk,
-		in.CommunityPoolKeeper,
-	)
+	bk := in.BankKeeper.WithMintCoinsRestriction(types.NewTokenFactoryDenomMintCoinsRestriction())
 
 	k := keeper.NewKeeper(
+		in.Key,
+		in.Cdc,
 		in.SubspacesKeeper,
-		tfk,
+		in.AccountKeeper,
 		bk,
 		authority.String(),
 	)
@@ -272,7 +262,6 @@ func ProvideModule(in ModuleInputs) ModuleOutputs {
 		in.Cdc,
 		k,
 		in.SubspacesKeeper,
-		tfk,
 		in.AccountKeeper,
 		bk,
 	)

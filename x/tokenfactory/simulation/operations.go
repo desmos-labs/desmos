@@ -14,11 +14,11 @@ import (
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
-	tokenfactorytypes "github.com/osmosis-labs/osmosis/v15/x/tokenfactory/types"
 
 	"github.com/desmos-labs/desmos/v5/testutil/simtesting"
 	subspacessim "github.com/desmos-labs/desmos/v5/x/subspaces/simulation"
 	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v5/x/tokenfactory/keeper"
 	"github.com/desmos-labs/desmos/v5/x/tokenfactory/types"
 )
 
@@ -41,7 +41,7 @@ const (
 // WeightedOperations returns all the operations from the module with their respective weights
 func WeightedOperations(
 	appParams simtypes.AppParams, cdc codec.JSONCodec,
-	sk types.SubspacesKeeper, tfk types.TokenFactoryKeeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k keeper.Keeper, sk types.SubspacesKeeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) sim.WeightedOperations {
 
 	var weightMsgCreateDenom int
@@ -75,19 +75,19 @@ func WeightedOperations(
 	return sim.WeightedOperations{
 		sim.NewWeightedOperation(
 			weightMsgCreateDenom,
-			SimulateMsgCreateDenom(sk, tfk, ak, bk),
+			SimulateMsgCreateDenom(k, sk, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgMint,
-			SimulateMsgMint(sk, tfk, ak, bk),
+			SimulateMsgMint(k, sk, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgBurn,
-			SimulateMsgBurn(sk, tfk, ak, bk),
+			SimulateMsgBurn(k, sk, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgSetDenomMetadata,
-			SimulateMsgSetDenomMetadata(sk, tfk, ak, bk),
+			SimulateMsgSetDenomMetadata(k, sk, ak, bk),
 		),
 	}
 }
@@ -96,7 +96,7 @@ func WeightedOperations(
 
 // SimulateMsgCreateDenom tests and runs a single MsgCreateDenom
 func SimulateMsgCreateDenom(
-	sk types.SubspacesKeeper, tfk types.TokenFactoryKeeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k keeper.Keeper, sk types.SubspacesKeeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -104,7 +104,7 @@ func SimulateMsgCreateDenom(
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 
 		// Get the data
-		subspaceID, subdenom, signer, skip := randomCreateDenomFields(r, ctx, accs, sk, tfk, bk)
+		subspaceID, subdenom, signer, skip := randomCreateDenomFields(r, ctx, accs, k, sk, bk)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, "MsgCreateDenom", "skip"), nil, nil
 		}
@@ -118,7 +118,7 @@ func SimulateMsgCreateDenom(
 
 // randomCreateDenomFields returns the data used to build a random MsgCreateDenom
 func randomCreateDenomFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, sk types.SubspacesKeeper, tfk types.TokenFactoryKeeper, bk bankkeeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk types.SubspacesKeeper, bk bankkeeper.Keeper,
 ) (subspaceID uint64, subdenom string, signer simtypes.Account, skip bool) {
 
 	// Get a subspace id
@@ -133,7 +133,7 @@ func randomCreateDenomFields(
 
 	// Check treasury balances
 	balances := bk.SpendableCoins(ctx, sdk.MustAccAddressFromBech32(subspace.Treasury))
-	creationFees := tfk.GetParams(ctx).DenomCreationFee
+	creationFees := k.GetParams(ctx).DenomCreationFee
 	if !balances.IsAllGT(creationFees) {
 		// Skip because treasury does not have enough coins
 		skip = true
@@ -142,7 +142,7 @@ func randomCreateDenomFields(
 
 	// Get a denom
 	subdenom = simtypes.RandStringOfLength(r, 6)
-	denom, _ := tokenfactorytypes.GetTokenDenom(subspace.Treasury, subdenom)
+	denom, _ := types.GetTokenDenom(subspace.Treasury, subdenom)
 	_, exists := bk.GetDenomMetaData(ctx, denom)
 	if exists {
 		// Skip because denom has already existed
@@ -167,7 +167,7 @@ func randomCreateDenomFields(
 
 // SimulateMsgMint tests and runs a single MsgMint
 func SimulateMsgMint(
-	sk types.SubspacesKeeper, tfk types.TokenFactoryKeeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k keeper.Keeper, sk types.SubspacesKeeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -175,7 +175,7 @@ func SimulateMsgMint(
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 
 		// Get the data
-		subspaceID, amount, signer, skip := randomMintFields(r, ctx, accs, sk, tfk)
+		subspaceID, amount, signer, skip := randomMintFields(r, ctx, accs, k, sk)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, "MsgMint", "skip"), nil, nil
 		}
@@ -189,7 +189,7 @@ func SimulateMsgMint(
 
 // randomMintFields returns the data used to build a random MsgMint
 func randomMintFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, sk types.SubspacesKeeper, tfk types.TokenFactoryKeeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk types.SubspacesKeeper,
 ) (subspaceID uint64, amount sdk.Coin, signer simtypes.Account, skip bool) {
 
 	// Get a subspace id
@@ -203,7 +203,7 @@ func randomMintFields(
 	subspaceID = subspace.ID
 
 	// Get an amount
-	denoms := tfk.GetDenomsFromCreator(ctx, subspace.Treasury)
+	denoms := k.GetDenomsFromCreator(ctx, subspace.Treasury)
 	if len(denoms) == 0 {
 		// Skip because there are no denoms
 		skip = true
@@ -234,7 +234,7 @@ func randomMintFields(
 
 // SimulateMsgBurn tests and runs a single MsgBurn
 func SimulateMsgBurn(
-	sk types.SubspacesKeeper, tfk types.TokenFactoryKeeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k keeper.Keeper, sk types.SubspacesKeeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -242,7 +242,7 @@ func SimulateMsgBurn(
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 
 		// Get the data
-		subspaceID, amount, signer, skip := randomBurnFields(r, ctx, accs, sk, tfk, bk)
+		subspaceID, amount, signer, skip := randomBurnFields(r, ctx, accs, k, sk, bk)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, "MsgBurn", "skip"), nil, nil
 		}
@@ -256,7 +256,7 @@ func SimulateMsgBurn(
 
 // randomBurnFields returns the data used to build a random MsgBurn
 func randomBurnFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, sk types.SubspacesKeeper, tfk types.TokenFactoryKeeper, bk bankkeeper.ViewKeeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk types.SubspacesKeeper, bk bankkeeper.ViewKeeper,
 ) (subspaceID uint64, amount sdk.Coin, signer simtypes.Account, skip bool) {
 
 	// Get a subspace id
@@ -270,7 +270,7 @@ func randomBurnFields(
 	subspaceID = subspace.ID
 
 	// Get a denom
-	denoms := tfk.GetDenomsFromCreator(ctx, subspace.Treasury)
+	denoms := k.GetDenomsFromCreator(ctx, subspace.Treasury)
 	if len(denoms) == 0 {
 		// Skip because there are no denoms
 		skip = true
@@ -304,7 +304,7 @@ func randomBurnFields(
 
 // SimulateMsgSetDenomMetadata tests and runs a single MsgSetDenomMetadata
 func SimulateMsgSetDenomMetadata(
-	sk types.SubspacesKeeper, tfk types.TokenFactoryKeeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k keeper.Keeper, sk types.SubspacesKeeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -312,7 +312,7 @@ func SimulateMsgSetDenomMetadata(
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 
 		// Get the data
-		subspaceID, metadata, signer, skip := randomSetDenomMetadataFields(r, ctx, accs, sk, tfk)
+		subspaceID, metadata, signer, skip := randomSetDenomMetadataFields(r, ctx, accs, k, sk)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, "MsgSetDenomMetadata", "skip"), nil, nil
 		}
@@ -326,7 +326,7 @@ func SimulateMsgSetDenomMetadata(
 
 // randomSetDenomMetadataFields returns the data used to build a random MsgSetDenomMetadata
 func randomSetDenomMetadataFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, sk types.SubspacesKeeper, tfk types.TokenFactoryKeeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk types.SubspacesKeeper,
 ) (subspaceID uint64, metadata banktypes.Metadata, signer simtypes.Account, skip bool) {
 
 	// Get a subspace id
@@ -340,7 +340,7 @@ func randomSetDenomMetadataFields(
 	subspaceID = subspace.ID
 
 	// Get an metadata
-	denoms := tfk.GetDenomsFromCreator(ctx, subspace.Treasury)
+	denoms := k.GetDenomsFromCreator(ctx, subspace.Treasury)
 	if len(denoms) == 0 {
 		// Skip because there are no denoms
 		skip = true

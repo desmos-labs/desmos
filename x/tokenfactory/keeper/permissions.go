@@ -4,8 +4,6 @@ import (
 	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	tokenfactorytypes "github.com/osmosis-labs/osmosis/v15/x/tokenfactory/types"
-
 	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 	"github.com/desmos-labs/desmos/v5/x/tokenfactory/types"
 )
@@ -21,17 +19,17 @@ func (k Keeper) ValidateManageTokenPermission(ctx sdk.Context, subspace subspace
 	// Check if the denom exists
 	_, denomExists := k.bk.GetDenomMetaData(ctx, denom)
 	if !denomExists {
-		return tokenfactorytypes.ErrDenomDoesNotExist.Wrapf("denom: %s", denom)
+		return types.ErrDenomDoesNotExist.Wrapf("denom: %s", denom)
 	}
 
-	authorityMetadata, err := k.tfk.GetAuthorityMetadata(ctx, denom)
+	authorityMetadata, err := k.GetAuthorityMetadata(ctx, denom)
 	if err != nil {
 		return err
 	}
 
 	// Check if the subspace treasury is the admin of the denom
 	if subspace.Treasury != authorityMetadata.GetAdmin() {
-		return tokenfactorytypes.ErrUnauthorized
+		return types.ErrUnauthorized
 	}
 
 	return nil

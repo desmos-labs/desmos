@@ -6,7 +6,6 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/auth/migrations/legacytx"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	tokenfactorytypes "github.com/osmosis-labs/osmosis/v15/x/tokenfactory/types"
 )
 
 var (
@@ -34,9 +33,9 @@ func (msg MsgCreateDenom) ValidateBasic() error {
 		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid sender address: %s", err)
 	}
 
-	_, err = tokenfactorytypes.GetTokenDenom(msg.Sender, msg.Subdenom)
+	_, err = GetTokenDenom(msg.Sender, msg.Subdenom)
 	if err != nil {
-		return errors.Wrap(tokenfactorytypes.ErrInvalidDenom, err.Error())
+		return errors.Wrap(ErrInvalidDenom, err.Error())
 	}
 
 	return nil
@@ -193,7 +192,7 @@ func (msg MsgSetDenomMetadata) ValidateBasic() error {
 		return err
 	}
 
-	_, _, err = tokenfactorytypes.DeconstructDenom(msg.Metadata.Base)
+	_, _, err = DeconstructDenom(msg.Metadata.Base)
 	return err
 }
 
@@ -236,7 +235,7 @@ func (msg MsgUpdateParams) ValidateBasic() error {
 		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid authority address: %s", err)
 	}
 
-	return ToOsmosisTokenFactoryParams(msg.Params).Validate()
+	return msg.Params.Validate()
 }
 
 // GetSigners implements sdk.Msg

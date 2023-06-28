@@ -14,9 +14,9 @@ var _ types.QueryServer = Keeper{}
 // Params implements the Query/Params gRPC method
 func (k Keeper) Params(ctx context.Context, request *types.QueryParamsRequest) (*types.QueryParamsResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
-	params := k.tfk.GetParams(sdkCtx)
+	params := k.GetParams(sdkCtx)
 
-	return &types.QueryParamsResponse{Params: types.FromOsmosisTokenFactoryParams(params)}, nil
+	return &types.QueryParamsResponse{Params: params}, nil
 }
 
 // SubspaceDenoms implements the Query/SubspaceDenoms gRPC method
@@ -24,7 +24,7 @@ func (k Keeper) SubspaceDenoms(ctx context.Context, request *types.QuerySubspace
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 
 	treasury := subspacestypes.GetTreasuryAddress(request.SubspaceId)
-	denoms := k.tfk.GetDenomsFromCreator(sdkCtx, treasury.String())
+	denoms := k.GetDenomsFromCreator(sdkCtx, treasury.String())
 
 	return &types.QuerySubspaceDenomsResponse{Denoms: denoms}, nil
 }

@@ -2,7 +2,6 @@ package types
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	tokenfactorytypes "github.com/osmosis-labs/osmosis/v15/x/tokenfactory/types"
 )
 
 // NewParams creates a new params instance
@@ -19,16 +18,11 @@ func DefaultParams() Params {
 	}
 }
 
-// ToOsmosisTokenFactoryParams converts desmos tokenfactory Params into osmosis tokenfactory Params
-func ToOsmosisTokenFactoryParams(p Params) tokenfactorytypes.Params {
-	return tokenfactorytypes.Params{
-		DenomCreationFee: p.DenomCreationFee,
+// Validate implements fmt.Validator
+func (p Params) Validate() error {
+	if err := p.DenomCreationFee.Validate(); err != nil {
+		return err
 	}
-}
 
-// FromOsmosisTokenFactoryParams converts osmosis tokenfactory Params into desmos tokenfactory Params
-func FromOsmosisTokenFactoryParams(p tokenfactorytypes.Params) Params {
-	return Params{
-		DenomCreationFee: p.DenomCreationFee,
-	}
+	return nil
 }

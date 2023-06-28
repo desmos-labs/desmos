@@ -19,8 +19,6 @@ import (
 	"github.com/gogo/protobuf/proto"
 	"github.com/stretchr/testify/suite"
 
-	tokenfactorytypes "github.com/osmosis-labs/osmosis/v15/x/tokenfactory/types"
-
 	"github.com/desmos-labs/desmos/v5/testutil"
 	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 	"github.com/desmos-labs/desmos/v5/x/tokenfactory/client/cli"
@@ -70,18 +68,18 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	s.Require().NoError(err)
 	genesisState[subspacestypes.ModuleName] = subspacesDataBz
 
-	tokenfactoryGenesis := &tokenfactorytypes.GenesisState{
-		Params: tokenfactorytypes.DefaultParams(),
-		FactoryDenoms: []tokenfactorytypes.GenesisDenom{
+	tokenfactoryGenesis := &types.GenesisState{
+		Params: types.DefaultParams(),
+		FactoryDenoms: []types.GenesisDenom{
 			{
 				Denom: "factory/cosmos1cyjzgj9j7d2gdqk78pa0fgvfnlzradat97aek9/uminttoken",
-				AuthorityMetadata: tokenfactorytypes.DenomAuthorityMetadata{
+				AuthorityMetadata: types.DenomAuthorityMetadata{
 					Admin: "cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 				},
 			},
 			{
 				Denom: "factory/cosmos1cyjzgj9j7d2gdqk78pa0fgvfnlzradat97aek9/utesttoken",
-				AuthorityMetadata: tokenfactorytypes.DenomAuthorityMetadata{
+				AuthorityMetadata: types.DenomAuthorityMetadata{
 					Admin: "cosmos1cyjzgj9j7d2gdqk78pa0fgvfnlzradat97aek9",
 				},
 			},

@@ -20,7 +20,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Params() {
 			name: "params are returned properly",
 			setup: func() {
 				suite.tfk.EXPECT().GetParams(gomock.Any()).
-					Return(types.ToOsmosisTokenFactoryParams(types.DefaultParams()))
+					Return(types.DefaultParams())
 			},
 			request:   types.NewQueryParamsRequest(),
 			shouldErr: false,

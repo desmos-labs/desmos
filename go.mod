@@ -30,7 +30,6 @@ require (
 	github.com/manifoldco/promptui v0.9.0
 	github.com/mr-tron/base58 v1.2.0
 	github.com/osmosis-labs/go-mutesting v0.0.0-20221219192234-827e6d6b9d4e
-	github.com/osmosis-labs/osmosis/v15 v15.1.2
 	github.com/prometheus/client_golang v1.16.0
 	github.com/rakyll/statik v0.1.7
 	github.com/spf13/cast v1.5.1
@@ -334,9 +333,6 @@ replace (
 	// Fix upstream GHSA-h395-qcrw-5vmq vulnerability.
 	// TODO Remove it: https://github.com/cosmos/cosmos-sdk/issues/10409
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.8.1
-
-	// Our osmosis branch is: https://github.com/desmos-labs/osmosis v15.1.x-desmos
-	github.com/osmosis-labs/osmosis/v15 => github.com/desmos-labs/osmosis/v15 v15.1.2-desmos.1
 
 	// Downgraded to avoid bugs in following commits which caused simulations to fail.
 	github.com/syndtr/goleveldb => github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7

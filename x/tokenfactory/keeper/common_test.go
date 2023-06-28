@@ -32,9 +32,9 @@ type KeeperTestSuite struct {
 	storeKey storetypes.StoreKey
 	k        keeper.Keeper
 
-	bk  *testutil.MockBankKeeper
-	sk  *testutil.MockSubspacesKeeper
-	tfk *testutil.MockTokenFactoryKeeper
+	bk *testutil.MockBankKeeper
+	sk *testutil.MockSubspacesKeeper
+	ak *testutil.MockAccountKeeper
 }
 
 func (suite *KeeperTestSuite) SetupTest() {
@@ -62,11 +62,13 @@ func (suite *KeeperTestSuite) SetupTest() {
 
 	suite.bk = testutil.NewMockBankKeeper(ctrl)
 	suite.sk = testutil.NewMockSubspacesKeeper(ctrl)
-	suite.tfk = testutil.NewMockTokenFactoryKeeper(ctrl)
+	suite.ak = testutil.NewMockAccountKeeper(ctrl)
 
 	suite.k = keeper.NewKeeper(
+		suite.storeKey,
+		suite.cdc,
 		suite.sk,
-		suite.tfk,
+		suite.ak,
 		suite.bk,
 		authtypes.NewModuleAddress("gov").String(),
 	)
