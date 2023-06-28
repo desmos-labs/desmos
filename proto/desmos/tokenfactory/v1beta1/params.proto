@@ -12,7 +12,7 @@ option go_package = "github.com/desmos-labs/desmos/v5/x/tokenfactory/types";
 message Params {
   // DenomCreationFee defines the fee to be charged on the creation of a new
   // denom. The fee is drawn from the subspace treasruy account, and
-  // transferred to the community pool.
+  // burned.
   repeated cosmos.base.v1beta1.Coin denom_creation_fee = 1 [
     (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
     (gogoproto.moretags) = "yaml:\"denom_creation_fee\"",
