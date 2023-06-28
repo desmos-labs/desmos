@@ -1,10 +1,9 @@
 package keeper_test
 
 import (
-	"fmt"
-
 	"github.com/golang/mock/gomock"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 
 	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
@@ -16,6 +15,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateSubspaceTokenPermission() {
 	testCases := []struct {
 		name      string
 		setup     func()
+		store     func(ctx sdk.Context)
 		subspace  subspacestypes.Subspace
 		sender    string
 		denom     string
@@ -68,35 +68,6 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateSubspaceTokenPermission() {
 			shouldErr: true,
 		},
 		{
-			name: "get denom authority failed returns error",
-			setup: func() {
-				suite.sk.EXPECT().
-					HasPermission(
-						gomock.Any(),
-						uint64(1),
-						uint32(subspacestypes.RootSectionID),
-						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-						types.PermissionManageSubspaceTokens,
-					).
-					Return(true)
-
-				suite.bk.EXPECT().
-					GetDenomMetaData(gomock.Any(), "factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken").
-					Return(banktypes.Metadata{}, true)
-
-				suite.tfk.EXPECT().
-					GetAuthorityMetadata(gomock.Any(), "factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken").
-					Return(types.DenomAuthorityMetadata{}, fmt.Errorf("error"))
-			},
-			subspace: subspacestypes.Subspace{
-				ID:       1,
-				Treasury: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-			},
-			sender:    "cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-			denom:     "factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken",
-			shouldErr: true,
-		},
-		{
 			name: "denom admin does not match subspace treasury returns error",
 			setup: func() {
 				suite.sk.EXPECT().
@@ -112,10 +83,36 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateSubspaceTokenPermission() {
 				suite.bk.EXPECT().
 					GetDenomMetaData(gomock.Any(), "factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken").
 					Return(banktypes.Metadata{}, true)
+			},
+			subspace: subspacestypes.Subspace{
+				ID:       1,
+				Treasury: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			},
+			sender:    "cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+			denom:     "factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken",
+			shouldErr: true,
+		},
+		{
+			name: "subspace treasury does not match admin returns error",
+			setup: func() {
+				suite.sk.EXPECT().
+					HasPermission(
+						gomock.Any(),
+						uint64(1),
+						uint32(subspacestypes.RootSectionID),
+						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+						types.PermissionManageSubspaceTokens,
+					).
+					Return(true)
 
-				suite.tfk.EXPECT().
-					GetAuthorityMetadata(gomock.Any(), "factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken").
-					Return(types.DenomAuthorityMetadata{Admin: "non-treasury-account"}, nil)
+				suite.bk.EXPECT().
+					GetDenomMetaData(gomock.Any(), "factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken").
+					Return(banktypes.Metadata{}, true)
+			},
+			store: func(ctx sdk.Context) {
+				suite.k.SetAuthorityMetadata(ctx,
+					"factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken",
+					types.DenomAuthorityMetadata{Admin: ""})
 			},
 			subspace: subspacestypes.Subspace{
 				ID:       1,
@@ -141,10 +138,11 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateSubspaceTokenPermission() {
 				suite.bk.EXPECT().
 					GetDenomMetaData(gomock.Any(), "factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken").
 					Return(banktypes.Metadata{}, true)
-
-				suite.tfk.EXPECT().
-					GetAuthorityMetadata(gomock.Any(), "factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken").
-					Return(types.DenomAuthorityMetadata{Admin: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"}, nil)
+			},
+			store: func(ctx sdk.Context) {
+				suite.k.SetAuthorityMetadata(ctx,
+					"factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken",
+					types.DenomAuthorityMetadata{Admin: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"})
 			},
 			subspace: subspacestypes.Subspace{
 				ID:       1,
@@ -161,6 +159,9 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateSubspaceTokenPermission() {
 			ctx, _ := suite.ctx.CacheContext()
 			if tc.setup != nil {
 				tc.setup()
+			}
+			if tc.store != nil {
+				tc.store(ctx)
 			}
 
 			err := suite.k.ValidateManageTokenPermission(ctx, tc.subspace, tc.sender, tc.denom)

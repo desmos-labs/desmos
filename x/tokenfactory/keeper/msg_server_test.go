@@ -97,9 +97,9 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateDenom() {
 					).
 					Return(true)
 
-				suite.tfk.EXPECT().
-					CreateDenom(gomock.Any(), "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", "uminttoken").
-					Return("", fmt.Errorf("error"))
+				suite.bk.EXPECT().
+					HasSupply(gomock.Any(), "uminttoken").
+					Return(true)
 			},
 			msg: types.NewMsgCreateDenom(
 				1,
@@ -134,9 +134,23 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateDenom() {
 					).
 					Return(true)
 
-				suite.tfk.EXPECT().
-					CreateDenom(gomock.Any(), "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", "uminttoken").
-					Return("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", nil)
+				suite.bk.EXPECT().
+					HasSupply(gomock.Any(), "uminttoken").
+					Return(false)
+
+				suite.bk.EXPECT().
+					GetDenomMetaData(gomock.Any(), "factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken").
+					Return(banktypes.Metadata{}, false).
+					Times(2)
+
+				suite.bk.EXPECT().
+					SetDenomMetaData(gomock.Any(), banktypes.Metadata{
+						DenomUnits: []*banktypes.DenomUnit{{
+							Denom:    "factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken",
+							Exponent: 0,
+						}},
+						Base: "factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken",
+					})
 			},
 			msg: types.NewMsgCreateDenom(
 				1,
@@ -188,7 +202,7 @@ func (suite *KeeperTestSuite) TestMsgServer_Mint() {
 	testCases := []struct {
 		name        string
 		setup       func()
-		setupCtx    func(ctx sdk.Context) sdk.Context
+		store       func(ctx sdk.Context)
 		msg         *types.MsgMint
 		shouldErr   bool
 		expResponse *types.MsgMintResponse
@@ -242,7 +256,7 @@ func (suite *KeeperTestSuite) TestMsgServer_Mint() {
 			shouldErr: true,
 		},
 		{
-			name: "mint failed returns error",
+			name: "mint failed returns error - bank mint coins failed",
 			setup: func() {
 				suite.sk.EXPECT().
 					GetSubspace(gomock.Any(), uint64(1)).
@@ -271,17 +285,77 @@ func (suite *KeeperTestSuite) TestMsgServer_Mint() {
 					GetDenomMetaData(gomock.Any(), "factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken").
 					Return(banktypes.Metadata{}, true)
 
-				suite.tfk.EXPECT().
-					GetAuthorityMetadata(gomock.Any(), "factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken").
-					Return(types.DenomAuthorityMetadata{Admin: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"}, nil)
-
-				suite.tfk.EXPECT().
-					MintTo(
+				suite.bk.EXPECT().
+					MintCoins(
 						gomock.Any(),
-						sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken",
-							sdk.NewInt(100)), "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						types.ModuleName,
+						sdk.NewCoins(sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", sdk.NewInt(100))),
 					).
 					Return(fmt.Errorf("error"))
+			},
+			store: func(ctx sdk.Context) {
+				suite.k.SetAuthorityMetadata(ctx,
+					"factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken",
+					types.DenomAuthorityMetadata{Admin: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"})
+			},
+			msg: types.NewMsgMint(
+				1,
+				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+				sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", sdk.NewInt(100)),
+			),
+			shouldErr: true,
+		},
+		{
+			name: "mint failed returns error - module send coins to treasury failed",
+			setup: func() {
+				suite.sk.EXPECT().
+					GetSubspace(gomock.Any(), uint64(1)).
+					Return(subspacestypes.NewSubspace(
+						1,
+						"Test subspace",
+						"This is a test subspace",
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						nil,
+					), true)
+
+				suite.sk.EXPECT().
+					HasPermission(
+						gomock.Any(),
+						uint64(1),
+						uint32(subspacestypes.RootSectionID),
+						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+						types.PermissionManageSubspaceTokens,
+					).
+					Return(true)
+
+				suite.bk.EXPECT().
+					GetDenomMetaData(gomock.Any(), "factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken").
+					Return(banktypes.Metadata{}, true)
+
+				suite.bk.EXPECT().
+					MintCoins(
+						gomock.Any(),
+						types.ModuleName,
+						sdk.NewCoins(sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", sdk.NewInt(100))),
+					).
+					Return(nil)
+
+				suite.bk.EXPECT().
+					SendCoinsFromModuleToAccount(
+						gomock.Any(),
+						types.ModuleName,
+						sdk.MustAccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+						sdk.NewCoins(sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", sdk.NewInt(100))),
+					).
+					Return(fmt.Errorf("error"))
+			},
+			store: func(ctx sdk.Context) {
+				suite.k.SetAuthorityMetadata(ctx,
+					"factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken",
+					types.DenomAuthorityMetadata{Admin: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"})
 			},
 			msg: types.NewMsgMint(
 				1,
@@ -320,17 +394,27 @@ func (suite *KeeperTestSuite) TestMsgServer_Mint() {
 					GetDenomMetaData(gomock.Any(), "factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken").
 					Return(banktypes.Metadata{}, true)
 
-				suite.tfk.EXPECT().
-					GetAuthorityMetadata(gomock.Any(), "factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken").
-					Return(types.DenomAuthorityMetadata{Admin: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"}, nil)
-
-				suite.tfk.EXPECT().
-					MintTo(
+				suite.bk.EXPECT().
+					MintCoins(
 						gomock.Any(),
-						sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", sdk.NewInt(100)),
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						types.ModuleName,
+						sdk.NewCoins(sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", sdk.NewInt(100))),
 					).
 					Return(nil)
+
+				suite.bk.EXPECT().
+					SendCoinsFromModuleToAccount(
+						gomock.Any(),
+						types.ModuleName,
+						sdk.MustAccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+						sdk.NewCoins(sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", sdk.NewInt(100))),
+					).
+					Return(nil)
+			},
+			store: func(ctx sdk.Context) {
+				suite.k.SetAuthorityMetadata(ctx,
+					"factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken",
+					types.DenomAuthorityMetadata{Admin: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"})
 			},
 			msg: types.NewMsgMint(
 				1,
@@ -362,6 +446,9 @@ func (suite *KeeperTestSuite) TestMsgServer_Mint() {
 			if tc.setup != nil {
 				tc.setup()
 			}
+			if tc.store != nil {
+				tc.store(ctx)
+			}
 
 			msgServer := keeper.NewMsgServerImpl(suite.k)
 			res, err := msgServer.Mint(sdk.WrapSDKContext(ctx), tc.msg)
@@ -380,6 +467,7 @@ func (suite *KeeperTestSuite) TestMsgServer_Burn() {
 	testCases := []struct {
 		name        string
 		setup       func()
+		store       func(ctx sdk.Context)
 		msg         *types.MsgBurn
 		shouldErr   bool
 		expResponse *types.MsgBurnResponse
@@ -433,7 +521,7 @@ func (suite *KeeperTestSuite) TestMsgServer_Burn() {
 			shouldErr: true,
 		},
 		{
-			name: "burn failed returns error",
+			name: "burn failed returns error - send coins to module failed",
 			setup: func() {
 				suite.sk.EXPECT().
 					GetSubspace(gomock.Any(), uint64(1)).
@@ -462,17 +550,78 @@ func (suite *KeeperTestSuite) TestMsgServer_Burn() {
 					GetDenomMetaData(gomock.Any(), "factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken").
 					Return(banktypes.Metadata{}, true)
 
-				suite.tfk.EXPECT().
-					GetAuthorityMetadata(gomock.Any(), "factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken").
-					Return(types.DenomAuthorityMetadata{Admin: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"}, nil)
-
-				suite.tfk.EXPECT().
-					BurnFrom(
+				suite.bk.EXPECT().
+					SendCoinsFromAccountToModule(
 						gomock.Any(),
-						sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", sdk.NewInt(100)),
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						sdk.MustAccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+						types.ModuleName,
+						sdk.NewCoins(sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", sdk.NewInt(100))),
 					).
 					Return(fmt.Errorf("error"))
+			},
+			store: func(ctx sdk.Context) {
+				suite.k.SetAuthorityMetadata(ctx,
+					"factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken",
+					types.DenomAuthorityMetadata{Admin: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"})
+			},
+			msg: types.NewMsgBurn(
+				1,
+				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+				sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", sdk.NewInt(100)),
+			),
+			shouldErr: true,
+		},
+		{
+			name: "burn failed returns error - bank burn failed",
+			setup: func() {
+				suite.sk.EXPECT().
+					GetSubspace(gomock.Any(), uint64(1)).
+					Return(subspacestypes.NewSubspace(
+						1,
+						"Test subspace",
+						"This is a test subspace",
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						nil,
+					), true)
+
+				suite.sk.EXPECT().
+					HasPermission(
+						gomock.Any(),
+						uint64(1),
+						uint32(subspacestypes.RootSectionID),
+						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+						types.PermissionManageSubspaceTokens,
+					).
+					Return(true)
+
+				suite.bk.EXPECT().
+					GetDenomMetaData(gomock.Any(), "factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken").
+					Return(banktypes.Metadata{}, true)
+
+				suite.bk.EXPECT().
+					SendCoinsFromAccountToModule(
+						gomock.Any(),
+						sdk.MustAccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+						types.ModuleName,
+						sdk.NewCoins(sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", sdk.NewInt(100))),
+					).
+					Return(nil)
+
+				suite.bk.EXPECT().
+					BurnCoins(
+						gomock.Any(),
+						types.ModuleName,
+						sdk.NewCoins(sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", sdk.NewInt(100))),
+					).
+					Return(fmt.Errorf("error"))
+			},
+			store: func(ctx sdk.Context) {
+				suite.k.SetAuthorityMetadata(ctx,
+					"factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken",
+					types.DenomAuthorityMetadata{Admin: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"})
 			},
 			msg: types.NewMsgBurn(
 				1,
@@ -511,17 +660,27 @@ func (suite *KeeperTestSuite) TestMsgServer_Burn() {
 					GetDenomMetaData(gomock.Any(), "factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken").
 					Return(banktypes.Metadata{}, true)
 
-				suite.tfk.EXPECT().
-					GetAuthorityMetadata(gomock.Any(), "factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken").
-					Return(types.DenomAuthorityMetadata{Admin: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"}, nil)
-
-				suite.tfk.EXPECT().
-					BurnFrom(
+				suite.bk.EXPECT().
+					SendCoinsFromAccountToModule(
 						gomock.Any(),
-						sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", sdk.NewInt(100)),
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						sdk.MustAccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+						types.ModuleName,
+						sdk.NewCoins(sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", sdk.NewInt(100))),
 					).
 					Return(nil)
+
+				suite.bk.EXPECT().
+					BurnCoins(
+						gomock.Any(),
+						types.ModuleName,
+						sdk.NewCoins(sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", sdk.NewInt(100))),
+					).
+					Return(nil)
+			},
+			store: func(ctx sdk.Context) {
+				suite.k.SetAuthorityMetadata(ctx,
+					"factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken",
+					types.DenomAuthorityMetadata{Admin: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"})
 			},
 			msg: types.NewMsgBurn(
 				1,
@@ -553,6 +712,9 @@ func (suite *KeeperTestSuite) TestMsgServer_Burn() {
 			if tc.setup != nil {
 				tc.setup()
 			}
+			if tc.store != nil {
+				tc.store(ctx)
+			}
 
 			msgServer := keeper.NewMsgServerImpl(suite.k)
 			res, err := msgServer.Burn(sdk.WrapSDKContext(ctx), tc.msg)
@@ -583,6 +745,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SetDenomMetadata() {
 	testCases := []struct {
 		name        string
 		setup       func()
+		store       func(ctx sdk.Context)
 		msg         *types.MsgSetDenomMetadata
 		shouldErr   bool
 		expResponse *types.MsgSetDenomMetadataResponse
@@ -665,12 +828,13 @@ func (suite *KeeperTestSuite) TestMsgServer_SetDenomMetadata() {
 					GetDenomMetaData(gomock.Any(), "factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken").
 					Return(banktypes.Metadata{}, true)
 
-				suite.tfk.EXPECT().
-					GetAuthorityMetadata(gomock.Any(), "factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken").
-					Return(types.DenomAuthorityMetadata{Admin: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"}, nil)
-
 				suite.bk.EXPECT().
 					SetDenomMetaData(gomock.Any(), metadata)
+			},
+			store: func(ctx sdk.Context) {
+				suite.k.SetAuthorityMetadata(ctx,
+					"factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken",
+					types.DenomAuthorityMetadata{Admin: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"})
 			},
 			msg: types.NewMsgSetDenomMetadata(
 				1,
@@ -702,6 +866,9 @@ func (suite *KeeperTestSuite) TestMsgServer_SetDenomMetadata() {
 			if tc.setup != nil {
 				tc.setup()
 			}
+			if tc.store != nil {
+				tc.store(ctx)
+			}
 
 			msgServer := keeper.NewMsgServerImpl(suite.k)
 			res, err := msgServer.SetDenomMetadata(sdk.WrapSDKContext(ctx), tc.msg)
@@ -722,6 +889,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UpdateParams() {
 		setup     func()
 		msg       *types.MsgUpdateParams
 		shouldErr bool
+		check     func(ctx sdk.Context)
 		expEvents sdk.Events
 	}{
 		{
@@ -734,15 +902,17 @@ func (suite *KeeperTestSuite) TestMsgServer_UpdateParams() {
 		},
 		{
 			name: "set params properly",
-			setup: func() {
-				suite.tfk.EXPECT().
-					SetParams(gomock.Any(), types.ToOsmosisTokenFactoryParams(types.DefaultParams()))
-			},
 			msg: types.NewMsgUpdateParams(
-				types.DefaultParams(),
+				types.NewParams(sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))),
 				authtypes.NewModuleAddress("gov").String(),
 			),
 			shouldErr: false,
+			check: func(ctx sdk.Context) {
+				suite.Require().Equal(
+					types.NewParams(sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))),
+					suite.k.GetParams(ctx),
+				)
+			},
 			expEvents: sdk.Events{
 				sdk.NewEvent(
 					sdk.EventTypeMessage,

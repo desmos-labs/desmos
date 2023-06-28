@@ -22,10 +22,7 @@ func (k Keeper) ValidateManageTokenPermission(ctx sdk.Context, subspace subspace
 		return types.ErrDenomDoesNotExist.Wrapf("denom: %s", denom)
 	}
 
-	authorityMetadata, err := k.GetAuthorityMetadata(ctx, denom)
-	if err != nil {
-		return err
-	}
+	authorityMetadata := k.GetAuthorityMetadata(ctx, denom)
 
 	// Check if the subspace treasury is the admin of the denom
 	if subspace.Treasury != authorityMetadata.GetAdmin() {

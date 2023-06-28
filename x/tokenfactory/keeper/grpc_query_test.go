@@ -2,7 +2,6 @@ package keeper_test
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/golang/mock/gomock"
 
 	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 	"github.com/desmos-labs/desmos/v5/x/tokenfactory/types"
@@ -11,16 +10,15 @@ import (
 func (suite *KeeperTestSuite) TestQueryServer_Params() {
 	testCases := []struct {
 		name      string
-		setup     func()
+		store     func(ctx sdk.Context)
 		request   *types.QueryParamsRequest
 		shouldErr bool
 		expParams types.Params
 	}{
 		{
 			name: "params are returned properly",
-			setup: func() {
-				suite.tfk.EXPECT().GetParams(gomock.Any()).
-					Return(types.DefaultParams())
+			store: func(ctx sdk.Context) {
+				suite.k.SetParams(ctx, types.DefaultParams())
 			},
 			request:   types.NewQueryParamsRequest(),
 			shouldErr: false,
@@ -32,8 +30,8 @@ func (suite *KeeperTestSuite) TestQueryServer_Params() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
-			if tc.setup != nil {
-				tc.setup()
+			if tc.store != nil {
+				tc.store(ctx)
 			}
 
 			res, err := suite.k.Params(sdk.WrapSDKContext(ctx), tc.request)
@@ -50,20 +48,20 @@ func (suite *KeeperTestSuite) TestQueryServer_Params() {
 func (suite *KeeperTestSuite) TestQueryServer_SubspaceDenoms() {
 	testCases := []struct {
 		name      string
-		setup     func()
+		store     func(ctx sdk.Context)
 		request   *types.QuerySubspaceDenomsRequest
 		shouldErr bool
 		expDenoms []string
 	}{
 		{
-			name: "params are returned properly",
-			setup: func() {
-				suite.tfk.EXPECT().GetDenomsFromCreator(gomock.Any(), subspacestypes.GetTreasuryAddress(1).String()).
-					Return([]string{"minttoken", "bitcoin"})
+			name: "denoms are returned properly",
+			store: func(ctx sdk.Context) {
+				suite.k.AddDenomFromCreator(ctx, subspacestypes.GetTreasuryAddress(1).String(), "bitcoin")
+				suite.k.AddDenomFromCreator(ctx, subspacestypes.GetTreasuryAddress(1).String(), "minttoken")
 			},
 			request:   types.NewQuerySubspaceDenomsRequest(1),
 			shouldErr: false,
-			expDenoms: []string{"minttoken", "bitcoin"},
+			expDenoms: []string{"bitcoin", "minttoken"},
 		},
 	}
 
@@ -71,8 +69,8 @@ func (suite *KeeperTestSuite) TestQueryServer_SubspaceDenoms() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
-			if tc.setup != nil {
-				tc.setup()
+			if tc.store != nil {
+				tc.store(ctx)
 			}
 
 			res, err := suite.k.SubspaceDenoms(sdk.WrapSDKContext(ctx), tc.request)

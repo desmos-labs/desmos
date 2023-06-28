@@ -11,9 +11,6 @@ import (
 func (k Keeper) InitGenesis(ctx sdk.Context, genState types.GenesisState) {
 	k.createModuleAccount(ctx)
 
-	if genState.Params.DenomCreationFee == nil {
-		genState.Params.DenomCreationFee = sdk.NewCoins()
-	}
 	k.SetParams(ctx, genState.Params)
 
 	for _, genDenom := range genState.GetFactoryDenoms() {
@@ -25,7 +22,7 @@ func (k Keeper) InitGenesis(ctx sdk.Context, genState types.GenesisState) {
 		if err != nil {
 			panic(err)
 		}
-		err = k.setAuthorityMetadata(ctx, genDenom.GetDenom(), genDenom.GetAuthorityMetadata())
+		err = k.SetAuthorityMetadata(ctx, genDenom.GetDenom(), genDenom.GetAuthorityMetadata())
 		if err != nil {
 			panic(err)
 		}
@@ -40,11 +37,7 @@ func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 	for ; iterator.Valid(); iterator.Next() {
 		denom := string(iterator.Value())
 
-		authorityMetadata, err := k.GetAuthorityMetadata(ctx, denom)
-		if err != nil {
-			panic(err)
-		}
-
+		authorityMetadata := k.GetAuthorityMetadata(ctx, denom)
 		genDenoms = append(genDenoms, types.GenesisDenom{
 			Denom:             denom,
 			AuthorityMetadata: authorityMetadata,
