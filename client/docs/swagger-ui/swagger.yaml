@@ -14839,7 +14839,7 @@ paths:
                       denom. The fee is drawn from the subspace treasruy
                       account, and
 
-                      transferred to the community pool.
+                      burned.
             description: >-
               QueryParamsResponse is the response type for the Query/Params RPC
               method.
@@ -23624,7 +23624,7 @@ definitions:
 
           denom. The fee is drawn from the subspace treasruy account, and
 
-          transferred to the community pool.
+          burned.
     description: |-
       Params defines the parameters for the tokenfactory module.
 
@@ -23659,7 +23659,7 @@ definitions:
 
               denom. The fee is drawn from the subspace treasruy account, and
 
-              transferred to the community pool.
+              burned.
     description: QueryParamsResponse is the response type for the Query/Params RPC method.
   desmos.tokenfactory.v1beta1.QuerySubspaceDenomsResponse:
     type: object
