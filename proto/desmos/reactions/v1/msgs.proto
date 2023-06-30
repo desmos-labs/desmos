@@ -227,13 +227,15 @@ message MsgSetReactionsParams {
   // Params related to RegisteredReactionValue reactions
   RegisteredReactionValueParams registered_reaction = 2 [
     (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"registered_reaction\""
+    (gogoproto.moretags) = "yaml:\"registered_reaction\"",
+    (amino.dont_omitempty) = true
   ];
 
   // Params related to FreeTextValue reactions
   FreeTextValueParams free_text = 3 [
     (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"free_text\""
+    (gogoproto.moretags) = "yaml:\"free_text\"",
+    (amino.dont_omitempty) = true
   ];
 
   // User setting the params

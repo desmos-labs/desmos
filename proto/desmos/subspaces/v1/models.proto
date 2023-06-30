@@ -1,6 +1,7 @@
 syntax = "proto3";
 package desmos.subspaces.v1;
 
+import "amino/amino.proto";
 import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";
 
@@ -35,7 +36,8 @@ message Subspace {
   google.protobuf.Timestamp creation_time = 7 [
     (gogoproto.nullable) = false,
     (gogoproto.stdtime) = true,
-    (gogoproto.moretags) = "yaml:\"creation_time\""
+    (gogoproto.moretags) = "yaml:\"creation_time\"",
+    (amino.dont_omitempty) = true
   ];
 }
 

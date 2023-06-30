@@ -1,6 +1,7 @@
 syntax = "proto3";
 package desmos.relationships.v1;
 
+import "amino/amino.proto";
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "cosmos_proto/cosmos.proto";
@@ -52,7 +53,7 @@ message QueryRelationshipsRequest {
 // Query/Relationships RPC method.
 message QueryRelationshipsResponse {
   repeated desmos.relationships.v1.Relationship relationships = 1
-      [ (gogoproto.nullable) = false ];
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
@@ -82,6 +83,6 @@ message QueryBlocksRequest {
 // method.
 message QueryBlocksResponse {
   repeated desmos.relationships.v1.UserBlock blocks = 1
-      [ (gogoproto.nullable) = false ];
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }

@@ -1,6 +1,7 @@
 syntax = "proto3";
 package desmos.posts.v3;
 
+import "amino/amino.proto";
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
@@ -74,7 +75,7 @@ message QuerySubspacePostsRequest {
 // QuerySubspacePostsResponse is the response type for the Query/SubspacePosts
 // RPC method
 message QuerySubspacePostsResponse {
-  repeated Post posts = 1 [ (gogoproto.nullable) = false ];
+  repeated Post posts = 1 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
@@ -94,7 +95,7 @@ message QuerySectionPostsRequest {
 // QuerySectionPostsResponse is the response type for the Query/SectionPosts RPC
 // method
 message QuerySectionPostsResponse {
-  repeated Post posts = 1 [ (gogoproto.nullable) = false ];
+  repeated Post posts = 1 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
@@ -108,7 +109,7 @@ message QueryPostRequest {
 }
 
 // QueryPostResponse is the response type for the Query/Post RPC method
-message QueryPostResponse { Post post = 1 [ (gogoproto.nullable) = false ]; }
+message QueryPostResponse { Post post = 1 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ]; }
 
 // QueryPostsRequest is the request type for the Query/PostAttachments RPC
 // method
@@ -126,7 +127,7 @@ message QueryPostAttachmentsRequest {
 // QueryPostAttachmentsResponse is the response type for the
 // Query/PostAttachments RPC method
 message QueryPostAttachmentsResponse {
-  repeated Attachment attachments = 1 [ (gogoproto.nullable) = false ];
+  repeated Attachment attachments = 1 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
@@ -152,7 +153,7 @@ message QueryPollAnswersRequest {
 // QueryPollAnswersResponse is the response type for the Query/PollAnswers RPC
 // method
 message QueryPollAnswersResponse {
-  repeated UserAnswer answers = 1 [ (gogoproto.nullable) = false ];
+  repeated UserAnswer answers = 1 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
@@ -161,7 +162,7 @@ message QueryParamsRequest {}
 
 // QueryParamsResponse is the response type for the Query/Params RPC method
 message QueryParamsResponse {
-  Params params = 1 [ (gogoproto.nullable) = false ];
+  Params params = 1 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 }
 
 // QueryIncomingPostOwnerTransferRequestsRequest is the request type for the
@@ -187,7 +188,7 @@ message QueryIncomingPostOwnerTransferRequestsResponse {
   // Requests represent the list of all the post owner transfer requests made
   // towards the receiver
   repeated desmos.posts.v3.PostOwnerTransferRequest requests = 1
-      [ (gogoproto.nullable) = false ];
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 
   // Pagination defines the pagination response
   cosmos.base.query.v1beta1.PageResponse pagination = 2;

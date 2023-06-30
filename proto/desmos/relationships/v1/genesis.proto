@@ -1,6 +1,7 @@
 syntax = "proto3";
 package desmos.relationships.v1;
 
+import "amino/amino.proto";
 import "gogoproto/gogo.proto";
 import "desmos/relationships/v1/models.proto";
 
@@ -12,11 +13,13 @@ message GenesisState {
 
   repeated desmos.relationships.v1.Relationship relationships = 1 [
     (gogoproto.moretags) = "yaml:\"relationships\"",
-    (gogoproto.nullable) = false
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
   ];
 
   repeated desmos.relationships.v1.UserBlock blocks = 2 [
     (gogoproto.moretags) = "yaml:\"blocks\"",
-    (gogoproto.nullable) = false
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
   ];
 }

@@ -26,7 +26,8 @@ message MsgLinkApplication {
   // LinkData contains the data related to the application to which connect
   Data link_data = 2 [
     (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"link_data\""
+    (gogoproto.moretags) = "yaml:\"link_data\"",
+    (amino.dont_omitempty) = true
   ];
 
   // Hex encoded call data that will be sent to the data source in order to
@@ -44,7 +45,8 @@ message MsgLinkApplication {
   // The timeout is disabled when set to 0.
   ibc.core.client.v1.Height timeout_height = 6 [
     (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"timeout_height\""
+    (gogoproto.moretags) = "yaml:\"timeout_height\"",
+    (amino.dont_omitempty) = true
   ];
 
   // Timeout timestamp (in nanoseconds) relative to the current block timestamp.

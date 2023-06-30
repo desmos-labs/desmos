@@ -55,7 +55,8 @@ message MsgCreateReport {
   // Id of the reason this report has been created for
   repeated uint32 reasons_ids = 2 [
     (gogoproto.customname) = "ReasonsIDs",
-    (gogoproto.moretags) = "yaml:\"reasons_ids\""
+    (gogoproto.moretags) = "yaml:\"reasons_ids\"",
+    (amino.dont_omitempty) = true
   ];
 
   // (optional) Message attached to this report
@@ -86,7 +87,8 @@ message MsgCreateReportResponse {
   google.protobuf.Timestamp creation_date = 2 [
     (gogoproto.stdtime) = true,
     (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"creation_date\""
+    (gogoproto.moretags) = "yaml:\"creation_date\"",
+    (amino.dont_omitempty) = true
   ];
 }
 
@@ -228,7 +230,7 @@ message MsgUpdateParams {
   // params defines the parameters to update.
   //
   // NOTE: All parameters must be supplied.
-  Params params = 2 [ (gogoproto.nullable) = false ];
+  Params params = 2 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 }
 
 // MsgUpdateParamsResponse defines the response structure for executing a

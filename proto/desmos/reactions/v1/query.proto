@@ -1,6 +1,7 @@
 syntax = "proto3";
 package desmos.reactions.v1;
 
+import "amino/amino.proto";
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "cosmos_proto/cosmos.proto";
@@ -66,7 +67,7 @@ message QueryReactionsRequest {
 // QueryReactionsResponse is the response type for the Query/Reactions RPC
 // method
 message QueryReactionsResponse {
-  repeated Reaction reactions = 1 [ (gogoproto.nullable) = false ];
+  repeated Reaction reactions = 1 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
@@ -86,7 +87,7 @@ message QueryReactionRequest {
 // QueryReactionResponse is the response type for the Query/Reaction RPC
 // method
 message QueryReactionResponse {
-  Reaction reaction = 1 [ (gogoproto.nullable) = false ];
+  Reaction reaction = 1 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 }
 
 // QueryRegisteredReactionsRequest is the request type for the
@@ -103,7 +104,7 @@ message QueryRegisteredReactionsRequest {
 // Query/RegisteredReactions RPC method
 message QueryRegisteredReactionsResponse {
   repeated RegisteredReaction registered_reactions = 1
-      [ (gogoproto.nullable) = false ];
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
@@ -120,7 +121,7 @@ message QueryRegisteredReactionRequest {
 // QueryRegisteredReactionResponse is the response type for the
 // Query/RegisteredReaction RPC method
 message QueryRegisteredReactionResponse {
-  RegisteredReaction registered_reaction = 1 [ (gogoproto.nullable) = false ];
+  RegisteredReaction registered_reaction = 1 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 }
 
 // QueryReactionsParamsRequest is the request type for the Query/ReactionsParams
@@ -133,5 +134,5 @@ message QueryReactionsParamsRequest {
 // QueryReactionsParamsResponse is the response type for the
 // Query/ReactionsParam RPC method
 message QueryReactionsParamsResponse {
-  SubspaceReactionsParams params = 1 [ (gogoproto.nullable) = false ];
+  SubspaceReactionsParams params = 1 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 }

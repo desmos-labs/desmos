@@ -36,7 +36,7 @@ message MsgGrantTreasuryAuthorization {
 
   // Grant represents the authorization to execute the provided methods
   cosmos.authz.v1beta1.Grant grant = 4
-      [ (gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"grant\"" ];
+      [ (gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"grant\"", (amino.dont_omitempty) = true ];
 }
 
 // MsgGrantTreasuryAuthorizationResponse defines the

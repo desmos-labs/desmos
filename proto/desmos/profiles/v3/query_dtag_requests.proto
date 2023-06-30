@@ -1,6 +1,7 @@
 syntax = "proto3";
 package desmos.profiles.v3;
 
+import "amino/amino.proto";
 import "gogoproto/gogo.proto";
 import "cosmos_proto/cosmos.proto";
 import "desmos/profiles/v3/models_dtag_requests.proto";
@@ -28,7 +29,7 @@ message QueryIncomingDTagTransferRequestsResponse {
   // Requests represent the list of all the DTag transfer requests made towards
   // the user
   repeated desmos.profiles.v3.DTagTransferRequest requests = 1
-      [ (gogoproto.nullable) = false ];
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 
   // Pagination defines the pagination response
   cosmos.base.query.v1beta1.PageResponse pagination = 2;

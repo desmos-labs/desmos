@@ -24,7 +24,7 @@ message MsgUpdateParams {
   // params defines the parameters to update.
   //
   // NOTE: All parameters must be supplied.
-  Params params = 2 [ (gogoproto.nullable) = false ];
+  Params params = 2 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 }
 
 // MsgUpdateParamsResponse defines the response structure for executing a

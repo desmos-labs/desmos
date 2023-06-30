@@ -1,6 +1,7 @@
 syntax = "proto3";
 package desmos.profiles.v3;
 
+import "amino/amino.proto";
 import "gogoproto/gogo.proto";
 import "cosmos_proto/cosmos.proto";
 import "desmos/profiles/v3/models_app_links.proto";
@@ -30,7 +31,7 @@ message QueryApplicationLinksRequest {
 // QueryApplicationLinksResponse represents the response to the query used
 // to get the application links for a specific user
 message QueryApplicationLinksResponse {
-  repeated ApplicationLink links = 1 [ (gogoproto.nullable) = false ];
+  repeated ApplicationLink links = 1 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 
   // Pagination defines the pagination response
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
@@ -46,7 +47,7 @@ message QueryApplicationLinkByClientIDRequest {
 // QueryApplicationLinkByClientIDResponse contains the data returned by the
 // request allowing to get an application link using a client id
 message QueryApplicationLinkByClientIDResponse {
-  ApplicationLink link = 1 [ (gogoproto.nullable) = false ];
+  ApplicationLink link = 1 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 }
 
 // QueryApplicationLinkOwnersRequest contains the data of the request that can
@@ -77,7 +78,7 @@ message QueryApplicationLinkOwnersResponse {
 
   // Addresses of the application links owners
   repeated ApplicationLinkOwnerDetails owners = 1
-      [ (gogoproto.nullable) = false ];
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 
   // Pagination defines the pagination response
   cosmos.base.query.v1beta1.PageResponse pagination = 2;

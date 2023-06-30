@@ -134,7 +134,8 @@ message MsgCreatePost {
   // A list this posts references (either as a reply, repost or quote)
   repeated PostReference referenced_posts = 11 [
     (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"referenced_posts\""
+    (gogoproto.moretags) = "yaml:\"referenced_posts\"",
+    (amino.dont_omitempty) = true
   ];
 }
 
@@ -150,7 +151,8 @@ message MsgCreatePostResponse {
   google.protobuf.Timestamp creation_date = 2 [
     (gogoproto.nullable) = false,
     (gogoproto.stdtime) = true,
-    (gogoproto.moretags) = "yaml:\"creation_date\""
+    (gogoproto.moretags) = "yaml:\"creation_date\"",
+    (amino.dont_omitempty) = true
   ];
 }
 
@@ -196,7 +198,8 @@ message MsgEditPostResponse {
   google.protobuf.Timestamp edit_date = 1 [
     (gogoproto.nullable) = false,
     (gogoproto.stdtime) = true,
-    (gogoproto.moretags) = "yaml:\"edit_date\""
+    (gogoproto.moretags) = "yaml:\"edit_date\"",
+    (amino.dont_omitempty) = true
   ];
 }
 
@@ -270,7 +273,8 @@ message MsgAddPostAttachmentResponse {
   google.protobuf.Timestamp edit_date = 2 [
     (gogoproto.nullable) = false,
     (gogoproto.stdtime) = true,
-    (gogoproto.moretags) = "yaml:\"edit_date\""
+    (gogoproto.moretags) = "yaml:\"edit_date\"",
+    (amino.dont_omitempty) = true
   ];
 }
 
@@ -312,7 +316,8 @@ message MsgRemovePostAttachmentResponse {
   google.protobuf.Timestamp edit_date = 1 [
     (gogoproto.nullable) = false,
     (gogoproto.stdtime) = true,
-    (gogoproto.moretags) = "yaml:\"edit_date\""
+    (gogoproto.moretags) = "yaml:\"edit_date\"",
+    (amino.dont_omitempty) = true
   ];
 }
 
@@ -341,7 +346,7 @@ message MsgAnswerPoll {
 
   // Indexes of the answer inside the ProvidedAnswers array
   repeated uint32 answers_indexes = 4
-      [ (gogoproto.moretags) = "yaml:\"answers_indexes\"" ];
+      [ (gogoproto.moretags) = "yaml:\"answers_indexes\"", (amino.dont_omitempty) = true ];
 
   // Address of the user answering the poll
   string signer = 5 [

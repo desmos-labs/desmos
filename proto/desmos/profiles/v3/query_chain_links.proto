@@ -1,6 +1,7 @@
 syntax = "proto3";
 package desmos.profiles.v3;
 
+import "amino/amino.proto";
 import "gogoproto/gogo.proto";
 import "cosmos_proto/cosmos.proto";
 import "desmos/profiles/v3/models_chain_links.proto";
@@ -31,7 +32,7 @@ message QueryChainLinksRequest {
 // QueryChainLinksResponse is the response type for the
 // Query/ChainLinks RPC method.
 message QueryChainLinksResponse {
-  repeated ChainLink links = 1 [ (gogoproto.nullable) = false ];
+  repeated ChainLink links = 1 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 
   // Pagination defines the pagination response
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
@@ -63,7 +64,7 @@ message QueryChainLinkOwnersResponse {
   }
 
   // Addresses of the chain links owners
-  repeated ChainLinkOwnerDetails owners = 1 [ (gogoproto.nullable) = false ];
+  repeated ChainLinkOwnerDetails owners = 1 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 
   // Pagination defines the pagination response
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
@@ -87,7 +88,7 @@ message QueryDefaultExternalAddressesRequest {
 message QueryDefaultExternalAddressesResponse {
   // List of default addresses, each one represented by the associated chain
   // link
-  repeated ChainLink links = 1 [ (gogoproto.nullable) = false ];
+  repeated ChainLink links = 1 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }

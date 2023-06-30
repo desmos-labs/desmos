@@ -353,7 +353,10 @@ message MsgCreateUserGroup {
 
   // Initial members to be put inside the group
   repeated string initial_members = 6
-      [ (gogoproto.moretags) = "yaml:\"initial_members\"" ];
+      [
+        (gogoproto.moretags) = "yaml:\"initial_members\"",
+        (cosmos_proto.scalar) = "cosmos.AddressString" 
+      ];
 
   // Creator of the group
   string creator = 7 [
@@ -633,7 +636,8 @@ message MsgUpdateSubspaceFeeTokens {
     (gogoproto.nullable) = false,
     (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
     (gogoproto.moretags) = "yaml:\"additional_fee_tokens\"",
-    (amino.encoding)         = "legacy_coins"
+    (amino.encoding)         = "legacy_coins",
+    (amino.dont_omitempty) = true
   ];
 
   // authority is the address that controls the module (defaults to x/gov unless

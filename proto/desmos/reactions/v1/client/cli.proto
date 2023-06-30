@@ -1,6 +1,7 @@
 syntax = "proto3";
 package desmos.reactions.v1.client;
 
+import "amino/amino.proto";
 import "gogoproto/gogo.proto";
 
 import "desmos/reactions/v1/models.proto";
@@ -12,8 +13,8 @@ option go_package = "github.com/desmos-labs/desmos/v5/x/reactions/client/utils";
 message SetReactionsParamsJSON {
   // Params related to RegisteredReactionValue reactions
   RegisteredReactionValueParams registered_reaction_params = 1
-      [ (gogoproto.nullable) = false ];
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 
   // Params related to FreeTextValue reactions
-  FreeTextValueParams free_text_params = 2 [ (gogoproto.nullable) = false ];
+  FreeTextValueParams free_text_params = 2 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 }
