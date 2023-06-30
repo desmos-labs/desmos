@@ -4,6 +4,7 @@ package types
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/codec/legacy"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -17,21 +18,21 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&Poll{}, "desmos/Poll", nil)
 	cdc.RegisterConcrete(&Media{}, "desmos/Media", nil)
 
-	cdc.RegisterConcrete(&MsgCreatePost{}, "desmos/MsgCreatePost", nil)
-	cdc.RegisterConcrete(&MsgEditPost{}, "desmos/MsgEditPost", nil)
-	cdc.RegisterConcrete(&MsgAddPostAttachment{}, "desmos/MsgAddPostAttachment", nil)
-	cdc.RegisterConcrete(&MsgRemovePostAttachment{}, "desmos/MsgRemovePostAttachment", nil)
-	cdc.RegisterConcrete(&MsgDeletePost{}, "desmos/MsgDeletePost", nil)
-	cdc.RegisterConcrete(&MsgAnswerPoll{}, "desmos/MsgAnswerPoll", nil)
-	cdc.RegisterConcrete(&MsgMovePost{}, "desmos/MsgMovePost", nil)
+	legacy.RegisterAminoMsg(cdc, &MsgCreatePost{}, "desmos/MsgCreatePost")
+	legacy.RegisterAminoMsg(cdc, &MsgEditPost{}, "desmos/MsgEditPost")
+	legacy.RegisterAminoMsg(cdc, &MsgAddPostAttachment{}, "desmos/MsgAddPostAttachment")
+	legacy.RegisterAminoMsg(cdc, &MsgRemovePostAttachment{}, "desmos/MsgRemovePostAttachment")
+	legacy.RegisterAminoMsg(cdc, &MsgDeletePost{}, "desmos/MsgDeletePost")
+	legacy.RegisterAminoMsg(cdc, &MsgAnswerPoll{}, "desmos/MsgAnswerPoll")
+	legacy.RegisterAminoMsg(cdc, &MsgMovePost{}, "desmos/MsgMovePost")
 
-	cdc.Amino.RegisterConcrete(&MsgRequestPostOwnerTransfer{}, "desmos/MsgRequestPostOwnerTransfer", nil)
-	cdc.Amino.RegisterConcrete(&MsgCancelPostOwnerTransferRequest{}, "desmos/MsgCancelPostOwnerTransferRequest", nil)
-	cdc.Amino.RegisterConcrete(&MsgAcceptPostOwnerTransferRequest{}, "desmos/MsgAcceptPostOwnerTransferRequest", nil)
-	cdc.Amino.RegisterConcrete(&MsgRefusePostOwnerTransferRequest{}, "desmos/MsgRefusePostOwnerTransferRequest", nil)
+	legacy.RegisterAminoMsg(cdc, &MsgRequestPostOwnerTransfer{}, "desmos/MsgRequestPostOwnerTransfer")
+	legacy.RegisterAminoMsg(cdc, &MsgCancelPostOwnerTransferRequest{}, "desmos/MsgCancelPostOwnerTransfer")
+	legacy.RegisterAminoMsg(cdc, &MsgAcceptPostOwnerTransferRequest{}, "desmos/MsgAcceptPostOwnerTransfer")
+	legacy.RegisterAminoMsg(cdc, &MsgRefusePostOwnerTransferRequest{}, "desmos/MsgRefusePostOwnerTransfer")
 
 	cdc.RegisterConcrete(&Params{}, "desmos/x/posts/Params", nil)
-	cdc.RegisterConcrete(&MsgUpdateParams{}, "desmos/x/posts/MsgUpdateParams", nil)
+	legacy.RegisterAminoMsg(cdc, &MsgUpdateParams{}, "desmos/x/posts/MsgUpdateParams")
 }
 
 func RegisterInterfaces(registry types.InterfaceRegistry) {

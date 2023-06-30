@@ -2,6 +2,7 @@ package types
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/codec/legacy"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -19,18 +20,18 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&ethsecp256k1.PubKey{}, ethsecp256k1.PubKeyName, nil)
 	cdc.RegisterConcrete(&ethsecp256k1.PrivKey{}, ethsecp256k1.PrivKeyName, nil)
 
-	cdc.RegisterConcrete(&MsgSaveProfile{}, "desmos/MsgSaveProfile", nil)
-	cdc.RegisterConcrete(&MsgDeleteProfile{}, "desmos/MsgDeleteProfile", nil)
-	cdc.RegisterConcrete(&MsgRequestDTagTransfer{}, "desmos/MsgRequestDTagTransfer", nil)
-	cdc.RegisterConcrete(&MsgCancelDTagTransferRequest{}, "desmos/MsgCancelDTagTransferRequest", nil)
-	cdc.RegisterConcrete(&MsgAcceptDTagTransferRequest{}, "desmos/MsgAcceptDTagTransferRequest", nil)
-	cdc.RegisterConcrete(&MsgRefuseDTagTransferRequest{}, "desmos/MsgRefuseDTagTransferRequest", nil)
-	cdc.RegisterConcrete(&MsgLinkChainAccount{}, "desmos/MsgLinkChainAccount", nil)
-	cdc.RegisterConcrete(&MsgUnlinkChainAccount{}, "desmos/MsgUnlinkChainAccount", nil)
-	cdc.RegisterConcrete(&MsgSetDefaultExternalAddress{}, "desmos/MsgSetDefaultExternalAddress", nil)
-	cdc.RegisterConcrete(&MsgLinkApplication{}, "desmos/MsgLinkApplication", nil)
-	cdc.RegisterConcrete(&MsgUnlinkApplication{}, "desmos/MsgUnlinkApplication", nil)
-	cdc.RegisterConcrete(&MsgUpdateParams{}, "desmos/x/profiles/MsgUpdateParams", nil)
+	legacy.RegisterAminoMsg(cdc, &MsgSaveProfile{}, "desmos/MsgSaveProfile")
+	legacy.RegisterAminoMsg(cdc, &MsgDeleteProfile{}, "desmos/MsgDeleteProfile")
+	legacy.RegisterAminoMsg(cdc, &MsgRequestDTagTransfer{}, "desmos/MsgRequestDTagTransfer")
+	legacy.RegisterAminoMsg(cdc, &MsgCancelDTagTransferRequest{}, "desmos/MsgCancelDTagTransferRequest")
+	legacy.RegisterAminoMsg(cdc, &MsgAcceptDTagTransferRequest{}, "desmos/MsgAcceptDTagTransferRequest")
+	legacy.RegisterAminoMsg(cdc, &MsgRefuseDTagTransferRequest{}, "desmos/MsgRefuseDTagTransferRequest")
+	legacy.RegisterAminoMsg(cdc, &MsgLinkChainAccount{}, "desmos/MsgLinkChainAccount")
+	legacy.RegisterAminoMsg(cdc, &MsgUnlinkChainAccount{}, "desmos/MsgUnlinkChainAccount")
+	legacy.RegisterAminoMsg(cdc, &MsgSetDefaultExternalAddress{}, "desmos/MsgSetDefaultExternalAddress")
+	legacy.RegisterAminoMsg(cdc, &MsgLinkApplication{}, "desmos/MsgLinkApplication")
+	legacy.RegisterAminoMsg(cdc, &MsgUnlinkApplication{}, "desmos/MsgUnlinkApplication")
+	legacy.RegisterAminoMsg(cdc, &MsgUpdateParams{}, "desmos/x/profiles/MsgUpdateParams")
 
 	cdc.RegisterConcrete(&Params{}, "desmos/x/profiles/Params", nil)
 

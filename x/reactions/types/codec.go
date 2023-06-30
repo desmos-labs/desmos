@@ -2,6 +2,7 @@ package types
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/codec/legacy"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -14,12 +15,12 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&RegisteredReactionValue{}, "desmos/RegisteredReactionValue", nil)
 	cdc.RegisterConcrete(&FreeTextValue{}, "desmos/FreeTextValue", nil)
 
-	cdc.RegisterConcrete(&MsgAddReaction{}, "desmos/MsgAddReaction", nil)
-	cdc.RegisterConcrete(&MsgRemoveReaction{}, "desmos/MsgRemoveReaction", nil)
-	cdc.RegisterConcrete(&MsgAddRegisteredReaction{}, "desmos/MsgAddRegisteredReaction", nil)
-	cdc.RegisterConcrete(&MsgEditRegisteredReaction{}, "desmos/MsgEditRegisteredReaction", nil)
-	cdc.RegisterConcrete(&MsgRemoveRegisteredReaction{}, "desmos/MsgRemoveRegisteredReaction", nil)
-	cdc.RegisterConcrete(&MsgSetReactionsParams{}, "desmos/MsgSetReactionsParams", nil)
+	legacy.RegisterAminoMsg(cdc, &MsgAddReaction{}, "desmos/MsgAddReaction")
+	legacy.RegisterAminoMsg(cdc, &MsgRemoveReaction{}, "desmos/MsgRemoveReaction")
+	legacy.RegisterAminoMsg(cdc, &MsgAddRegisteredReaction{}, "desmos/MsgAddRegisteredReaction")
+	legacy.RegisterAminoMsg(cdc, &MsgEditRegisteredReaction{}, "desmos/MsgEditRegisteredReaction")
+	legacy.RegisterAminoMsg(cdc, &MsgRemoveRegisteredReaction{}, "desmos/MsgRemoveRegisteredReaction")
+	legacy.RegisterAminoMsg(cdc, &MsgSetReactionsParams{}, "desmos/MsgSetReactionsParams")
 }
 
 func RegisterInterfaces(registry types.InterfaceRegistry) {

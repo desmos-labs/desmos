@@ -178,7 +178,7 @@ func TestMsgCancelPostOwnerTransferRequest_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgCancelPostOwnerTransferRequest_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgCancelPostOwnerTransferRequest","value":{"post_id":"1","sender":"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg","subspace_id":"1"}}`
+	expected := `{"type":"desmos/MsgCancelPostOwnerTransfer","value":{"post_id":"1","sender":"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg","subspace_id":"1"}}`
 	require.Equal(t, expected, string(msgCancelPostOwnerTransferRequest.GetSignBytes()))
 }
 
@@ -256,7 +256,7 @@ func TestMsgAcceptPostOwnerTransferRequest_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgAcceptPostOwnerTransferRequest_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgAcceptPostOwnerTransferRequest","value":{"post_id":"1","receiver":"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg","subspace_id":"1"}}`
+	expected := `{"type":"desmos/MsgAcceptPostOwnerTransfer","value":{"post_id":"1","receiver":"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg","subspace_id":"1"}}`
 	require.Equal(t, expected, string(msgAcceptPostOwnerTransferRequest.GetSignBytes()))
 }
 
@@ -334,7 +334,7 @@ func TestMsgRefusePostOwnerTransferRequest_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgRefusePostOwnerTransferRequest_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgRefusePostOwnerTransferRequest","value":{"post_id":"1","receiver":"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg","subspace_id":"1"}}`
+	expected := `{"type":"desmos/MsgRefusePostOwnerTransfer","value":{"post_id":"1","receiver":"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg","subspace_id":"1"}}`
 	require.Equal(t, expected, string(msgRefusePostOwnerTransferRequest.GetSignBytes()))
 }
 

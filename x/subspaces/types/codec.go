@@ -2,6 +2,7 @@ package types
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/codec/legacy"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -11,37 +12,37 @@ import (
 )
 
 func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
-	cdc.RegisterConcrete(&MsgCreateSubspace{}, "desmos/MsgCreateSubspace", nil)
-	cdc.RegisterConcrete(&MsgEditSubspace{}, "desmos/MsgEditSubspace", nil)
-	cdc.RegisterConcrete(&MsgDeleteSubspace{}, "desmos/MsgDeleteSubspace", nil)
+	legacy.RegisterAminoMsg(cdc, &MsgCreateSubspace{}, "desmos/MsgCreateSubspace")
+	legacy.RegisterAminoMsg(cdc, &MsgEditSubspace{}, "desmos/MsgEditSubspace")
+	legacy.RegisterAminoMsg(cdc, &MsgDeleteSubspace{}, "desmos/MsgDeleteSubspace")
 
-	cdc.RegisterConcrete(&MsgCreateSection{}, "desmos/MsgCreateSection", nil)
-	cdc.RegisterConcrete(&MsgEditSection{}, "desmos/MsgEditSection", nil)
-	cdc.RegisterConcrete(&MsgMoveSection{}, "desmos/MsgMoveSection", nil)
-	cdc.RegisterConcrete(&MsgDeleteSection{}, "desmos/MsgDeleteSection", nil)
+	legacy.RegisterAminoMsg(cdc, &MsgCreateSection{}, "desmos/MsgCreateSection")
+	legacy.RegisterAminoMsg(cdc, &MsgEditSection{}, "desmos/MsgEditSection")
+	legacy.RegisterAminoMsg(cdc, &MsgMoveSection{}, "desmos/MsgMoveSection")
+	legacy.RegisterAminoMsg(cdc, &MsgDeleteSection{}, "desmos/MsgDeleteSection")
 
-	cdc.RegisterConcrete(&MsgCreateUserGroup{}, "desmos/MsgCreateUserGroup", nil)
-	cdc.RegisterConcrete(&MsgEditUserGroup{}, "desmos/MsgEditUserGroup", nil)
-	cdc.RegisterConcrete(&MsgMoveUserGroup{}, "desmos/MsgMoveUserGroup", nil)
-	cdc.RegisterConcrete(&MsgSetUserGroupPermissions{}, "desmos/MsgSetUserGroupPermissions", nil)
-	cdc.RegisterConcrete(&MsgDeleteUserGroup{}, "desmos/MsgDeleteUserGroup", nil)
+	legacy.RegisterAminoMsg(cdc, &MsgCreateUserGroup{}, "desmos/MsgCreateUserGroup")
+	legacy.RegisterAminoMsg(cdc, &MsgEditUserGroup{}, "desmos/MsgEditUserGroup")
+	legacy.RegisterAminoMsg(cdc, &MsgMoveUserGroup{}, "desmos/MsgMoveUserGroup")
+	legacy.RegisterAminoMsg(cdc, &MsgSetUserGroupPermissions{}, "desmos/MsgSetUserGroupPermissions")
+	legacy.RegisterAminoMsg(cdc, &MsgDeleteUserGroup{}, "desmos/MsgDeleteUserGroup")
 
-	cdc.RegisterConcrete(&MsgAddUserToUserGroup{}, "desmos/MsgAddUserToUserGroup", nil)
-	cdc.RegisterConcrete(&MsgRemoveUserFromUserGroup{}, "desmos/MsgRemoveUserFromUserGroup", nil)
+	legacy.RegisterAminoMsg(cdc, &MsgAddUserToUserGroup{}, "desmos/MsgAddUserToUserGroup")
+	legacy.RegisterAminoMsg(cdc, &MsgRemoveUserFromUserGroup{}, "desmos/MsgRemoveUserFromUserGroup")
 
-	cdc.RegisterConcrete(&MsgSetUserPermissions{}, "desmos/MsgSetUserPermissions", nil)
+	legacy.RegisterAminoMsg(cdc, &MsgSetUserPermissions{}, "desmos/MsgSetUserPermissions")
 
-	cdc.RegisterConcrete(&MsgGrantTreasuryAuthorization{}, "desmos/MsgGrantTreasuryAuthorization", nil)
-	cdc.RegisterConcrete(&MsgRevokeTreasuryAuthorization{}, "desmos/MsgRevokeTreasuryAuthorization", nil)
+	legacy.RegisterAminoMsg(cdc, &MsgGrantTreasuryAuthorization{}, "desmos/MsgGrantTreasuryAuthorization")
+	legacy.RegisterAminoMsg(cdc, &MsgRevokeTreasuryAuthorization{}, "desmos/MsgRevokeTreasuryAuthorization")
 
-	cdc.RegisterConcrete(&MsgGrantAllowance{}, "desmos/MsgGrantAllowance", nil)
-	cdc.RegisterConcrete(&MsgRevokeAllowance{}, "desmos/MsgRevokeAllowance", nil)
+	legacy.RegisterAminoMsg(cdc, &MsgGrantAllowance{}, "desmos/MsgGrantAllowance")
+	legacy.RegisterAminoMsg(cdc, &MsgRevokeAllowance{}, "desmos/MsgRevokeAllowance")
 
 	cdc.RegisterInterface((*Grantee)(nil), nil)
 	cdc.RegisterConcrete(&UserGrantee{}, "desmos/UserGrantee", nil)
 	cdc.RegisterConcrete(&GroupGrantee{}, "desmos/GroupGrantee", nil)
 
-	cdc.RegisterConcrete(&MsgUpdateSubspaceFeeTokens{}, "desmos/MsgUpdateSubspaceFeeTokens", nil)
+	legacy.RegisterAminoMsg(cdc, &MsgUpdateSubspaceFeeTokens{}, "desmos/MsgUpdateSubspaceFeeTokens")
 }
 
 func RegisterInterfaces(registry types.InterfaceRegistry) {
