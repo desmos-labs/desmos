@@ -2,6 +2,7 @@ package types
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/codec/legacy"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -15,12 +16,12 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&UserTarget{}, "desmos/UserTarget", nil)
 	cdc.RegisterConcrete(&PostTarget{}, "desmos/PostTarget", nil)
 
-	cdc.RegisterConcrete(&MsgCreateReport{}, "desmos/MsgCreateReport", nil)
-	cdc.RegisterConcrete(&MsgDeleteReport{}, "desmos/MsgDeleteReport", nil)
-	cdc.RegisterConcrete(&MsgSupportStandardReason{}, "desmos/MsgSupportStandardReason", nil)
-	cdc.RegisterConcrete(&MsgAddReason{}, "desmos/MsgAddReason", nil)
-	cdc.RegisterConcrete(&MsgRemoveReason{}, "desmos/MsgRemoveReason", nil)
-	cdc.RegisterConcrete(&MsgUpdateParams{}, "desmos/x/reports/MsgUpdateParams", nil)
+	legacy.RegisterAminoMsg(cdc, &MsgCreateReport{}, "desmos/MsgCreateReport")
+	legacy.RegisterAminoMsg(cdc, &MsgDeleteReport{}, "desmos/MsgDeleteReport")
+	legacy.RegisterAminoMsg(cdc, &MsgSupportStandardReason{}, "desmos/MsgSupportStandardReason")
+	legacy.RegisterAminoMsg(cdc, &MsgAddReason{}, "desmos/MsgAddReason")
+	legacy.RegisterAminoMsg(cdc, &MsgRemoveReason{}, "desmos/MsgRemoveReason")
+	legacy.RegisterAminoMsg(cdc, &MsgUpdateParams{}, "desmos/x/reports/MsgUpdateParams")
 
 	cdc.RegisterConcrete(&Params{}, "desmos/x/reports/Params", nil)
 }

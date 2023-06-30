@@ -2,6 +2,7 @@ package types
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/codec/legacy"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -10,10 +11,10 @@ import (
 )
 
 func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
-	cdc.RegisterConcrete(&MsgCreateRelationship{}, "desmos/MsgCreateRelationship", nil)
-	cdc.RegisterConcrete(&MsgDeleteRelationship{}, "desmos/MsgDeleteRelationship", nil)
-	cdc.RegisterConcrete(&MsgBlockUser{}, "desmos/MsgBlockUser", nil)
-	cdc.RegisterConcrete(&MsgUnblockUser{}, "desmos/MsgUnblockUser", nil)
+	legacy.RegisterAminoMsg(cdc, &MsgCreateRelationship{}, "desmos/MsgCreateRelationship")
+	legacy.RegisterAminoMsg(cdc, &MsgDeleteRelationship{}, "desmos/MsgDeleteRelationship")
+	legacy.RegisterAminoMsg(cdc, &MsgBlockUser{}, "desmos/MsgBlockUser")
+	legacy.RegisterAminoMsg(cdc, &MsgUnblockUser{}, "desmos/MsgUnblockUser")
 }
 
 func RegisterInterfaces(registry types.InterfaceRegistry) {
