@@ -27,9 +27,9 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	legacy.RegisterAminoMsg(cdc, &MsgMovePost{}, "desmos/MsgMovePost")
 
 	legacy.RegisterAminoMsg(cdc, &MsgRequestPostOwnerTransfer{}, "desmos/MsgRequestPostOwnerTransfer")
-	legacy.RegisterAminoMsg(cdc, &MsgCancelPostOwnerTransferRequest{}, "desmos/MsgCancelPostOwnerTransferRequest")
-	legacy.RegisterAminoMsg(cdc, &MsgAcceptPostOwnerTransferRequest{}, "desmos/MsgAcceptPostOwnerTransferRequest")
-	legacy.RegisterAminoMsg(cdc, &MsgRefusePostOwnerTransferRequest{}, "desmos/MsgRefusePostOwnerTransferRequest")
+	legacy.RegisterAminoMsg(cdc, &MsgCancelPostOwnerTransferRequest{}, "desmos/MsgCancelPostOwnerTransfer")
+	legacy.RegisterAminoMsg(cdc, &MsgAcceptPostOwnerTransferRequest{}, "desmos/MsgAcceptPostOwnerTransfer")
+	legacy.RegisterAminoMsg(cdc, &MsgRefusePostOwnerTransferRequest{}, "desmos/MsgRefusePostOwnerTransfer")
 
 	cdc.RegisterConcrete(&Params{}, "desmos/x/posts/Params", nil)
 	legacy.RegisterAminoMsg(cdc, &MsgUpdateParams{}, "desmos/x/posts/MsgUpdateParams")
