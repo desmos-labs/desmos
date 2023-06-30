@@ -15,7 +15,7 @@ import "ibc/core/client/v1/client.proto";
 // centralized application account (eg. Twitter, GitHub, etc).
 message MsgLinkApplication {
   option (cosmos.msg.v1.signer) = "sender";
-  option (amino.name)           = "desmos/MsgLinkApplication";
+  option (amino.name) = "desmos/MsgLinkApplication";
 
   // The sender of the connection request
   string sender = 1 [
@@ -65,7 +65,7 @@ message MsgLinkApplicationResponse {}
 // profile
 message MsgUnlinkApplication {
   option (cosmos.msg.v1.signer) = "signer";
-  option (amino.name)           = "desmos/MsgUnlinkApplication";
+  option (amino.name) = "desmos/MsgUnlinkApplication";
 
   // Application represents the name of the application to unlink
   string application = 1 [ (gogoproto.moretags) = "yaml:\"application\"" ];

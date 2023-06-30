@@ -31,8 +31,11 @@ message ChainLink {
   ];
 
   // Proof contains the ownership proof of the external chain address
-  Proof proof = 3
-      [ (gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"proof\"", (amino.dont_omitempty) = true ];
+  Proof proof = 3 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"proof\"",
+    (amino.dont_omitempty) = true
+  ];
 
   // ChainConfig contains the configuration of the external chain
   ChainConfig chain_config = 4 [

@@ -15,7 +15,7 @@ option go_package = "github.com/desmos-labs/desmos/v5/x/subspaces/types";
 // Msg defines subspaces Msg service.
 service Msg {
   option (cosmos.msg.v1.service) = true;
-  
+
   // CreateSubspace allows to create a subspace
   rpc CreateSubspace(MsgCreateSubspace) returns (MsgCreateSubspaceResponse);
 
@@ -97,7 +97,7 @@ service Msg {
 // MsgCreateSubspace represents the message used to create a subspace
 message MsgCreateSubspace {
   option (cosmos.msg.v1.signer) = "creator";
-  option (amino.name)           = "desmos/MsgCreateSubspace";
+  option (amino.name) = "desmos/MsgCreateSubspace";
 
   // Name of the subspace
   string name = 1 [ (gogoproto.moretags) = "yaml:\"name\"" ];
@@ -131,7 +131,7 @@ message MsgCreateSubspaceResponse {
 // MsgEditSubspace represents the message used to edit a subspace fields
 message MsgEditSubspace {
   option (cosmos.msg.v1.signer) = "signer";
-  option (amino.name)           = "desmos/MsgEditSubspace";
+  option (amino.name) = "desmos/MsgEditSubspace";
 
   // Id of the subspace to edit
   uint64 subspace_id = 1 [
@@ -167,7 +167,7 @@ message MsgEditSubspaceResponse {}
 // MsgDeleteSubspace represents the message used to delete a subspace
 message MsgDeleteSubspace {
   option (cosmos.msg.v1.signer) = "signer";
-  option (amino.name)           = "desmos/MsgDeleteSubspace";
+  option (amino.name) = "desmos/MsgDeleteSubspace";
 
   // Id of the subspace to delete
   uint64 subspace_id = 1 [
@@ -191,7 +191,7 @@ message MsgDeleteSubspaceResponse {}
 // section
 message MsgCreateSection {
   option (cosmos.msg.v1.signer) = "creator";
-  option (amino.name)           = "desmos/MsgCreateSection";
+  option (amino.name) = "desmos/MsgCreateSection";
 
   // Id of the subspace inside which the section will be placed
   uint64 subspace_id = 1 [
@@ -231,7 +231,7 @@ message MsgCreateSectionResponse {
 // section
 message MsgEditSection {
   option (cosmos.msg.v1.signer) = "editor";
-  option (amino.name)           = "desmos/MsgEditSection";
+  option (amino.name) = "desmos/MsgEditSection";
 
   // Id of the subspace inside which the section to be edited is
   uint64 subspace_id = 1 [
@@ -265,7 +265,7 @@ message MsgEditSectionResponse {}
 // another parent
 message MsgMoveSection {
   option (cosmos.msg.v1.signer) = "signer";
-  option (amino.name)           = "desmos/MsgMoveSection";
+  option (amino.name) = "desmos/MsgMoveSection";
 
   // Id of the subspace inside which the section lies
   uint64 subspace_id = 1 [
@@ -298,7 +298,7 @@ message MsgMoveSectionResponse {}
 // MsgDeleteSection represents the message to be used when deleting a section
 message MsgDeleteSection {
   option (cosmos.msg.v1.signer) = "signer";
-  option (amino.name)           = "desmos/MsgDeleteSection";
+  option (amino.name) = "desmos/MsgDeleteSection";
 
   // Id of the subspace inside which the section to be deleted is
   uint64 subspace_id = 1 [
@@ -327,7 +327,7 @@ message MsgDeleteSectionResponse {}
 // MsgCreateUserGroup represents the message used to create a user group
 message MsgCreateUserGroup {
   option (cosmos.msg.v1.signer) = "creator";
-  option (amino.name)           = "desmos/MsgCreateUserGroup";
+  option (amino.name) = "desmos/MsgCreateUserGroup";
 
   // Id of the subspace inside which the group will be created
   uint64 subspace_id = 1 [
@@ -352,11 +352,10 @@ message MsgCreateUserGroup {
       [ (gogoproto.moretags) = "yaml:\"default_permissions\"" ];
 
   // Initial members to be put inside the group
-  repeated string initial_members = 6
-      [
-        (gogoproto.moretags) = "yaml:\"initial_members\"",
-        (cosmos_proto.scalar) = "cosmos.AddressString" 
-      ];
+  repeated string initial_members = 6 [
+    (gogoproto.moretags) = "yaml:\"initial_members\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 
   // Creator of the group
   string creator = 7 [
@@ -376,7 +375,7 @@ message MsgCreateUserGroupResponse {
 // MsgEditUserGroup represents the message used to edit a user group
 message MsgEditUserGroup {
   option (cosmos.msg.v1.signer) = "signer";
-  option (amino.name)           = "desmos/MsgEditUserGroup";
+  option (amino.name) = "desmos/MsgEditUserGroup";
 
   // Id of the subspace inside which the group to be edited is
   uint64 subspace_id = 1 [
@@ -410,7 +409,7 @@ message MsgEditUserGroupResponse {}
 // section to anoter
 message MsgMoveUserGroup {
   option (cosmos.msg.v1.signer) = "signer";
-  option (amino.name)           = "desmos/MsgMoveUserGroup";
+  option (amino.name) = "desmos/MsgMoveUserGroup";
 
   // Id of the subspace inside which the group to move is
   uint64 subspace_id = 1 [
@@ -444,7 +443,7 @@ message MsgMoveUserGroupResponse {}
 // of a user group
 message MsgSetUserGroupPermissions {
   option (cosmos.msg.v1.signer) = "signer";
-  option (amino.name)           = "desmos/MsgSetUserGroupPermissions";
+  option (amino.name) = "desmos/MsgSetUserGroupPermissions";
 
   // Id of the subspace inside which the group is
   uint64 subspace_id = 1 [
@@ -476,7 +475,7 @@ message MsgSetUserGroupPermissionsResponse {}
 // MsgDeleteUserGroup represents the message used to delete a user group
 message MsgDeleteUserGroup {
   option (cosmos.msg.v1.signer) = "signer";
-  option (amino.name)           = "desmos/MsgDeleteUserGroup";
+  option (amino.name) = "desmos/MsgDeleteUserGroup";
 
   // Id of the subspace inside which the group to delete is
   uint64 subspace_id = 1 [
@@ -506,7 +505,7 @@ message MsgDeleteUserGroupResponse {}
 // group
 message MsgAddUserToUserGroup {
   option (cosmos.msg.v1.signer) = "signer";
-  option (amino.name)           = "desmos/MsgAddUserToUserGroup";
+  option (amino.name) = "desmos/MsgAddUserToUserGroup";
 
   // Id of the subspace inside which the group is
   uint64 subspace_id = 1 [
@@ -541,7 +540,7 @@ message MsgAddUserToUserGroupResponse {}
 // a user group
 message MsgRemoveUserFromUserGroup {
   option (cosmos.msg.v1.signer) = "signer";
-  option (amino.name)           = "desmos/MsgRemoveUserFromUserGroup";
+  option (amino.name) = "desmos/MsgRemoveUserFromUserGroup";
 
   // Id of the subspace inside which the group to remove the user from is
   uint64 subspace_id = 1 [
@@ -578,7 +577,7 @@ message MsgRemoveUserFromUserGroupResponse {}
 // specific user
 message MsgSetUserPermissions {
   option (cosmos.msg.v1.signer) = "signer";
-  option (amino.name)           = "desmos/MsgSetUserPermissions";
+  option (amino.name) = "desmos/MsgSetUserPermissions";
 
   // Id of the subspace inside which to set the permissions
   uint64 subspace_id = 1 [
@@ -622,7 +621,7 @@ message MsgSetUserPermissionsResponse {}
 // Since: Desmos 6.0.0
 message MsgUpdateSubspaceFeeTokens {
   option (cosmos.msg.v1.signer) = "authority";
-  option (amino.name)           = "desmos/MsgUpdateSubspaceFeeTokens";
+  option (amino.name) = "desmos/MsgUpdateSubspaceFeeTokens";
 
   // Id of the subspace where the list of allowed fee tokens will be updated
   uint64 subspace_id = 1 [
@@ -636,7 +635,7 @@ message MsgUpdateSubspaceFeeTokens {
     (gogoproto.nullable) = false,
     (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
     (gogoproto.moretags) = "yaml:\"additional_fee_tokens\"",
-    (amino.encoding)         = "legacy_coins",
+    (amino.encoding) = "legacy_coins",
     (amino.dont_omitempty) = true
   ];
 

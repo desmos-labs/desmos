@@ -16,5 +16,6 @@ message SetReactionsParamsJSON {
       [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 
   // Params related to FreeTextValue reactions
-  FreeTextValueParams free_text_params = 2 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+  FreeTextValueParams free_text_params = 2
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 }

@@ -44,7 +44,7 @@ service Msg {
 // MsgCreateReport represents the message to be used to create a report
 message MsgCreateReport {
   option (cosmos.msg.v1.signer) = "reporter";
-  option (amino.name)           = "desmos/MsgCreateReport";
+  option (amino.name) = "desmos/MsgCreateReport";
 
   // Id of the subspace for which the report should be stored
   uint64 subspace_id = 1 [
@@ -95,7 +95,7 @@ message MsgCreateReportResponse {
 // MsgDeleteReport represents the message to be used when deleting a report
 message MsgDeleteReport {
   option (cosmos.msg.v1.signer) = "signer";
-  option (amino.name)           = "desmos/MsgDeleteReport";
+  option (amino.name) = "desmos/MsgDeleteReport";
 
   // Id of the subspace that contains the report to be deleted
   uint64 subspace_id = 1 [
@@ -123,7 +123,7 @@ message MsgDeleteReportResponse {}
 // support one reason from the module params
 message MsgSupportStandardReason {
   option (cosmos.msg.v1.signer) = "signer";
-  option (amino.name)           = "desmos/MsgSupportStandardReason";
+  option (amino.name) = "desmos/MsgSupportStandardReason";
 
   // Id of the subspace for which to support the reason
   uint64 subspace_id = 1 [
@@ -158,7 +158,7 @@ message MsgSupportStandardReasonResponse {
 // reason
 message MsgAddReason {
   option (cosmos.msg.v1.signer) = "signer";
-  option (amino.name)           = "desmos/MsgAddReason";
+  option (amino.name) = "desmos/MsgAddReason";
 
   // Id of the subspace for which to add the reason
   uint64 subspace_id = 1 [
@@ -192,7 +192,7 @@ message MsgAddReasonResponse {
 // reporting reason
 message MsgRemoveReason {
   option (cosmos.msg.v1.signer) = "signer";
-  option (amino.name)           = "desmos/MsgRemoveReason";
+  option (amino.name) = "desmos/MsgRemoveReason";
 
   // Id of the subspace from which to remove the reason
   uint64 subspace_id = 1 [
@@ -221,7 +221,7 @@ message MsgRemoveReasonResponse {}
 // Since: Desmos 5.0.0
 message MsgUpdateParams {
   option (cosmos.msg.v1.signer) = "authority";
-  option (amino.name)           = "desmos/x/reports/MsgUpdateParams";
+  option (amino.name) = "desmos/x/reports/MsgUpdateParams";
 
   // authority is the address that controls the module (defaults to x/gov unless
   // overwritten).
@@ -230,7 +230,8 @@ message MsgUpdateParams {
   // params defines the parameters to update.
   //
   // NOTE: All parameters must be supplied.
-  Params params = 2 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+  Params params = 2
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 }
 
 // MsgUpdateParamsResponse defines the response structure for executing a

@@ -17,18 +17,24 @@ message GenesisState {
   repeated SubspaceDataEntry subspaces_data = 1
       [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 
-  repeated PostDataEntry posts_data = 2 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+  repeated PostDataEntry posts_data = 2
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 
-  repeated Post posts = 3 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+  repeated Post posts = 3
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 
-  repeated Attachment attachments = 4 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+  repeated Attachment attachments = 4
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 
-  repeated ActivePollData active_polls = 5 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+  repeated ActivePollData active_polls = 5
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 
-  repeated UserAnswer user_answers = 6 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+  repeated UserAnswer user_answers = 6
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 
-  Params params = 7 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
-  
+  Params params = 7
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+
   repeated PostOwnerTransferRequest post_owner_transfer_requests = 8
       [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 }
@@ -61,6 +67,9 @@ message ActivePollData {
   uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
   uint64 post_id = 2 [ (gogoproto.customname) = "PostID" ];
   uint32 poll_id = 3 [ (gogoproto.customname) = "PollID" ];
-  google.protobuf.Timestamp end_date = 4
-      [ (gogoproto.nullable) = false, (gogoproto.stdtime) = true, (amino.dont_omitempty) = true ];
+  google.protobuf.Timestamp end_date = 4 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true,
+    (amino.dont_omitempty) = true
+  ];
 }

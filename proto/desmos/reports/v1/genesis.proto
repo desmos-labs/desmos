@@ -14,9 +14,12 @@ message GenesisState {
 
   repeated SubspaceDataEntry subspaces_data = 1
       [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
-  repeated Reason reasons = 2 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
-  repeated Report reports = 3 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
-  Params params = 4 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+  repeated Reason reasons = 2
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+  repeated Report reports = 3
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+  Params params = 4
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 }
 
 // SubspaceDataEntry contains the data related to a single subspace

@@ -11,7 +11,7 @@ option go_package = "github.com/desmos-labs/desmos/v5/x/profiles/types";
 // MsgSaveProfile represents a message to save a profile.
 message MsgSaveProfile {
   option (cosmos.msg.v1.signer) = "creator";
-  option (amino.name)           = "desmos/MsgSaveProfile";
+  option (amino.name) = "desmos/MsgSaveProfile";
 
   // DTag of the profile. If it shouldn't be changed, [do-no-modify] can be used
   // instead.
@@ -52,7 +52,7 @@ message MsgSaveProfileResponse {}
 // MsgDeleteProfile represents the message used to delete an existing profile.
 message MsgDeleteProfile {
   option (cosmos.msg.v1.signer) = "creator";
-  option (amino.name)           = "desmos/MsgDeleteProfile";
+  option (amino.name) = "desmos/MsgDeleteProfile";
 
   // Address associated to the profile to be deleted
   string creator = 1 [

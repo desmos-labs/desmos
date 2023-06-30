@@ -31,7 +31,8 @@ message QueryApplicationLinksRequest {
 // QueryApplicationLinksResponse represents the response to the query used
 // to get the application links for a specific user
 message QueryApplicationLinksResponse {
-  repeated ApplicationLink links = 1 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+  repeated ApplicationLink links = 1
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 
   // Pagination defines the pagination response
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
@@ -47,7 +48,8 @@ message QueryApplicationLinkByClientIDRequest {
 // QueryApplicationLinkByClientIDResponse contains the data returned by the
 // request allowing to get an application link using a client id
 message QueryApplicationLinkByClientIDResponse {
-  ApplicationLink link = 1 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+  ApplicationLink link = 1
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 }
 
 // QueryApplicationLinkOwnersRequest contains the data of the request that can

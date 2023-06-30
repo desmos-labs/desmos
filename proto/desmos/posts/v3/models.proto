@@ -148,7 +148,7 @@ message Entities {
   repeated Url urls = 3 [
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"urls\"",
-    (amino.dont_omitempty) = true  
+    (amino.dont_omitempty) = true
   ];
 }
 

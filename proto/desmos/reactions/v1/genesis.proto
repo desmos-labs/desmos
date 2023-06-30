@@ -19,10 +19,12 @@ message GenesisState {
   repeated RegisteredReaction registered_reactions = 2
       [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 
-  repeated PostDataEntry posts_data = 3 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+  repeated PostDataEntry posts_data = 3
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 
-  repeated Reaction reactions = 4 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
-  
+  repeated Reaction reactions = 4
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+
   repeated SubspaceReactionsParams subspaces_params = 5
       [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 }

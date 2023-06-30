@@ -14,7 +14,7 @@ option go_package = "github.com/desmos-labs/desmos/v5/x/subspaces/types";
 // treasury to a user
 message MsgGrantTreasuryAuthorization {
   option (cosmos.msg.v1.signer) = "granter";
-  option (amino.name)           = "desmos/MsgGrantTreasuryAuthorization";
+  option (amino.name) = "desmos/MsgGrantTreasuryAuthorization";
 
   // Id of the subspace where the authorization should be granted
   uint64 subspace_id = 1 [
@@ -35,8 +35,11 @@ message MsgGrantTreasuryAuthorization {
   ];
 
   // Grant represents the authorization to execute the provided methods
-  cosmos.authz.v1beta1.Grant grant = 4
-      [ (gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"grant\"", (amino.dont_omitempty) = true ];
+  cosmos.authz.v1beta1.Grant grant = 4 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"grant\"",
+    (amino.dont_omitempty) = true
+  ];
 }
 
 // MsgGrantTreasuryAuthorizationResponse defines the
@@ -47,7 +50,7 @@ message MsgGrantTreasuryAuthorizationResponse {}
 // from a user
 message MsgRevokeTreasuryAuthorization {
   option (cosmos.msg.v1.signer) = "granter";
-  option (amino.name)           = "desmos/MsgRevokeTreasuryAuthorization";
+  option (amino.name) = "desmos/MsgRevokeTreasuryAuthorization";
 
   // Id of the subspace from which the authorization should be revoked
   uint64 subspace_id = 1 [

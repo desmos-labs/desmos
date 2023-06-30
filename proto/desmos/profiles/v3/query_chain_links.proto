@@ -32,7 +32,8 @@ message QueryChainLinksRequest {
 // QueryChainLinksResponse is the response type for the
 // Query/ChainLinks RPC method.
 message QueryChainLinksResponse {
-  repeated ChainLink links = 1 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+  repeated ChainLink links = 1
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 
   // Pagination defines the pagination response
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
@@ -64,7 +65,8 @@ message QueryChainLinkOwnersResponse {
   }
 
   // Addresses of the chain links owners
-  repeated ChainLinkOwnerDetails owners = 1 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+  repeated ChainLinkOwnerDetails owners = 1
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 
   // Pagination defines the pagination response
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
@@ -88,7 +90,8 @@ message QueryDefaultExternalAddressesRequest {
 message QueryDefaultExternalAddressesResponse {
   // List of default addresses, each one represented by the associated chain
   // link
-  repeated ChainLink links = 1 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+  repeated ChainLink links = 1
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }

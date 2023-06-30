@@ -91,7 +91,8 @@ message QuerySubspacesRequest {
 // QuerySubspacesResponse is the response type for the Query/Subspaces RPC
 // method
 message QuerySubspacesResponse {
-  repeated Subspace subspaces = 1 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+  repeated Subspace subspaces = 1
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
@@ -106,7 +107,8 @@ message QuerySubspaceRequest {
 
 // QuerySubspaceResponse is the response type for the Query/Subspace method
 message QuerySubspaceResponse {
-  Subspace subspace = 1 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+  Subspace subspace = 1
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -122,7 +124,8 @@ message QuerySectionsRequest {
 
 // QuerySectionsResponse is the response type for Query/Sections RPC method
 message QuerySectionsResponse {
-  repeated Section sections = 1 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+  repeated Section sections = 1
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
@@ -139,7 +142,8 @@ message QuerySectionRequest {
 
 // QuerySectionResponse is the response type for Query/Section RPC method
 message QuerySectionResponse {
-  Section section = 1 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+  Section section = 1
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -160,7 +164,8 @@ message QueryUserGroupsRequest {
 // QueryUserGroupsResponse is the response type for the Query/UserGroups RPC
 // method
 message QueryUserGroupsResponse {
-  repeated UserGroup groups = 1 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+  repeated UserGroup groups = 1
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
@@ -176,7 +181,8 @@ message QueryUserGroupRequest {
 // QueryUserGroupResponse is the response type for the Query/UserGroup RPC
 // method
 message QueryUserGroupResponse {
-  UserGroup group = 1 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+  UserGroup group = 1
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 }
 
 // QueryUserGroupMembersRequest is the request type for the
@@ -195,7 +201,8 @@ message QueryUserGroupMembersRequest {
 // QueryUserGroupMembersResponse is the response type for the
 // Query/UserGroupMembers RPC method
 message QueryUserGroupMembersResponse {
-  repeated string members = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  repeated string members = 1
+      [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 

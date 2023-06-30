@@ -18,20 +18,26 @@ message GenesisState {
   uint64 initial_subspace_id = 1
       [ (gogoproto.customname) = "InitialSubspaceID" ];
 
-  repeated SubspaceData subspaces_data = 2 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+  repeated SubspaceData subspaces_data = 2
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 
-  repeated Subspace subspaces = 3 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+  repeated Subspace subspaces = 3
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 
-  repeated Section sections = 4 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+  repeated Section sections = 4
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 
-  repeated UserPermission user_permissions = 5 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+  repeated UserPermission user_permissions = 5
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 
-  repeated UserGroup user_groups = 6 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+  repeated UserGroup user_groups = 6
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 
   repeated UserGroupMemberEntry user_groups_members = 7
       [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 
-  repeated Grant grants = 8 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+  repeated Grant grants = 8
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 }
 
 // SubspaceData contains the genesis data for a single subspace

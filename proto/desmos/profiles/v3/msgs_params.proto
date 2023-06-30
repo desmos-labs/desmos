@@ -15,7 +15,7 @@ option go_package = "github.com/desmos-labs/desmos/v5/x/profiles/types";
 // Since: Desmos 5.0.0
 message MsgUpdateParams {
   option (cosmos.msg.v1.signer) = "authority";
-  option (amino.name)           = "desmos/x/profiles/MsgUpdateParams";
+  option (amino.name) = "desmos/x/profiles/MsgUpdateParams";
 
   // authority is the address that controls the module (defaults to x/gov unless
   // overwritten).
@@ -24,7 +24,8 @@ message MsgUpdateParams {
   // params defines the parameters to update.
   //
   // NOTE: All parameters must be supplied.
-  Params params = 2 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+  Params params = 2
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 }
 
 // MsgUpdateParamsResponse defines the response structure for executing a

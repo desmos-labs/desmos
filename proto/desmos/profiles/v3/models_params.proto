@@ -129,7 +129,7 @@ message OracleParams {
     (gogoproto.nullable) = false,
     (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
     (gogoproto.moretags) = "yaml:\"fee_amount\"",
-    (amino.encoding)         = "legacy_coins",
+    (amino.encoding) = "legacy_coins",
     (amino.dont_omitempty) = true
   ];
 }

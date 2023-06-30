@@ -14,7 +14,10 @@ message GenericSubspaceAuthorization {
       "cosmos.authz.v1beta1.Authorization";
 
   // Ids of the subspaces inside which to grant the permission
-  repeated uint64 subspaces_ids = 1 [ (gogoproto.customname) = "SubspacesIDs", (amino.dont_omitempty) = true ];
+  repeated uint64 subspaces_ids = 1 [
+    (gogoproto.customname) = "SubspacesIDs",
+    (amino.dont_omitempty) = true
+  ];
 
   // Msg, identified by it's type URL, to grant unrestricted permissions to
   // execute within the subspace

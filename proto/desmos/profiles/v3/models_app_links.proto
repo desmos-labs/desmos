@@ -20,8 +20,11 @@ message ApplicationLink {
   ];
 
   // Data contains the details of this specific link
-  Data data = 2
-      [ (gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"data\"", (amino.dont_omitempty) = true ];
+  Data data = 2 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"data\"",
+    (amino.dont_omitempty) = true
+  ];
 
   // State of the link
   ApplicationLinkState state = 3 [ (gogoproto.moretags) = "yaml:\"state\"" ];

@@ -55,7 +55,7 @@ message Subspace {
     (gogoproto.nullable) = false,
     (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
     (gogoproto.moretags) = "yaml:\"additional_fee_tokens\"",
-    (amino.encoding)         = "legacy_coins",
+    (amino.encoding) = "legacy_coins",
     (amino.dont_omitempty) = true
   ];
 }

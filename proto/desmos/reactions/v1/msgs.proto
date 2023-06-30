@@ -14,7 +14,7 @@ option go_package = "github.com/desmos-labs/desmos/v5/x/reactions/types";
 // Msg defines the reactions Msg service.
 service Msg {
   option (cosmos.msg.v1.service) = true;
-  
+
   // AddReaction allows to add a post reaction
   rpc AddReaction(MsgAddReaction) returns (MsgAddReactionResponse);
 
@@ -41,7 +41,7 @@ service Msg {
 // MsgAddReaction represents the message to be used to add a post reaction
 message MsgAddReaction {
   option (cosmos.msg.v1.signer) = "user";
-  option (amino.name)           = "desmos/MsgAddReaction";
+  option (amino.name) = "desmos/MsgAddReaction";
 
   // Id of the subspace inside which the post to react to is
   uint64 subspace_id = 1 [
@@ -81,7 +81,7 @@ message MsgAddReactionResponse {
 // existing reaction from a post
 message MsgRemoveReaction {
   option (cosmos.msg.v1.signer) = "user";
-  option (amino.name)           = "desmos/MsgRemoveReaction";
+  option (amino.name) = "desmos/MsgRemoveReaction";
 
   // Id of the subspace inside which the reaction to remove is
   uint64 subspace_id = 1 [
@@ -115,7 +115,7 @@ message MsgRemoveReactionResponse {}
 // register a new supported reaction
 message MsgAddRegisteredReaction {
   option (cosmos.msg.v1.signer) = "user";
-  option (amino.name)           = "desmos/MsgAddRegisteredReaction";
+  option (amino.name) = "desmos/MsgAddRegisteredReaction";
 
   // Id of the subspace inside which this reaction should be registered
   uint64 subspace_id = 1 [
@@ -151,7 +151,7 @@ message MsgAddRegisteredReactionResponse {
 // registered reaction
 message MsgEditRegisteredReaction {
   option (cosmos.msg.v1.signer) = "user";
-  option (amino.name)           = "desmos/MsgEditRegisteredReaction";
+  option (amino.name) = "desmos/MsgEditRegisteredReaction";
 
   // Id of the subspace inside which the reaction to edit is
   uint64 subspace_id = 1 [
@@ -187,7 +187,7 @@ message MsgEditRegisteredReactionResponse {}
 // remove an existing registered reaction
 message MsgRemoveRegisteredReaction {
   option (cosmos.msg.v1.signer) = "user";
-  option (amino.name)           = "desmos/MsgRemoveRegisteredReaction";
+  option (amino.name) = "desmos/MsgRemoveRegisteredReaction";
 
   // Id of the subspace from which to remove the registered reaction
   uint64 subspace_id = 1 [
@@ -216,7 +216,7 @@ message MsgRemoveRegisteredReactionResponse {}
 // a subspace reactions params
 message MsgSetReactionsParams {
   option (cosmos.msg.v1.signer) = "user";
-  option (amino.name)           = "desmos/MsgSetReactionsParams";
+  option (amino.name) = "desmos/MsgSetReactionsParams";
 
   // Id of the subspace for which to set the params
   uint64 subspace_id = 1 [
