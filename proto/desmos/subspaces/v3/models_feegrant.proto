@@ -17,8 +17,13 @@ message Grant {
     (gogoproto.customname) = "SubspaceID",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
+
   // Address of the user that granted the allowance
-  string granter = 2 [ (gogoproto.moretags) = "yaml:\"granter\"" ];
+  string granter = 2 [
+    (gogoproto.moretags) = "yaml:\"granter\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
+
   // Target to which the allowance has been granted
   google.protobuf.Any grantee = 3 [
     (cosmos_proto.accepts_interface) = "desmos.subspaces.v3.Grantee",
@@ -38,7 +43,10 @@ message UserGrantee {
   option (gogoproto.goproto_stringer) = true;
   option (cosmos_proto.implements_interface) = "desmos.subspaces.v3.Grantee";
 
-  string user = 1 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+  string user = 1 [
+    (gogoproto.moretags) = "yaml:\"user\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 }
 
 // GroupGrantee contains the target of a grant about a group

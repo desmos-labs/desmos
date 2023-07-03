@@ -1,7 +1,10 @@
 syntax = "proto3";
 package desmos.profiles.v3;
 
+import "amino/amino.proto";
 import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+
 import "desmos/profiles/v3/models_params.proto";
 import "desmos/profiles/v3/models_dtag_requests.proto";
 import "desmos/profiles/v3/models_chain_links.proto";
@@ -16,22 +19,26 @@ message GenesisState {
   repeated desmos.profiles.v3.DTagTransferRequest dtag_transfer_requests = 1 [
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"dtag_transfer_requests\"",
-    (gogoproto.customname) = "DTagTransferRequests"
+    (gogoproto.customname) = "DTagTransferRequests",
+    (amino.dont_omitempty) = true
   ];
 
   repeated desmos.profiles.v3.ChainLink chain_links = 2 [
     (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"chain_links\""
+    (gogoproto.moretags) = "yaml:\"chain_links\"",
+    (amino.dont_omitempty) = true
   ];
 
   repeated ApplicationLink application_links = 3 [
     (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"application_links\""
+    (gogoproto.moretags) = "yaml:\"application_links\"",
+    (amino.dont_omitempty) = true
   ];
 
   repeated DefaultExternalAddressEntry default_external_addresses = 4 [
     (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"default_external_addresses\""
+    (gogoproto.moretags) = "yaml:\"default_external_addresses\"",
+    (amino.dont_omitempty) = true
   ];
 
   string ibc_port_id = 5 [
@@ -41,13 +48,14 @@ message GenesisState {
 
   desmos.profiles.v3.Params params = 6 [
     (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"params\""
+    (gogoproto.moretags) = "yaml:\"params\"",
+    (amino.dont_omitempty) = true
   ];
 }
 
 // DefaultExternalAddressEntry contains the data of a default extnernal address
 message DefaultExternalAddressEntry {
-  string owner = 1;
+  string owner = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
   string chain_name = 2;
   string target = 3;
 }

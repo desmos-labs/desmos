@@ -1,6 +1,7 @@
 syntax = "proto3";
 package desmos.reports.v1;
 
+import "amino/amino.proto";
 import "gogoproto/gogo.proto";
 
 import "desmos/reports/v1/models.proto";
@@ -12,10 +13,13 @@ message GenesisState {
   option (gogoproto.goproto_getters) = false;
 
   repeated SubspaceDataEntry subspaces_data = 1
-      [ (gogoproto.nullable) = false ];
-  repeated Reason reasons = 2 [ (gogoproto.nullable) = false ];
-  repeated Report reports = 3 [ (gogoproto.nullable) = false ];
-  Params params = 4 [ (gogoproto.nullable) = false ];
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+  repeated Reason reasons = 2
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+  repeated Report reports = 3
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+  Params params = 4
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 }
 
 // SubspaceDataEntry contains the data related to a single subspace

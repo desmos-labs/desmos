@@ -1,6 +1,7 @@
 syntax = "proto3";
 package desmos.profiles.v3;
 
+import "amino/amino.proto";
 import "gogoproto/gogo.proto";
 import "cosmos/base/v1beta1/coin.proto";
 import "google/protobuf/duration.proto";
@@ -10,16 +11,19 @@ option go_package = "github.com/desmos-labs/desmos/v5/x/profiles/types";
 // Params contains the parameters for the profiles module
 message Params {
   option (gogoproto.goproto_getters) = false;
+  option (amino.name) = "desmos/x/profiles/Params";
 
   NicknameParams nickname = 1 [
     (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"nickname\""
+    (gogoproto.moretags) = "yaml:\"nickname\"",
+    (amino.dont_omitempty) = true
   ];
 
   DTagParams dtag = 2 [
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"dtag\"",
-    (gogoproto.customname) = "DTag"
+    (gogoproto.customname) = "DTag",
+    (amino.dont_omitempty) = true
   ];
 
   BioParams bio = 3
@@ -27,12 +31,14 @@ message Params {
 
   OracleParams oracle = 4 [
     (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"oracle\""
+    (gogoproto.moretags) = "yaml:\"oracle\"",
+    (amino.dont_omitempty) = true
   ];
 
   AppLinksParams app_links = 5 [
     (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"app_links\""
+    (gogoproto.moretags) = "yaml:\"app_links\"",
+    (amino.dont_omitempty) = true
   ];
 }
 
@@ -43,13 +49,15 @@ message NicknameParams {
   bytes min_length = 1 [
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
     (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"min_length\""
+    (gogoproto.moretags) = "yaml:\"min_length\"",
+    (amino.dont_omitempty) = true
   ];
 
   bytes max_length = 2 [
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
     (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"max_length\""
+    (gogoproto.moretags) = "yaml:\"max_length\"",
+    (amino.dont_omitempty) = true
   ];
 }
 
@@ -63,14 +71,16 @@ message DTagParams {
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"min_length\"",
-    (gogoproto.customname) = "MinLength"
+    (gogoproto.customname) = "MinLength",
+    (amino.dont_omitempty) = true
   ];
 
   bytes max_length = 3 [
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"max_length\"",
-    (gogoproto.customname) = "MaxLength"
+    (gogoproto.customname) = "MaxLength",
+    (amino.dont_omitempty) = true
   ];
 }
 
@@ -81,7 +91,8 @@ message BioParams {
   bytes max_length = 3 [
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
     (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"max_length\""
+    (gogoproto.moretags) = "yaml:\"max_length\"",
+    (amino.dont_omitempty) = true
   ];
 }
 
@@ -118,7 +129,9 @@ message OracleParams {
   repeated cosmos.base.v1beta1.Coin fee_amount = 6 [
     (gogoproto.nullable) = false,
     (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
-    (gogoproto.moretags) = "yaml:\"fee_amount\""
+    (gogoproto.moretags) = "yaml:\"fee_amount\"",
+    (amino.encoding) = "legacy_coins",
+    (amino.dont_omitempty) = true
   ];
 }
 
@@ -130,6 +143,7 @@ message AppLinksParams {
   google.protobuf.Duration validity_duration = 1 [
     (gogoproto.nullable) = false,
     (gogoproto.stdduration) = true,
-    (gogoproto.moretags) = "yaml:\"validity_duration\""
+    (gogoproto.moretags) = "yaml:\"validity_duration\"",
+    (amino.dont_omitempty) = true
   ];
 }

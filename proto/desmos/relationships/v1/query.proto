@@ -1,8 +1,10 @@
 syntax = "proto3";
 package desmos.relationships.v1;
 
+import "amino/amino.proto";
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
+import "cosmos_proto/cosmos.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 
 import "desmos/relationships/v1/models.proto";
@@ -37,11 +39,11 @@ message QueryRelationshipsRequest {
   uint64 subspace_id = 1;
 
   // optional address of the user for which to query the relationships
-  string user = 2;
+  string user = 2 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
 
   // optional address of the counterparty of the relationships (used only if the
   // user is provided)
-  string counterparty = 3;
+  string counterparty = 3 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
 
   // pagination defines an optional pagination for the request.
   cosmos.base.query.v1beta1.PageRequest pagination = 4;
@@ -51,7 +53,7 @@ message QueryRelationshipsRequest {
 // Query/Relationships RPC method.
 message QueryRelationshipsResponse {
   repeated desmos.relationships.v1.Relationship relationships = 1
-      [ (gogoproto.nullable) = false ];
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
@@ -67,11 +69,11 @@ message QueryBlocksRequest {
   uint64 subspace_id = 1;
 
   // optional address of the blocker to query the blocks for
-  string blocker = 2;
+  string blocker = 2 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
 
   // optional address of the blocked user to query the block for (used only if
   // the blocker is provided)
-  string blocked = 3;
+  string blocked = 3 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
 
   // pagination defines an optional pagination for the request.
   cosmos.base.query.v1beta1.PageRequest pagination = 4;
@@ -81,6 +83,6 @@ message QueryBlocksRequest {
 // method.
 message QueryBlocksResponse {
   repeated desmos.relationships.v1.UserBlock blocks = 1
-      [ (gogoproto.nullable) = false ];
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }

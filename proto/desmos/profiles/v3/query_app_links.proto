@@ -1,7 +1,9 @@
 syntax = "proto3";
 package desmos.profiles.v3;
 
+import "amino/amino.proto";
 import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
 import "desmos/profiles/v3/models_app_links.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 
@@ -12,7 +14,7 @@ option go_package = "github.com/desmos-labs/desmos/v5/x/profiles/types";
 message QueryApplicationLinksRequest {
   // (Optional) User contains the Desmos profile address associated for which
   // the link should be searched for
-  string user = 1;
+  string user = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
 
   // (Optional) Application represents the application name associated with the
   // link. Used only if user is also set.
@@ -29,7 +31,8 @@ message QueryApplicationLinksRequest {
 // QueryApplicationLinksResponse represents the response to the query used
 // to get the application links for a specific user
 message QueryApplicationLinksResponse {
-  repeated ApplicationLink links = 1 [ (gogoproto.nullable) = false ];
+  repeated ApplicationLink links = 1
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 
   // Pagination defines the pagination response
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
@@ -45,7 +48,8 @@ message QueryApplicationLinkByClientIDRequest {
 // QueryApplicationLinkByClientIDResponse contains the data returned by the
 // request allowing to get an application link using a client id
 message QueryApplicationLinkByClientIDResponse {
-  ApplicationLink link = 1 [ (gogoproto.nullable) = false ];
+  ApplicationLink link = 1
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 }
 
 // QueryApplicationLinkOwnersRequest contains the data of the request that can
@@ -69,14 +73,14 @@ message QueryApplicationLinkOwnersResponse {
   // ApplicationLinkOwnerDetails contains the details of a single application
   // link owner
   message ApplicationLinkOwnerDetails {
-    string user = 1;
+    string user = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
     string application = 2;
     string username = 3;
   }
 
   // Addresses of the application links owners
   repeated ApplicationLinkOwnerDetails owners = 1
-      [ (gogoproto.nullable) = false ];
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 
   // Pagination defines the pagination response
   cosmos.base.query.v1beta1.PageResponse pagination = 2;

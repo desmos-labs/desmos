@@ -1,8 +1,10 @@
 syntax = "proto3";
 package desmos.subspaces.v3;
 
+import "amino/amino.proto";
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
+import "cosmos_proto/cosmos.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 
 import "desmos/subspaces/v3/models.proto";
@@ -89,7 +91,8 @@ message QuerySubspacesRequest {
 // QuerySubspacesResponse is the response type for the Query/Subspaces RPC
 // method
 message QuerySubspacesResponse {
-  repeated Subspace subspaces = 1 [ (gogoproto.nullable) = false ];
+  repeated Subspace subspaces = 1
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
@@ -104,7 +107,8 @@ message QuerySubspaceRequest {
 
 // QuerySubspaceResponse is the response type for the Query/Subspace method
 message QuerySubspaceResponse {
-  Subspace subspace = 1 [ (gogoproto.nullable) = false ];
+  Subspace subspace = 1
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -120,7 +124,8 @@ message QuerySectionsRequest {
 
 // QuerySectionsResponse is the response type for Query/Sections RPC method
 message QuerySectionsResponse {
-  repeated Section sections = 1 [ (gogoproto.nullable) = false ];
+  repeated Section sections = 1
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
@@ -137,7 +142,8 @@ message QuerySectionRequest {
 
 // QuerySectionResponse is the response type for Query/Section RPC method
 message QuerySectionResponse {
-  Section section = 1 [ (gogoproto.nullable) = false ];
+  Section section = 1
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -158,7 +164,8 @@ message QueryUserGroupsRequest {
 // QueryUserGroupsResponse is the response type for the Query/UserGroups RPC
 // method
 message QueryUserGroupsResponse {
-  repeated UserGroup groups = 1 [ (gogoproto.nullable) = false ];
+  repeated UserGroup groups = 1
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
@@ -174,7 +181,8 @@ message QueryUserGroupRequest {
 // QueryUserGroupResponse is the response type for the Query/UserGroup RPC
 // method
 message QueryUserGroupResponse {
-  UserGroup group = 1 [ (gogoproto.nullable) = false ];
+  UserGroup group = 1
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 }
 
 // QueryUserGroupMembersRequest is the request type for the
@@ -193,7 +201,8 @@ message QueryUserGroupMembersRequest {
 // QueryUserGroupMembersResponse is the response type for the
 // Query/UserGroupMembers RPC method
 message QueryUserGroupMembersResponse {
-  repeated string members = 1;
+  repeated string members = 1
+      [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
@@ -212,7 +221,10 @@ message QueryUserPermissionsRequest {
   uint32 section_id = 2 [ (gogoproto.moretags) = "yaml:\"section_id\"" ];
 
   // Address of the user to query the permissions for
-  string user = 3 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+  string user = 3 [
+    (gogoproto.moretags) = "yaml:\"user\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 }
 
 // QueryUserPermissionsRequest is the response type for the
@@ -220,9 +232,11 @@ message QueryUserPermissionsRequest {
 message QueryUserPermissionsResponse {
   repeated string permissions = 1
       [ (gogoproto.moretags) = "yaml:\"permissions\"" ];
+
   repeated PermissionDetail details = 2 [
     (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"details\""
+    (gogoproto.moretags) = "yaml:\"details\"",
+    (amino.dont_omitempty) = true
   ];
 }
 
@@ -253,7 +267,10 @@ message PermissionDetail {
     option (gogoproto.equal) = true;
 
     // User for which the permission was set
-    string user = 1 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+    string user = 1 [
+      (gogoproto.moretags) = "yaml:\"user\"",
+      (cosmos_proto.scalar) = "cosmos.AddressString"
+    ];
 
     // Permissions set to the user
     repeated string permission = 2
@@ -288,7 +305,10 @@ message QueryUserAllowancesRequest {
   uint64 subspace_id = 1 [ (gogoproto.moretags) = "yaml:\"subspace_id\"" ];
 
   // (Optional) Address of the user that was granted an allowance
-  string grantee = 2 [ (gogoproto.moretags) = "yaml:\"grantee\"" ];
+  string grantee = 2 [
+    (gogoproto.moretags) = "yaml:\"grantee\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
 
   // pagination defines an pagination for the request
   cosmos.base.query.v1beta1.PageRequest pagination = 3;
@@ -299,7 +319,8 @@ message QueryUserAllowancesRequest {
 message QueryUserAllowancesResponse {
   repeated Grant grants = 1 [
     (gogoproto.moretags) = "yaml:\"grants\"",
-    (gogoproto.nullable) = false
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
   ];
 
   // pagination defines an pagination for the response
@@ -329,7 +350,8 @@ message QueryGroupAllowancesRequest {
 message QueryGroupAllowancesResponse {
   repeated Grant grants = 1 [
     (gogoproto.moretags) = "yaml:\"grants\"",
-    (gogoproto.nullable) = false
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
   ];
 
   // pagination defines an pagination for the response

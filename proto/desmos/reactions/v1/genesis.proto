@@ -1,6 +1,7 @@
 syntax = "proto3";
 package desmos.reactions.v1;
 
+import "amino/amino.proto";
 import "gogoproto/gogo.proto";
 
 import "desmos/reactions/v1/models.proto";
@@ -13,13 +14,19 @@ message GenesisState {
   option (gogoproto.goproto_stringer) = true;
 
   repeated SubspaceDataEntry subspaces_data = 1
-      [ (gogoproto.nullable) = false ];
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+
   repeated RegisteredReaction registered_reactions = 2
-      [ (gogoproto.nullable) = false ];
-  repeated PostDataEntry posts_data = 3 [ (gogoproto.nullable) = false ];
-  repeated Reaction reactions = 4 [ (gogoproto.nullable) = false ];
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+
+  repeated PostDataEntry posts_data = 3
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+
+  repeated Reaction reactions = 4
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+
   repeated SubspaceReactionsParams subspaces_params = 5
-      [ (gogoproto.nullable) = false ];
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 }
 
 // SubspaceDataEntry contains the data related to a single subspace
