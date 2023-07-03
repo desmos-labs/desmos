@@ -4681,11 +4681,8 @@ paths:
                     treasury:
                       type: string
                       title: >-
-                        Represents the account that is associated with the
-                        subspace and
-
-                        should be used to connect external applications to
-                        verify this subspace
+                        Represents the treasury account that is associated with
+                        the subspace
                     owner:
                       type: string
                       title: Address of the user that owns the subspace
@@ -4716,7 +4713,9 @@ paths:
                           signatures required by gogoproto.
                       title: >-
                         List of fee token denoms with default minimum gas prices
-                        allowed inside the subspace
+                        allowed inside the
+
+                        subspace
                   title: Subspace contains all the data of a Desmos subspace
               pagination:
                 type: object
@@ -5029,11 +5028,8 @@ paths:
                   treasury:
                     type: string
                     title: >-
-                      Represents the account that is associated with the
-                      subspace and
-
-                      should be used to connect external applications to verify
-                      this subspace
+                      Represents the treasury account that is associated with
+                      the subspace
                   owner:
                     type: string
                     title: Address of the user that owns the subspace
@@ -5063,7 +5059,9 @@ paths:
                         signatures required by gogoproto.
                     title: >-
                       List of fee token denoms with default minimum gas prices
-                      allowed inside the subspace
+                      allowed inside the
+
+                      subspace
                 title: Subspace contains all the data of a Desmos subspace
             title: >-
               QuerySubspaceResponse is the response type for the Query/Subspace
@@ -8585,11 +8583,9 @@ paths:
         - Query
   /desmos/posts/v3/subspaces/{subspace_id}/post-owner-transfer-requests:
     get:
-      summary: >-
+      summary: |-
         IncomingPostOwnerTransferRequests queries all the post owner transfers
-        requests that
-
-        have been made towards the receiver with the given address
+        requests that have been made towards the receiver with the given address
       operationId: IncomingPostOwnerTransferRequests
       responses:
         '200':
@@ -8618,12 +8614,14 @@ paths:
                       title: Address of the receiver
                   title: >-
                     PostOwnerTransferRequest represents a request to transfer
-                    the ownership of a post from the sender to the receiver
+                    the ownership of a
+
+                    post from the sender to the receiver
                 title: >-
                   Requests represent the list of all the post owner transfer
-                  requests made towards
+                  requests made
 
-                  the receiver
+                  towards the receiver
               pagination:
                 title: Pagination defines the pagination response
                 type: object
@@ -19560,9 +19558,7 @@ definitions:
           treasury:
             type: string
             title: >-
-              Represents the account that is associated with the subspace and
-
-              should be used to connect external applications to verify this
+              Represents the treasury account that is associated with the
               subspace
           owner:
             type: string
@@ -19593,7 +19589,9 @@ definitions:
                 signatures required by gogoproto.
             title: >-
               List of fee token denoms with default minimum gas prices allowed
-              inside the subspace
+              inside the
+
+              subspace
         title: Subspace contains all the data of a Desmos subspace
     title: QuerySubspaceResponse is the response type for the Query/Subspace method
   desmos.subspaces.v3.QuerySubspacesResponse:
@@ -19617,9 +19615,7 @@ definitions:
             treasury:
               type: string
               title: >-
-                Represents the account that is associated with the subspace and
-
-                should be used to connect external applications to verify this
+                Represents the treasury account that is associated with the
                 subspace
             owner:
               type: string
@@ -19650,7 +19646,9 @@ definitions:
                   signatures required by gogoproto.
               title: >-
                 List of fee token denoms with default minimum gas prices allowed
-                inside the subspace
+                inside the
+
+                subspace
           title: Subspace contains all the data of a Desmos subspace
       pagination:
         type: object
@@ -20299,11 +20297,7 @@ definitions:
         title: Optional description of this subspace
       treasury:
         type: string
-        title: >-
-          Represents the account that is associated with the subspace and
-
-          should be used to connect external applications to verify this
-          subspace
+        title: Represents the treasury account that is associated with the subspace
       owner:
         type: string
         title: Address of the user that owns the subspace
@@ -20330,7 +20324,9 @@ definitions:
             signatures required by gogoproto.
         title: >-
           List of fee token denoms with default minimum gas prices allowed
-          inside the subspace
+          inside the
+
+          subspace
     title: Subspace contains all the data of a Desmos subspace
   desmos.subspaces.v3.UserGroup:
     type: object
@@ -20790,7 +20786,9 @@ definitions:
         title: Address of the receiver
     title: >-
       PostOwnerTransferRequest represents a request to transfer the ownership of
-      a post from the sender to the receiver
+      a
+
+      post from the sender to the receiver
   desmos.posts.v3.PostReference:
     type: object
     properties:
@@ -20859,12 +20857,14 @@ definitions:
               title: Address of the receiver
           title: >-
             PostOwnerTransferRequest represents a request to transfer the
-            ownership of a post from the sender to the receiver
+            ownership of a
+
+            post from the sender to the receiver
         title: >-
           Requests represent the list of all the post owner transfer requests
-          made towards
+          made
 
-          the receiver
+          towards the receiver
       pagination:
         title: Pagination defines the pagination response
         type: object
