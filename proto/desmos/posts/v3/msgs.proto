@@ -480,7 +480,7 @@ message MsgRequestPostOwnerTransferResponse {}
 // Since: Desmos 6.0.0
 message MsgCancelPostOwnerTransferRequest {
   option (cosmos.msg.v1.signer) = "sender";
-  option (amino.name) = "desmos/MsgCancelPostOwnerTransferRequest";
+  option (amino.name) = "desmos/MsgCancelPostOwnerTransfer";
 
   // Id of the subspace that holds the post for which the request should be
   // canceled
@@ -514,7 +514,7 @@ message MsgCancelPostOwnerTransferRequestResponse {}
 // Since: Desmos 6.0.0
 message MsgAcceptPostOwnerTransferRequest {
   option (cosmos.msg.v1.signer) = "receiver";
-  option (amino.name) = "desmos/MsgAcceptPostOwnerTransferRequest";
+  option (amino.name) = "desmos/MsgAcceptPostOwnerTransfer";
 
   // Id of the subspace holding the post for which the request will be accepted
   uint64 subspace_id = 1 [
@@ -547,7 +547,7 @@ message MsgAcceptPostOwnerTransferRequestResponse {}
 // Since: Desmos 6.0.0
 message MsgRefusePostOwnerTransferRequest {
   option (cosmos.msg.v1.signer) = "receiver";
-  option (amino.name) = "desmos/MsgRefusePostOwnerTransferRequest";
+  option (amino.name) = "desmos/MsgRefusePostOwnerTransfer";
 
   // Id of the subspace holding the post for which the request will be refused
   uint64 subspace_id = 1 [
