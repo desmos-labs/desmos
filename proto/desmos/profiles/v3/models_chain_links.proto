@@ -92,6 +92,7 @@ message Bech32Address {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
   option (cosmos_proto.implements_interface) = "desmos.profiles.v3.AddressData";
+  option (amino.name) = "desmos/Bech32Address";
 
   // Value represents the Bech-32 encoded address value
   string value = 1 [ (gogoproto.moretags) = "yaml:\"value\"" ];
@@ -106,6 +107,7 @@ message Base58Address {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
   option (cosmos_proto.implements_interface) = "desmos.profiles.v3.AddressData";
+  option (amino.name) = "desmos/Base58Address";
 
   // Value contains the Base58-encoded address
   string value = 1 [ (gogoproto.moretags) = "yaml:\"value\"" ];
@@ -118,6 +120,7 @@ message HexAddress {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
   option (cosmos_proto.implements_interface) = "desmos.profiles.v3.AddressData";
+  option (amino.name) = "desmos/HexAddress";
 
   // Value represents the hex address value
   string value = 1 [ (gogoproto.moretags) = "yaml:\"value\"" ];
@@ -134,6 +137,7 @@ message SingleSignature {
   option (gogoproto.goproto_getters) = false;
   option (gogoproto.equal) = true;
   option (cosmos_proto.implements_interface) = "desmos.profiles.v3.Signature";
+  option (amino.name) = "desmos/SingleSignature";
 
   // Type represents the type of the signature value
   SignatureValueType value_type = 1
@@ -175,6 +179,7 @@ message CosmosMultiSignature {
   option (gogoproto.goproto_getters) = false;
   option (gogoproto.equal) = true;
   option (cosmos_proto.implements_interface) = "desmos.profiles.v3.Signature";
+  option (amino.name) = "desmos/CosmosMultiSignature";
 
   // Bitarray specifies which keys within the multisig are signing
   cosmos.crypto.multisig.v1beta1.CompactBitArray bit_array = 1

@@ -107,6 +107,7 @@ message Reason {
 message Params {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
+  option (amino.name) = "desmos/x/reports/Params";
 
   // List of available reasons from which new subspaces can pick their default
   // ones

@@ -11,6 +11,7 @@ option go_package = "github.com/desmos-labs/desmos/v5/x/profiles/types";
 // Params contains the parameters for the profiles module
 message Params {
   option (gogoproto.goproto_getters) = false;
+  option (amino.name) = "desmos/x/profiles/Params";
 
   NicknameParams nickname = 1 [
     (gogoproto.nullable) = false,

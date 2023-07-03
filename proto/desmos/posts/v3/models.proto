@@ -362,6 +362,7 @@ message PollTallyResults {
 message Params {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
+  option (amino.name) = "desmos/x/posts/Params";
 
   // Maximum length of the post text
   uint32 max_text_length = 1
