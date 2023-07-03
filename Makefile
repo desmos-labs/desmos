@@ -204,17 +204,15 @@ build-docs:
 ###############################################################################
 
 test: test-unit
-test-all: test-unit test-ledger-mock test-race test-cover test-app1
-test-app1: test-app1
+test-all: test-unit test-ledger-mock test-race test-cover
 
 TEST_PACKAGES=./...
-TEST_TARGETS := test-unit test-unit-amino test-unit-proto test-ledger-mock test-race test-ledger test-race test-app1
+TEST_TARGETS := test-unit test-unit-amino test-unit-proto test-ledger-mock test-race test-ledger test-race
 
 # Test runs-specific rules. To add a new test target, just add
 # a new rule, customise ARGS or TEST_PACKAGES ad libitum, and
 # append the new rule to the TEST_TARGETS list.
 test-unit: test_tags += cgo ledger test_ledger_mock norace
-test-app1: test_tags += cgo ledger test_ledger_mock norace app_v1
 test-unit-amino: test_tags += ledger test_ledger_mock test_amino norace
 test-ledger: test_tags += cgo ledger norace
 test-ledger-mock: test_tags += ledger test_ledger_mock norace
@@ -419,4 +417,4 @@ localnet-stop:
 
 .PHONY: all build-linux install \
 	go-mod-cache clean build \
-	test test-all test-cover test-unit test-race test-app1
+	test test-all test-cover test-unit test-race
