@@ -18,7 +18,7 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	legacy.RegisterAminoMsg(cdc, &MsgSetDenomMetadata{}, "desmos/x/tokenfactory/MsgSetDenomMetadata")
 	legacy.RegisterAminoMsg(cdc, &MsgUpdateParams{}, "desmos/x/tokenfactory/MsgUpdateParams")
 
-	legacy.RegisterAminoMsg(cdc, &Params{}, "desmos/x/tokenfactory/Params")
+	cdc.RegisterConcrete(&Params{}, "desmos/x/tokenfactory/Params", nil)
 }
 
 func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
