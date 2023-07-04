@@ -30,6 +30,7 @@ func GetQueryCmd() *cobra.Command {
 	return queryCmd
 }
 
+// GetCmdQuerySubspaceDenoms returns the command to query subspace denoms of the given subspace with id
 func GetCmdQuerySubspaceDenoms() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "subspace-denoms [subspace-id]",
