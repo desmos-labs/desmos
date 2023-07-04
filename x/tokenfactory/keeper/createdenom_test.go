@@ -21,7 +21,7 @@ func (suite *KeeperTestSuite) TestKeeper_CreateDenom() {
 		check     func(ctx sdk.Context)
 	}{
 		{
-			name: "subdenom has supply returns error",
+			name: "subdenom with existing supply returns error",
 			setup: func() {
 				suite.bk.EXPECT().
 					HasSupply(gomock.Any(), "uminttoken").
