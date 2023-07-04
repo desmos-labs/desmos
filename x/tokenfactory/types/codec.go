@@ -12,10 +12,10 @@ import (
 )
 
 func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
-	legacy.RegisterAminoMsg(cdc, &MsgCreateDenom{}, "desmos/x/tokenfactory/MsgCreateDenom")
-	legacy.RegisterAminoMsg(cdc, &MsgMint{}, "desmos/x/tokenfactory/MsgMint")
-	legacy.RegisterAminoMsg(cdc, &MsgBurn{}, "desmos/x/tokenfactory/MsgBurn")
-	legacy.RegisterAminoMsg(cdc, &MsgSetDenomMetadata{}, "desmos/x/tokenfactory/MsgSetDenomMetadata")
+	legacy.RegisterAminoMsg(cdc, &MsgCreateDenom{}, "desmos/MsgCreateDenom")
+	legacy.RegisterAminoMsg(cdc, &MsgMint{}, "desmos/MsgMint")
+	legacy.RegisterAminoMsg(cdc, &MsgBurn{}, "desmos/MsgBurn")
+	legacy.RegisterAminoMsg(cdc, &MsgSetDenomMetadata{}, "desmos/MsgSetDenomMetadata")
 	legacy.RegisterAminoMsg(cdc, &MsgUpdateParams{}, "desmos/x/tokenfactory/MsgUpdateParams")
 
 	cdc.RegisterConcrete(&Params{}, "desmos/x/tokenfactory/Params", nil)
