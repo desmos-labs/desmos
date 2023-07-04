@@ -36,11 +36,12 @@ func GenerateRandomSubspace(r *rand.Rand, accs []simtypes.Account) types.Subspac
 	simAccount, _ := simtypes.RandomAcc(r, accs)
 	creator := simAccount.Address.String()
 
+	id := RandomID(r)
 	return types.NewSubspace(
 		RandomID(r),
 		RandomName(r),
 		RandomDescription(r),
-		creator,
+		types.GetTreasuryAddress(id).String(),
 		creator,
 		creator,
 		RandomDate(r),

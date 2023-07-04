@@ -1,0 +1,218 @@
+syntax = "proto3";
+package desmos.tokenfactory.v1beta1;
+
+import "amino/amino.proto";
+import "gogoproto/gogo.proto";
+import "cosmos/base/v1beta1/coin.proto";
+import "cosmos/bank/v1beta1/bank.proto";
+import "cosmos_proto/cosmos.proto";
+import "cosmos/msg/v1/msg.proto";
+
+import "desmos/tokenfactory/v1beta1/params.proto";
+
+option go_package = "github.com/desmos-labs/desmos/v5/x/tokenfactory/types";
+
+// Msg defines the tokefactory module's gRPC message service.
+service Msg {
+  option (cosmos.msg.v1.service) = true;
+
+  // CreateDenom allows an account to create a new denom for subspace. It
+  // requires a subspace and a sub denomination. The (subspace_treasury_address,
+  // sub_denomination) tuple must be unique and cannot be re-used.
+  //
+  // The resulting denom created is defined as
+  // <factory/{treasuryAddress}/{subdenom}>. The resulting denom's admin is
+  // originally set to be the subspace treasury account, and this can not be
+  // changed later.
+  //
+  // Since: Desmos 6.0.0
+  rpc CreateDenom(MsgCreateDenom) returns (MsgCreateDenomResponse);
+
+  // Mint allows subspace admins to mint more of a token.
+  //
+  // Since: Desmos 6.0.0
+  rpc Mint(MsgMint) returns (MsgMintResponse);
+
+  // Burn allows subspace admins to burn a token.
+  // For now, we only support burning from the treasury account.
+  //
+  // Since: Desmos 6.0.0
+  rpc Burn(MsgBurn) returns (MsgBurnResponse);
+
+  // SetDenomMetadata allows subspace admins to set the denom's bank metadata.
+  //
+  // Since: Desmos 6.0.0
+  rpc SetDenomMetadata(MsgSetDenomMetadata)
+      returns (MsgSetDenomMetadataResponse);
+
+  // UpdateParams defines a (governance) operation for updating the module
+  // parameters. The authority defaults to the x/gov module account.
+  //
+  // Since: Desmos 6.0.0
+  rpc UpdateParams(MsgUpdateParams) returns (MsgUpdateParamsResponse);
+}
+
+// MsgCreateDenom represents the message to be used to create a denom for
+// subspace
+//
+// Since: Desmos 6.0.0
+message MsgCreateDenom {
+  option (cosmos.msg.v1.signer) = "sender";
+  option (amino.name) = "desmos/MsgCreateDenom";
+
+  // Id of the subspace which manages the denom
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+
+  // Address of user having the permission to manage subspace denoms
+  string sender = 2 [
+    (gogoproto.moretags) = "yaml:\"sender\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
+
+  // Subdenom name of the creating denom
+  // It can be up to 44 "alphanumeric" characters long
+  string subdenom = 3 [ (gogoproto.moretags) = "yaml:\"subdenom\"" ];
+}
+
+// MsgCreateDenomResponse represents the Msg/CreateDenom response type
+// It returns the full string of the newly created denom
+message MsgCreateDenomResponse {
+  // Name of the newly created denom
+  string new_token_denom = 1
+      [ (gogoproto.moretags) = "yaml:\"new_token_denom\"" ];
+}
+
+// MsgMint represents the message to be used to mint subspace tokens to treasury
+// account
+//
+// Since: Desmos 6.0.0
+message MsgMint {
+  option (cosmos.msg.v1.signer) = "sender";
+  option (amino.name) = "desmos/MsgMint";
+
+  // Id of the subspace which manages the denom
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+
+  // Address of user having the permission to manage subspace denoms
+  string sender = 2 [
+    (gogoproto.moretags) = "yaml:\"sender\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
+
+  // Amount of the minting subspace tokens
+  cosmos.base.v1beta1.Coin amount = 3 [
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
+    (gogoproto.moretags) = "yaml:\"amount\"",
+    (gogoproto.nullable) = false,
+    (amino.encoding) = "legacy_coins",
+    (amino.dont_omitempty) = true
+  ];
+}
+
+// MsgMintResponse represents the Msg/Mint response type
+//
+// Since: Desmos 6.0.0
+message MsgMintResponse {}
+
+// MsgBurn represents the message to be used to burn subspace tokens from
+// treasury account
+//
+// Since: Desmos 6.0.0
+message MsgBurn {
+  option (cosmos.msg.v1.signer) = "sender";
+  option (amino.name) = "desmos/MsgBurn";
+
+  // Id of the subspace which manages the denom
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+
+  // Address of user having the permission to manage subspace denoms
+  string sender = 2 [
+    (gogoproto.moretags) = "yaml:\"sender\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
+
+  // Amount of the burning subspace tokens
+  cosmos.base.v1beta1.Coin amount = 3 [
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
+    (gogoproto.moretags) = "yaml:\"amount\"",
+    (gogoproto.nullable) = false,
+    (amino.encoding) = "legacy_coins",
+    (amino.dont_omitempty) = true
+  ];
+}
+
+// MsgBurnResponse represents the Msg/Burn response type
+//
+// Since: Desmos 6.0.0
+message MsgBurnResponse {}
+
+// MsgSetDenomMetadata represents the message to be used to set the subspace
+// token's bank metadata
+//
+// Since: Desmos 6.0.0
+message MsgSetDenomMetadata {
+  option (cosmos.msg.v1.signer) = "sender";
+  option (amino.name) = "desmos/MsgSetDenomMetadata";
+
+  // Id of the subspace which manages the denom
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+
+  // Address of user having the permission to manage subspace denoms
+  string sender = 2 [
+    (gogoproto.moretags) = "yaml:\"sender\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
+
+  // Metadata of the denom
+  cosmos.bank.v1beta1.Metadata metadata = 3 [
+    (gogoproto.moretags) = "yaml:\"metadata\"",
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
+}
+
+// MsgSetDenomMetadataResponse represents the Msg/SetDenomMetadata response type
+//
+// Since: Desmos 6.0.0
+message MsgSetDenomMetadataResponse {}
+
+// MsgUpdateParams is the Msg/UpdateParams request type.
+//
+// Since: Desmos 6.0.0
+message MsgUpdateParams {
+  option (amino.name) = "desmos/x/tokenfactoy/MsgUpdateParams";
+  option (cosmos.msg.v1.signer) = "authority";
+
+  // authority is the address that controls the module (defaults to x/gov unless
+  // overwritten).
+  string authority = 1 [
+    (gogoproto.moretags) = "yaml:\"authority\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
+
+  // params defines the parameters to update.
+  //
+  // NOTE: All parameters must be supplied.
+  Params params = 2 [
+    (gogoproto.moretags) = "yaml:\"params\"",
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
+}
+
+// MsgUpdateParamsResponse represents the Msg/UpdateParams response type
+//
+// Since: Desmos 6.0.0
+message MsgUpdateParamsResponse {}

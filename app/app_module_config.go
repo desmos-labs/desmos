@@ -55,6 +55,7 @@ import (
 	reportsmodulev1 "github.com/desmos-labs/desmos/v5/api/desmos/reports/module/v1"
 	subspacesmodulev1 "github.com/desmos-labs/desmos/v5/api/desmos/subspaces/module/v1"
 	supplymodulev1 "github.com/desmos-labs/desmos/v5/api/desmos/supply/module/v1"
+	tokenfactorymodulev1 "github.com/desmos-labs/desmos/v5/api/desmos/tokenfactory/module/v1"
 
 	poststypes "github.com/desmos-labs/desmos/v5/x/posts/types"
 	profilestypes "github.com/desmos-labs/desmos/v5/x/profiles/types"
@@ -63,6 +64,7 @@ import (
 	reportstypes "github.com/desmos-labs/desmos/v5/x/reports/types"
 	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 	supplytypes "github.com/desmos-labs/desmos/v5/x/supply/types"
+	tokenfactorytypes "github.com/desmos-labs/desmos/v5/x/tokenfactory/types"
 )
 
 var (
@@ -77,6 +79,7 @@ var (
 		ibcfeetypes.ModuleName,
 		icatypes.ModuleName,
 		wasmtypes.ModuleName,
+		tokenfactorytypes.ModuleName,
 
 		// We allow the following module accounts to receive funds:
 		// govtypes.ModuleName
@@ -223,6 +226,10 @@ var (
 			{
 				Name:   supplytypes.ModuleName,
 				Config: appconfig.WrapAny(&supplymodulev1.Module{}),
+			},
+			{
+				Name:   tokenfactorytypes.ModuleName,
+				Config: appconfig.WrapAny(&tokenfactorymodulev1.Module{}),
 			},
 		},
 	})

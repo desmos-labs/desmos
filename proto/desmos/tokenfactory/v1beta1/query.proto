@@ -1,0 +1,48 @@
+syntax = "proto3";
+package desmos.tokenfactory.v1beta1;
+
+import "amino/amino.proto";
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "desmos/tokenfactory/v1beta1/params.proto";
+
+option go_package = "github.com/desmos-labs/desmos/v5/x/tokenfactory/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  // Params defines a gRPC query method that returns the tokenfactory module's
+  // parameters.
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/desmos/tokenfactory/v1beta1/params";
+  }
+
+  // SubspaceDenoms defines a gRPC query method for fetching all
+  // denominations created by a specific subspace.
+  rpc SubspaceDenoms(QuerySubspaceDenomsRequest)
+      returns (QuerySubspaceDenomsResponse) {
+    option (google.api.http).get =
+        "/desmos/tokenfactory/v1beta1/subspaces/{subspace_id}/denoms";
+  }
+}
+
+// QueryParamsRequest is the request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is the response type for the Query/Params RPC method.
+message QueryParamsResponse {
+  // params defines the parameters of the module.
+  Params params = 1
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+}
+
+// QuerySubspaceDenomsRequest defines the request structure for the
+// SubspaceDenoms gRPC query.
+message QuerySubspaceDenomsRequest {
+  uint64 subspace_id = 1 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
+}
+
+// QuerySubspaceDenomsResponse defines the response structure for the
+// SubspaceDenoms gRPC query.
+message QuerySubspaceDenomsResponse {
+  repeated string denoms = 1 [ (gogoproto.moretags) = "yaml:\"denoms\"" ];
+}
