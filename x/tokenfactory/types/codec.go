@@ -2,6 +2,7 @@ package types
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/codec/legacy"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -11,13 +12,13 @@ import (
 )
 
 func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
-	cdc.RegisterConcrete(&MsgCreateDenom{}, "desmos/x/tokenfactory/MsgCreateDenom", nil)
-	cdc.RegisterConcrete(&MsgMint{}, "desmos/x/tokenfactory/MsgMint", nil)
-	cdc.RegisterConcrete(&MsgBurn{}, "desmos/x/tokenfactory/MsgBurn", nil)
-	cdc.RegisterConcrete(&MsgSetDenomMetadata{}, "desmos/x/tokenfactory/MsgSetDenomMetadata", nil)
-	cdc.RegisterConcrete(&MsgUpdateParams{}, "desmos/x/tokenfactory/MsgUpdateParams", nil)
+	legacy.RegisterAminoMsg(cdc, &MsgCreateDenom{}, "desmos/x/tokenfactory/MsgCreateDenom")
+	legacy.RegisterAminoMsg(cdc, &MsgMint{}, "desmos/x/tokenfactory/MsgMint")
+	legacy.RegisterAminoMsg(cdc, &MsgBurn{}, "desmos/x/tokenfactory/MsgBurn")
+	legacy.RegisterAminoMsg(cdc, &MsgSetDenomMetadata{}, "desmos/x/tokenfactory/MsgSetDenomMetadata")
+	legacy.RegisterAminoMsg(cdc, &MsgUpdateParams{}, "desmos/x/tokenfactory/MsgUpdateParams")
 
-	cdc.RegisterConcrete(&Params{}, "desmos/x/tokenfactory/Params", nil)
+	legacy.RegisterAminoMsg(cdc, &Params{}, "desmos/x/tokenfactory/Params")
 }
 
 func RegisterInterfaces(registry codectypes.InterfaceRegistry) {

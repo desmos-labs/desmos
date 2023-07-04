@@ -14,7 +14,7 @@ func NewParams(denomCreationFee sdk.Coins) Params {
 // DefaultParams creates a default params instance
 func DefaultParams() Params {
 	return Params{
-		DenomCreationFee: sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 10_000_000)), // 10 DSM
+		DenomCreationFee: sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 10_000_000_000)), // 10,000 DSM
 	}
 }
 

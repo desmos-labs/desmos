@@ -19,7 +19,7 @@ func RandomizeGenState(simState *module.SimulationState) {
 	simState.Cdc.MustUnmarshalJSON(subspacesGenesisBz, &subspacesGenesis)
 
 	genesis := &types.GenesisState{
-		Params:        types.NewParams(nil),
+		Params:        types.NewParams(sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 10))),
 		FactoryDenoms: randomFactoryDenoms(simState.Rand, subspacesGenesis.Subspaces),
 	}
 
