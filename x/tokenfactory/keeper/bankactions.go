@@ -20,9 +20,7 @@ func (k Keeper) mintTo(ctx sdk.Context, amount sdk.Coin, mintTo string) error {
 
 	addr := sdk.MustAccAddressFromBech32(mintTo)
 
-	return k.bk.SendCoinsFromModuleToAccount(ctx, types.ModuleName,
-		addr,
-		sdk.NewCoins(amount))
+	return k.bk.SendCoinsFromModuleToAccount(ctx, types.ModuleName, addr, sdk.NewCoins(amount))
 }
 
 func (k Keeper) burnFrom(ctx sdk.Context, amount sdk.Coin, burnFrom string) error {
