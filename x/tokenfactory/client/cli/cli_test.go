@@ -164,7 +164,7 @@ func (s *IntegrationTestSuite) TestCmdQuerySubspaceDenoms() {
 			shouldErr: true,
 		},
 		{
-			name: "denoms are returned properly returns error",
+			name: "denoms are returned properly",
 			args: []string{
 				"1",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
