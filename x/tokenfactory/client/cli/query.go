@@ -67,7 +67,7 @@ func GetCmdQueryParams() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "params",
 		Short:   "Query the module parameters",
-		Example: fmt.Sprintf(`%s query reports params`, version.AppName),
+		Example: fmt.Sprintf(`%s query tokenfactory params`, version.AppName),
 		Args:    cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
