@@ -344,7 +344,7 @@ func (s *IntegrationTestSuite) TestCmdBurn() {
 			shouldErr: true,
 		},
 		{
-			name: "invalid sender returns no error",
+			name: "invalid sender returns error",
 			args: []string{
 				"1", "10factory/cosmos1cyjzgj9j7d2gdqk78pa0fgvfnlzradat97aek9/uminttoken",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
