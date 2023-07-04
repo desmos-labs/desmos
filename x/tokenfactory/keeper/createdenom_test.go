@@ -43,7 +43,7 @@ func (suite *KeeperTestSuite) TestKeeper_CreateDenom() {
 			shouldErr: true,
 		},
 		{
-			name: "denom exists returns error",
+			name: "existing denom returns error",
 			setup: func() {
 				suite.bk.EXPECT().
 					HasSupply(gomock.Any(), "uminttoken").
