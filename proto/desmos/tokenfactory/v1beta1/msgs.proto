@@ -192,7 +192,7 @@ message MsgSetDenomMetadataResponse {}
 //
 // Since: Desmos 6.0.0
 message MsgUpdateParams {
-  option (amino.name) = "desmos/MsgUpdateParams";
+  option (amino.name) = "desmos/x/tokenfactoy/MsgUpdateParams";
   option (cosmos.msg.v1.signer) = "authority";
 
   // authority is the address that controls the module (defaults to x/gov unless
