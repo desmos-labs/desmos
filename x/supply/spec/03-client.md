@@ -65,7 +65,7 @@ Example Output:
 circulating_supply: "100003882303991703831"
 ```
 
-## gRPC 
+## gRPC
 A user can query the `supply` module gRPC endpoints. 
 
 ### Total
@@ -108,7 +108,7 @@ Example Output:
 }
 ```
 
-## REST 
+## REST
 A user can query the `supply` module using REST endpoints. 
 
 ### Total 

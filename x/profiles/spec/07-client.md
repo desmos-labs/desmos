@@ -374,7 +374,7 @@ Example:
 desmos tx profiles unlink-app "twitter" "twitter_user"
 ```
 
-## gRPC 
+## gRPC
 A user can query the `profiles` module gRPC endpoints. 
 
 ### Profile 
