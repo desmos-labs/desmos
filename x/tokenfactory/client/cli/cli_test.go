@@ -273,7 +273,7 @@ func (s *IntegrationTestSuite) TestCmdMint() {
 			shouldErr: true,
 		},
 		{
-			name: "invalid amount returns no error",
+			name: "invalid amount returns error",
 			args: []string{
 				"1", "X",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
