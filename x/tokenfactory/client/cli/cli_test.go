@@ -408,7 +408,7 @@ func (s *IntegrationTestSuite) TestCmdSetDenomMetadata() {
 			shouldErr: true,
 		},
 		{
-			name: "invalid metadata schema return error",
+			name: "invalid metadata schema returns error",
 			setupFile: func() string {
 				os.CreateTemp(os.TempDir(), "metadata.json")
 				return path.Join(os.TempDir(), "metadata.json")
