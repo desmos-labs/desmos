@@ -78,10 +78,7 @@ func (k Keeper) chargeForCreateDenom(ctx sdk.Context, creator string) (err error
 
 	// Burn creation fee
 	if creationFee != nil {
-		err := k.bk.SendCoinsFromAccountToModule(ctx,
-			sdk.MustAccAddressFromBech32(creator),
-			types.ModuleName,
-			creationFee)
+		err := k.bk.SendCoinsFromAccountToModule(ctx, sdk.MustAccAddressFromBech32(creator), types.ModuleName, creationFee)
 		if err != nil {
 			return err
 		}
