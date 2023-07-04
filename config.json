@@ -41,6 +41,9 @@
     },
     {
       "url": "./tmp-swagger-gen/desmos/supply/v1/query.swagger.json"
+    },
+    {
+      "url": "./tmp-swagger-gen/desmos/tokenfactory/v1beta1/query.swagger.json"
     }
   ]
 }

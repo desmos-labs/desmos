@@ -14797,6 +14797,125 @@ paths:
           format: uint64
       tags:
         - Query
+  /desmos/tokenfactory/v1beta1/params:
+    get:
+      summary: >-
+        Params defines a gRPC query method that returns the tokenfactory
+        module's
+
+        parameters.
+      operationId: Params
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              params:
+                description: params defines the parameters of the module.
+                type: object
+                properties:
+                  denom_creation_fee:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        denom:
+                          type: string
+                        amount:
+                          type: string
+                      description: >-
+                        Coin defines a token with a denomination and an amount.
+
+
+                        NOTE: The amount field is an Int which implements the
+                        custom method
+
+                        signatures required by gogoproto.
+                    description: >-
+                      DenomCreationFee defines the fee to be charged on the
+                      creation of a new
+
+                      denom. The fee is drawn from the subspace treasruy
+                      account, and
+
+                      burned.
+            description: >-
+              QueryParamsResponse is the response type for the Query/Params RPC
+              method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      tags:
+        - Query
+  /desmos/tokenfactory/v1beta1/subspaces/{subspace_id}/denoms:
+    get:
+      summary: |-
+        SubspaceDenoms defines a gRPC query method for fetching all
+        denominations created by a specific subspace.
+      operationId: SubspaceDenoms
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              denoms:
+                type: array
+                items:
+                  type: string
+            description: |-
+              QuerySubspaceDenomsResponse defines the response structure for the
+              SubspaceDenoms gRPC query.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      parameters:
+        - name: subspace_id
+          in: path
+          required: true
+          type: string
+          format: uint64
+      tags:
+        - Query
 definitions:
   cosmos.base.query.v1beta1.PageRequest:
     type: object
@@ -23482,3 +23601,73 @@ definitions:
       total_supply:
         type: string
     title: QueryTotalResponse is the response type for the Query/Total RPC method
+  desmos.tokenfactory.v1beta1.Params:
+    type: object
+    properties:
+      denom_creation_fee:
+        type: array
+        items:
+          type: object
+          properties:
+            denom:
+              type: string
+            amount:
+              type: string
+          description: |-
+            Coin defines a token with a denomination and an amount.
+
+            NOTE: The amount field is an Int which implements the custom method
+            signatures required by gogoproto.
+        description: >-
+          DenomCreationFee defines the fee to be charged on the creation of a
+          new
+
+          denom. The fee is drawn from the subspace treasruy account, and
+
+          burned.
+    description: |-
+      Params defines the parameters for the tokenfactory module.
+
+      Since: Desmos 6.0.0
+  desmos.tokenfactory.v1beta1.QueryParamsResponse:
+    type: object
+    properties:
+      params:
+        description: params defines the parameters of the module.
+        type: object
+        properties:
+          denom_creation_fee:
+            type: array
+            items:
+              type: object
+              properties:
+                denom:
+                  type: string
+                amount:
+                  type: string
+              description: >-
+                Coin defines a token with a denomination and an amount.
+
+
+                NOTE: The amount field is an Int which implements the custom
+                method
+
+                signatures required by gogoproto.
+            description: >-
+              DenomCreationFee defines the fee to be charged on the creation of
+              a new
+
+              denom. The fee is drawn from the subspace treasruy account, and
+
+              burned.
+    description: QueryParamsResponse is the response type for the Query/Params RPC method.
+  desmos.tokenfactory.v1beta1.QuerySubspaceDenomsResponse:
+    type: object
+    properties:
+      denoms:
+        type: array
+        items:
+          type: string
+    description: |-
+      QuerySubspaceDenomsResponse defines the response structure for the
+      SubspaceDenoms gRPC query.
