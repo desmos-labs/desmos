@@ -3,12 +3,11 @@ package desmos.subspaces.v3;
 
 import "amino/amino.proto";
 import "gogoproto/gogo.proto";
+import "google/protobuf/any.proto";
 import "cosmos/base/v1beta1/coin.proto";
 import "cosmos_proto/cosmos.proto";
 import "cosmos/msg/v1/msg.proto";
-
-import "desmos/subspaces/v3/msgs_treasury.proto";
-import "desmos/subspaces/v3/msgs_feegrant.proto";
+import "cosmos/authz/v1beta1/authz.proto";
 
 option go_package = "github.com/desmos-labs/desmos/v5/x/subspaces/types";
 
@@ -611,6 +610,144 @@ message MsgSetUserPermissions {
 // MsgSetUserPermissionsResponse defines the Msg/SetPermissionsResponse
 // response type
 message MsgSetUserPermissionsResponse {}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// MsgGrantAllowance adds grants for the grantee to spend up allowance of fees
+// from the treasury inside the given subspace
+message MsgGrantAllowance {
+  option (cosmos.msg.v1.signer) = "granter";
+  option (amino.name) = "desmos/MsgGrantAllowance";
+
+  // Id of the subspace inside which where the allowance should be granted
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+
+  // Address of the user granting the allowance
+  string granter = 2 [
+    (gogoproto.moretags) = "yaml:\"granter\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
+
+  // Target being granted the allowance
+  google.protobuf.Any grantee = 3 [
+    (cosmos_proto.accepts_interface) = "desmos.subspaces.v3.Grantee",
+    (gogoproto.moretags) = "yaml:\"grantee\""
+  ];
+
+  // Allowance can be any allowance type that implements AllowanceI
+  google.protobuf.Any allowance = 4 [
+    (cosmos_proto.accepts_interface) = "cosmos.feegrant.v1beta1.AllowanceI",
+    (gogoproto.moretags) = "yaml:\"allowance\""
+  ];
+}
+
+// MsgGrantAllowanceResponse defines the Msg/GrantAllowanceResponse response
+// type.
+message MsgGrantAllowanceResponse {}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// MsgRevokeAllowance removes any existing allowance to the grantee inside the
+// subspace
+message MsgRevokeAllowance {
+  option (cosmos.msg.v1.signer) = "granter";
+  option (amino.name) = "desmos/MsgRevokeAllowance";
+
+  // If of the subspace inside which the allowance to be deleted is
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+
+  // Address of the user that created the allowance
+  string granter = 2 [
+    (gogoproto.moretags) = "yaml:\"granter\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
+
+  // Target being revoked the allowance
+  google.protobuf.Any grantee = 3 [
+    (cosmos_proto.accepts_interface) = "desmos.subspaces.v3.Grantee",
+    (gogoproto.moretags) = "yaml:\"grantee\""
+  ];
+}
+
+// MsgRevokeAllowanceResponse defines the Msg/RevokeAllowanceResponse
+// response type.
+message MsgRevokeAllowanceResponse {}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// MsgGrantTreasuryAuthorization grants an authorization on behalf of the
+// treasury to a user
+message MsgGrantTreasuryAuthorization {
+  option (cosmos.msg.v1.signer) = "granter";
+  option (amino.name) = "desmos/MsgGrantTreasuryAuthorization";
+
+  // Id of the subspace where the authorization should be granted
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+
+  // Address of the user granting a treasury authorization
+  string granter = 2 [
+    (gogoproto.moretags) = "yaml:\"granter\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
+
+  // Address of the user who is being granted a treasury authorization
+  string grantee = 3 [
+    (gogoproto.moretags) = "yaml:\"grantee\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
+
+  // Grant represents the authorization to execute the provided methods
+  cosmos.authz.v1beta1.Grant grant = 4 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"grant\"",
+    (amino.dont_omitempty) = true
+  ];
+}
+
+// MsgGrantTreasuryAuthorizationResponse defines the
+// Msg/MsgGrantTreasuryAuthorization response type
+message MsgGrantTreasuryAuthorizationResponse {}
+
+// MsgRevokeTreasuryAuthorization revokes an existing treasury authorization
+// from a user
+message MsgRevokeTreasuryAuthorization {
+  option (cosmos.msg.v1.signer) = "granter";
+  option (amino.name) = "desmos/MsgRevokeTreasuryAuthorization";
+
+  // Id of the subspace from which the authorization should be revoked
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+
+  // Address of the user revoking the treasury authorization
+  string granter = 2 [
+    (gogoproto.moretags) = "yaml:\"granter\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
+
+  // Address of the user who is being revoked the treasury authorization
+  string grantee = 3 [
+    (gogoproto.moretags) = "yaml:\"grantee\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
+
+  // Type url of the authorized message which is being revoked
+  string msg_type_url = 4 [ (gogoproto.moretags) = "yaml:\"msg_type_url\"" ];
+}
+
+// MsgRevokeTreasuryAuthorizationResponse defines the
+// Msg/MsgRevokeTreasuryAuthorization response type
+message MsgRevokeTreasuryAuthorizationResponse {}
 
 // --------------------------------------------------------------------------------------------------------------------
 
