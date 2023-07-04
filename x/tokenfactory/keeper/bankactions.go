@@ -34,11 +34,7 @@ func (k Keeper) burnFrom(ctx sdk.Context, amount sdk.Coin, burnFrom string) erro
 
 	addr := sdk.MustAccAddressFromBech32(burnFrom)
 
-	err = k.bk.SendCoinsFromAccountToModule(ctx,
-		addr,
-		types.ModuleName,
-		sdk.NewCoins(amount))
-	if err != nil {
+	if err := k.bk.SendCoinsFromAccountToModule(ctx, addr, types.ModuleName, sdk.NewCoins(amount)); err != nil {
 		return err
 	}
 

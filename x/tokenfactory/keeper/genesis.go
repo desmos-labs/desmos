@@ -34,6 +34,7 @@ func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 	genDenoms := []types.GenesisDenom{}
 	iterator := k.GetAllDenomsIterator(ctx)
 	defer iterator.Close()
+
 	for ; iterator.Valid(); iterator.Next() {
 		denom := string(iterator.Value())
 
