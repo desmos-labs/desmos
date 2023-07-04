@@ -218,7 +218,7 @@ func (s *IntegrationTestSuite) TestCmdCreateDenom() {
 			shouldErr: true,
 		},
 		{
-			name: "invalid subdenom returns no error",
+			name: "invalid subdenom returns error",
 			args: []string{
 				"1", "",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
