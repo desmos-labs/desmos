@@ -18,7 +18,7 @@ import (
 func GetQueryCmd() *cobra.Command {
 	queryCmd := &cobra.Command{
 		Use:                        types.ModuleName,
-		Short:                      "Querying commands for the tokenfactory module",
+		Short:                      "Querying commands for the token factory module",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
