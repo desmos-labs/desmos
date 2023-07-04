@@ -397,7 +397,7 @@ func TestMsgUpdateParams_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgUpdateParams_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/x/tokenfactory/MsgUpdateParams","value":{"authority":"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd","params":{"denom_creation_fee":[{"amount":"10000000","denom":"stake"}]}}}`
+	expected := `{"type":"desmos/x/tokenfactory/MsgUpdateParams","value":{"authority":"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd","params":{"denom_creation_fee":[{"amount":"10000000000","denom":"stake"}]}}}`
 	require.Equal(t, expected, string(msgUpdateParams.GetSignBytes()))
 }
 
