@@ -20,6 +20,7 @@ import (
 	relationshipstypes "github.com/desmos-labs/desmos/v5/x/relationships/types"
 	reportstypes "github.com/desmos-labs/desmos/v5/x/reports/types"
 	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
+	tokenfactorytypes "github.com/desmos-labs/desmos/v5/x/tokenfactory/types"
 
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
@@ -258,6 +259,7 @@ func TestAppImportExport(t *testing.T) {
 		{app.GetKey(poststypes.StoreKey), newApp.GetKey(poststypes.StoreKey), [][]byte{}},
 		{app.GetKey(reportstypes.StoreKey), newApp.GetKey(reportstypes.StoreKey), [][]byte{}},
 		{app.GetKey(reactionstypes.StoreKey), newApp.GetKey(reactionstypes.StoreKey), [][]byte{}},
+		{app.GetKey(tokenfactorytypes.StoreKey), newApp.GetKey(tokenfactorytypes.StoreKey), [][]byte{}},
 
 		{app.GetKey(wasmtypes.StoreKey), newApp.GetKey(wasmtypes.StoreKey), [][]byte{wasmtypes.TXCounterPrefix}},
 	}
