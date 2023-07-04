@@ -9,9 +9,8 @@ option go_package = "github.com/desmos-labs/desmos/v5/x/tokenfactory/types";
 // capabilities over a token factory denom. Right now there is only one Admin
 // permission, but is planned to be extended to the future.
 message DenomAuthorityMetadata {
-    option (gogoproto.equal) = true;
-  
-    // Can be empty for no admin, or a valid osmosis address
-    string admin = 1 [ (gogoproto.moretags) = "yaml:\"admin\"" ];
-  }
-  
+  option (gogoproto.equal) = true;
+
+  // Can be empty for no admin, or a valid osmosis address
+  string admin = 1 [ (gogoproto.moretags) = "yaml:\"admin\"" ];
+}
