@@ -1,6 +1,7 @@
 syntax = "proto3";
 package desmos.tokenfactory.v1beta1;
 
+import "amino/amino.proto";
 import "gogoproto/gogo.proto";
 import "cosmos/base/v1beta1/coin.proto";
 import "cosmos/bank/v1beta1/bank.proto";
@@ -56,6 +57,9 @@ service Msg {
 //
 // Since: Desmos 6.0.0
 message MsgCreateDenom {
+  option (cosmos.msg.v1.signer) = "sender";
+  option (amino.name) = "desmos/MsgCreateDenom";
+
   // Id of the subspace which manages the denom
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
@@ -85,6 +89,9 @@ message MsgCreateDenomResponse {
 //
 // Since: Desmos 6.0.0
 message MsgMint {
+  option (cosmos.msg.v1.signer) = "sender";
+  option (amino.name) = "desmos/MsgMint";
+
   // Id of the subspace which manages the denom
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
@@ -101,7 +108,9 @@ message MsgMint {
   cosmos.base.v1beta1.Coin amount = 3 [
     (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
     (gogoproto.moretags) = "yaml:\"amount\"",
-    (gogoproto.nullable) = false
+    (gogoproto.nullable) = false,
+    (amino.encoding) = "legacy_coins",
+    (amino.dont_omitempty) = true
   ];
 }
 
@@ -115,6 +124,9 @@ message MsgMintResponse {}
 //
 // Since: Desmos 6.0.0
 message MsgBurn {
+  option (cosmos.msg.v1.signer) = "sender";
+  option (amino.name) = "desmos/MsgBurn";
+
   // Id of the subspace which manages the denom
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
@@ -131,7 +143,9 @@ message MsgBurn {
   cosmos.base.v1beta1.Coin amount = 3 [
     (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
     (gogoproto.moretags) = "yaml:\"amount\"",
-    (gogoproto.nullable) = false
+    (gogoproto.nullable) = false,
+    (amino.encoding) = "legacy_coins",
+    (amino.dont_omitempty) = true
   ];
 }
 
@@ -145,6 +159,9 @@ message MsgBurnResponse {}
 //
 // Since: Desmos 6.0.0
 message MsgSetDenomMetadata {
+  option (cosmos.msg.v1.signer) = "sender";
+  option (amino.name) = "desmos/MsgSetDenomMetadata";
+
   // Id of the subspace which manages the denom
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
@@ -160,7 +177,8 @@ message MsgSetDenomMetadata {
   // Metadata of the denom
   cosmos.bank.v1beta1.Metadata metadata = 3 [
     (gogoproto.moretags) = "yaml:\"metadata\"",
-    (gogoproto.nullable) = false
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
   ];
 }
 
@@ -173,6 +191,7 @@ message MsgSetDenomMetadataResponse {}
 //
 // Since: Desmos 6.0.0
 message MsgUpdateParams {
+  option (amino.name) = "desmos/MsgUpdateParams";
   option (cosmos.msg.v1.signer) = "authority";
 
   // authority is the address that controls the module (defaults to x/gov unless
@@ -187,7 +206,8 @@ message MsgUpdateParams {
   // NOTE: All parameters must be supplied.
   Params params = 2 [ 
     (gogoproto.moretags) = "yaml:\"params\"",  
-    (gogoproto.nullable) = false
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
   ];
 }
 

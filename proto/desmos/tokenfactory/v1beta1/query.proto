@@ -1,6 +1,7 @@
 syntax = "proto3";
 package desmos.tokenfactory.v1beta1;
 
+import "amino/amino.proto";
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "desmos/tokenfactory/v1beta1/params.proto";
@@ -30,7 +31,7 @@ message QueryParamsRequest {}
 // QueryParamsResponse is the response type for the Query/Params RPC method.
 message QueryParamsResponse {
   // params defines the parameters of the module.
-  Params params = 1 [ (gogoproto.nullable) = false ];
+  Params params = 1 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 }
 
 // QuerySubspaceDenomsRequest defines the request structure for the

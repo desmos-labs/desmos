@@ -1,6 +1,7 @@
 syntax = "proto3";
 package desmos.tokenfactory.v1beta1;
 
+import "amino/amino.proto";
 import "gogoproto/gogo.proto";
 import "desmos/tokenfactory/v1beta1/params.proto";
 import "desmos/tokenfactory/v1beta1/models.proto";
@@ -10,11 +11,12 @@ option go_package = "github.com/desmos-labs/desmos/v5/x/tokenfactory/types";
 // GenesisState defines the tokenfactory module's genesis state.
 message GenesisState {
   // params defines the paramaters of the module.
-  Params params = 1 [ (gogoproto.nullable) = false ];
+  Params params = 1 [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 
   repeated GenesisDenom factory_denoms = 2 [
     (gogoproto.moretags) = "yaml:\"factory_denoms\"",
-    (gogoproto.nullable) = false
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
   ];
 }
 
@@ -27,6 +29,7 @@ message GenesisDenom {
   string denom = 1 [ (gogoproto.moretags) = "yaml:\"denom\"" ];
   DenomAuthorityMetadata authority_metadata = 2 [
     (gogoproto.moretags) = "yaml:\"authority_metadata\"",
-    (gogoproto.nullable) = false
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
   ];
 }
