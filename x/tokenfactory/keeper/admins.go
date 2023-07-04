@@ -10,7 +10,7 @@ import (
 func (k Keeper) GetAuthorityMetadata(ctx sdk.Context, denom string) types.DenomAuthorityMetadata {
 	bz := k.GetDenomPrefixStore(ctx, denom).Get([]byte(types.DenomAuthorityMetadataKey))
 
-	metadata := types.DenomAuthorityMetadata{}
+	var metadata types.DenomAuthorityMetadata
 	k.cdc.MustUnmarshal(bz, &metadata)
 	return metadata
 }
