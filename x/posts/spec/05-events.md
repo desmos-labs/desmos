@@ -81,6 +81,26 @@ The posts module emits the following events:
 | message     | action            | desmos.posts.v3.MsgAnswerPoll |
 | message     | sender            | {userAddress}                 |
 
+### MsgUpdateParams
+
+| **Type**    | **Attribute Key** | **Attribute Value**             | 
+|:------------|:------------------|:--------------------------------|
+| message     | module            | posts                           |
+| message     | action            | desmos.posts.v3.MsgUpdateParams |
+| message     | sender            | {userAddress}                   |
+
+## MsgMovePost
+
+| **Type**  | **Attribute Key** | **Attribute Value**         | 
+|:----------|:------------------|:----------------------------|
+| move_post | subspace_id       | {subspaceID}                |
+| move_post | post_id           | {postID}                    |
+| move_post | new_subspace_id   | {newSubspaceID}             |
+| move_post | new_post_id       | {newPostID}                 |
+| message   | module            | posts                       |
+| message   | action            | desmos.posts.v3.MsgMovePost |
+| message   | sender            | {userAddress}               |
+
 ## Keeper
 
 | **Type**   | **Attribute Key** | **Attribute Value** | 
