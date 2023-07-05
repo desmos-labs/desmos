@@ -405,7 +405,7 @@ message MsgEditUserGroup {
 message MsgEditUserGroupResponse {}
 
 // MsgMoveUserGroup represents the message used to move one user group from a
-// section to anoter
+// section to another
 message MsgMoveUserGroup {
   option (cosmos.msg.v1.signer) = "signer";
   option (amino.name) = "desmos/MsgMoveUserGroup";
