@@ -32,7 +32,6 @@ The subspaces module emits the following events:
 | message       | action            | desmos.subspaces.v2.MsgEditSubspace |
 | message       | sender            | {userAddress}                       |
 
-
 ### MsgDeleteSubspace
 
 | **Type**        | **Attribute Key** | **Attribute Value**                   | 
@@ -163,3 +162,59 @@ The subspaces module emits the following events:
 | message              | module            | subspaces                           |
 | message              | action            | desmos.subspaces.v2.MsgEditSubspace |
 | message              | sender            | {userAddress}                       |
+
+## MsgGrantTreasuryAuthorization
+
+| **Type**                     | **Attribute Key** | **Attribute Value**                               | 
+|:-----------------------------|:------------------|:--------------------------------------------------|
+| grant_treasury_authorization | subspace_id       | {subspaceID}                                      |
+| grant_treasury_authorization | granter           | {userAddress}                                     |
+| grant_treasury_authorization | grantee           | {userAddress}                                     |
+| message                      | module            | subspaces                                         |
+| message                      | action            | desmos.subspaces.v2.MsgGrantTreasuryAuthorization |
+| message                      | sender            | {userAddress}                                     |
+
+## MsgRevokeTreasuryAuthorization
+
+| **Type**                      | **Attribute Key** | **Attribute Value**                                | 
+|:------------------------------|:------------------|:---------------------------------------------------|
+| revoke_treasury_authorization | subspace_id       | {subspaceID}                                       |
+| revoke_treasury_authorization | granter           | {userAddress}                                      |
+| revoke_treasury_authorization | grantee           | {userAddress}                                      |
+| message                       | module            | subspaces                                          |
+| message                       | action            | desmos.subspaces.v2.MsgRevokeTreasuryAuthorization |
+| message                       | sender            | {userAddress}                                      |
+
+## MsgGrantAllowance
+
+| **Type**        | **Attribute Key** | **Attribute Value**                               | 
+|:----------------|:------------------|:--------------------------------------------------|
+| grant_allowance | subspace_id       | {subspaceID}                                      |
+| grant_allowance | granter           | {userAddress}                                     |
+| grant_allowance | user_grantee      | {userAddress}                                     |
+| grant_allowance | group_grantee     | {groupID}                                         |
+| message         | module            | subspaces                                         |
+| message         | action            | desmos.subspaces.v2.MsgGrantTreasuryAuthorization |
+| message         | sender            | {userAddress}                                     |
+
+## MsgRevokeAllowance
+
+| **Type**         | **Attribute Key** | **Attribute Value**                               | 
+|:-----------------|:------------------|:--------------------------------------------------|
+| revoke_allowance | subspace_id       | {subspaceID}                                      |
+| revoke_allowance | granter           | {userAddress}                                     |
+| revoke_allowance | user_grantee      | {userAddress}                                     |
+| revoke_allowance | group_grantee     | {groupID}                                         |
+| message          | module            | subspaces                                         |
+| message          | action            | desmos.subspaces.v2.MsgGrantTreasuryAuthorization |
+| message          | sender            | {userAddress}                                     |
+
+## MsgUpdateSubspaceFeeTokens
+
+| **Type**                   | **Attribute Key** | **Attribute Value**                               | 
+|:---------------------------|:------------------|:--------------------------------------------------|
+| update_subspace_fee_tokens | subspace_id       | {subspaceID}                                      |
+| update_subspace_fee_tokens | user              | {authorityAddress}                                |
+| message                    | module            | subspaces                                         |
+| message                    | action            | desmos.subspaces.v2.MsgGrantTreasuryAuthorization |
+| message                    | sender            | {userAddress}                                     |
