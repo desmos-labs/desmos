@@ -36,6 +36,10 @@ func NewTxCmd() *cobra.Command {
 		GetCmdRemovePostAttachment(),
 		GetCmdAnswerPoll(),
 		GetCmdMovePost(),
+		GetCmdRequestPostOwnerTransfer(),
+		GetCmdCancelPostOwnerTransfer(),
+		GetCmdAcceptPostOwnerTransfer(),
+		GetCmdRefusePostOwnerTransfer(),
 	)
 
 	return subspacesTxCmd
