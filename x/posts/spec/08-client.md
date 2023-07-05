@@ -191,6 +191,31 @@ params:
   max_text_length: 500
 ```
 
+### incoming-post-owner-transfer-requests
+The `incoming-post-owner-transfer-requests` query command allows users to get the incoming post ownership transfer requests.
+
+```bash
+desmos query posts incoming-post-owner-transfer-requests [subspace-id] [[receiver]] [flags]
+```
+
+Examples:
+```bash
+desmos query posts incoming-post-owner-transfer-requests 1
+desmos query posts incoming-post-owner-transfer-requests 1 desmos1f39c3qlgc7mgu0v505easutdrukr8yal0246fs --page=1 --limit=100
+```
+
+Example output:
+```bash
+pagination:
+  next_key: null
+  total: "0"
+requests:
+- post_id: "1"
+  receiver: desmos1f39c3qlgc7mgu0v505easutdrukr8yal0246fs
+  sender: desmos1dm3saw9gwx0ha4mdd67rn2ahfwhewzgvd7q5vn
+  subspace_id: "1"
+```
+
 ## gRPC
 A user can query the `posts` module gRPC endpoints. 
 
@@ -456,6 +481,36 @@ Example output:
 }
 ```
 
+### IncomingPostOwnerTransferRequests
+The `IncomingPostOwnerTransferRequests` endpoint allows users to query all the incoming post owner transfer requests.
+
+```bash
+desmos.posts.v3.Query/IncomingPostOwnerTransferRequests
+```
+
+Example:
+```bash
+grpcurl -plaintext \
+-d '{"subspace_id":1, "receiver":"desmos1f39c3qlgc7mgu0v505easutdrukr8yal0246fs"}' localhost:9090 desmos.posts.v3.Query/IncomingPostOwnerTransferRequests
+```
+
+Example output:
+```json
+{
+  "requests": [
+    {
+      "subspaceId": "1",
+      "postId": "1",
+      "sender": "desmos1dm3saw9gwx0ha4mdd67rn2ahfwhewzgvd7q5vn",
+      "receiver": "desmos1f39c3qlgc7mgu0v505easutdrukr8yal0246fs"
+    }
+  ],
+  "pagination": {
+    "total": "1"
+  }
+}
+```
+
 ## REST
 A user can query the `posts` module using REST endpoints.
 
@@ -502,4 +557,11 @@ The `Params` endpoint allows users to query the module's parameters.
 
 ```
 /desmos/posts/v3/params
+```
+
+### IncomingPostOwnerTransferRequests
+The `IncomingPostOwnerTransferRequests` endpoint allows users to query all the incoming post owner transfer requests.
+
+```
+/desmos/posts/v3/subspaces/{subspace_id}/post-owner-transfer-requests?receiver={receiver}
 ```
