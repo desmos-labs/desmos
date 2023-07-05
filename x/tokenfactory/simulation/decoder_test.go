@@ -5,10 +5,11 @@ import (
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/types/kv"
+	"github.com/stretchr/testify/require"
+
 	"github.com/desmos-labs/desmos/v5/app"
 	"github.com/desmos-labs/desmos/v5/x/tokenfactory/simulation"
 	"github.com/desmos-labs/desmos/v5/x/tokenfactory/types"
-	"github.com/stretchr/testify/require"
 )
 
 func TestDecodeStore(t *testing.T) {

@@ -10,9 +10,10 @@ import (
 
 	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 
+	"github.com/golang/mock/gomock"
+
 	"github.com/desmos-labs/desmos/v5/x/tokenfactory/keeper"
 	"github.com/desmos-labs/desmos/v5/x/tokenfactory/types"
-	"github.com/golang/mock/gomock"
 )
 
 func (suite *KeeperTestSuite) TestMsgServer_CreateDenom() {

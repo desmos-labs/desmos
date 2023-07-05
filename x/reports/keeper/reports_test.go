@@ -3,8 +3,9 @@ package keeper_test
 import (
 	"time"
 
-	poststypes "github.com/desmos-labs/desmos/v5/x/posts/types"
 	"github.com/golang/mock/gomock"
+
+	poststypes "github.com/desmos-labs/desmos/v5/x/posts/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
