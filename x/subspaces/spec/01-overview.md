@@ -18,6 +18,9 @@ This module allows users to create and manage the representation of different so
     - [Section](02-concepts.md#section)
     - [User Group](02-concepts.md#user-group)
     - [User Permission](02-concepts.md#user-permission)
+    - [Grant](02-concepts.md#grant)
+    - [UserGrantee](02-concepts.md#usergrantee)
+    - [GroupGrantee](02-concepts.md#groupgrantee)
 2. **[State](03-state.md)**
     - [Next Subspace ID](03-state.md#next-subspace-id)
     - [Subspace](03-state.md#subspace)

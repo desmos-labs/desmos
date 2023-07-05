@@ -23,6 +23,8 @@ An optional description of what the subspace is about.
 ### Treasury
 The treasury address represents the wallet of the subspace itself. This can be used for different reasons such as verifying a subspace with external applications (to prove its authenticity), or paying for fees when executing some smart contracts. 
 
+Note that this wallet address is generated based on the subspace id, so that it is always the same for a given subspace and cannot be changed. If you want to perform an action on behalf of this wallet, you will have to grant a treasury permission to the wallet that will perform the action.
+
 ### Owner
 The subspace owner represents the wallet that owns the subspace. As the owner, this wallet will have the `EVERYTHING` permission always set, which allows it to perform any kind of operation within this subspace.
 
@@ -31,6 +33,11 @@ This address represents the creator of the subspace. Note that, once a subspace 
 
 ### Creation time
 The creation time of a subspace represents the block time at which the subspace was created. Note that this cannot be set externally nor edited, and is assigned automatically when a `MsgCreateSubspace` is handled.
+
+### Additional fee tokens
+Each subspace can have a list of additional fee tokens that are accepted when paying for fees for operations that are related to social engagement (creating contents, reacting, reporting, etc.). This can be useful to allow users to pay for fees using tokens that are not the native one of the chain.
+
+Note that even by setting additional fee tokens, users will always be able to pay for fees using the native staking token of the chain.
 
 ## Section
 A section can be seen as a folder within a subspace. It can be useful to represent a category or a topic, or to build
@@ -80,10 +87,39 @@ A user permission can be used to set an individual user's permission withing a s
 The ID of the subspace where the permission has been set.
 
 ### Section ID
-The ID of the section where the permission has been set. Note that permissions set within parent sections are automatically applied to children sections as well. This means that if you set a user to have a specific permission inside the root section, such permission will be valid throught the entire subspace.
+The ID of the section where the permission has been set. Note that permissions set within parent sections are automatically applied to children sections as well. This means that if you set a user to have a specific permission inside the root section, such permission will be valid through the entire subspace.
 
 ### User
 The address of the user to which the permissions have been set.
 
 ### Permissions
 The array of permissions granted to the user.
+
+## Grant
+A grant represents a fee allowance that has been granted to a user or a group within a specific subspace. This can be used to grant users the ability to perform transactions within the subspace without having any tokens in their wallet.
+
+Note that if an allowance is granted to a user group, it means that all the users within the group will be able to use that allowance. If the allowance is going to be limited in terms of tokens, then all users within the group will share the same limitation.
+
+### Subspace ID
+The ID of the subspace where the grant has been set.
+
+### Granter
+The address of the user that granted the permission.
+
+### Grantee
+The details of the user or user group that has been granted the permission.
+
+### Allowance
+The fee allowance that has been granted to the user or user group.
+
+## UserGrantee
+The `UserGrantee` contains the details of an individual user who has been granted a fee allowance within a subspace.
+
+### User
+The address of the user that has been granted the permission.
+
+## GroupGrantee
+The `GroupGrantee` contains the details of a user group that has been granted a fee allowance within a subspace.
+
+### GroupID
+The ID of the user group that has been granted the permission.
