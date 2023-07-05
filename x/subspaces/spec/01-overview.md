@@ -48,6 +48,11 @@ This module allows users to create and manage the representation of different so
     - [Msg/AddUserToUserGroup](04-messages.md#msgaddusertousergroup)
     - [Msg/RemoveUserFromUserGroup](04-messages.md#msgremoveuserfromusergroup)
     - [Msg/SetUserPermissions](04-messages.md#msgsetuserpermissions)
+    - [Msg/GrantTreasuryAuthorization](04-messages.md#msggranttreasuryauthorization)
+    - [Msg/RevokeTreasuryAuthorization](04-messages.md#msgrevoketreasuryauthorization)
+    - [Msg/GrantAllowance](04-messages.md#msggrantallowance)
+    - [Msg/RevokeAllowance](04-messages.md#msgrevokeallowance)
+    - [Msg/UpdateSubspaceFeeTokens](04-messages.md#msgupdatesubspacefeetokens)
 4. **[Events](05-events.md)**
     - [Handlers](05-events.md#handlers) 
 5. **[Permissions](06-permissions.md)**
