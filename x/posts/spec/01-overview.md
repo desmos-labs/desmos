@@ -36,6 +36,12 @@ kind of data.
     - [Msg/AddPostAttachment](04-messages.md#msgaddpostattachment)
     - [Msg/RemovePostAttachment](04-messages.md#msgremovepostattachment)
     - [Msg/AnswerPoll](04-messages.md#msganswerpoll)
+    - [Msg/UpdateParams](04-messages.md#msgupdateparams)
+    - [Msg/MovePost](04-messages.md#msgmovepost)
+    - [Msg/RequestPostOwnerTransfer](04-messages.md#msgrequestpostownertransfer)
+    - [Msg/CancelPostOwnerTransferRequest](04-messages.md#msgcancelpostownertransferrequest)
+    - [Msg/AcceptPostOwnerTransferRequest](04-messages.md#msgacceptpostownertransferrequest)
+    - [Msg/RefusePostOwnerTransferRequest](04-messages.md#msgrefusepostownertransferrequest)
 4. **[Events](05-events.md)**
     - [Handlers](05-events.md#handlers)
     - [Keeper](05-events.md#keeper)
