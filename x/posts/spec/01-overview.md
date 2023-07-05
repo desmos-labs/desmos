@@ -16,16 +16,19 @@ kind of data.
 ## Contents
 1. **[Concepts](02-concepts.md)**
     - [Post](02-concepts.md#post)
-    - [Attchment](02-concepts.md#attachment)
+    - [Attachment](02-concepts.md#attachment)
     - [Media](02-concepts.md#media)
     - [Poll](02-concepts.md#poll)
 2. **[State](03-state.md)**
     - [Next Post ID](03-state.md#next-post-id)
     - [Post](03-state.md#post)
+    - [Post section](03-state.md#post-section)
     - [Next Attachment ID](03-state.md#post-section)
     - [Attachment](03-state.md#attachment)
     - [User Answer](03-state.md#user-answer)
     - [Active Poll Queue](03-state.md#active-poll-queue)
+    - [Params](03-state.md#params)
+    - [Post owner transfer requests](03-state.md#post-owner-transfer-requests)
 3. **[Msg Service](04-messages.md)**
     - [Msg/CreatePost](04-messages.md#msgcreatepost)
     - [Msg/EditPost](04-messages.md#msgeditpost)
