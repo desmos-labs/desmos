@@ -27,7 +27,7 @@ jobs:
 
       - name: Build 🔧
         run:
-          sudo make proto-swagger-gen && sudo chown $USER .
+          sudo make proto-swagger-gen && sudo chown -R $USER .
 
       - name: Commit ✅
         uses: endbug/add-and-commit@v9
