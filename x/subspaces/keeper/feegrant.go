@@ -37,7 +37,7 @@ func (k Keeper) HasUserGrant(ctx sdk.Context, subspaceID uint64, grantee string)
 	return ctx.KVStore(k.storeKey).Has(types.UserAllowanceKey(subspaceID, grantee))
 }
 
-// DeleteSection deletes the grant associated the given user grantee from the subspace with the provided id
+// DeleteUserGrant deletes the grant associated the given user grantee from the subspace with the provided id
 func (k Keeper) DeleteUserGrant(ctx sdk.Context, subspaceID uint64, grantee string) {
 	store := ctx.KVStore(k.storeKey)
 	key := types.UserAllowanceKey(subspaceID, grantee)
@@ -59,12 +59,12 @@ func (k Keeper) GetUserGrant(ctx sdk.Context, subspaceID uint64, grantee string)
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// HasUserGrant tells whether the group grant associated to the given group id exists inside the provided subspace
+// HasGroupGrant tells whether the group grant associated to the given group id exists inside the provided subspace
 func (k Keeper) HasGroupGrant(ctx sdk.Context, subspaceID uint64, groupID uint32) bool {
 	return ctx.KVStore(k.storeKey).Has(types.GroupAllowanceKey(subspaceID, groupID))
 }
 
-// DeleteSection deletes the grant having associated to the given group id from the subspace with the provided id
+// DeleteGroupGrant deletes the grant having associated to the given group id from the subspace with the provided id
 func (k Keeper) DeleteGroupGrant(ctx sdk.Context, subspaceID uint64, groupID uint32) {
 	store := ctx.KVStore(k.storeKey)
 	key := types.GroupAllowanceKey(subspaceID, groupID)
