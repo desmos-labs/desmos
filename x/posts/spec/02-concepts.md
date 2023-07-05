@@ -106,6 +106,9 @@ The creation date of the post.
 ### Last Edited Date
 The las time the post has been edited.
 
+### Owner
+The owner of the post. This is the user that can edit or delete the post. Usually this is the same as the author, but it might be different if the post ownership has been transferred.
+
 ## Attachment
 An attachment represents any kind of media that can be attached to a post, such as (but not limited to): an image, a GIF, or a poll.
 
