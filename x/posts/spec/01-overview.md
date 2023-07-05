@@ -39,9 +39,9 @@ kind of data.
     - [Msg/UpdateParams](04-messages.md#msgupdateparams)
     - [Msg/MovePost](04-messages.md#msgmovepost)
     - [Msg/RequestPostOwnerTransfer](04-messages.md#msgrequestpostownertransfer)
-    - [Msg/CancelPostOwnerTransferRequest](04-messages.md#msgcancelpostownertransferrequest)
-    - [Msg/AcceptPostOwnerTransferRequest](04-messages.md#msgacceptpostownertransferrequest)
-    - [Msg/RefusePostOwnerTransferRequest](04-messages.md#msgrefusepostownertransferrequest)
+    - [Msg/CancelPostOwnerTransferRequest](04-messages.md#msgcancelpostownertransfer)
+    - [Msg/AcceptPostOwnerTransferRequest](04-messages.md#msgacceptpostownertransfer)
+    - [Msg/RefusePostOwnerTransferRequest](04-messages.md#msgrefusepostownertransfer)
 4. **[Events](05-events.md)**
     - [Handlers](05-events.md#handlers)
     - [Keeper](05-events.md#keeper)
