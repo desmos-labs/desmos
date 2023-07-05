@@ -19,6 +19,7 @@ kind of data.
     - [Attachment](02-concepts.md#attachment)
     - [Media](02-concepts.md#media)
     - [Poll](02-concepts.md#poll)
+    - [PostOwnerTransferRequest](02-concepts.md#postownertransferrequest)
 2. **[State](03-state.md)**
     - [Next Post ID](03-state.md#next-post-id)
     - [Post](03-state.md#post)

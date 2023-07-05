@@ -189,3 +189,19 @@ The answer indexes contains a list of user answers, each one identified by the i
 
 #### User 
 The address of the user answering the poll.
+
+## PostOwnerTransferRequest
+A post owner transfer request is a request that can be used to transfer the ownership of a post from one user to another. This can be useful in case a user wants to transfer the ownership of a post to another user, for example because they are leaving the platform.
+
+### Subspace ID
+The subspace id represents the id of the subspace inside which is present the post which ownership should be transferred.
+
+### Post ID
+The id of the post which ownership should be transferred.
+
+### Sender
+Address of the user that has sent the post ownership transfer request.
+
+### Receiver
+Address of the user that should receive the post ownership.
+
