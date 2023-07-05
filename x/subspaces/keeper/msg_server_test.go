@@ -5,6 +5,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	"github.com/cosmos/cosmos-sdk/x/feegrant"
 
 	"github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
 	"github.com/desmos-labs/desmos/v5/x/subspaces/types"
@@ -3258,6 +3260,941 @@ func (suite *KeeperTestSuite) TestMsgServer_UpdateSubspaceFeeTokens() {
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.k)
 			_, err := service.UpdateSubspaceFeeTokens(sdk.WrapSDKContext(ctx), tc.msg)
+
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(tc.expEvents, ctx.EventManager().Events())
+
+				if tc.check != nil {
+					tc.check(ctx)
+				}
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestMsgServer_GrantTreasuryAuthorization() {
+	blockTime := time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC)
+	testCases := []struct {
+		name        string
+		store       func(ctx sdk.Context)
+		msg         *types.MsgGrantTreasuryAuthorization
+		shouldErr   bool
+		expResponse *types.MsgGrantTreasuryAuthorizationResponse
+		expEvents   []sdk.Event
+		check       func(ctx sdk.Context)
+	}{
+		{
+			name: "non existing subspace returns error",
+			msg: types.NewMsgGrantTreasuryAuthorization(
+				1,
+				"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez",
+				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+				&banktypes.SendAuthorization{SpendLimit: sdk.NewCoins(sdk.NewInt64Coin("steak", 100))},
+				&expiration,
+			),
+			shouldErr: true,
+		},
+		{
+			name: "granter without permissions returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil),
+				)
+			},
+			msg: types.NewMsgGrantTreasuryAuthorization(
+				1,
+				"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez",
+				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+				&banktypes.SendAuthorization{SpendLimit: sdk.NewCoins(sdk.NewInt64Coin("steak", 100))},
+				&expiration,
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid treasury address returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(1,
+					"Test subspace",
+					"This is a test subspace",
+					"",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil),
+				)
+
+				suite.k.SetUserPermissions(ctx,
+					1,
+					types.RootSectionID,
+					"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez",
+					types.NewPermissions(types.PermissionManageTreasuryAuthorization),
+				)
+			},
+			msg: types.NewMsgGrantTreasuryAuthorization(
+				1,
+				"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez",
+				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+				&banktypes.SendAuthorization{SpendLimit: sdk.NewCoins(sdk.NewInt64Coin("steak", 100))},
+				&expiration,
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid grantee address returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil),
+				)
+
+				suite.k.SetUserPermissions(ctx,
+					1,
+					types.RootSectionID,
+					"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez",
+					types.NewPermissions(types.PermissionManageTreasuryAuthorization),
+				)
+			},
+			msg: types.NewMsgGrantTreasuryAuthorization(
+				1,
+				"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez",
+				"",
+				&banktypes.SendAuthorization{SpendLimit: sdk.NewCoins(sdk.NewInt64Coin("steak", 100))},
+				&expiration,
+			),
+			shouldErr: true,
+		},
+		{
+			name: "valid request creates authorization properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil),
+				)
+
+				suite.k.SetUserPermissions(ctx,
+					1,
+					types.RootSectionID,
+					"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez",
+					types.NewPermissions(types.PermissionManageTreasuryAuthorization),
+				)
+			},
+			msg: types.NewMsgGrantTreasuryAuthorization(
+				1,
+				"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez",
+				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+				&banktypes.SendAuthorization{SpendLimit: sdk.NewCoins(sdk.NewInt64Coin("steak", 100))},
+				&expiration,
+			),
+			shouldErr:   false,
+			expResponse: &types.MsgGrantTreasuryAuthorizationResponse{},
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					sdk.EventTypeMessage,
+					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgGrantTreasuryAuthorization{})),
+					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez"),
+				),
+				sdk.NewEvent(
+					types.EventTypeGrantTreasuryAuthorization,
+					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					sdk.NewAttribute(types.AttributeKeyGranter, "cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez"),
+					sdk.NewAttribute(types.AttributeKeyGrantee, "cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69"),
+				),
+			},
+			check: func(ctx sdk.Context) {
+				treasury, err := sdk.AccAddressFromBech32("cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn")
+				suite.Require().NoError(err)
+				grantee, err := sdk.AccAddressFromBech32("cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69")
+				suite.Require().NoError(err)
+
+				authorizations, err := suite.authzKeeper.GetAuthorizations(ctx, grantee, treasury)
+				suite.Require().NoError(err)
+				suite.Require().Equal(1, len(authorizations))
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			ctx = ctx.WithBlockTime(blockTime)
+
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			// Reset any event that might have been emitted during the setup
+			ctx = ctx.WithEventManager(sdk.NewEventManager())
+
+			// Run the message
+			service := keeper.NewMsgServerImpl(suite.k)
+			res, err := service.GrantTreasuryAuthorization(sdk.WrapSDKContext(ctx), tc.msg)
+
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(tc.expResponse, res)
+
+				for _, event := range tc.expEvents {
+					suite.Require().Contains(ctx.EventManager().Events(), event)
+				}
+
+				if tc.check != nil {
+					tc.check(ctx)
+				}
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestMsgServer_RevokeTreasuryAuthorization() {
+	blockTime := time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC)
+	testCases := []struct {
+		name        string
+		store       func(ctx sdk.Context)
+		msg         *types.MsgRevokeTreasuryAuthorization
+		shouldErr   bool
+		expResponse *types.MsgRevokeTreasuryAuthorizationResponse
+		expEvents   []sdk.Event
+		check       func(ctx sdk.Context)
+	}{
+		{
+			name: "non existing subspace returns error",
+			msg: types.NewMsgRevokeTreasuryAuthorization(
+				1,
+				"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez",
+				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+				"/cosmos.v1beta1.MsgSend",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "revoker with no permissions returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil),
+				)
+			},
+			msg: types.NewMsgRevokeTreasuryAuthorization(
+				1,
+				"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez",
+				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+				"/cosmos.v1beta1.MsgSend",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid treasury address returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(1,
+					"Test subspace",
+					"This is a test subspace",
+					"",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil),
+				)
+
+				suite.k.SetUserPermissions(ctx,
+					1,
+					types.RootSectionID,
+					"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez",
+					types.NewPermissions(types.PermissionManageTreasuryAuthorization),
+				)
+			},
+			msg: types.NewMsgRevokeTreasuryAuthorization(
+				1,
+				"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez",
+				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+				"/cosmos.v1beta1.MsgSend",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid revoker address returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil),
+				)
+
+				suite.k.SetUserPermissions(ctx,
+					1,
+					types.RootSectionID,
+					"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez",
+					types.NewPermissions(types.PermissionManageTreasuryAuthorization),
+				)
+			},
+			msg: types.NewMsgRevokeTreasuryAuthorization(
+				1,
+				"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez",
+				"",
+				"/cosmos.v1beta1.MsgSend",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "non exiting authorization returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil),
+				)
+
+				suite.k.SetUserPermissions(ctx,
+					1,
+					types.RootSectionID,
+					"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez",
+					types.NewPermissions(types.PermissionManageTreasuryAuthorization),
+				)
+			},
+			msg: types.NewMsgRevokeTreasuryAuthorization(
+				1,
+				"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez",
+				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+				"/cosmos.v1beta1.MsgSend",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "valid request deletes authorization properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil),
+				)
+
+				suite.k.SetUserPermissions(ctx,
+					1,
+					types.RootSectionID,
+					"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez",
+					types.NewPermissions(types.PermissionManageTreasuryAuthorization),
+				)
+
+				treasury, err := sdk.AccAddressFromBech32("cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn")
+				suite.Require().NoError(err)
+				grantee, err := sdk.AccAddressFromBech32("cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69")
+				suite.Require().NoError(err)
+
+				expiration := time.Date(2024, 1, 11, 1, 1, 1, 1, time.UTC)
+				err = suite.authzKeeper.SaveGrant(ctx,
+					grantee,
+					treasury,
+					&banktypes.SendAuthorization{SpendLimit: sdk.NewCoins(sdk.NewInt64Coin("steak", 100))},
+					&expiration,
+				)
+				suite.Require().NoError(err)
+			},
+			msg: types.NewMsgRevokeTreasuryAuthorization(
+				1,
+				"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez",
+				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+				"/cosmos.bank.v1beta1.MsgSend",
+			),
+			shouldErr:   false,
+			expResponse: &types.MsgRevokeTreasuryAuthorizationResponse{},
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					sdk.EventTypeMessage,
+					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgRevokeTreasuryAuthorization{})),
+					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez"),
+				),
+				sdk.NewEvent(
+					types.EventTypeRevokeTreasuryAuthorization,
+					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					sdk.NewAttribute(types.AttributeKeyGranter, "cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez"),
+					sdk.NewAttribute(types.AttributeKeyGrantee, "cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69"),
+				),
+			},
+			check: func(ctx sdk.Context) {
+				treasury, err := sdk.AccAddressFromBech32("cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn")
+				suite.Require().NoError(err)
+				grantee, err := sdk.AccAddressFromBech32("cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69")
+				suite.Require().NoError(err)
+
+				authorizations, err := suite.authzKeeper.GetAuthorizations(ctx, grantee, treasury)
+				suite.Require().NoError(err)
+				suite.Require().Equal(0, len(authorizations))
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			ctx = ctx.WithBlockTime(blockTime)
+
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			// Reset any event that might have been emitted during the setup
+			ctx = ctx.WithEventManager(sdk.NewEventManager())
+
+			// Run the message
+			service := keeper.NewMsgServerImpl(suite.k)
+			res, err := service.RevokeTreasuryAuthorization(sdk.WrapSDKContext(ctx), tc.msg)
+
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(tc.expResponse, res)
+
+				for _, event := range tc.expEvents {
+					suite.Require().Contains(ctx.EventManager().Events(), event)
+				}
+
+				if tc.check != nil {
+					tc.check(ctx)
+				}
+			}
+		})
+	}
+}
+
+var expiration = time.Date(2100, 1, 11, 0, 0, 0, 0, time.UTC)
+
+func (suite *KeeperTestSuite) TestMsgServer_GrantAllowance() {
+	testCases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		msg       *types.MsgGrantAllowance
+		shouldErr bool
+		expEvents sdk.Events
+		check     func(ctx sdk.Context)
+	}{
+		{
+			name: "subspace not found returns error",
+			msg: types.NewMsgGrantAllowance(
+				1,
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
+				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+			),
+			shouldErr: true,
+		},
+		{
+			name: "granter has no permission returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				))
+			},
+			msg: types.NewMsgGrantAllowance(
+				1,
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
+				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+			),
+			shouldErr: true,
+		},
+		{
+			name: "duplicated user grant returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				))
+
+				suite.k.SetUserPermissions(ctx,
+					1,
+					types.RootSectionID,
+					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+					types.NewPermissions(types.PermissionManageAllowances),
+				)
+
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
+					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+					types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				))
+			},
+			msg: types.NewMsgGrantAllowance(
+				1,
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
+				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+			),
+			shouldErr: true,
+		},
+		{
+			name: "group not found returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				))
+
+				suite.k.SetUserPermissions(ctx,
+					1,
+					types.RootSectionID,
+					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+					types.NewPermissions(types.PermissionManageAllowances),
+				)
+			},
+			msg: types.NewMsgGrantAllowance(
+				1,
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				types.NewGroupGrantee(1),
+				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+			),
+			shouldErr: true,
+		},
+		{
+			name: "duplicated group grant returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				))
+
+				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
+					1,
+					0,
+					1,
+					"test",
+					"test",
+					nil,
+				))
+
+				suite.k.SetUserPermissions(ctx,
+					1,
+					types.RootSectionID,
+					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+					types.NewPermissions(types.PermissionManageAllowances),
+				)
+
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
+					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+					types.NewGroupGrantee(1),
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				))
+			},
+			msg: types.NewMsgGrantAllowance(
+				1,
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				types.NewGroupGrantee(1),
+				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+			),
+			shouldErr: true,
+		},
+		{
+			name: "user allowance set properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				))
+
+				suite.k.SetUserPermissions(ctx,
+					1,
+					types.RootSectionID,
+					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+					types.NewPermissions(types.PermissionManageAllowances),
+				)
+			},
+			msg: types.NewMsgGrantAllowance(
+				1,
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
+				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+			),
+			shouldErr: false,
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					sdk.EventTypeMessage,
+					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgGrantAllowance{})),
+					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"),
+				),
+				sdk.NewEvent(
+					types.EventTypeGrantAllowance,
+					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					sdk.NewAttribute(types.AttributeKeyGranter, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"),
+					sdk.NewAttribute(types.AttributeKeyUserGrantee, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
+				),
+			},
+			check: func(ctx sdk.Context) {
+				grant, found := suite.k.GetUserGrant(ctx, 1, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
+				suite.Require().True(found)
+				suite.Require().Equal(types.NewGrant(
+					1,
+					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+					types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				), grant)
+			},
+		},
+		{
+			name: "group allowance set properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				))
+
+				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
+					1,
+					0,
+					1,
+					"test",
+					"test",
+					nil,
+				))
+
+				suite.k.SetUserPermissions(ctx,
+					1,
+					types.RootSectionID,
+					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+					types.NewPermissions(types.PermissionManageAllowances),
+				)
+			},
+			msg: types.NewMsgGrantAllowance(
+				1,
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				types.NewGroupGrantee(1),
+				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+			),
+			shouldErr: false,
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					sdk.EventTypeMessage,
+					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgGrantAllowance{})),
+					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"),
+				),
+				sdk.NewEvent(
+					types.EventTypeGrantAllowance,
+					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					sdk.NewAttribute(types.AttributeKeyGranter, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"),
+					sdk.NewAttribute(types.AttributeKeyGroupGrantee, "1"),
+				),
+			},
+			check: func(ctx sdk.Context) {
+				grant, found := suite.k.GetGroupGrant(ctx, 1, 1)
+				suite.Require().True(found)
+				suite.Require().Equal(types.NewGrant(1,
+					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+					types.NewGroupGrantee(1),
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				), grant)
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			// Run the message
+			service := keeper.NewMsgServerImpl(suite.k)
+			_, err := service.GrantAllowance(sdk.WrapSDKContext(ctx), tc.msg)
+
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(tc.expEvents, ctx.EventManager().Events())
+
+				if tc.check != nil {
+					tc.check(ctx)
+				}
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestMsgServer_RevokeAllowance() {
+	testCases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		msg       *types.MsgRevokeAllowance
+		shouldErr bool
+		expEvents sdk.Events
+		check     func(ctx sdk.Context)
+	}{
+		{
+			name: "granter has no permission returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				))
+			},
+			msg: types.NewMsgRevokeAllowance(
+				1,
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
+			),
+			shouldErr: true,
+		},
+		{
+			name: "user allowance does not exist returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				))
+
+				suite.k.SetUserPermissions(ctx,
+					1,
+					types.RootSectionID,
+					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+					types.NewPermissions(types.PermissionManageAllowances),
+				)
+			},
+			msg: types.NewMsgRevokeAllowance(
+				1,
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
+			),
+			shouldErr: true,
+		},
+		{
+			name: "group allowance does not exist returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				))
+
+				suite.k.SetUserPermissions(ctx,
+					1,
+					types.RootSectionID,
+					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+					types.NewPermissions(types.PermissionManageAllowances),
+				)
+			},
+			msg: types.NewMsgRevokeAllowance(
+				1,
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				types.NewGroupGrantee(1),
+			),
+			shouldErr: true,
+		},
+		{
+			name: "user allowance revoked properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				))
+
+				suite.k.SetUserPermissions(ctx,
+					1,
+					types.RootSectionID,
+					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+					types.NewPermissions(types.PermissionManageAllowances),
+				)
+
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
+					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+					types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				))
+			},
+			msg: types.NewMsgRevokeAllowance(
+				1,
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
+			),
+			shouldErr: false,
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					sdk.EventTypeMessage,
+					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgRevokeAllowance{})),
+					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"),
+				),
+				sdk.NewEvent(
+					types.EventTypeRevokeAllowance,
+					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					sdk.NewAttribute(types.AttributeKeyGranter, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"),
+					sdk.NewAttribute(types.AttributeKeyUserGrantee, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
+				),
+			},
+			check: func(ctx sdk.Context) {
+				suite.Require().False(suite.k.HasUserGrant(ctx, 1, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"))
+			},
+		},
+		{
+			name: "group allowance revoked properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				))
+
+				suite.k.SetUserPermissions(ctx,
+					1,
+					types.RootSectionID,
+					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+					types.NewPermissions(types.PermissionManageAllowances),
+				)
+
+				suite.k.SaveGrant(ctx, types.NewGrant(1,
+					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+					types.NewGroupGrantee(1),
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				))
+			},
+			msg: types.NewMsgRevokeAllowance(
+				1,
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				types.NewGroupGrantee(1),
+			),
+			shouldErr: false,
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					sdk.EventTypeMessage,
+					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgRevokeAllowance{})),
+					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"),
+				),
+				sdk.NewEvent(
+					types.EventTypeRevokeAllowance,
+					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					sdk.NewAttribute(types.AttributeKeyGranter, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"),
+					sdk.NewAttribute(types.AttributeKeyGroupGrantee, "1"),
+				),
+			},
+			check: func(ctx sdk.Context) {
+				suite.Require().False(suite.k.HasGroupGrant(ctx, 1, 1))
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			// Run the message
+			service := keeper.NewMsgServerImpl(suite.k)
+			_, err := service.RevokeAllowance(sdk.WrapSDKContext(ctx), tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
