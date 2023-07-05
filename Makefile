@@ -328,9 +328,9 @@ lint-fix:
 .PHONY: lint lint-fix
 
 format:
-	find . -name '*.go' -type f -not -path "./client/docs/statik*" -not -path "*.git*" -not -name '*.pb.go' -not -name '*_mocks.go' | xargs gofmt -w -s
-	find . -name '*.go' -type f -not -path "./client/docs/statik*" -not -path "*.git*" -not -name '*.pb.go' -not -name '*_mocks.go' | xargs misspell -w
-	find . -name '*.go' -type f -not -path "./client/docs/statik*" -not -path "*.git*" -not -name '*.pb.go' -not -name '*_mocks.go' | xargs goimports -w -local github.com/desmos-labs/desmos
+	find . -name '*.go' -type f -not -path "./client/docs/statik*" -not -path "*.git*" -not -name '*.pb.go' -not -name '*_mocks.go' -not -name '*.pulsar.go' | xargs gofmt -w -s
+	find . -name '*.go' -type f -not -path "./client/docs/statik*" -not -path "*.git*" -not -name '*.pb.go' -not -name '*_mocks.go' -not -name '*.pulsar.go' | xargs misspell -w
+	find . -name '*.go' -type f -not -path "./client/docs/statik*" -not -path "*.git*" -not -name '*.pb.go' -not -name '*_mocks.go' -not -name '*.pulsar.go' | xargs goimports -w -local github.com/desmos-labs/desmos
 .PHONY: format
 
 ###############################################################################
