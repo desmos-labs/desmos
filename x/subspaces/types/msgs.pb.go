@@ -1095,7 +1095,7 @@ func (m *MsgEditUserGroupResponse) XXX_DiscardUnknown() {
 var xxx_messageInfo_MsgEditUserGroupResponse proto.InternalMessageInfo
 
 // MsgMoveUserGroup represents the message used to move one user group from a
-// section to anoter
+// section to another
 type MsgMoveUserGroup struct {
 	// Id of the subspace inside which the group to move is
 	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
