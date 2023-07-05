@@ -54,3 +54,13 @@ A user permission is stored on the chain with a combination of subspace id, sect
 - all the permissions set to an address.
 
 * User Permission: `0x05 | Subspace ID | Section ID | Address | -> ProtocolBuffer(UserPermission)`
+
+## User Allowance
+A user allowance is stored on the chain with a combination of subspace id and grantee address as key. This make it easy to query all the allowances granted to a specific user within a subspace.
+
+* User Allowance: `0x08 | Subspace ID | Grantee Address | -> ProtocolBuffer(Allowance)`
+
+## Group Allowance
+A group allowance is stored on the chain with a combination of subspace id and group id as key. This make it easy to query all the allowances granted to a specific group within a subspace.
+
+* Group Allowance: `0x09 | Subspace ID | Group ID | -> ProtocolBuffer(Allowance)`

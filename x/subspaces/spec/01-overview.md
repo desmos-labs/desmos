@@ -30,6 +30,8 @@ This module allows users to create and manage the representation of different so
     - [User Group](03-state.md#user-group)
     - [User Group Member](03-state.md#user-group-member)
     - [User Permission](03-state.md#user-permission)
+    - [User Allowance](03-state.md#user-allowance)
+    - [Group Allowance](03-state.md#group-allowance)
 3. **[Msg Service](04-messages.md)**
     - [Msg/CreateSubspace](04-messages.md#msgcreatesubspace)
     - [Msg/EditSubspace](04-messages.md#msgeditsubspace)
