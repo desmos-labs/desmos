@@ -22,15 +22,15 @@ under the `statesync` section:
 3. Get a trusted chain height, and the associated block hash. To do this, you will have to:
     - Get the current chain height by running:
        ```bash
-       curl -s curl -s <rpc-address>/commit | jq "{height: .result.signed_header.header.height}"
+       curl -s <rpc-address>/commit | jq "{height: .result.signed_header.header.height}"
        ```
     - Once you have the current chain height, get a height that is a little lower (200 blocks) than the current one.  
       To do this you can execute:
        ```bash
-       curl -s curl -s <rpc-address>/commit?height=<your-height> | jq "{height: .result.signed_header.header.height, hash: .result.signed_header.commit.block_id.hash}"
+       curl -s <rpc-address>/commit?height=<your-height> | jq "{height: .result.signed_header.header.height, hash: .result.signed_header.commit.block_id.hash}"
  
        # Example
-       # curl -s curl -s <rpc-address>/commit?height=100000 | jq "{height: .result.signed_header.header.height, hash: .result.signed_header.commit.block_id.hash}"
+       # curl -s <rpc-address>/commit?height=100000 | jq "{height: .result.signed_header.header.height, hash: .result.signed_header.commit.block_id.hash}"
        ```
       
 4. Now that you have a trusted height and block hash, use those values as the `trust_height` and `trust_hash` values. 
