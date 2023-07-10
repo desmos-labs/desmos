@@ -1,6 +1,8 @@
 package app
 
 import (
+	"fmt"
+
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	"github.com/cosmos/cosmos-sdk/baseapp"
@@ -31,6 +33,8 @@ import (
 	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
 	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 	subspaceswasm "github.com/desmos-labs/desmos/v5/x/subspaces/wasm"
+
+	wasmtypes "github.com/desmos-labs/desmos/v5/x/wasm/types"
 )
 
 const (
@@ -76,8 +80,14 @@ func NewDesmosCustomQueryPlugin(
 
 	querier := wasmdesmos.NewQuerier(queriers)
 
+	protoCdc, ok := cdc.(*codec.ProtoCodec)
+	if !ok {
+		panic(fmt.Errorf("codec must be *codec.ProtoCodec type: actual: %T", cdc))
+	}
+
+	wasmProtoCdc := codec.NewProtoCodec(wasmtypes.NewWasmInterfaceRegistry(protoCdc.InterfaceRegistry()))
 	return wasm.QueryPlugins{
-		Stargate: wasmkeeper.AcceptListStargateQuerier(GetStargateAcceptedQueries(), grpcQueryRouter, cdc),
+		Stargate: wasmkeeper.AcceptListStargateQuerier(GetStargateAcceptedQueries(), grpcQueryRouter, wasmProtoCdc),
 		Custom:   querier.QueryCustom,
 	}
 }
