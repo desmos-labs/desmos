@@ -24,11 +24,10 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// DenomAuthorityMetadata specifies metadata for addresses that have specific
-// capabilities over a token factory denom. Right now there is only one Admin
-// permission, but is planned to be extended to the future.
+// DenomAuthorityMetadata contains the metadata for a single token denom.
 type DenomAuthorityMetadata struct {
-	// Can be empty for no admin, or a valid osmosis address
+	// Admin of the denomination.
+	// Can be empty for no admin, or a valid Desmos address
 	Admin string `protobuf:"bytes,1,opt,name=admin,proto3" json:"admin,omitempty" yaml:"admin"`
 }
 
