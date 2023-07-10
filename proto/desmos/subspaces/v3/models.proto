@@ -17,13 +17,13 @@ message Subspace {
 
   // Unique id that identifies the subspace
   uint64 id = 1
-  [(gogoproto.customname) = "ID", (gogoproto.moretags) = "yaml:\"id\""];
+      [ (gogoproto.customname) = "ID", (gogoproto.moretags) = "yaml:\"id\"" ];
 
   // Human-readable name of the subspace
-  string name = 2 [(gogoproto.moretags) = "yaml:\"name\""];
+  string name = 2 [ (gogoproto.moretags) = "yaml:\"name\"" ];
 
   // Optional description of this subspace
-  string description = 3 [(gogoproto.moretags) = "yaml:\"description\""];
+  string description = 3 [ (gogoproto.moretags) = "yaml:\"description\"" ];
 
   // Represents the treasury account that is associated with the subspace
   string treasury = 4 [
@@ -74,7 +74,7 @@ message Section {
 
   // Unique id of the section within the subspace
   uint32 id = 2
-  [(gogoproto.customname) = "ID", (gogoproto.moretags) = "yaml:\"id\""];
+      [ (gogoproto.customname) = "ID", (gogoproto.moretags) = "yaml:\"id\"" ];
 
   // (optional) Id of the parent section
   uint32 parent_id = 3 [
@@ -83,10 +83,10 @@ message Section {
   ];
 
   // Name of the section within the subspace
-  string name = 4 [(gogoproto.moretags) = "yaml:\"name\""];
+  string name = 4 [ (gogoproto.moretags) = "yaml:\"name\"" ];
 
   // (optional) Description of the section
-  string description = 5 [(gogoproto.moretags) = "yaml:\"description\""];
+  string description = 5 [ (gogoproto.moretags) = "yaml:\"description\"" ];
 }
 
 // UserGroup represents a group of users
@@ -108,13 +108,13 @@ message UserGroup {
 
   // Unique id that identifies the group
   uint32 id = 3
-  [(gogoproto.customname) = "ID", (gogoproto.moretags) = "yaml:\"id\""];
+      [ (gogoproto.customname) = "ID", (gogoproto.moretags) = "yaml:\"id\"" ];
 
   // Human-readable name of the user group
-  string name = 4 [(gogoproto.moretags) = "yaml:\"name\""];
+  string name = 4 [ (gogoproto.moretags) = "yaml:\"name\"" ];
 
   // Optional description of this group
-  string description = 5 [(gogoproto.moretags) = "yaml:\"description\""];
+  string description = 5 [ (gogoproto.moretags) = "yaml:\"description\"" ];
 
   // Permissions that will be granted to all the users part of this group
   repeated string permissions = 6 [
@@ -128,10 +128,10 @@ message UserPermission {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
-  uint64 subspace_id = 1 [(gogoproto.customname) = "SubspaceID"];
-  uint32 section_id = 2 [(gogoproto.customname) = "SectionID"];
-  string user = 3 [(cosmos_proto.scalar) = "cosmos.AddressString"];
-  repeated string permissions = 4 [(gogoproto.castrepeated) = "Permissions"];
+  uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
+  uint32 section_id = 2 [ (gogoproto.customname) = "SectionID" ];
+  string user = 3 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  repeated string permissions = 4 [ (gogoproto.castrepeated) = "Permissions" ];
 }
 
 // Grant represents a grant to a user or a group
