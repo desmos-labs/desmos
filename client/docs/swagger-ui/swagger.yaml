@@ -14797,7 +14797,7 @@ paths:
           format: uint64
       tags:
         - Query
-  /desmos/tokenfactory/v1beta1/params:
+  /desmos/tokenfactory/v1/params:
     get:
       summary: >-
         Params defines a gRPC query method that returns the tokenfactory
@@ -14836,7 +14836,7 @@ paths:
                       DenomCreationFee defines the fee to be charged on the
                       creation of a new
 
-                      denom. The fee is drawn from the subspace treasruy
+                      denom. The fee is drawn from the subspace treasury
                       account, and
 
                       burned.
@@ -14867,7 +14867,7 @@ paths:
                       format: byte
       tags:
         - Query
-  /desmos/tokenfactory/v1beta1/subspaces/{subspace_id}/denoms:
+  /desmos/tokenfactory/v1/subspaces/{subspace_id}/denoms:
     get:
       summary: |-
         SubspaceDenoms defines a gRPC query method for fetching all
@@ -23601,7 +23601,7 @@ definitions:
       total_supply:
         type: string
     title: QueryTotalResponse is the response type for the Query/Total RPC method
-  desmos.tokenfactory.v1beta1.Params:
+  desmos.tokenfactory.v1.Params:
     type: object
     properties:
       denom_creation_fee:
@@ -23622,14 +23622,14 @@ definitions:
           DenomCreationFee defines the fee to be charged on the creation of a
           new
 
-          denom. The fee is drawn from the subspace treasruy account, and
+          denom. The fee is drawn from the subspace treasury account, and
 
           burned.
     description: |-
       Params defines the parameters for the tokenfactory module.
 
       Since: Desmos 6.0.0
-  desmos.tokenfactory.v1beta1.QueryParamsResponse:
+  desmos.tokenfactory.v1.QueryParamsResponse:
     type: object
     properties:
       params:
@@ -23657,11 +23657,11 @@ definitions:
               DenomCreationFee defines the fee to be charged on the creation of
               a new
 
-              denom. The fee is drawn from the subspace treasruy account, and
+              denom. The fee is drawn from the subspace treasury account, and
 
               burned.
     description: QueryParamsResponse is the response type for the Query/Params RPC method.
-  desmos.tokenfactory.v1beta1.QuerySubspaceDenomsResponse:
+  desmos.tokenfactory.v1.QuerySubspaceDenomsResponse:
     type: object
     properties:
       denoms:

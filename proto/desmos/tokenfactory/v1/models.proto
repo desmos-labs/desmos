@@ -1,5 +1,5 @@
 syntax = "proto3";
-package desmos.tokenfactory.v1beta1;
+package desmos.tokenfactory.v1;
 
 import "gogoproto/gogo.proto";
 import "cosmos_proto/cosmos.proto";
