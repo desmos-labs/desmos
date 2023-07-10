@@ -85,9 +85,9 @@ func NewDesmosCustomQueryPlugin(
 		panic(fmt.Errorf("codec must be *codec.ProtoCodec type: actual: %T", cdc))
 	}
 
-	wasmProtoCdc := codec.NewProtoCodec(wasmtypes.NewWasmInterfaceRegistry(protoCdc.InterfaceRegistry()))
+	stargateCdc := codec.NewProtoCodec(wasmtypes.NewWasmInterfaceRegistry(protoCdc.InterfaceRegistry()))
 	return wasm.QueryPlugins{
-		Stargate: wasmkeeper.AcceptListStargateQuerier(GetStargateAcceptedQueries(), grpcQueryRouter, wasmProtoCdc),
+		Stargate: wasmkeeper.AcceptListStargateQuerier(GetStargateAcceptedQueries(), grpcQueryRouter, stargateCdc),
 		Custom:   querier.QueryCustom,
 	}
 }
