@@ -156,6 +156,7 @@ message Grant {
     (cosmos_proto.accepts_interface) = "desmos.subspaces.v3.Grantee",
     (gogoproto.moretags) = "yaml:\"grantee\""
   ];
+
   // Allowance can be any allowance type implementing the FeeAllowanceI
   // interface
   google.protobuf.Any allowance = 4 [
