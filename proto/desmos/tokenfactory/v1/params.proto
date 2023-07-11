@@ -1,5 +1,5 @@
 syntax = "proto3";
-package desmos.tokenfactory.v1beta1;
+package desmos.tokenfactory.v1;
 
 import "amino/amino.proto";
 import "gogoproto/gogo.proto";
@@ -14,7 +14,7 @@ message Params {
   option (amino.name) = "desmos/x/tokenfactory/Params";
 
   // DenomCreationFee defines the fee to be charged on the creation of a new
-  // denom. The fee is drawn from the subspace treasruy account, and
+  // denom. The fee is drawn from the subspace treasury account, and
   // burned.
   repeated cosmos.base.v1beta1.Coin denom_creation_fee = 1 [
     (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
