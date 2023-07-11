@@ -18,7 +18,7 @@ It's expected to fail if:
 * the subspace does not exist;
 * the provided denomination is invalid;
 * the sender does not have the permission to mint tokens inside the subspace;
-* the sender does not have enough balance to pay the creation fee.
+* the subspace treasury does not have enough balance to pay the creation fee.
 
 ## Msg/Mint
 The admin of a token denomination can mint more tokens using a `MsgMint`.
