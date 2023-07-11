@@ -1,0 +1,6 @@
+type: refactor
+module: other
+pull_request: 1193
+description: Build wasm interface registry with custom resolver for StargateQuerier
+backward_compatible: true
+date: 2023-07-10T11:22:35.644818109Z

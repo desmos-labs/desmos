@@ -9,7 +9,7 @@ require (
 	cosmossdk.io/errors v1.0.0-beta.7
 	cosmossdk.io/math v1.0.1
 	cosmossdk.io/simapp v0.0.0-20230323161446-0af178d721ff
-	github.com/CosmWasm/wasmd v0.40.0-rc.1
+	github.com/CosmWasm/wasmd v0.40.0
 	github.com/armon/go-metrics v0.4.1
 	github.com/btcsuite/btcd/btcec/v2 v2.3.2
 	github.com/cometbft/cometbft v0.37.2
@@ -316,9 +316,6 @@ require (
 
 replace (
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.2.0
-
-	// Our wasmd branch is: https://github.com/desmos-labs/wasmd v0.40.x-desmos
-	github.com/CosmWasm/wasmd => github.com/desmos-labs/wasmd v0.40.0-desmos
 
 	// Our cosmos-sdk branch is: https://github.com/desmos-labs/cosmos-sdk v0.47.x-desmos
 	github.com/cosmos/cosmos-sdk => github.com/desmos-labs/cosmos-sdk v0.47.3-desmos
