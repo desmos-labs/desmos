@@ -32,7 +32,6 @@ Here is a brief description of each one of these:
 These features are not directly connected to the social-networks scope but serve the network maintainers and
 external services.
 
-* `Fees`: Allows setting custom additional fees to modules' messages;
 * `Supply`: Allows retrieving information about a particular token total and circulating supply.
 
 If you want to know more about each module, its concepts and how to interact with them check the [modules] section.
