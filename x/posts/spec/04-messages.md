@@ -25,7 +25,7 @@ It's to fail if:
 A previously created post can be edited with the `MsgEditPost`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/master/proto/desmos/posts/v3/msgs.proto#L159-193
+https://github.com/desmos-labs/desmos/blob/master/proto/desmos/posts/v3/msgs.proto#L159-L193
 ```
 It's expected to fail if:
 * the subspace does not exist;
@@ -38,7 +38,7 @@ It's expected to fail if:
 A post can be deleted with the `MsgDeletePost`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/master/proto/desmos/posts/v3/msgs.proto#L206-227
+https://github.com/desmos-labs/desmos/blob/master/proto/desmos/posts/v3/msgs.proto#L206-L227
 ```
 
 It's expected to fail if:
@@ -50,7 +50,7 @@ It's expected to fail if:
 It's possible to add an attachment to an existing post with `MsgAddPostAttachment`. Attachment can be a [media](02-concepts.md#media) or a [poll](02-concepts.md#poll).
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/master/proto/desmos/posts/v3/msgs.proto#L233-262
+https://github.com/desmos-labs/desmos/blob/master/proto/desmos/posts/v3/msgs.proto#L233-L262
 ```
 
 It's expected to fail if:
@@ -64,7 +64,7 @@ It's expected to fail if:
 A post attachment can be removed with `MsgRemovePostAttachment`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/master/proto/desmos/posts/v3/msgs.proto#L281-310
+https://github.com/desmos-labs/desmos/blob/master/proto/desmos/posts/v3/msgs.proto#L281-L310
 ```
 
 It's expected to fail if:
@@ -78,7 +78,7 @@ It's expected to fail if:
 It's possible to answer any active post's poll with `MsgAnswerPoll`.
 
 ```js reference 
-https://github.com/desmos-labs/desmos/blob/master/proto/desmos/posts/v3/msgs.proto#L324-358
+https://github.com/desmos-labs/desmos/blob/master/proto/desmos/posts/v3/msgs.proto#L324-L358
 ```
 
 It's expected to fail if:
@@ -95,7 +95,7 @@ It's expected to fail if:
 The `MsgUpdateParams` allows to update the posts module params.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/master/proto/desmos/posts/v3/msgs.proto#L363-381
+https://github.com/desmos-labs/desmos/blob/master/proto/desmos/posts/v3/msgs.proto#L363-L381
 ```
 
 It's expected to fail if:
@@ -106,7 +106,7 @@ It's expected to fail if:
 Posts can be moved from one subspace to another with `MsgMovePost`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/master/proto/desmos/posts/v3/msgs.proto#L389-425
+https://github.com/desmos-labs/desmos/blob/master/proto/desmos/posts/v3/msgs.proto#L389-L425
 ```
 
 It's expected to fail if:
@@ -120,7 +120,7 @@ It's expected to fail if:
 Users can transfer the ownership of their posts to another user with `MsgRequestPostOwnerTransfer`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/master/proto/desmos/posts/v3/msgs.proto#L438-469
+https://github.com/desmos-labs/desmos/blob/master/proto/desmos/posts/v3/msgs.proto#L438-L469
 ```
 
 It's expected to fail if:
@@ -133,7 +133,7 @@ It's expected to fail if:
 Users can cancel a previously requested post ownership transfer with `MsgCancelPostOwnerTransfer`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/master/proto/desmos/posts/v3/msgs.proto#L477-503
+https://github.com/desmos-labs/desmos/blob/master/proto/desmos/posts/v3/msgs.proto#L477-L503
 ```
 
 It's expected to fail if:
@@ -143,7 +143,7 @@ It's expected to fail if:
 Users can accept a previously requested post ownership transfer with `MsgAcceptPostOwnerTransfer`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/master/proto/desmos/posts/v3/msgs.proto#L511-536
+https://github.com/desmos-labs/desmos/blob/master/proto/desmos/posts/v3/msgs.proto#L511-L536
 ```
 
 It's expected to fail if:
@@ -153,7 +153,7 @@ It's expected to fail if:
 Users can refuse a previously requested post ownership transfer with `MsgRefusePostOwnerTransfer`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/master/proto/desmos/posts/v3/msgs.proto#L544-569
+https://github.com/desmos-labs/desmos/blob/master/proto/desmos/posts/v3/msgs.proto#L544-L569
 ```
 
 It's expected to fail if:

@@ -11,7 +11,7 @@ slug: messages
 A token denomination can be created with a `MsgCreateDenom`. In order to prevent spam, a fee is required to be paid from the subspace treasury in order to create a new denomination. Such fee's amount is set inside the module's params and can be updated by the chain governance if the community decides to do so.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/master/proto/desmos/tokenfactory/v1beta1/msgs.proto#L55-78
+https://github.com/desmos-labs/desmos/blob/master/proto/desmos/tokenfactory/v1beta1/msgs.proto#L55-L78
 ```
 
 It's expected to fail if:
@@ -24,7 +24,7 @@ It's expected to fail if:
 The admin of a token denomination can mint more tokens using a `MsgMint`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/master/proto/desmos/tokenfactory/v1beta1/msgs.proto#L88-116
+https://github.com/desmos-labs/desmos/blob/master/proto/desmos/tokenfactory/v1beta1/msgs.proto#L88-L116
 ```
 
 It's expected to fail if:
@@ -36,7 +36,7 @@ It's expected to fail if:
 The admin of a token denomination can burn tokens using a `MsgBurn`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/master/proto/desmos/tokenfactory/v1beta1/msgs.proto#L123-151
+https://github.com/desmos-labs/desmos/blob/master/proto/desmos/tokenfactory/v1beta1/msgs.proto#L123-L151
 ```
 
 It's expected to fail if:
@@ -47,7 +47,7 @@ It's expected to fail if:
 The admin of a token denomination can set the metadata of the denomination using a `MsgSetDenomMetadata`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/master/proto/desmos/tokenfactory/v1beta1/msgs.proto#L158-179
+https://github.com/desmos-labs/desmos/blob/master/proto/desmos/tokenfactory/v1beta1/msgs.proto#L158-L179
 ```
 
 It's expected to fail if:
@@ -60,7 +60,7 @@ It's expected to fail if:
 The `MsgUpdateParams` can be used to update the overall module's params.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/master/proto/desmos/tokenfactory/v1beta1/msgs.proto#L191-213
+https://github.com/desmos-labs/desmos/blob/master/proto/desmos/tokenfactory/v1beta1/msgs.proto#L191-L213
 ```
 
 It's expected to fail if:
