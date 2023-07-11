@@ -63,7 +63,7 @@ var (
 // is used for delivering transactions through the application state.
 // NOTE: the actual application uses an empty chain-id for ease of testing.
 type TestChain struct {
-	t *testing.T
+	T *testing.T
 
 	App           *simapp.DesmosApp
 	ChainID       string
@@ -122,7 +122,7 @@ func NewTestChain(t *testing.T, chainID string) *TestChain {
 
 	// create an account to send transactions from
 	chain := &TestChain{
-		t:             t,
+		T:             t,
 		ChainID:       chainID,
 		App:           app,
 		CurrentHeader: header,
@@ -158,10 +158,10 @@ func (chain *TestChain) QueryProof(key []byte) ([]byte, clienttypes.Height) {
 	})
 
 	merkleProof, err := commitmenttypes.ConvertProofs(res.ProofOps)
-	require.NoError(chain.t, err)
+	require.NoError(chain.T, err)
 
 	proof, err := chain.App.AppCodec().Marshal(&merkleProof)
-	require.NoError(chain.t, err)
+	require.NoError(chain.T, err)
 
 	revision := clienttypes.ParseChainID(chain.ChainID)
 
@@ -182,10 +182,10 @@ func (chain *TestChain) QueryUpgradeProof(key []byte, height uint64) ([]byte, cl
 	})
 
 	merkleProof, err := commitmenttypes.ConvertProofs(res.ProofOps)
-	require.NoError(chain.t, err)
+	require.NoError(chain.T, err)
 
 	proof, err := chain.App.AppCodec().Marshal(&merkleProof)
-	require.NoError(chain.t, err)
+	require.NoError(chain.T, err)
 
 	revision := clienttypes.ParseChainID(chain.ChainID)
 
@@ -200,7 +200,7 @@ func (chain *TestChain) QueryUpgradeProof(key []byte, height uint64) ([]byte, cl
 func (chain *TestChain) QueryClientStateProof(clientID string) (exported.ClientState, []byte) {
 	// retrieve client state to provide proof for
 	clientState, found := chain.App.IBCKeeper.ClientKeeper.GetClientState(chain.GetContext(), clientID)
-	require.True(chain.t, found)
+	require.True(chain.T, found)
 
 	clientKey := host.FullClientStateKey(clientID)
 	proofClient, _ := chain.QueryProof(clientKey)
@@ -256,7 +256,7 @@ func (chain *TestChain) sendMsgs(msgs ...sdk.Msg) error {
 // occurred.
 func (chain *TestChain) SendMsgs(msgs ...sdk.Msg) (*sdk.Result, error) {
 	_, r, err := simtestutil.SignCheckDeliver(
-		chain.t,
+		chain.T,
 		chain.TxConfig,
 		chain.App.BaseApp,
 		chain.GetContext().BlockHeader(),
@@ -283,7 +283,7 @@ func (chain *TestChain) SendMsgs(msgs ...sdk.Msg) (*sdk.Result, error) {
 // expected to exist otherwise testing will fail.
 func (chain *TestChain) GetClientState(clientID string) exported.ClientState {
 	clientState, found := chain.App.IBCKeeper.ClientKeeper.GetClientState(chain.GetContext(), clientID)
-	require.True(chain.t, found)
+	require.True(chain.T, found)
 
 	return clientState
 }
@@ -315,7 +315,7 @@ func (chain *TestChain) GetValsAtHeight(height int64) (*tmtypes.ValidatorSet, bo
 // connection is expected to exist otherwise testing will fail.
 func (chain *TestChain) GetConnection(testConnection *TestConnection) connectiontypes.ConnectionEnd {
 	connection, found := chain.App.IBCKeeper.ConnectionKeeper.GetConnection(chain.GetContext(), testConnection.ID)
-	require.True(chain.t, found)
+	require.True(chain.T, found)
 
 	return connection
 }
@@ -324,7 +324,7 @@ func (chain *TestChain) GetConnection(testConnection *TestConnection) connection
 // is expected to exist otherwise testing will fail.
 func (chain *TestChain) GetChannel(testChannel TestChannel) channeltypes.Channel {
 	channel, found := chain.App.IBCKeeper.ChannelKeeper.GetChannel(chain.GetContext(), testChannel.PortID, testChannel.ID)
-	require.True(chain.t, found)
+	require.True(chain.T, found)
 
 	return channel
 }
@@ -333,7 +333,7 @@ func (chain *TestChain) GetChannel(testChannel TestChannel) channeltypes.Channel
 // acknowledgement does not exist then testing will fail.
 func (chain *TestChain) GetAcknowledgement(packet exported.PacketI) []byte {
 	ack, found := chain.App.IBCKeeper.ChannelKeeper.GetPacketAcknowledgement(chain.GetContext(), packet.GetDestPort(), packet.GetDestChannel(), packet.GetSequence())
-	require.True(chain.t, found)
+	require.True(chain.T, found)
 
 	return ack
 }
@@ -428,13 +428,13 @@ func (chain *TestChain) ConstructMsgCreateClient(counterparty *TestChain, client
 		)
 		consensusState = counterparty.LastHeader.ConsensusState()
 	default:
-		chain.t.Fatalf("unsupported client state type %s", clientType)
+		chain.T.Fatalf("unsupported client state type %s", clientType)
 	}
 
 	msg, err := clienttypes.NewMsgCreateClient(
 		clientState, consensusState, chain.Account.GetAddress().String(),
 	)
-	require.NoError(chain.t, err)
+	require.NoError(chain.T, err)
 	return msg
 }
 
@@ -451,13 +451,13 @@ func (chain *TestChain) CreateTMClient(counterparty *TestChain, clientID string)
 // necessary for updating a Tendermint client.
 func (chain *TestChain) UpdateTMClient(counterparty *TestChain, clientID string) error {
 	header, err := chain.ConstructUpdateTMClientHeader(counterparty, clientID)
-	require.NoError(chain.t, err)
+	require.NoError(chain.T, err)
 
 	msg, err := clienttypes.NewMsgUpdateClient(
 		clientID, header,
 		chain.Account.GetAddress().String(),
 	)
-	require.NoError(chain.t, err)
+	require.NoError(chain.T, err)
 
 	return chain.sendMsgs(msg)
 }
@@ -520,7 +520,7 @@ func (chain *TestChain) CreateTMClientHeader(chainID string, blockHeight int64, 
 		valSet      *tmproto.ValidatorSet
 		trustedVals *tmproto.ValidatorSet
 	)
-	require.NotNil(chain.t, tmValSet)
+	require.NotNil(chain.T, tmValSet)
 
 	vsetHash := tmValSet.Hash()
 
@@ -545,7 +545,7 @@ func (chain *TestChain) CreateTMClientHeader(chainID string, blockHeight int64, 
 	voteSet := tmtypes.NewVoteSet(chainID, blockHeight, 1, tmproto.PrecommitType, tmValSet)
 
 	commit, err := tmtypes.MakeCommit(blockID, blockHeight, 1, voteSet, signers, timestamp)
-	require.NoError(chain.t, err)
+	require.NoError(chain.T, err)
 
 	signedHeader := &tmproto.SignedHeader{
 		Header: tmHeader.ToProto(),
@@ -690,13 +690,13 @@ func (chain *TestChain) CreatePortCapability(portID string) {
 	if !ok {
 		// create capability using the IBC capability keeper
 		cap, err := chain.App.ScopedIBCKeeper.NewCapability(chain.GetContext(), host.PortPath(portID))
-		require.NoError(chain.t, err)
+		require.NoError(chain.T, err)
 
 		switch portID {
 		case profilestypes.IBCPortID:
 			// claim capability using the ibcporfiles capability keeper
 			err = chain.App.ScopedProfilesKeeper.ClaimCapability(chain.GetContext(), cap, host.PortPath(portID))
-			require.NoError(chain.t, err)
+			require.NoError(chain.T, err)
 		default:
 			panic(fmt.Sprintf("unsupported ibc testing package port ID %s", portID))
 		}
@@ -715,9 +715,9 @@ func (chain *TestChain) CreateChannelCapability(portID, channelID string) {
 	_, ok := chain.App.ScopedIBCKeeper.GetCapability(chain.GetContext(), capName)
 	if !ok {
 		cap, err := chain.App.ScopedIBCKeeper.NewCapability(chain.GetContext(), capName)
-		require.NoError(chain.t, err)
+		require.NoError(chain.T, err)
 		err = chain.App.ScopedProfilesKeeper.ClaimCapability(chain.GetContext(), cap, capName)
-		require.NoError(chain.t, err)
+		require.NoError(chain.T, err)
 	}
 
 	chain.App.Commit()
@@ -729,7 +729,7 @@ func (chain *TestChain) CreateChannelCapability(portID, channelID string) {
 // The capability must exist, otherwise testing will fail.
 func (chain *TestChain) GetChannelCapability(portID, channelID string) *capabilitytypes.Capability {
 	cap, ok := chain.App.ScopedIBCKeeper.GetCapability(chain.GetContext(), host.ChannelCapabilityPath(portID, channelID))
-	require.True(chain.t, ok)
+	require.True(chain.T, ok)
 
 	return cap
 }
