@@ -21,7 +21,7 @@ The subspace name allows the subspace creator and owner to set a human-readable 
 An optional description of what the subspace is about.
 
 ### Treasury
-The treasury address represents the wallet of the subspace itself. This can be used for different reasons such as verifying a subspace with external applications (to prove its authenticity), or paying for fees when executing some smart contracts. 
+The treasury address is the wallet of the subspace. It is used to pay fees for executing smart contracts and creating custom token denominations within the subspace. 
 
 Note that this wallet address is generated based on the subspace id, so that it is always the same for a given subspace and cannot be changed. If you want to perform an action on behalf of this wallet, you will have to grant a treasury permission to the wallet that will perform the action.
 
