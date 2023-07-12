@@ -254,6 +254,71 @@ permissions:
 - EVERYTHING
 ```
 
+#### allowances
+The `allowances` query command allows users to query the allowances state.
+
+```bash
+desmos query subspaces allowances [command] [flags]
+```
+
+##### user-allowances
+The `user-allowances` query command allows users to query the allowances of a specific user.
+
+```bash
+desmos query subspaces allowances user-allowances [subspace-id] [[grantee]] [flags]
+```
+
+Example:
+```bash
+desmos query subspaces allowances user-allowances 1 desmos1f39c3qlgc7mgu0v505easutdrukr8yal0246fs
+```
+
+Example output:
+```yaml
+grants:
+  - allowance:
+      '@type': /cosmos.feegrant.v1beta1.BasicAllowance
+      expiration: null
+      spend_limit: []
+    grantee:
+      '@type': /desmos.subspaces.v3.UserGrantee
+      user: desmos1f39c3qlgc7mgu0v505easutdrukr8yal0246fs
+    granter: desmos1dm3saw9gwx0ha4mdd67rn2ahfwhewzgvd7q5vn
+    subspace_id: "1"
+pagination:
+  next_key: null
+  total: "0"
+```
+
+##### group-allowances
+The `group-allowances` query command allows users to query the allowances of a specific group.
+
+```bash
+desmos query subspaces allowances group-allowances [subspace-id] [group-id] [flags]
+```
+
+Example:
+```bash
+desmos query subspaces allowances group-allowances 1 1
+```
+
+Example output:
+```yaml
+grants:
+  - allowance:
+      '@type': /cosmos.feegrant.v1beta1.BasicAllowance
+      expiration: null
+      spend_limit: []
+    grantee:
+      '@type': /desmos.subspaces.v3.GroupGrantee
+      group_id: 1
+    granter: desmos1dm3saw9gwx0ha4mdd67rn2ahfwhewzgvd7q5vn
+    subspace_id: "1"
+pagination:
+  next_key: null
+  total: "0"
+```
+
 ## gRPC
 Users can query the `subspaces` module gRPC endpoints.
 
@@ -261,12 +326,12 @@ Users can query the `subspaces` module gRPC endpoints.
 The `Subspaces` endpoint allows users to query all the subspaces inside Desmos.
 
 ```bash
-desmos.subspaces.v2.Query/Subspaces
+desmos.subspaces.v3.Query/Subspaces
 ```
 
 Example:
 ```bash
-grpcurl -plaintext localhost:9090 desmos.subspaces.v2.Query/Subspaces
+grpcurl -plaintext localhost:9090 desmos.subspaces.v3.Query/Subspaces
 ```
 
 Example output:
@@ -292,12 +357,12 @@ Example output:
 The `Subspace` endpoint allows users to query a subspace associated with the given ID.
 
 ```bash
-desmos.subspaces.v2.Query/Subspace
+desmos.subspaces.v3.Query/Subspace
 ```
 
 Example:
 ```bash
-grpcurl -plaintext -d '{"subspace_id":1}' localhost:9090 desmos.subspaces.v2.Query/Subspace
+grpcurl -plaintext -d '{"subspace_id":1}' localhost:9090 desmos.subspaces.v3.Query/Subspace
 ```
 
 Example output:
@@ -318,12 +383,12 @@ Example output:
 The `Sections` endpoint allows users to query the sections associated with the given subspace ID. 
 
 ```bash
-desmos.subspaces.v2.Query/Sections
+desmos.subspaces.v3.Query/Sections
 ```
 
 Example:
 ```bash
-grpcurl -plaintext -d '{"subspace_id":1}' localhost:9090 desmos.subspaces.v2.Query/Sections 
+grpcurl -plaintext -d '{"subspace_id":1}' localhost:9090 desmos.subspaces.v3.Query/Sections 
 ```
 
 Example output:
@@ -363,12 +428,12 @@ Example output:
 The `Section` endpoint allows users to query a section with the given ID inside the subspace with the given ID.
 
 ```bash
-desmos.subspaces.v2.Query/Section
+desmos.subspaces.v3.Query/Section
 ```
 
 Example:
 ```bash
-grpcurl -plaintext -d '{"subspace_id":1, "section_id":1}' localhost:9090 desmos.subspaces.v2.Query/Section
+grpcurl -plaintext -d '{"subspace_id":1, "section_id":1}' localhost:9090 desmos.subspaces.v3.Query/Section
 ```
 
 Example output:
@@ -386,12 +451,12 @@ Example output:
 The `UserGroups` endpoint allows users to query all the user groups associated with a given subspace ID and section ID.
 
 ```bash
-desmos.subspaces.v2.Query/UserGroups
+desmos.subspaces.v3.Query/UserGroups
 ```
 
 Example:
 ```bash
-grpcurl -plaintext -d '{"subspace_id":1, "section_id": 0}' localhost:9090 desmos.subspaces.v2.Query/UserGroups
+grpcurl -plaintext -d '{"subspace_id":1, "section_id": 0}' localhost:9090 desmos.subspaces.v3.Query/UserGroups
 ```
 
 Example output:
@@ -420,12 +485,12 @@ Example output:
 The `UserGroup` endpoint allows users to query a specific user group with the given ID associated with a given subspace ID.
 
 ```bash
-desmos.subspaces.v2.Query/UserGroup
+desmos.subspaces.v3.Query/UserGroup
 ```
 
 Example:
 ```bash
-grpcurl -plaintext -d '{"subspace_id":1, "group_id":1}' localhost:9090 desmos.subspaces.v2.Query/UserGroup 
+grpcurl -plaintext -d '{"subspace_id":1, "group_id":1}' localhost:9090 desmos.subspaces.v3.Query/UserGroup 
 ```
 
 Example output:
@@ -445,12 +510,12 @@ The `UserGroupMembers` endpoint allows users to query all the members of the use
 subspace with the given ID.
 
 ```bash
-desmos.subspaces.v2.Query/UserGroupMembers
+desmos.subspaces.v3.Query/UserGroupMembers
 ```
 
 Example:
 ```bash
-grpcurl -plaintext -d '{"subspace_id":1, "group_id":1}' localhost:9090 desmos.subspaces.v2.Query/UserGroupMembers
+grpcurl -plaintext -d '{"subspace_id":1, "group_id":1}' localhost:9090 desmos.subspaces.v3.Query/UserGroupMembers
 ```
 
 Example output:
@@ -471,12 +536,12 @@ The `UserPermissions` endpoint allows users to query all the user's permissions 
 and the section with the given ID.
 
 ```bash
-desmos.subspaces.v2.Query/UserPermissions
+desmos.subspaces.v3.Query/UserPermissions
 ```
 
 Example:
 ```bash
-grpcurl -plaintext -d '{"subspace_id":1, "section_id":0, "user": "desmos1nwp8gxrnmrsrzjdhvk47vvmthzxjtphgxp5ftc"}' localhost:9090 desmos.subspaces.v2.Query/UserPermissions
+grpcurl -plaintext -d '{"subspace_id":1, "section_id":0, "user": "desmos1nwp8gxrnmrsrzjdhvk47vvmthzxjtphgxp5ftc"}' localhost:9090 desmos.subspaces.v3.Query/UserPermissions
 ```
 
 Example output:
@@ -508,6 +573,64 @@ Example output:
       }
     }
   ]
+}
+```
+
+### UserAllowances
+The `UserAllowances` endpoint allows users to query all the user's allowances inside the subspace with the given ID.
+  
+```bash
+desmos.subspaces.v3.Query/UserAllowances
+```
+
+Example:
+```bash
+grpcurl -plaintext -d '{"subspace_id":1, "grantee": "desmos1f39c3qlgc7mgu0v505easutdrukr8yal0246fs"}' localhost:9090 desmos.subspaces.v3.Query/UserAllowances
+````
+
+Example output:
+```json
+{
+  "grants": [
+    {
+      "subspaceId": "1",
+      "granter": "desmos1dm3saw9gwx0ha4mdd67rn2ahfwhewzgvd7q5vn",
+      "grantee": {"@type":"/desmos.subspaces.v3.UserGrantee","user":"desmos1f39c3qlgc7mgu0v505easutdrukr8yal0246fs"},
+      "allowance": {"@type":"/cosmos.feegrant.v1beta1.BasicAllowance"}
+    }
+  ],
+  "pagination": {
+    "total": "1"
+  }
+}
+```
+
+### GroupAllowances
+The `GroupAllowances` endpoint allows users to query all the group's allowances inside the subspace with the given ID.
+
+```bash
+desmos.subspaces.v3.Query/GroupAllowances
+```
+
+Example:
+```bash
+grpcurl -plaintext -d '{"subspace_id":1, "group_id": 1}' localhost:9090 desmos.subspaces.v3.Query/GroupAllowances
+````
+
+Example output:
+```json
+{
+  "grants": [
+    {
+      "subspaceId": "1",
+      "granter": "desmos1dm3saw9gwx0ha4mdd67rn2ahfwhewzgvd7q5vn",
+      "grantee": {"@type":"/desmos.subspaces.v3.GroupGrantee","groupId":1},
+      "allowance": {"@type":"/cosmos.feegrant.v1beta1.BasicAllowance"}
+    }
+  ],
+  "pagination": {
+    "total": "1"
+  }
 }
 ```
 
@@ -570,4 +693,18 @@ and the section with the given ID.
 
 ````
 /desmos/subspaces/v3/subspaces/{subspace_id}/permissions/{user}
+````
+
+### UserAllowances
+The `UserAllowances` endpoint allows users to query all the user's allowances inside the subspace with the given ID.
+  
+````
+/desmos/subspaces/v3/subspaces/{subspace_id}/allowances/users?grantee={grantee}
+````
+
+### GroupAllowances
+The `GroupAllowances` endpoint allows users to query all the group's allowances inside the subspace with the given ID.
+
+````
+/desmos/subspaces/v3/subspaces/{subspace_id}/allowances/groups?group_id={group_id}
 ````

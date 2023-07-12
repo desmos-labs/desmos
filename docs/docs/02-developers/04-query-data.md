@@ -22,8 +22,8 @@ To query data using `CLI`, you can check the following commands of each module:
 * [Reports CLI commands](02-modules/reports/08-client.md#cli);
 * [Reactions CLI commands](02-modules/reactions/07-client.md#cli);
 * [Supply CLI commands](02-modules/supply/03-client.md#cli);
-* [Fees CLI commands](02-modules/fees/06-client.md#cli).
-
+* [Token factory CLI commands](02-modules/tokenfactory/03-client.md#cli);
+[_category_.json](_category_.json)
 :::info
 To be able to perform the above queries, you need to have the desmos daemon installed.
 Check the full node [setup section](../03-fullnode/02-setup.md#1-build-the-software) to know how.
@@ -32,8 +32,8 @@ Check the full node [setup section](../03-fullnode/02-setup.md#1-build-the-softw
 ## gRPC
 To query data using the `gRPC` endpoint, you can use the following endpoints:
 
-1. [Testnet gRPC endpoint](../05-testnet/05-endpoints.md#rest--grpc)
-2. [Mainnet gRPC endpoint](../06-mainnet/06-endpoints.md#rest--grpc)
+1. [Testnet gRPC endpoint](../05-testnet/05-endpoints.md)
+2. [Mainnet gRPC endpoint](../06-mainnet/06-endpoints.md)
 
 The above endpoints can be combined with the following endpoints to get the desired data:
 * [Profiles gRPC endpoints](02-modules/profiles/07-client.md#grpc);
@@ -42,13 +42,13 @@ The above endpoints can be combined with the following endpoints to get the desi
 * [Posts gRPC endpoints](02-modules/posts/08-client.md#grpc);
 * [Reports gRPC endpoints](02-modules/reports/08-client.md#grpc);
 * [Reactions gRPC endpoints](02-modules/reactions/07-client.md#grpc);
-* [Supply gRPC endpoints](02-modules/fees/06-client.md#grpc);
-* [Fees gRPC endpoints](02-modules/fees/06-client.md#grpc).
+* [Supply gRPC endpoints](02-modules/supply/03-client.md#grpc);
+* [Token factory gRPC endpoints](02-modules/tokenfactory/06-client.md#grpc).
 
 ## REST
 TO query data using the `REST` endpoint, you can use the following endpoints:
-1. [Testnet REST endpoint](../05-testnet/05-endpoints.md#rest--grpc)
-2. [Mainnet REST endpoint](../06-mainnet/06-endpoints.md#rest--grpc)
+1. [Testnet REST endpoint](../05-testnet/05-endpoints.md)
+2. [Mainnet REST endpoint](../06-mainnet/06-endpoints.md)
 
 The above endpoints can be used with the following endpoints to get the desired data:
 * [Profiles REST endpoints](02-modules/profiles/07-client.md#rest);
@@ -57,12 +57,11 @@ The above endpoints can be used with the following endpoints to get the desired 
 * [Posts REST endpoints](02-modules/posts/08-client.md#rest);
 * [Reports REST endpoints](02-modules/reports/08-client.md#rest);
 * [Reactions REST endpoints](02-modules/reactions/07-client.md#rest);
-* [Supply REST endpoints](02-modules/fees/06-client.md#rest);
-* [Fees REST endpoints](02-modules/fees/06-client.md#rest).
+* [Supply REST endpoints](02-modules/supply/03-client.md#rest);
 
 ## GQL
 Another way to query the Desmos data is GQL. GQL is different from the above methods because it offers high possibilities of customisation for developers based on their needs. It is possible to interact with GQL endpoints in the client you are building by using one of the many libraries available for this kind of interaction. You can check what suits your needs here: [GraphQL resources](https://graphql.org/code/).
 
 The GQL endpoints for Desmos chains are the following:
-1. [Testnet GQL endpoint](../05-testnet/05-endpoints.md#gql)
-2. [Mainnet GQL endpoint](../06-mainnet/06-endpoints.md#gql)
+1. [Testnet GQL endpoint](../05-testnet/05-endpoints.md)
+2. [Mainnet GQL endpoint](../06-mainnet/06-endpoints.md)

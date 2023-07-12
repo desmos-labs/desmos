@@ -39,7 +39,17 @@ A user answer to a poll is stored using the subspace id, post id and poll id as 
 
 * `0x20 | Subspace ID | Post ID | Poll ID | -> ProtocolBuffer(UserAnswer)`
 
-## Active poll queue 
+## Active poll queue
 Active polls are stored using the voting end time, subspace id, post id and poll id as the key. This allows to determine, at each block height, which polls should have their results tallied:
 
 * `0x21 | End Time | Subspace ID | Post ID | Poll ID | -> bytes(PollID)`
+
+## Params
+The posts module params are stored using a simple prefix: 
+
+* `0x30 | -> ProtocolBuffer(Params)`
+
+## Post owner transfer requests
+The post owner transfer requests are stored using the subspace id and post id. This allows to easily query the post owner transfer request of a specific post:
+
+* `0x40 | Subspace ID | Post ID | -> ProtocolBuffer(PostOwnerTransferRequest)`

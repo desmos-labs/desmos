@@ -106,6 +106,9 @@ The creation date of the post.
 ### Last Edited Date
 The las time the post has been edited.
 
+### Owner
+The owner of the post. This is the user that can edit or delete the post. Usually this is the same as the author, but it might be different if the post ownership has been transferred.
+
 ## Attachment
 An attachment represents any kind of media that can be attached to a post, such as (but not limited to): an image, a GIF, or a poll.
 
@@ -189,3 +192,19 @@ The answer indexes contains a list of user answers, each one identified by the i
 
 #### User 
 The address of the user answering the poll.
+
+## PostOwnerTransferRequest
+A post owner transfer request is a request that can be used to transfer the ownership of a post from one user to another. This can be useful in case a user wants to transfer the ownership of a post to another user, for example because they are leaving the platform.
+
+### Subspace ID
+The subspace id represents the id of the subspace inside which is present the post which ownership should be transferred.
+
+### Post ID
+The id of the post which ownership should be transferred.
+
+### Sender
+Address of the user that has sent the post ownership transfer request.
+
+### Receiver
+Address of the user that should receive the post ownership.
+

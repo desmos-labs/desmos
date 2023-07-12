@@ -11,7 +11,7 @@ slug: messages
 A subspace can be created with the `MsgCreateSubspace`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v3/msgs.proto#L65-L82 
+https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v3/msgs.proto#L96-L119
 ```
 
 It's expected to fail if:
@@ -23,7 +23,7 @@ It's expected to fail if:
 A subspace can be edited with the `MsgEditSubspace`:
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v3/msgs.proto#L93-L119 
+https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v3/msgs.proto#L130-L161
 ```
 
 It's expected to fail if:
@@ -35,7 +35,7 @@ It's expected to fail if:
 A subspace can be deleted using `MsgDeleteSubspace`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v3/msgs.proto#L124-L134 
+https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v3/msgs.proto#L166-L182
 ```
 
 It's expected to fail if:
@@ -46,7 +46,7 @@ It's expected to fail if:
 A section can be created using the `MsgCreateSection`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v3/msgs.proto#L141-L164 
+https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v3/msgs.proto#L189-L218
 ```
 
 The message is expected to fail if:
@@ -59,7 +59,7 @@ The message is expected to fail if:
 A section can be edited using the `MsgEditSection`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v3/msgs.proto#L175-L198 
+https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v3/msgs.proto#L229-L258
 ```
 
 It's expected to fail if:
@@ -71,7 +71,7 @@ It's expected to fail if:
 A section can be moved to under another section using the `MsgMoveSection`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v3/msgs.proto#L203-L226 
+https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v3/msgs.proto#L263-L292
 ```
 
 It's expected to fail if:
@@ -85,7 +85,7 @@ It's expected to fail if:
 A section can be deleted using the `MsgDeleteSection`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v3/msgs.proto#L231-L247 
+https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v3/msgs.proto#L297-L319
 ```
 
 It's is expected to fail if:
@@ -97,7 +97,7 @@ It's is expected to fail if:
 A user group can be created using the `MsgCreateUserGroup`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v3/msgs.proto#L254-L284 
+https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v3/msgs.proto#L326-L364
 ```
 
 The message is expected to fail if:
@@ -111,7 +111,7 @@ The message is expected to fail if:
 A user group can be edited using the `MsgEditUserGroup`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v3/msgs.proto#L294-L316
+https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v3/msgs.proto#L374-L402
 ```
 
 It's expected to fail if:
@@ -124,7 +124,7 @@ It's expected to fail if:
 A user group can be moved to another section group using the `MsgMoveUserGroup`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v3/msgs.proto#L321-L344
+https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v3/msgs.proto#L407-L436
 ```
 
 It's expected to fail if:
@@ -138,7 +138,7 @@ It's expected to fail if:
 A user group permissions can be set using the `MsgSetUserGroupPermissions`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v3/msgs.proto#L349-L370
+https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v3/msgs.proto#L441-L468
 ```
 
 It's expected to fail if:
@@ -152,7 +152,7 @@ It's expected to fail if:
 A user group permissions can be deleted using the `MsgDeleteUserGroup`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v3/msgs.proto#L376-L392
+https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v3/msgs.proto#L474-L496
 ```
 
 It's expected to fail if:
@@ -164,7 +164,7 @@ It's expected to fail if:
 A user can be added to a user group using the `MsgAddUserToUserGroup`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v3/msgs.proto#L399-L419
+https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v3/msgs.proto#L503-L532
 ```
 
 It's expected to fail if:
@@ -177,7 +177,7 @@ It's expected to fail if:
 A user can be removed from a user group using the `MsgRemoveUserFromUserGroup`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v3/msgs.proto#L425-L445
+https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v3/msgs.proto#L538-L567
 ```
 
 It's expected to fail if:
@@ -190,7 +190,7 @@ It's expected to fail if:
 A user permissions can be set using the `MsgSetUserPermissions`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v3/msgs.proto#L453-L477
+https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v3/msgs.proto#L575-L608
 ```
 
 It's expected to fail if:
@@ -198,3 +198,71 @@ It's expected to fail if:
 * the section does not exist;
 * the signer has no permission to set permissions inside the destination section;
 * the permissions values are not valid.
+
+## Msg/GrantAllowance
+A subspace admin can grant a user or a user group a fee allowance within the subspace using a `MsgGrantAllowance`.
+
+```js reference
+https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v3/msgs.proto#L616-L645
+```
+
+It's expected to fail if:
+* the subspace does not exist;
+* the signer has no permission to grant allowances within the subspace;
+* the grantee is not a valid user or user group;
+* the grantee is already allowed to spend fees within the subspace;
+* the allowance is not valid.
+
+## Msg/RevokeAllowance
+A subspace admin can revoke a user or a user group a fee allowance within the subspace using a `MsgRevokeAllowance`.
+
+```js reference
+https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v3/msgs.proto#L653-L676
+```
+
+It's expected to fail if:
+* the subspace does not exist;
+* the signer has no permission to revoke allowances within the subspace;
+* the grantee is not a valid user or user group;
+* the grantee does not have an allowance within the subspace.
+
+## Msg/GrantTreasuryAuthorization
+A subspace admin can grant a user the authorization to perform an action on behalf of the subspace treasury using a `MsgGrantTreasuryAuthorization`.
+
+```js reference
+https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v3/msgs.proto#L684-L714
+```
+
+It's expected to fail if:
+* the subspace does not exist;
+* the signer has no permission to grant treasury authorizations within the subspace;
+* the grantee is not a valid user;
+* the grantee is already authorized to perform the given action;
+* the authorization is not valid.
+
+## Msg/RevokeTreasuryAuthorization
+A subspace admin can revoke a user the authorization to perform an action on behalf of the subspace treasury using a `MsgRevokeTreasuryAuthorization`.
+
+```js reference
+https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v3/msgs.proto#L720-L746
+```
+
+It's expected to fail if:
+* the subspace does not exist;
+* the signer has no permission to revoke treasury authorizations within the subspace;
+* the grantee is not a valid user;
+* the grantee does not already have an authorization to perform the given action.
+
+## Msg/UpdateSubspaceFeeTokens
+The `MsgUpdateSubspaceFeeTokens` represents the message to be used to update the accepted fee tokens inside a given subspace, using an on-chain governance proposal.
+
+This is done through a governance proposal in order to make sure that validators are aware that they will start receiving fees in a new token when validating the messages related to the given subspace.
+
+```js reference
+https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v3/msgs.proto#L754-L782
+```
+
+It's expected to fail if:
+* the subspace does not exist;
+* the additional fee tokens are invalid;
+* the authority is not the address of the governance module.

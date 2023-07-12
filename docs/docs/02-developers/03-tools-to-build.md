@@ -236,7 +236,7 @@ fn query_posts_from_contract(deps: Deps<DesmosQuery>, subspace_id: Uint64, pagin
 The above examples are really simple examples of what you can achieve with the Desmos Bindings packages inside smart contracts. More examples will be added here in the future, and you can find some other inside the [Desmos Bindings Github repository](https://github.com/desmos-labs/desmos-bindings).
 
 ## GraphQL APIs
-The [GraphQL APIs](../07-graphql/01-overview.md) simplifies the way with which clients interact with the Desmos blockchain to obtain the data their applications need. These queries can be customised with a wide range of parameters giving developers a great flexibility while building their apps.
+The GraphQL APIs simplify the way with which clients interact with the Desmos blockchain to obtain the data their applications need. These queries can be customised with a wide range of parameters giving developers a great flexibility while building their apps.
 
 ### Example: Query a user posts
 #### Query

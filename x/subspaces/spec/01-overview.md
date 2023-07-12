@@ -18,6 +18,9 @@ This module allows users to create and manage the representation of different so
     - [Section](02-concepts.md#section)
     - [User Group](02-concepts.md#user-group)
     - [User Permission](02-concepts.md#user-permission)
+    - [Grant](02-concepts.md#grant)
+    - [UserGrantee](02-concepts.md#usergrantee)
+    - [GroupGrantee](02-concepts.md#groupgrantee)
 2. **[State](03-state.md)**
     - [Next Subspace ID](03-state.md#next-subspace-id)
     - [Subspace](03-state.md#subspace)
@@ -27,6 +30,8 @@ This module allows users to create and manage the representation of different so
     - [User Group](03-state.md#user-group)
     - [User Group Member](03-state.md#user-group-member)
     - [User Permission](03-state.md#user-permission)
+    - [User Allowance](03-state.md#user-allowance)
+    - [Group Allowance](03-state.md#group-allowance)
 3. **[Msg Service](04-messages.md)**
     - [Msg/CreateSubspace](04-messages.md#msgcreatesubspace)
     - [Msg/EditSubspace](04-messages.md#msgeditsubspace)
@@ -43,6 +48,11 @@ This module allows users to create and manage the representation of different so
     - [Msg/AddUserToUserGroup](04-messages.md#msgaddusertousergroup)
     - [Msg/RemoveUserFromUserGroup](04-messages.md#msgremoveuserfromusergroup)
     - [Msg/SetUserPermissions](04-messages.md#msgsetuserpermissions)
+    - [Msg/GrantTreasuryAuthorization](04-messages.md#msggranttreasuryauthorization)
+    - [Msg/RevokeTreasuryAuthorization](04-messages.md#msgrevoketreasuryauthorization)
+    - [Msg/GrantAllowance](04-messages.md#msggrantallowance)
+    - [Msg/RevokeAllowance](04-messages.md#msgrevokeallowance)
+    - [Msg/UpdateSubspaceFeeTokens](04-messages.md#msgupdatesubspacefeetokens)
 4. **[Events](05-events.md)**
     - [Handlers](05-events.md#handlers) 
 5. **[Permissions](06-permissions.md)**

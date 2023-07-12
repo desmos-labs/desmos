@@ -18,21 +18,22 @@ Here is a brief description of each one of these:
 
 * `Profiles`: Handles the creation and management of a decentralized identity and its own links with both your other chains wallets and centralised applications;
 
-* `Relationships`: Handles the creation and management of mono-directional and bidirectional [relationships] between users' wallets. It also allows managing users blocks lists;
+* `Relationships`: Handles the creation and management of mono-directional and bidirectional relationships between users' wallets. It also allows managing users blocks lists;
 
-* `Subspaces`: Handles the creation and management of a [subspace] and their [sections] inside Desmos;
+* `Subspaces`: Handles the creation and management of a subspace and their sections inside Desmos;
 
-* `Posts`: Handles the creation and management of posts and their contents. These contents can include a variety of different attachments such as medias (pics, gifs, videos) and polls. Posts can also be enriched with a variety of [entities].
+* `Posts`: Handles the creation and management of posts and their contents. These contents can include a variety of different attachments such as medias (pics, gifs, videos) and polls. Posts can also be enriched with a variety of entities.
 
 * `Reactions`: Handles the creation and management of reactions to posts;
 
 * `Reports`: Handle the creation and management of posts' and users' reports.
 
+* `Tokenfactory`: Handles the creation and management of native tokens that can be set as additional fee tokens inside subspaces.
+
 ## Support features
 These features are not directly connected to the social-networks scope but serve the network maintainers and
 external services.
 
-* `Fees`: Allows setting custom additional fees to modules' messages;
 * `Supply`: Allows retrieving information about a particular token total and circulating supply.
 
-If you want to know more about each module, its concepts and how to interact with them check the [modules] section.
+If you want to know more about each module, its concepts and how to interact with them check the modules section.
