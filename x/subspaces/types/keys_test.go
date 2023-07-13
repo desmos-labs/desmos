@@ -2,6 +2,7 @@ package types_test
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/require"
 
@@ -81,6 +82,44 @@ func TestSplitUserAddressPermissionKey(t *testing.T) {
 				require.Equal(t, tc.expSubspaceID, subspaceID)
 				require.Equal(t, tc.expSectionID, sectionID)
 				require.Equal(t, tc.expUser, user)
+			}
+		})
+	}
+}
+
+func TestParseGrantKeyFromAllowanceQueueKey(t *testing.T) {
+	expiration := time.Date(2100, 7, 7, 0, 0, 0, 0, time.UTC)
+	testCases := []struct {
+		name        string
+		key         []byte
+		shouldPanic bool
+		expKey      []byte
+	}{
+		{
+			name:        "invalid length panics",
+			key:         []byte{},
+			shouldPanic: true,
+		},
+		{
+			name:        "invalid prefix panics",
+			key:         types.UserPermissionStoreKey(1, 2, "cosmos1vlknheepy5454pw4j6x53yeg57l7ec39rf8ffp"),
+			shouldPanic: true,
+		},
+		{
+			name:   "valid key return proper data",
+			key:    types.AllowanceExpirationQueueKey(&expiration, types.UserAllowanceKey(1, "cosmos1vlknheepy5454pw4j6x53yeg57l7ec39rf8ffp")),
+			expKey: types.UserAllowanceKey(1, "cosmos1vlknheepy5454pw4j6x53yeg57l7ec39rf8ffp"),
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			if tc.shouldPanic {
+				require.Panics(t, func() { types.ParseGrantKeyFromAllowanceQueueKey(tc.key) })
+			} else {
+				grantKey := types.ParseGrantKeyFromAllowanceQueueKey(tc.key)
+				require.Equal(t, tc.expKey, grantKey)
 			}
 		})
 	}
