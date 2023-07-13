@@ -482,12 +482,12 @@ func (k Keeper) GetUserGroupGrants(ctx sdk.Context, subspaceID uint64, groupID u
 
 func (k Keeper) IterateGrantsInExpirationQueue(ctx sdk.Context, fn func(grant types.Grant) bool) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.AllowanceExpirationQueuePrefix)
+	iterator := sdk.KVStorePrefixIterator(store, types.ExpiringAllowanceQueuePrefix)
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
 		var grant types.Grant
-		k.cdc.MustUnmarshal(store.Get(types.ParseGrantKeyFromAllowanceQueueKey(iterator.Key())), &grant)
+		k.cdc.MustUnmarshal(store.Get(types.ParseAllowanceKeyFromExpiringQueueKey(iterator.Key())), &grant)
 		stop := fn(grant)
 		if stop {
 			break

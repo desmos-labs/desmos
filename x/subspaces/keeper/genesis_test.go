@@ -680,7 +680,7 @@ func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 				// Check expiration is added properly
 				suite.Require().True(
 					ctx.KVStore(suite.storeKey).Has(
-						types.AllowanceExpirationQueueKey(&expiration, types.UserAllowanceKey(1, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")),
+						types.ExpiringAllowanceQueueKey(&expiration, types.UserAllowanceKey(1, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")),
 					),
 				)
 			},
@@ -716,7 +716,7 @@ func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 				// Check expiration is added properly
 				suite.Require().True(
 					ctx.KVStore(suite.storeKey).Has(
-						types.AllowanceExpirationQueueKey(&expiration, types.GroupAllowanceKey(1, 1)),
+						types.ExpiringAllowanceQueueKey(&expiration, types.GroupAllowanceKey(1, 1)),
 					),
 				)
 			},

@@ -107,7 +107,7 @@ func (k Keeper) saveAllowanceToExpirationQueue(ctx sdk.Context, expiration *time
 
 	store := ctx.KVStore(k.storeKey)
 	if expiration != nil {
-		store.Set(types.AllowanceExpirationQueueKey(expiration, grantKey), []byte{0x1})
+		store.Set(types.ExpiringAllowanceQueueKey(expiration, grantKey), []byte{0x1})
 	}
 }
 
@@ -126,19 +126,19 @@ func (k Keeper) removeAllowanceFromExpirationQueue(ctx sdk.Context, grantKey []b
 	// Delete grant from expiration queue
 	expiration := grant.GetExpiration()
 	if expiration != nil {
-		store.Delete(types.AllowanceExpirationQueueKey(expiration, grantKey))
+		store.Delete(types.ExpiringAllowanceQueueKey(expiration, grantKey))
 	}
 }
 
 // RemoveExpiredAllowances deletes the expired grants.
 func (k Keeper) RemoveExpiredAllowances(ctx sdk.Context, expiration time.Time) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := store.Iterator(types.AllowanceExpirationQueuePrefix, types.AllowanceKeyByExpiration(&expiration))
+	iterator := store.Iterator(types.ExpiringAllowanceQueuePrefix, types.AllowanceKeyByExpiration(&expiration))
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
 		store.Delete(iterator.Key())
-		store.Delete(types.ParseGrantKeyFromAllowanceQueueKey(iterator.Key()))
+		store.Delete(types.ParseAllowanceKeyFromExpiringQueueKey(iterator.Key()))
 	}
 }
 

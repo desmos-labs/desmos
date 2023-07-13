@@ -44,17 +44,17 @@ const (
 )
 
 var (
-	SubspaceIDKey                  = []byte{0x00}
-	SubspacePrefix                 = []byte{0x01}
-	GroupIDPrefix                  = []byte{0x02}
-	GroupsPrefix                   = []byte{0x03}
-	GroupsMembersPrefix            = []byte{0x04}
-	UserPermissionsStorePrefix     = []byte{0x05}
-	SectionIDPrefix                = []byte{0x06}
-	SectionsPrefix                 = []byte{0x07}
-	UserAllowancePrefix            = []byte{0x08}
-	GroupAllowancePrefix           = []byte{0x09}
-	AllowanceExpirationQueuePrefix = []byte{0x10}
+	SubspaceIDKey                = []byte{0x00}
+	SubspacePrefix               = []byte{0x01}
+	GroupIDPrefix                = []byte{0x02}
+	GroupsPrefix                 = []byte{0x03}
+	GroupsMembersPrefix          = []byte{0x04}
+	UserPermissionsStorePrefix   = []byte{0x05}
+	SectionIDPrefix              = []byte{0x06}
+	SectionsPrefix               = []byte{0x07}
+	UserAllowancePrefix          = []byte{0x08}
+	GroupAllowancePrefix         = []byte{0x09}
+	ExpiringAllowanceQueuePrefix = []byte{0x10}
 )
 
 // GetSubspaceIDBytes returns the byte representation of the subspaceID
@@ -245,29 +245,29 @@ func GroupAllowanceKey(subspaceID uint64, groupID uint32) []byte {
 // --------------------------------------------------------------------------------------------------------------------
 
 var (
-	lenAllowancePrefix     = len(AllowanceExpirationQueuePrefix)
-	lenAllowanceExpiration = len(sdk.FormatTimeBytes(time.Now()))
-	lenExpirationPrefix    = lenAllowancePrefix + lenAllowanceExpiration
+	lenExpiringAllowanceQueuePrefix = len(ExpiringAllowanceQueuePrefix)
+	lenAllowanceExpiration          = len(sdk.FormatTimeBytes(time.Now()))
+	lenExpirationPrefix             = lenExpiringAllowanceQueuePrefix + lenAllowanceExpiration
 )
 
-// AllowanceKeyByExpiration gets the allowance expiration queue key by endTime
+// AllowanceKeyByExpiration gets the allowance expiration queue key by expiration time
 func AllowanceKeyByExpiration(expiration *time.Time) []byte {
-	return append(AllowanceExpirationQueuePrefix, sdk.FormatTimeBytes(*expiration)...)
+	return append(ExpiringAllowanceQueuePrefix, sdk.FormatTimeBytes(*expiration)...)
 }
 
-// AllowanceExpirationQueueKey returns the key used to store the allowance to the expiration queue
-func AllowanceExpirationQueueKey(expiration *time.Time, key []byte) []byte {
+// ExpiringAllowanceQueueKey returns the key used to store the allowance to the expiring queue
+func ExpiringAllowanceQueueKey(expiration *time.Time, key []byte) []byte {
 	return append(AllowanceKeyByExpiration(expiration), key...)
 }
 
-// ParseGrantKeyFromAllowanceQueueKey parses grant key from allowance expiration queue key
-func ParseGrantKeyFromAllowanceQueueKey(key []byte) []byte {
+// ParseAllowanceKeyFromExpiringQueueKey parses allowance key from expiring queue key
+func ParseAllowanceKeyFromExpiringQueueKey(key []byte) []byte {
 	if len(key) < lenExpirationPrefix {
 		panic(fmt.Errorf("invalid key length; expected min %d got %d", lenExpirationPrefix, len(key)))
 	}
 
-	if !bytes.Equal(key[:lenAllowancePrefix], AllowanceExpirationQueuePrefix) {
-		panic(fmt.Errorf("invalid key prefix; expected prefix %X prefix %X", AllowanceExpirationQueuePrefix, key[:lenAllowancePrefix]))
+	if !bytes.Equal(key[:lenExpiringAllowanceQueuePrefix], ExpiringAllowanceQueuePrefix) {
+		panic(fmt.Errorf("invalid key prefix; expected prefix %X prefix %X", ExpiringAllowanceQueuePrefix, key[:lenExpiringAllowanceQueuePrefix]))
 	}
 
 	return key[lenExpirationPrefix:]
