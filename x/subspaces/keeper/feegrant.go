@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"fmt"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -11,8 +12,14 @@ import (
 // SaveGrant saves the given grant inside the current context
 func (k Keeper) SaveGrant(ctx sdk.Context, grant types.Grant) {
 	store := ctx.KVStore(k.storeKey)
-	store.Set(getGrantKey(grant), k.cdc.MustMarshal(&grant))
 
+	grantKey := getGrantKey(grant)
+
+	// Save allowance grant to expiration queue
+	k.saveAllowanceToExpirationQueue(ctx, grant.GetExpiration(), grantKey)
+
+	// Save allowance grant
+	store.Set(grantKey, k.cdc.MustMarshal(&grant))
 	if grantee, isUserGrantee := grant.Grantee.GetCachedValue().(*types.UserGrantee); isUserGrantee {
 		k.createAccountIfNotExists(ctx, grantee.User)
 	}
@@ -41,6 +48,10 @@ func (k Keeper) HasUserGrant(ctx sdk.Context, subspaceID uint64, grantee string)
 func (k Keeper) DeleteUserGrant(ctx sdk.Context, subspaceID uint64, grantee string) {
 	store := ctx.KVStore(k.storeKey)
 	key := types.UserAllowanceKey(subspaceID, grantee)
+
+	k.removeAllowanceFromExpirationQueue(ctx, key)
+
+	// Delete allowance
 	store.Delete(key)
 }
 
@@ -68,6 +79,10 @@ func (k Keeper) HasGroupGrant(ctx sdk.Context, subspaceID uint64, groupID uint32
 func (k Keeper) DeleteGroupGrant(ctx sdk.Context, subspaceID uint64, groupID uint32) {
 	store := ctx.KVStore(k.storeKey)
 	key := types.GroupAllowanceKey(subspaceID, groupID)
+
+	k.removeAllowanceFromExpirationQueue(ctx, key)
+
+	// Delete allowance
 	store.Delete(key)
 }
 
@@ -83,6 +98,48 @@ func (k Keeper) GetGroupGrant(ctx sdk.Context, subspaceID uint64, groupID uint32
 	var grant types.Grant
 	k.cdc.MustUnmarshal(bz, &grant)
 	return grant, true
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+func (k Keeper) saveAllowanceToExpirationQueue(ctx sdk.Context, expiration *time.Time, grantKey []byte) {
+	k.removeAllowanceFromExpirationQueue(ctx, grantKey)
+
+	store := ctx.KVStore(k.storeKey)
+	if expiration != nil {
+		store.Set(types.AllowanceExpirationQueueKey(expiration, grantKey), []byte{0x1})
+	}
+}
+
+func (k Keeper) removeAllowanceFromExpirationQueue(ctx sdk.Context, grantKey []byte) {
+	store := ctx.KVStore(k.storeKey)
+
+	// Do nothing if grant does not exist
+	if !store.Has(grantKey) {
+		return
+	}
+
+	// Get existing grant
+	var grant types.Grant
+	k.cdc.MustUnmarshal(store.Get(grantKey), &grant)
+
+	// Delete grant from expiration queue
+	expiration := grant.GetExpiration()
+	if expiration != nil {
+		store.Delete(types.AllowanceExpirationQueueKey(expiration, grantKey))
+	}
+}
+
+// RemoveExpiredAllowances deletes the expired grants.
+func (k Keeper) RemoveExpiredAllowances(ctx sdk.Context, expiration time.Time) {
+	store := ctx.KVStore(k.storeKey)
+	iterator := store.Iterator(types.AllowanceExpirationQueuePrefix, types.AllowanceKeyByExpiration(&expiration))
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		store.Delete(iterator.Key())
+		store.Delete(types.ParseGrantKeyFromAllowanceQueueKey(iterator.Key()))
+	}
 }
 
 // --------------------------------------------------------------------------------------------------------------------

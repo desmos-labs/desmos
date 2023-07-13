@@ -1,6 +1,8 @@
 package keeper_test
 
 import (
+	"time"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/feegrant"
 
@@ -140,6 +142,206 @@ func (suite *KeeperTestSuite) TestKeeper_SaveGrant() {
 	}
 }
 
+func (suite *KeeperTestSuite) TestKeeper_SaveAllowanceToExpirationQueue() {
+	expiration := time.Date(2100, 7, 7, 0, 0, 0, 0, time.UTC)
+	newExpiration := time.Date(2100, 7, 14, 0, 0, 0, 0, time.UTC)
+
+	testCases := []struct {
+		name  string
+		store func(ctx sdk.Context)
+		grant types.Grant
+		check func(ctx sdk.Context)
+	}{
+		{
+			name: "new grant without expiration is saved properly",
+			grant: types.NewGrant(
+				1,
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				types.NewGroupGrantee(1),
+				&feegrant.BasicAllowance{
+					SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100))),
+				},
+			),
+			check: func(ctx sdk.Context) {
+				_, found := suite.k.GetGroupGrant(ctx, 1, 1)
+				suite.Require().True(found)
+
+				// Check no grants inside expiration queue
+				suite.Require().Empty(suite.k.GetAllGrantsInExpirationQueue(ctx))
+			},
+		},
+		{
+			name: "new grant with expiration is saved properly properly",
+			grant: types.NewGrant(
+				1,
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				types.NewGroupGrantee(1),
+				&feegrant.BasicAllowance{
+					SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100))),
+					Expiration: &newExpiration,
+				},
+			),
+			check: func(ctx sdk.Context) {
+				_, found := suite.k.GetGroupGrant(ctx, 1, 1)
+				suite.Require().True(found)
+
+				// Check grant is added into grant queue
+				suite.Require().True(
+					ctx.KVStore(suite.storeKey).Has(
+						types.AllowanceExpirationQueueKey(&newExpiration, types.GroupAllowanceKey(1, 1)),
+					),
+				)
+			},
+		},
+		{
+			name: "grant without expiration overrides the grant with expiration properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
+					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+					types.NewGroupGrantee(1),
+					&feegrant.BasicAllowance{
+						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100))),
+						Expiration: &expiration,
+					},
+				))
+			},
+			grant: types.NewGrant(
+				1,
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				types.NewGroupGrantee(1),
+				&feegrant.BasicAllowance{
+					SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100))),
+				},
+			),
+			check: func(ctx sdk.Context) {
+				_, found := suite.k.GetGroupGrant(ctx, 1, 1)
+				suite.Require().True(found)
+
+				// Check no grants inside expiration queue
+				suite.Require().Empty(suite.k.GetAllGrantsInExpirationQueue(ctx))
+			},
+		},
+		{
+			name: "grant with expiration overrides the grant with expiration properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
+					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+					types.NewGroupGrantee(1),
+					&feegrant.BasicAllowance{
+						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100))),
+						Expiration: &expiration,
+					},
+				))
+			},
+			grant: types.NewGrant(
+				1,
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				types.NewGroupGrantee(1),
+				&feegrant.BasicAllowance{
+					SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100))),
+					Expiration: &newExpiration,
+				},
+			),
+			check: func(ctx sdk.Context) {
+				_, found := suite.k.GetGroupGrant(ctx, 1, 1)
+				suite.Require().True(found)
+
+				// Check old expiration is removed properly
+				suite.Require().False(
+					ctx.KVStore(suite.storeKey).Has(
+						types.AllowanceExpirationQueueKey(&expiration, types.GroupAllowanceKey(1, 1)),
+					),
+				)
+
+				// Check new expiration is added properly
+				suite.Require().True(
+					ctx.KVStore(suite.storeKey).Has(
+						types.AllowanceExpirationQueueKey(&newExpiration, types.GroupAllowanceKey(1, 1)),
+					),
+				)
+			},
+		},
+		{
+			name: "grant without expiration overrides the grant without expiration properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
+					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+					types.NewGroupGrantee(1),
+					&feegrant.BasicAllowance{
+						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100))),
+					},
+				))
+			},
+			grant: types.NewGrant(
+				1,
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				types.NewGroupGrantee(1),
+				&feegrant.BasicAllowance{
+					SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100))),
+				},
+			),
+			check: func(ctx sdk.Context) {
+				_, found := suite.k.GetGroupGrant(ctx, 1, 1)
+				suite.Require().True(found)
+
+				// Check no grants inside expiration queue
+				suite.Require().Empty(suite.k.GetAllGrantsInExpirationQueue(ctx))
+			},
+		},
+		{
+			name: "grant with expiration overrides the grant without expiration properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
+					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+					types.NewGroupGrantee(1),
+					&feegrant.BasicAllowance{
+						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100))),
+					},
+				))
+			},
+			grant: types.NewGrant(
+				1,
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				types.NewGroupGrantee(1),
+				&feegrant.BasicAllowance{
+					SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100))),
+					Expiration: &newExpiration,
+				},
+			),
+			check: func(ctx sdk.Context) {
+				_, found := suite.k.GetGroupGrant(ctx, 1, 1)
+				suite.Require().True(found)
+
+				// Check new expiration is added properly
+				suite.Require().True(
+					ctx.KVStore(suite.storeKey).Has(
+						types.AllowanceExpirationQueueKey(&newExpiration, types.GroupAllowanceKey(1, 1)),
+					),
+				)
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			suite.k.SaveGrant(ctx, tc.grant)
+			if tc.check != nil {
+				tc.check(ctx)
+			}
+		})
+	}
+}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 func (suite *KeeperTestSuite) TestKeeper_HasUserGrant() {
@@ -239,6 +441,8 @@ func (suite *KeeperTestSuite) TestKeeper_GetUserGrant() {
 }
 
 func (suite *KeeperTestSuite) TestKeeper_DeleteUserGrant() {
+	expiration := time.Date(2100, 7, 7, 0, 0, 0, 0, time.UTC)
+
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -252,6 +456,9 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteUserGrant() {
 			grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 			check: func(ctx sdk.Context) {
 				suite.Require().False(suite.k.HasUserGrant(ctx, 1, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"))
+
+				// Check no grants inside expiration queue
+				suite.Require().Empty(suite.k.GetAllGrantsInExpirationQueue(ctx))
 			},
 		},
 		{
@@ -261,13 +468,19 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteUserGrant() {
 					1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(1)))},
+					&feegrant.BasicAllowance{
+						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(1))),
+						Expiration: &expiration,
+					},
 				))
 			},
 			subspaceID: 1,
 			grantee:    "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 			check: func(ctx sdk.Context) {
 				suite.Require().False(suite.k.HasUserGrant(ctx, 1, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"))
+
+				// Check no grants inside expiration queue
+				suite.Require().Empty(suite.k.GetAllGrantsInExpirationQueue(ctx))
 			},
 		},
 	}
@@ -393,6 +606,8 @@ func (suite *KeeperTestSuite) TestKeeper_GetGroupGrant() {
 }
 
 func (suite *KeeperTestSuite) TestKeeper_DeleteGroupGrant() {
+	expiration := time.Date(2100, 7, 7, 0, 0, 0, 0, time.UTC)
+
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -406,6 +621,9 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteGroupGrant() {
 			groupID:    1,
 			check: func(ctx sdk.Context) {
 				suite.Require().False(suite.k.HasGroupGrant(ctx, 1, 1))
+
+				// Check no grants inside expiration queue
+				suite.Require().Empty(suite.k.GetAllGrantsInExpirationQueue(ctx))
 			},
 		},
 		{
@@ -414,14 +632,20 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteGroupGrant() {
 				suite.k.SaveGrant(ctx, types.NewGrant(
 					1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-					types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(1)))},
+					types.NewGroupGrantee(1),
+					&feegrant.BasicAllowance{
+						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(1))),
+						Expiration: &expiration,
+					},
 				))
 			},
 			subspaceID: 1,
 			groupID:    1,
 			check: func(ctx sdk.Context) {
 				suite.Require().False(suite.k.HasGroupGrant(ctx, 1, 1))
+
+				// Check no grants inside expiration queue
+				suite.Require().Empty(suite.k.GetAllGrantsInExpirationQueue(ctx))
 			},
 		},
 	}
@@ -435,6 +659,85 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteGroupGrant() {
 			}
 
 			suite.k.DeleteGroupGrant(ctx, tc.subspaceID, tc.groupID)
+			if tc.check != nil {
+				tc.check(ctx)
+			}
+		})
+	}
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+func (suite *KeeperTestSuite) TestKeeper_RemoveExpiredAllowances() {
+	expiration := time.Date(2100, 7, 7, 0, 0, 0, 0, time.UTC)
+
+	testCases := []struct {
+		name       string
+		store      func(ctx sdk.Context)
+		expiration time.Time
+		check      func(ctx sdk.Context)
+	}{
+		{
+			name: "non expired grant is kept properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
+					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+					types.NewGroupGrantee(1),
+					&feegrant.BasicAllowance{
+						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(1))),
+						Expiration: &expiration,
+					},
+				))
+			},
+			expiration: time.Date(2100, 7, 6, 0, 0, 0, 0, time.UTC),
+			check: func(ctx sdk.Context) {
+				suite.Require().True(suite.k.HasGroupGrant(ctx, 1, 1))
+
+				// Check new expiration is kept properly
+				suite.Require().True(
+					ctx.KVStore(suite.storeKey).Has(
+						types.AllowanceExpirationQueueKey(&expiration, types.GroupAllowanceKey(1, 1)),
+					),
+				)
+			},
+		},
+		{
+			name: "expired grant is removed properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveGrant(ctx, types.NewGrant(
+					1,
+					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+					types.NewGroupGrantee(1),
+					&feegrant.BasicAllowance{
+						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(1))),
+						Expiration: &expiration,
+					},
+				))
+			},
+			expiration: time.Date(2100, 7, 8, 0, 0, 0, 0, time.UTC),
+			check: func(ctx sdk.Context) {
+				suite.Require().False(suite.k.HasGroupGrant(ctx, 1, 1))
+
+				// Check new expiration is removed properly
+				suite.Require().False(
+					ctx.KVStore(suite.storeKey).Has(
+						types.AllowanceExpirationQueueKey(&expiration, types.GroupAllowanceKey(1, 1)),
+					),
+				)
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			suite.k.RemoveExpiredAllowances(ctx, tc.expiration)
 			if tc.check != nil {
 				tc.check(ctx)
 			}
