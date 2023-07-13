@@ -67,6 +67,9 @@ func NewDecodeStore(cdc codec.Codec) func(kvA, kvB kv.Pair) string {
 			cdc.MustUnmarshal(kvB.Value, &grantB)
 			return fmt.Sprintf("GrantA: %s\nGrantB: %s\n", &grantA, &grantB)
 
+		case bytes.HasPrefix(kvA.Key, types.ExpiringAllowanceQueuePrefix):
+			return fmt.Sprintf("Expiring Allowance statusA: %X\nExpiring Allowance statusN: %X", kvA.Value, kvB.Value)
+
 		default:
 			panic(fmt.Sprintf("unexpected %s key %X (%s)", types.ModuleName, kvA.Key, kvA.Key))
 		}
