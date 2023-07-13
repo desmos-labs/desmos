@@ -185,7 +185,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveAllowanceToExpirationQueue() {
 				_, found := suite.k.GetGroupGrant(ctx, 1, 1)
 				suite.Require().True(found)
 
-				// Check grant is added into grant queue
+				// Check expiration is added properly
 				suite.Require().True(
 					ctx.KVStore(suite.storeKey).Has(
 						types.AllowanceExpirationQueueKey(&newExpiration, types.GroupAllowanceKey(1, 1)),
