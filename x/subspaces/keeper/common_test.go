@@ -72,3 +72,18 @@ func (suite *KeeperTestSuite) SetupTest() {
 	// Define keeper
 	suite.k = keeper.NewKeeper(suite.cdc, suite.storeKey, suite.ak, suite.authzKeeper, authtypes.NewModuleAddress("gov").String())
 }
+
+func (suite *KeeperTestSuite) getAllGrantsInExpiringQueue(ctx sdk.Context) []types.Grant {
+	store := ctx.KVStore(suite.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.ExpiringAllowanceQueuePrefix)
+	defer iterator.Close()
+
+	var grants []types.Grant
+	for ; iterator.Valid(); iterator.Next() {
+		var grant types.Grant
+		suite.cdc.MustUnmarshal(store.Get(types.ParseAllowanceKeyFromExpiringKey(iterator.Key())), &grant)
+		grants = append(grants, grant)
+	}
+
+	return grants
+}

@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+	"time"
 
 	errors "cosmossdk.io/errors"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -124,8 +125,8 @@ func (g Grant) Validate() error {
 }
 
 // GetUnpackedAllowance returns unpacked allowance
-func (u Grant) GetUnpackedAllowance() (feegranttypes.FeeAllowanceI, error) {
-	allowance, isAllowance := u.Allowance.GetCachedValue().(feegranttypes.FeeAllowanceI)
+func (g Grant) GetUnpackedAllowance() (feegranttypes.FeeAllowanceI, error) {
+	allowance, isAllowance := g.Allowance.GetCachedValue().(feegranttypes.FeeAllowanceI)
 	if !isAllowance {
 		return nil, fmt.Errorf("failed to unpack allowance")
 	}
@@ -133,14 +134,29 @@ func (u Grant) GetUnpackedAllowance() (feegranttypes.FeeAllowanceI, error) {
 	return allowance, nil
 }
 
+// GetExpiration returns the expiration time
+func (g Grant) GetExpiration() *time.Time {
+	f, err := g.GetUnpackedAllowance()
+	if err != nil {
+		panic(err)
+	}
+
+	exp, err := f.ExpiresAt()
+	if err != nil {
+		panic(err)
+	}
+
+	return exp
+}
+
 // UnpackInterfaces implements UnpackInterfacesMessage.UnpackInterfaces
-func (u Grant) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
+func (g Grant) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 	var grantee Grantee
-	err := unpacker.UnpackAny(u.Grantee, &grantee)
+	err := unpacker.UnpackAny(g.Grantee, &grantee)
 	if err != nil {
 		return err
 	}
 
 	var allowance feegranttypes.FeeAllowanceI
-	return unpacker.UnpackAny(u.Allowance, &allowance)
+	return unpacker.UnpackAny(g.Allowance, &allowance)
 }

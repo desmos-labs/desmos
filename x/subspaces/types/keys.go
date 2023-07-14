@@ -1,8 +1,12 @@
 package types
 
 import (
+	"bytes"
 	"encoding/binary"
 	"fmt"
+	"time"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // DONTCOVER
@@ -40,16 +44,17 @@ const (
 )
 
 var (
-	SubspaceIDKey              = []byte{0x00}
-	SubspacePrefix             = []byte{0x01}
-	GroupIDPrefix              = []byte{0x02}
-	GroupsPrefix               = []byte{0x03}
-	GroupsMembersPrefix        = []byte{0x04}
-	UserPermissionsStorePrefix = []byte{0x05}
-	SectionIDPrefix            = []byte{0x06}
-	SectionsPrefix             = []byte{0x07}
-	UserAllowancePrefix        = []byte{0x08}
-	GroupAllowancePrefix       = []byte{0x09}
+	SubspaceIDKey                = []byte{0x00}
+	SubspacePrefix               = []byte{0x01}
+	GroupIDPrefix                = []byte{0x02}
+	GroupsPrefix                 = []byte{0x03}
+	GroupsMembersPrefix          = []byte{0x04}
+	UserPermissionsStorePrefix   = []byte{0x05}
+	SectionIDPrefix              = []byte{0x06}
+	SectionsPrefix               = []byte{0x07}
+	UserAllowancePrefix          = []byte{0x08}
+	GroupAllowancePrefix         = []byte{0x09}
+	ExpiringAllowanceQueuePrefix = []byte{0x10}
 )
 
 // GetSubspaceIDBytes returns the byte representation of the subspaceID
@@ -235,4 +240,34 @@ func SubspaceGroupAllowancePrefix(subspaceID uint64) []byte {
 // GroupAllowanceKey returns the key used to store the group allowance
 func GroupAllowanceKey(subspaceID uint64, groupID uint32) []byte {
 	return append(SubspaceGroupAllowancePrefix(subspaceID), GetGroupIDBytes(groupID)...)
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+var (
+	lenExpiringAllowanceQueuePrefix = len(ExpiringAllowanceQueuePrefix)
+	lenExpiringAllowanceTimePrefix  = lenExpiringAllowanceQueuePrefix + len(sdk.FormatTimeBytes(time.Now()))
+)
+
+// ExpiringAllowanceTimePrefix gets the expiring allowance prefix by expiration time
+func ExpiringAllowanceTimePrefix(expiration *time.Time) []byte {
+	return append(ExpiringAllowanceQueuePrefix, sdk.FormatTimeBytes(*expiration)...)
+}
+
+// ExpiringAllowanceKey returns the key used to store the allowance to the expiring queue
+func ExpiringAllowanceKey(expiration *time.Time, key []byte) []byte {
+	return append(ExpiringAllowanceTimePrefix(expiration), key...)
+}
+
+// ParseAllowanceKeyFromExpiringKey parses allowance key from expiring key
+func ParseAllowanceKeyFromExpiringKey(key []byte) []byte {
+	if len(key) < lenExpiringAllowanceTimePrefix {
+		panic(fmt.Errorf("invalid key length; expected min %d got %d", lenExpiringAllowanceTimePrefix, len(key)))
+	}
+
+	if !bytes.Equal(key[:lenExpiringAllowanceQueuePrefix], ExpiringAllowanceQueuePrefix) {
+		panic(fmt.Errorf("invalid key prefix; expected prefix %X prefix %X", ExpiringAllowanceQueuePrefix, key[:lenExpiringAllowanceQueuePrefix]))
+	}
+
+	return key[lenExpiringAllowanceTimePrefix:]
 }

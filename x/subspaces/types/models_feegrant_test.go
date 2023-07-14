@@ -2,6 +2,7 @@ package types_test
 
 import (
 	"testing"
+	"time"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/x/feegrant"
@@ -161,6 +162,64 @@ func TestGrant_Validate(t *testing.T) {
 				require.Error(t, err)
 			} else {
 				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestGrant_GetExpiration(t *testing.T) {
+	testCases := []struct {
+		name        string
+		grant       types.Grant
+		shouldPanic bool
+		expTime     *time.Time
+	}{
+		{
+			name: "invalid fee allowance panics",
+			grant: types.Grant{
+				SubspaceID: 1,
+				Granter:    "cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
+				Grantee:    &codectypes.Any{},
+				Allowance:  &codectypes.Any{},
+			},
+			shouldPanic: true,
+		},
+		{
+			name: "valid grant without expiration returns nil",
+			grant: types.NewGrant(
+				1,
+				"cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
+				types.NewUserGrantee("cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez"),
+				&feegrant.BasicAllowance{},
+			),
+			shouldPanic: false,
+			expTime:     nil,
+		},
+		{
+			name: "valid grant returns expiration properly",
+			grant: types.NewGrant(
+				1,
+				"cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
+				types.NewUserGrantee("cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez"),
+				&feegrant.BasicAllowance{
+					Expiration: &expiration,
+				},
+			),
+			shouldPanic: false,
+			expTime:     &expiration,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			if tc.shouldPanic {
+				require.Panics(t, func() {
+					tc.grant.GetExpiration()
+				})
+			} else {
+				expiration := tc.grant.GetExpiration()
+				require.Equal(t, tc.expTime, expiration)
 			}
 		})
 	}

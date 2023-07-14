@@ -39,7 +39,7 @@ import (
 )
 
 const (
-	consensusVersion = 6
+	consensusVersion = 7
 )
 
 // type check to ensure the interface is properly implemented
@@ -142,6 +142,10 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 	if err != nil {
 		panic(err)
 	}
+	err = cfg.RegisterMigration(types.ModuleName, 6, m.Migrate6to7)
+	if err != nil {
+		panic(err)
+	}
 }
 
 // NewAppModule creates a new AppModule Object
@@ -195,7 +199,8 @@ func (AppModule) ConsensusVersion() uint64 {
 }
 
 // BeginBlock returns the begin blocker for the subspaces module.
-func (am AppModule) BeginBlock(_ sdk.Context, _ abci.RequestBeginBlock) {
+func (am AppModule) BeginBlock(ctx sdk.Context, _ abci.RequestBeginBlock) {
+	BeginBlocker(ctx, *am.keeper)
 }
 
 // EndBlock returns the end blocker for the subspaces module. It returns no validator

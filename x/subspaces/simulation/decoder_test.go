@@ -67,6 +67,8 @@ func TestDecodeStore(t *testing.T) {
 		&feegrant.BasicAllowance{},
 	)
 
+	expiration := time.Date(2100, 7, 7, 0, 0, 0, 0, time.UTC)
+
 	kvPairs := kv.Pairs{Pairs: []kv.Pair{
 		{
 			Key:   types.SubspaceIDKey,
@@ -109,6 +111,10 @@ func TestDecodeStore(t *testing.T) {
 			Value: cdc.MustMarshal(&groupGrant),
 		},
 		{
+			Key:   types.ExpiringAllowanceKey(&expiration, types.UserAllowanceKey(1, "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e")),
+			Value: []byte{0x1},
+		},
+		{
 			Key:   []byte("Unknown key"),
 			Value: nil,
 		},
@@ -134,6 +140,7 @@ func TestDecodeStore(t *testing.T) {
 		{"Section", fmt.Sprintf("SectionA: %s\nSectionB: %s\n", &section, &section)},
 		{"User grant", fmt.Sprintf("GrantA: %s\nGrantB: %s\n", &userGrant, &userGrant)},
 		{"Group grant", fmt.Sprintf("GrantA: %s\nGrantB: %s\n", &groupGrant, &groupGrant)},
+		{"Expring allowance", fmt.Sprintf("Expiring Allowance statusA: %X\nExpiring Allowance statusB: %X", []byte{0x1}, []byte{0x1})},
 		{"other", ""},
 	}
 
