@@ -140,7 +140,7 @@ func TestDecodeStore(t *testing.T) {
 		{"Section", fmt.Sprintf("SectionA: %s\nSectionB: %s\n", &section, &section)},
 		{"User grant", fmt.Sprintf("GrantA: %s\nGrantB: %s\n", &userGrant, &userGrant)},
 		{"Group grant", fmt.Sprintf("GrantA: %s\nGrantB: %s\n", &groupGrant, &groupGrant)},
-		{"Expring allowance", fmt.Sprintf("Expiring Allowance statusA: %X\nExpiring Allowance statusN: %X", []byte{0x1}, []byte{0x1})},
+		{"Expring allowance", fmt.Sprintf("Expiring Allowance statusA: %X\nExpiring Allowance statusB: %X", []byte{0x1}, []byte{0x1})},
 		{"other", ""},
 	}
 
