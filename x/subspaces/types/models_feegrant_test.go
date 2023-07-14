@@ -185,7 +185,7 @@ func TestGrant_GetExpiration(t *testing.T) {
 			shouldPanic: true,
 		},
 		{
-			name: "valid grant without expiration return nil",
+			name: "valid grant without expiration returns nil",
 			grant: types.NewGrant(
 				1,
 				"cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
