@@ -106,6 +106,7 @@ func (k Keeper) GetGroupGrant(ctx sdk.Context, subspaceID uint64, groupID uint32
 
 // saveAllowanceToExpiringQueue saves the allowance into expiring queue
 func (k Keeper) saveAllowanceToExpiringQueue(ctx sdk.Context, expiration *time.Time, grantKey []byte) {
+	// Make sure we remove the grant from the expiring queue to properly handle expiration date updates and avoid duplicated keys
 	k.removeAllowanceFromExpiringQueue(ctx, grantKey)
 
 	store := ctx.KVStore(k.storeKey)

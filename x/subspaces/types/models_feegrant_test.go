@@ -1,7 +1,6 @@
 package types_test
 
 import (
-	"fmt"
 	"testing"
 	"time"
 
@@ -168,14 +167,6 @@ func TestGrant_Validate(t *testing.T) {
 	}
 }
 
-type InvalidExpirationAllowance struct {
-	feegrant.BasicAllowance
-}
-
-func (a InvalidExpirationAllowance) ExpiresAt() (*time.Time, error) {
-	return nil, fmt.Errorf("error")
-}
-
 func TestGrant_GetExpiration(t *testing.T) {
 	testCases := []struct {
 		name        string
@@ -194,14 +185,15 @@ func TestGrant_GetExpiration(t *testing.T) {
 			shouldPanic: true,
 		},
 		{
-			name: "invalid expiration time panics",
+			name: "valid grant without expiration return nil",
 			grant: types.NewGrant(
 				1,
 				"cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
 				types.NewUserGrantee("cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez"),
-				&InvalidExpirationAllowance{},
+				&feegrant.BasicAllowance{},
 			),
-			shouldPanic: true,
+			shouldPanic: false,
+			expTime:     nil,
 		},
 		{
 			name: "valid grant returns expiration properly",
