@@ -167,7 +167,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveAllowanceToExpirationQueue() {
 				suite.Require().True(found)
 
 				// Check no grants inside expiration queue
-				suite.Require().Empty(suite.k.GetAllGrantsInExpirationQueue(ctx))
+				suite.Require().Empty(suite.getAllGrantsInExpiringQueue(ctx))
 			},
 		},
 		{
@@ -219,7 +219,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveAllowanceToExpirationQueue() {
 				suite.Require().True(found)
 
 				// Check no grants inside expiration queue
-				suite.Require().Empty(suite.k.GetAllGrantsInExpirationQueue(ctx))
+				suite.Require().Empty(suite.getAllGrantsInExpiringQueue(ctx))
 			},
 		},
 		{
@@ -288,7 +288,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveAllowanceToExpirationQueue() {
 				suite.Require().True(found)
 
 				// Check no grants inside expiration queue
-				suite.Require().Empty(suite.k.GetAllGrantsInExpirationQueue(ctx))
+				suite.Require().Empty(suite.getAllGrantsInExpiringQueue(ctx))
 			},
 		},
 		{
@@ -458,7 +458,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteUserGrant() {
 				suite.Require().False(suite.k.HasUserGrant(ctx, 1, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"))
 
 				// Check no grants inside expiration queue
-				suite.Require().Empty(suite.k.GetAllGrantsInExpirationQueue(ctx))
+				suite.Require().Empty(suite.getAllGrantsInExpiringQueue(ctx))
 			},
 		},
 		{
@@ -480,7 +480,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteUserGrant() {
 				suite.Require().False(suite.k.HasUserGrant(ctx, 1, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"))
 
 				// Check no grants inside expiration queue
-				suite.Require().Empty(suite.k.GetAllGrantsInExpirationQueue(ctx))
+				suite.Require().Empty(suite.getAllGrantsInExpiringQueue(ctx))
 			},
 		},
 	}
@@ -623,7 +623,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteGroupGrant() {
 				suite.Require().False(suite.k.HasGroupGrant(ctx, 1, 1))
 
 				// Check no grants inside expiration queue
-				suite.Require().Empty(suite.k.GetAllGrantsInExpirationQueue(ctx))
+				suite.Require().Empty(suite.getAllGrantsInExpiringQueue(ctx))
 			},
 		},
 		{
@@ -645,7 +645,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteGroupGrant() {
 				suite.Require().False(suite.k.HasGroupGrant(ctx, 1, 1))
 
 				// Check no grants inside expiration queue
-				suite.Require().Empty(suite.k.GetAllGrantsInExpirationQueue(ctx))
+				suite.Require().Empty(suite.getAllGrantsInExpiringQueue(ctx))
 			},
 		},
 	}
