@@ -30,7 +30,8 @@ func addAllowancesToExpiringQueue(ctx sdk.Context, storeKey storetypes.StoreKey,
 
 		expiration := grant.GetExpiration()
 		if expiration != nil {
-			allowanceKey := allowancePrefix
+			// Re-add the prefix because the prefix store trims it out, and we need it to get the data
+			allowanceKey := append([]byte(nil), allowancePrefix...)
 			allowanceKey = append(allowanceKey, iterator.Key()...)
 			store.Set(types.ExpiringAllowanceKey(expiration, allowanceKey), []byte{0x1})
 		}
