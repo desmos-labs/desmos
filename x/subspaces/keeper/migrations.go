@@ -9,6 +9,7 @@ import (
 	v4 "github.com/desmos-labs/desmos/v5/x/subspaces/legacy/v4"
 	v5 "github.com/desmos-labs/desmos/v5/x/subspaces/legacy/v5"
 	v6 "github.com/desmos-labs/desmos/v5/x/subspaces/legacy/v6"
+	v7 "github.com/desmos-labs/desmos/v5/x/subspaces/legacy/v7"
 	"github.com/desmos-labs/desmos/v5/x/subspaces/types"
 )
 
@@ -53,4 +54,9 @@ func (m Migrator) Migrate4to5(ctx sdk.Context) error {
 // Migrate5to6 migrates from version 5 to 6.
 func (m Migrator) Migrate5to6(ctx sdk.Context) error {
 	return v6.MigrateStore(ctx, m.keeper.storeKey, m.keeper.cdc)
+}
+
+// Migrate5to6 migrates from version 6 to 7.
+func (m Migrator) Migrate6to7(ctx sdk.Context) error {
+	return v7.MigrateStore(ctx, m.keeper.storeKey, m.keeper.cdc)
 }
