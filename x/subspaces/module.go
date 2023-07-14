@@ -195,7 +195,8 @@ func (AppModule) ConsensusVersion() uint64 {
 }
 
 // BeginBlock returns the begin blocker for the subspaces module.
-func (am AppModule) BeginBlock(_ sdk.Context, _ abci.RequestBeginBlock) {
+func (am AppModule) BeginBlock(ctx sdk.Context, _ abci.RequestBeginBlock) {
+	BeginBlocker(ctx, *am.keeper)
 }
 
 // EndBlock returns the end blocker for the subspaces module. It returns no validator
