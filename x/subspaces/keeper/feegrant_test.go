@@ -163,8 +163,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveAllowanceToExpirationQueue() {
 				},
 			),
 			check: func(ctx sdk.Context) {
-				_, found := suite.k.GetGroupGrant(ctx, 1, 1)
-				suite.Require().True(found)
+				suite.Require().True(suite.k.HasGroupGrant(ctx, 1, 1))
 
 				// Check no grants inside expiration queue
 				suite.Require().Empty(suite.getAllGrantsInExpiringQueue(ctx))
@@ -182,8 +181,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveAllowanceToExpirationQueue() {
 				},
 			),
 			check: func(ctx sdk.Context) {
-				_, found := suite.k.GetGroupGrant(ctx, 1, 1)
-				suite.Require().True(found)
+				suite.Require().True(suite.k.HasGroupGrant(ctx, 1, 1))
 
 				// Check expiration is added properly
 				suite.Require().True(
@@ -215,8 +213,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveAllowanceToExpirationQueue() {
 				},
 			),
 			check: func(ctx sdk.Context) {
-				_, found := suite.k.GetGroupGrant(ctx, 1, 1)
-				suite.Require().True(found)
+				suite.Require().True(suite.k.HasGroupGrant(ctx, 1, 1))
 
 				// Check no grants inside expiration queue
 				suite.Require().Empty(suite.getAllGrantsInExpiringQueue(ctx))
@@ -245,8 +242,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveAllowanceToExpirationQueue() {
 				},
 			),
 			check: func(ctx sdk.Context) {
-				_, found := suite.k.GetGroupGrant(ctx, 1, 1)
-				suite.Require().True(found)
+				suite.Require().True(suite.k.HasGroupGrant(ctx, 1, 1))
 
 				// Check old expiration is removed properly
 				suite.Require().False(
@@ -284,8 +280,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveAllowanceToExpirationQueue() {
 				},
 			),
 			check: func(ctx sdk.Context) {
-				_, found := suite.k.GetGroupGrant(ctx, 1, 1)
-				suite.Require().True(found)
+				suite.Require().True(suite.k.HasGroupGrant(ctx, 1, 1))
 
 				// Check no grants inside expiration queue
 				suite.Require().Empty(suite.getAllGrantsInExpiringQueue(ctx))
@@ -313,8 +308,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveAllowanceToExpirationQueue() {
 				},
 			),
 			check: func(ctx sdk.Context) {
-				_, found := suite.k.GetGroupGrant(ctx, 1, 1)
-				suite.Require().True(found)
+				suite.Require().True(suite.k.HasGroupGrant(ctx, 1, 1))
 
 				// Check new expiration is added properly
 				suite.Require().True(
