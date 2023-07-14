@@ -81,7 +81,7 @@ func (suite *KeeperTestSuite) getAllGrantsInExpiringQueue(ctx sdk.Context) []typ
 	var grants []types.Grant
 	for ; iterator.Valid(); iterator.Next() {
 		var grant types.Grant
-		suite.cdc.MustUnmarshal(store.Get(types.ParseAllowanceKeyFromExpiringQueueKey(iterator.Key())), &grant)
+		suite.cdc.MustUnmarshal(store.Get(types.ParseAllowanceKeyFromExpiringKey(iterator.Key())), &grant)
 		grants = append(grants, grant)
 	}
 

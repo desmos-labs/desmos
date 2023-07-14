@@ -87,7 +87,7 @@ func TestSplitUserAddressPermissionKey(t *testing.T) {
 	}
 }
 
-func TestParseAllowanceKeyFromExpiringQueueKey(t *testing.T) {
+func TestParseAllowanceKeyFromExpiringKey(t *testing.T) {
 	expiration := time.Date(2100, 7, 7, 0, 0, 0, 0, time.UTC)
 	testCases := []struct {
 		name        string
@@ -107,7 +107,7 @@ func TestParseAllowanceKeyFromExpiringQueueKey(t *testing.T) {
 		},
 		{
 			name:   "valid key return proper data",
-			key:    types.ExpiringAllowanceQueueKey(&expiration, types.UserAllowanceKey(1, "cosmos1vlknheepy5454pw4j6x53yeg57l7ec39rf8ffp")),
+			key:    types.ExpiringAllowanceKey(&expiration, types.UserAllowanceKey(1, "cosmos1vlknheepy5454pw4j6x53yeg57l7ec39rf8ffp")),
 			expKey: types.UserAllowanceKey(1, "cosmos1vlknheepy5454pw4j6x53yeg57l7ec39rf8ffp"),
 		},
 	}
@@ -116,9 +116,9 @@ func TestParseAllowanceKeyFromExpiringQueueKey(t *testing.T) {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			if tc.shouldPanic {
-				require.Panics(t, func() { types.ParseAllowanceKeyFromExpiringQueueKey(tc.key) })
+				require.Panics(t, func() { types.ParseAllowanceKeyFromExpiringKey(tc.key) })
 			} else {
-				grantKey := types.ParseAllowanceKeyFromExpiringQueueKey(tc.key)
+				grantKey := types.ParseAllowanceKeyFromExpiringKey(tc.key)
 				require.Equal(t, tc.expKey, grantKey)
 			}
 		})

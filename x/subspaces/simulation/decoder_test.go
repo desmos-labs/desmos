@@ -111,7 +111,7 @@ func TestDecodeStore(t *testing.T) {
 			Value: cdc.MustMarshal(&groupGrant),
 		},
 		{
-			Key:   types.ExpiringAllowanceQueueKey(&expiration, types.UserAllowanceKey(1, "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e")),
+			Key:   types.ExpiringAllowanceKey(&expiration, types.UserAllowanceKey(1, "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e")),
 			Value: []byte{0x1},
 		},
 		{

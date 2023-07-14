@@ -246,29 +246,28 @@ func GroupAllowanceKey(subspaceID uint64, groupID uint32) []byte {
 
 var (
 	lenExpiringAllowanceQueuePrefix = len(ExpiringAllowanceQueuePrefix)
-	lenAllowanceExpiration          = len(sdk.FormatTimeBytes(time.Now()))
-	lenExpirationPrefix             = lenExpiringAllowanceQueuePrefix + lenAllowanceExpiration
+	lenExpiringAllowanceTimePrefix  = lenExpiringAllowanceQueuePrefix + len(sdk.FormatTimeBytes(time.Now()))
 )
 
-// AllowanceKeyByExpiration gets the allowance expiration queue key by expiration time
-func AllowanceKeyByExpiration(expiration *time.Time) []byte {
+// ExpiringAllowanceTimePrefix gets the expiring allowance prefix by expiration time
+func ExpiringAllowanceTimePrefix(expiration *time.Time) []byte {
 	return append(ExpiringAllowanceQueuePrefix, sdk.FormatTimeBytes(*expiration)...)
 }
 
-// ExpiringAllowanceQueueKey returns the key used to store the allowance to the expiring queue
-func ExpiringAllowanceQueueKey(expiration *time.Time, key []byte) []byte {
-	return append(AllowanceKeyByExpiration(expiration), key...)
+// ExpiringAllowanceKey returns the key used to store the allowance to the expiring queue
+func ExpiringAllowanceKey(expiration *time.Time, key []byte) []byte {
+	return append(ExpiringAllowanceTimePrefix(expiration), key...)
 }
 
-// ParseAllowanceKeyFromExpiringQueueKey parses allowance key from expiring queue key
-func ParseAllowanceKeyFromExpiringQueueKey(key []byte) []byte {
-	if len(key) < lenExpirationPrefix {
-		panic(fmt.Errorf("invalid key length; expected min %d got %d", lenExpirationPrefix, len(key)))
+// ParseAllowanceKeyFromExpiringKey parses allowance key from expiring key
+func ParseAllowanceKeyFromExpiringKey(key []byte) []byte {
+	if len(key) < lenExpiringAllowanceTimePrefix {
+		panic(fmt.Errorf("invalid key length; expected min %d got %d", lenExpiringAllowanceTimePrefix, len(key)))
 	}
 
 	if !bytes.Equal(key[:lenExpiringAllowanceQueuePrefix], ExpiringAllowanceQueuePrefix) {
 		panic(fmt.Errorf("invalid key prefix; expected prefix %X prefix %X", ExpiringAllowanceQueuePrefix, key[:lenExpiringAllowanceQueuePrefix]))
 	}
 
-	return key[lenExpirationPrefix:]
+	return key[lenExpiringAllowanceTimePrefix:]
 }

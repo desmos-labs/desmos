@@ -188,7 +188,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveAllowanceToExpirationQueue() {
 				// Check expiration is added properly
 				suite.Require().True(
 					ctx.KVStore(suite.storeKey).Has(
-						types.ExpiringAllowanceQueueKey(&newExpiration, types.GroupAllowanceKey(1, 1)),
+						types.ExpiringAllowanceKey(&newExpiration, types.GroupAllowanceKey(1, 1)),
 					),
 				)
 			},
@@ -251,14 +251,14 @@ func (suite *KeeperTestSuite) TestKeeper_SaveAllowanceToExpirationQueue() {
 				// Check old expiration is removed properly
 				suite.Require().False(
 					ctx.KVStore(suite.storeKey).Has(
-						types.ExpiringAllowanceQueueKey(&expiration, types.GroupAllowanceKey(1, 1)),
+						types.ExpiringAllowanceKey(&expiration, types.GroupAllowanceKey(1, 1)),
 					),
 				)
 
 				// Check new expiration is added properly
 				suite.Require().True(
 					ctx.KVStore(suite.storeKey).Has(
-						types.ExpiringAllowanceQueueKey(&newExpiration, types.GroupAllowanceKey(1, 1)),
+						types.ExpiringAllowanceKey(&newExpiration, types.GroupAllowanceKey(1, 1)),
 					),
 				)
 			},
@@ -319,7 +319,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveAllowanceToExpirationQueue() {
 				// Check new expiration is added properly
 				suite.Require().True(
 					ctx.KVStore(suite.storeKey).Has(
-						types.ExpiringAllowanceQueueKey(&newExpiration, types.GroupAllowanceKey(1, 1)),
+						types.ExpiringAllowanceKey(&newExpiration, types.GroupAllowanceKey(1, 1)),
 					),
 				)
 			},
@@ -697,7 +697,7 @@ func (suite *KeeperTestSuite) TestKeeper_RemoveExpiredAllowances() {
 				// Check new expiration is kept properly
 				suite.Require().True(
 					ctx.KVStore(suite.storeKey).Has(
-						types.ExpiringAllowanceQueueKey(&expiration, types.GroupAllowanceKey(1, 1)),
+						types.ExpiringAllowanceKey(&expiration, types.GroupAllowanceKey(1, 1)),
 					),
 				)
 			},
@@ -722,7 +722,7 @@ func (suite *KeeperTestSuite) TestKeeper_RemoveExpiredAllowances() {
 				// Check new expiration is removed properly
 				suite.Require().False(
 					ctx.KVStore(suite.storeKey).Has(
-						types.ExpiringAllowanceQueueKey(&expiration, types.GroupAllowanceKey(1, 1)),
+						types.ExpiringAllowanceKey(&expiration, types.GroupAllowanceKey(1, 1)),
 					),
 				)
 			},
