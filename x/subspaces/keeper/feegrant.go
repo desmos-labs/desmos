@@ -49,6 +49,7 @@ func (k Keeper) DeleteUserGrant(ctx sdk.Context, subspaceID uint64, grantee stri
 	store := ctx.KVStore(k.storeKey)
 	key := types.UserAllowanceKey(subspaceID, grantee)
 
+	// Remove the allowance from the list of expiring allowances
 	k.removeAllowanceFromExpiringQueue(ctx, key)
 
 	// Delete allowance
@@ -80,6 +81,7 @@ func (k Keeper) DeleteGroupGrant(ctx sdk.Context, subspaceID uint64, groupID uin
 	store := ctx.KVStore(k.storeKey)
 	key := types.GroupAllowanceKey(subspaceID, groupID)
 
+	// Remove the allowance from the list of expiring allowances
 	k.removeAllowanceFromExpiringQueue(ctx, key)
 
 	// Delete allowance

@@ -170,7 +170,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveAllowanceToExpirationQueue() {
 			},
 		},
 		{
-			name: "new grant with expiration is saved properly properly",
+			name: "new grant with expiration is saved properly",
 			grant: types.NewGrant(
 				1,
 				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
