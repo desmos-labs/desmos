@@ -180,7 +180,7 @@ func TestGrant_GetExpiration(t *testing.T) {
 				SubspaceID: 1,
 				Granter:    "cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
 				Grantee:    &codectypes.Any{},
-				Allowance:  nil,
+				Allowance:  &codectypes.Any{},
 			},
 			shouldPanic: true,
 		},
