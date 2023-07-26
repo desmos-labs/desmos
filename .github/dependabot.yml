@@ -12,7 +12,6 @@ updates:
     open-pull-requests-limit: 10
     reviewers:
       - dadamu
-      - manu0466
       - riccardom
     labels:
       - automerge
