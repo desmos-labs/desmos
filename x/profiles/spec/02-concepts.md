@@ -46,7 +46,8 @@ To be properly verified, a chain link must contain a signature that proves the u
 
 Currently, we support two types of signatures: 
 
-- `CosmosMultiSignature` should be used when 
+- `SingleSignature`
+- `CosmosMultiSignature`
 
 #### SingleSignature
 This signature type should be used when the external wallet is made of a single key. It must specify the type of value that has been signed, as well as the signature bytes. 
