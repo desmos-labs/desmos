@@ -46,7 +46,8 @@ To be properly verified, a chain link must contain a signature that proves the u
 
 Currently, we support two types of signatures: 
 
-- `CosmosMultiSignature` should be used when 
+- `SingleSignature`
+- `CosmosMultiSignature`
 
 #### SingleSignature
 This signature type should be used when the external wallet is made of a single key. It must specify the type of value that has been signed, as well as the signature bytes. 
@@ -123,7 +124,7 @@ Note that the `SourceAddress` field must be one of the currently supported types
 ##### Using the CLI
 You can easily create a chain link using the CLI by running two commands:
 
-1.`desmos create-chain-link-json`
+1. `desmos create-chain-link-json`
 This will start an interactive prompt session allowing you to generate the proper JSON file containing all the linkage information.
 
 2. `desmos tx profiles link-chain [/path/to/link_file.json]`
