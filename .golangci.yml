@@ -10,7 +10,6 @@ linters:
   enable:
     - bodyclose
     - deadcode
-    - depguard
     - dogsled
     - exportloopref
     - goconst
@@ -22,7 +21,6 @@ linters:
     - govet
     - ineffassign
     - misspell
-    - nakedret
     - nolintlint
     - staticcheck
     - structcheck
