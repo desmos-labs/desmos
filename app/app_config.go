@@ -100,6 +100,7 @@ import (
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
+	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 )
 
 const (
@@ -122,8 +123,8 @@ func GetWasmOpts(
 	postsKeeper postskeeper.Keeper,
 	reportsKeeper reportskeeper.Keeper,
 	reactionsKeeper reactionskeeper.Keeper,
-) []wasm.Option {
-	var wasmOpts []wasm.Option
+) []wasmkeeper.Option {
+	var wasmOpts []wasmkeeper.Option
 	if cast.ToBool(appOpts.Get("telemetry.enabled")) {
 		wasmOpts = append(wasmOpts, wasmkeeper.WithVMCacheMetrics(prometheus.DefaultRegisterer))
 	}
@@ -209,7 +210,7 @@ var (
 		{Account: stakingtypes.NotBondedPoolName, Permissions: []string{authtypes.Burner, authtypes.Staking}},
 		{Account: govtypes.ModuleName, Permissions: []string{authtypes.Burner}},
 		{Account: ibctransfertypes.ModuleName, Permissions: []string{authtypes.Minter, authtypes.Burner}},
-		{Account: wasm.ModuleName, Permissions: []string{authtypes.Burner}},
+		{Account: wasmtypes.ModuleName, Permissions: []string{authtypes.Burner}},
 		{Account: ibcfeetypes.ModuleName},
 		{Account: icatypes.ModuleName},
 		{Account: tokenfactorytypes.ModuleName, Permissions: []string{authtypes.Minter, authtypes.Burner}},
@@ -255,7 +256,7 @@ var (
 		supplytypes.ModuleName,
 		tokenfactorytypes.ModuleName,
 
-		wasm.ModuleName,
+		wasmtypes.ModuleName,
 	}
 
 	endBlockerOrder = []string{
@@ -293,7 +294,7 @@ var (
 		supplytypes.ModuleName,
 		tokenfactorytypes.ModuleName,
 
-		wasm.ModuleName,
+		wasmtypes.ModuleName,
 	}
 
 	// NOTE: The genutils module must occur after staking so that pools are
@@ -339,7 +340,7 @@ var (
 		tokenfactorytypes.ModuleName,
 
 		// wasm module should be at the end of app modules
-		wasm.ModuleName,
+		wasmtypes.ModuleName,
 		crisistypes.ModuleName,
 	}
 
@@ -380,7 +381,7 @@ var (
 		supplytypes.ModuleName,
 		tokenfactorytypes.ModuleName,
 
-		wasm.ModuleName,
+		wasmtypes.ModuleName,
 		crisistypes.ModuleName,
 	}
 )

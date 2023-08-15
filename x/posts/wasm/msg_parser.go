@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 
 	"cosmossdk.io/errors"
-	"github.com/CosmWasm/wasmd/x/wasm"
+	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -46,6 +46,6 @@ func (parser MsgsParser) ParseCustomMsgs(contractAddr sdk.AccAddress, data json.
 	case msg.AnswerPoll != nil:
 		return commons.HandleWasmMsg(parser.cdc, *msg.AnswerPoll, &types.MsgAnswerPoll{})
 	default:
-		return nil, errors.Wrap(wasm.ErrInvalidMsg, "cosmwasm-posts-msg-parser: message not supported")
+		return nil, errors.Wrap(wasmtypes.ErrInvalidMsg, "cosmwasm-posts-msg-parser: message not supported")
 	}
 }

@@ -3,7 +3,6 @@ package app
 import (
 	"fmt"
 
-	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -34,7 +33,7 @@ import (
 	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 	subspaceswasm "github.com/desmos-labs/desmos/v5/x/subspaces/wasm"
 
-	wasmtypes "github.com/desmos-labs/desmos/v5/x/wasm/types"
+	desmoswasmtypes "github.com/desmos-labs/desmos/v5/x/wasm/types"
 )
 
 const (
@@ -67,7 +66,7 @@ func NewDesmosCustomQueryPlugin(
 	postsKeeper postskeeper.Keeper,
 	reportsKeeper reportskeeper.Keeper,
 	reactionsKeeper reactionskeeper.Keeper,
-) wasm.QueryPlugins {
+) wasmkeeper.QueryPlugins {
 	queriers := map[string]wasmdesmos.Querier{
 		wasmdesmos.QueryRouteProfiles:      profileswasm.NewProfilesWasmQuerier(profilesKeeper, cdc),
 		wasmdesmos.QueryRouteSubspaces:     subspaceswasm.NewSubspacesWasmQuerier(subspacesKeeper, cdc),
@@ -85,8 +84,8 @@ func NewDesmosCustomQueryPlugin(
 		panic(fmt.Errorf("codec must be *codec.ProtoCodec type: actual: %T", cdc))
 	}
 
-	stargateCdc := codec.NewProtoCodec(wasmtypes.NewWasmInterfaceRegistry(protoCdc.InterfaceRegistry()))
-	return wasm.QueryPlugins{
+	stargateCdc := codec.NewProtoCodec(desmoswasmtypes.NewWasmInterfaceRegistry(protoCdc.InterfaceRegistry()))
+	return wasmkeeper.QueryPlugins{
 		Stargate: wasmkeeper.AcceptListStargateQuerier(GetStargateAcceptedQueries(), grpcQueryRouter, stargateCdc),
 		Custom:   querier.QueryCustom,
 	}
@@ -146,7 +145,7 @@ func GetStargateAcceptedQueries() wasmkeeper.AcceptedStargateQueries {
 }
 
 // NewDesmosCustomMessageEncoder initialize the custom message encoder to desmos app for contracts
-func NewDesmosCustomMessageEncoder(cdc codec.Codec) wasm.MessageEncoders {
+func NewDesmosCustomMessageEncoder(cdc codec.Codec) wasmkeeper.MessageEncoders {
 	// Initialization of custom Desmos messages for contracts
 	parserRouter := wasmdesmos.NewParserRouter()
 	parsers := map[string]wasmdesmos.MsgParserInterface{
@@ -160,7 +159,7 @@ func NewDesmosCustomMessageEncoder(cdc codec.Codec) wasm.MessageEncoders {
 	}
 
 	parserRouter.Parsers = parsers
-	return wasm.MessageEncoders{
+	return wasmkeeper.MessageEncoders{
 		Custom: parserRouter.ParseCustom,
 	}
 }

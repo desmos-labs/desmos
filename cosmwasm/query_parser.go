@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 
 	"cosmossdk.io/errors"
-	"github.com/CosmWasm/wasmd/x/wasm"
+	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
@@ -81,5 +81,5 @@ func (q QuerierRouter) QueryCustom(ctx sdk.Context, data json.RawMessage) ([]byt
 	if querier, ok := q.Queriers[route]; ok {
 		return querier.QueryCustom(ctx, query)
 	}
-	return nil, errors.Wrap(wasm.ErrQueryFailed, "unimplemented route")
+	return nil, errors.Wrap(wasmtypes.ErrQueryFailed, "unimplemented route")
 }
