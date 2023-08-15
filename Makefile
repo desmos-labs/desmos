@@ -337,13 +337,16 @@ format:
 ###                                  Types                                  ###
 ###############################################################################
 
-EVMOS_URL 		 = https://raw.githubusercontent.com/evmos/ethermint/v0.17.1/crypto/
+EVMOS_URL 		 = https://raw.githubusercontent.com/evmos/ethermint/v0.17.1
 CRYPTO_TYPES 	 = types/crypto
+BAND_URL 		 = https://raw.githubusercontent.com/bandprotocol/chain/v2.5.2
 
 update-deps-types:
 	@mkdir -p $(CRYPTO_TYPES)/ethsecp256k1
-	@curl -sSL $(EVMOS_URL)/ethsecp256k1/keys.pb.go > $(CRYPTO_TYPES)/ethsecp256k1/keys.pb.go
-	@curl -sSL $(EVMOS_URL)/ethsecp256k1/ethsecp256k1.go > $(CRYPTO_TYPES)/ethsecp256k1/ethsecp256k1.go
+	@curl -sSL $(EVMOS_URL)/proto/ethermint/crypto/v1/ethsecp256k1/keys.proto > proto/ethermint/crypto/v1/ethsecp256k1/keys.proto
+	@curl -sSL $(EVMOS_URL)/crypto/ethsecp256k1/ethsecp256k1.go > $(CRYPTO_TYPES)/ethsecp256k1/ethsecp256k1.go
+
+	@curl -sSL $(BAND_URL)/proto/oracle/v1/oracle.proto > proto/oracle/v1/oracle.proto
 
 .PHONY: update-deps-types
 
