@@ -6,7 +6,6 @@ import (
 	"os"
 
 	simappparams "cosmossdk.io/simapp/params"
-	"github.com/CosmWasm/wasmd/x/wasm"
 	serverconfig "github.com/cosmos/cosmos-sdk/server/config"
 
 	"github.com/cosmos/cosmos-sdk/client/config"
@@ -257,7 +256,6 @@ func newApp(logger log.Logger, db dbm.DB, traceStore io.Writer, appOpts serverty
 	return app.NewDesmosApp(
 		logger, db, traceStore, true,
 		appOpts,
-		wasm.DisableAllProposals,
 		server.DefaultBaseappOptions(appOpts)...,
 	)
 }
@@ -292,7 +290,6 @@ func createDesmosappAndExport(
 	desmosApp = app.NewDesmosApp(
 		logger, db, traceStore, height == -1,
 		appOpts,
-		wasm.DisableAllProposals,
 	)
 
 	if height != -1 {

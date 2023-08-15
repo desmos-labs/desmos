@@ -35,7 +35,6 @@ import (
 
 	profilestypes "github.com/desmos-labs/desmos/v5/x/profiles/types"
 
-	"github.com/CosmWasm/wasmd/x/wasm"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -105,7 +104,7 @@ func TestFullAppSimulation(t *testing.T) {
 	appOptions[server.FlagInvCheckPeriod] = simcli.FlagPeriodValue
 
 	app := NewDesmosApp(
-		logger, db, nil, true, appOptions, wasm.EnableAllProposals, fauxMerkleModeOpt, baseapp.SetChainID(SimAppChainID),
+		logger, db, nil, true, appOptions, fauxMerkleModeOpt, baseapp.SetChainID(SimAppChainID),
 	)
 	require.Equal(t, appName, app.Name())
 
@@ -152,7 +151,7 @@ func TestAppImportExport(t *testing.T) {
 	appOptions[server.FlagInvCheckPeriod] = simcli.FlagPeriodValue
 
 	app := NewDesmosApp(
-		logger, db, nil, true, appOptions, wasm.EnableAllProposals, fauxMerkleModeOpt, baseapp.SetChainID(SimAppChainID),
+		logger, db, nil, true, appOptions, fauxMerkleModeOpt, baseapp.SetChainID(SimAppChainID),
 	)
 	require.Equal(t, appName, app.Name())
 
@@ -205,7 +204,7 @@ func TestAppImportExport(t *testing.T) {
 	}()
 
 	newApp := NewDesmosApp(
-		log.NewNopLogger(), newDB, nil, true, appOptions, wasm.EnableAllProposals, fauxMerkleModeOpt, baseapp.SetChainID(SimAppChainID),
+		log.NewNopLogger(), newDB, nil, true, appOptions, fauxMerkleModeOpt, baseapp.SetChainID(SimAppChainID),
 	)
 	require.Equal(t, appName, newApp.Name())
 
@@ -296,7 +295,7 @@ func TestAppSimulationAfterImport(t *testing.T) {
 	appOptions[server.FlagInvCheckPeriod] = simcli.FlagPeriodValue
 
 	app := NewDesmosApp(
-		logger, db, nil, true, appOptions, wasm.EnableAllProposals, fauxMerkleModeOpt, baseapp.SetChainID(SimAppChainID),
+		logger, db, nil, true, appOptions, fauxMerkleModeOpt, baseapp.SetChainID(SimAppChainID),
 	)
 	require.Equal(t, appName, app.Name())
 
@@ -343,7 +342,7 @@ func TestAppSimulationAfterImport(t *testing.T) {
 	}()
 
 	newApp := NewDesmosApp(
-		log.NewNopLogger(), newDB, nil, true, appOptions, wasm.EnableAllProposals, fauxMerkleModeOpt, baseapp.SetChainID(SimAppChainID),
+		log.NewNopLogger(), newDB, nil, true, appOptions, fauxMerkleModeOpt, baseapp.SetChainID(SimAppChainID),
 	)
 	require.Equal(t, appName, newApp.Name())
 
@@ -402,7 +401,7 @@ func TestAppStateDeterminism(t *testing.T) {
 			db := dbm.NewMemDB()
 
 			app := NewDesmosApp(
-				logger, db, nil, true, appOptions, wasm.EnableAllProposals, interBlockCacheOpt(), baseapp.SetChainID(SimAppChainID),
+				logger, db, nil, true, appOptions, interBlockCacheOpt(), baseapp.SetChainID(SimAppChainID),
 			)
 
 			fmt.Printf(

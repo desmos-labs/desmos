@@ -5,7 +5,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/CosmWasm/wasmd/x/wasm"
 	dbm "github.com/cometbft/cometbft-db"
 	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cometbft/cometbft/libs/log"
@@ -34,7 +33,7 @@ func setup(chainID string, withGenesis bool, invCheckPeriod uint) (*simapp.Desmo
 	appOptions[flags.FlagHome] = simapp.DefaultNodeHome // ensure unique folder
 	appOptions[server.FlagInvCheckPeriod] = invCheckPeriod
 
-	app := simapp.NewDesmosApp(log.NewNopLogger(), db, nil, true, appOptions, wasm.DisableAllProposals, baseapp.SetChainID(chainID))
+	app := simapp.NewDesmosApp(log.NewNopLogger(), db, nil, true, appOptions, baseapp.SetChainID(chainID))
 	if withGenesis {
 		return app, simapp.NewDefaultGenesisState(app.AppCodec())
 	}

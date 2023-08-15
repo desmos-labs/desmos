@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 
 	"cosmossdk.io/errors"
-	"github.com/CosmWasm/wasmd/x/wasm"
+	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
@@ -81,5 +81,5 @@ func (router ParserRouter) ParseCustom(contractAddr sdk.AccAddress, data json.Ra
 	if parser, ok := router.Parsers[route]; ok {
 		return parser.ParseCustomMsgs(contractAddr, msg)
 	}
-	return nil, errors.Wrap(wasm.ErrInvalidMsg, "unimplemented route")
+	return nil, errors.Wrap(wasmtypes.ErrInvalidMsg, "unimplemented route")
 }
