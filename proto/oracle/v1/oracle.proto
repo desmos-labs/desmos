@@ -3,7 +3,6 @@ package oracle.v1;
 
 import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";
-import "google/protobuf/any.proto";
 import "cosmos/base/v1beta1/coin.proto";
 
 option go_package = "github.com/desmos-labs/desmos/v5/x/oracle/types";
