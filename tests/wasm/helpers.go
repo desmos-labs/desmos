@@ -13,8 +13,9 @@ import (
 	abci "github.com/cometbft/cometbft/abci/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	ibctesting "github.com/cosmos/ibc-go/v7/testing"
-	chaintesting "github.com/desmos-labs/desmos/v5/testutil/ibctesting"
 	"github.com/stretchr/testify/require"
+
+	chaintesting "github.com/desmos-labs/desmos/v5/testutil/ibctesting"
 )
 
 type TestChain struct {

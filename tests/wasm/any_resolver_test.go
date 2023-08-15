@@ -8,11 +8,12 @@ import (
 	wasmvmtypes "github.com/CosmWasm/wasmvm/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	"github.com/stretchr/testify/require"
+
 	"github.com/desmos-labs/desmos/v5/tests/wasm"
 	"github.com/desmos-labs/desmos/v5/testutil/ibctesting"
 	profilestypes "github.com/desmos-labs/desmos/v5/x/profiles/types"
 	wasmtypes "github.com/desmos-labs/desmos/v5/x/wasm/types"
-	"github.com/stretchr/testify/require"
 )
 
 func TestAnyResolverByProfile(t *testing.T) {

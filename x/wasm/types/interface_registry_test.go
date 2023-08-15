@@ -8,9 +8,10 @@ import (
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	"github.com/stretchr/testify/require"
+
 	"github.com/desmos-labs/desmos/v5/app"
 	"github.com/desmos-labs/desmos/v5/x/wasm/types"
-	"github.com/stretchr/testify/require"
 )
 
 func TestWasmInterfaceRegistry_Resolve(t *testing.T) {
