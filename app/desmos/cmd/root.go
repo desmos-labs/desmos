@@ -25,7 +25,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/debug"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -257,7 +256,6 @@ func newApp(logger log.Logger, db dbm.DB, traceStore io.Writer, appOpts serverty
 	return app.NewDesmosApp(
 		logger, db, traceStore, true,
 		appOpts,
-		wasmtypes.DisableAllProposals,
 		server.DefaultBaseappOptions(appOpts)...,
 	)
 }
@@ -292,7 +290,6 @@ func createDesmosappAndExport(
 	desmosApp = app.NewDesmosApp(
 		logger, db, traceStore, height == -1,
 		appOpts,
-		wasmtypes.DisableAllProposals,
 	)
 
 	if height != -1 {

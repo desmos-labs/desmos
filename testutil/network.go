@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"time"
 
-	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	dbm "github.com/cometbft/cometbft-db"
 	tmrand "github.com/cometbft/cometbft/libs/rand"
 	"github.com/cosmos/cosmos-sdk/baseapp"
@@ -27,7 +26,6 @@ func NewAppConstructor() network.AppConstructor {
 		return app.NewDesmosApp(
 			val.GetCtx().Logger, dbm.NewMemDB(), nil, true,
 			simtestutil.NewAppOptionsWithFlagHome(val.GetCtx().Config.RootDir),
-			wasmtypes.DisableAllProposals,
 			baseapp.SetPruning(pruningtypes.NewPruningOptionsFromString(val.GetAppConfig().Pruning)),
 			baseapp.SetMinGasPrices(val.GetAppConfig().MinGasPrices),
 			baseapp.SetChainID(val.GetCtx().Viper.GetString(flags.FlagChainID)),

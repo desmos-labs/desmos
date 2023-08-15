@@ -179,8 +179,7 @@ type DesmosApp struct {
 
 func NewDesmosApp(
 	logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest bool,
-	appOpts servertypes.AppOptions, wasmEnabledProposals []wasmtypes.ProposalType,
-	baseAppOptions ...func(*baseapp.BaseApp),
+	appOpts servertypes.AppOptions, baseAppOptions ...func(*baseapp.BaseApp),
 ) *DesmosApp {
 	var (
 		app        = &DesmosApp{}
@@ -422,11 +421,6 @@ func NewDesmosApp(
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 		wasmOpts...,
 	)
-
-	// The gov proposal types can be individually enabled
-	if len(wasmEnabledProposals) != 0 {
-		govRouter.AddRoute(wasmtypes.RouterKey, wasmkeeper.NewWasmProposalHandler(app.WasmKeeper, wasmEnabledProposals))
-	}
 
 	// Set legacy router for backwards compatibility with gov v1beta1
 	app.GovKeeper.SetLegacyRouter(govRouter)
