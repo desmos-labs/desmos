@@ -10,7 +10,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
-	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
@@ -180,7 +179,6 @@ type ModuleInputs struct {
 
 	Config *modulev1.Module
 	Cdc    codec.Codec
-	Key    *storetypes.KVStoreKey
 
 	AccountKeeper      authkeeper.AccountKeeper
 	BankKeeper         bankkeeper.Keeper
