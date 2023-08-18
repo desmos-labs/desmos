@@ -1,4 +1,4 @@
-package v530
+package v6
 
 import (
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
@@ -15,7 +15,7 @@ var (
 	_ upgrades.Upgrade = &Upgrade{}
 )
 
-// Upgrade represents the v5.3.0 upgrade
+// Upgrade represents the v6 upgrade
 type Upgrade struct {
 	mm           *module.Manager
 	configurator module.Configurator
@@ -34,7 +34,7 @@ func NewUpgrade(mm *module.Manager, configurator module.Configurator, sk *stakin
 
 // Name implements upgrades.Upgrade
 func (u *Upgrade) Name() string {
-	return "v5.3.0"
+	return "v6"
 }
 
 // Handler implements upgrades.Upgrade
