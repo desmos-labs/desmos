@@ -3,8 +3,8 @@ package keeper_test
 import (
 	"testing"
 
-	"github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
-	"github.com/desmos-labs/desmos/v5/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v6/x/subspaces/keeper"
+	"github.com/desmos-labs/desmos/v6/x/subspaces/types"
 
 	db "github.com/cometbft/cometbft-db"
 	"github.com/cometbft/cometbft/libs/log"
@@ -19,7 +19,7 @@ import (
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/desmos-labs/desmos/v5/app"
+	"github.com/desmos-labs/desmos/v6/app"
 )
 
 type KeeperTestSuite struct {

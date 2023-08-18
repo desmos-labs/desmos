@@ -23,15 +23,15 @@ import (
 
 	"github.com/spf13/cobra"
 
-	modulev1 "github.com/desmos-labs/desmos/v5/api/desmos/relationships/module/v1"
+	modulev1 "github.com/desmos-labs/desmos/v6/api/desmos/relationships/module/v1"
 
-	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
-	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
+	subspaceskeeper "github.com/desmos-labs/desmos/v6/x/subspaces/keeper"
+	subspacestypes "github.com/desmos-labs/desmos/v6/x/subspaces/types"
 
-	"github.com/desmos-labs/desmos/v5/x/relationships/client/cli"
-	"github.com/desmos-labs/desmos/v5/x/relationships/keeper"
-	"github.com/desmos-labs/desmos/v5/x/relationships/simulation"
-	"github.com/desmos-labs/desmos/v5/x/relationships/types"
+	"github.com/desmos-labs/desmos/v6/x/relationships/client/cli"
+	"github.com/desmos-labs/desmos/v6/x/relationships/keeper"
+	"github.com/desmos-labs/desmos/v6/x/relationships/simulation"
+	"github.com/desmos-labs/desmos/v6/x/relationships/types"
 )
 
 const (

@@ -7,7 +7,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types/kv"
 
-	"github.com/desmos-labs/desmos/v5/x/reactions/types"
+	"github.com/desmos-labs/desmos/v6/x/reactions/types"
 )
 
 // NewDecodeStore returns a new decoder that unmarshals the KVPair's Value

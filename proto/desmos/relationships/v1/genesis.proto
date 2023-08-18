@@ -5,7 +5,7 @@ import "amino/amino.proto";
 import "gogoproto/gogo.proto";
 import "desmos/relationships/v1/models.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v5/x/relationships/types";
+option go_package = "github.com/desmos-labs/desmos/v6/x/relationships/types";
 
 // GenesisState defines the profiles module's genesis state.
 message GenesisState {

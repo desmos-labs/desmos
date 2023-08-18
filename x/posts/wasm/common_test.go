@@ -8,8 +8,8 @@ import (
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	"github.com/desmos-labs/desmos/v5/app"
-	"github.com/desmos-labs/desmos/v5/x/posts/keeper"
+	"github.com/desmos-labs/desmos/v6/app"
+	"github.com/desmos-labs/desmos/v6/x/posts/keeper"
 
 	db "github.com/cometbft/cometbft-db"
 	"github.com/cometbft/cometbft/libs/log"
@@ -19,7 +19,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v5/x/posts/types"
+	"github.com/desmos-labs/desmos/v6/x/posts/types"
 )
 
 func buildCreatePostRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {

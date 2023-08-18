@@ -7,33 +7,33 @@ import (
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	wasmdesmos "github.com/desmos-labs/desmos/v5/cosmwasm"
+	wasmdesmos "github.com/desmos-labs/desmos/v6/cosmwasm"
 
-	postskeeper "github.com/desmos-labs/desmos/v5/x/posts/keeper"
-	poststypes "github.com/desmos-labs/desmos/v5/x/posts/types"
-	postswasm "github.com/desmos-labs/desmos/v5/x/posts/wasm"
+	postskeeper "github.com/desmos-labs/desmos/v6/x/posts/keeper"
+	poststypes "github.com/desmos-labs/desmos/v6/x/posts/types"
+	postswasm "github.com/desmos-labs/desmos/v6/x/posts/wasm"
 
-	profileskeeper "github.com/desmos-labs/desmos/v5/x/profiles/keeper"
-	profilestypes "github.com/desmos-labs/desmos/v5/x/profiles/types"
-	profileswasm "github.com/desmos-labs/desmos/v5/x/profiles/wasm"
+	profileskeeper "github.com/desmos-labs/desmos/v6/x/profiles/keeper"
+	profilestypes "github.com/desmos-labs/desmos/v6/x/profiles/types"
+	profileswasm "github.com/desmos-labs/desmos/v6/x/profiles/wasm"
 
-	reactionskeeper "github.com/desmos-labs/desmos/v5/x/reactions/keeper"
-	reactionstypes "github.com/desmos-labs/desmos/v5/x/reactions/types"
-	reactionswasm "github.com/desmos-labs/desmos/v5/x/reactions/wasm"
+	reactionskeeper "github.com/desmos-labs/desmos/v6/x/reactions/keeper"
+	reactionstypes "github.com/desmos-labs/desmos/v6/x/reactions/types"
+	reactionswasm "github.com/desmos-labs/desmos/v6/x/reactions/wasm"
 
-	relationshipskeeper "github.com/desmos-labs/desmos/v5/x/relationships/keeper"
-	relationshipstypes "github.com/desmos-labs/desmos/v5/x/relationships/types"
-	relationshipswasm "github.com/desmos-labs/desmos/v5/x/relationships/wasm"
+	relationshipskeeper "github.com/desmos-labs/desmos/v6/x/relationships/keeper"
+	relationshipstypes "github.com/desmos-labs/desmos/v6/x/relationships/types"
+	relationshipswasm "github.com/desmos-labs/desmos/v6/x/relationships/wasm"
 
-	reportskeeper "github.com/desmos-labs/desmos/v5/x/reports/keeper"
-	reportstypes "github.com/desmos-labs/desmos/v5/x/reports/types"
-	reportswasm "github.com/desmos-labs/desmos/v5/x/reports/wasm"
+	reportskeeper "github.com/desmos-labs/desmos/v6/x/reports/keeper"
+	reportstypes "github.com/desmos-labs/desmos/v6/x/reports/types"
+	reportswasm "github.com/desmos-labs/desmos/v6/x/reports/wasm"
 
-	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
-	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
-	subspaceswasm "github.com/desmos-labs/desmos/v5/x/subspaces/wasm"
+	subspaceskeeper "github.com/desmos-labs/desmos/v6/x/subspaces/keeper"
+	subspacestypes "github.com/desmos-labs/desmos/v6/x/subspaces/types"
+	subspaceswasm "github.com/desmos-labs/desmos/v6/x/subspaces/wasm"
 
-	desmoswasmtypes "github.com/desmos-labs/desmos/v5/x/wasm/types"
+	desmoswasmtypes "github.com/desmos-labs/desmos/v6/x/wasm/types"
 )
 
 const (

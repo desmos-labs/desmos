@@ -12,9 +12,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
 
-	"github.com/desmos-labs/desmos/v5/app/params"
-	"github.com/desmos-labs/desmos/v5/x/relationships/keeper"
-	"github.com/desmos-labs/desmos/v5/x/relationships/types"
+	"github.com/desmos-labs/desmos/v6/app/params"
+	"github.com/desmos-labs/desmos/v6/x/relationships/keeper"
+	"github.com/desmos-labs/desmos/v6/x/relationships/types"
 )
 
 // Simulation operation weights constants

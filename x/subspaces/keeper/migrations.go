@@ -4,13 +4,13 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 
-	v2 "github.com/desmos-labs/desmos/v5/x/subspaces/legacy/v2"
-	v3 "github.com/desmos-labs/desmos/v5/x/subspaces/legacy/v3"
-	v4 "github.com/desmos-labs/desmos/v5/x/subspaces/legacy/v4"
-	v5 "github.com/desmos-labs/desmos/v5/x/subspaces/legacy/v5"
-	v6 "github.com/desmos-labs/desmos/v5/x/subspaces/legacy/v6"
-	v7 "github.com/desmos-labs/desmos/v5/x/subspaces/legacy/v7"
-	"github.com/desmos-labs/desmos/v5/x/subspaces/types"
+	v2 "github.com/desmos-labs/desmos/v6/x/subspaces/legacy/v2"
+	v3 "github.com/desmos-labs/desmos/v6/x/subspaces/legacy/v3"
+	v4 "github.com/desmos-labs/desmos/v6/x/subspaces/legacy/v4"
+	v5 "github.com/desmos-labs/desmos/v6/x/subspaces/legacy/v5"
+	v6 "github.com/desmos-labs/desmos/v6/x/subspaces/legacy/v6"
+	v7 "github.com/desmos-labs/desmos/v6/x/subspaces/legacy/v7"
+	"github.com/desmos-labs/desmos/v6/x/subspaces/types"
 )
 
 // DONTCOVER

@@ -6,14 +6,14 @@ import (
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 
-	"github.com/desmos-labs/desmos/v5/app"
-	"github.com/desmos-labs/desmos/v5/testutil/profilestesting"
+	"github.com/desmos-labs/desmos/v6/app"
+	"github.com/desmos-labs/desmos/v6/testutil/profilestesting"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v5/x/profiles/types"
+	"github.com/desmos-labs/desmos/v6/x/profiles/types"
 )
 
 func TestProfile_Update(t *testing.T) {

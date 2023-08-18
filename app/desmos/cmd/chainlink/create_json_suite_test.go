@@ -8,7 +8,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/desmos-labs/desmos/v5/app/desmos/cmd/chainlink/types"
+	"github.com/desmos-labs/desmos/v6/app/desmos/cmd/chainlink/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -17,7 +17,7 @@ import (
 	authclient "github.com/cosmos/cosmos-sdk/x/auth/client"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/desmos-labs/desmos/v5/app"
+	"github.com/desmos-labs/desmos/v6/app"
 )
 
 func TestCreateJSONChainLinkSuite(t *testing.T) {

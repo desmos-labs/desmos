@@ -3,7 +3,7 @@ package keeper
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v5/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v6/x/subspaces/types"
 )
 
 // SetUserPermissions sets the given permission for the specific user inside a single subspace

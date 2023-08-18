@@ -11,10 +11,10 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v5/app"
-	"github.com/desmos-labs/desmos/v5/testutil/storetesting"
-	v7 "github.com/desmos-labs/desmos/v5/x/subspaces/legacy/v7"
-	"github.com/desmos-labs/desmos/v5/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v6/app"
+	"github.com/desmos-labs/desmos/v6/testutil/storetesting"
+	v7 "github.com/desmos-labs/desmos/v6/x/subspaces/legacy/v7"
+	"github.com/desmos-labs/desmos/v6/x/subspaces/types"
 )
 
 func isExpiringQueueEmpty(ctx sdk.Context, key storetypes.StoreKey) bool {

@@ -23,7 +23,7 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
-	simapp "github.com/desmos-labs/desmos/v5/app"
+	simapp "github.com/desmos-labs/desmos/v6/app"
 )
 
 func setup(chainID string, withGenesis bool, invCheckPeriod uint) (*simapp.DesmosApp, simapp.GenesisState) {

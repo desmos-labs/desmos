@@ -6,7 +6,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	"github.com/desmos-labs/desmos/v5/x/profiles/types"
+	"github.com/desmos-labs/desmos/v6/x/profiles/types"
 )
 
 // IterateProfiles iterates through the Profiles set and performs the provided function

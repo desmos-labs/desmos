@@ -3,7 +3,7 @@ package keeper
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v5/x/relationships/types"
+	"github.com/desmos-labs/desmos/v6/x/relationships/types"
 )
 
 // SaveUserBlock allows to store the given block inside the store

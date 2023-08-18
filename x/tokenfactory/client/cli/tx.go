@@ -11,8 +11,8 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/spf13/cobra"
 
-	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
-	"github.com/desmos-labs/desmos/v5/x/tokenfactory/types"
+	subspacestypes "github.com/desmos-labs/desmos/v6/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v6/x/tokenfactory/types"
 )
 
 const (

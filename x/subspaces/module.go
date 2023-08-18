@@ -27,15 +27,15 @@ import (
 	"github.com/spf13/cobra"
 	"golang.org/x/exp/maps"
 
-	modulev1 "github.com/desmos-labs/desmos/v5/api/desmos/subspaces/module/v1"
+	modulev1 "github.com/desmos-labs/desmos/v6/api/desmos/subspaces/module/v1"
 
-	v2 "github.com/desmos-labs/desmos/v5/x/subspaces/legacy/v2"
+	v2 "github.com/desmos-labs/desmos/v6/x/subspaces/legacy/v2"
 
-	"github.com/desmos-labs/desmos/v5/x/subspaces/authz"
-	"github.com/desmos-labs/desmos/v5/x/subspaces/client/cli"
-	"github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
-	"github.com/desmos-labs/desmos/v5/x/subspaces/simulation"
-	"github.com/desmos-labs/desmos/v5/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v6/x/subspaces/authz"
+	"github.com/desmos-labs/desmos/v6/x/subspaces/client/cli"
+	"github.com/desmos-labs/desmos/v6/x/subspaces/keeper"
+	"github.com/desmos-labs/desmos/v6/x/subspaces/simulation"
+	"github.com/desmos-labs/desmos/v6/x/subspaces/types"
 )
 
 const (

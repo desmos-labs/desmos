@@ -26,14 +26,14 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 
-	modulev1 "github.com/desmos-labs/desmos/v5/api/desmos/tokenfactory/module/v1"
+	modulev1 "github.com/desmos-labs/desmos/v6/api/desmos/tokenfactory/module/v1"
 
-	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
+	subspaceskeeper "github.com/desmos-labs/desmos/v6/x/subspaces/keeper"
 
-	"github.com/desmos-labs/desmos/v5/x/tokenfactory/client/cli"
-	"github.com/desmos-labs/desmos/v5/x/tokenfactory/keeper"
-	"github.com/desmos-labs/desmos/v5/x/tokenfactory/simulation"
-	"github.com/desmos-labs/desmos/v5/x/tokenfactory/types"
+	"github.com/desmos-labs/desmos/v6/x/tokenfactory/client/cli"
+	"github.com/desmos-labs/desmos/v6/x/tokenfactory/keeper"
+	"github.com/desmos-labs/desmos/v6/x/tokenfactory/simulation"
+	"github.com/desmos-labs/desmos/v6/x/tokenfactory/types"
 )
 
 const (

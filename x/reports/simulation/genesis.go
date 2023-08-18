@@ -6,16 +6,16 @@ import (
 	"math/rand"
 	"time"
 
-	relationshipstypes "github.com/desmos-labs/desmos/v5/x/relationships/types"
+	relationshipstypes "github.com/desmos-labs/desmos/v6/x/relationships/types"
 
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
-	postssim "github.com/desmos-labs/desmos/v5/x/posts/simulation"
-	poststypes "github.com/desmos-labs/desmos/v5/x/posts/types"
-	"github.com/desmos-labs/desmos/v5/x/reports/types"
-	subspacessim "github.com/desmos-labs/desmos/v5/x/subspaces/simulation"
-	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
+	postssim "github.com/desmos-labs/desmos/v6/x/posts/simulation"
+	poststypes "github.com/desmos-labs/desmos/v6/x/posts/types"
+	"github.com/desmos-labs/desmos/v6/x/reports/types"
+	subspacessim "github.com/desmos-labs/desmos/v6/x/subspaces/simulation"
+	subspacestypes "github.com/desmos-labs/desmos/v6/x/subspaces/types"
 )
 
 // RandomizeGenState generates a random GenesisState for subspaces

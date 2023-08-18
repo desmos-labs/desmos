@@ -4,7 +4,7 @@ import (
 	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v5/x/posts/types"
+	"github.com/desmos-labs/desmos/v6/x/posts/types"
 )
 
 // SetNextAttachmentID sets the new attachment id for the given post to the store

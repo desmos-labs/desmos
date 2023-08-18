@@ -8,11 +8,11 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v5/app"
-	"github.com/desmos-labs/desmos/v5/testutil/storetesting"
+	"github.com/desmos-labs/desmos/v6/app"
+	"github.com/desmos-labs/desmos/v6/testutil/storetesting"
 
-	v6 "github.com/desmos-labs/desmos/v5/x/posts/legacy/v6"
-	"github.com/desmos-labs/desmos/v5/x/posts/types"
+	v6 "github.com/desmos-labs/desmos/v6/x/posts/legacy/v6"
+	"github.com/desmos-labs/desmos/v6/x/posts/types"
 )
 
 type mockSubspace struct {

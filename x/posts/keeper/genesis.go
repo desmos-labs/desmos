@@ -3,9 +3,9 @@ package keeper
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
+	subspacestypes "github.com/desmos-labs/desmos/v6/x/subspaces/types"
 
-	"github.com/desmos-labs/desmos/v5/x/posts/types"
+	"github.com/desmos-labs/desmos/v6/x/posts/types"
 )
 
 // ExportGenesis returns the GenesisState associated with the given context

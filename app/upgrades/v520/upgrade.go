@@ -8,7 +8,7 @@ import (
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 
-	"github.com/desmos-labs/desmos/v5/app/upgrades"
+	"github.com/desmos-labs/desmos/v6/app/upgrades"
 )
 
 var (

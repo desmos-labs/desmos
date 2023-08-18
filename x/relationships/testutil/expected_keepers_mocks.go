@@ -8,7 +8,7 @@ import (
 	reflect "reflect"
 
 	types "github.com/cosmos/cosmos-sdk/types"
-	types0 "github.com/desmos-labs/desmos/v5/x/subspaces/types"
+	types0 "github.com/desmos-labs/desmos/v6/x/subspaces/types"
 	gomock "github.com/golang/mock/gomock"
 )
 

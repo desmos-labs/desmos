@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v5/x/reactions/types"
+	"github.com/desmos-labs/desmos/v6/x/reactions/types"
 )
 
 func TestValidateGenesis(t *testing.T) {

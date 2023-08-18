@@ -9,9 +9,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
-	"github.com/desmos-labs/desmos/v5/x/posts/types"
-	subspacessim "github.com/desmos-labs/desmos/v5/x/subspaces/simulation"
-	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v6/x/posts/types"
+	subspacessim "github.com/desmos-labs/desmos/v6/x/subspaces/simulation"
+	subspacestypes "github.com/desmos-labs/desmos/v6/x/subspaces/types"
 )
 
 // RandomizeGenState generates a random GenesisState for posts

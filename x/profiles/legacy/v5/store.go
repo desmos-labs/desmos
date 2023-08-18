@@ -6,9 +6,9 @@ import (
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	v5types "github.com/desmos-labs/desmos/v5/x/profiles/legacy/v5/types"
+	v5types "github.com/desmos-labs/desmos/v6/x/profiles/legacy/v5/types"
 
-	"github.com/desmos-labs/desmos/v5/x/profiles/types"
+	"github.com/desmos-labs/desmos/v6/x/profiles/types"
 )
 
 // MigrateStore performs in-place store migrations from v5 to v6.

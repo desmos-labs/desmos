@@ -10,8 +10,8 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 
-	"github.com/desmos-labs/desmos/v5/x/reports/types"
-	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v6/x/reports/types"
+	subspacestypes "github.com/desmos-labs/desmos/v6/x/subspaces/types"
 )
 
 type msgServer struct {

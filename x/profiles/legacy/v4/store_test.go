@@ -5,16 +5,16 @@ import (
 	"testing"
 	"time"
 
-	v4 "github.com/desmos-labs/desmos/v5/x/profiles/legacy/v4"
-	types2 "github.com/desmos-labs/desmos/v5/x/profiles/legacy/v4/types"
-	v5types "github.com/desmos-labs/desmos/v5/x/profiles/legacy/v5/types"
+	v4 "github.com/desmos-labs/desmos/v6/x/profiles/legacy/v4"
+	types2 "github.com/desmos-labs/desmos/v6/x/profiles/legacy/v4/types"
+	v5types "github.com/desmos-labs/desmos/v6/x/profiles/legacy/v5/types"
 
 	"github.com/cosmos/cosmos-sdk/types/tx"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	"github.com/cosmos/cosmos-sdk/x/auth/migrations/legacytx"
 
-	"github.com/desmos-labs/desmos/v5/testutil/profilestesting"
-	profilestypes "github.com/desmos-labs/desmos/v5/x/profiles/types"
+	"github.com/desmos-labs/desmos/v6/testutil/profilestesting"
+	profilestypes "github.com/desmos-labs/desmos/v6/x/profiles/types"
 
 	dbm "github.com/cometbft/cometbft-db"
 	"github.com/cometbft/cometbft/libs/log"
@@ -30,8 +30,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v5/app"
-	v4types "github.com/desmos-labs/desmos/v5/x/profiles/legacy/v4/types"
+	"github.com/desmos-labs/desmos/v6/app"
+	v4types "github.com/desmos-labs/desmos/v6/x/profiles/legacy/v4/types"
 )
 
 func buildContext(

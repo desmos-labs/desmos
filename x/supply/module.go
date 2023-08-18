@@ -22,11 +22,11 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 
-	modulev1 "github.com/desmos-labs/desmos/v5/api/desmos/supply/module/v1"
+	modulev1 "github.com/desmos-labs/desmos/v6/api/desmos/supply/module/v1"
 
-	"github.com/desmos-labs/desmos/v5/x/supply/client/cli"
-	"github.com/desmos-labs/desmos/v5/x/supply/keeper"
-	"github.com/desmos-labs/desmos/v5/x/supply/types"
+	"github.com/desmos-labs/desmos/v6/x/supply/client/cli"
+	"github.com/desmos-labs/desmos/v6/x/supply/keeper"
+	"github.com/desmos-labs/desmos/v6/x/supply/types"
 )
 
 var (

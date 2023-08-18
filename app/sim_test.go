@@ -14,13 +14,13 @@ import (
 	"github.com/cosmos/cosmos-sdk/server"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 
-	reactionstypes "github.com/desmos-labs/desmos/v5/x/reactions/types"
+	reactionstypes "github.com/desmos-labs/desmos/v6/x/reactions/types"
 
-	poststypes "github.com/desmos-labs/desmos/v5/x/posts/types"
-	relationshipstypes "github.com/desmos-labs/desmos/v5/x/relationships/types"
-	reportstypes "github.com/desmos-labs/desmos/v5/x/reports/types"
-	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
-	tokenfactorytypes "github.com/desmos-labs/desmos/v5/x/tokenfactory/types"
+	poststypes "github.com/desmos-labs/desmos/v6/x/posts/types"
+	relationshipstypes "github.com/desmos-labs/desmos/v6/x/relationships/types"
+	reportstypes "github.com/desmos-labs/desmos/v6/x/reports/types"
+	subspacestypes "github.com/desmos-labs/desmos/v6/x/subspaces/types"
+	tokenfactorytypes "github.com/desmos-labs/desmos/v6/x/tokenfactory/types"
 
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
@@ -33,7 +33,7 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
-	profilestypes "github.com/desmos-labs/desmos/v5/x/profiles/types"
+	profilestypes "github.com/desmos-labs/desmos/v6/x/profiles/types"
 
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"

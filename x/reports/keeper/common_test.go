@@ -15,10 +15,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/desmos-labs/desmos/v5/app"
-	"github.com/desmos-labs/desmos/v5/x/reports/keeper"
-	"github.com/desmos-labs/desmos/v5/x/reports/testutil"
-	"github.com/desmos-labs/desmos/v5/x/reports/types"
+	"github.com/desmos-labs/desmos/v6/app"
+	"github.com/desmos-labs/desmos/v6/x/reports/keeper"
+	"github.com/desmos-labs/desmos/v6/x/reports/testutil"
+	"github.com/desmos-labs/desmos/v6/x/reports/types"
 )
 
 type KeeperTestSuite struct {

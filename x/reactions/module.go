@@ -23,19 +23,19 @@ import (
 
 	"github.com/spf13/cobra"
 
-	modulev1 "github.com/desmos-labs/desmos/v5/api/desmos/reactions/module/v1"
+	modulev1 "github.com/desmos-labs/desmos/v6/api/desmos/reactions/module/v1"
 
-	postskeeper "github.com/desmos-labs/desmos/v5/x/posts/keeper"
-	poststypes "github.com/desmos-labs/desmos/v5/x/posts/types"
-	profileskeeper "github.com/desmos-labs/desmos/v5/x/profiles/keeper"
-	relationshipskeeper "github.com/desmos-labs/desmos/v5/x/relationships/keeper"
-	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
-	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
+	postskeeper "github.com/desmos-labs/desmos/v6/x/posts/keeper"
+	poststypes "github.com/desmos-labs/desmos/v6/x/posts/types"
+	profileskeeper "github.com/desmos-labs/desmos/v6/x/profiles/keeper"
+	relationshipskeeper "github.com/desmos-labs/desmos/v6/x/relationships/keeper"
+	subspaceskeeper "github.com/desmos-labs/desmos/v6/x/subspaces/keeper"
+	subspacestypes "github.com/desmos-labs/desmos/v6/x/subspaces/types"
 
-	"github.com/desmos-labs/desmos/v5/x/reactions/client/cli"
-	"github.com/desmos-labs/desmos/v5/x/reactions/keeper"
-	"github.com/desmos-labs/desmos/v5/x/reactions/simulation"
-	"github.com/desmos-labs/desmos/v5/x/reactions/types"
+	"github.com/desmos-labs/desmos/v6/x/reactions/client/cli"
+	"github.com/desmos-labs/desmos/v6/x/reactions/keeper"
+	"github.com/desmos-labs/desmos/v6/x/reactions/simulation"
+	"github.com/desmos-labs/desmos/v6/x/reactions/types"
 )
 
 const (

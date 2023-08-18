@@ -7,7 +7,7 @@ import "cosmos_proto/cosmos.proto";
 import "desmos/profiles/v3/models_app_links.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v5/x/profiles/types";
+option go_package = "github.com/desmos-labs/desmos/v6/x/profiles/types";
 
 // QueryUserApplicationLinkRequest represents the request used when querying an
 // application link using an application name and username for a given user

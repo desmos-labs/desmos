@@ -10,13 +10,13 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client/config"
 
-	"github.com/desmos-labs/desmos/v5/app/desmos/cmd/chainlink"
-	"github.com/desmos-labs/desmos/v5/app/desmos/cmd/sign"
+	"github.com/desmos-labs/desmos/v6/app/desmos/cmd/chainlink"
+	"github.com/desmos-labs/desmos/v6/app/desmos/cmd/sign"
 
 	"github.com/cosmos/cosmos-sdk/x/crisis"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 
-	"github.com/desmos-labs/desmos/v5/app"
+	"github.com/desmos-labs/desmos/v6/app"
 
 	dbm "github.com/cometbft/cometbft-db"
 	tmcfg "github.com/cometbft/cometbft/config"
@@ -39,9 +39,9 @@ import (
 	cosmosgenutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
 	cosmosgenutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 
-	chainlinktypes "github.com/desmos-labs/desmos/v5/app/desmos/cmd/chainlink/getter"
-	chainlinkprovider "github.com/desmos-labs/desmos/v5/app/desmos/cmd/chainlink/provider"
-	genutilcli "github.com/desmos-labs/desmos/v5/x/genutil/client/cli"
+	chainlinktypes "github.com/desmos-labs/desmos/v6/app/desmos/cmd/chainlink/getter"
+	chainlinkprovider "github.com/desmos-labs/desmos/v6/app/desmos/cmd/chainlink/provider"
+	genutilcli "github.com/desmos-labs/desmos/v6/x/genutil/client/cli"
 )
 
 // NewRootCmd creates a new root command for desmos. It is called once in the

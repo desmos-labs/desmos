@@ -12,8 +12,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/spf13/cobra"
 
-	profilescliutils "github.com/desmos-labs/desmos/v5/x/profiles/client/utils"
-	"github.com/desmos-labs/desmos/v5/x/profiles/types"
+	profilescliutils "github.com/desmos-labs/desmos/v6/x/profiles/client/utils"
+	"github.com/desmos-labs/desmos/v6/x/profiles/types"
 )
 
 // GetCmdLinkChainAccount returns the command allowing to link an external chain account

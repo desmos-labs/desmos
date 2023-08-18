@@ -7,11 +7,11 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 
-	"github.com/desmos-labs/desmos/v5/testutil/profilestesting"
-	"github.com/desmos-labs/desmos/v5/x/profiles/types"
+	"github.com/desmos-labs/desmos/v6/testutil/profilestesting"
+	"github.com/desmos-labs/desmos/v6/x/profiles/types"
 
-	"github.com/desmos-labs/desmos/v5/x/profiles/wasm"
-	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v6/x/profiles/wasm"
+	subspacestypes "github.com/desmos-labs/desmos/v6/x/subspaces/types"
 )
 
 func (suite *TestSuite) TestProfilesWasmQuerier_QueryCustom() {

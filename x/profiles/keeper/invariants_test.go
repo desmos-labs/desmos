@@ -4,15 +4,15 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/desmos-labs/desmos/v5/testutil/profilestesting"
+	"github.com/desmos-labs/desmos/v6/testutil/profilestesting"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v5/x/profiles/keeper"
-	"github.com/desmos-labs/desmos/v5/x/profiles/types"
+	"github.com/desmos-labs/desmos/v6/x/profiles/keeper"
+	"github.com/desmos-labs/desmos/v6/x/profiles/types"
 )
 
 func (suite *KeeperTestSuite) TestInvariants() {

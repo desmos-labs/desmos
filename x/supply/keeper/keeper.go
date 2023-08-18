@@ -11,7 +11,7 @@ import (
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	distributionkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
 
-	"github.com/desmos-labs/desmos/v5/x/supply/types"
+	"github.com/desmos-labs/desmos/v6/x/supply/types"
 )
 
 type Keeper struct {

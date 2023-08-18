@@ -7,7 +7,7 @@ import "cosmos_proto/cosmos.proto";
 import "desmos/profiles/v3/models_chain_links.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v5/x/profiles/types";
+option go_package = "github.com/desmos-labs/desmos/v6/x/profiles/types";
 
 // QueryChainLinksRequest represents the request that should be used in order
 // to retrieve the link associated with the provided user, for the given chain

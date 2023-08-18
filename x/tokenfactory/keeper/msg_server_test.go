@@ -8,12 +8,12 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 
-	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
+	subspacestypes "github.com/desmos-labs/desmos/v6/x/subspaces/types"
 
 	"github.com/golang/mock/gomock"
 
-	"github.com/desmos-labs/desmos/v5/x/tokenfactory/keeper"
-	"github.com/desmos-labs/desmos/v5/x/tokenfactory/types"
+	"github.com/desmos-labs/desmos/v6/x/tokenfactory/keeper"
+	"github.com/desmos-labs/desmos/v6/x/tokenfactory/types"
 )
 
 func (suite *KeeperTestSuite) TestMsgServer_CreateDenom() {
