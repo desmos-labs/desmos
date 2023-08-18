@@ -9,6 +9,7 @@ import (
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 
 	"github.com/desmos-labs/desmos/v5/app/upgrades"
+	tokenfactorytypes "github.com/desmos-labs/desmos/v5/x/tokenfactory/types"
 )
 
 var (
@@ -72,5 +73,9 @@ func (u *Upgrade) Handler() upgradetypes.UpgradeHandler {
 
 // StoreUpgrades implements upgrades.Upgrade
 func (u *Upgrade) StoreUpgrades() *storetypes.StoreUpgrades {
-	return &storetypes.StoreUpgrades{}
+	return &storetypes.StoreUpgrades{
+		Added: []string{
+			tokenfactorytypes.StoreKey,
+		},
+	}
 }
