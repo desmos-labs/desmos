@@ -44,9 +44,9 @@ with open(chain_state_file, 'r') as chain_state_f, open(genesis_file, 'r') as ge
     genesis['app_state']['auth']['accounts'] += chain_state['app_state']['auth']['accounts']
 
     # x/gov
-    genesis['app_state']['gov']['deposit_params']['max_deposit_period'] = '120s'
-    genesis['app_state']['gov']['voting_params']['voting_period'] = '120s'
-    genesis['app_state']['gov']['deposit_params']['min_deposit'] = [{'amount': '10000000', 'denom': 'udaric'}]
+    genesis['app_state']['gov']['params']['max_deposit_period'] = '120s'
+    genesis['app_state']['gov']['params']['voting_period'] = '120s'
+    genesis['app_state']['gov']['params']['min_deposit'] = [{'amount': '10000000', 'denom': 'udaric'}]
 
     # -------------------------------
     # --- Copy modules state over
