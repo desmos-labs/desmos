@@ -52,17 +52,18 @@ for ((i = 1; i < $NODES; i++)); do
   echo $NODE_SECRET | $DESMOS keys add "node$i" --recover --keyring-backend test >/dev/null 2>&1
 done
 
-sleep $SLEEP
+sleep 6s
 
 TX_FLAGS="--from node0 --chain-id $CHAIN_ID --yes --fees 100udaric --keyring-backend test"
 
 echo ""
 echo "===> Submitting upgrade proposal"
-RESULT=$($DESMOS tx gov submit-proposal \
+RESULT=$($DESMOS tx gov submit-legacy-proposal \
   software-upgrade $UPGRADE_NAME \
   --title Upgrade \
   --description Description \
   --upgrade-height $UPGRADE_HEIGHT \
+  --no-validate \
   $TX_FLAGS 2>&1)
 
 TX_HASH=$(echo "$RESULT" | grep txhash | sed -e 's/txhash: //')
@@ -79,7 +80,7 @@ sleep 6s
 
 echo ""
 echo "===> Getting proposal id"
-PROPOSAL_ID=$($DESMOS q tx $TX_HASH --node $NODE --output json 2>&1 | jq .logs[0].events[4].attributes[0].value -r)
+PROPOSAL_ID=$($DESMOS q tx $TX_HASH --node $NODE --output json 2>&1 | jq .logs[0].events[1].attributes[0].value -r)
 echo "Proposal ID: $PROPOSAL_ID"
 
 sleep 3s
