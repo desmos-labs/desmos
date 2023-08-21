@@ -10,5 +10,5 @@ import (
 func (app *DesmosApp) registerUpgradeHandlers() {
 	app.registerUpgrade(v500.NewUpgrade(app.ModuleManager, app.Configurator(), app.ParamsKeeper, app.ConsensusParamsKeeper))
 	app.registerUpgrade(v520.NewUpgrade(app.ModuleManager, app.Configurator(), app.ParamsKeeper, app.ConsensusParamsKeeper))
-	app.registerUpgrade(v6.NewUpgrade(app.ModuleManager, app.Configurator(), app.StakingKeeper))
+	app.registerUpgrade(v6.NewUpgrade(app.ModuleManager, app.Configurator(), app.StakingKeeper, app.IBCKeeper.ClientKeeper))
 }

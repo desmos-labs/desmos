@@ -7,6 +7,8 @@ import (
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
+	clientkeeper "github.com/cosmos/ibc-go/v7/modules/core/02-client/keeper"
+	"github.com/cosmos/ibc-go/v7/modules/core/exported"
 
 	"github.com/desmos-labs/desmos/v6/app/upgrades"
 	tokenfactorytypes "github.com/desmos-labs/desmos/v6/x/tokenfactory/types"
@@ -21,15 +23,17 @@ type Upgrade struct {
 	mm           *module.Manager
 	configurator module.Configurator
 
-	sk *stakingkeeper.Keeper
+	sk           *stakingkeeper.Keeper
+	clientKeeper clientkeeper.Keeper
 }
 
 // NewUpgrade returns a new Upgrade instance
-func NewUpgrade(mm *module.Manager, configurator module.Configurator, sk *stakingkeeper.Keeper) *Upgrade {
+func NewUpgrade(mm *module.Manager, configurator module.Configurator, sk *stakingkeeper.Keeper, clientKeeper clientkeeper.Keeper) *Upgrade {
 	return &Upgrade{
 		mm:           mm,
 		configurator: configurator,
 		sk:           sk,
+		clientKeeper: clientKeeper,
 	}
 }
 
@@ -65,6 +69,11 @@ func (u *Upgrade) Handler() upgradetypes.UpgradeHandler {
 
 			return false
 		})
+
+		// explicitly update the IBC 02-client params, adding the localhost client type
+		params := u.clientKeeper.GetParams(ctx)
+		params.AllowedClients = append(params.AllowedClients, exported.Localhost)
+		u.clientKeeper.SetParams(ctx, params)
 
 		// After properly setting all the validator commissions, we can proceed with the normal migration
 		return u.mm.RunMigrations(ctx, u.configurator, fromVM)
