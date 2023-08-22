@@ -1,5 +1,5 @@
 type: feat
-module: other
+module: x/tokenfactory
 pull_request: 1141
 description: Added the `x/tokenfactory` module
 backward_compatible: false
