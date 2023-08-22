@@ -1,6 +1,6 @@
 type: fix
 module: other
 pull_request: 1207
-description: fix third party proto files
+description: Fixed the generation of third party Proto files
 backward_compatible: true
 date: 2023-08-15T07:10:34.983588266Z

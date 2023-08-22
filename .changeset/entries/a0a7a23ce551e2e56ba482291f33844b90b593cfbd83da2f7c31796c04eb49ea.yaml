@@ -1,6 +1,6 @@
 type: feat
 module: other
 pull_request: 1141
-description: Added the tokenfactory module
+description: Added the `x/tokenfactory` module
 backward_compatible: false
 date: 2023-08-18T17:34:31.603816821Z

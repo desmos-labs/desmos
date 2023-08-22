@@ -1,6 +1,6 @@
 type: feat
 module: x/subspaces
 pull_request: 1198
-description: Implement expired subspace fee grant deletion
+description: Added the automatic deletion of expired subspace fee grants
 backward_compatible: true
 date: 2023-07-14T08:54:35.868279313Z

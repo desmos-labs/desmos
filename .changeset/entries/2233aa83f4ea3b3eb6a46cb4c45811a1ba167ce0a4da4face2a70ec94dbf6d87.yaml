@@ -1,6 +1,0 @@
-type: refactor
-module: other
-pull_request: 1188
-description: 'chore: deprecate app v1'
-backward_compatible: true
-date: 2023-07-03T11:44:31.007224348Z

@@ -1,6 +1,6 @@
 type: deps
 module: other
 pull_request: 1209
-description: Bump wasmd to 0.41.0 from 0.40.0
+description: Updated `wasmd` to `v0.41.0`
 backward_compatible: false
 date: 2023-08-15T14:20:52.992816381Z
