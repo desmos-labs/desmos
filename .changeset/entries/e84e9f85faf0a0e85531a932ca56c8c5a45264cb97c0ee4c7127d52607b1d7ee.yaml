@@ -1,6 +1,0 @@
-type: feat
-module: x/subspaces
-pull_request: 1138
-description: Added the ability to set per-subspace custom fee denominations
-backward_compatible: true
-date: 2023-05-12T08:32:20.5983359Z
