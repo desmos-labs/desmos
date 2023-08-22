@@ -1,6 +1,0 @@
-type: feat
-module: x/posts
-pull_request: 1145
-description: Implement post ownership transfer feature
-backward_compatible: true
-date: 2023-05-18T11:37:49.9881798Z

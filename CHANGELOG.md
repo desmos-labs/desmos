@@ -2,6 +2,28 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
+## Version 6.0.0
+### Features
+#### Subspaces
+- ([\#1138](https://github.com/desmos-labs/desmos/pull/1138)) Added the ability to set per-subspace custom fee denominations
+- ([\#1198](https://github.com/desmos-labs/desmos/pull/1198)) Added the automatic deletion of expired subspace fee grants
+
+#### Posts
+- ([\#1145](https://github.com/desmos-labs/desmos/pull/1145)) Added the ability to transfer the ownership of a post to another account
+- ([\#1157](https://github.com/desmos-labs/desmos/pull/1157)) Added the ability to move a post from one subspace to another
+
+#### Tokenfactory
+- ([\#1141](https://github.com/desmos-labs/desmos/pull/1141)) Added the `x/tokenfactory` module
+
+### Bug Fixes
+#### Other
+- ([\#1207](https://github.com/desmos-labs/desmos/pull/1207)) Fixed the generation of third party Proto files
+
+### Dependencies
+- ([\#1209](https://github.com/desmos-labs/desmos/pull/1209)) Updated `wasmd` to `v0.41.0`
+
+- ([\#1180](https://github.com/desmos-labs/desmos/pull/1180)) Updated `ibc-go` to `v7.2.0`
+
 ## Version 5.2.0
 ### Dependencies
 - ([\#1180](https://github.com/desmos-labs/desmos/pull/1180)) Updated `ibc-go` to `v7.2.0`

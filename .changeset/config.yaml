@@ -74,6 +74,8 @@ modules:
     description: Fees
   - id: x/supply
     description: Supply
+  - id: x/tokenfactory
+    description: Tokenfactory
   - id: other
     description: Other
   - id: none
