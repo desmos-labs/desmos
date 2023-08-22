@@ -1,5 +1,5 @@
 type: deps
-module: other
+module: none
 pull_request: 1209
 description: Updated `wasmd` to `v0.41.0`
 backward_compatible: false
