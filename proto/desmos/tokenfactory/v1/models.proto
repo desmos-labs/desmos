@@ -4,7 +4,7 @@ package desmos.tokenfactory.v1;
 import "gogoproto/gogo.proto";
 import "cosmos_proto/cosmos.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v5/x/tokenfactory/types";
+option go_package = "github.com/desmos-labs/desmos/v6/x/tokenfactory/types";
 
 // DenomAuthorityMetadata contains the metadata for a single token denom.
 message DenomAuthorityMetadata {

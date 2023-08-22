@@ -8,7 +8,7 @@ import (
 	_ "github.com/cosmos/cosmos-sdk/types/tx/amino"
 	_ "github.com/cosmos/gogoproto/gogoproto"
 	proto "github.com/cosmos/gogoproto/proto"
-	types "github.com/desmos-labs/desmos/v5/x/reactions/types"
+	types "github.com/desmos-labs/desmos/v6/x/reactions/types"
 	io "io"
 	math "math"
 	math_bits "math/bits"

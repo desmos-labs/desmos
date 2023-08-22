@@ -7,14 +7,14 @@ import (
 
 	"github.com/golang/mock/gomock"
 
-	"github.com/desmos-labs/desmos/v5/testutil/profilestesting"
+	"github.com/desmos-labs/desmos/v6/testutil/profilestesting"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	host "github.com/cosmos/ibc-go/v7/modules/core/24-host"
 
-	"github.com/desmos-labs/desmos/v5/x/profiles/types"
+	"github.com/desmos-labs/desmos/v6/x/profiles/types"
 )
 
 func (suite *KeeperTestSuite) Test_ExportGenesis() {

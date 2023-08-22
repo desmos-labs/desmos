@@ -8,7 +8,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/desmos-labs/desmos/v5/x/relationships/types"
+	"github.com/desmos-labs/desmos/v6/x/relationships/types"
 )
 
 var _ types.MsgServer = &msgServer{}

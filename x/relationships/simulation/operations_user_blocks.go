@@ -12,12 +12,12 @@ import (
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v5/testutil/simtesting"
+	"github.com/desmos-labs/desmos/v6/testutil/simtesting"
 
-	subspacessim "github.com/desmos-labs/desmos/v5/x/subspaces/simulation"
+	subspacessim "github.com/desmos-labs/desmos/v6/x/subspaces/simulation"
 
-	"github.com/desmos-labs/desmos/v5/x/relationships/keeper"
-	"github.com/desmos-labs/desmos/v5/x/relationships/types"
+	"github.com/desmos-labs/desmos/v6/x/relationships/keeper"
+	"github.com/desmos-labs/desmos/v6/x/relationships/types"
 )
 
 // SimulateMsgBlockUser tests and runs a single MsgBlockUser

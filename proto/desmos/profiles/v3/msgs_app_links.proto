@@ -1,7 +1,7 @@
 syntax = "proto3";
 package desmos.profiles.v3;
 
-option go_package = "github.com/desmos-labs/desmos/v5/x/profiles/types";
+option go_package = "github.com/desmos-labs/desmos/v6/x/profiles/types";
 
 import "desmos/profiles/v3/models_app_links.proto";
 

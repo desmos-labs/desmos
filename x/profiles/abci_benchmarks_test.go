@@ -5,9 +5,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/desmos-labs/desmos/v5/x/profiles"
+	"github.com/desmos-labs/desmos/v6/x/profiles"
 
-	"github.com/desmos-labs/desmos/v5/testutil/profilestesting"
+	"github.com/desmos-labs/desmos/v6/testutil/profilestesting"
 
 	db "github.com/cometbft/cometbft-db"
 	"github.com/cometbft/cometbft/libs/log"
@@ -22,9 +22,9 @@ import (
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v5/app"
-	"github.com/desmos-labs/desmos/v5/x/profiles/keeper"
-	"github.com/desmos-labs/desmos/v5/x/profiles/types"
+	"github.com/desmos-labs/desmos/v6/app"
+	"github.com/desmos-labs/desmos/v6/x/profiles/keeper"
+	"github.com/desmos-labs/desmos/v6/x/profiles/types"
 )
 
 func setupBenchTest() (sdk.Context, authkeeper.AccountKeeper, keeper.Keeper) {

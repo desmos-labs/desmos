@@ -7,10 +7,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v5/app"
-	profilestypes "github.com/desmos-labs/desmos/v5/x/profiles/types"
-	"github.com/desmos-labs/desmos/v5/x/relationships/types"
-	"github.com/desmos-labs/desmos/v5/x/relationships/wasm"
+	"github.com/desmos-labs/desmos/v6/app"
+	profilestypes "github.com/desmos-labs/desmos/v6/x/profiles/types"
+	"github.com/desmos-labs/desmos/v6/x/relationships/types"
+	"github.com/desmos-labs/desmos/v6/x/relationships/wasm"
 )
 
 func TestMsgsParser_ParseCustomMsgs(t *testing.T) {

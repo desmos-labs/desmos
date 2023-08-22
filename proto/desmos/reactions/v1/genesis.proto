@@ -6,7 +6,7 @@ import "gogoproto/gogo.proto";
 
 import "desmos/reactions/v1/models.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v5/x/reactions/types";
+option go_package = "github.com/desmos-labs/desmos/v6/x/reactions/types";
 
 // GenesisState contains the data of the genesis state for the reactions module
 message GenesisState {

@@ -11,9 +11,9 @@ import (
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
 
-	"github.com/desmos-labs/desmos/v5/app/params"
-	"github.com/desmos-labs/desmos/v5/x/reactions/keeper"
-	"github.com/desmos-labs/desmos/v5/x/reactions/types"
+	"github.com/desmos-labs/desmos/v6/app/params"
+	"github.com/desmos-labs/desmos/v6/x/reactions/keeper"
+	"github.com/desmos-labs/desmos/v6/x/reactions/types"
 )
 
 // Simulation operation weights constants

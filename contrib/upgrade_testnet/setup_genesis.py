@@ -44,12 +44,19 @@ with open(chain_state_file, 'r') as chain_state_f, open(genesis_file, 'r') as ge
     genesis['app_state']['auth']['accounts'] += chain_state['app_state']['auth']['accounts']
 
     # x/gov
-    genesis['app_state']['gov']['deposit_params']['max_deposit_period'] = '120s'
-    genesis['app_state']['gov']['voting_params']['voting_period'] = '120s'
-    genesis['app_state']['gov']['deposit_params']['min_deposit'] = [{'amount': '10000000', 'denom': 'udaric'}]
+    genesis['app_state']['gov']['params']['max_deposit_period'] = '120s'
+    genesis['app_state']['gov']['params']['voting_period'] = '120s'
+    genesis['app_state']['gov']['params']['min_deposit'] = [{'amount': '10000000', 'denom': 'udaric'}]
+
+    # x/ibc
+    allowed_clients = chain_state['app_state']['ibc']['client_genesis']['params']['allowed_clients']
+    if '09-localhost' not in allowed_clients:
+        allowed_clients.append('09-localhost')
+    genesis['app_state']['ibc']['client_genesis']['params']['allowed_clients'] = allowed_clients
 
     # -------------------------------
     # --- Copy modules state over
+
     genesis['app_state']['crisis'] = chain_state['app_state']['crisis']
     genesis['app_state']['ibc'] = chain_state['app_state']['ibc']
     genesis['app_state']['profiles'] = chain_state['app_state']['profiles']

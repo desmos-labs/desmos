@@ -27,11 +27,11 @@ import (
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 
-	poststypes "github.com/desmos-labs/desmos/v5/x/posts/types"
-	profilestypes "github.com/desmos-labs/desmos/v5/x/profiles/types"
-	reportstypes "github.com/desmos-labs/desmos/v5/x/reports/types"
+	poststypes "github.com/desmos-labs/desmos/v6/x/posts/types"
+	profilestypes "github.com/desmos-labs/desmos/v6/x/profiles/types"
+	reportstypes "github.com/desmos-labs/desmos/v6/x/reports/types"
 
-	"github.com/desmos-labs/desmos/v5/app/upgrades"
+	"github.com/desmos-labs/desmos/v6/app/upgrades"
 )
 
 var (

@@ -4,7 +4,7 @@ package desmos.relationships.v1;
 import "gogoproto/gogo.proto";
 import "cosmos_proto/cosmos.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v5/x/relationships/types";
+option go_package = "github.com/desmos-labs/desmos/v6/x/relationships/types";
 
 // Relationship is the struct of a relationship.
 // It represent the concept of "follow" of traditional social networks.

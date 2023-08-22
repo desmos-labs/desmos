@@ -4,9 +4,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
 
-	antetypes "github.com/desmos-labs/desmos/v5/x/subspaces/ante/types"
+	antetypes "github.com/desmos-labs/desmos/v6/x/subspaces/ante/types"
 
-	"github.com/desmos-labs/desmos/v5/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v6/x/subspaces/types"
 )
 
 // hasManageSubspaceMsg checks if tx has manage subspace msg or not

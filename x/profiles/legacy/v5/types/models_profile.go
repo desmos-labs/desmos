@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/desmos-labs/desmos/v5/x/commons"
+	"github.com/desmos-labs/desmos/v6/x/commons"
 
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting/exported"
 

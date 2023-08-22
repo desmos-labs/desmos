@@ -10,7 +10,7 @@ import (
 	_ "github.com/cosmos/cosmos-sdk/types/tx/amino"
 	_ "github.com/cosmos/gogoproto/gogoproto"
 	proto "github.com/cosmos/gogoproto/proto"
-	types1 "github.com/desmos-labs/desmos/v5/x/profiles/types"
+	types1 "github.com/desmos-labs/desmos/v6/x/profiles/types"
 	io "io"
 	math "math"
 	math_bits "math/bits"

@@ -1,7 +1,7 @@
 package keeper
 
 import (
-	"github.com/desmos-labs/desmos/v5/x/tokenfactory/types"
+	"github.com/desmos-labs/desmos/v6/x/tokenfactory/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )

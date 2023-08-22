@@ -15,7 +15,7 @@ import (
 
 	"github.com/gogo/protobuf/proto"
 
-	"github.com/desmos-labs/desmos/v5/x/profiles/types"
+	"github.com/desmos-labs/desmos/v6/x/profiles/types"
 )
 
 func NewAny(value proto.Message) *codectypes.Any {

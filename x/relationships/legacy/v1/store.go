@@ -5,10 +5,10 @@ import (
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
+	subspacestypes "github.com/desmos-labs/desmos/v6/x/subspaces/types"
 
-	profilesv4 "github.com/desmos-labs/desmos/v5/x/profiles/legacy/v4"
-	"github.com/desmos-labs/desmos/v5/x/relationships/types"
+	profilesv4 "github.com/desmos-labs/desmos/v6/x/profiles/legacy/v4"
+	"github.com/desmos-labs/desmos/v6/x/relationships/types"
 )
 
 // MigrateStore performs in-place store migrations from v0 to v1

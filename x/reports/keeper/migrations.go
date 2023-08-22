@@ -5,9 +5,9 @@ package keeper
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	v2 "github.com/desmos-labs/desmos/v5/x/reports/legacy/v2"
-	v3 "github.com/desmos-labs/desmos/v5/x/reports/legacy/v3"
-	"github.com/desmos-labs/desmos/v5/x/reports/types"
+	v2 "github.com/desmos-labs/desmos/v6/x/reports/legacy/v2"
+	v3 "github.com/desmos-labs/desmos/v6/x/reports/legacy/v3"
+	"github.com/desmos-labs/desmos/v6/x/reports/types"
 )
 
 // Migrator is a struct for handling in-place store migrations.

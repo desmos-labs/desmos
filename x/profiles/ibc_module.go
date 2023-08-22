@@ -6,7 +6,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	oracletypes "github.com/desmos-labs/desmos/v5/x/oracle/types"
+	oracletypes "github.com/desmos-labs/desmos/v6/x/oracle/types"
 
 	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -18,8 +18,8 @@ import (
 
 	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
 
-	"github.com/desmos-labs/desmos/v5/x/profiles/keeper"
-	"github.com/desmos-labs/desmos/v5/x/profiles/types"
+	"github.com/desmos-labs/desmos/v6/x/profiles/keeper"
+	"github.com/desmos-labs/desmos/v6/x/profiles/types"
 )
 
 var (

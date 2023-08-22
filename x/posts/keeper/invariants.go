@@ -3,11 +3,11 @@ package keeper
 import (
 	"fmt"
 
-	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
+	subspacestypes "github.com/desmos-labs/desmos/v6/x/subspaces/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v5/x/posts/types"
+	"github.com/desmos-labs/desmos/v6/x/posts/types"
 )
 
 // RegisterInvariants registers all posts invariants

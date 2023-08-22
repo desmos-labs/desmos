@@ -15,8 +15,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/golang/protobuf/proto"
 
-	"github.com/desmos-labs/desmos/v5/x/profiles/client/cli"
-	"github.com/desmos-labs/desmos/v5/x/profiles/types"
+	"github.com/desmos-labs/desmos/v6/x/profiles/client/cli"
+	"github.com/desmos-labs/desmos/v6/x/profiles/types"
 )
 
 func (s *IntegrationTestSuite) TestCmdQueryChainLinks() {

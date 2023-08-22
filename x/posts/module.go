@@ -26,20 +26,20 @@ import (
 	"github.com/spf13/cobra"
 	"golang.org/x/exp/maps"
 
-	modulev1 "github.com/desmos-labs/desmos/v5/api/desmos/posts/module/v1"
+	modulev1 "github.com/desmos-labs/desmos/v6/api/desmos/posts/module/v1"
 
-	profileskeeper "github.com/desmos-labs/desmos/v5/x/profiles/keeper"
-	relationshipskeeper "github.com/desmos-labs/desmos/v5/x/relationships/keeper"
-	subspaceskeeper "github.com/desmos-labs/desmos/v5/x/subspaces/keeper"
-	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
+	profileskeeper "github.com/desmos-labs/desmos/v6/x/profiles/keeper"
+	relationshipskeeper "github.com/desmos-labs/desmos/v6/x/relationships/keeper"
+	subspaceskeeper "github.com/desmos-labs/desmos/v6/x/subspaces/keeper"
+	subspacestypes "github.com/desmos-labs/desmos/v6/x/subspaces/types"
 
-	v2 "github.com/desmos-labs/desmos/v5/x/posts/legacy/v2"
-	v4 "github.com/desmos-labs/desmos/v5/x/posts/legacy/v4"
+	v2 "github.com/desmos-labs/desmos/v6/x/posts/legacy/v2"
+	v4 "github.com/desmos-labs/desmos/v6/x/posts/legacy/v4"
 
-	"github.com/desmos-labs/desmos/v5/x/posts/client/cli"
-	"github.com/desmos-labs/desmos/v5/x/posts/keeper"
-	"github.com/desmos-labs/desmos/v5/x/posts/simulation"
-	"github.com/desmos-labs/desmos/v5/x/posts/types"
+	"github.com/desmos-labs/desmos/v6/x/posts/client/cli"
+	"github.com/desmos-labs/desmos/v6/x/posts/keeper"
+	"github.com/desmos-labs/desmos/v6/x/posts/simulation"
+	"github.com/desmos-labs/desmos/v6/x/posts/types"
 )
 
 const (

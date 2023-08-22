@@ -6,7 +6,7 @@ import "gogoproto/gogo.proto";
 import "cosmos/msg/v1/msg.proto";
 import "cosmos_proto/cosmos.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v5/x/profiles/types";
+option go_package = "github.com/desmos-labs/desmos/v6/x/profiles/types";
 
 // MsgSaveProfile represents a message to save a profile.
 message MsgSaveProfile {

@@ -25,17 +25,17 @@ import (
 
 	"github.com/spf13/cobra"
 
-	modulev1 "github.com/desmos-labs/desmos/v5/api/desmos/profiles/module/v1"
+	modulev1 "github.com/desmos-labs/desmos/v6/api/desmos/profiles/module/v1"
 
-	relationshipskeeper "github.com/desmos-labs/desmos/v5/x/relationships/keeper"
+	relationshipskeeper "github.com/desmos-labs/desmos/v6/x/relationships/keeper"
 
-	v4 "github.com/desmos-labs/desmos/v5/x/profiles/legacy/v4/types"
-	v5 "github.com/desmos-labs/desmos/v5/x/profiles/legacy/v5/types"
+	v4 "github.com/desmos-labs/desmos/v6/x/profiles/legacy/v4/types"
+	v5 "github.com/desmos-labs/desmos/v6/x/profiles/legacy/v5/types"
 
-	"github.com/desmos-labs/desmos/v5/x/profiles/client/cli"
-	"github.com/desmos-labs/desmos/v5/x/profiles/keeper"
-	"github.com/desmos-labs/desmos/v5/x/profiles/simulation"
-	"github.com/desmos-labs/desmos/v5/x/profiles/types"
+	"github.com/desmos-labs/desmos/v6/x/profiles/client/cli"
+	"github.com/desmos-labs/desmos/v6/x/profiles/keeper"
+	"github.com/desmos-labs/desmos/v6/x/profiles/simulation"
+	"github.com/desmos-labs/desmos/v6/x/profiles/types"
 )
 
 const (

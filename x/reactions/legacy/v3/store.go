@@ -6,8 +6,8 @@ import (
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	poststypes "github.com/desmos-labs/desmos/v5/x/posts/types"
-	"github.com/desmos-labs/desmos/v5/x/reactions/types"
+	poststypes "github.com/desmos-labs/desmos/v6/x/posts/types"
+	"github.com/desmos-labs/desmos/v6/x/reactions/types"
 )
 
 // MigrateStore performs in-place store migrations from v2 to v3

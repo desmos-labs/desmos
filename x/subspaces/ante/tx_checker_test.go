@@ -9,9 +9,9 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 
-	relationshipstypes "github.com/desmos-labs/desmos/v5/x/relationships/types"
-	subspacesante "github.com/desmos-labs/desmos/v5/x/subspaces/ante"
-	"github.com/desmos-labs/desmos/v5/x/subspaces/types"
+	relationshipstypes "github.com/desmos-labs/desmos/v6/x/relationships/types"
+	subspacesante "github.com/desmos-labs/desmos/v6/x/subspaces/ante"
+	"github.com/desmos-labs/desmos/v6/x/subspaces/types"
 )
 
 func (suite *AnteTestSuite) TestCheckTxFeeWithSubspaceMinPrices() {

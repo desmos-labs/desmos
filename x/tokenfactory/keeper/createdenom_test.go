@@ -7,7 +7,7 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/golang/mock/gomock"
 
-	"github.com/desmos-labs/desmos/v5/x/tokenfactory/types"
+	"github.com/desmos-labs/desmos/v6/x/tokenfactory/types"
 )
 
 func (suite *KeeperTestSuite) TestKeeper_CreateDenom() {

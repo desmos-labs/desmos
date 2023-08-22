@@ -5,11 +5,11 @@ import (
 
 	"github.com/golang/mock/gomock"
 
-	poststypes "github.com/desmos-labs/desmos/v5/x/posts/types"
+	poststypes "github.com/desmos-labs/desmos/v6/x/posts/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v5/x/reports/types"
+	"github.com/desmos-labs/desmos/v6/x/reports/types"
 )
 
 func (suite *KeeperTestSuite) TestKeeper_SetNextReportID() {

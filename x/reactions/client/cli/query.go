@@ -6,15 +6,15 @@ import (
 	"context"
 	"fmt"
 
-	poststypes "github.com/desmos-labs/desmos/v5/x/posts/types"
+	poststypes "github.com/desmos-labs/desmos/v6/x/posts/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/spf13/cobra"
 
-	"github.com/desmos-labs/desmos/v5/x/reactions/types"
-	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v6/x/reactions/types"
+	subspacestypes "github.com/desmos-labs/desmos/v6/x/subspaces/types"
 )
 
 const (

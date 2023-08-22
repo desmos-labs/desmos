@@ -8,9 +8,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v5/cosmwasm"
-	"github.com/desmos-labs/desmos/v5/x/commons"
-	"github.com/desmos-labs/desmos/v5/x/posts/types"
+	"github.com/desmos-labs/desmos/v6/cosmwasm"
+	"github.com/desmos-labs/desmos/v6/x/commons"
+	"github.com/desmos-labs/desmos/v6/x/posts/types"
 )
 
 var _ cosmwasm.MsgParserInterface = MsgsParser{}

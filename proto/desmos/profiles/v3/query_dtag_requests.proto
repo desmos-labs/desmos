@@ -7,7 +7,7 @@ import "cosmos_proto/cosmos.proto";
 import "desmos/profiles/v3/models_dtag_requests.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v5/x/profiles/types";
+option go_package = "github.com/desmos-labs/desmos/v6/x/profiles/types";
 
 // QueryIncomingDTagTransferRequestsRequest is the request type for the
 // Query/IncomingDTagTransferRequests RPC endpoint

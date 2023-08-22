@@ -10,7 +10,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
-	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
@@ -22,11 +21,11 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 
-	modulev1 "github.com/desmos-labs/desmos/v5/api/desmos/supply/module/v1"
+	modulev1 "github.com/desmos-labs/desmos/v6/api/desmos/supply/module/v1"
 
-	"github.com/desmos-labs/desmos/v5/x/supply/client/cli"
-	"github.com/desmos-labs/desmos/v5/x/supply/keeper"
-	"github.com/desmos-labs/desmos/v5/x/supply/types"
+	"github.com/desmos-labs/desmos/v6/x/supply/client/cli"
+	"github.com/desmos-labs/desmos/v6/x/supply/keeper"
+	"github.com/desmos-labs/desmos/v6/x/supply/types"
 )
 
 var (
@@ -180,7 +179,6 @@ type ModuleInputs struct {
 
 	Config *modulev1.Module
 	Cdc    codec.Codec
-	Key    *storetypes.KVStoreKey
 
 	AccountKeeper      authkeeper.AccountKeeper
 	BankKeeper         bankkeeper.Keeper

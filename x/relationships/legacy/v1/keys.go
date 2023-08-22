@@ -3,7 +3,7 @@ package v1
 // DONTCOVER
 
 import (
-	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
+	subspacestypes "github.com/desmos-labs/desmos/v6/x/subspaces/types"
 )
 
 var (

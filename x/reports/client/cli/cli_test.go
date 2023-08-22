@@ -14,15 +14,15 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/gogo/protobuf/proto"
 
-	poststypes "github.com/desmos-labs/desmos/v5/x/posts/types"
-	"github.com/desmos-labs/desmos/v5/x/reports/client/cli"
-	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
+	poststypes "github.com/desmos-labs/desmos/v6/x/posts/types"
+	"github.com/desmos-labs/desmos/v6/x/reports/client/cli"
+	subspacestypes "github.com/desmos-labs/desmos/v6/x/subspaces/types"
 
 	"github.com/cosmos/cosmos-sdk/testutil/network"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/desmos-labs/desmos/v5/testutil"
-	"github.com/desmos-labs/desmos/v5/x/reports/types"
+	"github.com/desmos-labs/desmos/v6/testutil"
+	"github.com/desmos-labs/desmos/v6/x/reports/types"
 )
 
 func TestIntegrationTestSuite(t *testing.T) {
