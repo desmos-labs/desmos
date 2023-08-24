@@ -33,6 +33,8 @@ import (
 	subspacestypes "github.com/desmos-labs/desmos/v6/x/subspaces/types"
 	subspaceswasm "github.com/desmos-labs/desmos/v6/x/subspaces/wasm"
 
+	tokenfactorytypes "github.com/desmos-labs/desmos/v6/x/tokenfactory/types"
+
 	desmoswasmtypes "github.com/desmos-labs/desmos/v6/x/wasm/types"
 )
 
@@ -121,12 +123,13 @@ func GetStargateAcceptedQueries() wasmkeeper.AcceptedStargateQueries {
 		"/desmos.subspaces.v3.Query/GroupAllowances":  &subspacestypes.QueryGroupAllowancesResponse{},
 
 		// Register x/posts queries
-		"/desmos.posts.v3.Query/SubspacePosts":   &poststypes.QuerySubspacePostsResponse{},
-		"/desmos.posts.v3.Query/SectionPosts":    &poststypes.QuerySectionPostsResponse{},
-		"/desmos.posts.v3.Query/Post":            &poststypes.QueryPostResponse{},
-		"/desmos.posts.v3.Query/PostAttachments": &poststypes.QueryPostAttachmentsResponse{},
-		"/desmos.posts.v3.Query/PollAnswers":     &poststypes.QueryPollAnswersResponse{},
-		"/desmos.posts.v3.Query/Params":          &poststypes.QueryParamsResponse{},
+		"/desmos.posts.v3.Query/SubspacePosts":                          &poststypes.QuerySubspacePostsResponse{},
+		"/desmos.posts.v3.Query/SectionPosts":                           &poststypes.QuerySectionPostsResponse{},
+		"/desmos.posts.v3.Query/Post":                                   &poststypes.QueryPostResponse{},
+		"/desmos.posts.v3.Query/PostAttachments":                        &poststypes.QueryPostAttachmentsResponse{},
+		"/desmos.posts.v3.Query/PollAnswers":                            &poststypes.QueryPollAnswersResponse{},
+		"/desmos.posts.v3.Query/Params":                                 &poststypes.QueryParamsResponse{},
+		"/desmos.posts.v3.Query/QueryIncomingPostOwnerTransferRequests": &poststypes.QueryIncomingPostOwnerTransferRequestsResponse{},
 
 		// Register x/reports queries
 		"/desmos.reports.v1.Query/Reports": &reportstypes.QueryReportsResponse{},
@@ -141,6 +144,10 @@ func GetStargateAcceptedQueries() wasmkeeper.AcceptedStargateQueries {
 		"/desmos.reactions.v1.Query/RegisteredReactions": &reactionstypes.QueryRegisteredReactionsResponse{},
 		"/desmos.reactions.v1.Query/RegisteredReaction":  &reactionstypes.QueryRegisteredReactionResponse{},
 		"/desmos.reactions.v1.Query/ReactionsParams":     &reactionstypes.QueryReactionsParamsResponse{},
+
+		// Register x/tokenfactory queries
+		"/desmos.tokenfactory.v1.Query/Params":         &tokenfactorytypes.QueryParamsResponse{},
+		"/desmos.tokenfactory.v1.Query/SubspaceDenoms": &tokenfactorytypes.QuerySubspaceDenomsResponse{},
 	}
 }
 
