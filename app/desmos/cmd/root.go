@@ -5,7 +5,6 @@ import (
 	"io"
 	"os"
 
-	"cosmossdk.io/simapp/params"
 	simappparams "cosmossdk.io/simapp/params"
 	serverconfig "github.com/cosmos/cosmos-sdk/server/config"
 
@@ -194,7 +193,7 @@ func addModuleInitFlags(startCmd *cobra.Command) {
 }
 
 // genesisCommand builds genesis-related `simd genesis` command. Users may provide application specific commands as a parameter
-func genesisCommand(encodingConfig params.EncodingConfig, cmds ...*cobra.Command) *cobra.Command {
+func genesisCommand(encodingConfig simappparams.EncodingConfig, cmds ...*cobra.Command) *cobra.Command {
 	cmd := genutilcli.GenesisCoreCommand(encodingConfig.TxConfig, app.ModuleBasics, app.DefaultNodeHome)
 
 	for _, sub_cmd := range cmds {
