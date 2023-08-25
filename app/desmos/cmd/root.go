@@ -9,6 +9,8 @@ import (
 	serverconfig "github.com/cosmos/cosmos-sdk/server/config"
 
 	"github.com/cosmos/cosmos-sdk/client/config"
+	"github.com/cosmos/cosmos-sdk/client/pruning"
+	"github.com/cosmos/cosmos-sdk/client/snapshot"
 
 	"github.com/desmos-labs/desmos/v6/app/desmos/cmd/chainlink"
 	"github.com/desmos-labs/desmos/v6/app/desmos/cmd/sign"
@@ -179,6 +181,8 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig simappparams.EncodingCon
 		testnetCmd(app.ModuleBasics, banktypes.GenesisBalancesIterator{}),
 		debug.Cmd(),
 		config.Cmd(),
+		pruning.Cmd(newApp, app.DefaultNodeHome),
+		snapshot.Cmd(newApp),
 	)
 
 	server.AddCommands(rootCmd, app.DefaultNodeHome, newApp, createDesmosappAndExport, addModuleInitFlags)
