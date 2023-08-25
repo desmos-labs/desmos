@@ -1,0 +1,6 @@
+type: refactor
+module: other
+pull_request: 1220
+description: Applied sdk genesis command
+backward_compatible: false
+date: 2023-08-25T11:57:00.622599731Z

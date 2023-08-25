@@ -16,7 +16,6 @@ import (
 	"github.com/desmos-labs/desmos/v6/app/desmos/cmd/sign"
 
 	"github.com/cosmos/cosmos-sdk/x/crisis"
-	"github.com/cosmos/cosmos-sdk/x/genutil"
 
 	"github.com/desmos-labs/desmos/v6/app"
 
@@ -38,12 +37,10 @@ import (
 	authcmd "github.com/cosmos/cosmos-sdk/x/auth/client/cli"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	cosmosgenutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
-	cosmosgenutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
+	genutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
 
 	chainlinktypes "github.com/desmos-labs/desmos/v6/app/desmos/cmd/chainlink/getter"
 	chainlinkprovider "github.com/desmos-labs/desmos/v6/app/desmos/cmd/chainlink/provider"
-	genutilcli "github.com/desmos-labs/desmos/v6/x/genutil/client/cli"
 )
 
 // NewRootCmd creates a new root command for desmos. It is called once in the
@@ -168,15 +165,9 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig simappparams.EncodingCon
 	app.SetupConfig(cfg)
 	cfg.Seal()
 
-	gentxModule := app.ModuleBasics[cosmosgenutiltypes.ModuleName].(genutil.AppModuleBasic)
 	rootCmd.AddCommand(
-		cosmosgenutilcli.InitCmd(app.ModuleBasics, app.DefaultNodeHome),
-		cosmosgenutilcli.CollectGenTxsCmd(banktypes.GenesisBalancesIterator{}, app.DefaultNodeHome, gentxModule.GenTxValidator),
-		genutilcli.MigrationsListCmd(),
-		genutilcli.MigrateGenesisCmd(),
-		cosmosgenutilcli.GenTxCmd(app.ModuleBasics, encodingConfig.TxConfig, banktypes.GenesisBalancesIterator{}, app.DefaultNodeHome),
-		cosmosgenutilcli.ValidateGenesisCmd(app.ModuleBasics),
-		cosmosgenutilcli.AddGenesisAccountCmd(app.DefaultNodeHome),
+		genutilcli.InitCmd(app.ModuleBasics, app.DefaultNodeHome),
+		genesisCommand(encodingConfig),
 		tmcli.NewCompletionCmd(rootCmd, true),
 		testnetCmd(app.ModuleBasics, banktypes.GenesisBalancesIterator{}),
 		debug.Cmd(),
@@ -203,6 +194,16 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig simappparams.EncodingCon
 
 func addModuleInitFlags(startCmd *cobra.Command) {
 	crisis.AddModuleInitFlags(startCmd)
+}
+
+// genesisCommand builds genesis-related `simd genesis` command. Users may provide application specific commands as a parameter
+func genesisCommand(encodingConfig simappparams.EncodingConfig, cmds ...*cobra.Command) *cobra.Command {
+	cmd := genutilcli.GenesisCoreCommand(encodingConfig.TxConfig, app.ModuleBasics, app.DefaultNodeHome)
+
+	for _, sub_cmd := range cmds {
+		cmd.AddCommand(sub_cmd)
+	}
+	return cmd
 }
 
 func queryCommand() *cobra.Command {
