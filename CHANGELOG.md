@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
+## Version 6.0.1
+### Bug Fixes
+#### Other
+- ([\#1218](https://github.com/desmos-labs/desmos/pull/1218)) Registered missing stargate queries
+
 ## Version 6.0.0
 ### Features
 #### Subspaces
