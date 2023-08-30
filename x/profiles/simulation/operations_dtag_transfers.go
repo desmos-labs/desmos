@@ -20,7 +20,7 @@ import (
 
 // SimulateMsgRequestDTagTransfer tests and runs a single MsgRequestDTagTransfer
 func SimulateMsgRequestDTagTransfer(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k *keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -39,7 +39,7 @@ func SimulateMsgRequestDTagTransfer(
 
 // randomDTagRequestTransferFields returns random dTagRequest data
 func randomDTagRequestTransferFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k *keeper.Keeper,
 ) (sender simtypes.Account, receiver *types.Profile, skip bool) {
 	if len(accs) == 0 {
 		return simtypes.Account{}, nil, true
@@ -78,7 +78,7 @@ func randomDTagRequestTransferFields(
 
 // SimulateMsgAcceptDTagTransfer tests and runs a single MsgAcceptDTagTransfer
 func SimulateMsgAcceptDTagTransfer(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k *keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -96,7 +96,7 @@ func SimulateMsgAcceptDTagTransfer(
 
 // randomDTagAcceptRequestTransferFields returns random dTagRequest data and a random dTag
 func randomDTagAcceptRequestTransferFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k *keeper.Keeper,
 ) (simtypes.Account, types.DTagTransferRequest, string, bool) {
 	if len(accs) == 0 {
 		return simtypes.Account{}, types.DTagTransferRequest{}, "", true
@@ -124,7 +124,7 @@ func randomDTagAcceptRequestTransferFields(
 
 // SimulateMsgRefuseDTagTransfer tests and runs a single MsgRefuseDTagTransfer
 func SimulateMsgRefuseDTagTransfer(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k *keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -142,7 +142,7 @@ func SimulateMsgRefuseDTagTransfer(
 
 // randomRefuseDTagTransferFields returns random refuse DTag transfer fields
 func randomRefuseDTagTransferFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k *keeper.Keeper,
 ) (simtypes.Account, simtypes.Account, bool) {
 	if len(accs) == 0 {
 		return simtypes.Account{}, simtypes.Account{}, true
@@ -178,7 +178,7 @@ func randomRefuseDTagTransferFields(
 
 // SimulateMsgCancelDTagTransfer tests and runs a single MsgCancelDTagTransfer
 func SimulateMsgCancelDTagTransfer(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k *keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -200,7 +200,7 @@ func SimulateMsgCancelDTagTransfer(
 
 // randomCancelDTagTransferFields returns random refuse DTag transfer fields
 func randomCancelDTagTransferFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k *keeper.Keeper,
 ) (simtypes.Account, simtypes.Account, bool) {
 	if len(accs) == 0 {
 		return simtypes.Account{}, simtypes.Account{}, true

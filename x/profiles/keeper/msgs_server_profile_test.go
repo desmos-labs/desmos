@@ -12,6 +12,15 @@ import (
 	"github.com/desmos-labs/desmos/v6/x/profiles/types"
 )
 
+func (suite *KeeperTestSuite) TestMsgServer_NewMsgServerImpl() {
+	suite.k.ChannelKeeper = nil
+	server := keeper.NewMsgServerImpl(suite.k)
+	suite.k.ChannelKeeper = suite.channelKeeper
+
+	// Make sure keeper set ChannelKeeper properly after msg server initialized.
+	suite.Require().Equal(suite.channelKeeper, server.(*keeper.MsgServer).Keeper.ChannelKeeper)
+}
+
 func (suite *KeeperTestSuite) TestMsgServer_SaveProfile() {
 	blockTime := time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC)
 	testCases := []struct {

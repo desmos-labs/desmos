@@ -13,7 +13,7 @@ import (
 )
 
 // LinkChainAccount defines a rpc method for MsgLinkChainAccount
-func (k msgServer) LinkChainAccount(goCtx context.Context, msg *types.MsgLinkChainAccount) (*types.MsgLinkChainAccountResponse, error) {
+func (k MsgServer) LinkChainAccount(goCtx context.Context, msg *types.MsgLinkChainAccount) (*types.MsgLinkChainAccountResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	srcAddrData, err := types.UnpackAddressData(k.cdc, msg.ChainAddress)
@@ -47,7 +47,7 @@ func (k msgServer) LinkChainAccount(goCtx context.Context, msg *types.MsgLinkCha
 }
 
 // UnlinkChainAccount defines a rpc method for MsgUnlinkChainAccount
-func (k msgServer) UnlinkChainAccount(goCtx context.Context, msg *types.MsgUnlinkChainAccount) (*types.MsgUnlinkChainAccountResponse, error) {
+func (k MsgServer) UnlinkChainAccount(goCtx context.Context, msg *types.MsgUnlinkChainAccount) (*types.MsgUnlinkChainAccountResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Get the chain link
@@ -78,7 +78,7 @@ func (k msgServer) UnlinkChainAccount(goCtx context.Context, msg *types.MsgUnlin
 }
 
 // SetDefaultExternalAddress defines a rpc method for MsgSetDefaultExternalAddress
-func (k msgServer) SetDefaultExternalAddress(goCtx context.Context, msg *types.MsgSetDefaultExternalAddress) (*types.MsgSetDefaultExternalAddressResponse, error) {
+func (k MsgServer) SetDefaultExternalAddress(goCtx context.Context, msg *types.MsgSetDefaultExternalAddress) (*types.MsgSetDefaultExternalAddressResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Get the chain link

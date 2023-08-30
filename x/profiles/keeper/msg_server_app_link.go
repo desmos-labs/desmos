@@ -67,7 +67,7 @@ func (k Keeper) LinkApplication(
 }
 
 // UnlinkApplication defines a rpc method for MsgUnlinkApplication
-func (k msgServer) UnlinkApplication(
+func (k MsgServer) UnlinkApplication(
 	goCtx context.Context, msg *types.MsgUnlinkApplication,
 ) (*types.MsgUnlinkApplicationResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)

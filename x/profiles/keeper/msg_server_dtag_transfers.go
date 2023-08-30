@@ -12,7 +12,7 @@ import (
 )
 
 // RequestDTagTransfer defines a rpc method for MsgRequestDTagTransfer
-func (k msgServer) RequestDTagTransfer(goCtx context.Context, msg *types.MsgRequestDTagTransfer) (*types.MsgRequestDTagTransferResponse, error) {
+func (k MsgServer) RequestDTagTransfer(goCtx context.Context, msg *types.MsgRequestDTagTransfer) (*types.MsgRequestDTagTransferResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Check if the request's receiver has blocked the sender before
@@ -63,7 +63,7 @@ func (k msgServer) RequestDTagTransfer(goCtx context.Context, msg *types.MsgRequ
 }
 
 // CancelDTagTransferRequest defines a rpc method for MsgCancelDTagTransferRequest
-func (k msgServer) CancelDTagTransferRequest(goCtx context.Context, msg *types.MsgCancelDTagTransferRequest) (*types.MsgCancelDTagTransferRequestResponse, error) {
+func (k MsgServer) CancelDTagTransferRequest(goCtx context.Context, msg *types.MsgCancelDTagTransferRequest) (*types.MsgCancelDTagTransferRequestResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Check if the request exists
@@ -92,7 +92,7 @@ func (k msgServer) CancelDTagTransferRequest(goCtx context.Context, msg *types.M
 }
 
 // AcceptDTagTransferRequest defines a rpc method for MsgAcceptDTagTransferRequest
-func (k msgServer) AcceptDTagTransferRequest(goCtx context.Context, msg *types.MsgAcceptDTagTransferRequest) (*types.MsgAcceptDTagTransferRequestResponse, error) {
+func (k MsgServer) AcceptDTagTransferRequest(goCtx context.Context, msg *types.MsgAcceptDTagTransferRequest) (*types.MsgAcceptDTagTransferRequestResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	request, found, err := k.GetDTagTransferRequest(ctx, msg.Sender, msg.Receiver)
@@ -200,7 +200,7 @@ func (k msgServer) AcceptDTagTransferRequest(goCtx context.Context, msg *types.M
 }
 
 // RefuseDTagTransferRequest defines a rpc method for MsgRefuseDTagTransferRequest
-func (k msgServer) RefuseDTagTransferRequest(goCtx context.Context, msg *types.MsgRefuseDTagTransferRequest) (*types.MsgRefuseDTagTransferRequestResponse, error) {
+func (k MsgServer) RefuseDTagTransferRequest(goCtx context.Context, msg *types.MsgRefuseDTagTransferRequest) (*types.MsgRefuseDTagTransferRequestResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Check if the request exists

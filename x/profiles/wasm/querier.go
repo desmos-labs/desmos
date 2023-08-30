@@ -18,11 +18,11 @@ import (
 var _ cosmwasm.Querier = ProfilesWasmQuerier{}
 
 type ProfilesWasmQuerier struct {
-	profilesKeeper profileskeeper.Keeper
+	profilesKeeper *profileskeeper.Keeper
 	cdc            codec.Codec
 }
 
-func NewProfilesWasmQuerier(profilesKeeper profileskeeper.Keeper, cdc codec.Codec) ProfilesWasmQuerier {
+func NewProfilesWasmQuerier(profilesKeeper *profileskeeper.Keeper, cdc codec.Codec) ProfilesWasmQuerier {
 	return ProfilesWasmQuerier{profilesKeeper: profilesKeeper, cdc: cdc}
 }
 

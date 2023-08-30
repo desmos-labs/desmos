@@ -22,7 +22,7 @@ import (
 
 // SimulateMsgLinkChainAccount tests and runs a single MsgLinkChainAccount
 func SimulateMsgLinkChainAccount(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k *keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -50,7 +50,7 @@ func SimulateMsgLinkChainAccount(
 
 // randomLinkChainAccountFields returns the data used to build a random MsgLinkChainAccount
 func randomLinkChainAccountFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k *keeper.Keeper,
 ) (link types.ChainLink, signer simtypes.Account, skip bool) {
 	if len(accs) == 0 {
 		// Skip because there are no accounts
@@ -83,7 +83,7 @@ func randomLinkChainAccountFields(
 
 // SimulateMsgUnlinkChainAccount tests and runs a single MsgUnlinkChainAccount
 func SimulateMsgUnlinkChainAccount(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k *keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -106,7 +106,7 @@ func SimulateMsgUnlinkChainAccount(
 
 // randomUnlinkChainAccountFields returns the data used to build a random MsgUnlinkChainAccount
 func randomUnlinkChainAccountFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k *keeper.Keeper,
 ) (link types.ChainLink, signer simtypes.Account, skip bool) {
 	if len(accs) == 0 {
 		// Skip because there are no accounts
@@ -138,7 +138,7 @@ func randomUnlinkChainAccountFields(
 
 // SimulateMsgSetDefaultExternalAddress tests and runs a single MsgSetDefaultExternalAddress
 func SimulateMsgSetDefaultExternalAddress(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k *keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -161,7 +161,7 @@ func SimulateMsgSetDefaultExternalAddress(
 
 // randomSetDefaultExternalAddressFields returns the data used to build a random MsgSetDefaultExternalAddress
 func randomSetDefaultExternalAddressFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k *keeper.Keeper,
 ) (link types.ChainLink, signer simtypes.Account, skip bool) {
 	if len(accs) == 0 {
 		// Skip because there are no accounts
