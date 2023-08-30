@@ -9,14 +9,14 @@ import (
 )
 
 // RegisterInvariants registers all posts invariants
-func RegisterInvariants(ir sdk.InvariantRegistry, keeper Keeper) {
+func RegisterInvariants(ir sdk.InvariantRegistry, keeper *Keeper) {
 	ir.RegisterRoute(types.ModuleName, "valid-profiles", ValidProfilesInvariant(keeper))
 	ir.RegisterRoute(types.ModuleName, "valid-dtag-transfer-requests", ValidDTagTransferRequests(keeper))
 	ir.RegisterRoute(types.ModuleName, "valid-chain-links", ValidChainLinks(keeper))
 	ir.RegisterRoute(types.ModuleName, "valid-application-links", ValidApplicationLinks(keeper))
 }
 
-func AllInvariants(k Keeper) sdk.Invariant {
+func AllInvariants(k *Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		res, broken := ValidProfilesInvariant(k)(ctx)
 		if broken {
@@ -43,7 +43,7 @@ func AllInvariants(k Keeper) sdk.Invariant {
 }
 
 // ValidProfilesInvariant checks that all registered Profiles have a non-empty DTag and a non-empty creator
-func ValidProfilesInvariant(k Keeper) sdk.Invariant {
+func ValidProfilesInvariant(k *Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidProfiles []*types.Profile
 		k.IterateProfiles(ctx, func(profile *types.Profile) (stop bool) {
@@ -75,7 +75,7 @@ func formatOutputProfiles(invalidProfiles []*types.Profile) (outputProfiles stri
 
 // ValidDTagTransferRequests checks that all DTag transfer requests are associated with a recipient that has a profile
 // and they have not been made from the same user towards the same user
-func ValidDTagTransferRequests(k Keeper) sdk.Invariant {
+func ValidDTagTransferRequests(k *Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidDTagTransferRequests []types.DTagTransferRequest
 		k.IterateDTagTransferRequests(ctx, func(request types.DTagTransferRequest) (stop bool) {
@@ -106,7 +106,7 @@ func formatOutputDTagTransferRequests(requests []types.DTagTransferRequest) (out
 // --------------------------------------------------------------------------------------------------------------------
 
 // ValidChainLinks checks that all chain links are associated with a user that has a profile
-func ValidChainLinks(k Keeper) sdk.Invariant {
+func ValidChainLinks(k *Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidChainLinks []types.ChainLink
 		k.IterateChainLinks(ctx, func(link types.ChainLink) (stop bool) {
@@ -138,7 +138,7 @@ func formatOutputChainLinks(links []types.ChainLink) (output string) {
 // --------------------------------------------------------------------------------------------------------------------
 
 // ValidApplicationLinks checks that all application links are associated with a user that has a profile
-func ValidApplicationLinks(k Keeper) sdk.Invariant {
+func ValidApplicationLinks(k *Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidApplicationLinks []types.ApplicationLink
 		k.IterateApplicationLinks(ctx, func(link types.ApplicationLink) (stop bool) {

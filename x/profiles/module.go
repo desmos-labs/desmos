@@ -124,7 +124,7 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
 	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
 
-	m := keeper.NewMigrator(am.ak, *am.keeper, am.legacySubspace)
+	m := keeper.NewMigrator(am.ak, am.keeper, am.legacySubspace)
 	err := cfg.RegisterMigration(types.ModuleName, 4, m.Migrate4to5)
 	if err != nil {
 		panic(err)
@@ -173,7 +173,7 @@ func (AppModule) Name() string {
 
 // RegisterInvariants performs a no-op.
 func (am AppModule) RegisterInvariants(ir sdk.InvariantRegistry) {
-	keeper.RegisterInvariants(ir, *am.keeper)
+	keeper.RegisterInvariants(ir, am.keeper)
 }
 
 // QuerierRoute returns the profiles module's querier route name.
@@ -204,7 +204,7 @@ func (AppModule) ConsensusVersion() uint64 {
 
 // BeginBlock returns the begin blocker for the profiles module.
 func (am AppModule) BeginBlock(ctx sdk.Context, _ abci.RequestBeginBlock) {
-	BeginBlocker(ctx, *am.keeper)
+	BeginBlocker(ctx, am.keeper)
 }
 
 // EndBlock returns the end blocker for the profiles module. It returns no validator
@@ -235,7 +235,7 @@ func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
 
 // WeightedOperations returns the all the profiles module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
-	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, *am.keeper, am.ak, am.bk)
+	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.ak, am.bk)
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -304,11 +304,11 @@ func ProvideModule(in ModuleInputs) ModuleOutputs {
 	m := NewAppModule(
 		in.Cdc,
 		in.LegacyCdc,
-		&k,
+		k,
 		in.AccountKeeper,
 		in.BankKeeper,
 		in.LegacySubspace,
 	)
 
-	return ModuleOutputs{ProfilesKeeper: &k, Module: m}
+	return ModuleOutputs{ProfilesKeeper: k, Module: m}
 }

@@ -14,6 +14,7 @@ import (
 var _ types.MsgServer = &MsgServer{}
 
 type MsgServer struct {
+	// To ensure setting IBC keepers properly, keeper must be a reference as DesmosApp
 	*Keeper
 }
 

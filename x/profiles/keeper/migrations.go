@@ -17,14 +17,14 @@ import (
 
 // Migrator is a struct for handling in-place store migrations.
 type Migrator struct {
-	keeper Keeper
+	keeper *Keeper
 	ak     authkeeper.AccountKeeper
 
 	legacySubspace types.ParamsSubspace
 }
 
 // NewMigrator returns a new Migrator
-func NewMigrator(ak authkeeper.AccountKeeper, keeper Keeper, legacySubspace types.ParamsSubspace) Migrator {
+func NewMigrator(ak authkeeper.AccountKeeper, keeper *Keeper, legacySubspace types.ParamsSubspace) Migrator {
 	return Migrator{
 		keeper:         keeper,
 		ak:             ak,

@@ -43,7 +43,7 @@ type KeeperTestSuite struct {
 	legacyAminoCdc *codec.LegacyAmino
 	ctx            sdk.Context
 	storeKey       storetypes.StoreKey
-	k              keeper.Keeper
+	k              *keeper.Keeper
 	ak             authkeeper.AccountKeeper
 
 	rk            *testutil.MockRelationshipsKeeper

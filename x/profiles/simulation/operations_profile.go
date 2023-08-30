@@ -21,7 +21,7 @@ import (
 
 // SimulateMsgSaveProfile tests and runs a single msg save profile where the creator already exists
 func SimulateMsgSaveProfile(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k *keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -47,7 +47,7 @@ func SimulateMsgSaveProfile(
 
 // randomProfileSaveFields returns random profile data
 func randomProfileSaveFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, ak authkeeper.AccountKeeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k *keeper.Keeper, ak authkeeper.AccountKeeper,
 ) (account simtypes.Account, profile *types.Profile, skip bool) {
 	if len(accs) == 0 {
 		return simtypes.Account{}, nil, true
@@ -92,7 +92,7 @@ func randomProfileSaveFields(
 
 // SimulateMsgDeleteProfile tests and runs a single msg delete profile where the creator already exists
 func SimulateMsgDeleteProfile(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k *keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -111,7 +111,7 @@ func SimulateMsgDeleteProfile(
 
 // randomProfileDeleteFields returns random profile data
 func randomProfileDeleteFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, ak authkeeper.AccountKeeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k *keeper.Keeper, ak authkeeper.AccountKeeper,
 ) (account simtypes.Account, skip bool) {
 	if len(accs) == 0 {
 		return simtypes.Account{}, true

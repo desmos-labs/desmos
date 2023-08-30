@@ -31,7 +31,6 @@ func TestCheckProfilesKeeper(t *testing.T) {
 	require.Equal(t, app.IBCKeeper.ChannelKeeper, app.ProfilesKeeper.ChannelKeeper)
 	require.Equal(t, &app.IBCKeeper.PortKeeper, app.ProfilesKeeper.PortKeeper)
 	require.Equal(t, app.ScopedProfilesKeeper, app.ProfilesKeeper.ScopedKeeper)
-
 }
 
 func TestSimAppExportAndBlockedAddrs(t *testing.T) {

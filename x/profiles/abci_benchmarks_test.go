@@ -27,7 +27,7 @@ import (
 	"github.com/desmos-labs/desmos/v6/x/profiles/types"
 )
 
-func setupBenchTest() (sdk.Context, authkeeper.AccountKeeper, keeper.Keeper) {
+func setupBenchTest() (sdk.Context, authkeeper.AccountKeeper, *keeper.Keeper) {
 	// Define the store keys
 	keys := sdk.NewKVStoreKeys(types.StoreKey, authtypes.StoreKey, paramstypes.StoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)

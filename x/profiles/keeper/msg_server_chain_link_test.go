@@ -141,7 +141,7 @@ func (suite *KeeperTestSuite) TestMsgServer_LinkChainAccount() {
 				tc.store(ctx)
 			}
 
-			server := keeper.NewMsgServerImpl(&suite.k)
+			server := keeper.NewMsgServerImpl(suite.k)
 			_, err = server.LinkChainAccount(sdk.WrapSDKContext(ctx), tc.msg)
 
 			if tc.shouldErr {
@@ -237,7 +237,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UnlinkChainAccount() {
 				tc.store(ctx)
 			}
 
-			server := keeper.NewMsgServerImpl(&suite.k)
+			server := keeper.NewMsgServerImpl(suite.k)
 			_, err := server.UnlinkChainAccount(sdk.WrapSDKContext(ctx), tc.msg)
 			suite.Require().Equal(tc.expEvents, ctx.EventManager().Events())
 
@@ -335,7 +335,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SetDefaultExternalAddress() {
 				tc.store(ctx)
 			}
 
-			server := keeper.NewMsgServerImpl(&suite.k)
+			server := keeper.NewMsgServerImpl(suite.k)
 			_, err := server.SetDefaultExternalAddress(sdk.WrapSDKContext(ctx), tc.msg)
 			suite.Require().Equal(tc.expEvents, ctx.EventManager().Events())
 

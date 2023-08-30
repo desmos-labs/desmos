@@ -62,7 +62,7 @@ func NewDesmosWasmGasRegister() wasmkeeper.WasmGasRegister {
 func NewDesmosCustomQueryPlugin(
 	cdc codec.Codec,
 	grpcQueryRouter *baseapp.GRPCQueryRouter,
-	profilesKeeper profileskeeper.Keeper,
+	profilesKeeper *profileskeeper.Keeper,
 	subspacesKeeper subspaceskeeper.Keeper,
 	relationshipsKeeper relationshipskeeper.Keeper,
 	postsKeeper postskeeper.Keeper,

@@ -14,10 +14,10 @@ import (
 
 func (suite *KeeperTestSuite) TestMsgServer_NewMsgServerImpl() {
 	suite.k.ChannelKeeper = nil
-	server := keeper.NewMsgServerImpl(&suite.k)
+	server := keeper.NewMsgServerImpl(suite.k)
 	suite.k.ChannelKeeper = suite.channelKeeper
 
-	// Make sure ChannelKeeper set properly after msg server initialized.
+	// Make sure keeper set ChannelKeeper properly after msg server initialized.
 	suite.Require().Equal(suite.channelKeeper, server.(*keeper.MsgServer).Keeper.ChannelKeeper)
 }
 
@@ -277,7 +277,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SaveProfile() {
 				tc.store(ctx)
 			}
 
-			server := keeper.NewMsgServerImpl(&suite.k)
+			server := keeper.NewMsgServerImpl(suite.k)
 			_, err := server.SaveProfile(sdk.WrapSDKContext(ctx), tc.msg)
 
 			if tc.shouldErr {
@@ -339,7 +339,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteProfile() {
 				tc.store(ctx)
 			}
 
-			server := keeper.NewMsgServerImpl(&suite.k)
+			server := keeper.NewMsgServerImpl(suite.k)
 			_, err := server.DeleteProfile(sdk.WrapSDKContext(ctx), tc.msg)
 
 			if tc.shouldErr {

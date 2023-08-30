@@ -55,8 +55,8 @@ func NewKeeper(
 	portKeeper types.PortKeeper,
 	scopedKeeper types.ScopedKeeper,
 	authority string,
-) Keeper {
-	return Keeper{
+) *Keeper {
+	return &Keeper{
 		storeKey:    storeKey,
 		cdc:         cdc,
 		legacyAmino: legacyAmino,

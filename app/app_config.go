@@ -117,7 +117,7 @@ func GetWasmOpts(
 	appOpts servertypes.AppOptions,
 	grpcQueryRouter *baseapp.GRPCQueryRouter,
 	cdc codec.Codec,
-	profilesKeeper profileskeeper.Keeper,
+	profilesKeeper *profileskeeper.Keeper,
 	subspacesKeeper subspaceskeeper.Keeper,
 	relationshipsKeeper relationshipskeeper.Keeper,
 	postsKeeper postskeeper.Keeper,
