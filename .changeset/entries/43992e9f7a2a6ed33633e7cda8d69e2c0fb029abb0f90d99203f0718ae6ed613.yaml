@@ -1,6 +1,0 @@
-type: fix
-module: other
-pull_request: 1218
-description: Registered missing CosmWasm Stargate queries
-backward_compatible: true
-date: 2023-08-24T13:06:06.678988667Z
