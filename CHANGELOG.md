@@ -2,6 +2,18 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
+## Version 6.1.0
+### Features
+#### Other
+- ([\#1221](https://github.com/desmos-labs/desmos/pull/1221)) Added `pruning` and `snapshots` command
+
+### Bug Fixes
+#### Profiles
+- ([\#1222](https://github.com/desmos-labs/desmos/pull/1222)) Utilized the `x/profiles` keeper pointer within the `x/profiles` message server
+
+#### Other
+- ([\#1218](https://github.com/desmos-labs/desmos/pull/1218)) Registered missing CosmWasm Stargate queries
+
 ## Version 6.0.0
 ### Features
 #### Subspaces
