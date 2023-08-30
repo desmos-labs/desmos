@@ -11,20 +11,20 @@ import (
 	"github.com/desmos-labs/desmos/v6/x/profiles/types"
 )
 
-var _ types.MsgServer = &msgServer{}
+var _ types.MsgServer = &MsgServer{}
 
-type msgServer struct {
+type MsgServer struct {
 	*Keeper
 }
 
 // NewMsgServerImpl returns an implementation of the profiles MsgServer interface
 // for the provided Keeper.
 func NewMsgServerImpl(keeper *Keeper) types.MsgServer {
-	return &msgServer{keeper}
+	return &MsgServer{keeper}
 }
 
 // SaveProfile defines a rpc method for MsgSaveProfile
-func (k msgServer) SaveProfile(goCtx context.Context, msg *types.MsgSaveProfile) (*types.MsgSaveProfileResponse, error) {
+func (k MsgServer) SaveProfile(goCtx context.Context, msg *types.MsgSaveProfile) (*types.MsgSaveProfileResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	profile, found, err := k.GetProfile(ctx, msg.Creator)
@@ -87,7 +87,7 @@ func (k msgServer) SaveProfile(goCtx context.Context, msg *types.MsgSaveProfile)
 }
 
 // DeleteProfile defines a rpc method for MsgDeleteProfile
-func (k msgServer) DeleteProfile(goCtx context.Context, msg *types.MsgDeleteProfile) (*types.MsgDeleteProfileResponse, error) {
+func (k MsgServer) DeleteProfile(goCtx context.Context, msg *types.MsgDeleteProfile) (*types.MsgDeleteProfileResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	err := k.RemoveProfile(ctx, msg.Creator)

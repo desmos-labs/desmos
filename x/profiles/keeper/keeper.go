@@ -30,9 +30,9 @@ type Keeper struct {
 	ak authkeeper.AccountKeeper
 	rk types.RelationshipsKeeper
 
-	channelKeeper types.ChannelKeeper
-	portKeeper    types.PortKeeper
-	scopedKeeper  types.ScopedKeeper
+	ChannelKeeper types.ChannelKeeper
+	PortKeeper    types.PortKeeper
+	ScopedKeeper  types.ScopedKeeper
 
 	// the address capable of executing a MsgUpdateParams message. Typically, this
 	// should be the x/gov module account.
@@ -63,9 +63,9 @@ func NewKeeper(
 		ak:          ak,
 		rk:          rk,
 
-		channelKeeper: channelKeeper,
-		portKeeper:    portKeeper,
-		scopedKeeper:  scopedKeeper,
+		ChannelKeeper: channelKeeper,
+		PortKeeper:    portKeeper,
+		ScopedKeeper:  scopedKeeper,
 
 		authority: authority,
 	}
@@ -77,9 +77,9 @@ func (k *Keeper) SetIBCKeepers(
 	portKeeper types.PortKeeper,
 	scopedKeeper types.ScopedKeeper,
 ) {
-	k.channelKeeper = channelKeeper
-	k.portKeeper = portKeeper
-	k.scopedKeeper = scopedKeeper
+	k.ChannelKeeper = channelKeeper
+	k.PortKeeper = portKeeper
+	k.ScopedKeeper = scopedKeeper
 }
 
 // Logger returns a module-specific logger.

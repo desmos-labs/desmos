@@ -21,6 +21,19 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 )
 
+func TestCheckProfilesKeeper(t *testing.T) {
+	db := dbm.NewMemDB()
+	app := NewDesmosApp(
+		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true,
+		simtestutil.NewAppOptionsWithFlagHome(t.TempDir()),
+	)
+
+	require.Equal(t, app.IBCKeeper.ChannelKeeper, app.ProfilesKeeper.ChannelKeeper)
+	require.Equal(t, &app.IBCKeeper.PortKeeper, app.ProfilesKeeper.PortKeeper)
+	require.Equal(t, app.ScopedProfilesKeeper, app.ProfilesKeeper.ScopedKeeper)
+
+}
+
 func TestSimAppExportAndBlockedAddrs(t *testing.T) {
 	db := dbm.NewMemDB()
 	app := NewDesmosApp(
