@@ -1,6 +1,6 @@
 type: feat
-module: none
+module: other
 pull_request: 1221
-description: Added pruning and snapshots command
+description: Added `pruning` and `snapshots` command
 backward_compatible: true
 date: 2023-08-25T12:23:20.876901389Z
