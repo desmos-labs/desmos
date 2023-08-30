@@ -1,6 +1,0 @@
-type: fix
-module: x/profiles
-pull_request: 1222
-description: Set `x/profiles` keeper of msg server into reference as DesmosApp
-backward_compatible: true
-date: 2023-08-30T15:39:08.119704027Z
