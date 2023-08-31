@@ -16,11 +16,11 @@ import (
 var _ cosmwasm.Querier = SubspacesWasmQuerier{}
 
 type SubspacesWasmQuerier struct {
-	subspacesKeeper subspaceskeeper.Keeper
+	subspacesKeeper *subspaceskeeper.Keeper
 	cdc             codec.Codec
 }
 
-func NewSubspacesWasmQuerier(subspacesKeeper subspaceskeeper.Keeper, cdc codec.Codec) SubspacesWasmQuerier {
+func NewSubspacesWasmQuerier(subspacesKeeper *subspaceskeeper.Keeper, cdc codec.Codec) SubspacesWasmQuerier {
 	return SubspacesWasmQuerier{subspacesKeeper: subspacesKeeper, cdc: cdc}
 }
 

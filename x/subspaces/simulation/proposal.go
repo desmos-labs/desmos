@@ -22,7 +22,7 @@ const (
 )
 
 // ProposalMsgs defines the module weighted proposals' contents
-func ProposalMsgs(k keeper.Keeper) []simtypes.WeightedProposalMsg {
+func ProposalMsgs(k *keeper.Keeper) []simtypes.WeightedProposalMsg {
 	return []simtypes.WeightedProposalMsg{
 		simulation.NewWeightedProposalMsg(
 			OpWeightMsgUpdateSubspaceFeeTokens,
@@ -33,7 +33,7 @@ func ProposalMsgs(k keeper.Keeper) []simtypes.WeightedProposalMsg {
 }
 
 // SimulateMsgUpdateParams returns a random MsgUpdateParams
-func SimulateMsgUpdateSubspaceFeeTokens(k keeper.Keeper) simtypes.MsgSimulatorFn {
+func SimulateMsgUpdateSubspaceFeeTokens(k *keeper.Keeper) simtypes.MsgSimulatorFn {
 	return func(r *rand.Rand, ctx sdk.Context, _ []simtypes.Account) sdk.Msg {
 		// use the default gov module account address as authority
 		var authority sdk.AccAddress = address.Module("gov")

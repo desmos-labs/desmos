@@ -9,7 +9,7 @@ import (
 )
 
 // RegisterInvariants registers all subspaces invariants
-func RegisterInvariants(ir sdk.InvariantRegistry, keeper Keeper) {
+func RegisterInvariants(ir sdk.InvariantRegistry, keeper *Keeper) {
 	ir.RegisterRoute(types.ModuleName, "valid-subspaces",
 		ValidSubspacesInvariant(keeper))
 	ir.RegisterRoute(types.ModuleName, "valid-sections",
@@ -29,7 +29,7 @@ func RegisterInvariants(ir sdk.InvariantRegistry, keeper Keeper) {
 // --------------------------------------------------------------------------------------------------------------------
 
 // ValidSubspacesInvariant checks that all the subspaces are valid
-func ValidSubspacesInvariant(k Keeper) sdk.Invariant {
+func ValidSubspacesInvariant(k *Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidSubspaces []types.Subspace
 		k.IterateSubspaces(ctx, func(subspace types.Subspace) (stop bool) {
@@ -85,7 +85,7 @@ func FormatOutputSubspaces(subspaces []types.Subspace) (outputSubspaces string) 
 // --------------------------------------------------------------------------------------------------------------------
 
 // ValidSectionsInvariant checks that all the sections are valid
-func ValidSectionsInvariant(k Keeper) sdk.Invariant {
+func ValidSectionsInvariant(k *Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidSections []types.Section
 
@@ -142,7 +142,7 @@ func formatOutputSections(sections []types.Section) (output string) {
 // --------------------------------------------------------------------------------------------------------------------
 
 // ValidUserGroupsInvariant checks that all the subspaces are valid
-func ValidUserGroupsInvariant(k Keeper) sdk.Invariant {
+func ValidUserGroupsInvariant(k *Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidUserGroups []types.UserGroup
 		k.IterateUserGroups(ctx, func(group types.UserGroup) (stop bool) {
@@ -198,7 +198,7 @@ func formatOutputUserGroups(groups []types.UserGroup) (outputUserGroups string) 
 // --------------------------------------------------------------------------------------------------------------------
 
 // ValidUserGroupMembersInvariant checks that all the user group members are valid
-func ValidUserGroupMembersInvariant(k Keeper) sdk.Invariant {
+func ValidUserGroupMembersInvariant(k *Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidMembers []types.UserGroupMemberEntry
 		k.IterateUserGroupsMembers(ctx, func(entry types.UserGroupMemberEntry) (stop bool) {
@@ -244,7 +244,7 @@ func formatOutputUserGroupsMembers(members []types.UserGroupMemberEntry) (output
 // --------------------------------------------------------------------------------------------------------------------
 
 // ValidUserPermissionsInvariant checks that all the user permission entries are valid
-func ValidUserPermissionsInvariant(k Keeper) sdk.Invariant {
+func ValidUserPermissionsInvariant(k *Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidPermissionsEntries []types.UserPermission
 		k.IterateUserPermissions(ctx, func(entry types.UserPermission) (stop bool) {
@@ -290,7 +290,7 @@ func formatOutputUserPermissions(entries []types.UserPermission) (output string)
 // --------------------------------------------------------------------------------------------------------------------
 
 // ValidUserGrantsInvariant checks that all the user grants are valid
-func ValidUserGrantsInvariant(k Keeper) sdk.Invariant {
+func ValidUserGrantsInvariant(k *Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidEntries []types.Grant
 		k.IterateUserGrants(ctx, func(entry types.Grant) (stop bool) {
@@ -331,7 +331,7 @@ func formatOutputUserGrants(entries []types.Grant) (output string) {
 // --------------------------------------------------------------------------------------------------------------------
 
 // ValidGroupGrantsInvariant checks that all the user grants are valid
-func ValidGroupGrantsInvariant(k Keeper) sdk.Invariant {
+func ValidGroupGrantsInvariant(k *Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidEntries []types.Grant
 		k.IterateUserGroupsGrants(ctx, func(entry types.Grant) (stop bool) {

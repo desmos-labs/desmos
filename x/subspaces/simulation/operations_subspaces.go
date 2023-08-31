@@ -68,7 +68,7 @@ func randomSubspaceCreateFields(
 
 // SimulateMsgEditSubspace tests and runs a single msg edit subspace
 func SimulateMsgEditSubspace(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k *keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -97,7 +97,7 @@ func SimulateMsgEditSubspace(
 
 // randomEditSubspaceFields returns the data needed to edit a subspace
 func randomEditSubspaceFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k *keeper.Keeper,
 ) (subspaceID uint64, update types.SubspaceUpdate, account simtypes.Account, skip bool) {
 	// Get a subspace id
 	subspaces := k.GetAllSubspaces(ctx)
@@ -145,7 +145,7 @@ func randomEditSubspaceFields(
 
 // SimulateMsgDeleteSubspace tests and runs a single msg delete subspace
 func SimulateMsgDeleteSubspace(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k *keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -168,7 +168,7 @@ func SimulateMsgDeleteSubspace(
 
 // randomDeleteSubspaceFields returns the data needed to delete a subspace
 func randomDeleteSubspaceFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k *keeper.Keeper,
 ) (subspaceID uint64, account simtypes.Account, skip bool) {
 	// Get a subspace id
 	subspaces := k.GetAllSubspaces(ctx)

@@ -14,12 +14,12 @@ import (
 )
 
 type msgServer struct {
-	Keeper
+	*Keeper
 }
 
 // NewMsgServerImpl returns an implementation of the stored MsgServer interface
 // for the provided keeper
-func NewMsgServerImpl(keeper Keeper) types.MsgServer {
+func NewMsgServerImpl(keeper *Keeper) types.MsgServer {
 	return &msgServer{Keeper: keeper}
 }
 

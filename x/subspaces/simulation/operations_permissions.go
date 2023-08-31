@@ -19,7 +19,7 @@ import (
 
 // SimulateMsgSetUserPermissions tests and runs a single MsgSetUserPermissions
 func SimulateMsgSetUserPermissions(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k *keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -42,7 +42,7 @@ func SimulateMsgSetUserPermissions(
 
 // randomSetUserPermissionsFields returns the data used to build a random MsgSetUserPermissions
 func randomSetUserPermissionsFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k *keeper.Keeper,
 ) (subspaceID uint64, target string, permissions types.Permissions, account simtypes.Account, skip bool) {
 	// Get a subspace id
 	subspaces := k.GetAllSubspaces(ctx)

@@ -7,6 +7,6 @@ import (
 )
 
 // BeginBlocker is called every block and takes care of removing expired allowances
-func BeginBlocker(ctx sdk.Context, keeper keeper.Keeper) {
+func BeginBlocker(ctx sdk.Context, keeper *keeper.Keeper) {
 	keeper.RemoveExpiredAllowances(ctx, ctx.BlockTime())
 }
