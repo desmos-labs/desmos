@@ -10,7 +10,7 @@ DISABLED_MUTATORS='branch/*'
 # * ignore test and Protobuf files
 # * ignore simulation test files
 # * ignore legacy files
-go_file_exclusions="-type f ! -path */client/* ! -path */simulation/* ! -path */legacy/* ! -path */wasm/* -name *.go -and -not -name *_test.go -and -not -name *pb* -and -not -name module.go -and -not -name ibc_module.go"
+go_file_exclusions="-type f ! -path */client/* ! -path */simulation/* ! -path */legacy/* ! -path */wasm/* ! -path */testutil/* -name *.go -and -not -name *_test.go -and -not -name *pb* -and -not -name module.go -and -not -name ibc_module.go"
 MUTATION_SOURCES=$(find ./x  $go_file_exclusions )
 
 # Filter on a module-by-module basis as provided by input
