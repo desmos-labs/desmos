@@ -123,13 +123,13 @@ func GetStargateAcceptedQueries() wasmkeeper.AcceptedStargateQueries {
 		"/desmos.subspaces.v3.Query/GroupAllowances":  &subspacestypes.QueryGroupAllowancesResponse{},
 
 		// Register x/posts queries
-		"/desmos.posts.v3.Query/SubspacePosts":                          &poststypes.QuerySubspacePostsResponse{},
-		"/desmos.posts.v3.Query/SectionPosts":                           &poststypes.QuerySectionPostsResponse{},
-		"/desmos.posts.v3.Query/Post":                                   &poststypes.QueryPostResponse{},
-		"/desmos.posts.v3.Query/PostAttachments":                        &poststypes.QueryPostAttachmentsResponse{},
-		"/desmos.posts.v3.Query/PollAnswers":                            &poststypes.QueryPollAnswersResponse{},
-		"/desmos.posts.v3.Query/Params":                                 &poststypes.QueryParamsResponse{},
-		"/desmos.posts.v3.Query/QueryIncomingPostOwnerTransferRequests": &poststypes.QueryIncomingPostOwnerTransferRequestsResponse{},
+		"/desmos.posts.v3.Query/SubspacePosts":                     &poststypes.QuerySubspacePostsResponse{},
+		"/desmos.posts.v3.Query/SectionPosts":                      &poststypes.QuerySectionPostsResponse{},
+		"/desmos.posts.v3.Query/Post":                              &poststypes.QueryPostResponse{},
+		"/desmos.posts.v3.Query/PostAttachments":                   &poststypes.QueryPostAttachmentsResponse{},
+		"/desmos.posts.v3.Query/PollAnswers":                       &poststypes.QueryPollAnswersResponse{},
+		"/desmos.posts.v3.Query/Params":                            &poststypes.QueryParamsResponse{},
+		"/desmos.posts.v3.Query/IncomingPostOwnerTransferRequests": &poststypes.QueryIncomingPostOwnerTransferRequestsResponse{},
 
 		// Register x/reports queries
 		"/desmos.reports.v1.Query/Reports": &reportstypes.QueryReportsResponse{},
