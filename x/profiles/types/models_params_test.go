@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
@@ -111,18 +112,33 @@ func TestValidateNicknameParams(t *testing.T) {
 		shouldErr bool
 	}{
 		{
+			name:      "invalid max returns error - nil min",
+			params:    types.NicknameParams{MinLength: sdkmath.Int{}, MaxLength: sdk.NewInt(10)},
+			shouldErr: true,
+		},
+		{
 			name:      "invalid min returns error",
 			params:    types.NewNicknameParams(sdk.NewInt(1), sdk.NewInt(1000)),
 			shouldErr: true,
 		},
 		{
-			name:      "invalid max returns error",
+			name:      "invalid max returns error - nil max",
+			params:    types.NicknameParams{MinLength: sdk.NewInt(2), MaxLength: sdkmath.Int{}},
+			shouldErr: true,
+		},
+		{
+			name:      "invalid max returns error - lower than min",
 			params:    types.NewNicknameParams(sdk.NewInt(2), sdk.NewInt(-10)),
 			shouldErr: true,
 		},
 		{
+			name:      "invalid max returns error - higher than max limit",
+			params:    types.NewNicknameParams(sdk.NewInt(2), types.DefaultMaxNicknameLength.Add(sdk.NewInt(1))),
+			shouldErr: true,
+		},
+		{
 			name:      "valid values return no error",
-			params:    types.NewNicknameParams(sdk.NewInt(2), sdk.NewInt(1000)),
+			params:    types.NewNicknameParams(sdk.NewInt(2), sdk.NewInt(10)),
 			shouldErr: false,
 		},
 	}
@@ -158,8 +174,13 @@ func TestValidateDTagParams(t *testing.T) {
 			shouldErr: true,
 		},
 		{
-			name:      "invalid max returns error",
+			name:      "invalid max returns error - lower than min",
 			params:    types.NewDTagParams("regExParam", sdk.NewInt(3), sdk.NewInt(-30)),
+			shouldErr: true,
+		},
+		{
+			name:      "invalid max returns error - higher than max limit",
+			params:    types.NewDTagParams("regExParam", sdk.NewInt(3), types.DefaultMaxDTagLength.Add(sdk.NewInt(1))),
 			shouldErr: true,
 		},
 		{
@@ -318,6 +339,11 @@ func TestValidateAppLinksParams(t *testing.T) {
 		{
 			name:      "time duration zero returns error",
 			params:    types.NewAppLinksParams(time.Duration(0)),
+			shouldErr: true,
+		},
+		{
+			name:      "invalid duration returns error",
+			params:    types.NewAppLinksParams(types.FourteenDaysCorrectionFactor - 1),
 			shouldErr: true,
 		},
 		{

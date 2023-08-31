@@ -103,7 +103,7 @@ func ValidateNicknameParams(i interface{}) error {
 
 	// TODO make sense to cap this? I've done this thinking "what's the sense of having names higher that 1000 chars?"
 	maxLength := params.MaxLength
-	if maxLength.IsNil() || maxLength.IsNegative() || maxLength.GT(DefaultMaxNicknameLength) {
+	if maxLength.IsNil() || maxLength.LT(params.MinLength) || maxLength.GT(DefaultMaxNicknameLength) {
 		return fmt.Errorf("invalid max nickname length param: %s", maxLength)
 	}
 
@@ -140,11 +140,11 @@ func ValidateDTagParams(i interface{}) error {
 		return fmt.Errorf("empty dTag regEx param")
 	}
 
-	if params.MinLength.IsNegative() || params.MinLength.LT(DefaultMinDTagLength) {
+	if params.MinLength.LT(DefaultMinDTagLength) {
 		return fmt.Errorf("invalid minimum dTag length param: %s", params.MinLength)
 	}
 
-	if params.MaxLength.IsNegative() {
+	if params.MaxLength.LT(params.MinLength) || params.MaxLength.GT(DefaultMaxDTagLength) {
 		return fmt.Errorf("invalid max dTag length param: %s", params.MaxLength)
 	}
 
