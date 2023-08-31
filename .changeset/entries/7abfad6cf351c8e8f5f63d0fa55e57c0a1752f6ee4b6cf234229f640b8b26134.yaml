@@ -1,0 +1,6 @@
+type: refactor
+module: x/posts
+pull_request: 1225
+description: Improve posts keeper input and output consistency
+backward_compatible: true
+date: 2023-08-31T07:26:01.660422652Z

@@ -392,7 +392,7 @@ func NewDesmosApp(
 		app.ProfilesKeeper,
 		*app.SubspacesKeeper,
 		app.RelationshipsKeeper,
-		*app.PostsKeeper,
+		app.PostsKeeper,
 		app.ReportsKeeper,
 		app.ReactionsKeeper,
 	)

@@ -10,7 +10,7 @@ import (
 )
 
 // EndBlocker called every block, process ended polls
-func EndBlocker(ctx sdk.Context, keeper keeper.Keeper) {
+func EndBlocker(ctx sdk.Context, keeper *keeper.Keeper) {
 	// Iterate over all the active polls that have been ended by the current block time
 	keeper.IterateActivePollsQueue(ctx, ctx.BlockTime(), func(poll types.Attachment) (stop bool) {
 		keeper.EndPoll(ctx, poll)

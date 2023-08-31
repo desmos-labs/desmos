@@ -11,7 +11,7 @@ import (
 )
 
 // RegisterInvariants registers all posts invariants
-func RegisterInvariants(ir sdk.InvariantRegistry, keeper Keeper) {
+func RegisterInvariants(ir sdk.InvariantRegistry, keeper *Keeper) {
 	ir.RegisterRoute(types.ModuleName, "valid-subspaces",
 		ValidSubspacesInvariant(keeper))
 	ir.RegisterRoute(types.ModuleName, "valid-posts",
@@ -29,7 +29,7 @@ func RegisterInvariants(ir sdk.InvariantRegistry, keeper Keeper) {
 // --------------------------------------------------------------------------------------------------------------------
 
 // ValidSubspacesInvariant checks that all the subspaces have a valid post id to them
-func ValidSubspacesInvariant(k Keeper) sdk.Invariant {
+func ValidSubspacesInvariant(k *Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (message string, broken bool) {
 		var invalidSubspaces []subspacestypes.Subspace
 		k.sk.IterateSubspaces(ctx, func(subspace subspacestypes.Subspace) (stop bool) {
@@ -59,7 +59,7 @@ func formatOutputSubspaces(subspaces []subspacestypes.Subspace) (output string) 
 // --------------------------------------------------------------------------------------------------------------------
 
 // ValidPostsInvariant checks that all the posts are valid
-func ValidPostsInvariant(k Keeper) sdk.Invariant {
+func ValidPostsInvariant(k *Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (message string, broken bool) {
 		var invalidPosts []types.Post
 		k.IteratePosts(ctx, func(post types.Post) (stop bool) {
@@ -122,7 +122,7 @@ func formatOutputPosts(posts []types.Post) (output string) {
 // --------------------------------------------------------------------------------------------------------------------
 
 // ValidAttachmentsInvariant checks that all the attachments are valid
-func ValidAttachmentsInvariant(k Keeper) sdk.Invariant {
+func ValidAttachmentsInvariant(k *Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (message string, broken bool) {
 		var invalidAttachments []types.Attachment
 		k.IterateAttachments(ctx, func(attachment types.Attachment) (stop bool) {
@@ -179,7 +179,7 @@ func formatOutputAttachments(attachments []types.Attachment) (output string) {
 // --------------------------------------------------------------------------------------------------------------------
 
 // ValidUserAnswersInvariant checks that all the user answers are valid
-func ValidUserAnswersInvariant(k Keeper) sdk.Invariant {
+func ValidUserAnswersInvariant(k *Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (message string, broken bool) {
 		var invalidUserAnswers []types.UserAnswer
 		k.IterateUserAnswers(ctx, func(answer types.UserAnswer) (stop bool) {
@@ -231,7 +231,7 @@ func formatOutputUserAnswers(answers []types.UserAnswer) (output string) {
 // --------------------------------------------------------------------------------------------------------------------
 
 // ValidActivePollsInvariant checks that all the active polls are valid
-func ValidActivePollsInvariant(k Keeper) sdk.Invariant {
+func ValidActivePollsInvariant(k *Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (message string, broken bool) {
 		var invalidActivePolls []types.Attachment
 		k.IterateActivePolls(ctx, func(attachment types.Attachment) (stop bool) {
@@ -262,7 +262,7 @@ func formatOutputActivePolls(polls []types.Attachment) (output string) {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-func ValidPostOwnerTransferRequestsInvariant(k Keeper) sdk.Invariant {
+func ValidPostOwnerTransferRequestsInvariant(k *Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (message string, broken bool) {
 		var invalidPostOwnerTransferRequests []types.PostOwnerTransferRequest
 		k.IteratePostOwnerTransferRequests(ctx, func(request types.PostOwnerTransferRequest) (stop bool) {

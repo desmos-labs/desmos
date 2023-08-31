@@ -96,7 +96,7 @@ type TestSuite struct {
 	ctx            sdk.Context
 
 	storeKey storetypes.StoreKey
-	k        keeper.Keeper
+	k        *keeper.Keeper
 }
 
 func TestTestSuite(t *testing.T) {
