@@ -63,7 +63,7 @@ func NewDesmosCustomQueryPlugin(
 	cdc codec.Codec,
 	grpcQueryRouter *baseapp.GRPCQueryRouter,
 	profilesKeeper *profileskeeper.Keeper,
-	subspacesKeeper subspaceskeeper.Keeper,
+	subspacesKeeper *subspaceskeeper.Keeper,
 	relationshipsKeeper relationshipskeeper.Keeper,
 	postsKeeper postskeeper.Keeper,
 	reportsKeeper reportskeeper.Keeper,

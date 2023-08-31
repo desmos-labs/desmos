@@ -390,7 +390,7 @@ func NewDesmosApp(
 		app.GRPCQueryRouter(),
 		app.appCodec,
 		app.ProfilesKeeper,
-		*app.SubspacesKeeper,
+		app.SubspacesKeeper,
 		app.RelationshipsKeeper,
 		*app.PostsKeeper,
 		app.ReportsKeeper,
