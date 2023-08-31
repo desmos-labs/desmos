@@ -3,6 +3,7 @@ package types_test
 import (
 	"testing"
 
+	"github.com/desmos-labs/desmos/v6/app"
 	"github.com/desmos-labs/desmos/v6/x/profiles/types"
 
 	"github.com/stretchr/testify/require"
@@ -73,4 +74,16 @@ func TestDTagTransferRequest_Validate(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestMustUnmarshalDTagTransferRequest(t *testing.T) {
+	cdc, _ := app.MakeCodecs()
+	request := types.NewDTagTransferRequest(
+		"dtag",
+		"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+	)
+	marshalled := cdc.MustMarshal(&request)
+	unmarshalled := types.MustUnmarshalDTagTransferRequest(cdc, marshalled)
+	require.Equal(t, request, unmarshalled)
 }
