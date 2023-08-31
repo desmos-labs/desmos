@@ -19,7 +19,7 @@ import (
 
 // SimulateMsgGrantAllowance tests and runs a single MsgGrantAllowance
 func SimulateMsgGrantAllowance(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k *keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -41,7 +41,7 @@ func SimulateMsgGrantAllowance(
 
 // randomGrantAllowanceFields returns the data used to build a random MsgGrantAllowance
 func randomGrantAllowanceFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, ak authkeeper.AccountKeeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k *keeper.Keeper, ak authkeeper.AccountKeeper,
 ) (subspaceID uint64, granter string, grantee types.Grantee, signer simtypes.Account, skip bool) {
 	// Get a subspace id
 	subspaces := k.GetAllSubspaces(ctx)
@@ -118,7 +118,7 @@ func randomGrantAllowanceFields(
 
 // SimulateMsgRevokeAllowance tests and runs a single MsgRevokeAllowance
 func SimulateMsgRevokeAllowance(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k *keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -140,7 +140,7 @@ func SimulateMsgRevokeAllowance(
 
 // randomRevokeAllowanceFields returns the data used to build a random MsgRevokeAllowance
 func randomRevokeAllowanceFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k *keeper.Keeper,
 ) (subspaceID uint64, granter string, grantee types.Grantee, signer simtypes.Account, skip bool) {
 	// 50% of having user grants, otherwise group grants
 	var grants []types.Grant

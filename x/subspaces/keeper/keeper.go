@@ -23,8 +23,8 @@ type Keeper struct {
 }
 
 // NewKeeper creates new instances of the subspaces keeper
-func NewKeeper(cdc codec.BinaryCodec, storeKey storetypes.StoreKey, ak types.AccountKeeper, authzKeeper types.AuthzKeeper, authority string) Keeper {
-	return Keeper{
+func NewKeeper(cdc codec.BinaryCodec, storeKey storetypes.StoreKey, ak types.AccountKeeper, authzKeeper types.AuthzKeeper, authority string) *Keeper {
+	return &Keeper{
 		storeKey: storeKey,
 		cdc:      cdc,
 		ak:       ak,

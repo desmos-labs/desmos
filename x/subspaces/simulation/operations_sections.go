@@ -19,7 +19,7 @@ import (
 
 // SimulateMsgCreateSection tests and runs a single MsgCreateSection
 func SimulateMsgCreateSection(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k *keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -48,7 +48,7 @@ func SimulateMsgCreateSection(
 
 // randomCreateSectionFields returns the data used to build a random MsgCreateSection
 func randomCreateSectionFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k *keeper.Keeper,
 ) (subspaceID uint64, update types.SectionUpdate, parentID uint32, account simtypes.Account, skip bool) {
 	// Get a subspace id
 	subspaces := k.GetAllSubspaces(ctx)
@@ -88,7 +88,7 @@ func randomCreateSectionFields(
 
 // SimulateMsgEditSection tests and runs a single MsgEditSection
 func SimulateMsgEditSection(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k *keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -117,7 +117,7 @@ func SimulateMsgEditSection(
 
 // randomEditSectionFields returns the data used to build a random MsgEditSection
 func randomEditSectionFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k *keeper.Keeper,
 ) (subspaceID uint64, sectionID uint32, update types.SectionUpdate, account simtypes.Account, skip bool) {
 	// Get a subspace id
 	subspaces := k.GetAllSubspaces(ctx)
@@ -157,7 +157,7 @@ func randomEditSectionFields(
 
 // SimulateMsgMoveSection tests and runs a single MsgMoveSection
 func SimulateMsgMoveSection(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k *keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -185,7 +185,7 @@ func SimulateMsgMoveSection(
 
 // randomMoveSectionFields returns the data used to build a random MsgMoveSection
 func randomMoveSectionFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k *keeper.Keeper,
 ) (subspaceID uint64, sectionID uint32, newParentID uint32, account simtypes.Account, skip bool) {
 	// Get a subspace id
 	subspaces := k.GetAllSubspaces(ctx)
@@ -236,7 +236,7 @@ func randomMoveSectionFields(
 }
 
 // isChildSection tells whether the given section is the child of the given parent section or not.
-func isChildSection(ctx sdk.Context, k keeper.Keeper, parent types.Section, section types.Section) bool {
+func isChildSection(ctx sdk.Context, k *keeper.Keeper, parent types.Section, section types.Section) bool {
 	visitsCount := 0
 	k.IterateSectionChildren(ctx, parent.SubspaceID, parent.ID, func(node types.Section) (stop bool) {
 		if node.SubspaceID == section.SubspaceID && node.ID == section.ID {
@@ -252,7 +252,7 @@ func isChildSection(ctx sdk.Context, k keeper.Keeper, parent types.Section, sect
 
 // SimulateMsgDeleteSection tests and runs a single MsgDeleteSection
 func SimulateMsgDeleteSection(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k *keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -279,7 +279,7 @@ func SimulateMsgDeleteSection(
 
 // randomDeleteFields returns the data used to build a random MsgDeleteSection
 func randomDeleteFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k *keeper.Keeper,
 ) (subspaceID uint64, sectionID uint32, account simtypes.Account, skip bool) {
 	// Get a subspace id
 	subspaces := k.GetAllSubspaces(ctx)

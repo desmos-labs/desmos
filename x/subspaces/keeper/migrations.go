@@ -17,13 +17,13 @@ import (
 
 // Migrator is a struct for handling in-place store migrations.
 type Migrator struct {
-	keeper      Keeper
+	keeper      *Keeper
 	authzKeeper authzkeeper.Keeper
 	ak          types.AccountKeeper
 }
 
 // NewMigrator returns a new Migrator
-func NewMigrator(keeper Keeper, authzKeeper authzkeeper.Keeper, ak types.AccountKeeper) Migrator {
+func NewMigrator(keeper *Keeper, authzKeeper authzkeeper.Keeper, ak types.AccountKeeper) Migrator {
 	return Migrator{
 		keeper:      keeper,
 		authzKeeper: authzKeeper,

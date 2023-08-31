@@ -158,7 +158,7 @@ type TestSuite struct {
 	cdc            codec.Codec
 	legacyAminoCdc *codec.LegacyAmino
 	ctx            sdk.Context
-	k              keeper.Keeper
+	k              *keeper.Keeper
 	storeKey       storetypes.StoreKey
 	ak             authkeeper.AccountKeeper
 }

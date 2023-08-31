@@ -21,7 +21,7 @@ import (
 
 // SimulateMsgGrantTreasuryAuthorization tests and runs a single MsgGrantTreasuryAuthorization
 func SimulateMsgGrantTreasuryAuthorization(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k *keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -45,7 +45,7 @@ func SimulateMsgGrantTreasuryAuthorization(
 
 // randomGrantTreasuryAuthorizationFields returns the data used to build a random MsgGrantTreasuryAuthorization
 func randomGrantTreasuryAuthorizationFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k *keeper.Keeper,
 ) (subspaceID uint64, grantee string, granter simtypes.Account, skip bool) {
 	// Get a subspace id
 	subspaces := k.GetAllSubspaces(ctx)
@@ -84,7 +84,7 @@ func randomGrantTreasuryAuthorizationFields(
 
 // SimulateMsgRevokeTreasuryAuthorization tests and runs a single MsgRevokeTreasuryAuthorization
 func SimulateMsgRevokeTreasuryAuthorization(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, authzk authzkeeper.Keeper,
+	k *keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, authzk authzkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -107,7 +107,7 @@ func SimulateMsgRevokeTreasuryAuthorization(
 
 // randomRevokeTreasuryAuthorizationFields returns the data used to build a random MsgRevokeTreasuryAuthorization
 func randomRevokeTreasuryAuthorizationFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, authzk authzkeeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k *keeper.Keeper, authzk authzkeeper.Keeper,
 ) (subspaceID uint64, grantee string, granter simtypes.Account, msgTypeUrl string, skip bool) {
 	// Get a subspace id
 	subspaces := k.GetAllSubspaces(ctx)

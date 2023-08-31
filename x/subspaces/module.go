@@ -118,10 +118,10 @@ type AppModule struct {
 
 // RegisterServices registers module services.
 func (am AppModule) RegisterServices(cfg module.Configurator) {
-	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(*am.keeper))
+	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
 	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
 
-	m := keeper.NewMigrator(*am.keeper, am.authzk, am.ak)
+	m := keeper.NewMigrator(am.keeper, am.authzk, am.ak)
 	err := cfg.RegisterMigration(types.ModuleName, 1, m.Migrate1to2)
 	if err != nil {
 		panic(err)
@@ -169,7 +169,7 @@ func (AppModule) Name() string {
 
 // RegisterInvariants performs a no-op.
 func (am AppModule) RegisterInvariants(ir sdk.InvariantRegistry) {
-	keeper.RegisterInvariants(ir, *am.keeper)
+	keeper.RegisterInvariants(ir, am.keeper)
 }
 
 // QuerierRoute returns the subspaces module's querier route name.
@@ -200,7 +200,7 @@ func (AppModule) ConsensusVersion() uint64 {
 
 // BeginBlock returns the begin blocker for the subspaces module.
 func (am AppModule) BeginBlock(ctx sdk.Context, _ abci.RequestBeginBlock) {
-	BeginBlocker(ctx, *am.keeper)
+	BeginBlocker(ctx, am.keeper)
 }
 
 // EndBlock returns the end blocker for the subspaces module. It returns no validator
@@ -221,7 +221,7 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 
 // ProposalMsgs returns msgs used for governance proposals for simulations.
 func (am AppModule) ProposalMsgs(simState module.SimulationState) []simtypes.WeightedProposalMsg {
-	return simulation.ProposalMsgs(*am.keeper)
+	return simulation.ProposalMsgs(am.keeper)
 }
 
 // RegisterStoreDecoder performs a no-op.
@@ -231,7 +231,7 @@ func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
 
 // WeightedOperations returns the all the subspaces module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
-	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, *am.keeper, am.ak, am.bk, am.authzk)
+	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.ak, am.bk, am.authzk)
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -293,13 +293,13 @@ func ProvideModule(in ModuleInputs) ModuleOutputs {
 
 	m := NewAppModule(
 		in.Cdc,
-		&k,
+		k,
 		in.AuthzKeeper,
 		in.AccountKeeper,
 		in.BankKeeper,
 	)
 
-	return ModuleOutputs{SubspacesKeeper: &k, Module: m}
+	return ModuleOutputs{SubspacesKeeper: k, Module: m}
 }
 
 func InvokeSetSubspacesHooks(

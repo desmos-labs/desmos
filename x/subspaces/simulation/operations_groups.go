@@ -21,7 +21,7 @@ import (
 
 // SimulateMsgCreateUserGroup tests and runs a single MsgCreateUserGroup
 func SimulateMsgCreateUserGroup(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k *keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -52,7 +52,7 @@ func SimulateMsgCreateUserGroup(
 
 // randomCreateUserGroupFields returns the data used to build a random MsgCreateUserGroup
 func randomCreateUserGroupFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k *keeper.Keeper,
 ) (subspaceID uint64, update types.GroupUpdate, permissions types.Permissions, account simtypes.Account, skip bool) {
 	// Get a subspace id
 	subspaces := k.GetAllSubspaces(ctx)
@@ -91,7 +91,7 @@ func randomCreateUserGroupFields(
 
 // SimulateMsgEditUserGroup tests and runs a single MsgEditUserGroup
 func SimulateMsgEditUserGroup(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k *keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -114,7 +114,7 @@ func SimulateMsgEditUserGroup(
 
 // randomEditUserGroupFields returns the data used to build a random MsgEditUserGroup
 func randomEditUserGroupFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k *keeper.Keeper,
 ) (subspaceID uint64, groupID uint32, update types.GroupUpdate, account simtypes.Account, skip bool) {
 	// Get a group
 	groups := k.GetAllUserGroups(ctx)
@@ -155,7 +155,7 @@ func randomEditUserGroupFields(
 
 // SimulateMsgMoveUserGroup tests and runs a single MsgMoveUserGroup
 func SimulateMsgMoveUserGroup(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k *keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -178,7 +178,7 @@ func SimulateMsgMoveUserGroup(
 
 // randomMoveUserGroupFields returns the data used to build a random MsgMoveUserGroup
 func randomMoveUserGroupFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k *keeper.Keeper,
 ) (subspaceID uint64, groupID uint32, newSectionID uint32, account simtypes.Account, skip bool) {
 	// Get a subspace id
 	subspaces := k.GetAllSubspaces(ctx)
@@ -227,7 +227,7 @@ func randomMoveUserGroupFields(
 
 // SimulateMsgSetUserGroupPermissions tests and runs a single MsgSetUserGroupPermissions
 func SimulateMsgSetUserGroupPermissions(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k *keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -250,7 +250,7 @@ func SimulateMsgSetUserGroupPermissions(
 
 // randomSetUserGroupPermissionsFields returns the data used to build a random MsgSetUserGroupPermissions
 func randomSetUserGroupPermissionsFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k *keeper.Keeper,
 ) (subspaceID uint64, groupID uint32, permissions types.Permissions, account simtypes.Account, skip bool) {
 	// Get a subspace id
 	subspaces := k.GetAllSubspaces(ctx)
@@ -298,7 +298,7 @@ func randomSetUserGroupPermissionsFields(
 
 // SimulateMsgDeleteUserGroup tests and runs a single MsgDeleteUserGroup
 func SimulateMsgDeleteUserGroup(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k *keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -321,7 +321,7 @@ func SimulateMsgDeleteUserGroup(
 
 // randomDeleteUserGroupFields returns the data used to build a random MsgDeleteUserGroup
 func randomDeleteUserGroupFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k *keeper.Keeper,
 ) (subspaceID uint64, groupID uint32, account simtypes.Account, skip bool) {
 	// Get a group
 	groups := k.GetAllUserGroups(ctx)
@@ -357,7 +357,7 @@ func randomDeleteUserGroupFields(
 
 // SimulateMsgAddUserToUserGroup tests and runs a single MsgAddUserToUserGroup
 func SimulateMsgAddUserToUserGroup(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k *keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -380,7 +380,7 @@ func SimulateMsgAddUserToUserGroup(
 
 // randomAddUserToUserGroupFields returns the data used to build a random MsgAddUserToUserGroup
 func randomAddUserToUserGroupFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, ak authkeeper.AccountKeeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k *keeper.Keeper, ak authkeeper.AccountKeeper,
 ) (subspaceID uint64, groupID uint32, user string, account simtypes.Account, skip bool) {
 	// Get a group
 	groups := k.GetAllUserGroups(ctx)
@@ -426,7 +426,7 @@ func randomAddUserToUserGroupFields(
 
 // SimulateMsgRemoveUserFromUserGroup tests and runs a single MsgRemoveUserFromUserGroup
 func SimulateMsgRemoveUserFromUserGroup(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k *keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -449,7 +449,7 @@ func SimulateMsgRemoveUserFromUserGroup(
 
 // randomRemoveUserFromUserGroupFields returns the data used to build a random MsgRemoveUserFromUserGroup
 func randomRemoveUserFromUserGroupFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k *keeper.Keeper,
 ) (subspaceID uint64, groupID uint32, user string, account simtypes.Account, skip bool) {
 	// Get a group
 	groups := k.GetAllUserGroups(ctx)
