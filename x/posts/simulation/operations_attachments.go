@@ -23,7 +23,7 @@ import (
 
 // SimulateMsgAddPostAttachment tests and runs a single msg add post attachment
 func SimulateMsgAddPostAttachment(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k *keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -42,7 +42,7 @@ func SimulateMsgAddPostAttachment(
 
 // randomAddPostAttachmentFields returns the data needed to add an attachment to an existing post
 func randomAddPostAttachmentFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k *keeper.Keeper,
 ) (subspaceID uint64, postID uint64, content types.AttachmentContent, editor simtypes.Account, skip bool) {
 	if len(accs) == 0 {
 		// Skip because there are no accounts
@@ -86,7 +86,7 @@ func randomAddPostAttachmentFields(
 
 // SimulateMsgRemovePostAttachment tests and runs a single msg remove post attachment
 func SimulateMsgRemovePostAttachment(
-	k keeper.Keeper, sk types.SubspacesKeeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k *keeper.Keeper, sk types.SubspacesKeeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -106,7 +106,7 @@ func SimulateMsgRemovePostAttachment(
 
 // randomRemovePostAttachmentFields returns the data needed to remove an attachment from an existing post
 func randomRemovePostAttachmentFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk types.SubspacesKeeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k *keeper.Keeper, sk types.SubspacesKeeper,
 ) (subspaceID uint64, postID uint64, attachmentID uint32, editor simtypes.Account, skip bool) {
 	if len(accs) == 0 {
 		// Skip because there are no accounts

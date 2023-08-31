@@ -125,10 +125,10 @@ type AppModule struct {
 
 // RegisterServices registers module services.
 func (am AppModule) RegisterServices(cfg module.Configurator) {
-	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(*am.keeper))
+	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
 	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
 
-	m := keeper.NewMigrator(*am.keeper, am.sk, am.legacySubspace)
+	m := keeper.NewMigrator(am.keeper, am.sk, am.legacySubspace)
 	err := cfg.RegisterMigration(types.ModuleName, 1, m.Migrate1to2)
 	if err != nil {
 		panic(err)
@@ -177,7 +177,7 @@ func (AppModule) Name() string {
 
 // RegisterInvariants registers the module invariants
 func (am AppModule) RegisterInvariants(ir sdk.InvariantRegistry) {
-	keeper.RegisterInvariants(ir, *am.keeper)
+	keeper.RegisterInvariants(ir, am.keeper)
 }
 
 // QuerierRoute returns the posts module's querier route name.
@@ -212,7 +212,7 @@ func (am AppModule) BeginBlock(_ sdk.Context, _ abci.RequestBeginBlock) {}
 // EndBlock returns the end blocker for the posts module. It returns no validator
 // updates.
 func (am AppModule) EndBlock(ctx sdk.Context, _ abci.RequestEndBlock) []abci.ValidatorUpdate {
-	EndBlocker(ctx, *am.keeper)
+	EndBlocker(ctx, am.keeper)
 	return []abci.ValidatorUpdate{}
 }
 
@@ -238,7 +238,7 @@ func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
 
 // WeightedOperations returns the all the posts module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
-	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, *am.keeper, am.sk, am.ak, am.bk)
+	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.sk, am.ak, am.bk)
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -309,7 +309,7 @@ func ProvideModule(in ModuleInputs) ModuleOutputs {
 
 	m := NewAppModule(
 		in.Cdc,
-		&k,
+		k,
 		in.SubspacesKeeper,
 		in.AccountKeeper,
 		in.BankKeeper,
@@ -317,7 +317,7 @@ func ProvideModule(in ModuleInputs) ModuleOutputs {
 	)
 
 	return ModuleOutputs{
-		PostsKeeper:    &k,
+		PostsKeeper:    k,
 		Module:         m,
 		SubspacesHooks: subspacestypes.SubspacesHooksWrapper{Hooks: k.Hooks()},
 	}

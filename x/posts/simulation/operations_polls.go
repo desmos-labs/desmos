@@ -23,7 +23,7 @@ import (
 
 // SimulateMsgAnswerPoll tests and runs a single msg answer poll post
 func SimulateMsgAnswerPoll(
-	k keeper.Keeper, sk types.SubspacesKeeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k *keeper.Keeper, sk types.SubspacesKeeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -43,7 +43,7 @@ func SimulateMsgAnswerPoll(
 
 // randomAnswerPollFields returns the data needed to answer a user poll
 func randomAnswerPollFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk types.SubspacesKeeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k *keeper.Keeper, sk types.SubspacesKeeper,
 ) (answer types.UserAnswer, user simtypes.Account, skip bool) {
 	if len(accs) == 0 {
 		// Skip because there are no accounts

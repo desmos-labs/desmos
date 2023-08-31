@@ -18,11 +18,11 @@ import (
 var _ cosmwasm.Querier = PostsWasmQuerier{}
 
 type PostsWasmQuerier struct {
-	postsKeeper postskeeper.Keeper
+	postsKeeper *postskeeper.Keeper
 	cdc         codec.Codec
 }
 
-func NewPostsWasmQuerier(postsKeeper postskeeper.Keeper, cdc codec.Codec) PostsWasmQuerier {
+func NewPostsWasmQuerier(postsKeeper *postskeeper.Keeper, cdc codec.Codec) PostsWasmQuerier {
 	return PostsWasmQuerier{postsKeeper: postsKeeper, cdc: cdc}
 }
 

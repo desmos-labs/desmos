@@ -19,7 +19,7 @@ import (
 
 // SimulateMsgRequestPostOwnerTransfer tests and runs a single msg request post owner transfer request
 func SimulateMsgRequestPostOwnerTransfer(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k *keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -42,7 +42,7 @@ func SimulateMsgRequestPostOwnerTransfer(
 
 // randomRequestPostOwnerTransferFields returns the data needed to request a post owner transfer request
 func randomRequestPostOwnerTransferFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k *keeper.Keeper,
 ) (request types.PostOwnerTransferRequest, signer simtypes.Account, skip bool) {
 
 	// Get a random post
@@ -102,7 +102,7 @@ func randomRequestPostOwnerTransferFields(
 
 // SimulateMsgCancelPostOwnerTransferRequest tests and runs a single msg cancel post owner transfer request
 func SimulateMsgCancelPostOwnerTransferRequest(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k *keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -124,7 +124,7 @@ func SimulateMsgCancelPostOwnerTransferRequest(
 
 // randomCancelPostOwnerTransferFields returns the data needed to cancel a post owner transfer request
 func randomCancelPostOwnerTransferFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k *keeper.Keeper,
 ) (request types.PostOwnerTransferRequest, signer simtypes.Account, skip bool) {
 
 	// Get a random post owner transfer request
@@ -152,7 +152,7 @@ func randomCancelPostOwnerTransferFields(
 
 // SimulateMsgAcceptPostOwnerTransferRequest tests and runs a single msg accept post owner transfer request
 func SimulateMsgAcceptPostOwnerTransferRequest(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k *keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -174,7 +174,7 @@ func SimulateMsgAcceptPostOwnerTransferRequest(
 
 // randomAcceptPostOwnerTransferFields returns the data needed to accept a post owner transfer request
 func randomAcceptPostOwnerTransferFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k *keeper.Keeper,
 ) (request types.PostOwnerTransferRequest, signer simtypes.Account, skip bool) {
 
 	// Get a random post owner transfer request
@@ -207,7 +207,7 @@ func randomAcceptPostOwnerTransferFields(
 
 // SimulateMsgRefusePostOwnerTransferRequest tests and runs a single msg refuse post owner transfer request
 func SimulateMsgRefusePostOwnerTransferRequest(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k *keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -229,7 +229,7 @@ func SimulateMsgRefusePostOwnerTransferRequest(
 
 // randomRefusePostOwnerTransferFields returns the data needed to refuse a post owner transfer request
 func randomRefusePostOwnerTransferFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k *keeper.Keeper,
 ) (request types.PostOwnerTransferRequest, signer simtypes.Account, skip bool) {
 
 	// Get a random post owner transfer request

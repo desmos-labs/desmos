@@ -31,7 +31,7 @@ type KeeperTestSuite struct {
 	ctx            sdk.Context
 
 	storeKey storetypes.StoreKey
-	k        keeper.Keeper
+	k        *keeper.Keeper
 
 	ak *testutil.MockProfilesKeeper
 	sk *testutil.MockSubspacesKeeper

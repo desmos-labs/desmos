@@ -120,7 +120,7 @@ func GetWasmOpts(
 	profilesKeeper *profileskeeper.Keeper,
 	subspacesKeeper subspaceskeeper.Keeper,
 	relationshipsKeeper relationshipskeeper.Keeper,
-	postsKeeper postskeeper.Keeper,
+	postsKeeper *postskeeper.Keeper,
 	reportsKeeper reportskeeper.Keeper,
 	reactionsKeeper reactionskeeper.Keeper,
 ) []wasmkeeper.Option {
