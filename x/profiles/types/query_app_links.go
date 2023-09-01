@@ -18,6 +18,21 @@ func NewQueryApplicationLinksRequest(
 	}
 }
 
+// GetQueryPrefix returns the prefix used for Query/ApplicationLinks
+func (request *QueryApplicationLinksRequest) GetQueryPrefix() []byte {
+	prefix := ApplicationLinkPrefix
+	switch {
+	case request.User != "" && request.Application != "" && request.Username != "":
+		prefix = UserApplicationLinkKey(request.User, request.Application, request.Username)
+	case request.User != "" && request.Application != "":
+		prefix = UserApplicationLinksApplicationPrefix(request.User, request.Application)
+	case request.User != "":
+		prefix = UserApplicationLinksPrefix(request.User)
+	}
+
+	return prefix
+}
+
 // NewQueryApplicationLinkByClientIDRequest returns a new QueryApplicationLinkByClientIDRequest instance
 func NewQueryApplicationLinkByClientIDRequest(clientID string) *QueryApplicationLinkByClientIDRequest {
 	return &QueryApplicationLinkByClientIDRequest{
@@ -34,4 +49,17 @@ func NewQueryApplicationLinkOwnersRequest(
 		Username:    username,
 		Pagination:  pageReq,
 	}
+}
+
+// GetQueryPrefix returns the prefix used for Query/ApplicationLinkOwners
+func (request *QueryApplicationLinkOwnersRequest) GetQueryPrefix() []byte {
+	prefix := ApplicationLinkAppPrefix
+	switch {
+	case request.Application != "" && request.Username != "":
+		prefix = ApplicationLinkAppUsernameKey(request.Application, request.Username)
+	case request.Application != "":
+		prefix = ApplicationLinkAppKey(request.Application)
+	}
+
+	return prefix
 }
