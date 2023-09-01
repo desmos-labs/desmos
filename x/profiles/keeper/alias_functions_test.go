@@ -279,6 +279,52 @@ func (suite *KeeperTestSuite) TestKeeper_IterateExpiringApplicationLinks() {
 		expLinks []types.ApplicationLink
 	}{
 		{
+			name: "expiring links without client key are skipped properly",
+			setupCtx: func(ctx sdk.Context) sdk.Context {
+				return ctx.WithBlockTime(time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC))
+			},
+			store: func(ctx sdk.Context) {
+				suite.ak.SetAccount(ctx, profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"))
+
+				err := suite.k.SaveApplicationLink(ctx, types.NewApplicationLink(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					types.NewData("github", "github-user"),
+					types.ApplicationLinkStateInitialized,
+					types.NewOracleRequest(
+						0,
+						1,
+						types.NewOracleRequestCallData("github", "call_data"),
+						"client_id",
+					),
+					nil,
+					time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				))
+				suite.Require().NoError(err)
+
+				err = suite.k.SaveApplicationLink(ctx, types.NewApplicationLink(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					types.NewData("reddit", "reddit-user"),
+					types.ApplicationLinkStateInitialized,
+					types.NewOracleRequest(
+						0,
+						1,
+						types.NewOracleRequestCallData("reddit", "call_data"),
+						"client_id2",
+					),
+					nil,
+					time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+				))
+				suite.Require().NoError(err)
+
+				// Delete client ids
+				ctx.KVStore(suite.storeKey).Delete(types.ApplicationLinkClientIDKey("client_id"))
+				ctx.KVStore(suite.storeKey).Delete(types.ApplicationLinkClientIDKey("client_id2"))
+			},
+			expLinks: nil,
+		},
+		{
 			name: "expiring links are iterated properly",
 			setupCtx: func(ctx sdk.Context) sdk.Context {
 				return ctx.WithBlockTime(time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC))
