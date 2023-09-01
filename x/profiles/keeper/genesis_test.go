@@ -404,6 +404,11 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 				}
 				suite.Require().Equal(chainLinks, suite.k.GetChainLinks(ctx))
 
+				defaultExternalAddressEntries := []types.DefaultExternalAddressEntry{
+					types.NewDefaultExternalAddressEntry("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", "cosmos", ext.GetAddress().String()),
+				}
+				suite.Require().Equal(defaultExternalAddressEntries, suite.k.GetDefaultExternalAddressEntries(ctx))
+
 				applicationLinks := []types.ApplicationLink{
 					types.NewApplicationLink(
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
