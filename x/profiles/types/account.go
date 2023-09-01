@@ -314,9 +314,14 @@ func (p *Profile) String() string {
 
 // MarshalYAML returns the YAML representation of a Profile.
 func (p *Profile) MarshalYAML() (interface{}, error) {
+	var pubKey = ""
+	if p.GetPubKey() != nil {
+		pubKey = p.GetPubKey().String()
+	}
+
 	bs, err := yaml.Marshal(profilePretty{
 		Address:       p.GetAddress(),
-		PubKey:        p.GetPubKey().String(),
+		PubKey:        pubKey,
 		AccountNumber: p.GetAccountNumber(),
 		Sequence:      p.GetSequence(),
 		DTag:          p.DTag,
