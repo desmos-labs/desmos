@@ -347,7 +347,12 @@ func TestValidateAppLinksParams(t *testing.T) {
 			shouldErr: true,
 		},
 		{
-			name:      "valid params return no error",
+			name:      "minimum duration returns no error",
+			params:    types.NewAppLinksParams(types.FourteenDaysCorrectionFactor),
+			shouldErr: false,
+		},
+		{
+			name:      "default params return no error",
 			params:    types.DefaultAppLinksParams(),
 			shouldErr: false,
 		},

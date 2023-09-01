@@ -277,7 +277,7 @@ func TestProof_Verify(t *testing.T) {
 			proof: types.Proof{
 				PubKey:    pubKeyAny,
 				Signature: codectypes.UnsafePackAny(types.NewSingleSignature(types.SIGNATURE_VALUE_TYPE_UNSPECIFIED, sigBz)),
-				PlainText: "76616C7565",
+				PlainText: "636F736D6F73317535357977686B3674686D686E787337796E387668387637657A6E636B63716A65766E616478",
 			},
 			owner:       "cosmos1u55ywhk6thmhnxs7yn8vh8v7eznckcqjevnadx",
 			addressData: types.NewBase58Address(base58.Encode(pubKey.Bytes())),
