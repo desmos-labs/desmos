@@ -277,6 +277,7 @@ func (suite *KeeperTestSuite) TestKeeper_IterateExpiringApplicationLinks() {
 		setupCtx func(ctx sdk.Context) sdk.Context
 		store    func(ctx sdk.Context)
 		expLinks []types.ApplicationLink
+		check    func(ctx sdk.Context)
 	}{
 		{
 			name: "expiring links without client key are skipped properly",
@@ -323,6 +324,10 @@ func (suite *KeeperTestSuite) TestKeeper_IterateExpiringApplicationLinks() {
 				ctx.KVStore(suite.storeKey).Delete(types.ApplicationLinkClientIDKey("client_id2"))
 			},
 			expLinks: nil,
+			check: func(ctx sdk.Context) {
+				suite.Require().False(ctx.KVStore(suite.storeKey).Has(types.ApplicationLinkClientIDKey("client_id")))
+				suite.Require().False(ctx.KVStore(suite.storeKey).Has(types.ApplicationLinkClientIDKey("client_id2")))
+			},
 		},
 		{
 			name: "expiring links are iterated properly",
@@ -401,6 +406,10 @@ func (suite *KeeperTestSuite) TestKeeper_IterateExpiringApplicationLinks() {
 			})
 
 			suite.Require().Equal(tc.expLinks, iteratedLinks)
+
+			if tc.check != nil {
+				tc.check(ctx)
+			}
 		})
 	}
 }
