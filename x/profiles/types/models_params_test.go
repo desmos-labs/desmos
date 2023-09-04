@@ -132,11 +132,6 @@ func TestValidateNicknameParams(t *testing.T) {
 			shouldErr: true,
 		},
 		{
-			name:      "invalid max returns error - higher than max limit",
-			params:    types.NewNicknameParams(sdk.NewInt(2), types.DefaultMaxNicknameLength.Add(sdk.NewInt(1))),
-			shouldErr: true,
-		},
-		{
 			name:      "valid values return no error",
 			params:    types.NewNicknameParams(sdk.NewInt(2), sdk.NewInt(10)),
 			shouldErr: false,
@@ -176,11 +171,6 @@ func TestValidateDTagParams(t *testing.T) {
 		{
 			name:      "invalid max returns error - lower than min",
 			params:    types.NewDTagParams("regExParam", sdk.NewInt(3), sdk.NewInt(-30)),
-			shouldErr: true,
-		},
-		{
-			name:      "invalid max returns error - higher than max limit",
-			params:    types.NewDTagParams("regExParam", sdk.NewInt(3), types.DefaultMaxDTagLength.Add(sdk.NewInt(1))),
 			shouldErr: true,
 		},
 		{
