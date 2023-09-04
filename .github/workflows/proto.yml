@@ -13,7 +13,7 @@ jobs:
     timeout-minutes: 5
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Lint ✅
         run: sudo make proto-lint
@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Check breakage ✅
         run: sudo make proto-check-breaking
