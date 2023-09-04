@@ -254,20 +254,49 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 			shouldErr: true,
 		},
 		{
-			name: "min nickname length not reached",
+			name: "max nickname length reached returns no error",
 			profile: suite.CheckProfileNoError(types.NewProfile(
 				"custom_dtag",
-				"m",
+				strings.Repeat("A", 1000),
 				"my-bio",
 				types.NewPictures(
 					"https://tc.com/profile-picture",
 					"https://tc.com/cover-pic",
 				),
-
+				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				profilestesting.AccountFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
+			)),
+			shouldErr: false,
+		},
+		{
+			name: "min nickname length not reached",
+			profile: suite.CheckProfileNoError(types.NewProfile(
+				"custom_dtag",
+				strings.Repeat("A", 1),
+				"my-bio",
+				types.NewPictures(
+					"https://tc.com/profile-picture",
+					"https://tc.com/cover-pic",
+				),
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				profilestesting.AccountFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 			)),
 			shouldErr: true,
+		},
+		{
+			name: "min nickname length reached returns no error",
+			profile: suite.CheckProfileNoError(types.NewProfile(
+				"custom_dtag",
+				strings.Repeat("A", 2),
+				"my-bio",
+				types.NewPictures(
+					"https://tc.com/profile-picture",
+					"https://tc.com/cover-pic",
+				),
+				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				profilestesting.AccountFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
+			)),
+			shouldErr: false,
 		},
 		{
 			name: "max bio length exceeded",
@@ -284,6 +313,38 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 				profilestesting.AccountFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 			)),
 			shouldErr: true,
+		},
+		{
+			name: "max bio length reached returns no error",
+			profile: suite.CheckProfileNoError(types.NewProfile(
+				"custom_dtag",
+				"nickname",
+				strings.Repeat("A", 1000),
+				types.NewPictures(
+					"https://tc.com/profile-picture",
+					"https://tc.com/cover-pic",
+				),
+
+				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				profilestesting.AccountFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
+			)),
+			shouldErr: false,
+		},
+		{
+			name: "empty bio returns no error",
+			profile: suite.CheckProfileNoError(types.NewProfile(
+				"custom_dtag",
+				"nickname",
+				"",
+				types.NewPictures(
+					"https://tc.com/profile-picture",
+					"https://tc.com/cover-pic",
+				),
+
+				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				profilestesting.AccountFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
+			)),
+			shouldErr: false,
 		},
 		{
 			name: "invalid DTag doesn't match regEx",
@@ -303,7 +364,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 		{
 			name: "min DTag length not reached",
 			profile: suite.CheckProfileNoError(types.NewProfile(
-				"d",
+				strings.Repeat("A", 1),
 				"nickname",
 				"my-bio",
 				types.NewPictures(
@@ -316,9 +377,24 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 			shouldErr: true,
 		},
 		{
+			name: "min DTag length reached returns no error",
+			profile: suite.CheckProfileNoError(types.NewProfile(
+				strings.Repeat("A", 3),
+				"nickname",
+				"my-bio",
+				types.NewPictures(
+					"https://tc.com/profile-picture",
+					"https://tc.com/cover-pic",
+				),
+				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				profilestesting.AccountFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
+			)),
+			shouldErr: false,
+		},
+		{
 			name: "max DTag length exceeded",
 			profile: suite.CheckProfileNoError(types.NewProfile(
-				"9YfrVVi3UEI1ymN7n6isSct30xG6Jn1EDxEXxWOn0voSMIKqLhHsBfnZoXEyHNS",
+				strings.Repeat("A", 35),
 				"nickname",
 				"my-bio",
 				types.NewPictures(
@@ -329,6 +405,21 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 				profilestesting.AccountFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 			)),
 			shouldErr: true,
+		},
+		{
+			name: "max DTag length reached returns no error",
+			profile: suite.CheckProfileNoError(types.NewProfile(
+				strings.Repeat("A", 30),
+				"nickname",
+				"my-bio",
+				types.NewPictures(
+					"https://tc.com/profile-picture",
+					"https://tc.com/cover-pic",
+				),
+				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				profilestesting.AccountFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
+			)),
+			shouldErr: false,
 		},
 		{
 			name: "invalid profile pictures",
