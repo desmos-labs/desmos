@@ -1,10 +1,15 @@
 package keeper_test
 
 import (
+	"bytes"
+	"encoding/hex"
+	"fmt"
 	"strings"
 	"time"
 
+	"github.com/cometbft/cometbft/libs/log"
 	"github.com/desmos-labs/desmos/v6/testutil/profilestesting"
+	"github.com/golang/mock/gomock"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -85,6 +90,52 @@ func (suite *KeeperTestSuite) TestKeeper_SaveProfile() {
 			}
 		})
 	}
+}
+
+func (suite *KeeperTestSuite) TestKeeper_SaveProfile_AfterProfileSaved() {
+	// Setup profile
+	profile := suite.CheckProfileNoError(types.NewProfile(
+		"DTag",
+		"",
+		"",
+		types.NewPictures("", ""),
+		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+		profilestesting.AccountFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")),
+	)
+
+	// Setup hooks
+	suite.hooks.EXPECT().AfterProfileSaved(suite.ctx, profile)
+	k := suite.k.SetHooks(suite.hooks)
+
+	// Execute
+	suite.Require().NoError(k.SaveProfile(suite.ctx, profile))
+}
+
+func (suite *KeeperTestSuite) TestKeeper_SaveProfile_Logger() {
+	// Setup profile
+	profile := suite.CheckProfileNoError(types.NewProfile(
+		"DTag",
+		"",
+		"",
+		types.NewPictures("", ""),
+		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+		profilestesting.AccountFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")),
+	)
+
+	// Setup Logger
+	var buf bytes.Buffer
+
+	ctx, _ := suite.ctx.CacheContext()
+	ctx = ctx.WithLogger(log.NewTMLogger(&buf))
+
+	// Execute
+	suite.Require().NoError(suite.k.SaveProfile(ctx, profile))
+
+	// Check logs
+	msg := strings.TrimSpace(buf.String())
+	suite.Require().Contains(msg, "saved profile")
+	suite.Require().Contains(msg, fmt.Sprintf("DTag=%s", profile.DTag))
+	suite.Require().Contains(msg, fmt.Sprintf("from=%s", profile.GetAccount().GetAddress().String()))
 }
 
 func (suite *KeeperTestSuite) TestKeeper_GetProfile() {
@@ -182,6 +233,8 @@ func (suite *KeeperTestSuite) TestKeeper_GetAddressFromDTag() {
 }
 
 func (suite *KeeperTestSuite) TestKeeper_RemoveProfile() {
+	// Generate destination key
+	ext := suite.GetRandomProfile()
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -199,6 +252,35 @@ func (suite *KeeperTestSuite) TestKeeper_RemoveProfile() {
 			store: func(ctx sdk.Context) {
 				profile := profilestesting.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
 				suite.Require().NoError(suite.k.SaveProfile(ctx, profile))
+
+				suite.k.SaveDTagTransferRequest(ctx, types.NewDTagTransferRequest("test-dtag", "sender", "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"))
+
+				suite.k.SaveChainLink(ctx, types.NewChainLink(
+					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+					types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
+					types.NewProof(
+						ext.GetPubKey(),
+						profilestesting.SingleSignatureFromHex(hex.EncodeToString(ext.Sign([]byte("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")))),
+						hex.EncodeToString([]byte("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")),
+					),
+					types.NewChainConfig("cosmos"),
+					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+				))
+
+				suite.k.SaveApplicationLink(ctx, types.NewApplicationLink(
+					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+					types.NewData("twitter", "twitteruser"),
+					types.ApplicationLinkStateInitialized,
+					types.NewOracleRequest(
+						0,
+						1,
+						types.NewOracleRequestCallData("twitter", "calldata"),
+						"client_id",
+					),
+					nil,
+					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
+				))
 			},
 			address:   "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 			shouldErr: false,
@@ -206,6 +288,23 @@ func (suite *KeeperTestSuite) TestKeeper_RemoveProfile() {
 				_, found, err := suite.k.GetProfile(ctx, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
 				suite.Require().NoError(err)
 				suite.Require().False(found)
+
+				store := ctx.KVStore(suite.storeKey)
+				suite.Require().False(
+					store.Has(types.DTagStoreKey("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773-dtag")),
+				)
+
+				suite.Require().False(
+					store.Has(types.DTagTransferRequestStoreKey("sender", "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")),
+				)
+
+				suite.Require().False(
+					store.Has(types.ChainLinksStoreKey("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773", "cosmos", ext.GetAddress().String())),
+				)
+
+				suite.Require().False(
+					store.Has(types.UserApplicationLinkKey("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773", "twitter", "twitteruser")),
+				)
 			},
 		},
 	}
@@ -230,6 +329,26 @@ func (suite *KeeperTestSuite) TestKeeper_RemoveProfile() {
 			}
 		})
 	}
+}
+
+func (suite *KeeperTestSuite) TestKeeper_RemoveProfile_AfterProfileDeleted() {
+	// Setup profile
+	profile := suite.CheckProfileNoError(types.NewProfile(
+		"DTag",
+		"",
+		"",
+		types.NewPictures("", ""),
+		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+		profilestesting.AccountFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")),
+	)
+	suite.Require().NoError(suite.k.SaveProfile(suite.ctx, profile))
+
+	// Setup hooks
+	suite.hooks.EXPECT().AfterProfileDeleted(gomock.Any(), profile)
+	suite.k.SetHooks(suite.hooks)
+
+	// Execute
+	suite.Require().NoError(suite.k.RemoveProfile(suite.ctx, "cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x"))
 }
 
 func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
