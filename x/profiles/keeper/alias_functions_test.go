@@ -325,8 +325,12 @@ func (suite *KeeperTestSuite) TestKeeper_IterateExpiringApplicationLinks() {
 			},
 			expLinks: nil,
 			check: func(ctx sdk.Context) {
-				suite.Require().False(ctx.KVStore(suite.storeKey).Has(types.ApplicationLinkClientIDKey("client_id")))
-				suite.Require().False(ctx.KVStore(suite.storeKey).Has(types.ApplicationLinkClientIDKey("client_id2")))
+				suite.Require().False(
+					ctx.KVStore(suite.storeKey).Has(types.ApplicationLinkExpiringTimeKey(time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC), "client_id")),
+				)
+				suite.Require().False(
+					ctx.KVStore(suite.storeKey).Has(types.ApplicationLinkExpiringTimeKey(time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC), "client_id2")),
+				)
 			},
 		},
 		{
