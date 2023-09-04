@@ -26,7 +26,7 @@ jobs:
     if: "!contains(github.event.head_commit.message, 'skip-sims')"
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Go 🧰
         uses: actions/setup-go@v4
@@ -59,7 +59,7 @@ jobs:
     needs: [ build, install-runsim ]
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Go 🧰
         uses: actions/setup-go@v4
@@ -90,7 +90,7 @@ jobs:
     needs: [ build, install-runsim ]
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Go 🧰
         uses: actions/setup-go@v4
@@ -121,7 +121,7 @@ jobs:
     needs: [ build, install-runsim ]
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Go 🧰
         uses: actions/setup-go@v4

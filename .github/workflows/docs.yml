@@ -14,14 +14,14 @@ jobs:
     steps:
       - name: Checkout PR 🛎️
         if: ${{ github.event_name == 'pull_request' }}
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
           ref: ${{ github.event.pull_request.head.ref }}
 
       - name: Checkout branch 🛎️
         if: ${{ github.event_name != 'pull_request' }}
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           persist-credentials: false
 

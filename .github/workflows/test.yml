@@ -44,7 +44,7 @@ jobs:
         go-arch: [ "amd64" ]
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Go 🧰
         uses: actions/setup-go@v4
@@ -67,7 +67,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Create a file with all the pkgs 📜
         run: go list ./... > pkgs.txt
@@ -108,7 +108,7 @@ jobs:
         part: [ "00", "01", "02", "03" ]
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Go 🧰
         uses: actions/setup-go@v4
@@ -145,7 +145,7 @@ jobs:
     needs: tests
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Compute diff 📜
         uses: technote-space/get-diff-action@v6.1.2
@@ -215,7 +215,7 @@ jobs:
         part: [ "00", "01", "02", "03" ]
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Go 🧰
         uses: actions/setup-go@v4
@@ -253,7 +253,7 @@ jobs:
     timeout-minutes: 5
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Compute diff 📜
         uses: technote-space/get-diff-action@v6.1.2
@@ -303,7 +303,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Go 🧰
         uses: actions/setup-go@v4
