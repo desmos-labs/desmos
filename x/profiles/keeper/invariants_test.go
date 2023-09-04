@@ -81,7 +81,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 			expBroken: true,
 		},
 		{
-			name: "ValidDTagTransferRequests broken",
+			name: "ValidDTagTransferRequests broken - no profile",
 			store: func(ctx sdk.Context) {
 				store := ctx.KVStore(suite.storeKey)
 
@@ -96,6 +96,35 @@ func (suite *KeeperTestSuite) TestInvariants() {
 				fmt.Sprintf("%s%s",
 					"The following list contains invalid DTag transfer requests:\n",
 					"[Sender]: sender, [Receiver]: receiver\n",
+				),
+			),
+		},
+		{
+			name: "ValidDTagTransferRequests broken - sender equals receiver",
+			store: func(ctx sdk.Context) {
+				store := ctx.KVStore(suite.storeKey)
+
+				profile, err := types.NewProfileFromAccount(
+					"dTag",
+					profilestesting.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+					time.Now(),
+				)
+				suite.Require().NoError(err)
+
+				err = suite.k.SaveProfile(ctx, profile)
+				suite.Require().NoError(err)
+
+				request := types.NewDTagTransferRequest("dTag", "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+				store.Set(
+					types.DTagTransferRequestStoreKey(request.Sender, request.Sender),
+					suite.cdc.MustMarshal(&request),
+				)
+			},
+			expBroken: true,
+			expResponse: sdk.FormatInvariant(types.ModuleName, "invalid dtag transfer requests",
+				fmt.Sprintf("%s%s",
+					"The following list contains invalid DTag transfer requests:\n",
+					"[Sender]: cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47, [Receiver]: cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47\n",
 				),
 			),
 		},
