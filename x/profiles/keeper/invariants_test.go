@@ -2,6 +2,8 @@ package keeper_test
 
 import (
 	"fmt"
+	"reflect"
+	"runtime"
 	"time"
 
 	"github.com/desmos-labs/desmos/v6/testutil/profilestesting"
@@ -14,6 +16,38 @@ import (
 	"github.com/desmos-labs/desmos/v6/x/profiles/keeper"
 	"github.com/desmos-labs/desmos/v6/x/profiles/types"
 )
+
+var _ sdk.InvariantRegistry = &MockRegistry{}
+
+type MockRegistry struct {
+	RegisteredMap map[string]sdk.Invariant
+}
+
+func (m *MockRegistry) RegisterRoute(moduleName, route string, invar sdk.Invariant) {
+	m.RegisteredMap[moduleName+route] = invar
+}
+
+func (suite *KeeperTestSuite) TestKeeper_RegisterInvariants() {
+	mock := &MockRegistry{make(map[string]sdk.Invariant)}
+	keeper.RegisterInvariants(mock, suite.k)
+
+	suite.Require().Equal(
+		runtime.FuncForPC(reflect.ValueOf(keeper.ValidProfilesInvariant(suite.k)).Pointer()).Name(),
+		runtime.FuncForPC(reflect.ValueOf(mock.RegisteredMap[types.ModuleName+"valid-profiles"]).Pointer()).Name(),
+	)
+	suite.Require().Equal(
+		runtime.FuncForPC(reflect.ValueOf(keeper.ValidDTagTransferRequests(suite.k)).Pointer()).Name(),
+		runtime.FuncForPC(reflect.ValueOf(mock.RegisteredMap[types.ModuleName+"valid-dtag-transfer-requests"]).Pointer()).Name(),
+	)
+	suite.Require().Equal(
+		runtime.FuncForPC(reflect.ValueOf(keeper.ValidChainLinks(suite.k)).Pointer()).Name(),
+		runtime.FuncForPC(reflect.ValueOf(mock.RegisteredMap[types.ModuleName+"valid-chain-links"]).Pointer()).Name(),
+	)
+	suite.Require().Equal(
+		runtime.FuncForPC(reflect.ValueOf(keeper.ValidApplicationLinks(suite.k)).Pointer()).Name(),
+		runtime.FuncForPC(reflect.ValueOf(mock.RegisteredMap[types.ModuleName+"valid-application-links"]).Pointer()).Name(),
+	)
+}
 
 func (suite *KeeperTestSuite) TestInvariants() {
 	testCases := []struct {
