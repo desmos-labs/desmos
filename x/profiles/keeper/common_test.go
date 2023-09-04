@@ -52,6 +52,8 @@ type KeeperTestSuite struct {
 	portKeeper    *testutil.MockPortKeeper
 	scopedKeeper  *testutil.MockScopedKeeper
 
+	hooks *testutil.MockProfilesHooks
+
 	// Used for IBC testing
 	coordinator *ibctesting.Coordinator
 	chainA      *ibctesting.TestChain
@@ -111,6 +113,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.channelKeeper = testutil.NewMockChannelKeeper(suite.ctrl)
 	suite.portKeeper = testutil.NewMockPortKeeper(suite.ctrl)
 	suite.scopedKeeper = testutil.NewMockScopedKeeper(suite.ctrl)
+	suite.hooks = testutil.NewMockProfilesHooks(suite.ctrl)
 
 	suite.k = keeper.NewKeeper(
 		suite.cdc,

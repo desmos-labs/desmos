@@ -6,106 +6,65 @@ import (
 	"github.com/desmos-labs/desmos/v6/x/profiles/types"
 )
 
-var _ types.ProfilesHooks = &MockHooks{}
-
-type MockHooks struct {
-	CalledMap map[string]bool
-}
-
-func (h MockHooks) AfterProfileSaved(_ sdk.Context, _ *types.Profile) {
-	h.CalledMap["AfterProfileSaved"] = true
-}
-
-func (h MockHooks) AfterProfileDeleted(_ sdk.Context, _ *types.Profile) {
-	h.CalledMap["AfterProfileDeleted"] = true
-}
-
-func (h MockHooks) AfterDTagTransferRequestCreated(_ sdk.Context, _ types.DTagTransferRequest) {
-	h.CalledMap["AfterDTagTransferRequestCreated"] = true
-}
-
-func (h MockHooks) AfterDTagTransferRequestAccepted(_ sdk.Context, _ types.DTagTransferRequest, _ string) {
-	h.CalledMap["AfterDTagTransferRequestAccepted"] = true
-}
-
-func (h MockHooks) AfterDTagTransferRequestDeleted(_ sdk.Context, _, _ string) {
-	h.CalledMap["AfterDTagTransferRequestDeleted"] = true
-}
-
-func (h MockHooks) AfterChainLinkSaved(_ sdk.Context, _ types.ChainLink) {
-	h.CalledMap["AfterChainLinkSaved"] = true
-}
-
-func (h MockHooks) AfterChainLinkDeleted(_ sdk.Context, _ types.ChainLink) {
-	h.CalledMap["AfterChainLinkDeleted"] = true
-}
-
-func (h MockHooks) AfterApplicationLinkSaved(_ sdk.Context, _ types.ApplicationLink) {
-	h.CalledMap["AfterApplicationLinkSaved"] = true
-}
-
-func (h MockHooks) AfterApplicationLinkDeleted(_ sdk.Context, _ types.ApplicationLink) {
-	h.CalledMap["AfterApplicationLinkDeleted"] = true
-}
-
 func (suite *KeeperTestSuite) TestKeeper_AfterProfileSaved() {
-	hook := MockHooks{CalledMap: make(map[string]bool)}
-	suite.k.SetHooks(hook).AfterProfileSaved(sdk.Context{}, nil)
+	suite.hooks.EXPECT().AfterProfileSaved(sdk.Context{}, nil)
+	suite.k.SetHooks(suite.hooks)
 
-	suite.Require().True(hook.CalledMap["AfterProfileSaved"])
+	suite.k.AfterProfileSaved(sdk.Context{}, nil)
 }
 
 func (suite *KeeperTestSuite) TestKeeper_AfterProfileDeleted() {
-	hook := MockHooks{CalledMap: make(map[string]bool)}
-	suite.k.SetHooks(hook).AfterProfileDeleted(sdk.Context{}, nil)
+	suite.hooks.EXPECT().AfterProfileDeleted(sdk.Context{}, nil)
+	suite.k.SetHooks(suite.hooks)
 
-	suite.Require().True(hook.CalledMap["AfterProfileDeleted"])
+	suite.k.AfterProfileDeleted(sdk.Context{}, nil)
 }
 
 func (suite *KeeperTestSuite) TestKeeper_AfterDTagTransferRequestCreated() {
-	hook := MockHooks{CalledMap: make(map[string]bool)}
-	suite.k.SetHooks(hook).AfterDTagTransferRequestCreated(sdk.Context{}, types.DTagTransferRequest{})
+	suite.hooks.EXPECT().AfterDTagTransferRequestCreated(sdk.Context{}, types.DTagTransferRequest{})
+	suite.k.SetHooks(suite.hooks)
 
-	suite.Require().True(hook.CalledMap["AfterDTagTransferRequestCreated"])
+	suite.k.AfterDTagTransferRequestCreated(sdk.Context{}, types.DTagTransferRequest{})
 }
 
 func (suite *KeeperTestSuite) TestKeeper_AfterDTagTransferRequestAccepted() {
-	hook := MockHooks{CalledMap: make(map[string]bool)}
-	suite.k.SetHooks(hook).AfterDTagTransferRequestAccepted(sdk.Context{}, types.DTagTransferRequest{}, "")
+	suite.hooks.EXPECT().AfterDTagTransferRequestAccepted(sdk.Context{}, types.DTagTransferRequest{}, "")
+	suite.k.SetHooks(suite.hooks)
 
-	suite.Require().True(hook.CalledMap["AfterDTagTransferRequestAccepted"])
+	suite.k.AfterDTagTransferRequestAccepted(sdk.Context{}, types.DTagTransferRequest{}, "")
 }
 
 func (suite *KeeperTestSuite) TestKeeper_AfterDTagTransferRequestDeleted() {
-	hook := MockHooks{CalledMap: make(map[string]bool)}
-	suite.k.SetHooks(hook).AfterDTagTransferRequestDeleted(sdk.Context{}, "", "")
+	suite.hooks.EXPECT().AfterDTagTransferRequestDeleted(sdk.Context{}, "", "")
+	suite.k.SetHooks(suite.hooks)
 
-	suite.Require().True(hook.CalledMap["AfterDTagTransferRequestDeleted"])
+	suite.k.AfterDTagTransferRequestDeleted(sdk.Context{}, "", "")
 }
 
 func (suite *KeeperTestSuite) TestKeeper_AfterChainLinkSaved() {
-	hook := MockHooks{CalledMap: make(map[string]bool)}
-	suite.k.SetHooks(hook).AfterChainLinkSaved(sdk.Context{}, types.ChainLink{})
-	suite.Require().True(hook.CalledMap["AfterChainLinkSaved"])
+	suite.hooks.EXPECT().AfterChainLinkSaved(sdk.Context{}, types.ChainLink{})
+	suite.k.SetHooks(suite.hooks)
+
+	suite.k.AfterChainLinkSaved(sdk.Context{}, types.ChainLink{})
 }
 
 func (suite *KeeperTestSuite) TestKeeper_AfterChainLinkDeleted() {
-	hook := MockHooks{CalledMap: make(map[string]bool)}
-	suite.k.SetHooks(hook).AfterChainLinkDeleted(sdk.Context{}, types.ChainLink{})
+	suite.hooks.EXPECT().AfterChainLinkDeleted(sdk.Context{}, types.ChainLink{})
+	suite.k.SetHooks(suite.hooks)
 
-	suite.Require().True(hook.CalledMap["AfterChainLinkDeleted"])
+	suite.k.AfterChainLinkDeleted(sdk.Context{}, types.ChainLink{})
 }
 
 func (suite *KeeperTestSuite) TestKeeper_AfterApplicationLinkSaved() {
-	hook := MockHooks{CalledMap: make(map[string]bool)}
-	suite.k.SetHooks(hook).AfterApplicationLinkSaved(sdk.Context{}, types.ApplicationLink{})
+	suite.hooks.EXPECT().AfterApplicationLinkSaved(sdk.Context{}, types.ApplicationLink{})
+	suite.k.SetHooks(suite.hooks)
 
-	suite.Require().True(hook.CalledMap["AfterApplicationLinkSaved"])
+	suite.k.AfterApplicationLinkSaved(sdk.Context{}, types.ApplicationLink{})
 }
 
 func (suite *KeeperTestSuite) TestKeeper_AfterApplicationLinkDeleted() {
-	hook := MockHooks{CalledMap: make(map[string]bool)}
-	suite.k.SetHooks(hook).AfterApplicationLinkDeleted(sdk.Context{}, types.ApplicationLink{})
+	suite.hooks.EXPECT().AfterApplicationLinkDeleted(sdk.Context{}, types.ApplicationLink{})
+	suite.k.SetHooks(suite.hooks)
 
-	suite.Require().True(hook.CalledMap["AfterApplicationLinkDeleted"])
+	suite.k.AfterApplicationLinkDeleted(sdk.Context{}, types.ApplicationLink{})
 }
