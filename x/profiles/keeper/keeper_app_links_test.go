@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/desmos-labs/desmos/v6/testutil/profilestesting"
+	"github.com/golang/mock/gomock"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -16,6 +17,7 @@ func (suite *KeeperTestSuite) Test_SaveApplicationLink() {
 		store     func(ctx sdk.Context)
 		link      types.ApplicationLink
 		shouldErr bool
+		expEvents sdk.Events
 		check     func(ctx sdk.Context)
 	}{
 		{
@@ -57,6 +59,14 @@ func (suite *KeeperTestSuite) Test_SaveApplicationLink() {
 				time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
 			shouldErr: false,
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					types.EventTypesApplicationLinkSaved,
+					sdk.NewAttribute(types.AttributeKeyUser, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
+					sdk.NewAttribute(types.AttributeKeyApplicationName, "twitter"),
+					sdk.NewAttribute(types.AttributeKeyApplicationUsername, "twitteruser"),
+				),
+			},
 			check: func(ctx sdk.Context) {
 				suite.Require().True(suite.k.HasApplicationLink(ctx,
 					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
@@ -89,12 +99,41 @@ func (suite *KeeperTestSuite) Test_SaveApplicationLink() {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)
+				suite.Require().Equal(tc.expEvents, ctx.EventManager().Events())
 				if tc.check != nil {
 					tc.check(ctx)
 				}
 			}
 		})
 	}
+}
+
+func (suite *KeeperTestSuite) Test_SaveApplicationLink_AfterApplicationLinkSaved() {
+	// Setup link
+	profile := profilestesting.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
+	suite.Require().NoError(suite.k.SaveProfile(suite.ctx, profile))
+
+	link := types.NewApplicationLink(
+		"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+		types.NewData("twitter", "twitteruser"),
+		types.ApplicationLinkStateInitialized,
+		types.NewOracleRequest(
+			0,
+			1,
+			types.NewOracleRequestCallData("twitter", "calldata"),
+			"client_id",
+		),
+		nil,
+		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+		time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
+	)
+
+	// Setup hooks
+	suite.hooks.EXPECT().AfterApplicationLinkSaved(gomock.Any(), link)
+	k := suite.k.SetHooks(suite.hooks)
+
+	// Execute
+	suite.Require().NoError(k.SaveApplicationLink(suite.ctx, link))
 }
 
 func (suite *KeeperTestSuite) Test_GetApplicationLink() {
@@ -337,10 +376,11 @@ func (suite *KeeperTestSuite) Test_GetApplicationLinkByClientID() {
 
 func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 	testCases := []struct {
-		name  string
-		store func(ctx sdk.Context)
-		link  types.ApplicationLink
-		check func(ctx sdk.Context)
+		name      string
+		store     func(ctx sdk.Context)
+		link      types.ApplicationLink
+		expEvents sdk.Events
+		check     func(ctx sdk.Context)
 	}{
 		{
 			name: "different user does not delete link",
@@ -379,6 +419,7 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
+			expEvents: sdk.Events{},
 			check: func(ctx sdk.Context) {
 				suite.Require().True(suite.k.HasApplicationLink(ctx,
 					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
@@ -424,6 +465,7 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
+			expEvents: sdk.Events{},
 			check: func(ctx sdk.Context) {
 				suite.Require().True(suite.k.HasApplicationLink(ctx,
 					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
@@ -469,6 +511,7 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
+			expEvents: sdk.Events{},
 			check: func(ctx sdk.Context) {
 				suite.Require().True(suite.k.HasApplicationLink(ctx,
 					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
@@ -514,6 +557,15 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					types.EventTypeApplicationLinkDeleted,
+					sdk.NewAttribute(types.AttributeKeyUser, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
+					sdk.NewAttribute(types.AttributeKeyApplicationName, "twitter"),
+					sdk.NewAttribute(types.AttributeKeyApplicationUsername, "twitteruser"),
+					sdk.NewAttribute(types.AttributeKeyApplicationLinkExpirationTime, time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC).Format(time.RFC3339)),
+				),
+			},
 			check: func(ctx sdk.Context) {
 				suite.Require().False(suite.k.HasApplicationLink(ctx,
 					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
@@ -540,11 +592,42 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 			if tc.store != nil {
 				tc.store(ctx)
 			}
+			ctx = ctx.WithEventManager(sdk.NewEventManager())
 
 			suite.k.DeleteApplicationLink(ctx, tc.link)
+			suite.Require().Equal(tc.expEvents, ctx.EventManager().Events())
 			if tc.check != nil {
 				tc.check(ctx)
 			}
 		})
 	}
+}
+
+func (suite *KeeperTestSuite) Test_DeleteApplicationLink_AfterApplicationLinkDeleted() {
+	// Setup link
+	profile := profilestesting.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
+	suite.Require().NoError(suite.k.SaveProfile(suite.ctx, profile))
+
+	link := types.NewApplicationLink(
+		"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+		types.NewData("twitter", "twitteruser"),
+		types.ApplicationLinkStateInitialized,
+		types.NewOracleRequest(
+			0,
+			1,
+			types.NewOracleRequestCallData("twitter", "calldata"),
+			"client_id",
+		),
+		nil,
+		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+		time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
+	)
+	suite.Require().NoError(suite.k.SaveApplicationLink(suite.ctx, link))
+
+	// Setup hooks
+	suite.hooks.EXPECT().AfterApplicationLinkDeleted(gomock.Any(), link)
+	k := suite.k.SetHooks(suite.hooks)
+
+	// Execute
+	k.DeleteApplicationLink(suite.ctx, link)
 }

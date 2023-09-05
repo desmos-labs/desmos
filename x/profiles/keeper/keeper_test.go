@@ -104,7 +104,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveProfile_AfterProfileSaved() {
 	)
 
 	// Setup hooks
-	suite.hooks.EXPECT().AfterProfileSaved(suite.ctx, profile)
+	suite.hooks.EXPECT().AfterProfileSaved(gomock.Any(), profile)
 	k := suite.k.SetHooks(suite.hooks)
 
 	// Execute
@@ -345,10 +345,10 @@ func (suite *KeeperTestSuite) TestKeeper_RemoveProfile_AfterProfileDeleted() {
 
 	// Setup hooks
 	suite.hooks.EXPECT().AfterProfileDeleted(gomock.Any(), profile)
-	suite.k.SetHooks(suite.hooks)
+	k := suite.k.SetHooks(suite.hooks)
 
 	// Execute
-	suite.Require().NoError(suite.k.RemoveProfile(suite.ctx, "cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x"))
+	suite.Require().NoError(k.RemoveProfile(suite.ctx, "cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x"))
 }
 
 func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
