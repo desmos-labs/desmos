@@ -99,10 +99,6 @@ func (k Keeper) GetApplicationLinkByClientID(ctx sdk.Context, clientID string) (
 // for the given application and username
 func (k Keeper) DeleteApplicationLink(ctx sdk.Context, appLink types.ApplicationLink) {
 	store := ctx.KVStore(k.storeKey)
-	if !store.Has(types.UserApplicationLinkKey(appLink.User, appLink.Data.Application, appLink.Data.Username)) {
-		return
-	}
-
 	store.Delete(types.UserApplicationLinkKey(appLink.User, appLink.Data.Application, appLink.Data.Username))
 	store.Delete(types.ApplicationLinkClientIDKey(appLink.OracleRequest.ClientID))
 	store.Delete(types.ApplicationLinkOwnerKey(appLink.Data.Application, appLink.Data.Username, appLink.User))

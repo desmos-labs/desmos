@@ -419,7 +419,15 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
-			expEvents: sdk.Events{},
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					types.EventTypeApplicationLinkDeleted,
+					sdk.NewAttribute(types.AttributeKeyUser, "cosmos1xvvggrlgjkhu4rva9j500rc52za2smxhluvftc"),
+					sdk.NewAttribute(types.AttributeKeyApplicationName, "twitter"),
+					sdk.NewAttribute(types.AttributeKeyApplicationUsername, "twitteruser"),
+					sdk.NewAttribute(types.AttributeKeyApplicationLinkExpirationTime, time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC).Format(time.RFC3339)),
+				),
+			},
 			check: func(ctx sdk.Context) {
 				suite.Require().True(suite.k.HasApplicationLink(ctx,
 					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
@@ -465,7 +473,15 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
-			expEvents: sdk.Events{},
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					types.EventTypeApplicationLinkDeleted,
+					sdk.NewAttribute(types.AttributeKeyUser, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
+					sdk.NewAttribute(types.AttributeKeyApplicationName, "github"),
+					sdk.NewAttribute(types.AttributeKeyApplicationUsername, "twitteruser"),
+					sdk.NewAttribute(types.AttributeKeyApplicationLinkExpirationTime, time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC).Format(time.RFC3339)),
+				),
+			},
 			check: func(ctx sdk.Context) {
 				suite.Require().True(suite.k.HasApplicationLink(ctx,
 					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
@@ -511,7 +527,15 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
-			expEvents: sdk.Events{},
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					types.EventTypeApplicationLinkDeleted,
+					sdk.NewAttribute(types.AttributeKeyUser, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
+					sdk.NewAttribute(types.AttributeKeyApplicationName, "twitter"),
+					sdk.NewAttribute(types.AttributeKeyApplicationUsername, "another-user"),
+					sdk.NewAttribute(types.AttributeKeyApplicationLinkExpirationTime, time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC).Format(time.RFC3339)),
+				),
+			},
 			check: func(ctx sdk.Context) {
 				suite.Require().True(suite.k.HasApplicationLink(ctx,
 					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
