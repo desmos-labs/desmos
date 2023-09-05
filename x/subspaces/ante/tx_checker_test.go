@@ -100,16 +100,6 @@ func (suite *AnteTestSuite) TestCheckTxFeeWithSubspaceMinPrices() {
 		},
 		{
 			name: "manage subspace tx with subspace fees returns error",
-			setup: func() {
-				suite.sk.EXPECT().
-					GetSubspace(gomock.Any(), uint64(1)).
-					Return(
-						types.Subspace{
-							AdditionalFeeTokens: sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(1))),
-						},
-						true,
-					)
-			},
 			fees: sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(100))),
 			buildTx: func(fees sdk.Coins) sdk.Tx {
 				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
@@ -122,16 +112,6 @@ func (suite *AnteTestSuite) TestCheckTxFeeWithSubspaceMinPrices() {
 		},
 		{
 			name: "manage subspace tx returns no error",
-			setup: func() {
-				suite.sk.EXPECT().
-					GetSubspace(gomock.Any(), uint64(1)).
-					Return(
-						types.Subspace{
-							AdditionalFeeTokens: sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(1))),
-						},
-						true,
-					)
-			},
 			fees: sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(100))),
 			buildTx: func(fees sdk.Coins) sdk.Tx {
 				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
