@@ -21,6 +21,7 @@ type AnteTestSuite struct {
 	ctx       sdk.Context
 	clientCtx client.Context
 
+	ctrl                   *gomock.Controller
 	authDeductFeeDecorator *testutil.MockAuthDeductFeeDecorator
 	ak                     *testutil.MockAccountKeeper
 	bk                     *testutil.MockBankKeeper
@@ -39,21 +40,24 @@ func TestAnteTestSuite(t *testing.T) {
 }
 
 func (suite *AnteTestSuite) SetupTest() {
-	ctrl := gomock.NewController(suite.T())
-	defer ctrl.Finish()
+	suite.ctrl = gomock.NewController(suite.T())
 
 	suite.ctx = sdktestutil.
 		DefaultContext(sdk.NewKVStoreKey("kv_test"), sdk.NewTransientStoreKey("transient_test")).
 		WithMinGasPrices(sdk.NewDecCoins(sdk.NewDecCoin("stake", sdk.NewInt(1)))).
 		WithIsCheckTx(true)
 
-	suite.bk = testutil.NewMockBankKeeper(ctrl)
-	suite.sk = testutil.NewMockSubspacesKeeper(ctrl)
-	suite.ak = testutil.NewMockAccountKeeper(ctrl)
-	suite.authDeductFeeDecorator = testutil.NewMockAuthDeductFeeDecorator(ctrl)
+	suite.bk = testutil.NewMockBankKeeper(suite.ctrl)
+	suite.sk = testutil.NewMockSubspacesKeeper(suite.ctrl)
+	suite.ak = testutil.NewMockAccountKeeper(suite.ctrl)
+	suite.authDeductFeeDecorator = testutil.NewMockAuthDeductFeeDecorator(suite.ctrl)
 
 	encodingConfig := app.MakeEncodingConfig()
 	suite.clientCtx = client.Context{}.WithTxConfig(encodingConfig.TxConfig)
 
 	suite.ante = ante.NewDeductFeeDecorator(suite.authDeductFeeDecorator, suite.ak, suite.bk, suite.sk, MockTxFeeChecker)
+}
+
+func (suite *AnteTestSuite) TearDownTest() {
+	suite.ctrl.Finish()
 }

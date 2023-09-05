@@ -32,9 +32,10 @@ type KeeperTestSuite struct {
 	storeKey storetypes.StoreKey
 	k        keeper.Keeper
 
-	bk *testutil.MockBankKeeper
-	sk *testutil.MockSubspacesKeeper
-	ak *testutil.MockAccountKeeper
+	ctrl *gomock.Controller
+	bk   *testutil.MockBankKeeper
+	sk   *testutil.MockSubspacesKeeper
+	ak   *testutil.MockAccountKeeper
 }
 
 func (suite *KeeperTestSuite) SetupTest() {
@@ -57,12 +58,11 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.cdc, suite.legacyAminoCdc = app.MakeCodecs()
 
 	// Mocks initializations
-	ctrl := gomock.NewController(suite.T())
-	defer ctrl.Finish()
+	suite.ctrl = gomock.NewController(suite.T())
 
-	suite.bk = testutil.NewMockBankKeeper(ctrl)
-	suite.sk = testutil.NewMockSubspacesKeeper(ctrl)
-	suite.ak = testutil.NewMockAccountKeeper(ctrl)
+	suite.bk = testutil.NewMockBankKeeper(suite.ctrl)
+	suite.sk = testutil.NewMockSubspacesKeeper(suite.ctrl)
+	suite.ak = testutil.NewMockAccountKeeper(suite.ctrl)
 
 	suite.k = keeper.NewKeeper(
 		suite.storeKey,
@@ -76,4 +76,8 @@ func (suite *KeeperTestSuite) SetupTest() {
 
 func TestKeeperTestSuite(t *testing.T) {
 	suite.Run(t, new(KeeperTestSuite))
+}
+
+func (suite *KeeperTestSuite) TearDownTest() {
+	suite.ctrl.Finish()
 }
