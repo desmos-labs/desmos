@@ -669,7 +669,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
-					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 				))
 			},
 			msg: types.NewMsgEditPost(
@@ -1491,14 +1491,6 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostAttachment() {
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 					subspacestypes.NewPermission(types.PermissionModerateContent),
 				).Return(false)
-
-				suite.sk.EXPECT().HasPermission(
-					gomock.Any(),
-					uint64(1),
-					uint32(0),
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.NewPermission(types.PermissionEditOwnContent),
-				).Return(true)
 			},
 			store: func(ctx sdk.Context) {
 				suite.k.SavePost(ctx, types.NewPost(
