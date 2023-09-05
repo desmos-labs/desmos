@@ -2,6 +2,7 @@ package keeper_test
 
 import (
 	"encoding/hex"
+	"sort"
 	"time"
 
 	"github.com/desmos-labs/desmos/v6/testutil/profilestesting"
@@ -368,8 +369,15 @@ func (suite *KeeperTestSuite) TestKeeper_GetChainLink() {
 }
 
 func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
-	account := profilestesting.GetChainLinkAccount("cosmos", "cosmos")
-	secondAccount := profilestesting.GetChainLinkAccount("cosmos", "cosmos")
+	accounts := []profilestesting.ChainLinkAccount{
+		profilestesting.GetChainLinkAccount("cosmos", "cosmos"),
+		profilestesting.GetChainLinkAccount("cosmos", "cosmos"),
+		profilestesting.GetChainLinkAccount("cosmos", "cosmos"),
+	}
+	sort.SliceStable(accounts, func(i, j int) bool {
+		return accounts[i].Bech32Address().GetValue() < accounts[j].Bech32Address().GetValue()
+	})
+
 	testCases := []struct {
 		name  string
 		store func(ctx sdk.Context)
@@ -380,7 +388,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 			name: "different user does not delete link",
 			store: func(ctx sdk.Context) {
 				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")))
-				err := suite.k.SaveChainLink(ctx, account.GetBech32ChainLink(
+				err := suite.k.SaveChainLink(ctx, accounts[0].GetBech32ChainLink(
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 				))
@@ -388,8 +396,8 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 			},
 			link: types.NewChainLink(
 				"cosmos1xvvggrlgjkhu4rva9j500rc52za2smxhluvftc",
-				account.Bech32Address(),
-				account.Bech32Proof("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x"),
+				accounts[0].Bech32Address(),
+				accounts[0].Bech32Proof("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x"),
 				types.NewChainConfig("cosmos"),
 				time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 			),
@@ -397,7 +405,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 				suite.Require().True(suite.k.HasChainLink(ctx,
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 					"cosmos",
-					account.Bech32Address().GetValue(),
+					accounts[0].Bech32Address().GetValue(),
 				))
 			},
 		},
@@ -405,7 +413,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 			name: "different chain name does not delete link",
 			store: func(ctx sdk.Context) {
 				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")))
-				err := suite.k.SaveChainLink(ctx, account.GetBech32ChainLink(
+				err := suite.k.SaveChainLink(ctx, accounts[0].GetBech32ChainLink(
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 				))
@@ -413,8 +421,8 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 			},
 			link: types.NewChainLink(
 				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
-				types.NewBech32Address(account.Bech32Address().GetValue(), "cosmos"),
-				account.Bech32Proof("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x"),
+				types.NewBech32Address(accounts[0].Bech32Address().GetValue(), "cosmos"),
+				accounts[0].Bech32Proof("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x"),
 				types.NewChainConfig("likecoin"),
 				time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 			),
@@ -422,7 +430,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 				suite.Require().True(suite.k.HasChainLink(ctx,
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 					"cosmos",
-					account.Bech32Address().GetValue(),
+					accounts[0].Bech32Address().GetValue(),
 				))
 
 			},
@@ -431,7 +439,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 			name: "different external address does not delete the link",
 			store: func(ctx sdk.Context) {
 				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")))
-				err := suite.k.SaveChainLink(ctx, account.GetBech32ChainLink(
+				err := suite.k.SaveChainLink(ctx, accounts[0].GetBech32ChainLink(
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 				))
@@ -440,7 +448,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 			link: types.NewChainLink(
 				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 				types.NewBech32Address("cosmos1xvvggrlgjkhu4rva9j500rc52za2smxhluvftc", "cosmos"),
-				account.Bech32Proof("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x"),
+				accounts[0].Bech32Proof("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x"),
 				types.NewChainConfig("cosmos"),
 				time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 			),
@@ -448,7 +456,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 				suite.Require().True(suite.k.HasChainLink(ctx,
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 					"cosmos",
-					account.Bech32Address().GetValue(),
+					accounts[0].Bech32Address().GetValue(),
 				))
 			},
 		},
@@ -456,13 +464,13 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 			name: "proper data delete the link",
 			store: func(ctx sdk.Context) {
 				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")))
-				err := suite.k.SaveChainLink(ctx, account.GetBech32ChainLink(
+				err := suite.k.SaveChainLink(ctx, accounts[0].GetBech32ChainLink(
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 				))
 				suite.Require().NoError(err)
 			},
-			link: account.GetBech32ChainLink(
+			link: accounts[0].GetBech32ChainLink(
 				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 				time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 			),
@@ -470,14 +478,14 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 				suite.Require().False(suite.k.HasChainLink(ctx,
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 					"cosmos",
-					account.Bech32Address().GetValue(),
+					accounts[0].Bech32Address().GetValue(),
 				))
 
 				// Check the additional keys
 				store := ctx.KVStore(suite.storeKey)
 				suite.Require().False(store.Has(types.ChainLinkOwnerKey(
 					"cosmos",
-					account.Bech32Address().GetValue(),
+					accounts[0].Bech32Address().GetValue(),
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 				)))
 
@@ -488,18 +496,26 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 			name: "proper data delete the link - update default external address",
 			store: func(ctx sdk.Context) {
 				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")))
-				err := suite.k.SaveChainLink(ctx, account.GetBech32ChainLink(
+				err := suite.k.SaveChainLink(ctx, accounts[0].GetBech32ChainLink(
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 				))
 				suite.Require().NoError(err)
-				err = suite.k.SaveChainLink(ctx, secondAccount.GetBech32ChainLink(
+
+				err = suite.k.SaveChainLink(ctx, accounts[1].GetBech32ChainLink(
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+				))
+				suite.Require().NoError(err)
+
+				// The target link should be default external address
+				err = suite.k.SaveChainLink(ctx, accounts[2].GetBech32ChainLink(
+					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				))
 				suite.Require().NoError(err)
 			},
-			link: account.GetBech32ChainLink(
+			link: accounts[0].GetBech32ChainLink(
 				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 				time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 			),
@@ -507,28 +523,28 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 				suite.Require().False(suite.k.HasChainLink(ctx,
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 					"cosmos",
-					account.Bech32Address().GetValue(),
+					accounts[0].Bech32Address().GetValue(),
 				))
 
 				// Check the additional keys
 				store := ctx.KVStore(suite.storeKey)
 				suite.Require().False(store.Has(types.ChainLinkOwnerKey(
 					"cosmos",
-					account.Bech32Address().GetValue(),
+					accounts[0].Bech32Address().GetValue(),
 					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 				)))
 
 				// Check the default external address
 				suite.Require().True(suite.k.HasDefaultExternalAddress(ctx, "cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x", "cosmos"))
 				external := store.Get(types.DefaultExternalAddressKey("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x", "cosmos"))
-				suite.Require().True(string(external) == secondAccount.Bech32Address().Value)
+				suite.Require().True(string(external) == accounts[2].Bech32Address().Value)
 			},
 		},
 		{
 			name: "proper data delete the link - non default external address",
 			store: func(ctx sdk.Context) {
 				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")))
-				err := suite.k.SaveChainLink(ctx, account.GetBech32ChainLink(
+				err := suite.k.SaveChainLink(ctx, accounts[0].GetBech32ChainLink(
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 				))
@@ -541,7 +557,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 					[]byte("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 				)
 			},
-			link: account.GetBech32ChainLink(
+			link: accounts[0].GetBech32ChainLink(
 				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 				time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 			),
@@ -549,14 +565,14 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 				suite.Require().False(suite.k.HasChainLink(ctx,
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 					"cosmos",
-					account.Bech32Address().GetValue(),
+					accounts[0].Bech32Address().GetValue(),
 				))
 
 				// Check the additional keys
 				store := ctx.KVStore(suite.storeKey)
 				suite.Require().False(store.Has(types.ChainLinkOwnerKey(
 					"cosmos",
-					account.Bech32Address().GetValue(),
+					accounts[0].Bech32Address().GetValue(),
 					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 				)))
 
