@@ -1,7 +1,13 @@
 package keeper_test
 
 import (
+	"bytes"
+	"fmt"
+	"strings"
+
+	"github.com/cometbft/cometbft/libs/log"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/golang/mock/gomock"
 
 	"github.com/desmos-labs/desmos/v6/testutil/profilestesting"
 
@@ -169,6 +175,49 @@ func (suite *KeeperTestSuite) TestKeeper_SaveDTagTransferRequest() {
 	}
 }
 
+func (suite *KeeperTestSuite) TestKeeper_SaveDTagTransferRequest_Logger() {
+	// Setup profiles
+	request := types.NewDTagTransferRequest(
+		"dtag",
+		"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+	)
+	suite.Require().NoError(suite.k.SaveProfile(suite.ctx, profilestesting.ProfileFromAddr(request.Receiver)))
+	suite.Require().NoError(suite.k.SaveProfile(suite.ctx, profilestesting.ProfileFromAddr(request.Sender)))
+
+	// Setup Logger
+	var buf bytes.Buffer
+	ctx, _ := suite.ctx.CacheContext()
+	ctx = ctx.WithLogger(log.NewTMLogger(&buf))
+
+	// Execute
+	suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, request))
+
+	// Check logs
+	msg := strings.TrimSpace(buf.String())
+	suite.Require().Contains(msg, "DTag transfer request")
+	suite.Require().Contains(msg, fmt.Sprintf("sender=%s", request.Sender))
+	suite.Require().Contains(msg, fmt.Sprintf("receiver=%s", request.Receiver))
+}
+
+func (suite *KeeperTestSuite) TestKeeper_SaveDTagTransferRequest_AfterDTagTransferRequestCreated() {
+	// Setup profiles
+	request := types.NewDTagTransferRequest(
+		"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47-dtag",
+		"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+	)
+	suite.Require().NoError(suite.k.SaveProfile(suite.ctx, profilestesting.ProfileFromAddr(request.Receiver)))
+	suite.Require().NoError(suite.k.SaveProfile(suite.ctx, profilestesting.ProfileFromAddr(request.Sender)))
+
+	// Setup hooks
+	suite.hooks.EXPECT().AfterDTagTransferRequestCreated(gomock.Any(), request)
+	k := suite.k.SetHooks(suite.hooks)
+
+	// Execute
+	suite.Require().NoError(k.SaveDTagTransferRequest(suite.ctx, request))
+}
+
 func (suite *KeeperTestSuite) TestKeeper_GetDTagTransferRequest() {
 	testCases := []struct {
 		name     string
@@ -323,6 +372,25 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteDTagTransferRequest() {
 			}
 		})
 	}
+}
+
+func (suite *KeeperTestSuite) TestKeeper_DeleteDTagTransferRequest_AfterDTagTransferRequestDeleted() {
+	// Setup profiles and
+	request := types.NewDTagTransferRequest(
+		"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47-dtag",
+		"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+	)
+	suite.Require().NoError(suite.k.SaveProfile(suite.ctx, profilestesting.ProfileFromAddr(request.Receiver)))
+	suite.Require().NoError(suite.k.SaveProfile(suite.ctx, profilestesting.ProfileFromAddr(request.Sender)))
+	suite.Require().NoError(suite.k.SaveDTagTransferRequest(suite.ctx, request))
+
+	// Setup hooks
+	suite.hooks.EXPECT().AfterDTagTransferRequestDeleted(gomock.Any(), request.Sender, request.Receiver)
+	k := suite.k.SetHooks(suite.hooks)
+
+	// Execute
+	k.DeleteDTagTransferRequest(suite.ctx, request.Sender, request.Receiver)
 }
 
 func (suite *KeeperTestSuite) TestKeeper_DeleteAllUserIncomingDTagTransferRequests() {
