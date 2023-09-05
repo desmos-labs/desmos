@@ -33,7 +33,9 @@ type KeeperTestSuite struct {
 	ctx      sdk.Context
 	storeKey storetypes.StoreKey
 	k        keeper.Keeper
-	sk       *testutil.MockSubspacesKeeper
+
+	ctrl *gomock.Controller
+	sk   *testutil.MockSubspacesKeeper
 }
 
 func (suite *KeeperTestSuite) SetupTest() {
@@ -57,10 +59,13 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.cdc, _ = app.MakeCodecs()
 
 	// Mocks initializations
-	ctrl := gomock.NewController(suite.T())
-	defer ctrl.Finish()
+	suite.ctrl = gomock.NewController(suite.T())
 
-	suite.sk = testutil.NewMockSubspacesKeeper(ctrl)
+	suite.sk = testutil.NewMockSubspacesKeeper(suite.ctrl)
 
 	suite.k = keeper.NewKeeper(suite.cdc, suite.storeKey, suite.sk)
+}
+
+func (suite *KeeperTestSuite) TearDownTest() {
+	suite.ctrl.Finish()
 }

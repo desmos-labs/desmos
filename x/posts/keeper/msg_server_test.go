@@ -669,7 +669,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
-					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 				))
 			},
 			msg: types.NewMsgEditPost(
@@ -1170,7 +1170,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddPostAttachment() {
 					gomock.Any(),
 					uint64(1),
 					uint32(0),
-					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 					subspacestypes.NewPermission(types.PermissionEditOwnContent),
 				).Return(false)
 			},
@@ -1189,7 +1189,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddPostAttachment() {
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
-					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 				))
 			},
 			msg: types.NewMsgAddPostAttachment(
@@ -1491,14 +1491,6 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostAttachment() {
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 					subspacestypes.NewPermission(types.PermissionModerateContent),
 				).Return(false)
-
-				suite.sk.EXPECT().HasPermission(
-					gomock.Any(),
-					uint64(1),
-					uint32(0),
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.NewPermission(types.PermissionEditOwnContent),
-				).Return(true)
 			},
 			store: func(ctx sdk.Context) {
 				suite.k.SavePost(ctx, types.NewPost(
@@ -1844,6 +1836,24 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 					subspacestypes.NewPermission(types.PermissionInteractWithContent),
 				).Return(false)
+			},
+			store: func(ctx sdk.Context) {
+				suite.k.SavePost(ctx, types.NewPost(
+					1,
+					0,
+					1,
+					"External ID",
+					"This is a text",
+					"cosmos19mkklc8arp6phlg5eydu3v49syyqyfrq2sp4at",
+					0,
+					nil,
+					nil,
+					nil,
+					types.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
+				))
 			},
 			msg: types.NewMsgAnswerPoll(
 				1,
@@ -3282,7 +3292,6 @@ func (suite *KeeperTestSuite) TestMsgServer_RequestPostOwnerTransfer() {
 func (suite *KeeperTestSuite) TestMsgServer_CancelPostOwnerTransfer() {
 	testCases := []struct {
 		name        string
-		setup       func()
 		store       func(ctx sdk.Context)
 		msg         *types.MsgCancelPostOwnerTransferRequest
 		shouldErr   bool
@@ -3292,11 +3301,6 @@ func (suite *KeeperTestSuite) TestMsgServer_CancelPostOwnerTransfer() {
 	}{
 		{
 			name: "request does not exist returns error",
-			setup: func() {
-				suite.ak.EXPECT().
-					HasProfile(gomock.Any(), "cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg").
-					Return(true)
-			},
 			msg: types.NewMsgCancelPostOwnerTransferRequest(
 				1,
 				1,
@@ -3306,11 +3310,6 @@ func (suite *KeeperTestSuite) TestMsgServer_CancelPostOwnerTransfer() {
 		},
 		{
 			name: "request sender does not match the sender returns error",
-			setup: func() {
-				suite.ak.EXPECT().
-					HasProfile(gomock.Any(), "cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg").
-					Return(true)
-			},
 			store: func(ctx sdk.Context) {
 				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(
 					1,
@@ -3328,11 +3327,6 @@ func (suite *KeeperTestSuite) TestMsgServer_CancelPostOwnerTransfer() {
 		},
 		{
 			name: "valid request is performed properly",
-			setup: func() {
-				suite.ak.EXPECT().
-					HasProfile(gomock.Any(), "cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg").
-					Return(true)
-			},
 			store: func(ctx sdk.Context) {
 				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(
 					1,
@@ -3372,10 +3366,6 @@ func (suite *KeeperTestSuite) TestMsgServer_CancelPostOwnerTransfer() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
-			if tc.setup != nil {
-				tc.setup()
-			}
-
 			if tc.store != nil {
 				tc.store(ctx)
 			}
@@ -3649,7 +3639,6 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptPostOwnerTransfer() {
 func (suite *KeeperTestSuite) TestMsgServer_RefusePostOwnerTransfer() {
 	testCases := []struct {
 		name        string
-		setup       func()
 		store       func(ctx sdk.Context)
 		msg         *types.MsgRefusePostOwnerTransferRequest
 		shouldErr   bool
@@ -3659,11 +3648,6 @@ func (suite *KeeperTestSuite) TestMsgServer_RefusePostOwnerTransfer() {
 	}{
 		{
 			name: "request does not exist returns error",
-			setup: func() {
-				suite.ak.EXPECT().
-					HasProfile(gomock.Any(), "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd").
-					Return(true)
-			},
 			msg: types.NewMsgRefusePostOwnerTransferRequest(
 				1,
 				1,
@@ -3673,11 +3657,6 @@ func (suite *KeeperTestSuite) TestMsgServer_RefusePostOwnerTransfer() {
 		},
 		{
 			name: "request receiver does not match the receiver returns error",
-			setup: func() {
-				suite.ak.EXPECT().
-					HasProfile(gomock.Any(), "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd").
-					Return(true)
-			},
 			store: func(ctx sdk.Context) {
 				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(
 					1,
@@ -3695,11 +3674,6 @@ func (suite *KeeperTestSuite) TestMsgServer_RefusePostOwnerTransfer() {
 		},
 		{
 			name: "correct request is performed properly",
-			setup: func() {
-				suite.ak.EXPECT().
-					HasProfile(gomock.Any(), "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd").
-					Return(true)
-			},
 			store: func(ctx sdk.Context) {
 				suite.k.SavePostOwnerTransferRequest(ctx, types.NewPostOwnerTransferRequest(
 					1,
@@ -3739,10 +3713,6 @@ func (suite *KeeperTestSuite) TestMsgServer_RefusePostOwnerTransfer() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
-			if tc.setup != nil {
-				tc.setup()
-			}
-
 			if tc.store != nil {
 				tc.store(ctx)
 			}

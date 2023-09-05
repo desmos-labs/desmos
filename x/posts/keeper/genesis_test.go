@@ -291,34 +291,12 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 func (suite *KeeperTestSuite) TestKeeper_ImportGenesis() {
 	testCases := []struct {
 		name  string
-		setup func()
 		store func(ctx sdk.Context)
 		data  types.GenesisState
 		check func(ctx sdk.Context)
 	}{
 		{
 			name: "subspace data is imported properly",
-			setup: func() {
-				subspaces := []subspacestypes.Subspace{
-					subspacestypes.NewSubspace(
-						1,
-						"Test subspace",
-						"This is a test subspace",
-						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-						nil,
-					),
-				}
-
-				suite.sk.EXPECT().IterateSubspaces(gomock.Any(), gomock.Any()).
-					Do(func(ctx sdk.Context, fn func(subspace subspacestypes.Subspace) (stop bool)) {
-						for _, subspace := range subspaces {
-							fn(subspace)
-						}
-					})
-			},
 			data: types.GenesisState{
 				SubspacesData: []types.SubspaceDataEntry{
 					types.NewSubspaceDataEntry(1, 1),
@@ -332,27 +310,6 @@ func (suite *KeeperTestSuite) TestKeeper_ImportGenesis() {
 		},
 		{
 			name: "genesis post is imported correctly",
-			setup: func() {
-				subspaces := []subspacestypes.Subspace{
-					subspacestypes.NewSubspace(
-						1,
-						"Test subspace",
-						"This is a test subspace",
-						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-						nil,
-					),
-				}
-
-				suite.sk.EXPECT().IterateSubspaces(gomock.Any(), gomock.Any()).
-					Do(func(ctx sdk.Context, fn func(subspace subspacestypes.Subspace) (stop bool)) {
-						for _, subspace := range subspaces {
-							fn(subspace)
-						}
-					})
-			},
 			data: types.GenesisState{
 				Posts: []types.Post{
 					types.NewPost(
@@ -396,27 +353,6 @@ func (suite *KeeperTestSuite) TestKeeper_ImportGenesis() {
 		},
 		{
 			name: "attachment id is imported correctly",
-			setup: func() {
-				subspaces := []subspacestypes.Subspace{
-					subspacestypes.NewSubspace(
-						1,
-						"Test subspace",
-						"This is a test subspace",
-						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-						nil,
-					),
-				}
-
-				suite.sk.EXPECT().IterateSubspaces(gomock.Any(), gomock.Any()).
-					Do(func(ctx sdk.Context, fn func(subspace subspacestypes.Subspace) (stop bool)) {
-						for _, subspace := range subspaces {
-							fn(subspace)
-						}
-					})
-			},
 			data: types.GenesisState{
 				PostsData: []types.PostDataEntry{
 					types.NewPostDataEntry(1, 1, 2),
@@ -430,27 +366,6 @@ func (suite *KeeperTestSuite) TestKeeper_ImportGenesis() {
 		},
 		{
 			name: "attachment is imported correctly",
-			setup: func() {
-				subspaces := []subspacestypes.Subspace{
-					subspacestypes.NewSubspace(
-						1,
-						"Test subspace",
-						"This is a test subspace",
-						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-						nil,
-					),
-				}
-
-				suite.sk.EXPECT().IterateSubspaces(gomock.Any(), gomock.Any()).
-					Do(func(ctx sdk.Context, fn func(subspace subspacestypes.Subspace) (stop bool)) {
-						for _, subspace := range subspaces {
-							fn(subspace)
-						}
-					})
-			},
 			store: func(ctx sdk.Context) {
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
@@ -488,27 +403,6 @@ func (suite *KeeperTestSuite) TestKeeper_ImportGenesis() {
 		},
 		{
 			name: "user answer is imported properly",
-			setup: func() {
-				subspaces := []subspacestypes.Subspace{
-					subspacestypes.NewSubspace(
-						1,
-						"Test subspace",
-						"This is a test subspace",
-						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-						"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-						nil,
-					),
-				}
-
-				suite.sk.EXPECT().IterateSubspaces(gomock.Any(), gomock.Any()).
-					Do(func(ctx sdk.Context, fn func(subspace subspacestypes.Subspace) (stop bool)) {
-						for _, subspace := range subspaces {
-							fn(subspace)
-						}
-					})
-			},
 			store: func(ctx sdk.Context) {
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
@@ -552,9 +446,6 @@ func (suite *KeeperTestSuite) TestKeeper_ImportGenesis() {
 		},
 		{
 			name: "active polls are imported properly",
-			setup: func() {
-				suite.sk.EXPECT().IterateSubspaces(gomock.Any(), gomock.Any())
-			},
 			data: types.GenesisState{
 				ActivePolls: []types.ActivePollData{
 					types.NewActivePollData(1, 1, 2, time.Date(2100, 1, 1, 12, 00, 00, 000, time.UTC)),
@@ -567,9 +458,6 @@ func (suite *KeeperTestSuite) TestKeeper_ImportGenesis() {
 		},
 		{
 			name: "params are imported properly",
-			setup: func() {
-				suite.sk.EXPECT().IterateSubspaces(gomock.Any(), gomock.Any())
-			},
 			data: types.GenesisState{
 				Params: types.NewParams(200),
 			},
@@ -580,9 +468,6 @@ func (suite *KeeperTestSuite) TestKeeper_ImportGenesis() {
 		},
 		{
 			name: "post transfer owner requests are imported properly",
-			setup: func() {
-				suite.sk.EXPECT().IterateSubspaces(gomock.Any(), gomock.Any())
-			},
 			data: types.GenesisState{
 				PostOwnerTransferRequests: []types.PostOwnerTransferRequest{
 					types.NewPostOwnerTransferRequest(1, 1, "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd", "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"),
@@ -601,9 +486,6 @@ func (suite *KeeperTestSuite) TestKeeper_ImportGenesis() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
-			if tc.setup != nil {
-				tc.setup()
-			}
 			if tc.store != nil {
 				tc.store(ctx)
 			}

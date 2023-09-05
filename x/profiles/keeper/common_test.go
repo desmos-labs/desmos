@@ -46,6 +46,7 @@ type KeeperTestSuite struct {
 	k              *keeper.Keeper
 	ak             authkeeper.AccountKeeper
 
+	ctrl          *gomock.Controller
 	rk            *testutil.MockRelationshipsKeeper
 	channelKeeper *testutil.MockChannelKeeper
 	portKeeper    *testutil.MockPortKeeper
@@ -104,13 +105,12 @@ func (suite *KeeperTestSuite) SetupTest() {
 	)
 
 	// Mocks initializations
-	ctrl := gomock.NewController(suite.T())
-	defer ctrl.Finish()
+	suite.ctrl = gomock.NewController(suite.T())
 
-	suite.rk = testutil.NewMockRelationshipsKeeper(ctrl)
-	suite.channelKeeper = testutil.NewMockChannelKeeper(ctrl)
-	suite.portKeeper = testutil.NewMockPortKeeper(ctrl)
-	suite.scopedKeeper = testutil.NewMockScopedKeeper(ctrl)
+	suite.rk = testutil.NewMockRelationshipsKeeper(suite.ctrl)
+	suite.channelKeeper = testutil.NewMockChannelKeeper(suite.ctrl)
+	suite.portKeeper = testutil.NewMockPortKeeper(suite.ctrl)
+	suite.scopedKeeper = testutil.NewMockScopedKeeper(suite.ctrl)
 
 	suite.k = keeper.NewKeeper(
 		suite.cdc,
@@ -173,4 +173,8 @@ func (suite *KeeperTestSuite) GetRandomProfile() TestProfile {
 func (suite *KeeperTestSuite) CheckProfileNoError(profile *types.Profile, err error) *types.Profile {
 	suite.Require().NoError(err)
 	return profile
+}
+
+func (suite *KeeperTestSuite) TearDownTest() {
+	suite.ctrl.Finish()
 }
