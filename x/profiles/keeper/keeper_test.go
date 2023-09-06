@@ -556,7 +556,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 			shouldErr: true,
 		},
 		{
-			name: "max bio exceeded",
+			name: "max bio exceeded returns error",
 			profile: suite.CheckProfileNoError(types.NewProfile(
 				"dtag",
 				"nickname",
