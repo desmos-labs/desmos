@@ -21,13 +21,12 @@ func NewQueryApplicationLinksRequest(
 // GetQueryPrefix returns the prefix used for Query/ApplicationLinks
 func (request *QueryApplicationLinksRequest) GetQueryPrefix() []byte {
 	prefix := ApplicationLinkPrefix
+
 	switch {
 	case request.User != "" && request.Application != "" && request.Username != "":
 		prefix = UserApplicationLinkKey(request.User, request.Application, request.Username)
-	case request.User != "" && request.Application != "":
-		prefix = UserApplicationLinksApplicationPrefix(request.User, request.Application)
 	case request.User != "":
-		prefix = UserApplicationLinksPrefix(request.User)
+		prefix = UserApplicationLinksApplicationPrefix(request.User, request.Application)
 	}
 
 	return prefix
@@ -54,6 +53,7 @@ func NewQueryApplicationLinkOwnersRequest(
 // GetQueryPrefix returns the prefix used for Query/ApplicationLinkOwners
 func (request *QueryApplicationLinkOwnersRequest) GetQueryPrefix() []byte {
 	prefix := ApplicationLinkAppPrefix
+
 	switch {
 	case request.Application != "" && request.Username != "":
 		prefix = ApplicationLinkAppUsernameKey(request.Application, request.Username)
