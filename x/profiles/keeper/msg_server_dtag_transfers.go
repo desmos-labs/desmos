@@ -105,7 +105,7 @@ func (k MsgServer) AcceptDTagTransferRequest(goCtx context.Context, msg *types.M
 	}
 
 	// Get the current owner profile
-	currentOwnerProfile, exist, err := k.GetProfile(ctx, msg.Receiver)
+	requestReceiverProfile, exist, err := k.GetProfile(ctx, msg.Receiver)
 	if err != nil {
 		return nil, err
 	}
@@ -116,31 +116,31 @@ func (k MsgServer) AcceptDTagTransferRequest(goCtx context.Context, msg *types.M
 
 	// Get the DTag to trade and make sure its correct
 	dTagWanted := request.DTagToTrade
-	dTagToTrade := currentOwnerProfile.DTag
+	dTagToTrade := requestReceiverProfile.DTag
 	if dTagWanted != dTagToTrade {
 		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, "the owner's DTag is different from the one to be exchanged")
 	}
 
 	// Change the DTag and validate the profile
-	currentOwnerProfile.DTag = msg.NewDTag
-	err = k.ValidateProfile(ctx, currentOwnerProfile)
+	requestReceiverProfile.DTag = msg.NewDTag
+	err = k.ValidateProfile(ctx, requestReceiverProfile)
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	// Check for an existent profile of the receiving user
-	receiverProfile, exist, err := k.GetProfile(ctx, msg.Sender)
+	requestSenderProfile, exist, err := k.GetProfile(ctx, msg.Sender)
 	if err != nil {
 		return nil, err
 	}
 
-	if exist && msg.NewDTag == receiverProfile.DTag {
-		err = k.storeProfileWithoutDTagCheck(ctx, currentOwnerProfile)
+	if exist && msg.NewDTag == requestSenderProfile.DTag {
+		err = k.storeProfileWithoutDTagCheck(ctx, requestReceiverProfile)
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		err = k.Keeper.SaveProfile(ctx, currentOwnerProfile)
+		err = k.Keeper.SaveProfile(ctx, requestReceiverProfile)
 		if err != nil {
 			return nil, err
 		}
@@ -157,28 +157,25 @@ func (k MsgServer) AcceptDTagTransferRequest(goCtx context.Context, msg *types.M
 			senderAcc = authtypes.NewBaseAccountWithAddress(add)
 		}
 
-		receiverProfile, err = types.NewProfileFromAccount(dTagToTrade, senderAcc, ctx.BlockTime())
+		requestSenderProfile, err = types.NewProfileFromAccount(dTagToTrade, senderAcc, ctx.BlockTime())
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		receiverProfile.DTag = dTagToTrade
+		requestSenderProfile.DTag = dTagToTrade
 	}
 
-	// Validate the receiver profile
-	err = k.ValidateProfile(ctx, receiverProfile)
+	// Validate the request sender profile
+	err = k.ValidateProfile(ctx, requestSenderProfile)
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
-	// Save the receiver profile
-	err = k.Keeper.SaveProfile(ctx, receiverProfile)
+	// Save the request sender profile
+	err = k.Keeper.SaveProfile(ctx, requestSenderProfile)
 	if err != nil {
 		return nil, err
 	}
-
-	k.DeleteAllUserIncomingDTagTransferRequests(ctx, msg.Receiver)
-	k.DeleteAllUserIncomingDTagTransferRequests(ctx, msg.Sender)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(

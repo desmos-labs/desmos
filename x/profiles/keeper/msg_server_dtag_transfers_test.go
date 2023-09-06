@@ -129,6 +129,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CancelDTagTransfer() {
 		msg       *types.MsgCancelDTagTransferRequest
 		shouldErr bool
 		expEvents sdk.Events
+		check     func(ctx sdk.Context)
 	}{
 		{
 			name:      "request not found returns error",
@@ -166,6 +167,11 @@ func (suite *KeeperTestSuite) TestMsgServer_CancelDTagTransfer() {
 					sdk.NewAttribute(types.AttributeKeyRequestReceiver, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 				),
 			},
+			check: func(ctx sdk.Context) {
+				suite.Require().False(
+					suite.k.HasDTagTransferRequest(ctx, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+				)
+			},
 		},
 	}
 
@@ -185,6 +191,10 @@ func (suite *KeeperTestSuite) TestMsgServer_CancelDTagTransfer() {
 			} else {
 				suite.Require().NoError(err)
 				suite.Require().Equal(tc.expEvents, ctx.EventManager().Events())
+			}
+
+			if tc.check != nil {
+				tc.check(ctx)
 			}
 		})
 	}
@@ -277,6 +287,48 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptDTagTransfer() {
 			shouldErr: true,
 		},
 		{
+			name: "invalid request receiver profile after exchanging returns error",
+			store: func(ctx sdk.Context) {
+				request := types.NewDTagTransferRequest(
+					"DTag",
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				)
+
+				receiverProfile := profilestesting.ProfileFromAddr(request.Receiver)
+				receiverProfile.DTag = "DTag"
+				suite.Require().NoError(suite.k.SaveProfile(ctx, receiverProfile))
+				suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, request))
+			},
+			msg: types.NewMsgAcceptDTagTransferRequest(
+				"D",
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid request sender profile after exchanging returns error",
+			store: func(ctx sdk.Context) {
+				request := types.NewDTagTransferRequest(
+					"D",
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				)
+
+				receiverProfile := profilestesting.ProfileFromAddr(request.Receiver)
+				receiverProfile.DTag = "D"
+				suite.Require().NoError(suite.k.SaveProfile(ctx, receiverProfile))
+				suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, request))
+			},
+			msg: types.NewMsgAcceptDTagTransferRequest(
+				"NewDtag",
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			),
+			shouldErr: true,
+		},
+		{
 			name: "DTag is exchanged correctly (not existent sender profile)",
 			store: func(ctx sdk.Context) {
 				request := types.NewDTagTransferRequest(
@@ -313,7 +365,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptDTagTransfer() {
 			},
 		},
 		{
-			name: "DTag exchanged correctly (already existent sender profile)",
+			name: "DTag exchanged correctly (sender has changed DTag before exchanging)",
 			store: func(ctx sdk.Context) {
 				request := types.NewDTagTransferRequest(
 					"DTag",
@@ -345,6 +397,13 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptDTagTransfer() {
 					sdk.NewAttribute(types.AttributeKeyRequestSender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 					sdk.NewAttribute(types.AttributeKeyRequestReceiver, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 				),
+			},
+			check: func(ctx sdk.Context) {
+				senderProfile, _, _ := suite.k.GetProfile(ctx, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+				receiverProfile, _, _ := suite.k.GetProfile(ctx, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+
+				suite.Require().NotEqual(senderProfile.DTag, "receiverDTag")
+				suite.Require().Equal(receiverProfile.DTag, "NewDtag")
 			},
 		},
 		{
@@ -425,6 +484,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RefuseDTagTransfer() {
 		msg       *types.MsgRefuseDTagTransferRequest
 		shouldErr bool
 		expEvents sdk.Events
+		check     func(ctx sdk.Context)
 	}{
 		{
 			name: "not found request returns error",
@@ -463,6 +523,11 @@ func (suite *KeeperTestSuite) TestMsgServer_RefuseDTagTransfer() {
 					sdk.NewAttribute(types.AttributeKeyRequestReceiver, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 				),
 			},
+			check: func(ctx sdk.Context) {
+				suite.Require().False(
+					suite.k.HasDTagTransferRequest(ctx, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+				)
+			},
 		},
 	}
 
@@ -482,6 +547,10 @@ func (suite *KeeperTestSuite) TestMsgServer_RefuseDTagTransfer() {
 			} else {
 				suite.Require().NoError(err)
 				suite.Require().Equal(tc.expEvents, ctx.EventManager().Events())
+			}
+
+			if tc.check != nil {
+				tc.check(ctx)
 			}
 		})
 	}
