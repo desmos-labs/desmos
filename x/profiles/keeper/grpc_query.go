@@ -93,13 +93,21 @@ func (k Keeper) ChainLinks(ctx context.Context, request *types.QueryChainLinksRe
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	store := sdkCtx.KVStore(k.storeKey)
 
-	// Get prefix store
-	linksPrefix := request.GetQueryPrefix()
-	linksStore := prefix.NewStore(store, linksPrefix)
+	// Get user chain links prefix store
+	linksPrefix := types.ChainLinksPrefix
+	switch {
+	case request.User != "" && request.ChainName != "" && request.Target != "":
+		linksPrefix = types.ChainLinksStoreKey(request.User, request.ChainName, request.Target)
+	case request.User != "" && request.ChainName != "":
+		linksPrefix = types.UserChainLinksChainPrefix(request.User, request.ChainName)
+	case request.User != "":
+		linksPrefix = types.UserChainLinksPrefix(request.User)
+	}
 
-	// Get paginated chain links
+	// Get paginated user chain links
 	var links []types.ChainLink
-	pageRes, err := query.Paginate(linksStore, request.Pagination, func(_ []byte, value []byte) error {
+	linksStore := prefix.NewStore(store, linksPrefix)
+	pageRes, err := query.Paginate(linksStore, request.Pagination, func(key []byte, value []byte) error {
 		var link types.ChainLink
 		if err := k.cdc.Unmarshal(value, &link); err != nil {
 			return status.Error(codes.Internal, err.Error())
@@ -120,11 +128,16 @@ func (k Keeper) ChainLinkOwners(ctx context.Context, request *types.QueryChainLi
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	store := sdkCtx.KVStore(k.storeKey)
 
-	// Get prefix store
-	ownersPrefix := request.GetQueryPrefix()
-	ownersStore := prefix.NewStore(store, ownersPrefix)
+	ownersPrefix := types.ChainLinkChainPrefix
+	switch {
+	case request.ChainName != "" && request.Target != "":
+		ownersPrefix = types.ChainLinkChainAddressKey(request.ChainName, request.Target)
+	case request.ChainName != "":
+		ownersPrefix = types.ChainLinkChainKey(request.ChainName)
+	}
 
 	var owners []types.QueryChainLinkOwnersResponse_ChainLinkOwnerDetails
+	ownersStore := prefix.NewStore(store, ownersPrefix)
 	pageRes, err := query.Paginate(ownersStore, request.Pagination, func(key []byte, value []byte) error {
 		// Re-add the prefix because the prefix store trims it out, and we need it to get the data
 		keyWithPrefix := append([]byte(nil), ownersPrefix...)
@@ -152,11 +165,16 @@ func (k Keeper) DefaultExternalAddresses(ctx context.Context, request *types.Que
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	store := sdkCtx.KVStore(k.storeKey)
 
-	// Get prefix store
-	defaultPrefix := request.GetQueryPrefix()
-	defaultStore := prefix.NewStore(store, defaultPrefix)
+	defaultPrefix := types.DefaultExternalAddressPrefix
+	switch {
+	case request.Owner != "" && request.ChainName != "":
+		defaultPrefix = types.DefaultExternalAddressKey(request.Owner, request.ChainName)
+	case request.Owner != "":
+		defaultPrefix = types.OwnerDefaultExternalAddressPrefix(request.Owner)
+	}
 
 	var links []types.ChainLink
+	defaultStore := prefix.NewStore(store, defaultPrefix)
 	pageRes, err := query.Paginate(defaultStore, request.Pagination, func(key []byte, value []byte) error {
 		// Re-add the prefix because the prefix store trims it out, and we need it to get the data
 		keyWithPrefix := append([]byte(nil), defaultPrefix...)
@@ -182,12 +200,20 @@ func (k Keeper) ApplicationLinks(ctx context.Context, request *types.QueryApplic
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	store := sdkCtx.KVStore(k.storeKey)
 
-	// Get prefix store
-	linksPrefix := request.GetQueryPrefix()
-	linksStore := prefix.NewStore(store, linksPrefix)
+	// Get user links prefix store
+	linksPrefix := types.ApplicationLinkPrefix
+	switch {
+	case request.User != "" && request.Application != "" && request.Username != "":
+		linksPrefix = types.UserApplicationLinkKey(request.User, request.Application, request.Username)
+	case request.User != "" && request.Application != "":
+		linksPrefix = types.UserApplicationLinksApplicationPrefix(request.User, request.Application)
+	case request.User != "":
+		linksPrefix = types.UserApplicationLinksPrefix(request.User)
+	}
 
 	// Get paginated user links
 	var links []types.ApplicationLink
+	linksStore := prefix.NewStore(store, linksPrefix)
 	pageRes, err := query.Paginate(linksStore, request.Pagination, func(key []byte, value []byte) error {
 		var link types.ApplicationLink
 		if err := k.cdc.Unmarshal(value, &link); err != nil {
@@ -226,11 +252,16 @@ func (k Keeper) ApplicationLinkOwners(ctx context.Context, request *types.QueryA
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	store := sdkCtx.KVStore(k.storeKey)
 
-	// Get prefix store
-	ownersPrefix := request.GetQueryPrefix()
-	ownersStore := prefix.NewStore(store, ownersPrefix)
+	ownersPrefix := types.ApplicationLinkAppPrefix
+	switch {
+	case request.Application != "" && request.Username != "":
+		ownersPrefix = types.ApplicationLinkAppUsernameKey(request.Application, request.Username)
+	case request.Application != "":
+		ownersPrefix = types.ApplicationLinkAppKey(request.Application)
+	}
 
 	var owners []types.QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails
+	ownersStore := prefix.NewStore(store, ownersPrefix)
 	pageRes, err := query.Paginate(ownersStore, request.Pagination, func(key []byte, value []byte) error {
 		// Re-add the prefix because the prefix store trims it out, and we need it to get the data
 		keyWithPrefix := append([]byte(nil), ownersPrefix...)
