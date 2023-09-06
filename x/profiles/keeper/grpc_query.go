@@ -96,12 +96,10 @@ func (k Keeper) ChainLinks(ctx context.Context, request *types.QueryChainLinksRe
 	// Get user chain links prefix store
 	linksPrefix := types.ChainLinksPrefix
 	switch {
-	case request.User != "" && request.ChainName != "" && request.Target != "":
-		linksPrefix = types.ChainLinksStoreKey(request.User, request.ChainName, request.Target)
 	case request.User != "" && request.ChainName != "":
-		linksPrefix = types.UserChainLinksChainPrefix(request.User, request.ChainName)
+		linksPrefix = types.ChainLinksStoreKey(request.User, request.ChainName, request.Target)
 	case request.User != "":
-		linksPrefix = types.UserChainLinksPrefix(request.User)
+		linksPrefix = types.UserChainLinksChainPrefix(request.User, request.ChainName)
 	}
 
 	// Get paginated user chain links
@@ -129,11 +127,8 @@ func (k Keeper) ChainLinkOwners(ctx context.Context, request *types.QueryChainLi
 	store := sdkCtx.KVStore(k.storeKey)
 
 	ownersPrefix := types.ChainLinkChainPrefix
-	switch {
-	case request.ChainName != "" && request.Target != "":
+	if request.ChainName != "" {
 		ownersPrefix = types.ChainLinkChainAddressKey(request.ChainName, request.Target)
-	case request.ChainName != "":
-		ownersPrefix = types.ChainLinkChainKey(request.ChainName)
 	}
 
 	var owners []types.QueryChainLinkOwnersResponse_ChainLinkOwnerDetails
@@ -166,11 +161,8 @@ func (k Keeper) DefaultExternalAddresses(ctx context.Context, request *types.Que
 	store := sdkCtx.KVStore(k.storeKey)
 
 	defaultPrefix := types.DefaultExternalAddressPrefix
-	switch {
-	case request.Owner != "" && request.ChainName != "":
+	if request.Owner != "" {
 		defaultPrefix = types.DefaultExternalAddressKey(request.Owner, request.ChainName)
-	case request.Owner != "":
-		defaultPrefix = types.OwnerDefaultExternalAddressPrefix(request.Owner)
 	}
 
 	var links []types.ChainLink
@@ -203,12 +195,10 @@ func (k Keeper) ApplicationLinks(ctx context.Context, request *types.QueryApplic
 	// Get user links prefix store
 	linksPrefix := types.ApplicationLinkPrefix
 	switch {
-	case request.User != "" && request.Application != "" && request.Username != "":
-		linksPrefix = types.UserApplicationLinkKey(request.User, request.Application, request.Username)
 	case request.User != "" && request.Application != "":
-		linksPrefix = types.UserApplicationLinksApplicationPrefix(request.User, request.Application)
+		linksPrefix = types.UserApplicationLinkKey(request.User, request.Application, request.Username)
 	case request.User != "":
-		linksPrefix = types.UserApplicationLinksPrefix(request.User)
+		linksPrefix = types.UserApplicationLinksApplicationPrefix(request.User, request.Application)
 	}
 
 	// Get paginated user links
@@ -253,11 +243,8 @@ func (k Keeper) ApplicationLinkOwners(ctx context.Context, request *types.QueryA
 	store := sdkCtx.KVStore(k.storeKey)
 
 	ownersPrefix := types.ApplicationLinkAppPrefix
-	switch {
-	case request.Application != "" && request.Username != "":
+	if request.Application != "" {
 		ownersPrefix = types.ApplicationLinkAppUsernameKey(request.Application, request.Username)
-	case request.Application != "":
-		ownersPrefix = types.ApplicationLinkAppKey(request.Application)
 	}
 
 	var owners []types.QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails
