@@ -242,7 +242,7 @@ func (k Keeper) ValidateProfile(ctx sdk.Context, profile *types.Profile) error {
 	}
 
 	maxBioLen := params.Bio.MaxLength.Int64()
-	if profile.Bio != "" && int64(len(profile.Bio)) > maxBioLen {
+	if int64(len(profile.Bio)) > maxBioLen {
 		return fmt.Errorf("profile biography cannot exceed %d characters", maxBioLen)
 	}
 
