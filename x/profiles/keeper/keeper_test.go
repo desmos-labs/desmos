@@ -556,6 +556,21 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 			shouldErr: true,
 		},
 		{
+			name: "max bio exceeded",
+			profile: suite.CheckProfileNoError(types.NewProfile(
+				"dtag",
+				"nickname",
+				strings.Repeat("A", 1500),
+				types.NewPictures(
+					"https://tc.com/profile-picture",
+					"https://tc.com/cover-pic",
+				),
+				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				profilestesting.AccountFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
+			)),
+			shouldErr: true,
+		},
+		{
 			name: "valid profile",
 			profile: suite.CheckProfileNoError(types.NewProfile(
 				"dtag",
