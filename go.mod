@@ -334,6 +334,9 @@ replace (
 	// Our cosmos-sdk branch is: https://github.com/desmos-labs/cosmos-sdk v0.47.x-desmos
 	github.com/cosmos/cosmos-sdk => github.com/desmos-labs/cosmos-sdk v0.47.4-desmos
 
+	// fix concurrency for iavl
+	github.com/cosmos/iavl v0.20.0 => github.com/cosmos/iavl v0.20.1
+
 	// Replace the Cosmos Ledger app with the Desmos fork
 	github.com/cosmos/ledger-cosmos-go => github.com/desmos-labs/ledger-desmos-go v0.12.1-desmos
 
