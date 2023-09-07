@@ -6,7 +6,6 @@ import (
 	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	"github.com/desmos-labs/desmos/v6/x/profiles/types"
 )
@@ -154,7 +153,7 @@ func (k MsgServer) AcceptDTagTransferRequest(goCtx context.Context, msg *types.M
 
 		senderAcc := k.ak.GetAccount(ctx, add)
 		if senderAcc == nil {
-			senderAcc = authtypes.NewBaseAccountWithAddress(add)
+			senderAcc = k.ak.NewAccountWithAddress(ctx, add)
 		}
 
 		requestSenderProfile, err = types.NewProfileFromAccount(dTagToTrade, senderAcc, ctx.BlockTime())

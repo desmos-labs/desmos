@@ -317,12 +317,41 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptDTagTransfer() {
 				)
 
 				receiverProfile := profilestesting.ProfileFromAddr(request.Receiver)
-				receiverProfile.DTag = "D"
+				receiverProfile.DTag = "D" // invalid DTag length
 				suite.Require().NoError(suite.k.SaveProfile(ctx, receiverProfile))
 				suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, request))
 			},
 			msg: types.NewMsgAcceptDTagTransferRequest(
 				"NewDtag",
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "exchanged new DTag is registered by others returns error",
+			store: func(ctx sdk.Context) {
+				request := types.NewDTagTransferRequest(
+					"DTag",
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				)
+
+				receiverProfile := profilestesting.ProfileFromAddr(request.Receiver)
+				receiverProfile.DTag = "DTag"
+				senderProfile := profilestesting.ProfileFromAddr(request.Sender)
+				senderProfile.DTag = "senderDTag"
+				otherProfile := profilestesting.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
+				otherProfile.DTag = "NewDTag"
+				suite.Require().NoError(suite.k.SaveProfile(ctx, senderProfile))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, receiverProfile))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, otherProfile))
+
+				suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, request))
+
+			},
+			msg: types.NewMsgAcceptDTagTransferRequest(
+				"NewDTag",
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
