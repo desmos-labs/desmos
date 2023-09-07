@@ -1,0 +1,6 @@
+type: deps
+module: other
+pull_request: 1233
+description: Backport iavl to v0.20.1
+backward_compatible: true
+date: 2023-09-07T09:40:52.256050276Z
