@@ -112,9 +112,9 @@ func (dfd DeductFeeDecorator) tryHandleSubspaceTx(ctx sdk.Context, tx sdk.FeeTx,
 	feeGranter := tx.FeeGranter()
 	deductFeesFrom := feePayer
 
-	// If the fee granter is not set, or it's not equal to the subspace treasury,
+	// If the fee granter is not equal to the subspace treasury,
 	// then use auth.DeductFeeDecorator to deal with fees
-	if feeGranter == nil || !feeGranter.Equals(types.GetTreasuryAddress(subspaceID)) {
+	if !types.GetTreasuryAddress(subspaceID).Equals(feeGranter) {
 		return ctx, false, nil
 	}
 

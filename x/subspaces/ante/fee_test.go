@@ -45,6 +45,7 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 				return txBuilder.GetTx()
 			},
 			shouldErr: false,
+			expEvents: sdk.EmptyEvents(),
 		},
 		{
 			name: "standard tx that fails in auth fee deduction phase returns error",
@@ -75,6 +76,7 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 				return txBuilder.GetTx()
 			},
 			shouldErr: false,
+			expEvents: sdk.EmptyEvents(),
 		},
 		{
 			name: "valid tx with non treasury account granter returns no error",
@@ -91,6 +93,7 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 				return txBuilder.GetTx()
 			},
 			shouldErr: false,
+			expEvents: sdk.EmptyEvents(),
 		},
 		{
 			name: "non existing granter account returns error",
@@ -190,6 +193,13 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 				suite.Require().Equal(int64(10), ctx.Priority())
 			},
 			shouldErr: false,
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					sdk.EventTypeTx,
+					sdk.NewAttribute(sdk.AttributeKeyFee, feeAmount.String()),
+					sdk.NewAttribute(sdk.AttributeKeyFeePayer, granter.String()),
+				),
+			},
 		},
 		{
 			name: "zero fees valid tx returns no error",
@@ -217,6 +227,13 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 				suite.Require().Equal(int64(10), ctx.Priority())
 			},
 			shouldErr: false,
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					sdk.EventTypeTx,
+					sdk.NewAttribute(sdk.AttributeKeyFee, ""),
+					sdk.NewAttribute(sdk.AttributeKeyFeePayer, granter.String()),
+				),
+			},
 		},
 		{
 			name: "valid tx without granter returns no error",
@@ -232,6 +249,7 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 				return txBuilder.GetTx()
 			},
 			shouldErr: false,
+			expEvents: sdk.EmptyEvents(),
 		},
 	}
 
@@ -251,6 +269,7 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)
+				suite.Require().Equal(tc.expEvents, ctx.EventManager().Events())
 				if tc.check != nil {
 					tc.check(ctx)
 				}
