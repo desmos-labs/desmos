@@ -258,3 +258,82 @@ func (suite *AnteTestSuite) TestAnte_Ante() {
 		})
 	}
 }
+
+func (suite *AnteTestSuite) TestAnte_Ante_Simulate() {
+	feeAmount := sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(100)))
+	subspaceMsg := types.NewMsgAddUserToUserGroup(1, 1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
+
+	testCases := []struct {
+		name      string
+		setup     func()
+		buildTx   func() sdk.Tx
+		simulate  bool
+		shouldErr bool
+	}{
+		{
+			name: "non simulate mode without gas returns error",
+			buildTx: func() sdk.Tx {
+				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
+				txBuilder.SetMsgs(subspaceMsg)
+				txBuilder.SetFeeAmount(feeAmount)
+				txBuilder.SetGasLimit(0)
+				return txBuilder.GetTx()
+			},
+			shouldErr: true,
+		},
+		{
+			name: "non simulate mode with gas returns no error",
+			setup: func() {
+				suite.authDeductFeeDecorator.EXPECT().
+					AnteHandle(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+					Return(suite.ctx, nil)
+			},
+			buildTx: func() sdk.Tx {
+				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
+				txBuilder.SetMsgs(subspaceMsg)
+				txBuilder.SetFeeAmount(feeAmount)
+				txBuilder.SetGasLimit(100)
+				return txBuilder.GetTx()
+			},
+			shouldErr: false,
+		},
+		{
+			name: "simulate mode without gas returns no error",
+			setup: func() {
+				suite.authDeductFeeDecorator.EXPECT().
+					AnteHandle(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+					Return(suite.ctx, nil)
+			},
+			buildTx: func() sdk.Tx {
+				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
+				txBuilder.SetMsgs(subspaceMsg)
+				txBuilder.SetFeeAmount(feeAmount)
+				txBuilder.SetGasLimit(0)
+				return txBuilder.GetTx()
+			},
+			simulate: true,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.setup != nil {
+				tc.setup()
+			}
+
+			ctx = ctx.WithBlockHeight(10)
+
+			tx := tc.buildTx()
+			ctx, err := suite.ante.AnteHandle(ctx, tx, tc.simulate, func(ctx sdk.Context, tx sdk.Tx, simulate bool) (sdk.Context, error) {
+				return ctx, nil
+			})
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+			}
+		})
+	}
+}
