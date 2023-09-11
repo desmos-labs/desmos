@@ -18,10 +18,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/x/consensus"
 
-	"github.com/prometheus/client_golang/prometheus"
-
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
-	"github.com/spf13/cast"
 
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 
@@ -125,9 +122,12 @@ func GetWasmOpts(
 	reactionsKeeper reactionskeeper.Keeper,
 ) []wasmkeeper.Option {
 	var wasmOpts []wasmkeeper.Option
-	if cast.ToBool(appOpts.Get("telemetry.enabled")) {
-		wasmOpts = append(wasmOpts, wasmkeeper.WithVMCacheMetrics(prometheus.DefaultRegisterer))
-	}
+	// FIXME (wasmd-1575): This is commented out temporarily because it causes panics in telemetry server due to buggy
+	// Bug has been fixed here: https://github.com/CosmWasm/wasmd/pull/1575
+	// and will be released in v0.42
+	// if cast.ToBool(appOpts.Get("telemetry.enabled")) {
+	// wasmOpts = append(wasmOpts, wasmkeeper.WithVMCacheMetrics(prometheus.DefaultRegisterer))
+	// }
 
 	customQueryPlugin := NewDesmosCustomQueryPlugin(
 		cdc,
