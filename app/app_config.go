@@ -122,9 +122,9 @@ func GetWasmOpts(
 	reactionsKeeper reactionskeeper.Keeper,
 ) []wasmkeeper.Option {
 	var wasmOpts []wasmkeeper.Option
-	// FIXME (wasmd-1575): This is commented out temporarily because it causes panics in telemetry server due to buggy
-	// Bug has been fixed here: https://github.com/CosmWasm/wasmd/pull/1575
-	// and will be released in v0.42
+	// FIXME (wasmd-1575): This is commented out temporarily because it causes panics in telemetry server
+	// due to the bug fixed here: https://github.com/CosmWasm/wasmd/pull/1575.
+	// This will be released with CosmWasm v0.42, so we will un-comment this once we upgrade to that version.
 	// if cast.ToBool(appOpts.Get("telemetry.enabled")) {
 	// wasmOpts = append(wasmOpts, wasmkeeper.WithVMCacheMetrics(prometheus.DefaultRegisterer))
 	// }
