@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
+## Version 6.1.1
+### Bug Fixes
+#### Other
+- ([\#1235](https://github.com/desmos-labs/desmos/pull/1235)) Disabled Wasm metrics that caused panics
+
 ## Version 6.1.0
 ### Features
 #### Other
