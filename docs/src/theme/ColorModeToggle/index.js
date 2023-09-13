@@ -31,7 +31,7 @@ function ColorModeToggle({ className, value, onChange }) {
 
   const checkedIcon = (
     <svg
-      width="'90%"
+      width="90%"
       height="90%"
       viewBox="0 -1 20 21"
       fill="none"
@@ -64,7 +64,7 @@ function ColorModeToggle({ className, value, onChange }) {
 
   const uncheckedIcon = (
     <svg
-      width="'90%"
+      width="90%"
       height="90%"
       viewBox="0 -1 20 21"
       fill="none"
