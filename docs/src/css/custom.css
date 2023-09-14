@@ -1,11 +1,12 @@
-/* stylelint-disable docusaurus/copyright-header */
+@import url('https://fonts.cdnfonts.com/css/poppins');
 /**
  * Any CSS included here will be global. The classic template
  * bundles Infima by default. Infima is a CSS framework designed to
  * work well for content-centric websites.
  */
-
-@import url('https://fonts.cdnfonts.com/css/poppins');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /* You can override the default Infima variables here. */
 
@@ -69,7 +70,7 @@ html[data-theme='dark'] .docusaurus-highlight-code-line {
 
 .navbar {
   border-bottom-style: solid;
-  border-width: 2px;
+  border-bottom-width: 2px;
   border-color: rgba(52, 56, 62, 0.3);
   padding-inline: 6rem;
 }
@@ -103,11 +104,19 @@ html[data-theme='dark'] .footer {
 
 .footer {
   border-top-style: solid;
-  border-width: 2px;
+  border-top-width: 2px;
   border-color: rgba(52, 56, 62, 0.3);
   padding: 2rem 6rem 1rem 6rem;
   color: #141419;
   background-color: #fff;
+}
+
+html[data-theme='dark'] .footer__link {
+    color: #DDDDDD;
+}
+
+html[data-theme='dark'] .footer__svg {
+  fill: #DDDDDD;
 }
 
 /** In mobile view, reduce the padding */
@@ -163,6 +172,7 @@ html[data-theme='dark'] .menu {
   border-right-style: solid;
   border-right-width: 2px;
   border-bottom-width: 0;
+  border-top-width: 0;
   border-color: rgba(52, 56, 62, 0.3);
 }
 
