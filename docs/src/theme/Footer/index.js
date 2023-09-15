@@ -26,28 +26,28 @@ function Footer() {
           </span>
           <Link
             className="footer__link block md:inline-block px-0 md:leading-[21px] leading-[40px]"
-            href={"/newsletter"}
+            href={"https://desmos.network/terms"}
           >
             Terms & Conditions
           </Link>
           <span className="hidden md:inline-block md:px-6">|</span>
           <Link
             className="footer__link block md:inline-block px-0 md:leading-[21px] leading-[40px]"
-            href={"/terms"}
+            href={"https://desmos.network/privacy"}
           >
             Privacy Policy
           </Link>
           <span className="hidden md:inline-block md:px-6">|</span>
           <Link
             className="footer__link md:inline-block px-0 md:leading-[21px] leading-[40px]"
-            href={"/privacy"}
+            href={"https://desmos.network"}
           >
             White Paper
           </Link>
           <span className="hidden md:inline-block md:px-6">|</span>
           <Link
             className="footer__link block md:inline-block px-0 md:leading-[21px] leading-[40px]"
-            href={"/privacy"}
+            href={"https://desmos.network"}
           >
             Brand Kit
           </Link>
