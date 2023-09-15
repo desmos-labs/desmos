@@ -2,7 +2,6 @@ import React from "react";
 import { useThemeConfig } from "@docusaurus/theme-common";
 import Link from "@docusaurus/core/lib/client/exports/Link";
 import clsx from "clsx";
-import styles from "./styles.module.css";
 
 function Footer() {
   const { footer } = useThemeConfig();
