@@ -131,7 +131,7 @@ module.exports = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Desmos Network`,
+      copyright: `Copyright © ${new Date().getFullYear()} Desmos Labs`,
     },
   },
   presets: [
