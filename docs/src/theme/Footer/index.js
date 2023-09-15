@@ -1,11 +1,9 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useThemeConfig } from "@docusaurus/theme-common";
-import FooterLinks from "@theme/Footer/Links";
-import FooterLogo from "@theme/Footer/Logo";
-import FooterCopyright from "@theme/Footer/Copyright";
-import FooterLayout from "@theme/Footer/Layout";
 import Link from "@docusaurus/core/lib/client/exports/Link";
 import clsx from "clsx";
+import styles from "./styles.module.css";
+
 function Footer() {
   const { footer } = useThemeConfig();
   if (!footer) {
@@ -14,12 +12,6 @@ function Footer() {
   const { copyright, style } = footer;
 
   return (
-    /*    <FooterLayout
-      style={style}
-      links={links && links.length > 0 && <FooterLinks links={links} />}
-      logo={logo && <FooterLogo logo={logo} />}
-      copyright={copyright && <FooterCopyright copyright={copyright} />}
-    />*/
     <div
       className={
         clsx("footer", {

@@ -35,12 +35,20 @@
   background-color: #141419;
 }
 
+/* text adjustments */
+
+a {
+  color: #FF6C3E;
+}
+
 .docusaurus-highlight-code-line {
   background-color: rgba(0, 0, 0, 0.1);
   display: block;
   margin: 0 calc(-1 * var(--ifm-pre-padding));
   padding: 0 var(--ifm-pre-padding);
 }
+
+/* badge adjustments */
 
 .theme-doc-version-badge {
   margin-top: 1rem;
@@ -93,14 +101,6 @@ html[data-theme='dark'] .navbar {
 }
 
 /* footer adjustments */
-:root .footer__col {
-  text-align: center;
-}
-
-html[data-theme='dark'] .footer {
-  background-color: #141419;
-  color: #fff;
-}
 
 .footer {
   border-top-style: solid;
@@ -111,19 +111,25 @@ html[data-theme='dark'] .footer {
   background-color: #fff;
 }
 
+html[data-theme='dark'] .footer {
+  background-color: #141419;
+  color: #fff;
+}
+
+:root .footer__col {
+  text-align: center;
+}
+
+.footer__link {
+  color: #141419 !important;
+}
+
 html[data-theme='dark'] .footer__link {
-    color: #DDDDDD;
+    color: #DDDDDD !important;
 }
 
 html[data-theme='dark'] .footer__svg {
   fill: #DDDDDD;
-}
-
-/** In mobile view, reduce the padding */
-@media screen and (max-width: 996px) {
-  .footer {
-    padding-inline: 1rem;
-  }
 }
 
 html[data-theme='dark'] .footer {
@@ -140,7 +146,6 @@ html[data-theme='dark'] .footer__copyright {
 }
 
 /* tabs of 03-running-a-full-node 01-overview */
-
 :root .tabs-container {
   border-radius: 5px;
   border-top: 1px solid var(--ifm-color-primary);
@@ -164,9 +169,33 @@ div[role='tabpanel'] {
   border-color: rgba(52, 56, 62, 0.3);
 }
 
+.menu__list .menu__list {
+  margin-top: 0!important;
+}
+
+/** In mobile view, reduce the padding */
+@media screen and (min-width: 997px) {
+  .menu {
+    padding: 0!important;
+  }
+}
+
 html[data-theme='dark'] .menu {
   border-color: rgba(52, 56, 62, 1);
 }
+
+.menu__link--active {
+  border-left-style: solid;
+  border-left-width: 0.25rem;
+  border-left-color: #FF6C3E;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.menu .menu__link.menu__link--sublist:after {
+  color: #1a1c1f;
+  }
+
 
 .button.button--secondary {
   border-right-style: solid;
