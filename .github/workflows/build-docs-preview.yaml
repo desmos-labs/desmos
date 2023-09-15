@@ -3,10 +3,6 @@ name: Build docs preview
 # It runs on every push to master with a change in the docs folder.
 on:
   pull_request:
-    paths:
-      - "docs/**"
-      - "x/**/*.md"
-      - .github/workflows/deploy-docs.yml
 
 jobs:
   Build-preview:
@@ -14,12 +10,17 @@ jobs:
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v4
+
+      - name: Compute diff 📜
+        uses: technote-space/get-diff-action@v6.1.2
+        id: git_diff
         with:
-          persist-credentials: false
-          fetch-depth: 0
-          path: "."
+          PATTERNS: |
+            *.md
+            docs/**/*.*
 
       - name: Setup Node.js 🔧
+        if: env.GIT_DIFF
         uses: actions/setup-node@v3
         with:
           node-version: "16.x"
@@ -28,9 +29,11 @@ jobs:
             docs/yarn.lock
 
       - name: Build 🔧
+        if: env.GIT_DIFF
         run: make build-docs && mv ~/output ./output
 
       - name: Deploy preview to Netlify 🚀
+        if: env.GIT_DIFF
         id: deploy-preview
         uses: nwtgck/actions-netlify@v2.1
         with:
