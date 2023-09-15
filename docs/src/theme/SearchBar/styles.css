@@ -20,6 +20,11 @@
     var(--ifm-transition-timing-default);
 }
 
+.DocSearch-Button:hover {
+  background: white;
+  color: #25282D;
+}
+
 .DocSearch-Button .DocSearch-Search-Icon {
   color: #25282D;
   width: 1rem;
