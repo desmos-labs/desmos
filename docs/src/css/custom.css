@@ -80,7 +80,6 @@ html[data-theme='dark'] .docusaurus-highlight-code-line {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-color: rgba(52, 56, 62, 0.3);
-  padding-inline: 6rem;
 }
 
 /** In mobile view, reduce the padding */
