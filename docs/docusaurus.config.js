@@ -121,7 +121,7 @@ module.exports = {
     ],
     colorMode: {
       defaultMode: "dark",
-      respectPrefersColorScheme: true,
+      respectPrefersColorScheme: false,
     },
     algolia: {
       apiKey: "492b6729d095b18f5599d6584e00ae11",
