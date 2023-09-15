@@ -1,5 +1,10 @@
 module.exports = {
+  corePlugins: {
+    preflight: false, // disable Tailwind's reset
+  },
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
+  darkMode: ["class", '[data-theme="dark"]'],
+  blocklist: ["container"],
   theme: {
     screens: {
       md: "768px",
