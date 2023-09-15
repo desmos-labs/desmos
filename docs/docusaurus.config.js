@@ -65,6 +65,60 @@ module.exports = {
     }),
   },
   themeConfig: {
+    metadata: [
+      {
+        name: "title",
+        content: "Desmos Network Documentation",
+      },
+      {
+        name: "description",
+        content: "Browse the official Desmos Network documentation and learn how you can start building your DApp based on Desmos."
+      },
+
+      <!-- Open Graph / Facebook -->
+      {
+        property: "og:type",
+        content: "website"
+      },
+      {
+        property: "og:url",
+        content: "https://docs.desmos.network/"
+      },
+      {
+        property: "og:title",
+        content: "Desmos Network Documentation"
+      },
+      {
+        property: "og:description",
+        content: "Browse the official Desmos Network documentation and learn how you can start building your DApp based on Desmos."
+      },
+      {
+        property: "og:image",
+        content: "https://docs.desmos.network/assets/seo_cover.png"
+      },
+
+      <!-- Twitter -->
+      {
+        property: "twitter:card",
+        content: "summary_large_image"
+      },
+      {
+        property: "twitter:url",
+        content: "https://docs.desmos.network/"
+      },
+      {
+        property: "twitter:title",
+        content: "Desmos Network Documentation"
+      },
+      {
+        property: "twitter:description",
+        content: "Browse the official Desmos Network documentation and learn how you can start building your DApp based on Desmos."
+      },
+      {
+        property: "twitter:image",
+        content: "https://docs.desmos.network/assets/seo_cover.png"
+      },
+    ],
     colorMode: {
       defaultMode: "dark",
       respectPrefersColorScheme: true,
@@ -143,9 +197,9 @@ module.exports = {
           sidebarPath: require.resolve("./sidebars.js"),
           sidebarCollapsible: true,
           async sidebarItemsGenerator({
-            defaultSidebarItemsGenerator,
-            ...args
-          }) {
+                                        defaultSidebarItemsGenerator,
+                                        ...args
+                                      }) {
             const defaultItems = await defaultSidebarItemsGenerator(args);
             return convertPageWithHrefToExternLinks(args.docs, defaultItems);
           },
