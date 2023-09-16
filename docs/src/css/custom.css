@@ -82,7 +82,6 @@ html[data-theme='dark'] .docusaurus-highlight-code-line {
   border-color: rgba(52, 56, 62, 0.3);
 }
 
-/** In mobile view, reduce the padding */
 @media screen and (max-width: 996px) {
   .navbar {
     padding-inline: 1rem;
@@ -193,7 +192,11 @@ html[data-theme='dark'] .menu {
 
 .menu .menu__link.menu__link--sublist:after {
   color: #1a1c1f;
-  }
+}
+
+html[data-theme='dark'] .navbar-sidebar {
+  background-color: #141419;
+}
 
 
 .button.button--secondary {
