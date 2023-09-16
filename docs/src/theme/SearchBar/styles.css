@@ -12,12 +12,20 @@
   border: 1px solid var(--general-light-line-3-webapp, #DDD);
   background: #FFF;
   margin: 0;
-  width: 13.75rem;
+  width: 13rem;
   height: 2rem;
   padding: 0.75rem 1rem;
   box-shadow: 0 16px 30px 10px rgba(70, 53, 43, 0.02);
   transition: all var(--ifm-transition-fast)
     var(--ifm-transition-timing-default);
+}
+
+/** In mobile view, reduce the padding */
+@media screen and (max-width: 996px) {
+  .DocSearch-Button {
+    width: auto;
+    padding: 0.5rem;
+  }
 }
 
 .DocSearch-Button:hover {
