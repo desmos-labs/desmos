@@ -1,0 +1,6 @@
+type: deps
+module: other
+pull_request: 1245
+description: Bump cosmos-sdk to 0.47.5
+backward_compatible: true
+date: 2023-09-22T07:47:04.001240328Z
