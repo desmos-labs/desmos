@@ -20,9 +20,9 @@ import (
 	"github.com/desmos-labs/desmos/v6/app"
 	"github.com/desmos-labs/desmos/v6/testutil/ibctesting"
 
+	"cosmossdk.io/log"
 	"cosmossdk.io/store"
 	db "github.com/cometbft/cometbft-db"
-	"github.com/cometbft/cometbft/libs/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/suite"

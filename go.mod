@@ -9,7 +9,8 @@ require (
 	cosmossdk.io/core v0.11.0
 	cosmossdk.io/depinject v1.0.0-alpha.4
 	cosmossdk.io/errors v1.0.1
-	cosmossdk.io/math v1.2.0
+	cosmossdk.io/log v1.2.1
+	cosmossdk.io/math v1.1.2
 	cosmossdk.io/simapp v0.0.0-20230323161446-0af178d721ff
 	cosmossdk.io/store v1.0.0-rc.0
 	cosmossdk.io/x/evidence v0.0.0-20230818115413-c402c51a1508
@@ -63,7 +64,6 @@ require (
 	cloud.google.com/go/storage v1.30.1 // indirect
 	cosmossdk.io/client/v2 v2.0.0-20230818115413-c402c51a1508 // indirect
 	cosmossdk.io/collections v0.4.0 // indirect
-	cosmossdk.io/log v1.2.1 // indirect
 	cosmossdk.io/x/circuit v0.0.0-20230818115413-c402c51a1508 // indirect
 	cosmossdk.io/x/tx v0.10.0 // indirect
 	filippo.io/edwards25519 v1.0.0 // indirect

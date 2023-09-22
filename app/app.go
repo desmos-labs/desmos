@@ -31,10 +31,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/server/api"
 	"github.com/cosmos/cosmos-sdk/server/config"
 
+	"cosmossdk.io/log"
 	"cosmossdk.io/store/streaming"
 	dbm "github.com/cometbft/cometbft-db"
 	abci "github.com/cometbft/cometbft/abci/types"
-	"github.com/cometbft/cometbft/libs/log"
 	tmos "github.com/cometbft/cometbft/libs/os"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
@@ -189,6 +189,7 @@ func NewDesmosApp(
 			depinject.Supply(
 				// supply the application options
 				appOpts,
+				logger,
 
 				// ADVANCED CONFIGURATION
 
