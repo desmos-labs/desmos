@@ -16,10 +16,10 @@ import (
 	relationshipskeeper "github.com/desmos-labs/desmos/v6/x/relationships/keeper"
 	relationshipstypes "github.com/desmos-labs/desmos/v6/x/relationships/types"
 
+	"cosmossdk.io/log"
 	"cosmossdk.io/store"
 	storetypes "cosmossdk.io/store/types"
 	db "github.com/cometbft/cometbft-db"
-	"github.com/cometbft/cometbft/libs/log"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"

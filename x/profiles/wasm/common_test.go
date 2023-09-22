@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"testing"
 
+	"cosmossdk.io/log"
 	db "github.com/cometbft/cometbft-db"
-	"github.com/cometbft/cometbft/libs/log"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 
 	"cosmossdk.io/store"
