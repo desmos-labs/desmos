@@ -8,9 +8,9 @@ import (
 	"testing"
 	"time"
 
+	"cosmossdk.io/x/feegrant"
+	feegrantcli "cosmossdk.io/x/feegrant/client/cli"
 	authzcli "github.com/cosmos/cosmos-sdk/x/authz/client/cli"
-	"github.com/cosmos/cosmos-sdk/x/feegrant"
-	feegrantcli "github.com/cosmos/cosmos-sdk/x/feegrant/client/cli"
 	"github.com/stretchr/testify/suite"
 
 	poststypes "github.com/desmos-labs/desmos/v6/x/posts/types"
