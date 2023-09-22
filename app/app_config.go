@@ -61,9 +61,9 @@ import (
 	ica "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts"
 	icatypes "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts/types"
 
-	"github.com/cosmos/cosmos-sdk/x/upgrade"
-	upgradeclient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
-	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
+	"cosmossdk.io/x/upgrade"
+	upgradeclient "cosmossdk.io/x/upgrade/client"
+	upgradetypes "cosmossdk.io/x/upgrade/types"
 
 	"github.com/desmos-labs/desmos/v6/x/posts"
 	postskeeper "github.com/desmos-labs/desmos/v6/x/posts/keeper"
