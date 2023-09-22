@@ -126,9 +126,6 @@ type DesmosApp struct {
 	txConfig          client.TxConfig
 	interfaceRegistry types.InterfaceRegistry
 
-	// non depinject support modules store keys
-	keys map[string]*storetypes.KVStoreKey
-
 	// Keepers
 	AccountKeeper         authkeeper.AccountKeeper
 	BankKeeper            bankkeeper.Keeper
@@ -282,11 +279,13 @@ func NewDesmosApp(
 	app.App = appBuilder.Build(logger, db, traceStore, baseAppOptions...)
 
 	// set up non depinject support modules store keys
-	app.keys = sdk.NewKVStoreKeys(
+	storeKeys := sdk.NewKVStoreKeys(
 		ibcexported.StoreKey, ibctransfertypes.StoreKey, ibcfeetypes.StoreKey,
 		icahosttypes.StoreKey, icacontrollertypes.StoreKey, wasmtypes.StoreKey,
 	)
-	app.MountKVStores(app.keys)
+	for _, key := range storeKeys {
+		app.RegisterStores(key)
+	}
 
 	// load state streaming if enabled
 	if _, _, err := streaming.LoadStreamingServices(app.App.BaseApp, appOpts, app.appCodec, logger, app.kvStoreKeys()); err != nil {
@@ -461,12 +460,8 @@ func NewDesmosApp(
 		wasm.NewAppModule(app.appCodec, &app.WasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper, app.MsgServiceRouter(), app.GetSubspace(wasmtypes.ModuleName)),
 	}
 
-	app.RegisterModules(legacyModules...)
-	cfg := app.Configurator()
-	for _, m := range legacyModules {
-		if s, ok := m.(module.HasServices); ok {
-			s.RegisterServices(cfg)
-		}
+	if err := app.RegisterModules(legacyModules...); err != nil {
+		panic(err)
 	}
 
 	// create the simulation manager and define the order of the modules for deterministic simulations
@@ -611,10 +606,6 @@ func (app *DesmosApp) TxConfig() client.TxConfig {
 //
 // NOTE: This is solely to be used for testing purposes.
 func (app *DesmosApp) GetKey(storeKey string) *storetypes.KVStoreKey {
-	if key, ok := app.keys[storeKey]; ok {
-		return key
-	}
-
 	sk := app.UnsafeFindStoreKey(storeKey)
 	kvStoreKey, ok := sk.(*storetypes.KVStoreKey)
 	if !ok {
@@ -630,10 +621,6 @@ func (app *DesmosApp) kvStoreKeys() map[string]*storetypes.KVStoreKey {
 		if kv, ok := k.(*storetypes.KVStoreKey); ok {
 			keys[kv.Name()] = kv
 		}
-	}
-
-	for _, kv := range app.keys {
-		keys[kv.Name()] = kv
 	}
 
 	return keys
