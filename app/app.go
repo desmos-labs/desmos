@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/desmos-labs/desmos/v6/app/upgrades"
 
@@ -399,8 +400,7 @@ func NewDesmosApp(
 
 	// The last arguments can contain custom message handlers, and custom query handlers,
 	// if we want to allow any custom callbacks
-	// See https://github.com/CosmWasm/cosmwasm/blob/main/docs/CAPABILITIES-BUILT-IN.md
-	availableCapabilities := "iterator,staking,stargate,cosmwasm_1_1,cosmwasm_1_2,cosmwasm_1_3"
+	availableCapabilities := strings.Join(AllWasmCapabilities(), ",")
 	app.WasmKeeper = wasmkeeper.NewKeeper(
 		app.appCodec,
 		app.GetKey(wasmtypes.StoreKey),

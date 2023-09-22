@@ -4,6 +4,8 @@ import (
 	"fmt"
 
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
+	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
+
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
 
@@ -46,16 +48,16 @@ const (
 )
 
 // DesmosWasmGasRegister is defaults plus a custom compile amount
-func DesmosWasmGasRegister() wasmkeeper.WasmGasRegisterConfig {
-	gasConfig := wasmkeeper.DefaultGasRegisterConfig()
+func DesmosWasmGasRegister() wasmtypes.WasmGasRegisterConfig {
+	gasConfig := wasmtypes.DefaultGasRegisterConfig()
 	gasConfig.InstanceCost = DefaultDesmosInstanceCost
 	gasConfig.CompileCost = DefaultDesmosCompileCost
 
 	return gasConfig
 }
 
-func NewDesmosWasmGasRegister() wasmkeeper.WasmGasRegister {
-	return wasmkeeper.NewWasmGasRegister(DesmosWasmGasRegister())
+func NewDesmosWasmGasRegister() wasmtypes.WasmGasRegister {
+	return wasmtypes.NewWasmGasRegister(DesmosWasmGasRegister())
 }
 
 // NewDesmosCustomQueryPlugin initialize the custom querier to handle desmos queries for contracts
@@ -168,5 +170,20 @@ func NewDesmosCustomMessageEncoder(cdc codec.Codec) wasmkeeper.MessageEncoders {
 	parserRouter.Parsers = parsers
 	return wasmkeeper.MessageEncoders{
 		Custom: parserRouter.ParseCustom,
+	}
+}
+
+// AllWasmCapabilities returns all capabilities available with the current wasmvm
+// See https://github.com/CosmWasm/cosmwasm/blob/main/docs/CAPABILITIES-BUILT-IN.md
+// This functionality is going to be moved upstream: https://github.com/CosmWasm/wasmvm/issues/425
+func AllWasmCapabilities() []string {
+	return []string{
+		"iterator",
+		"staking",
+		"stargate",
+		"cosmwasm_1_1",
+		"cosmwasm_1_2",
+		"cosmwasm_1_3",
+		"cosmwasm_1_4",
 	}
 }
