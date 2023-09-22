@@ -4,8 +4,8 @@ import (
 	"context"
 	"strings"
 
+	"cosmossdk.io/store/prefix"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
-	"github.com/cosmos/cosmos-sdk/store/prefix"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 

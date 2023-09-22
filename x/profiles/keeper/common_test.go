@@ -6,8 +6,8 @@ import (
 
 	"github.com/golang/mock/gomock"
 
+	storetypes "cosmossdk.io/store/types"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
-	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	"github.com/cosmos/go-bip39"
 
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
@@ -20,10 +20,10 @@ import (
 	"github.com/desmos-labs/desmos/v6/app"
 	"github.com/desmos-labs/desmos/v6/testutil/ibctesting"
 
+	"cosmossdk.io/store"
 	db "github.com/cometbft/cometbft-db"
 	"github.com/cometbft/cometbft/libs/log"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/suite"
 
