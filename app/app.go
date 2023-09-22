@@ -73,7 +73,7 @@ import (
 	icahostkeeper "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts/host/keeper"
 	icahosttypes "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts/host/types"
 
-	"github.com/cosmos/cosmos-sdk/x/upgrade"
+	"cosmossdk.io/x/upgrade"
 
 	"github.com/desmos-labs/desmos/v6/x/profiles"
 	profileskeeper "github.com/desmos-labs/desmos/v6/x/profiles/keeper"
@@ -86,6 +86,7 @@ import (
 	tokenfactorykeeper "github.com/desmos-labs/desmos/v6/x/tokenfactory/keeper"
 
 	evidencekeeper "cosmossdk.io/x/evidence/keeper"
+	upgradekeeper "cosmossdk.io/x/upgrade/keeper"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	crisiskeeper "github.com/cosmos/cosmos-sdk/x/crisis/keeper"
@@ -94,12 +95,11 @@ import (
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	slashingkeeper "github.com/cosmos/cosmos-sdk/x/slashing/keeper"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
-	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
 
+	upgradetypes "cosmossdk.io/x/upgrade/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	govv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 
 	paramproposal "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 
