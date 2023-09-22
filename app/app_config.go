@@ -4,6 +4,9 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/spf13/cast"
+
 	evidencetypes "cosmossdk.io/x/evidence/types"
 	"cosmossdk.io/x/feegrant"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -11,12 +14,10 @@ import (
 	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 	"github.com/cosmos/cosmos-sdk/x/authz"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	consensusparamtypes "github.com/cosmos/cosmos-sdk/x/consensus/types"
 	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
-	"github.com/prometheus/client_golang/prometheus"
-	"github.com/spf13/cast"
+	capabilitytypes "github.com/cosmos/ibc-go/modules/capability/types"
 
 	"github.com/cosmos/cosmos-sdk/x/consensus"
 
@@ -42,7 +43,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/slashing"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 
-	"github.com/cosmos/cosmos-sdk/x/capability"
+	"github.com/cosmos/ibc-go/modules/capability"
 
 	feegrantmodule "cosmossdk.io/x/feegrant/module"
 	"github.com/cosmos/cosmos-sdk/x/mint"
@@ -53,7 +54,6 @@ import (
 	ibctransfer "github.com/cosmos/ibc-go/v8/modules/apps/transfer"
 	ibctransfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 	ibc "github.com/cosmos/ibc-go/v8/modules/core"
-	ibcclientclient "github.com/cosmos/ibc-go/v8/modules/core/02-client/client"
 	ibcexported "github.com/cosmos/ibc-go/v8/modules/core/exported"
 	solomachine "github.com/cosmos/ibc-go/v8/modules/light-clients/06-solomachine"
 	ibctm "github.com/cosmos/ibc-go/v8/modules/light-clients/07-tendermint"
@@ -62,7 +62,6 @@ import (
 	icatypes "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts/types"
 
 	"cosmossdk.io/x/upgrade"
-	upgradeclient "cosmossdk.io/x/upgrade/client"
 	upgradetypes "cosmossdk.io/x/upgrade/types"
 
 	"github.com/desmos-labs/desmos/v6/x/posts"
@@ -163,10 +162,6 @@ var (
 		gov.NewAppModuleBasic(
 			[]govclient.ProposalHandler{
 				paramsclient.ProposalHandler,
-				upgradeclient.LegacyProposalHandler,
-				upgradeclient.LegacyCancelProposalHandler,
-				ibcclientclient.UpdateClientProposalHandler,
-				ibcclientclient.UpgradeProposalHandler,
 			},
 		),
 		params.AppModuleBasic{},

@@ -12,8 +12,8 @@ import (
 	profilestypes "github.com/desmos-labs/desmos/v6/x/profiles/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	capabilitytypes "github.com/cosmos/ibc-go/modules/capability/types"
 	"github.com/stretchr/testify/require"
 
 	"github.com/desmos-labs/desmos/v6/app"
