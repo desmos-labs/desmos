@@ -19,8 +19,6 @@ import (
 
 	consensusparamkeeper "github.com/cosmos/cosmos-sdk/x/consensus/keeper"
 
-	ibcclient "github.com/cosmos/ibc-go/v8/modules/core/02-client"
-
 	"github.com/cosmos/cosmos-sdk/client/flags"
 
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
@@ -58,7 +56,6 @@ import (
 	ibctransferkeeper "github.com/cosmos/ibc-go/v8/modules/apps/transfer/keeper"
 	ibctransfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 	ibc "github.com/cosmos/ibc-go/v8/modules/core"
-	ibcclienttypes "github.com/cosmos/ibc-go/v8/modules/core/02-client/types"
 	porttypes "github.com/cosmos/ibc-go/v8/modules/core/05-port/types"
 	ibcexported "github.com/cosmos/ibc-go/v8/modules/core/exported"
 	ibckeeper "github.com/cosmos/ibc-go/v8/modules/core/keeper"
@@ -72,8 +69,6 @@ import (
 	icahost "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts/host"
 	icahostkeeper "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts/host/keeper"
 	icahosttypes "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts/host/types"
-
-	"cosmossdk.io/x/upgrade"
 
 	"github.com/desmos-labs/desmos/v6/x/profiles"
 	profileskeeper "github.com/desmos-labs/desmos/v6/x/profiles/keeper"
@@ -189,6 +184,8 @@ func NewDesmosApp(
 			depinject.Supply(
 				// supply the application options
 				appOpts,
+
+				// supply the logger
 				logger,
 
 				// ADVANCED CONFIGURATION
@@ -321,9 +318,7 @@ func NewDesmosApp(
 	// See: https://docs.cosmos.network/main/modules/gov#proposal-messages
 	govRouter := govv1beta1.NewRouter()
 	govRouter.AddRoute(govtypes.RouterKey, govv1beta1.ProposalHandler).
-		AddRoute(paramproposal.RouterKey, params.NewParamChangeProposalHandler(app.ParamsKeeper)). // This should be removed. It is still in place to avoid failures of modules that have not yet been upgraded.
-		AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(app.UpgradeKeeper)).
-		AddRoute(ibcclienttypes.RouterKey, ibcclient.NewClientProposalHandler(app.IBCKeeper.ClientKeeper))
+		AddRoute(paramproposal.RouterKey, params.NewParamChangeProposalHandler(app.ParamsKeeper)) // This should be removed. It is still in place to avoid failures of modules that have not yet been upgraded.
 
 	app.IBCFeeKeeper = ibcfeekeeper.NewKeeper(
 		app.appCodec, app.GetKey(ibcfeetypes.StoreKey),
