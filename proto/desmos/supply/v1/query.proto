@@ -40,7 +40,7 @@ message QueryTotalResponse {
   option (gogoproto.goproto_getters) = false;
 
   string total_supply = 1 [
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
     (gogoproto.nullable) = false
   ];
 }
@@ -66,7 +66,7 @@ message QueryCirculatingResponse {
   option (gogoproto.goproto_getters) = false;
 
   string circulating_supply = 1 [
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
     (gogoproto.nullable) = false
   ];
 }
