@@ -3,7 +3,6 @@ package app
 import (
 	"fmt"
 	"io"
-	"os"
 	"path/filepath"
 	"strings"
 
@@ -30,11 +29,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/server/config"
 
 	"cosmossdk.io/log"
-	"cosmossdk.io/store/streaming"
-	dbm "github.com/cometbft/cometbft-db"
 	abci "github.com/cometbft/cometbft/abci/types"
 	tmos "github.com/cometbft/cometbft/libs/os"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
+	dbm "github.com/cosmos/cosmos-db"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -275,10 +273,10 @@ func NewDesmosApp(
 	// }
 	// baseAppOptions = append(baseAppOptions, prepareOpt)
 
-	app.App = appBuilder.Build(logger, db, traceStore, baseAppOptions...)
+	app.App = appBuilder.Build(db, traceStore, baseAppOptions...)
 
 	// set up non depinject support modules store keys
-	storeKeys := sdk.NewKVStoreKeys(
+	storeKeys := storetypes.NewKVStoreKeys(
 		ibcexported.StoreKey, ibctransfertypes.StoreKey, ibcfeetypes.StoreKey,
 		icahosttypes.StoreKey, icacontrollertypes.StoreKey, wasmtypes.StoreKey,
 	)
@@ -287,9 +285,8 @@ func NewDesmosApp(
 	}
 
 	// load state streaming if enabled
-	if _, _, err := streaming.LoadStreamingServices(app.App.BaseApp, appOpts, app.appCodec, logger, app.kvStoreKeys()); err != nil {
-		logger.Error("failed to load state streaming", "err", err)
-		os.Exit(1)
+	if err := app.RegisterStreamingServices(appOpts, app.kvStoreKeys()); err != nil {
+		panic(err)
 	}
 
 	/****  Module Options ****/
@@ -309,7 +306,7 @@ func NewDesmosApp(
 
 	// Create IBC keeper
 	app.IBCKeeper = ibckeeper.NewKeeper(
-		app.appCodec, app.GetKey(ibcexported.StoreKey), app.GetSubspace(ibcexported.ModuleName), app.StakingKeeper, app.UpgradeKeeper, scopedIBCKeeper,
+		app.appCodec, app.GetKey(ibcexported.StoreKey), app.GetSubspace(ibcexported.ModuleName), app.StakingKeeper, app.UpgradeKeeper, scopedIBCKeeper, authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 
 	// Register the proposal types
@@ -338,6 +335,7 @@ func NewDesmosApp(
 		app.AccountKeeper,
 		app.BankKeeper,
 		scopedIBCTransferKeeper,
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 
 	// Create interchain account keepers
@@ -351,6 +349,7 @@ func NewDesmosApp(
 		app.AccountKeeper,
 		scopedICAHostKeeper,
 		app.MsgServiceRouter(),
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 	app.ICAControllerKeeper = icacontrollerkeeper.NewKeeper(
 		app.appCodec,
@@ -361,6 +360,7 @@ func NewDesmosApp(
 		&app.IBCKeeper.PortKeeper,
 		scopedICAControllerKeeper,
 		app.MsgServiceRouter(),
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 
 	// Setup profiles IBC keepers manually
@@ -398,7 +398,7 @@ func NewDesmosApp(
 	availableCapabilities := strings.Join(AllWasmCapabilities(), ",")
 	app.WasmKeeper = wasmkeeper.NewKeeper(
 		app.appCodec,
-		app.GetKey(wasmtypes.StoreKey),
+		runtime.NewKVStoreService(app.GetKey(wasmtypes.StoreKey)),
 		app.AccountKeeper,
 		app.BankKeeper,
 		app.StakingKeeper,
@@ -496,7 +496,7 @@ func NewDesmosApp(
 				SigGasConsumer:  ante.DefaultSigVerificationGasConsumer,
 			},
 			IBCkeeper:         app.IBCKeeper,
-			TxCounterStoreKey: app.GetKey(wasmtypes.StoreKey),
+			TxCounterStoreKey: runtime.NewKVStoreService(app.GetKey(wasmtypes.StoreKey)),
 			WasmConfig:        &wasmConfig,
 			SubspacesKeeper:   *app.SubspacesKeeper,
 		},
@@ -548,7 +548,7 @@ func NewDesmosApp(
 	// For instance, the upgrade module will set automatically the module version map in its init genesis thanks to app wiring.
 	// However, when registering a module manually (i.e. that does not support app wiring), the module version map
 	// must be set manually as follow. The upgrade module will de-duplicate the module version map.
-	app.SetInitChainer(func(ctx sdk.Context, req abci.RequestInitChain) abci.ResponseInitChain {
+	app.SetInitChainer(func(ctx sdk.Context, req *abci.RequestInitChain) (*abci.ResponseInitChain, error) {
 		app.UpgradeKeeper.SetModuleVersionMap(ctx, app.ModuleManager.GetVersionMap())
 		return app.App.InitChainer(ctx, req)
 	})
