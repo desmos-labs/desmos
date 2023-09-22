@@ -7,8 +7,8 @@ import (
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-	clientkeeper "github.com/cosmos/ibc-go/v7/modules/core/02-client/keeper"
-	"github.com/cosmos/ibc-go/v7/modules/core/exported"
+	clientkeeper "github.com/cosmos/ibc-go/v8/modules/core/02-client/keeper"
+	"github.com/cosmos/ibc-go/v8/modules/core/exported"
 
 	"github.com/desmos-labs/desmos/v6/app/upgrades"
 	tokenfactorytypes "github.com/desmos-labs/desmos/v6/x/tokenfactory/types"
