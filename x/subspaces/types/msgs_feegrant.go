@@ -4,11 +4,11 @@ import (
 	"fmt"
 
 	"cosmossdk.io/errors"
+	feegranttypes "cosmossdk.io/x/feegrant"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/auth/migrations/legacytx"
-	feegranttypes "github.com/cosmos/cosmos-sdk/x/feegrant"
 	"github.com/gogo/protobuf/proto"
 )
 

@@ -7,8 +7,8 @@ import (
 
 	"github.com/desmos-labs/desmos/v6/x/subspaces/simulation"
 
+	"cosmossdk.io/x/feegrant"
 	"github.com/cosmos/cosmos-sdk/types/kv"
-	"github.com/cosmos/cosmos-sdk/x/feegrant"
 	"github.com/stretchr/testify/require"
 
 	"github.com/desmos-labs/desmos/v6/app"

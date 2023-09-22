@@ -3,8 +3,8 @@ package keeper_test
 import (
 	"time"
 
+	"cosmossdk.io/x/feegrant"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/feegrant"
 
 	"github.com/desmos-labs/desmos/v6/x/subspaces/types"
 )

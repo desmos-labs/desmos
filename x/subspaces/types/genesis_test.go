@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
+	"cosmossdk.io/x/feegrant"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
-	"github.com/cosmos/cosmos-sdk/x/feegrant"
 
 	"github.com/desmos-labs/desmos/v6/x/subspaces/types"
 

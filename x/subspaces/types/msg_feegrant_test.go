@@ -3,9 +3,9 @@ package types_test
 import (
 	"testing"
 
+	"cosmossdk.io/x/feegrant"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/feegrant"
 	"github.com/stretchr/testify/require"
 
 	"github.com/desmos-labs/desmos/v6/x/subspaces/types"

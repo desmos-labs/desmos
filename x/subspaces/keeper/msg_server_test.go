@@ -3,10 +3,10 @@ package keeper_test
 import (
 	"time"
 
+	"cosmossdk.io/x/feegrant"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	"github.com/cosmos/cosmos-sdk/x/feegrant"
 
 	"github.com/desmos-labs/desmos/v6/x/subspaces/keeper"
 	"github.com/desmos-labs/desmos/v6/x/subspaces/types"

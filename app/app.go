@@ -47,8 +47,8 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
 
+	feegrantkeeper "cosmossdk.io/x/feegrant/keeper"
 	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
-	feegrantkeeper "github.com/cosmos/cosmos-sdk/x/feegrant/keeper"
 	mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
 
 	ibcfee "github.com/cosmos/ibc-go/v8/modules/apps/29-fee"

@@ -7,8 +7,8 @@ import (
 	"math/rand"
 	"time"
 
+	"cosmossdk.io/x/feegrant"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/cosmos/cosmos-sdk/x/feegrant"
 
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 

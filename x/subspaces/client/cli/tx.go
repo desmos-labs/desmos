@@ -5,10 +5,10 @@ import (
 	"strings"
 	"time"
 
+	"cosmossdk.io/x/feegrant"
+	feegrantcli "cosmossdk.io/x/feegrant/client/cli"
 	"github.com/cosmos/cosmos-sdk/x/authz"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	"github.com/cosmos/cosmos-sdk/x/feegrant"
-	feegrantcli "github.com/cosmos/cosmos-sdk/x/feegrant/client/cli"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/spf13/pflag"
 
