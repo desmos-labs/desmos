@@ -48,7 +48,7 @@ var (
 	_ module.AppModuleBasic      = AppModuleBasic{}
 	_ module.AppModuleSimulation = AppModule{}
 	_ appmodule.AppModule        = AppModule{}
-	_ depinject.OnePerModuleType = AppModule{}
+	_ appmodule.HasBeginBlocker  = AppModule{}
 )
 
 // AppModuleBasic defines the basic application module used by the profiles module.
@@ -203,14 +203,10 @@ func (AppModule) ConsensusVersion() uint64 {
 }
 
 // BeginBlock returns the begin blocker for the profiles module.
-func (am AppModule) BeginBlock(ctx sdk.Context, _ abci.RequestBeginBlock) {
-	BeginBlocker(ctx, am.keeper)
-}
-
-// EndBlock returns the end blocker for the profiles module. It returns no validator
-// updates.
-func (am AppModule) EndBlock(_ sdk.Context, _ abci.RequestEndBlock) []abci.ValidatorUpdate {
-	return []abci.ValidatorUpdate{}
+func (am AppModule) BeginBlock(ctx context.Context) error {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	BeginBlocker(sdkCtx, am.keeper)
+	return nil
 }
 
 // --------------------------------------------------------------------------------------------------------------------

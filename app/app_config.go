@@ -227,23 +227,11 @@ var (
 		authtypes.ModuleName,
 
 		// IBC modules
-		capabilitytypes.ModuleName,
 		ibcexported.ModuleName,
-		ibctransfertypes.ModuleName,
-		ibcfeetypes.ModuleName,
-		icatypes.ModuleName,
 
 		// Custom modules
 		subspacestypes.ModuleName,
-		relationshipstypes.ModuleName,
 		profilestypes.ModuleName,
-		poststypes.ModuleName,
-		reportstypes.ModuleName,
-		reactionstypes.ModuleName,
-		supplytypes.ModuleName,
-		tokenfactorytypes.ModuleName,
-
-		wasmtypes.ModuleName,
 	}
 
 	endBlockerOrder = []string{
@@ -252,25 +240,6 @@ var (
 		govtypes.ModuleName,
 		stakingtypes.ModuleName,
 		feegrant.ModuleName,
-
-		// IBC modules
-		capabilitytypes.ModuleName,
-		ibcexported.ModuleName,
-		ibctransfertypes.ModuleName,
-		ibcfeetypes.ModuleName,
-		icatypes.ModuleName,
-
-		// Custom modules
-		subspacestypes.ModuleName,
-		relationshipstypes.ModuleName,
-		profilestypes.ModuleName,
-		poststypes.ModuleName,
-		reportstypes.ModuleName,
-		reactionstypes.ModuleName,
-		supplytypes.ModuleName,
-		tokenfactorytypes.ModuleName,
-
-		wasmtypes.ModuleName,
 	}
 
 	// NOTE: The genutils module must occur after staking so that pools are
