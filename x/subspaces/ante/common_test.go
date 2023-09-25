@@ -3,6 +3,7 @@ package ante_test
 import (
 	"testing"
 
+	"cosmossdk.io/math"
 	"github.com/golang/mock/gomock"
 
 	"github.com/desmos-labs/desmos/v6/app"
@@ -44,7 +45,7 @@ func (suite *AnteTestSuite) SetupTest() {
 
 	suite.ctx = sdktestutil.
 		DefaultContext(sdk.NewKVStoreKey("kv_test"), sdk.NewTransientStoreKey("transient_test")).
-		WithMinGasPrices(sdk.NewDecCoins(sdk.NewDecCoin("stake", sdk.NewInt(1)))).
+		WithMinGasPrices(sdk.NewDecCoins(sdk.NewDecCoin("stake", math.NewInt(1)))).
 		WithIsCheckTx(true)
 
 	suite.bk = testutil.NewMockBankKeeper(suite.ctrl)

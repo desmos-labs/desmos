@@ -2,6 +2,7 @@ package types
 
 import (
 	"cosmossdk.io/errors"
+	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/auth/migrations/legacytx"
@@ -85,7 +86,7 @@ func (msg MsgMint) ValidateBasic() error {
 		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid sender address: %s", err)
 	}
 
-	if !msg.Amount.IsValid() || msg.Amount.Amount.Equal(sdk.ZeroInt()) {
+	if !msg.Amount.IsValid() || msg.Amount.Amount.Equal(math.ZeroInt()) {
 		return errors.Wrap(sdkerrors.ErrInvalidCoins, msg.Amount.String())
 	}
 
@@ -136,7 +137,7 @@ func (msg MsgBurn) ValidateBasic() error {
 		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid sender address: %s", err)
 	}
 
-	if !msg.Amount.IsValid() || msg.Amount.Amount.Equal(sdk.ZeroInt()) {
+	if !msg.Amount.IsValid() || msg.Amount.Amount.Equal(math.ZeroInt()) {
 		return errors.Wrap(sdkerrors.ErrInvalidCoins, msg.Amount.String())
 	}
 

@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"time"
 
+	"cosmossdk.io/math"
 	poststypes "github.com/desmos-labs/desmos/v6/x/posts/types"
 
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -129,7 +130,7 @@ func GenerateRandomFeeTokens(r *rand.Rand) sdk.Coins {
 	coins := make(sdk.Coins, r.Intn(10))
 
 	for i := range coins {
-		coins[i] = sdk.NewCoin(simtypes.RandStringOfLength(r, 10), sdk.NewInt(r.Int63n(1000000)))
+		coins[i] = sdk.NewCoin(simtypes.RandStringOfLength(r, 10), math.NewInt(r.Int63n(1000000)))
 	}
 
 	return coins.Sort()

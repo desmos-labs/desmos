@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"cosmossdk.io/log"
+	"cosmossdk.io/math"
 	"cosmossdk.io/store"
 	storetypes "cosmossdk.io/store/types"
 	"cosmossdk.io/x/feegrant"
@@ -60,7 +61,7 @@ func TestBeginBlocker(t *testing.T) {
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewGroupGrantee(1),
 					&feegrant.BasicAllowance{
-						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(1))),
+						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(1))),
 						Expiration: &expiration,
 					},
 				))
@@ -87,7 +88,7 @@ func TestBeginBlocker(t *testing.T) {
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewGroupGrantee(1),
 					&feegrant.BasicAllowance{
-						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(1))),
+						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(1))),
 						Expiration: &expiration,
 					},
 				))

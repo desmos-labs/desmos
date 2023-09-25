@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"time"
 
+	"cosmossdk.io/math"
 	"cosmossdk.io/x/feegrant"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
@@ -263,7 +264,7 @@ func (suite *TestSuite) TestSubspacesWasmQuerier_QueryCustom() {
 					1,
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					types.NewUserGrantee("cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e"),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10)))},
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("stake", math.NewInt(10)))},
 				))
 			},
 			shouldErr: false,
@@ -274,7 +275,7 @@ func (suite *TestSuite) TestSubspacesWasmQuerier_QueryCustom() {
 							1,
 							"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 							types.NewUserGrantee("cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e"),
-							&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10)))},
+							&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("stake", math.NewInt(10)))},
 						),
 					},
 					Pagination: &query.PageResponse{NextKey: nil, Total: 1},
@@ -303,7 +304,7 @@ func (suite *TestSuite) TestSubspacesWasmQuerier_QueryCustom() {
 					1,
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					types.NewGroupGrantee(1),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10)))},
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("stake", math.NewInt(10)))},
 				))
 			},
 			shouldErr: false,
@@ -314,7 +315,7 @@ func (suite *TestSuite) TestSubspacesWasmQuerier_QueryCustom() {
 							1,
 							"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 							types.NewGroupGrantee(1),
-							&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10)))},
+							&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("stake", math.NewInt(10)))},
 						),
 					},
 					Pagination: &query.PageResponse{NextKey: nil, Total: 1},

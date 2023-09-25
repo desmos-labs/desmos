@@ -1,6 +1,7 @@
 package keeper_test
 
 import (
+	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/v6/x/tokenfactory/types"
@@ -26,10 +27,10 @@ func (suite *KeeperTestSuite) TestKeeper_SetParams() {
 			store: func(ctx sdk.Context) {
 				suite.k.SetParams(ctx, types.DefaultParams())
 			},
-			params: types.NewParams(sdk.NewCoins(sdk.NewCoin("udsm", sdk.NewInt(100)))),
+			params: types.NewParams(sdk.NewCoins(sdk.NewCoin("udsm", math.NewInt(100)))),
 			check: func(ctx sdk.Context) {
 				stored := suite.k.GetParams(ctx)
-				suite.Require().Equal(types.NewParams(sdk.NewCoins(sdk.NewCoin("udsm", sdk.NewInt(100)))), stored)
+				suite.Require().Equal(types.NewParams(sdk.NewCoins(sdk.NewCoin("udsm", math.NewInt(100)))), stored)
 			},
 		},
 	}
@@ -59,9 +60,9 @@ func (suite *KeeperTestSuite) TestKeeper_GetParams() {
 		{
 			name: "params are returned properly",
 			store: func(ctx sdk.Context) {
-				suite.k.SetParams(ctx, types.NewParams(sdk.NewCoins(sdk.NewCoin("udsm", sdk.NewInt(100)))))
+				suite.k.SetParams(ctx, types.NewParams(sdk.NewCoins(sdk.NewCoin("udsm", math.NewInt(100)))))
 			},
-			expParams: types.NewParams(sdk.NewCoins(sdk.NewCoin("udsm", sdk.NewInt(100)))),
+			expParams: types.NewParams(sdk.NewCoins(sdk.NewCoin("udsm", math.NewInt(100)))),
 		},
 	}
 

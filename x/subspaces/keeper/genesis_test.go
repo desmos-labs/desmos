@@ -3,6 +3,7 @@ package keeper_test
 import (
 	"time"
 
+	"cosmossdk.io/math"
 	"cosmossdk.io/x/feegrant"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -320,7 +321,7 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
 					&feegrant.BasicAllowance{
-						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100))),
+						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100))),
 						Expiration: &expiration,
 					},
 				))
@@ -330,7 +331,7 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					types.NewUserGrantee("cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69"),
 					&feegrant.BasicAllowance{
-						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100))),
+						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100))),
 						Expiration: &expiration,
 					},
 				))
@@ -366,7 +367,7 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
 						&feegrant.BasicAllowance{
-							SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100))),
+							SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100))),
 							Expiration: &expiration,
 						},
 					),
@@ -375,7 +376,7 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						types.NewUserGrantee("cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69"),
 						&feegrant.BasicAllowance{
-							SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100))),
+							SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100))),
 							Expiration: &expiration,
 						},
 					),
@@ -414,7 +415,7 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					types.NewGroupGrantee(1),
 					&feegrant.BasicAllowance{
-						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100))),
+						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100))),
 						Expiration: &expiration,
 					},
 				))
@@ -423,7 +424,7 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					types.NewGroupGrantee(2),
 					&feegrant.BasicAllowance{
-						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100))),
+						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100))),
 						Expiration: &expiration,
 					},
 				))
@@ -470,7 +471,7 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						types.NewGroupGrantee(1),
 						&feegrant.BasicAllowance{
-							SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100))),
+							SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100))),
 							Expiration: &expiration,
 						},
 					),
@@ -479,7 +480,7 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						types.NewGroupGrantee(2),
 						&feegrant.BasicAllowance{
-							SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100))),
+							SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100))),
 							Expiration: &expiration,
 						},
 					),
@@ -658,7 +659,7 @@ func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 						types.NewUserGrantee("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 						&feegrant.BasicAllowance{
-							SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100))),
+							SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100))),
 							Expiration: &expiration,
 						},
 					),
@@ -672,7 +673,7 @@ func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					types.NewUserGrantee("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 					&feegrant.BasicAllowance{
-						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100))),
+						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100))),
 						Expiration: &expiration,
 					},
 				), stored)
@@ -694,7 +695,7 @@ func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 						"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 						types.NewGroupGrantee(1),
 						&feegrant.BasicAllowance{
-							SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100))),
+							SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100))),
 							Expiration: &expiration,
 						},
 					),
@@ -708,7 +709,7 @@ func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewGroupGrantee(1),
 					&feegrant.BasicAllowance{
-						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100))),
+						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100))),
 						Expiration: &expiration,
 					},
 				), stored)

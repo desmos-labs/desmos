@@ -3,6 +3,7 @@ package types_test
 import (
 	"testing"
 
+	"cosmossdk.io/math"
 	"github.com/desmos-labs/desmos/v6/x/subspaces/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -1277,7 +1278,7 @@ func TestMsgSetUserPermissions_GetSigners(t *testing.T) {
 
 var msgUpdateSubspaceFeeTokens = types.NewMsgUpdateSubspaceFeeTokens(
 	1,
-	sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(10))),
+	sdk.NewCoins(sdk.NewCoin("minttoken", math.NewInt(10))),
 	"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 )
 
@@ -1299,7 +1300,7 @@ func TestMsgUpdateSubspaceFeeTokens_ValidateBasic(t *testing.T) {
 			name: "invalid subspace id returns error",
 			msg: types.NewMsgUpdateSubspaceFeeTokens(
 				0,
-				sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(10))),
+				sdk.NewCoins(sdk.NewCoin("minttoken", math.NewInt(10))),
 				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 			),
 			shouldErr: true,
@@ -1308,7 +1309,7 @@ func TestMsgUpdateSubspaceFeeTokens_ValidateBasic(t *testing.T) {
 			name: "invalid additional fee tokens returns error",
 			msg: types.NewMsgUpdateSubspaceFeeTokens(
 				1,
-				sdk.Coins{{Denom: "minttoken", Amount: sdk.NewInt(-10)}},
+				sdk.Coins{{Denom: "minttoken", Amount: math.NewInt(-10)}},
 				"cosmos1m0czrla04f7rp3zg7d",
 			),
 			shouldErr: true,
@@ -1317,7 +1318,7 @@ func TestMsgUpdateSubspaceFeeTokens_ValidateBasic(t *testing.T) {
 			name: "invalid authority returns error",
 			msg: types.NewMsgUpdateSubspaceFeeTokens(
 				1,
-				sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(10))),
+				sdk.NewCoins(sdk.NewCoin("minttoken", math.NewInt(10))),
 				"cosmos1m0czrla04f7rp3zg7d",
 			),
 			shouldErr: true,

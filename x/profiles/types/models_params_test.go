@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	sdkmath "cosmossdk.io/math"
+	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
@@ -20,7 +20,7 @@ func TestValidateParams(t *testing.T) {
 		{
 			name: "invalid nickname param returns error",
 			params: types.NewParams(
-				types.NewNicknameParams(sdk.NewInt(1), sdk.NewInt(1000)),
+				types.NewNicknameParams(math.NewInt(1), math.NewInt(1000)),
 				types.DefaultDTagParams(),
 				types.DefaultBioParams(),
 				types.DefaultOracleParams(),
@@ -32,7 +32,7 @@ func TestValidateParams(t *testing.T) {
 			name: "invalid DTag param returns error",
 			params: types.NewParams(
 				types.DefaultNicknameParams(),
-				types.NewDTagParams("regEx", sdk.NewInt(3), sdk.NewInt(-30)),
+				types.NewDTagParams("regEx", math.NewInt(3), math.NewInt(-30)),
 				types.DefaultBioParams(),
 				types.DefaultOracleParams(),
 				types.DefaultAppLinksParams(),
@@ -44,7 +44,7 @@ func TestValidateParams(t *testing.T) {
 			params: types.NewParams(
 				types.DefaultNicknameParams(),
 				types.DefaultDTagParams(),
-				types.NewBioParams(sdk.NewInt(-1000)),
+				types.NewBioParams(math.NewInt(-1000)),
 				types.DefaultOracleParams(),
 				types.DefaultAppLinksParams(),
 			),
@@ -113,27 +113,27 @@ func TestValidateNicknameParams(t *testing.T) {
 	}{
 		{
 			name:      "invalid max returns error - nil min",
-			params:    types.NicknameParams{MinLength: sdkmath.Int{}, MaxLength: sdk.NewInt(10)},
+			params:    types.NicknameParams{MinLength: sdkmath.Int{}, MaxLength: math.NewInt(10)},
 			shouldErr: true,
 		},
 		{
 			name:      "invalid min returns error",
-			params:    types.NewNicknameParams(sdk.NewInt(1), sdk.NewInt(1000)),
+			params:    types.NewNicknameParams(math.NewInt(1), math.NewInt(1000)),
 			shouldErr: true,
 		},
 		{
 			name:      "invalid max returns error - nil max",
-			params:    types.NicknameParams{MinLength: sdk.NewInt(2), MaxLength: sdkmath.Int{}},
+			params:    types.NicknameParams{MinLength: math.NewInt(2), MaxLength: sdkmath.Int{}},
 			shouldErr: true,
 		},
 		{
 			name:      "invalid max returns error - lower than min",
-			params:    types.NewNicknameParams(sdk.NewInt(2), sdk.NewInt(-10)),
+			params:    types.NewNicknameParams(math.NewInt(2), math.NewInt(-10)),
 			shouldErr: true,
 		},
 		{
 			name:      "valid values return no error",
-			params:    types.NewNicknameParams(sdk.NewInt(2), sdk.NewInt(10)),
+			params:    types.NewNicknameParams(math.NewInt(2), math.NewInt(10)),
 			shouldErr: false,
 		},
 	}
@@ -160,22 +160,22 @@ func TestValidateDTagParams(t *testing.T) {
 	}{
 		{
 			name:      "empty regex returns error",
-			params:    types.NewDTagParams("", sdk.NewInt(3), sdk.NewInt(30)),
+			params:    types.NewDTagParams("", math.NewInt(3), math.NewInt(30)),
 			shouldErr: true,
 		},
 		{
 			name:      "invalid min returns error",
-			params:    types.NewDTagParams("regExParam", sdk.NewInt(1), sdk.NewInt(30)),
+			params:    types.NewDTagParams("regExParam", math.NewInt(1), math.NewInt(30)),
 			shouldErr: true,
 		},
 		{
 			name:      "invalid max returns error - lower than min",
-			params:    types.NewDTagParams("regExParam", sdk.NewInt(3), sdk.NewInt(-30)),
+			params:    types.NewDTagParams("regExParam", math.NewInt(3), math.NewInt(-30)),
 			shouldErr: true,
 		},
 		{
 			name:      "valid params return no error",
-			params:    types.NewDTagParams("regExParam", sdk.NewInt(3), sdk.NewInt(30)),
+			params:    types.NewDTagParams("regExParam", math.NewInt(3), math.NewInt(30)),
 			shouldErr: false,
 		},
 	}
@@ -202,12 +202,12 @@ func TestValidateBioParams(t *testing.T) {
 	}{
 		{
 			name:      "invalid value returns error",
-			params:    types.NewBioParams(sdk.NewInt(-1000)),
+			params:    types.NewBioParams(math.NewInt(-1000)),
 			shouldErr: true,
 		},
 		{
 			name:      "valid value returns no error",
-			params:    types.NewBioParams(sdk.NewInt(1000)),
+			params:    types.NewBioParams(math.NewInt(1000)),
 			shouldErr: false,
 		},
 	}
@@ -240,7 +240,7 @@ func TestValidateOracleParams(t *testing.T) {
 				6,
 				50_000,
 				200_000,
-				sdk.NewCoin("band", sdk.NewInt(10)),
+				sdk.NewCoin("band", math.NewInt(10)),
 			),
 			shouldErr: true,
 		},
@@ -252,7 +252,7 @@ func TestValidateOracleParams(t *testing.T) {
 				0,
 				50_000,
 				200_000,
-				sdk.NewCoin("band", sdk.NewInt(10)),
+				sdk.NewCoin("band", math.NewInt(10)),
 			),
 			shouldErr: true,
 		},
@@ -264,7 +264,7 @@ func TestValidateOracleParams(t *testing.T) {
 				6,
 				0,
 				200_000,
-				sdk.NewCoin("band", sdk.NewInt(10)),
+				sdk.NewCoin("band", math.NewInt(10)),
 			),
 			shouldErr: true,
 		},
@@ -276,7 +276,7 @@ func TestValidateOracleParams(t *testing.T) {
 				6,
 				50_000,
 				0,
-				sdk.NewCoin("band", sdk.NewInt(10)),
+				sdk.NewCoin("band", math.NewInt(10)),
 			),
 			shouldErr: true,
 		},
@@ -288,7 +288,7 @@ func TestValidateOracleParams(t *testing.T) {
 				6,
 				50_000,
 				200_000,
-				sdk.NewCoin("bank", sdk.NewInt(0)),
+				sdk.NewCoin("bank", math.NewInt(0)),
 			),
 			shouldErr: true,
 		},
@@ -300,7 +300,7 @@ func TestValidateOracleParams(t *testing.T) {
 				6,
 				50_000,
 				200_000,
-				sdk.NewCoin("band", sdk.NewInt(10)),
+				sdk.NewCoin("band", math.NewInt(10)),
 			),
 			shouldErr: false,
 		},
