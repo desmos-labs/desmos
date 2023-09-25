@@ -18,25 +18,25 @@ func (suite *KeeperTestSuite) TestQueryServer_Total() {
 			name: "valid query returns properly",
 			store: func(ctx sdk.Context) {
 				suite.setupSupply(ctx,
-					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(1_000_000_000_000))),
-					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(200_000))),
-					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(300_000))),
+					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, math.NewInt(1_000_000_000_000))),
+					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, math.NewInt(200_000))),
+					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, math.NewInt(300_000))),
 				)
 			},
 			req:       types.NewQueryTotalRequest(sdk.DefaultBondDenom, 6),
-			expSupply: sdk.NewInt(1_000_000),
+			expSupply: math.NewInt(1_000_000),
 		},
 		{
 			name: "valid query returns properly - divider equals to 0",
 			store: func(ctx sdk.Context) {
 				suite.setupSupply(ctx,
-					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(1_000_000_000_000))),
-					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(200_000))),
-					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(300_000))),
+					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, math.NewInt(1_000_000_000_000))),
+					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, math.NewInt(200_000))),
+					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, math.NewInt(300_000))),
 				)
 			},
 			req:       types.NewQueryTotalRequest(sdk.DefaultBondDenom, 0),
-			expSupply: sdk.NewInt(1_000_000_000_000),
+			expSupply: math.NewInt(1_000_000_000_000),
 		},
 	}
 
@@ -66,25 +66,25 @@ func (suite *KeeperTestSuite) TestQueryServer_Circulating() {
 			name: "valid query returns properly",
 			store: func(ctx sdk.Context) {
 				suite.setupSupply(ctx,
-					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(1_000_000))),
-					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(200_000))),
-					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(300_000))),
+					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, math.NewInt(1_000_000))),
+					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, math.NewInt(200_000))),
+					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, math.NewInt(300_000))),
 				)
 			},
 			req:       types.NewQueryCirculatingRequest(sdk.DefaultBondDenom, 3),
-			expSupply: sdk.NewInt(500),
+			expSupply: math.NewInt(500),
 		},
 		{
 			name: "valid query returns properly - divider equals to 0",
 			store: func(ctx sdk.Context) {
 				suite.setupSupply(ctx,
-					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(1_000_000))),
-					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(200_000))),
-					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(300_000))),
+					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, math.NewInt(1_000_000))),
+					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, math.NewInt(200_000))),
+					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, math.NewInt(300_000))),
 				)
 			},
 			req:       types.NewQueryCirculatingRequest(sdk.DefaultBondDenom, 0),
-			expSupply: sdk.NewInt(500_000),
+			expSupply: math.NewInt(500_000),
 		},
 	}
 

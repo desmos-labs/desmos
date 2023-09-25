@@ -3,6 +3,7 @@ package keeper_test
 import (
 	"time"
 
+	"cosmossdk.io/math"
 	"cosmossdk.io/x/feegrant"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -3142,7 +3143,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UpdateSubspaceFeeTokens() {
 			name: "invalid authority return error",
 			msg: types.NewMsgUpdateSubspaceFeeTokens(
 				1,
-				sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(10))),
+				sdk.NewCoins(sdk.NewCoin("minttoken", math.NewInt(10))),
 				"invalid",
 			),
 			shouldErr: true,
@@ -3151,7 +3152,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UpdateSubspaceFeeTokens() {
 			name: "subspace not found returns error",
 			msg: types.NewMsgUpdateSubspaceFeeTokens(
 				1,
-				sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(10))),
+				sdk.NewCoins(sdk.NewCoin("minttoken", math.NewInt(10))),
 				authtypes.NewModuleAddress("gov").String(),
 			),
 			shouldErr: true,
@@ -3172,7 +3173,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UpdateSubspaceFeeTokens() {
 			},
 			msg: types.NewMsgUpdateSubspaceFeeTokens(
 				1,
-				sdk.Coins{{Denom: "minttoken", Amount: sdk.NewInt(-10)}},
+				sdk.Coins{{Denom: "minttoken", Amount: math.NewInt(-10)}},
 				authtypes.NewModuleAddress("gov").String(),
 			),
 			shouldErr: true,
@@ -3193,7 +3194,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UpdateSubspaceFeeTokens() {
 			},
 			msg: types.NewMsgUpdateSubspaceFeeTokens(
 				1,
-				sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(10))),
+				sdk.NewCoins(sdk.NewCoin("minttoken", math.NewInt(10))),
 				authtypes.NewModuleAddress("gov").String(),
 			),
 			shouldErr: true,
@@ -3214,7 +3215,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UpdateSubspaceFeeTokens() {
 			},
 			msg: types.NewMsgUpdateSubspaceFeeTokens(
 				1,
-				sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(10))),
+				sdk.NewCoins(sdk.NewCoin("minttoken", math.NewInt(10))),
 				authtypes.NewModuleAddress("gov").String(),
 			),
 			shouldErr: false,
@@ -3241,7 +3242,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UpdateSubspaceFeeTokens() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(10))),
+					sdk.NewCoins(sdk.NewCoin("minttoken", math.NewInt(10))),
 				)
 
 				suite.Require().Equal(expected, subspace)
@@ -3715,7 +3716,7 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantAllowance() {
 				1,
 				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 				types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
-				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))},
 			),
 			shouldErr: true,
 		},
@@ -3737,7 +3738,7 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantAllowance() {
 				1,
 				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 				types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
-				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))},
 			),
 			shouldErr: true,
 		},
@@ -3766,14 +3767,14 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantAllowance() {
 					1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))},
 				))
 			},
 			msg: types.NewMsgGrantAllowance(
 				1,
 				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 				types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
-				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))},
 			),
 			shouldErr: true,
 		},
@@ -3802,7 +3803,7 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantAllowance() {
 				1,
 				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 				types.NewGroupGrantee(1),
-				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))},
 			),
 			shouldErr: true,
 		},
@@ -3840,14 +3841,14 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantAllowance() {
 					1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewGroupGrantee(1),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))},
 				))
 			},
 			msg: types.NewMsgGrantAllowance(
 				1,
 				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 				types.NewGroupGrantee(1),
-				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))},
 			),
 			shouldErr: true,
 		},
@@ -3876,7 +3877,7 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantAllowance() {
 				1,
 				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 				types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
-				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))},
 			),
 			shouldErr: false,
 			expEvents: sdk.Events{
@@ -3900,7 +3901,7 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantAllowance() {
 					1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))},
 				), grant)
 			},
 		},
@@ -3938,7 +3939,7 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantAllowance() {
 				1,
 				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 				types.NewGroupGrantee(1),
-				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))},
 			),
 			shouldErr: false,
 			expEvents: sdk.Events{
@@ -3961,7 +3962,7 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantAllowance() {
 				suite.Require().Equal(types.NewGrant(1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewGroupGrantee(1),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))},
 				), grant)
 			},
 		},
@@ -4104,7 +4105,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RevokeAllowance() {
 					1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))},
 				))
 			},
 			msg: types.NewMsgRevokeAllowance(
@@ -4155,7 +4156,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RevokeAllowance() {
 				suite.k.SaveGrant(ctx, types.NewGrant(1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewGroupGrantee(1),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))},
 				))
 			},
 			msg: types.NewMsgRevokeAllowance(

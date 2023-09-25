@@ -3,6 +3,7 @@ package types_test
 import (
 	"testing"
 
+	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/stretchr/testify/require"
@@ -91,7 +92,7 @@ func TestMsgCreateDenom_GetSigners(t *testing.T) {
 var msgMint = types.NewMsgMint(
 	1,
 	"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-	sdk.NewCoin("uminttoken", sdk.NewInt(100)),
+	sdk.NewCoin("uminttoken", math.NewInt(100)),
 )
 
 func TestMsgMint_Route(t *testing.T) {
@@ -131,7 +132,7 @@ func TestMsgMint_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgMint(
 				msgMint.SubspaceID,
 				msgMint.Sender,
-				sdk.Coin{Denom: "%invalid%", Amount: sdk.NewInt(100)},
+				sdk.Coin{Denom: "%invalid%", Amount: math.NewInt(100)},
 			),
 			shouldErr: true,
 		},
@@ -169,7 +170,7 @@ func TestMsgMint_GetSigners(t *testing.T) {
 var msgBurn = types.NewMsgBurn(
 	1,
 	"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-	sdk.NewCoin("uminttoken", sdk.NewInt(100)),
+	sdk.NewCoin("uminttoken", math.NewInt(100)),
 )
 
 func TestMsgBurn_Route(t *testing.T) {
@@ -209,7 +210,7 @@ func TestMsgBurn_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgBurn(
 				msgBurn.SubspaceID,
 				msgBurn.Sender,
-				sdk.Coin{Denom: "%invalid%", Amount: sdk.NewInt(100)},
+				sdk.Coin{Denom: "%invalid%", Amount: math.NewInt(100)},
 			),
 			shouldErr: true,
 		},

@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"time"
 
+	"cosmossdk.io/math"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
@@ -46,14 +47,14 @@ var (
 	}
 
 	feeCoins = sdk.NewCoins(
-		sdk.NewCoin("band", sdk.NewInt(10)),
-		sdk.NewCoin("atom", sdk.NewInt(10)),
-		sdk.NewCoin("desmos", sdk.NewInt(10)),
-		sdk.NewCoin("akt", sdk.NewInt(10)),
-		sdk.NewCoin("dvpn", sdk.NewInt(10)),
-		sdk.NewCoin("daric", sdk.NewInt(10)),
-		sdk.NewCoin("osmo", sdk.NewInt(10)),
-		sdk.NewCoin("regen", sdk.NewInt(10)),
+		sdk.NewCoin("band", math.NewInt(10)),
+		sdk.NewCoin("atom", math.NewInt(10)),
+		sdk.NewCoin("desmos", math.NewInt(10)),
+		sdk.NewCoin("akt", math.NewInt(10)),
+		sdk.NewCoin("dvpn", math.NewInt(10)),
+		sdk.NewCoin("daric", math.NewInt(10)),
+		sdk.NewCoin("osmo", math.NewInt(10)),
+		sdk.NewCoin("regen", math.NewInt(10)),
 	)
 )
 
@@ -149,21 +150,21 @@ func GetSimAccount(address sdk.Address, accs []simtypes.Account) *simtypes.Accou
 
 // RandomNicknameParams return a random set of nickname params
 func RandomNicknameParams(r *rand.Rand) types.NicknameParams {
-	randomMin := sdk.NewInt(int64(simtypes.RandIntBetween(r, 2, 3)))
-	randomMax := sdk.NewInt(int64(simtypes.RandIntBetween(r, 30, 1000)))
+	randomMin := math.NewInt(int64(simtypes.RandIntBetween(r, 2, 3)))
+	randomMax := math.NewInt(int64(simtypes.RandIntBetween(r, 30, 1000)))
 	return types.NewNicknameParams(randomMin, randomMax)
 }
 
 // RandomDTagParams return a random set of nickname params
 func RandomDTagParams(r *rand.Rand) types.DTagParams {
-	randomMin := sdk.NewInt(int64(simtypes.RandIntBetween(r, 3, 4)))
-	randomMax := sdk.NewInt(int64(simtypes.RandIntBetween(r, 30, 50)))
+	randomMin := math.NewInt(int64(simtypes.RandIntBetween(r, 3, 4)))
+	randomMax := math.NewInt(int64(simtypes.RandIntBetween(r, 30, 50)))
 	return types.NewDTagParams("^[A-Za-z0-9_]+$", randomMin, randomMax)
 }
 
 // RandomBioParams return a random biography param
 func RandomBioParams(r *rand.Rand) types.BioParams {
-	randomMax := sdk.NewInt(int64(simtypes.RandIntBetween(r, 500, 1000)))
+	randomMax := math.NewInt(int64(simtypes.RandIntBetween(r, 500, 1000)))
 	return types.NewBioParams(randomMax)
 }
 

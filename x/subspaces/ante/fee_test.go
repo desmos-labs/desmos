@@ -3,6 +3,7 @@ package ante_test
 import (
 	"fmt"
 
+	"cosmossdk.io/math"
 	"github.com/cosmos/cosmos-sdk/testutil/testdata"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -13,7 +14,7 @@ import (
 )
 
 func (suite *AnteTestSuite) TestAnte_Ante() {
-	feeAmount := sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(100)))
+	feeAmount := sdk.NewCoins(sdk.NewCoin("stake", math.NewInt(100)))
 	signer := sdk.MustAccAddressFromBech32("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
 	granter := types.GetTreasuryAddress(1)
 	nonTreasuryGranter := sdk.MustAccAddressFromBech32("cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53")

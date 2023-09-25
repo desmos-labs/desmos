@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"cosmossdk.io/math"
 	"github.com/golang/mock/gomock"
 
 	"github.com/desmos-labs/desmos/v6/testutil/profilestesting"
@@ -60,16 +61,16 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 				}
 
 				params := types.NewParams(
-					types.NewNicknameParams(sdk.NewInt(100), sdk.NewInt(200)),
-					types.NewDTagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
-					types.NewBioParams(sdk.NewInt(1000)),
+					types.NewNicknameParams(math.NewInt(100), math.NewInt(200)),
+					types.NewDTagParams("regex", math.NewInt(100), math.NewInt(200)),
+					types.NewBioParams(math.NewInt(1000)),
 					types.NewOracleParams(
 						32,
 						10,
 						6,
 						50_000,
 						200_000,
-						sdk.NewCoin("band", sdk.NewInt(10)),
+						sdk.NewCoin("band", math.NewInt(10)),
 					),
 					types.NewAppLinksParams(types.DefaultAppLinksValidityDuration),
 				)
@@ -123,16 +124,16 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 					types.NewDTagTransferRequest("dtag-1", "sender-1", "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 				},
 				types.NewParams(
-					types.NewNicknameParams(sdk.NewInt(100), sdk.NewInt(200)),
-					types.NewDTagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
-					types.NewBioParams(sdk.NewInt(1000)),
+					types.NewNicknameParams(math.NewInt(100), math.NewInt(200)),
+					types.NewDTagParams("regex", math.NewInt(100), math.NewInt(200)),
+					types.NewBioParams(math.NewInt(1000)),
 					types.NewOracleParams(
 						32,
 						10,
 						6,
 						50_000,
 						200_000,
-						sdk.NewCoin("band", sdk.NewInt(10)),
+						sdk.NewCoin("band", math.NewInt(10)),
 					),
 					types.NewAppLinksParams(types.DefaultAppLinksValidityDuration),
 				),
@@ -312,16 +313,16 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 					types.NewDTagTransferRequest("dtag-2", "sender-2", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 				},
 				types.NewParams(
-					types.NewNicknameParams(sdk.NewInt(100), sdk.NewInt(200)),
-					types.NewDTagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
-					types.NewBioParams(sdk.NewInt(1000)),
+					types.NewNicknameParams(math.NewInt(100), math.NewInt(200)),
+					types.NewDTagParams("regex", math.NewInt(100), math.NewInt(200)),
+					types.NewBioParams(math.NewInt(1000)),
 					types.NewOracleParams(
 						32,
 						10,
 						6,
 						50_000,
 						200_000,
-						sdk.NewCoin("band", sdk.NewInt(10)),
+						sdk.NewCoin("band", math.NewInt(10)),
 					),
 					types.NewAppLinksParams(types.DefaultAppLinksValidityDuration),
 				),
@@ -369,16 +370,16 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 				suite.Require().Equal(requests, suite.k.GetDTagTransferRequests(ctx))
 
 				params := types.NewParams(
-					types.NewNicknameParams(sdk.NewInt(100), sdk.NewInt(200)),
-					types.NewDTagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
-					types.NewBioParams(sdk.NewInt(1000)),
+					types.NewNicknameParams(math.NewInt(100), math.NewInt(200)),
+					types.NewDTagParams("regex", math.NewInt(100), math.NewInt(200)),
+					types.NewBioParams(math.NewInt(1000)),
 					types.NewOracleParams(
 						32,
 						10,
 						6,
 						50_000,
 						200_000,
-						sdk.NewCoin("band", sdk.NewInt(10)),
+						sdk.NewCoin("band", math.NewInt(10)),
 					),
 					types.NewAppLinksParams(types.DefaultAppLinksValidityDuration),
 				)

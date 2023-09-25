@@ -20,12 +20,12 @@ const (
 
 // Default profile paramsModule
 var (
-	DefaultMinNicknameLength = sdk.NewInt(2)
-	DefaultMaxNicknameLength = sdk.NewInt(1000) // Longest name on earth count 954 chars
+	DefaultMinNicknameLength = math.NewInt(2)
+	DefaultMaxNicknameLength = math.NewInt(1000) // Longest name on earth count 954 chars
 	DefaultRegEx             = `^[A-Za-z0-9_]+$`
-	DefaultMinDTagLength     = sdk.NewInt(3)
-	DefaultMaxDTagLength     = sdk.NewInt(30)
-	DefaultMaxBioLength      = sdk.NewInt(1000)
+	DefaultMinDTagLength     = math.NewInt(3)
+	DefaultMaxDTagLength     = math.NewInt(30)
+	DefaultMaxBioLength      = math.NewInt(1000)
 )
 
 // Parameters store keys
@@ -231,7 +231,7 @@ func DefaultOracleParams() OracleParams {
 		1,
 		50_000,
 		200_000,
-		sdk.NewCoin("band", sdk.NewInt(10)),
+		sdk.NewCoin("band", math.NewInt(10)),
 	)
 }
 

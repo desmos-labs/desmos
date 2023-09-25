@@ -3,6 +3,7 @@ package keeper_test
 import (
 	"fmt"
 
+	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/golang/mock/gomock"
@@ -74,12 +75,12 @@ func (suite *KeeperTestSuite) TestKeeper_CreateDenom() {
 						gomock.Any(),
 						sdk.MustAccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 						types.ModuleName,
-						sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100))),
+						sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100))),
 					).
 					Return(fmt.Errorf("send coin to module error"))
 			},
 			store: func(ctx sdk.Context) {
-				suite.k.SetParams(ctx, types.NewParams(sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))))
+				suite.k.SetParams(ctx, types.NewParams(sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))))
 			},
 			subdenom:  "uminttoken",
 			creator:   "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -101,16 +102,16 @@ func (suite *KeeperTestSuite) TestKeeper_CreateDenom() {
 						gomock.Any(),
 						sdk.MustAccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 						types.ModuleName,
-						sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100))),
+						sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100))),
 					).
 					Return(nil)
 
 				suite.bk.EXPECT().
-					BurnCoins(gomock.Any(), types.ModuleName, sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))).
+					BurnCoins(gomock.Any(), types.ModuleName, sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))).
 					Return(fmt.Errorf("bank burn coins error"))
 			},
 			store: func(ctx sdk.Context) {
-				suite.k.SetParams(ctx, types.NewParams(sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))))
+				suite.k.SetParams(ctx, types.NewParams(sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))))
 			},
 			subdenom:  "uminttoken",
 			creator:   "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -132,12 +133,12 @@ func (suite *KeeperTestSuite) TestKeeper_CreateDenom() {
 						gomock.Any(),
 						sdk.MustAccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 						types.ModuleName,
-						sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100))),
+						sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100))),
 					).
 					Return(nil)
 
 				suite.bk.EXPECT().
-					BurnCoins(gomock.Any(), types.ModuleName, sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))).
+					BurnCoins(gomock.Any(), types.ModuleName, sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))).
 					Return(nil)
 
 				suite.bk.EXPECT().
@@ -150,7 +151,7 @@ func (suite *KeeperTestSuite) TestKeeper_CreateDenom() {
 					})
 			},
 			store: func(ctx sdk.Context) {
-				suite.k.SetParams(ctx, types.NewParams(sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))))
+				suite.k.SetParams(ctx, types.NewParams(sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))))
 			},
 			check: func(ctx sdk.Context) {
 				suite.Require().Equal(

@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	"cosmossdk.io/math"
 	"cosmossdk.io/store/prefix"
 	storetypes "cosmossdk.io/store/types"
 	"cosmossdk.io/x/feegrant"
@@ -53,7 +54,7 @@ func TestMigrateStore(t *testing.T) {
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
 					&feegrant.BasicAllowance{
-						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(1))),
+						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(1))),
 						Expiration: &expiration,
 					},
 				)
@@ -74,7 +75,7 @@ func TestMigrateStore(t *testing.T) {
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
 					&feegrant.BasicAllowance{
-						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(1))),
+						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(1))),
 					},
 				)
 				ctx.KVStore(keys[types.StoreKey]).Set(types.UserAllowanceKey(1, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"), cdc.MustMarshal(&grant))
@@ -92,7 +93,7 @@ func TestMigrateStore(t *testing.T) {
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewGroupGrantee(1),
 					&feegrant.BasicAllowance{
-						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(1))),
+						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(1))),
 						Expiration: &expiration,
 					},
 				)
@@ -113,7 +114,7 @@ func TestMigrateStore(t *testing.T) {
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewGroupGrantee(1),
 					&feegrant.BasicAllowance{
-						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(1))),
+						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(1))),
 					},
 				)
 				ctx.KVStore(keys[types.StoreKey]).Set(types.GroupAllowanceKey(1, 1), cdc.MustMarshal(&grant))

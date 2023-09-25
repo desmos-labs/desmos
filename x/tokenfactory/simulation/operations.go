@@ -211,7 +211,7 @@ func randomMintFields(
 	}
 	denom := RandomDenom(r, denoms)
 	amount = sdk.NewCoin(denom, simtypes.RandomAmount(r, math.NewInt(1000)))
-	if amount.Amount.Equal(sdk.NewInt(0)) {
+	if amount.Amount.Equal(math.NewInt(0)) {
 		// Skip because amount with zero is invalid
 		skip = true
 		return
@@ -281,7 +281,7 @@ func randomBurnFields(
 	// Get a amount to burn
 	balance := bk.SpendableCoin(ctx, sdk.MustAccAddressFromBech32(subspace.Treasury), denom)
 	amount = sdk.NewCoin(denom, simtypes.RandomAmount(r, balance.Amount))
-	if amount.Amount.Equal(sdk.NewInt(0)) {
+	if amount.Amount.Equal(math.NewInt(0)) {
 		// Skip because amount with zero is invalid
 		skip = true
 		return
