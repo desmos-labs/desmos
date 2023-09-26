@@ -9,6 +9,7 @@ import (
 	db "github.com/cosmos/cosmos-db"
 
 	"cosmossdk.io/store"
+	"cosmossdk.io/store/metrics"
 	storetypes "cosmossdk.io/store/types"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -160,7 +161,7 @@ func (suite *TestSuite) SetupTest() {
 
 	// Create an in-memory db
 	memDB := db.NewMemDB()
-	ms := store.NewCommitMultiStore(memDB)
+	ms := store.NewCommitMultiStore(memDB, log.NewNopLogger(), metrics.NewNoOpMetrics())
 	for _, key := range keys {
 		ms.MountStoreWithDB(key, storetypes.StoreTypeIAVL, memDB)
 	}

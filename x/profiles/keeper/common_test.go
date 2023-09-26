@@ -6,6 +6,7 @@ import (
 
 	"github.com/golang/mock/gomock"
 
+	"cosmossdk.io/store/metrics"
 	storetypes "cosmossdk.io/store/types"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	"github.com/cosmos/go-bip39"
@@ -84,7 +85,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 
 	// Create an in-memory db
 	memDB := db.NewMemDB()
-	ms := store.NewCommitMultiStore(memDB)
+	ms := store.NewCommitMultiStore(memDB, log.NewNopLogger(), metrics.NewNoOpMetrics())
 	for _, key := range keys {
 		ms.MountStoreWithDB(key, storetypes.StoreTypeIAVL, memDB)
 	}
