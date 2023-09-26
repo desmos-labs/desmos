@@ -35,28 +35,28 @@ func WeightedOperations(
 	k keeper.Keeper, sk types.SubspacesKeeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) sim.WeightedOperations {
 	var weightMsgCreateRelationship int
-	appParams.GetOrGenerate(cdc, OpWeightMsgCreateRelationship, &weightMsgCreateRelationship, nil,
+	appParams.GetOrGenerate(OpWeightMsgCreateRelationship, &weightMsgCreateRelationship, nil,
 		func(_ *rand.Rand) {
 			weightMsgCreateRelationship = params.DefaultWeightMsgCreateRelationship
 		},
 	)
 
 	var weightMsgDeleteRelationship int
-	appParams.GetOrGenerate(cdc, OpWeightMsgDeleteRelationship, &weightMsgDeleteRelationship, nil,
+	appParams.GetOrGenerate(OpWeightMsgDeleteRelationship, &weightMsgDeleteRelationship, nil,
 		func(_ *rand.Rand) {
 			weightMsgDeleteRelationship = params.DefaultWeightMsgDeleteRelationship
 		},
 	)
 
 	var weightMsgBlockUser int
-	appParams.GetOrGenerate(cdc, OpWeightMsgBlockUser, &weightMsgBlockUser, nil,
+	appParams.GetOrGenerate(OpWeightMsgBlockUser, &weightMsgBlockUser, nil,
 		func(_ *rand.Rand) {
 			weightMsgBlockUser = params.DefaultWeightMsgBlockUser
 		},
 	)
 
 	var weightMsgUnblockUser int
-	appParams.GetOrGenerate(cdc, OpWeightMsgUnBlockUser, &weightMsgUnblockUser, nil,
+	appParams.GetOrGenerate(OpWeightMsgUnBlockUser, &weightMsgUnblockUser, nil,
 		func(_ *rand.Rand) {
 			weightMsgBlockUser = params.DefaultWeightMsgUnblockUser
 		},

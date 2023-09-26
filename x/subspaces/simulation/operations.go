@@ -49,132 +49,132 @@ func WeightedOperations(
 ) sim.WeightedOperations {
 
 	var weightMsgCreateSubspace int
-	appParams.GetOrGenerate(cdc, OpWeightMsgCreateSubspace, &weightMsgCreateSubspace, nil,
+	appParams.GetOrGenerate(OpWeightMsgCreateSubspace, &weightMsgCreateSubspace, nil,
 		func(_ *rand.Rand) {
 			weightMsgCreateSubspace = params.DefaultWeightMsgCreateSubspace
 		},
 	)
 
 	var weightMsgEditSubspace int
-	appParams.GetOrGenerate(cdc, OpWeightMsgEditSubspace, &weightMsgEditSubspace, nil,
+	appParams.GetOrGenerate(OpWeightMsgEditSubspace, &weightMsgEditSubspace, nil,
 		func(_ *rand.Rand) {
 			weightMsgEditSubspace = params.DefaultWeightMsgEditSubspace
 		},
 	)
 
 	var weightMsgDeleteSubspace int
-	appParams.GetOrGenerate(cdc, OpWeightMsgDeleteSubspace, &weightMsgDeleteSubspace, nil,
+	appParams.GetOrGenerate(OpWeightMsgDeleteSubspace, &weightMsgDeleteSubspace, nil,
 		func(_ *rand.Rand) {
 			weightMsgDeleteSubspace = params.DefaultWeightMsgDeleteSubspace
 		},
 	)
 
 	var weightMsgCreateSection int
-	appParams.GetOrGenerate(cdc, OpWeightMsgCreateSection, &weightMsgCreateSection, nil,
+	appParams.GetOrGenerate(OpWeightMsgCreateSection, &weightMsgCreateSection, nil,
 		func(_ *rand.Rand) {
 			weightMsgCreateSection = params.DefaultWeightMsgCreateSection
 		},
 	)
 
 	var weightMsgEditSection int
-	appParams.GetOrGenerate(cdc, OpWeightMsgEditSection, &weightMsgEditSection, nil,
+	appParams.GetOrGenerate(OpWeightMsgEditSection, &weightMsgEditSection, nil,
 		func(_ *rand.Rand) {
 			weightMsgEditSection = params.DefaultWeightMsgEditSection
 		},
 	)
 
 	var weightMsgMoveSection int
-	appParams.GetOrGenerate(cdc, OpWeightMsgMoveSection, &weightMsgMoveSection, nil,
+	appParams.GetOrGenerate(OpWeightMsgMoveSection, &weightMsgMoveSection, nil,
 		func(_ *rand.Rand) {
 			weightMsgMoveSection = params.DefaultWeightMsgMoveSection
 		},
 	)
 
 	var weightMsgDeleteSection int
-	appParams.GetOrGenerate(cdc, OpWeightMsgDeleteSection, &weightMsgDeleteSection, nil,
+	appParams.GetOrGenerate(OpWeightMsgDeleteSection, &weightMsgDeleteSection, nil,
 		func(_ *rand.Rand) {
 			weightMsgDeleteSection = params.DefaultWeightMsgDeleteSection
 		},
 	)
 
 	var weightMsgCreateUserGroup int
-	appParams.GetOrGenerate(cdc, OpWeightMsgCreateUserGroup, &weightMsgCreateUserGroup, nil,
+	appParams.GetOrGenerate(OpWeightMsgCreateUserGroup, &weightMsgCreateUserGroup, nil,
 		func(_ *rand.Rand) {
 			weightMsgCreateUserGroup = params.DefaultWeightMsgCreateUserGroup
 		},
 	)
 
 	var weightMsgEditUserGroup int
-	appParams.GetOrGenerate(cdc, OpWeightMsgEditUserGroup, &weightMsgEditUserGroup, nil,
+	appParams.GetOrGenerate(OpWeightMsgEditUserGroup, &weightMsgEditUserGroup, nil,
 		func(_ *rand.Rand) {
 			weightMsgEditUserGroup = params.DefaultWeightMsgEditUserGroup
 		},
 	)
 
 	var weightMsgMoveUserGroup int
-	appParams.GetOrGenerate(cdc, OpWeightMsgMoveUserGroup, &weightMsgMoveUserGroup, nil,
+	appParams.GetOrGenerate(OpWeightMsgMoveUserGroup, &weightMsgMoveUserGroup, nil,
 		func(_ *rand.Rand) {
 			weightMsgMoveUserGroup = params.DefaultWeightMsgMoveUserGroup
 		})
 
 	var weightMsgSetUserGroupPermissions int
-	appParams.GetOrGenerate(cdc, OpWeightMsgSetUserGroupPermissions, &weightMsgSetUserGroupPermissions, nil,
+	appParams.GetOrGenerate(OpWeightMsgSetUserGroupPermissions, &weightMsgSetUserGroupPermissions, nil,
 		func(_ *rand.Rand) {
 			weightMsgSetUserGroupPermissions = params.DefaultWeightMsgSetUserGroupPermissions
 		},
 	)
 
 	var weightMsgDeleteUserGroup int
-	appParams.GetOrGenerate(cdc, OpWeightMsgDeleteUserGroup, &weightMsgDeleteUserGroup, nil,
+	appParams.GetOrGenerate(OpWeightMsgDeleteUserGroup, &weightMsgDeleteUserGroup, nil,
 		func(_ *rand.Rand) {
 			weightMsgDeleteUserGroup = params.DefaultWeightMsgDeleteUserGroup
 		},
 	)
 
 	var weightMsgAddUserToUserGroup int
-	appParams.GetOrGenerate(cdc, OpWeightMsgAddUserToUserGroup, &weightMsgAddUserToUserGroup, nil,
+	appParams.GetOrGenerate(OpWeightMsgAddUserToUserGroup, &weightMsgAddUserToUserGroup, nil,
 		func(_ *rand.Rand) {
 			weightMsgAddUserToUserGroup = params.DefaultWeightMsgAddUserToUserGroup
 		},
 	)
 
 	var weightMsgRemoveUserFromUserGroup int
-	appParams.GetOrGenerate(cdc, OpWeightMsgRemoveUserFromUserGroup, &weightMsgRemoveUserFromUserGroup, nil,
+	appParams.GetOrGenerate(OpWeightMsgRemoveUserFromUserGroup, &weightMsgRemoveUserFromUserGroup, nil,
 		func(_ *rand.Rand) {
 			weightMsgRemoveUserFromUserGroup = params.DefaultWeightMsgRemoveUserFromUserGroup
 		},
 	)
 
 	var weightMsgSetUserPermissions int
-	appParams.GetOrGenerate(cdc, OpWeightMsgSetUserPermissions, &weightMsgSetUserPermissions, nil,
+	appParams.GetOrGenerate(OpWeightMsgSetUserPermissions, &weightMsgSetUserPermissions, nil,
 		func(_ *rand.Rand) {
 			weightMsgSetUserPermissions = params.DefaultWeightMsgSetUserPermissions
 		},
 	)
 
 	var weightMsgGrantTreasuryAuthorization int
-	appParams.GetOrGenerate(cdc, OpWeightMsgGrantTreasuryAuthorization, &weightMsgGrantTreasuryAuthorization, nil,
+	appParams.GetOrGenerate(OpWeightMsgGrantTreasuryAuthorization, &weightMsgGrantTreasuryAuthorization, nil,
 		func(_ *rand.Rand) {
 			weightMsgGrantTreasuryAuthorization = params.DefaultWeightMsgGrantTreasuryAuthorization
 		},
 	)
 
 	var weightMsgRevokeTreasuryAuthorization int
-	appParams.GetOrGenerate(cdc, OpWeightMsgRevokeTreasuryAuthorization, &weightMsgRevokeTreasuryAuthorization, nil,
+	appParams.GetOrGenerate(OpWeightMsgRevokeTreasuryAuthorization, &weightMsgRevokeTreasuryAuthorization, nil,
 		func(_ *rand.Rand) {
 			weightMsgRevokeTreasuryAuthorization = params.DefaultWeightMsgRevokeTreasuryAuthorization
 		},
 	)
 
 	var weightMsgGrantUserAllowance int
-	appParams.GetOrGenerate(cdc, OpWeightMsgGrantAllowance, &weightMsgGrantUserAllowance, nil,
+	appParams.GetOrGenerate(OpWeightMsgGrantAllowance, &weightMsgGrantUserAllowance, nil,
 		func(_ *rand.Rand) {
 			weightMsgGrantUserAllowance = params.DefaultWeightMsgGrantAllowance
 		},
 	)
 
 	var weightMsgRevokeAllowance int
-	appParams.GetOrGenerate(cdc, OpWeightMsgRevokeAllowance, &weightMsgRevokeAllowance, nil,
+	appParams.GetOrGenerate(OpWeightMsgRevokeAllowance, &weightMsgRevokeAllowance, nil,
 		func(_ *rand.Rand) {
 			weightMsgRevokeAllowance = params.DefaultWeightMsgRevokeAllowance
 		},

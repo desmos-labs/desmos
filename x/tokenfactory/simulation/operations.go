@@ -45,28 +45,28 @@ func WeightedOperations(
 ) sim.WeightedOperations {
 
 	var weightMsgCreateDenom int
-	appParams.GetOrGenerate(cdc, OpWeightMsgCreateDenom, &weightMsgCreateDenom, nil,
+	appParams.GetOrGenerate(OpWeightMsgCreateDenom, &weightMsgCreateDenom, nil,
 		func(_ *rand.Rand) {
 			weightMsgCreateDenom = DefaultWeightMsgCreateDenom
 		},
 	)
 
 	var weightMsgMint int
-	appParams.GetOrGenerate(cdc, OpWeightMsgMint, &weightMsgMint, nil,
+	appParams.GetOrGenerate(OpWeightMsgMint, &weightMsgMint, nil,
 		func(_ *rand.Rand) {
 			weightMsgMint = DefaultWeightMsgMint
 		},
 	)
 
 	var weightMsgBurn int
-	appParams.GetOrGenerate(cdc, OpWeightMsgBurn, &weightMsgBurn, nil,
+	appParams.GetOrGenerate(OpWeightMsgBurn, &weightMsgBurn, nil,
 		func(_ *rand.Rand) {
 			weightMsgBurn = DefaultWeightMsgBurn
 		},
 	)
 
 	var weightMsgSetDenomMetadata int
-	appParams.GetOrGenerate(cdc, OpWeightMsgSetDenomMetadata, &weightMsgSetDenomMetadata, nil,
+	appParams.GetOrGenerate(OpWeightMsgSetDenomMetadata, &weightMsgSetDenomMetadata, nil,
 		func(_ *rand.Rand) {
 			weightMsgSetDenomMetadata = DefaultWeightMsgSetDenomMetadata
 		},
