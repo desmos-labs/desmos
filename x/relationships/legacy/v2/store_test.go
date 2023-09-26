@@ -97,7 +97,7 @@ func TestMigrateStore(t *testing.T) {
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			ctx := testutil.DefaultContext(storeKey, sdk.NewTransientStoreKey("test"))
+			ctx := testutil.DefaultContext(storeKey, storetypes.NewTransientStoreKey("test"))
 			if tc.store != nil {
 				tc.store(ctx)
 			}
