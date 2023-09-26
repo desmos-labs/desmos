@@ -10,6 +10,7 @@ import (
 	"github.com/desmos-labs/desmos/v6/x/subspaces/ante"
 	"github.com/desmos-labs/desmos/v6/x/subspaces/ante/testutil"
 
+	storetypes "cosmossdk.io/store/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	sdktestutil "github.com/cosmos/cosmos-sdk/testutil"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -44,7 +45,7 @@ func (suite *AnteTestSuite) SetupTest() {
 	suite.ctrl = gomock.NewController(suite.T())
 
 	suite.ctx = sdktestutil.
-		DefaultContext(sdk.NewKVStoreKey("kv_test"), sdk.NewTransientStoreKey("transient_test")).
+		DefaultContext(storetypes.NewKVStoreKey("kv_test"), sdk.NewTransientStoreKey("transient_test")).
 		WithMinGasPrices(sdk.NewDecCoins(sdk.NewDecCoin("stake", math.NewInt(1)))).
 		WithIsCheckTx(true)
 

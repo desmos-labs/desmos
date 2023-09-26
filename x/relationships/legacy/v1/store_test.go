@@ -5,6 +5,7 @@ import (
 
 	v4types "github.com/desmos-labs/desmos/v6/x/profiles/legacy/v4/types"
 
+	storetypes "cosmossdk.io/store/types"
 	"github.com/cosmos/cosmos-sdk/testutil"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
@@ -17,7 +18,7 @@ import (
 
 func TestMigrateStore(t *testing.T) {
 	cdc, _ := app.MakeCodecs()
-	storeKey := sdk.NewKVStoreKey(types.StoreKey)
+	storeKey := storetypes.NewKVStoreKey(types.StoreKey)
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
