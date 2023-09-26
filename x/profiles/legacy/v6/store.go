@@ -15,7 +15,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	"github.com/desmos-labs/desmos/v6/x/profiles/types"
 )
@@ -60,7 +59,7 @@ func MigrateStore(ctx sdk.Context, ak authkeeper.AccountKeeper, storeKey storety
 // The migration from v5 to v6 is skipped because the two types are identical (from v5 to v6 no changes were made).
 func migrateProfiles(ctx sdk.Context, ak authkeeper.AccountKeeper) error {
 	var profiles []*v5types.Profile
-	ak.IterateAccounts(ctx, func(account authtypes.AccountI) (stop bool) {
+	ak.IterateAccounts(ctx, func(account sdk.AccountI) (stop bool) {
 		if profile, ok := account.(*v5types.Profile); ok {
 			profiles = append(profiles, profile)
 		}

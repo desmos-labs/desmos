@@ -12,8 +12,8 @@ import (
 // AccountKeeper represents the expected keeper used to interact with x/auth
 type AccountKeeper interface {
 	GetParams(ctx sdk.Context) authtypes.Params
-	GetAccount(ctx sdk.Context, addr sdk.AccAddress) authtypes.AccountI
-	SetAccount(ctx sdk.Context, acc authtypes.AccountI)
+	GetAccount(ctx sdk.Context, addr sdk.AccAddress) sdk.AccountI
+	SetAccount(ctx sdk.Context, acc sdk.AccountI)
 	GetModuleAddress(moduleName string) sdk.AccAddress
 }
 

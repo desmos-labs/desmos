@@ -27,7 +27,7 @@ type BankKeeper interface {
 
 // AccountKeeper represents a keeper that deals with x/auth
 type AccountKeeper interface {
-	GetAccount(sdk.Context, sdk.AccAddress) authtypes.AccountI
+	GetAccount(sdk.Context, sdk.AccAddress) sdk.AccountI
 	GetModuleAccount(ctx sdk.Context, moduleName string) authtypes.ModuleAccountI
 }
 

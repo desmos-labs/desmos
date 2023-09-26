@@ -17,7 +17,7 @@ import (
 )
 
 var (
-	_ authtypes.AccountI       = (*Profile)(nil)
+	_ sdk.AccountI             = (*Profile)(nil)
 	_ authtypes.GenesisAccount = (*Profile)(nil)
 	_ exported.VestingAccount  = (*Profile)(nil)
 )
@@ -25,7 +25,7 @@ var (
 // NewProfile builds a new profile having the given DTag, creator and creation date
 func NewProfile(
 	dTag string, nickname, bio string, pictures Pictures, creationDate time.Time,
-	account authtypes.AccountI,
+	account sdk.AccountI,
 ) (*Profile, error) {
 	// Make sure myAccount is a proto.Message, e.g. a BaseAccount etc.
 	protoAccount, ok := account.(proto.Message)
@@ -49,7 +49,7 @@ func NewProfile(
 }
 
 // NewProfileFromAccount allows to build a new Profile instance from a provided DTag, and account and a creation time
-func NewProfileFromAccount(dTag string, account authtypes.AccountI, creationTime time.Time) (*Profile, error) {
+func NewProfileFromAccount(dTag string, account sdk.AccountI, creationTime time.Time) (*Profile, error) {
 	return NewProfile(
 		dTag,
 		"",
@@ -60,9 +60,9 @@ func NewProfileFromAccount(dTag string, account authtypes.AccountI, creationTime
 	)
 }
 
-// GetAccount returns the underlying account as an authtypes.AccountI instance
-func (p *Profile) GetAccount() authtypes.AccountI {
-	return p.Account.GetCachedValue().(authtypes.AccountI)
+// GetAccount returns the underlying account as an sdk.AccountI instance
+func (p *Profile) GetAccount() sdk.AccountI {
+	return p.Account.GetCachedValue().(sdk.AccountI)
 }
 
 // getVestingAccount returns the underlying account as an exported.VestingAccount instance
@@ -76,7 +76,7 @@ func (p *Profile) getVestingAccount() exported.VestingAccount {
 
 // setAccount sets the given account as the underlying account instance.
 // This should be called after updating anything about the account (eg. after calling SetSequence).
-func (p *Profile) setAccount(account authtypes.AccountI) error {
+func (p *Profile) setAccount(account sdk.AccountI) error {
 	accAny, err := codectypes.NewAnyWithValue(account)
 	if err != nil {
 		return err
@@ -86,12 +86,12 @@ func (p *Profile) setAccount(account authtypes.AccountI) error {
 	return nil
 }
 
-// GetAddress implements authtypes.AccountI
+// GetAddress implements sdk.AccountI
 func (p *Profile) GetAddress() sdk.AccAddress {
 	return p.GetAccount().GetAddress()
 }
 
-// SetAddress implements authtypes.AccountI
+// SetAddress implements sdk.AccountI
 func (p *Profile) SetAddress(addr sdk.AccAddress) error {
 	acc := p.GetAccount()
 	err := acc.SetAddress(addr)
@@ -102,12 +102,12 @@ func (p *Profile) SetAddress(addr sdk.AccAddress) error {
 	return p.setAccount(acc)
 }
 
-// GetPubKey implements authtypes.AccountI
+// GetPubKey implements sdk.AccountI
 func (p *Profile) GetPubKey() cryptotypes.PubKey {
 	return p.GetAccount().GetPubKey()
 }
 
-// SetPubKey implements authtypes.AccountI
+// SetPubKey implements sdk.AccountI
 func (p *Profile) SetPubKey(pubKey cryptotypes.PubKey) error {
 	acc := p.GetAccount()
 	err := acc.SetPubKey(pubKey)
@@ -118,12 +118,12 @@ func (p *Profile) SetPubKey(pubKey cryptotypes.PubKey) error {
 	return p.setAccount(acc)
 }
 
-// GetAccountNumber implements authtypes.AccountI
+// GetAccountNumber implements sdk.AccountI
 func (p *Profile) GetAccountNumber() uint64 {
 	return p.GetAccount().GetAccountNumber()
 }
 
-// SetAccountNumber implements authtypes.AccountI
+// SetAccountNumber implements sdk.AccountI
 func (p *Profile) SetAccountNumber(accountNumber uint64) error {
 	acc := p.GetAccount()
 	err := acc.SetAccountNumber(accountNumber)
@@ -134,12 +134,12 @@ func (p *Profile) SetAccountNumber(accountNumber uint64) error {
 	return p.setAccount(acc)
 }
 
-// GetSequence implements authtypes.AccountI
+// GetSequence implements sdk.AccountI
 func (p *Profile) GetSequence() uint64 {
 	return p.GetAccount().GetSequence()
 }
 
-// SetSequence implements authtypes.AccountI
+// SetSequence implements sdk.AccountI
 func (p *Profile) SetSequence(sequence uint64) error {
 	acc := p.GetAccount()
 	err := acc.SetSequence(sequence)
@@ -253,7 +253,7 @@ func (p *Profile) GetDelegatedVesting() sdk.Coins {
 // UnpackInterfaces implements codectypes.UnpackInterfacesMessage
 func (p *Profile) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 	if p.Account != nil {
-		var account authtypes.AccountI
+		var account sdk.AccountI
 		err := unpacker.UnpackAny(p.Account, &account)
 		if err != nil {
 			return err
@@ -306,7 +306,7 @@ type profilePretty struct {
 	CreationDate  time.Time      `json:"creation_date" yaml:"creation_date"`
 }
 
-// String implements authtypes.AccountI implements stringer
+// String implements sdk.AccountI implements stringer
 func (p *Profile) String() string {
 	out, _ := p.MarshalYAML()
 	return out.(string)

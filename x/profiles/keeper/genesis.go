@@ -3,7 +3,6 @@ package keeper
 import (
 	abci "github.com/cometbft/cometbft/abci/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	"github.com/desmos-labs/desmos/v6/x/profiles/types"
 )
@@ -39,7 +38,7 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) []abci.Val
 	}
 
 	// Initialize the Profiles
-	k.ak.IterateAccounts(ctx, func(account authtypes.AccountI) (stop bool) {
+	k.ak.IterateAccounts(ctx, func(account sdk.AccountI) (stop bool) {
 		if profile, ok := (account).(*types.Profile); ok {
 			err := k.SaveProfile(ctx, profile)
 			if err != nil {

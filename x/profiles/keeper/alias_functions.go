@@ -5,7 +5,6 @@ import (
 
 	storetypes "cosmossdk.io/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	"github.com/desmos-labs/desmos/v6/x/profiles/types"
 )
@@ -13,7 +12,7 @@ import (
 // IterateProfiles iterates through the Profiles set and performs the provided function
 func (k Keeper) IterateProfiles(ctx sdk.Context, fn func(profile *types.Profile) (stop bool)) {
 
-	k.ak.IterateAccounts(ctx, func(account authtypes.AccountI) (stop bool) {
+	k.ak.IterateAccounts(ctx, func(account sdk.AccountI) (stop bool) {
 		profile, ok := account.(*types.Profile)
 
 		if ok {
