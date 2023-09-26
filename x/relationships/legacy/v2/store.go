@@ -32,7 +32,7 @@ func MigrateStore(ctx sdk.Context, storeKey storetypes.StoreKey, cdc codec.Binar
 }
 
 // migrateRelationships migrates all the relationships from using the old key to using the new key
-func migrateRelationships(store sdk.KVStore, cdc codec.BinaryCodec) error {
+func migrateRelationships(store storetypes.KVStore, cdc codec.BinaryCodec) error {
 	prefixStore := prefix.NewStore(store, v1.RelationshipsStorePrefix)
 	iterator := prefixStore.Iterator(nil, nil)
 
@@ -68,7 +68,7 @@ func migrateRelationships(store sdk.KVStore, cdc codec.BinaryCodec) error {
 }
 
 // migrateUserBlocks migrates all the user blocks from using the old key to using the new key
-func migrateUserBlocks(store sdk.KVStore, cdc codec.BinaryCodec) error {
+func migrateUserBlocks(store storetypes.KVStore, cdc codec.BinaryCodec) error {
 	prefixStore := prefix.NewStore(store, v1.UsersBlocksStorePrefix)
 	iterator := prefixStore.Iterator(nil, nil)
 

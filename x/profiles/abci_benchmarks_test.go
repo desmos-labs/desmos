@@ -29,8 +29,8 @@ import (
 
 func setupBenchTest() (sdk.Context, authkeeper.AccountKeeper, *keeper.Keeper) {
 	// Define the store keys
-	keys := sdk.NewKVStoreKeys(types.StoreKey, authtypes.StoreKey, paramstypes.StoreKey)
-	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
+	keys := storetypes.NewKVStoreKeys(types.StoreKey, authtypes.StoreKey, paramstypes.StoreKey)
+	memKeys := storetypes.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
 	storeKey := keys[types.StoreKey]
 

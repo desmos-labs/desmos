@@ -46,7 +46,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 	maccPerms := app.GetMaccPerms()
 
 	// Define store keys
-	keys := sdk.NewMemoryStoreKeys(authtypes.StoreKey, banktypes.StoreKey, distributiontypes.StoreKey, stakingtypes.StoreKey)
+	keys := storetypes.NewMemoryStoreKeys(authtypes.StoreKey, banktypes.StoreKey, distributiontypes.StoreKey, stakingtypes.StoreKey)
 
 	// Create an in-memory db
 	memDB := db.NewMemDB()

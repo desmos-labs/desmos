@@ -105,7 +105,7 @@ func TestTestSuite(t *testing.T) {
 
 func (suite *TestSuite) SetupTest() {
 	// Define store keys
-	keys := sdk.NewMemoryStoreKeys(types.StoreKey)
+	keys := storetypes.NewMemoryStoreKeys(types.StoreKey)
 	suite.storeKey = keys[types.StoreKey]
 
 	// Create an in-memory db

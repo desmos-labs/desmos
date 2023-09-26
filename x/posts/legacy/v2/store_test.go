@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	storetypes "cosmossdk.io/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/require"
@@ -36,7 +37,7 @@ func TestMigrateStore(t *testing.T) {
 	cdc, _ := app.MakeCodecs()
 
 	// Build all the necessary keys
-	keys := sdk.NewKVStoreKeys(paramstypes.StoreKey, subspacestypes.StoreKey, types.StoreKey)
+	keys := storetypes.NewKVStoreKeys(paramstypes.StoreKey, subspacestypes.StoreKey, types.StoreKey)
 
 	paramsSubspace := newMockSubspace(types.Params{})
 

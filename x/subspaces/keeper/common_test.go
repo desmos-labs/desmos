@@ -41,7 +41,7 @@ func TestKeeperTestSuite(t *testing.T) {
 
 func (suite *KeeperTestSuite) SetupTest() {
 	// Define store keys
-	keys := sdk.NewMemoryStoreKeys(types.StoreKey, authtypes.StoreKey, authzkeeper.StoreKey)
+	keys := storetypes.NewMemoryStoreKeys(types.StoreKey, authtypes.StoreKey, authzkeeper.StoreKey)
 	suite.storeKey = keys[types.StoreKey]
 
 	// Create an in-memory db
@@ -75,7 +75,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 
 func (suite *KeeperTestSuite) getAllGrantsInExpiringQueue(ctx sdk.Context) []types.Grant {
 	store := ctx.KVStore(suite.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.ExpiringAllowanceQueuePrefix)
+	iterator := storetypes.KVStorePrefixIterator(store, types.ExpiringAllowanceQueuePrefix)
 	defer iterator.Close()
 
 	var grants []types.Grant

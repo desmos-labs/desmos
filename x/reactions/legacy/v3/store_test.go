@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	storetypes "cosmossdk.io/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
@@ -20,7 +21,7 @@ func TestMigrateStore(t *testing.T) {
 	cdc, _ := app.MakeCodecs()
 
 	// Build all the necessary keys
-	keys := sdk.NewKVStoreKeys(types.StoreKey)
+	keys := storetypes.NewKVStoreKeys(types.StoreKey)
 
 	// Mocks initializations
 	ctrl := gomock.NewController(t)

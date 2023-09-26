@@ -97,7 +97,7 @@ type Testsuite struct {
 
 func (suite *Testsuite) SetupTest() {
 	// Define the store keys
-	keys := sdk.NewMemoryStoreKeys(types.StoreKey)
+	keys := storetypes.NewMemoryStoreKeys(types.StoreKey)
 
 	suite.storeKey = keys[types.StoreKey]
 

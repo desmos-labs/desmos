@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	storetypes "cosmossdk.io/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	subspacestypes "github.com/desmos-labs/desmos/v6/x/subspaces/types"
@@ -47,7 +48,7 @@ func (k Keeper) HasRelationship(ctx sdk.Context, user, counterparty string, subs
 // IteratePostIDs iterates over all the next post ids and performs the provided function
 func (k Keeper) IteratePostIDs(ctx sdk.Context, fn func(subspaceID uint64, postID uint64) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.NextPostIDPrefix)
+	iterator := storetypes.KVStorePrefixIterator(store, types.NextPostIDPrefix)
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
@@ -65,7 +66,7 @@ func (k Keeper) IteratePostIDs(ctx sdk.Context, fn func(subspaceID uint64, postI
 // IteratePosts iterates over all the posts stored inside the context and performs the provided function
 func (k Keeper) IteratePosts(ctx sdk.Context, fn func(post types.Post) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.PostPrefix)
+	iterator := storetypes.KVStorePrefixIterator(store, types.PostPrefix)
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
@@ -82,7 +83,7 @@ func (k Keeper) IteratePosts(ctx sdk.Context, fn func(post types.Post) (stop boo
 func (k Keeper) IterateSectionPosts(ctx sdk.Context, subspaceID uint64, sectionID uint32, fn func(post types.Post) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 	storePrefix := types.SectionPostsPrefix(subspaceID, sectionID)
-	iterator := sdk.KVStorePrefixIterator(store, storePrefix)
+	iterator := storetypes.KVStorePrefixIterator(store, storePrefix)
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
@@ -112,7 +113,7 @@ func (k Keeper) GetPosts(ctx sdk.Context) []types.Post {
 // IterateSubspacePosts iterates over all the posts stored inside the given subspace and performs the provided function
 func (k Keeper) IterateSubspacePosts(ctx sdk.Context, subspaceID uint64, fn func(post types.Post) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.SubspacePostsPrefix(subspaceID))
+	iterator := storetypes.KVStorePrefixIterator(store, types.SubspacePostsPrefix(subspaceID))
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
@@ -140,7 +141,7 @@ func (k Keeper) GetSubspacePosts(ctx sdk.Context, subspaceID uint64) []types.Pos
 // IterateActivePolls iterates over the polls in the active polls queue and performs the provided function
 func (k Keeper) IterateActivePolls(ctx sdk.Context, fn func(poll types.Attachment) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.ActivePollQueuePrefix)
+	iterator := storetypes.KVStorePrefixIterator(store, types.ActivePollQueuePrefix)
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
@@ -160,7 +161,7 @@ func (k Keeper) IterateActivePolls(ctx sdk.Context, fn func(poll types.Attachmen
 // IterateActivePollsQueue iterates over the polls that are still active by the time given performs the provided function
 func (k Keeper) IterateActivePollsQueue(ctx sdk.Context, endTime time.Time, fn func(poll types.Attachment) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := store.Iterator(types.ActivePollQueuePrefix, sdk.PrefixEndBytes(types.ActivePollByTimeKey(endTime)))
+	iterator := store.Iterator(types.ActivePollQueuePrefix, storetypes.PrefixEndBytes(types.ActivePollByTimeKey(endTime)))
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
@@ -180,7 +181,7 @@ func (k Keeper) IterateActivePollsQueue(ctx sdk.Context, endTime time.Time, fn f
 // IterateAttachments iterates over all the attachments in the given context and performs the provided function
 func (k Keeper) IterateAttachments(ctx sdk.Context, fn func(attachment types.Attachment) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.AttachmentPrefix)
+	iterator := storetypes.KVStorePrefixIterator(store, types.AttachmentPrefix)
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
@@ -196,7 +197,7 @@ func (k Keeper) IterateAttachments(ctx sdk.Context, fn func(attachment types.Att
 // IteratePostAttachments iterates through the attachments associated with the provided post and performs the given function
 func (k Keeper) IteratePostAttachments(ctx sdk.Context, subspaceID uint64, postID uint64, fn func(attachment types.Attachment) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.PostAttachmentsPrefix(subspaceID, postID))
+	iterator := storetypes.KVStorePrefixIterator(store, types.PostAttachmentsPrefix(subspaceID, postID))
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
@@ -224,7 +225,7 @@ func (k Keeper) GetPostAttachments(ctx sdk.Context, subspaceID uint64, postID ui
 // IterateUserAnswers iterates over all the polls user answers and performs the provided function
 func (k Keeper) IterateUserAnswers(ctx sdk.Context, fn func(answer types.UserAnswer) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.UserAnswerPrefix)
+	iterator := storetypes.KVStorePrefixIterator(store, types.UserAnswerPrefix)
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
@@ -240,7 +241,7 @@ func (k Keeper) IterateUserAnswers(ctx sdk.Context, fn func(answer types.UserAns
 // IteratePollUserAnswers iterates through the answers to the given poll and performs the provided function
 func (k Keeper) IteratePollUserAnswers(ctx sdk.Context, subspaceID uint64, postID uint64, pollID uint32, fn func(answer types.UserAnswer) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.PollAnswersPrefix(subspaceID, postID, pollID))
+	iterator := storetypes.KVStorePrefixIterator(store, types.PollAnswersPrefix(subspaceID, postID, pollID))
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
@@ -278,7 +279,7 @@ func (k Keeper) GetAllPostOwnerTransferRequests(ctx sdk.Context) []types.PostOwn
 // IteratePostOwnerTransferRequests iterates through the post owner transfer requests and performs the provided function
 func (k Keeper) IteratePostOwnerTransferRequests(ctx sdk.Context, fn func(request types.PostOwnerTransferRequest) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.PostOwnerTransferRequestPrefix)
+	iterator := storetypes.KVStorePrefixIterator(store, types.PostOwnerTransferRequestPrefix)
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {

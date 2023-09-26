@@ -78,7 +78,7 @@ func (p TestProfile) Sign(data []byte) []byte {
 
 func (suite *KeeperTestSuite) SetupTest() {
 	// Define the store keys
-	keys := sdk.NewKVStoreKeys(types.StoreKey, authtypes.StoreKey)
+	keys := storetypes.NewKVStoreKeys(types.StoreKey, authtypes.StoreKey)
 
 	suite.storeKey = keys[types.StoreKey]
 

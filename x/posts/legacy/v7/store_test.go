@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	storetypes "cosmossdk.io/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
@@ -16,7 +17,7 @@ import (
 func TestMigrate(t *testing.T) {
 	cdc, _ := app.MakeCodecs()
 
-	keys := sdk.NewKVStoreKeys(types.StoreKey)
+	keys := storetypes.NewKVStoreKeys(types.StoreKey)
 
 	testCases := []struct {
 		name      string

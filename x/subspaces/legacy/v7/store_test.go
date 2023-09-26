@@ -36,7 +36,7 @@ func TestMigrateStore(t *testing.T) {
 	cdc, _ := app.MakeCodecs()
 
 	// Build all the necessary keys
-	keys := sdk.NewKVStoreKeys(types.StoreKey)
+	keys := storetypes.NewKVStoreKeys(types.StoreKey)
 
 	expiration := time.Date(2100, 7, 7, 0, 0, 0, 0, time.UTC)
 
