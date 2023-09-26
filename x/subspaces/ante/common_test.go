@@ -45,7 +45,7 @@ func (suite *AnteTestSuite) SetupTest() {
 	suite.ctrl = gomock.NewController(suite.T())
 
 	suite.ctx = sdktestutil.
-		DefaultContext(storetypes.NewKVStoreKey("kv_test"), sdk.NewTransientStoreKey("transient_test")).
+		DefaultContext(storetypes.NewKVStoreKey("kv_test"), storetypes.NewTransientStoreKey("transient_test")).
 		WithMinGasPrices(sdk.NewDecCoins(sdk.NewDecCoin("stake", math.NewInt(1)))).
 		WithIsCheckTx(true)
 
