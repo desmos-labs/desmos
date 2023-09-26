@@ -36,7 +36,7 @@ func MigrateStore(ctx sdk.Context, storeKey storetypes.StoreKey, cdc codec.Binar
 }
 
 // fixApplicationLinks fixes the application links by adding the missing owner keys
-func fixApplicationLinks(store sdk.KVStore, cdc codec.BinaryCodec) error {
+func fixApplicationLinks(store storetypes.KVStore, cdc codec.BinaryCodec) error {
 	applicationLinksStore := prefix.NewStore(store, types.ApplicationLinkPrefix)
 	applicationLinksIterator := applicationLinksStore.Iterator(nil, nil)
 
@@ -61,7 +61,7 @@ func fixApplicationLinks(store sdk.KVStore, cdc codec.BinaryCodec) error {
 }
 
 // fixChainLinks fixes the chain links by adding the missing owner keys
-func fixChainLinks(store sdk.KVStore, cdc codec.BinaryCodec, legacyAmino *codec.LegacyAmino) error {
+func fixChainLinks(store storetypes.KVStore, cdc codec.BinaryCodec, legacyAmino *codec.LegacyAmino) error {
 	chainLinkStore := prefix.NewStore(store, types.ChainLinksPrefix)
 	chainLinksIterator := chainLinkStore.Iterator(nil, nil)
 

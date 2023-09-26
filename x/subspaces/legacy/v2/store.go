@@ -23,7 +23,7 @@ func MigrateStore(ctx sdk.Context, storeKey storetypes.StoreKey, cdc codec.Binar
 }
 
 // fixGroupsPermissions iterates over all the group permissions and sanitizes their values
-func fixGroupsPermissions(store sdk.KVStore, cdc codec.BinaryCodec) error {
+func fixGroupsPermissions(store storetypes.KVStore, cdc codec.BinaryCodec) error {
 	groupsStore := prefix.NewStore(store, GroupsPrefix)
 	iterator := groupsStore.Iterator(nil, nil)
 
@@ -62,7 +62,7 @@ type userPermissionDetails struct {
 }
 
 // fixUsersPermissions iterates over all the users permissions and sanitizes their values
-func fixUsersPermissions(store sdk.KVStore) {
+func fixUsersPermissions(store storetypes.KVStore) {
 	permissionsStore := prefix.NewStore(store, UserPermissionsStorePrefix)
 	iterator := permissionsStore.Iterator(nil, nil)
 

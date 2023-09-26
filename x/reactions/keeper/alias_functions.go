@@ -1,6 +1,7 @@
 package keeper
 
 import (
+	storetypes "cosmossdk.io/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	poststypes "github.com/desmos-labs/desmos/v6/x/posts/types"
@@ -44,7 +45,7 @@ func (k Keeper) GetPost(ctx sdk.Context, subspaceID uint64, postID uint64) (post
 // IterateRegisteredReactions iterates over all the registered reactions and performs the provided function
 func (k Keeper) IterateRegisteredReactions(ctx sdk.Context, fn func(reaction types.RegisteredReaction) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.RegisteredReactionPrefix)
+	iterator := storetypes.KVStorePrefixIterator(store, types.RegisteredReactionPrefix)
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
@@ -71,7 +72,7 @@ func (k Keeper) GetRegisteredReactions(ctx sdk.Context) []types.RegisteredReacti
 // IterateSubspaceRegisteredReactions iterates over all the given subspace registered reactions and performs the provided function
 func (k Keeper) IterateSubspaceRegisteredReactions(ctx sdk.Context, subspaceID uint64, fn func(reaction types.RegisteredReaction) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.SubspaceRegisteredReactionsPrefix(subspaceID))
+	iterator := storetypes.KVStorePrefixIterator(store, types.SubspaceRegisteredReactionsPrefix(subspaceID))
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
@@ -100,7 +101,7 @@ func (k Keeper) GetSubspaceRegisteredReactions(ctx sdk.Context, subspaceID uint6
 // IterateReactions iterates over all the reactions and performs the provided function
 func (k Keeper) IterateReactions(ctx sdk.Context, fn func(reaction types.Reaction) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.ReactionPrefix)
+	iterator := storetypes.KVStorePrefixIterator(store, types.ReactionPrefix)
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
@@ -127,7 +128,7 @@ func (k Keeper) GetReactions(ctx sdk.Context) []types.Reaction {
 // IterateSubspaceReactions iterates over all the given subspace reactions and performs the provided function
 func (k Keeper) IterateSubspaceReactions(ctx sdk.Context, subspaceID uint64, fn func(reaction types.Reaction) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.SubspaceReactionsPrefix(subspaceID))
+	iterator := storetypes.KVStorePrefixIterator(store, types.SubspaceReactionsPrefix(subspaceID))
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
@@ -154,7 +155,7 @@ func (k Keeper) GetSubspaceReactions(ctx sdk.Context, subspaceID uint64) []types
 // IteratePostReactions iterates over all the given post reactions and performs the provided function
 func (k Keeper) IteratePostReactions(ctx sdk.Context, subspaceID uint64, postID uint64, fn func(reaction types.Reaction) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.PostReactionsPrefix(subspaceID, postID))
+	iterator := storetypes.KVStorePrefixIterator(store, types.PostReactionsPrefix(subspaceID, postID))
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
@@ -185,7 +186,7 @@ func (k Keeper) HasReacted(ctx sdk.Context, subspaceID uint64, postID uint64, us
 // IterateReactionsParams iterates over all the stored subspace reactions params and performs the provided function
 func (k Keeper) IterateReactionsParams(ctx sdk.Context, fn func(params types.SubspaceReactionsParams) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.ReactionsParamsPrefix)
+	iterator := storetypes.KVStorePrefixIterator(store, types.ReactionsParamsPrefix)
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {

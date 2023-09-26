@@ -61,9 +61,9 @@ func TestMigrateStore(t *testing.T) {
 	cdc, legacyAmino := app.MakeCodecs()
 
 	// Build all the necessary keys
-	keys := sdk.NewKVStoreKeys(authtypes.StoreKey, profilestypes.StoreKey)
-	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
-	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
+	keys := storetypes.NewKVStoreKeys(authtypes.StoreKey, profilestypes.StoreKey)
+	tKeys := storetypes.NewTransientStoreKeys(paramstypes.TStoreKey)
+	memKeys := storetypes.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
 	// Build the x/auth keeper
 	authKeeper := authkeeper.NewAccountKeeper(

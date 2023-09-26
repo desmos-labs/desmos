@@ -52,9 +52,9 @@ func TestMigrateStore(t *testing.T) {
 	cdc, legacyAmino := app.MakeCodecs()
 
 	// Build all the necessary keys
-	keys := sdk.NewKVStoreKeys(authtypes.StoreKey, types.StoreKey)
-	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
-	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
+	keys := storetypes.NewKVStoreKeys(authtypes.StoreKey, types.StoreKey)
+	tKeys := storetypes.NewTransientStoreKeys(paramstypes.TStoreKey)
+	memKeys := storetypes.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
 	pubKey := secp256k1.GenPrivKey().PubKey()
 	testCases := []struct {

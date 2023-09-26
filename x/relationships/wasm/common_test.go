@@ -72,7 +72,7 @@ type TestSuite struct {
 
 func (suite *TestSuite) SetupTest() {
 	// Define the store keys
-	keys := sdk.NewKVStoreKeys(types.StoreKey)
+	keys := storetypes.NewKVStoreKeys(types.StoreKey)
 
 	suite.storeKey = keys[types.StoreKey]
 

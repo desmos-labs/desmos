@@ -43,7 +43,7 @@ func MigrateStore(ctx sdk.Context, storeKey storetypes.StoreKey, cdc codec.Binar
 }
 
 // setupSubspacesSections sets the NextSectionID to 1 for all the current subspaces and creates the default sections
-func setupSubspacesSections(store sdk.KVStore, cdc codec.BinaryCodec) error {
+func setupSubspacesSections(store storetypes.KVStore, cdc codec.BinaryCodec) error {
 	subspacesStore := prefix.NewStore(store, types.SubspacePrefix)
 	iterator := subspacesStore.Iterator(nil, nil)
 	defer iterator.Close()
@@ -66,7 +66,7 @@ func setupSubspacesSections(store sdk.KVStore, cdc codec.BinaryCodec) error {
 }
 
 // migrateUserGroupsPermissions migrates all the user groups permissions from the old system to the new one
-func migrateUserGroupsPermissions(store sdk.KVStore, cdc codec.BinaryCodec) error {
+func migrateUserGroupsPermissions(store storetypes.KVStore, cdc codec.BinaryCodec) error {
 	groupsStore := prefix.NewStore(store, v2.GroupsPrefix)
 	iterator := groupsStore.Iterator(nil, nil)
 	defer iterator.Close()
@@ -96,7 +96,7 @@ func migrateUserGroupsPermissions(store sdk.KVStore, cdc codec.BinaryCodec) erro
 }
 
 // migrateUserPermissions migrates all the user permissions from the old system to the new one
-func migrateUserPermissions(store sdk.KVStore, cdc codec.BinaryCodec) error {
+func migrateUserPermissions(store storetypes.KVStore, cdc codec.BinaryCodec) error {
 	permissionsStore := prefix.NewStore(store, v2.UserPermissionsStorePrefix)
 	iterator := permissionsStore.Iterator(nil, nil)
 	defer iterator.Close()

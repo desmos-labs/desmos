@@ -22,7 +22,7 @@ import (
 
 func TestBeginBlocker(t *testing.T) {
 	// Define store keys
-	keys := sdk.NewMemoryStoreKeys(
+	keys := storetypes.NewMemoryStoreKeys(
 		types.StoreKey,
 	)
 

@@ -22,7 +22,7 @@ func MigrateStore(ctx sdk.Context, storeKey storetypes.StoreKey, cdc codec.Binar
 }
 
 // migrateAttachments migrates all the attachments to v5
-func migrateAttachments(store sdk.KVStore, cdc codec.BinaryCodec) error {
+func migrateAttachments(store storetypes.KVStore, cdc codec.BinaryCodec) error {
 	attachmentsStore := prefix.NewStore(store, types.AttachmentPrefix)
 	attachmentsIterator := attachmentsStore.Iterator(nil, nil)
 	defer attachmentsIterator.Close()

@@ -19,7 +19,7 @@ func MigrateStore(ctx sdk.Context, storeKey storetypes.StoreKey, cdc codec.Binar
 
 // removeInvalidPollAnswers iterates over all the polls and deletes the user answers for all the polls which
 // final results already been tallied. This is to delete all the answers that have been added after that.
-func removeInvalidPollAnswers(store sdk.KVStore, cdc codec.BinaryCodec) error {
+func removeInvalidPollAnswers(store storetypes.KVStore, cdc codec.BinaryCodec) error {
 	attachmentStore := prefix.NewStore(store, types.AttachmentPrefix)
 	attachmentsIterator := attachmentStore.Iterator(nil, nil)
 	defer attachmentsIterator.Close()
@@ -46,7 +46,7 @@ func removeInvalidPollAnswers(store sdk.KVStore, cdc codec.BinaryCodec) error {
 }
 
 // removePollAnswers removes from the store the answers related to the given poll
-func removePollAnswers(store sdk.KVStore, subspaceID uint64, postID uint64, pollID uint32) error {
+func removePollAnswers(store storetypes.KVStore, subspaceID uint64, postID uint64, pollID uint32) error {
 	answersStore := prefix.NewStore(store, types.PollAnswersPrefix(subspaceID, postID, pollID))
 	answersIterator := answersStore.Iterator(nil, nil)
 

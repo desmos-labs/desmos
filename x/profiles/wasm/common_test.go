@@ -155,7 +155,7 @@ func TestTestSuite(t *testing.T) {
 
 func (suite *TestSuite) SetupTest() {
 	// Define the store keys
-	keys := sdk.NewKVStoreKeys(authtypes.StoreKey, types.StoreKey)
+	keys := storetypes.NewKVStoreKeys(authtypes.StoreKey, types.StoreKey)
 	suite.storeKey = keys[types.StoreKey]
 
 	// Create an in-memory db

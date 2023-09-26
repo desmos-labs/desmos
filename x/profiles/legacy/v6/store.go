@@ -90,7 +90,7 @@ func migrateProfiles(ctx sdk.Context, ak authkeeper.AccountKeeper) error {
 
 // migrateApplicationLinks migrates the application links from v5 to v7 adding the expiration date properly.
 // The migration from v5 to v6 is skipped because the two types are identical (from v5 to v6 no changes were made).
-func migrateApplicationLinks(store sdk.KVStore, cdc codec.BinaryCodec) error {
+func migrateApplicationLinks(store storetypes.KVStore, cdc codec.BinaryCodec) error {
 	appLinksStore := prefix.NewStore(store, types.ApplicationLinkPrefix)
 	iterator := appLinksStore.Iterator(nil, nil)
 
@@ -177,7 +177,7 @@ func convertApplicationLinkResult(v5Result *v5types.Result) *types.Result {
 
 // migrateChainLinks migrates the chain links from v5 to v7 by changing the various Protobuf interface types.
 // The migration from v5 to v6 is skipped because the two types are identical (from v5 to v6 no changes were made).
-func migrateChainLinks(store sdk.KVStore, cdc codec.BinaryCodec) error {
+func migrateChainLinks(store storetypes.KVStore, cdc codec.BinaryCodec) error {
 	appLinksStore := prefix.NewStore(store, types.ChainLinksPrefix)
 	iterator := appLinksStore.Iterator(nil, nil)
 
@@ -298,7 +298,7 @@ func convertChainLinkSignatureData(data *codectypes.Any, cdc codec.BinaryCodec) 
 }
 
 // setDefaultExternalAddresses set the default external address of each chain for each owner
-func setDefaultExternalAddresses(store sdk.KVStore, cdc codec.BinaryCodec) error {
+func setDefaultExternalAddresses(store storetypes.KVStore, cdc codec.BinaryCodec) error {
 	chainLinkStore := prefix.NewStore(store, types.ChainLinksPrefix)
 	chainLinksIterator := chainLinkStore.Iterator(nil, nil)
 	defer chainLinksIterator.Close()

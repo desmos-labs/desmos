@@ -3,6 +3,7 @@ package keeper
 import (
 	"bytes"
 
+	storetypes "cosmossdk.io/store/types"
 	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -26,7 +27,7 @@ func (k Keeper) createAccountIfNotExists(ctx sdk.Context, user string) {
 // IterateSubspaces iterates through the subspaces set and performs the given function
 func (k Keeper) IterateSubspaces(ctx sdk.Context, fn func(subspace types.Subspace) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.SubspacePrefix)
+	iterator := storetypes.KVStorePrefixIterator(store, types.SubspacePrefix)
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
@@ -55,7 +56,7 @@ func (k Keeper) GetAllSubspaces(ctx sdk.Context) []types.Subspace {
 // IterateSections iterates over all the sections stored and performs the provided function
 func (k Keeper) IterateSections(ctx sdk.Context, fn func(section types.Section) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.SectionsPrefix)
+	iterator := storetypes.KVStorePrefixIterator(store, types.SectionsPrefix)
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
@@ -81,7 +82,7 @@ func (k Keeper) GetAllSections(ctx sdk.Context) []types.Section {
 // IterateSubspaceSections iterates over all the sections for the given subspace and performs the provided function
 func (k Keeper) IterateSubspaceSections(ctx sdk.Context, subspaceID uint64, fn func(section types.Section) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.SubspaceSectionsPrefix(subspaceID))
+	iterator := storetypes.KVStorePrefixIterator(store, types.SubspaceSectionsPrefix(subspaceID))
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
@@ -139,7 +140,7 @@ func (k Keeper) IterateSectionChildren(ctx sdk.Context, subspaceID uint64, secti
 // IterateUserGroups iterates over all the users groups stored
 func (k Keeper) IterateUserGroups(ctx sdk.Context, fn func(group types.UserGroup) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.GroupsPrefix)
+	iterator := storetypes.KVStorePrefixIterator(store, types.GroupsPrefix)
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
@@ -165,7 +166,7 @@ func (k Keeper) GetAllUserGroups(ctx sdk.Context) []types.UserGroup {
 // IterateSubspaceUserGroups allows iterating over all the groups that are part of the subspace having the given id
 func (k Keeper) IterateSubspaceUserGroups(ctx sdk.Context, subspaceID uint64, fn func(group types.UserGroup) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.SubspaceGroupsPrefix(subspaceID))
+	iterator := storetypes.KVStorePrefixIterator(store, types.SubspaceGroupsPrefix(subspaceID))
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
@@ -191,7 +192,7 @@ func (k Keeper) GetSubspaceUserGroups(ctx sdk.Context, subspaceID uint64) []type
 // IterateSectionUserGroups iterates over all the user groups for the given section and performs the provided function
 func (k Keeper) IterateSectionUserGroups(ctx sdk.Context, subspaceID uint64, sectionID uint32, fn func(group types.UserGroup) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.SectionGroupsPrefix(subspaceID, sectionID))
+	iterator := storetypes.KVStorePrefixIterator(store, types.SectionGroupsPrefix(subspaceID, sectionID))
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
@@ -223,7 +224,7 @@ func (k Keeper) IterateUserGroupsMembers(ctx sdk.Context, fn func(entry types.Us
 	store := ctx.KVStore(k.storeKey)
 
 	prefix := types.GroupsMembersPrefix
-	iterator := sdk.KVStorePrefixIterator(store, prefix)
+	iterator := storetypes.KVStorePrefixIterator(store, prefix)
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
@@ -240,7 +241,7 @@ func (k Keeper) IterateUserGroupMembers(ctx sdk.Context, subspaceID uint64, grou
 	store := ctx.KVStore(k.storeKey)
 
 	prefix := types.GroupMembersPrefix(subspaceID, groupID)
-	iterator := sdk.KVStorePrefixIterator(store, prefix)
+	iterator := storetypes.KVStorePrefixIterator(store, prefix)
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
@@ -270,7 +271,7 @@ func (k Keeper) IterateUserPermissions(ctx sdk.Context, fn func(entry types.User
 	store := ctx.KVStore(k.storeKey)
 
 	prefix := types.UserPermissionsStorePrefix
-	iterator := sdk.KVStorePrefixIterator(store, prefix)
+	iterator := storetypes.KVStorePrefixIterator(store, prefix)
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
@@ -289,7 +290,7 @@ func (k Keeper) IterateSubspaceUserPermissions(ctx sdk.Context, subspaceID uint6
 	store := ctx.KVStore(k.storeKey)
 
 	prefix := types.SubspacePermissionsPrefix(subspaceID)
-	iterator := sdk.KVStorePrefixIterator(store, prefix)
+	iterator := storetypes.KVStorePrefixIterator(store, prefix)
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
@@ -318,7 +319,7 @@ func (k Keeper) IterateSectionUserPermissions(ctx sdk.Context, subspaceID uint64
 	store := ctx.KVStore(k.storeKey)
 
 	prefix := types.SectionPermissionsPrefix(subspaceID, sectionID)
-	iterator := sdk.KVStorePrefixIterator(store, prefix)
+	iterator := storetypes.KVStorePrefixIterator(store, prefix)
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
@@ -352,7 +353,7 @@ func (k Keeper) GetAllGrants(ctx sdk.Context) []types.Grant {
 // IterateUserGrants iterates through the user grants and performs the given function
 func (k Keeper) IterateUserGrants(ctx sdk.Context, fn func(grant types.Grant) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.UserAllowancePrefix)
+	iterator := storetypes.KVStorePrefixIterator(store, types.UserAllowancePrefix)
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
@@ -368,7 +369,7 @@ func (k Keeper) IterateUserGrants(ctx sdk.Context, fn func(grant types.Grant) (s
 // IterateSubspaceUserGrants iterates over all the user grants inside the subspace with the given id
 func (k Keeper) IterateSubspaceUserGrants(ctx sdk.Context, subspaceID uint64, fn func(grant types.Grant) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.SubspaceUserAllowancePrefix(subspaceID))
+	iterator := storetypes.KVStorePrefixIterator(store, types.SubspaceUserAllowancePrefix(subspaceID))
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
@@ -407,7 +408,7 @@ func (k Keeper) GetSubspaceUserGrants(ctx sdk.Context, subspaceID uint64) []type
 // IterateUserGroupsGrants iterates through the group grants and performs the given function
 func (k Keeper) IterateUserGroupsGrants(ctx sdk.Context, fn func(grant types.Grant) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.GroupAllowancePrefix)
+	iterator := storetypes.KVStorePrefixIterator(store, types.GroupAllowancePrefix)
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
@@ -424,7 +425,7 @@ func (k Keeper) IterateUserGroupsGrants(ctx sdk.Context, fn func(grant types.Gra
 func (k Keeper) IterateSubspaceUserGroupGrants(ctx sdk.Context, subspaceID uint64, fn func(grant types.Grant) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 	prefix := types.SubspaceGroupAllowancePrefix(subspaceID)
-	iterator := sdk.KVStorePrefixIterator(store, prefix)
+	iterator := storetypes.KVStorePrefixIterator(store, prefix)
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {

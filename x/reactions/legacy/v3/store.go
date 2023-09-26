@@ -79,7 +79,7 @@ func FixMissingNextReactionIDs(ctx sdk.Context, storeKey storetypes.StoreKey, pk
 		}
 
 		// Get max reaction ID of the post
-		iter := sdk.KVStorePrefixIterator(store, types.PostReactionsPrefix(post.SubspaceID, post.ID))
+		iter := storetypes.KVStorePrefixIterator(store, types.PostReactionsPrefix(post.SubspaceID, post.ID))
 		maxReactionID := uint32(0)
 		for ; iter.Valid(); iter.Next() {
 			var reaction types.Reaction

@@ -165,7 +165,7 @@ type TestSuite struct {
 
 func (suite *TestSuite) SetupTest() {
 	// Define store keys
-	keys := sdk.NewMemoryStoreKeys(types.StoreKey, authtypes.StoreKey)
+	keys := storetypes.NewMemoryStoreKeys(types.StoreKey, authtypes.StoreKey)
 	suite.storeKey = keys[types.StoreKey]
 
 	// Create an in-memory db
