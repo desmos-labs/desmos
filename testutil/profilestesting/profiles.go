@@ -33,7 +33,7 @@ func AssertNoProfileError(profile *types.Profile, err error) *types.Profile {
 	return profile
 }
 
-func AccountFromAddr(addr string) authtypes.AccountI {
+func AccountFromAddr(addr string) sdk.AccountI {
 	address, err := sdk.AccAddressFromBech32(addr)
 	if err != nil {
 		panic(err)

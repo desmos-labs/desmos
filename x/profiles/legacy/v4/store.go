@@ -12,7 +12,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	"github.com/cosmos/cosmos-sdk/x/auth/migrations/legacytx"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	v4types "github.com/desmos-labs/desmos/v6/x/profiles/legacy/v4/types"
 	v5types "github.com/desmos-labs/desmos/v6/x/profiles/legacy/v5/types"
@@ -56,7 +55,7 @@ func MigrateStore(ctx sdk.Context, ak authkeeper.AccountKeeper, storeKey storety
 
 func migrateProfiles(ctx sdk.Context, ak authkeeper.AccountKeeper) error {
 	var profiles []*v4types.Profile
-	ak.IterateAccounts(ctx, func(account authtypes.AccountI) (stop bool) {
+	ak.IterateAccounts(ctx, func(account sdk.AccountI) (stop bool) {
 		if profile, ok := account.(*v4types.Profile); ok {
 			profiles = append(profiles, profile)
 		}

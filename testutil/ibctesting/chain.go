@@ -78,7 +78,7 @@ type TestChain struct {
 	Signers []tmtypes.PrivValidator
 
 	PrivKey cryptotypes.PrivKey
-	Account authtypes.AccountI
+	Account sdk.AccountI
 
 	// IBC specific helpers
 	ClientIDs   []string          // ClientID's used on this chain

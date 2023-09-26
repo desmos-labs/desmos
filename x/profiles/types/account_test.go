@@ -324,7 +324,7 @@ func TestProfileSerialization(t *testing.T) {
 	bz, err := cdc.MarshalInterface(profile)
 	require.NoError(t, err)
 
-	var original authtypes.AccountI
+	var original sdk.AccountI
 	err = cdc.UnmarshalInterface(bz, &original)
 	require.NoError(t, err)
 
@@ -350,7 +350,7 @@ func TestProfileSerialization(t *testing.T) {
 	require.NoError(t, err)
 
 	// Deserialize
-	var serialized authtypes.AccountI
+	var serialized sdk.AccountI
 	err = cdc.UnmarshalInterface(bz, &serialized)
 	require.NoError(t, err)
 
