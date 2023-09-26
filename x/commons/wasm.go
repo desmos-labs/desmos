@@ -10,8 +10,13 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 )
 
+type WasmMsg interface {
+	sdk.Msg
+	sdk.HasValidateBasic
+}
+
 // HandleWasmMsg deserialises the given sdk.Msg and checks whether it is valid or not
-func HandleWasmMsg(cdc codec.Codec, data json.RawMessage, msg sdk.Msg) ([]sdk.Msg, error) {
+func HandleWasmMsg(cdc codec.Codec, data json.RawMessage, msg WasmMsg) ([]sdk.Msg, error) {
 	err := cdc.UnmarshalJSON(data, msg)
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
