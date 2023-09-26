@@ -38,42 +38,42 @@ func WeightedOperations(
 ) sim.WeightedOperations {
 
 	var weightMsgAddReaction int
-	appParams.GetOrGenerate(cdc, OpWeightMsgAddReaction, &weightMsgAddReaction, nil,
+	appParams.GetOrGenerate(OpWeightMsgAddReaction, &weightMsgAddReaction, nil,
 		func(_ *rand.Rand) {
 			weightMsgAddReaction = params.DefaultWeightMsgAddReaction
 		},
 	)
 
 	var weightMsgRemoveReaction int
-	appParams.GetOrGenerate(cdc, OpWeightMsgRemoveReaction, &weightMsgRemoveReaction, nil,
+	appParams.GetOrGenerate(OpWeightMsgRemoveReaction, &weightMsgRemoveReaction, nil,
 		func(_ *rand.Rand) {
 			weightMsgRemoveReaction = params.DefaultWeightMsgRemoveReaction
 		},
 	)
 
 	var weightMsgAddRegisteredReaction int
-	appParams.GetOrGenerate(cdc, OpWeightMsgAddRegisteredReaction, &weightMsgAddRegisteredReaction, nil,
+	appParams.GetOrGenerate(OpWeightMsgAddRegisteredReaction, &weightMsgAddRegisteredReaction, nil,
 		func(_ *rand.Rand) {
 			weightMsgAddRegisteredReaction = params.DefaultWeightMsgAddRegisteredReaction
 		},
 	)
 
 	var weightMsgEditRegisteredReaction int
-	appParams.GetOrGenerate(cdc, OpWeightMsgEditRegisteredReaction, &weightMsgEditRegisteredReaction, nil,
+	appParams.GetOrGenerate(OpWeightMsgEditRegisteredReaction, &weightMsgEditRegisteredReaction, nil,
 		func(_ *rand.Rand) {
 			weightMsgEditRegisteredReaction = params.DefaultWeightMsgEditRegisteredReaction
 		},
 	)
 
 	var weightMsgRemoveRegisteredReaction int
-	appParams.GetOrGenerate(cdc, OpWeightMsgRemoveRegisteredReaction, &weightMsgRemoveRegisteredReaction, nil,
+	appParams.GetOrGenerate(OpWeightMsgRemoveRegisteredReaction, &weightMsgRemoveRegisteredReaction, nil,
 		func(_ *rand.Rand) {
 			weightMsgRemoveRegisteredReaction = params.DefaultWeightMsgRemoveRegisteredReaction
 		},
 	)
 
 	var weightMsgSetReactionsParams int
-	appParams.GetOrGenerate(cdc, OpWeightMsgSetReactionsParams, &weightMsgSetReactionsParams, nil,
+	appParams.GetOrGenerate(OpWeightMsgSetReactionsParams, &weightMsgSetReactionsParams, nil,
 		func(_ *rand.Rand) {
 			weightMsgSetReactionsParams = params.DefaultWeightMsgSetReactionsParams
 		},

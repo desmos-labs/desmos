@@ -37,35 +37,35 @@ func WeightedOperations(
 ) sim.WeightedOperations {
 
 	var weightMsgCreateReport int
-	appParams.GetOrGenerate(cdc, OpWeightMsgCreateReport, &weightMsgCreateReport, nil,
+	appParams.GetOrGenerate(OpWeightMsgCreateReport, &weightMsgCreateReport, nil,
 		func(_ *rand.Rand) {
 			weightMsgCreateReport = params.DefaultWeightMsgCreateReport
 		},
 	)
 
 	var weightMsgDeleteReport int
-	appParams.GetOrGenerate(cdc, OpWeightMsgDeleteReport, &weightMsgDeleteReport, nil,
+	appParams.GetOrGenerate(OpWeightMsgDeleteReport, &weightMsgDeleteReport, nil,
 		func(_ *rand.Rand) {
 			weightMsgDeleteReport = params.DefaultWeightMsgDeleteReport
 		},
 	)
 
 	var weightMsgSupportStandardReason int
-	appParams.GetOrGenerate(cdc, OpWeightMsgSupportStandardReason, &weightMsgSupportStandardReason, nil,
+	appParams.GetOrGenerate(OpWeightMsgSupportStandardReason, &weightMsgSupportStandardReason, nil,
 		func(_ *rand.Rand) {
 			weightMsgSupportStandardReason = params.DefaultWeightMsgSupportStandardReason
 		},
 	)
 
 	var weightMsgAddReason int
-	appParams.GetOrGenerate(cdc, OpWeightMsgAddReason, &weightMsgAddReason, nil,
+	appParams.GetOrGenerate(OpWeightMsgAddReason, &weightMsgAddReason, nil,
 		func(_ *rand.Rand) {
 			weightMsgAddReason = params.DefaultWeightMsgAddReason
 		},
 	)
 
 	var weightMsgRemoveReason int
-	appParams.GetOrGenerate(cdc, OpWeightMsgRemoveReason, &weightMsgRemoveReason, nil,
+	appParams.GetOrGenerate(OpWeightMsgRemoveReason, &weightMsgRemoveReason, nil,
 		func(_ *rand.Rand) {
 			weightMsgRemoveReason = params.DefaultWeightMsgRemoveReason
 		},

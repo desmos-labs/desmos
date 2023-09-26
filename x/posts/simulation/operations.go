@@ -53,77 +53,77 @@ func WeightedOperations(
 	k *keeper.Keeper, sk types.SubspacesKeeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) sim.WeightedOperations {
 	var weightMsgCreatePost int
-	appParams.GetOrGenerate(cdc, OpWeightMsgCreatePost, &weightMsgCreatePost, nil,
+	appParams.GetOrGenerate(OpWeightMsgCreatePost, &weightMsgCreatePost, nil,
 		func(_ *rand.Rand) {
 			weightMsgCreatePost = DefaultWeightMsgCreatePost
 		},
 	)
 
 	var weightMsgEditPost int
-	appParams.GetOrGenerate(cdc, OpWeightMsgEditPost, &weightMsgEditPost, nil,
+	appParams.GetOrGenerate(OpWeightMsgEditPost, &weightMsgEditPost, nil,
 		func(_ *rand.Rand) {
 			weightMsgEditPost = DefaultWeightMsgEditPost
 		},
 	)
 
 	var weightMsgDeletePost int
-	appParams.GetOrGenerate(cdc, OpWeightMsgDeletePost, &weightMsgDeletePost, nil,
+	appParams.GetOrGenerate(OpWeightMsgDeletePost, &weightMsgDeletePost, nil,
 		func(_ *rand.Rand) {
 			weightMsgDeletePost = DefaultWeightMsgDeletePost
 		},
 	)
 
 	var weightMsgAddPostAttachment int
-	appParams.GetOrGenerate(cdc, OpWeightMsgAddPostAttachment, &weightMsgAddPostAttachment, nil,
+	appParams.GetOrGenerate(OpWeightMsgAddPostAttachment, &weightMsgAddPostAttachment, nil,
 		func(_ *rand.Rand) {
 			weightMsgAddPostAttachment = DefaultWeightMsgAddPostAttachment
 		},
 	)
 
 	var weightMsgRemovePostAttachment int
-	appParams.GetOrGenerate(cdc, OpWeightMsgRemovePostAttachment, &weightMsgRemovePostAttachment, nil,
+	appParams.GetOrGenerate(OpWeightMsgRemovePostAttachment, &weightMsgRemovePostAttachment, nil,
 		func(_ *rand.Rand) {
 			weightMsgRemovePostAttachment = DefaultWeightMsgRemovePostAttachment
 		},
 	)
 
 	var weightMsgAnswerPoll int
-	appParams.GetOrGenerate(cdc, OpWeightMsgAnswerPoll, &weightMsgAnswerPoll, nil,
+	appParams.GetOrGenerate(OpWeightMsgAnswerPoll, &weightMsgAnswerPoll, nil,
 		func(_ *rand.Rand) {
 			weightMsgAnswerPoll = DefaultWeightMsgAnswerPoll
 		},
 	)
 
 	var weightMsgMovePost int
-	appParams.GetOrGenerate(cdc, OpWeightMsgMovePost, &weightMsgMovePost, nil,
+	appParams.GetOrGenerate(OpWeightMsgMovePost, &weightMsgMovePost, nil,
 		func(_ *rand.Rand) {
 			weightMsgMovePost = DefaultWeightMsgMovePost
 		},
 	)
 
 	var weightMsgRequestPostOwnerTransfer int
-	appParams.GetOrGenerate(cdc, OpWeightMsgRequestPostOwnerTransfer, &weightMsgRequestPostOwnerTransfer, nil,
+	appParams.GetOrGenerate(OpWeightMsgRequestPostOwnerTransfer, &weightMsgRequestPostOwnerTransfer, nil,
 		func(r *rand.Rand) {
 			weightMsgRequestPostOwnerTransfer = DefaultWeightMsgRequestPostOwnerTransfer
 		},
 	)
 
 	var weightMsgCancelPostOwnerTransferRequest int
-	appParams.GetOrGenerate(cdc, OpWeightMsgCancelPostOwnerTransferRequest, &weightMsgCancelPostOwnerTransferRequest, nil,
+	appParams.GetOrGenerate(OpWeightMsgCancelPostOwnerTransferRequest, &weightMsgCancelPostOwnerTransferRequest, nil,
 		func(r *rand.Rand) {
 			weightMsgCancelPostOwnerTransferRequest = DefaultWeightMsgCancelPostOwnerTransferRequest
 		},
 	)
 
 	var weightMsgAcceptPostOwnerTransferRequest int
-	appParams.GetOrGenerate(cdc, OpWeightMsgAcceptPostOwnerTransferRequest, &weightMsgAcceptPostOwnerTransferRequest, nil,
+	appParams.GetOrGenerate(OpWeightMsgAcceptPostOwnerTransferRequest, &weightMsgAcceptPostOwnerTransferRequest, nil,
 		func(r *rand.Rand) {
 			weightMsgAcceptPostOwnerTransferRequest = DefaultWeightMsgAcceptPostOwnerTransferRequest
 		},
 	)
 
 	var weightMsgRefusePostOwnerTransferRequest int
-	appParams.GetOrGenerate(cdc, OpWeightMsgRefusePostOwnerTransferRequest, &weightMsgRefusePostOwnerTransferRequest, nil,
+	appParams.GetOrGenerate(OpWeightMsgRefusePostOwnerTransferRequest, &weightMsgRefusePostOwnerTransferRequest, nil,
 		func(r *rand.Rand) {
 			weightMsgRefusePostOwnerTransferRequest = DefaultWeightMsgRefusePostOwnerTransferRequest
 		},
