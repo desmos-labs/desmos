@@ -1,6 +1,8 @@
 package keeper
 
 import (
+	"fmt"
+
 	"cosmossdk.io/log"
 	"cosmossdk.io/math"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -84,6 +86,8 @@ func subtractVestingAccountDenomAmounts(circulatingSupply math.Int,
 
 	originalVestingAmount := originalVesting.AmountOf(denom)
 	delegatedFreeAmount := delegatedFree.AmountOf(denom)
+
+	fmt.Println(originalVestingAmount, delegatedFreeAmount)
 
 	return circulatingSupply.Sub(originalVestingAmount).Sub(delegatedFreeAmount)
 }
