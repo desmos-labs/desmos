@@ -51,7 +51,12 @@ func (k Keeper) GetCirculatingSupply(ctx sdk.Context, coinDenom string, divider 
 	totalSupply := k.bk.GetSupply(ctx, coinDenom)
 
 	// Get the community pool denom amount
-	communityPoolDenomAmount := k.dk.GetFeePoolCommunityCoins(ctx).AmountOf(coinDenom)
+	communityPool, err := k.dk.FeePool.Get(ctx)
+	if err != nil {
+		panic(err)
+	}
+
+	communityPoolDenomAmount := communityPool.CommunityPool.AmountOf(coinDenom)
 
 	// Subtract community pool amount from the total supply
 	circulatingSupply = totalSupply.Amount.Sub(communityPoolDenomAmount.RoundInt())
