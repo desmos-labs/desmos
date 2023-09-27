@@ -5,12 +5,12 @@
 package testutil
 
 import (
+	context "context"
 	reflect "reflect"
 
 	types "github.com/cosmos/cosmos-sdk/types"
-	types0 "github.com/cosmos/cosmos-sdk/x/auth/types"
-	types1 "github.com/cosmos/cosmos-sdk/x/bank/types"
-	types2 "github.com/desmos-labs/desmos/v6/x/subspaces/types"
+	types0 "github.com/cosmos/cosmos-sdk/x/bank/types"
+	types1 "github.com/desmos-labs/desmos/v6/x/subspaces/types"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -38,7 +38,7 @@ func (m *MockBankKeeper) EXPECT() *MockBankKeeperMockRecorder {
 }
 
 // BurnCoins mocks base method.
-func (m *MockBankKeeper) BurnCoins(ctx types.Context, moduleName string, amt types.Coins) error {
+func (m *MockBankKeeper) BurnCoins(ctx context.Context, moduleName string, amt types.Coins) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "BurnCoins", ctx, moduleName, amt)
 	ret0, _ := ret[0].(error)
@@ -52,10 +52,10 @@ func (mr *MockBankKeeperMockRecorder) BurnCoins(ctx, moduleName, amt interface{}
 }
 
 // GetDenomMetaData mocks base method.
-func (m *MockBankKeeper) GetDenomMetaData(ctx types.Context, denom string) (types1.Metadata, bool) {
+func (m *MockBankKeeper) GetDenomMetaData(ctx context.Context, denom string) (types0.Metadata, bool) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetDenomMetaData", ctx, denom)
-	ret0, _ := ret[0].(types1.Metadata)
+	ret0, _ := ret[0].(types0.Metadata)
 	ret1, _ := ret[1].(bool)
 	return ret0, ret1
 }
@@ -67,7 +67,7 @@ func (mr *MockBankKeeperMockRecorder) GetDenomMetaData(ctx, denom interface{}) *
 }
 
 // HasBalance mocks base method.
-func (m *MockBankKeeper) HasBalance(ctx types.Context, addr types.AccAddress, amt types.Coin) bool {
+func (m *MockBankKeeper) HasBalance(ctx context.Context, addr types.AccAddress, amt types.Coin) bool {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "HasBalance", ctx, addr, amt)
 	ret0, _ := ret[0].(bool)
@@ -81,7 +81,7 @@ func (mr *MockBankKeeperMockRecorder) HasBalance(ctx, addr, amt interface{}) *go
 }
 
 // HasSupply mocks base method.
-func (m *MockBankKeeper) HasSupply(ctx types.Context, denom string) bool {
+func (m *MockBankKeeper) HasSupply(ctx context.Context, denom string) bool {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "HasSupply", ctx, denom)
 	ret0, _ := ret[0].(bool)
@@ -95,7 +95,7 @@ func (mr *MockBankKeeperMockRecorder) HasSupply(ctx, denom interface{}) *gomock.
 }
 
 // MintCoins mocks base method.
-func (m *MockBankKeeper) MintCoins(ctx types.Context, moduleName string, amt types.Coins) error {
+func (m *MockBankKeeper) MintCoins(ctx context.Context, moduleName string, amt types.Coins) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "MintCoins", ctx, moduleName, amt)
 	ret0, _ := ret[0].(error)
@@ -109,7 +109,7 @@ func (mr *MockBankKeeperMockRecorder) MintCoins(ctx, moduleName, amt interface{}
 }
 
 // SendCoins mocks base method.
-func (m *MockBankKeeper) SendCoins(ctx types.Context, fromAddr, toAddr types.AccAddress, amt types.Coins) error {
+func (m *MockBankKeeper) SendCoins(ctx context.Context, fromAddr, toAddr types.AccAddress, amt types.Coins) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SendCoins", ctx, fromAddr, toAddr, amt)
 	ret0, _ := ret[0].(error)
@@ -123,7 +123,7 @@ func (mr *MockBankKeeperMockRecorder) SendCoins(ctx, fromAddr, toAddr, amt inter
 }
 
 // SendCoinsFromAccountToModule mocks base method.
-func (m *MockBankKeeper) SendCoinsFromAccountToModule(ctx types.Context, senderAddr types.AccAddress, recipientModule string, amt types.Coins) error {
+func (m *MockBankKeeper) SendCoinsFromAccountToModule(ctx context.Context, senderAddr types.AccAddress, recipientModule string, amt types.Coins) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SendCoinsFromAccountToModule", ctx, senderAddr, recipientModule, amt)
 	ret0, _ := ret[0].(error)
@@ -137,7 +137,7 @@ func (mr *MockBankKeeperMockRecorder) SendCoinsFromAccountToModule(ctx, senderAd
 }
 
 // SendCoinsFromModuleToAccount mocks base method.
-func (m *MockBankKeeper) SendCoinsFromModuleToAccount(ctx types.Context, senderModule string, recipientAddr types.AccAddress, amt types.Coins) error {
+func (m *MockBankKeeper) SendCoinsFromModuleToAccount(ctx context.Context, senderModule string, recipientAddr types.AccAddress, amt types.Coins) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SendCoinsFromModuleToAccount", ctx, senderModule, recipientAddr, amt)
 	ret0, _ := ret[0].(error)
@@ -151,7 +151,7 @@ func (mr *MockBankKeeperMockRecorder) SendCoinsFromModuleToAccount(ctx, senderMo
 }
 
 // SetDenomMetaData mocks base method.
-func (m *MockBankKeeper) SetDenomMetaData(ctx types.Context, denomMetaData types1.Metadata) {
+func (m *MockBankKeeper) SetDenomMetaData(ctx context.Context, denomMetaData types0.Metadata) {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "SetDenomMetaData", ctx, denomMetaData)
 }
@@ -186,10 +186,10 @@ func (m *MockAccountKeeper) EXPECT() *MockAccountKeeperMockRecorder {
 }
 
 // GetAccount mocks base method.
-func (m *MockAccountKeeper) GetAccount(arg0 types.Context, arg1 types.AccAddress) types0.AccountI {
+func (m *MockAccountKeeper) GetAccount(arg0 context.Context, arg1 types.AccAddress) types.AccountI {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAccount", arg0, arg1)
-	ret0, _ := ret[0].(types0.AccountI)
+	ret0, _ := ret[0].(types.AccountI)
 	return ret0
 }
 
@@ -200,10 +200,10 @@ func (mr *MockAccountKeeperMockRecorder) GetAccount(arg0, arg1 interface{}) *gom
 }
 
 // GetModuleAccount mocks base method.
-func (m *MockAccountKeeper) GetModuleAccount(ctx types.Context, moduleName string) types0.ModuleAccountI {
+func (m *MockAccountKeeper) GetModuleAccount(ctx context.Context, moduleName string) types.ModuleAccountI {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetModuleAccount", ctx, moduleName)
-	ret0, _ := ret[0].(types0.ModuleAccountI)
+	ret0, _ := ret[0].(types.ModuleAccountI)
 	return ret0
 }
 
@@ -237,10 +237,10 @@ func (m *MockSubspacesKeeper) EXPECT() *MockSubspacesKeeperMockRecorder {
 }
 
 // GetAllSubspaces mocks base method.
-func (m *MockSubspacesKeeper) GetAllSubspaces(ctx types.Context) []types2.Subspace {
+func (m *MockSubspacesKeeper) GetAllSubspaces(ctx types.Context) []types1.Subspace {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAllSubspaces", ctx)
-	ret0, _ := ret[0].([]types2.Subspace)
+	ret0, _ := ret[0].([]types1.Subspace)
 	return ret0
 }
 
@@ -251,10 +251,10 @@ func (mr *MockSubspacesKeeperMockRecorder) GetAllSubspaces(ctx interface{}) *gom
 }
 
 // GetSubspace mocks base method.
-func (m *MockSubspacesKeeper) GetSubspace(ctx types.Context, subspaceID uint64) (types2.Subspace, bool) {
+func (m *MockSubspacesKeeper) GetSubspace(ctx types.Context, subspaceID uint64) (types1.Subspace, bool) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetSubspace", ctx, subspaceID)
-	ret0, _ := ret[0].(types2.Subspace)
+	ret0, _ := ret[0].(types1.Subspace)
 	ret1, _ := ret[1].(bool)
 	return ret0, ret1
 }
@@ -266,7 +266,7 @@ func (mr *MockSubspacesKeeperMockRecorder) GetSubspace(ctx, subspaceID interface
 }
 
 // GetUsersWithRootPermissions mocks base method.
-func (m *MockSubspacesKeeper) GetUsersWithRootPermissions(ctx types.Context, subspaceID uint64, permission types2.Permissions) []string {
+func (m *MockSubspacesKeeper) GetUsersWithRootPermissions(ctx types.Context, subspaceID uint64, permission types1.Permissions) []string {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetUsersWithRootPermissions", ctx, subspaceID, permission)
 	ret0, _ := ret[0].([]string)
@@ -280,7 +280,7 @@ func (mr *MockSubspacesKeeperMockRecorder) GetUsersWithRootPermissions(ctx, subs
 }
 
 // HasPermission mocks base method.
-func (m *MockSubspacesKeeper) HasPermission(ctx types.Context, subspaceID uint64, sectionID uint32, user string, permission types2.Permission) bool {
+func (m *MockSubspacesKeeper) HasPermission(ctx types.Context, subspaceID uint64, sectionID uint32, user string, permission types1.Permission) bool {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "HasPermission", ctx, subspaceID, sectionID, user, permission)
 	ret0, _ := ret[0].(bool)

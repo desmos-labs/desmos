@@ -5,11 +5,11 @@
 package testutil
 
 import (
+	context "context"
 	reflect "reflect"
 	time "time"
 
 	types "github.com/cosmos/cosmos-sdk/types"
-	types0 "github.com/cosmos/cosmos-sdk/x/auth/types"
 	authz "github.com/cosmos/cosmos-sdk/x/authz"
 	gomock "github.com/golang/mock/gomock"
 )
@@ -38,7 +38,7 @@ func (m *MockAccountKeeper) EXPECT() *MockAccountKeeperMockRecorder {
 }
 
 // HasAccount mocks base method.
-func (m *MockAccountKeeper) HasAccount(ctx types.Context, addr types.AccAddress) bool {
+func (m *MockAccountKeeper) HasAccount(ctx context.Context, addr types.AccAddress) bool {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "HasAccount", ctx, addr)
 	ret0, _ := ret[0].(bool)
@@ -52,10 +52,10 @@ func (mr *MockAccountKeeperMockRecorder) HasAccount(ctx, addr interface{}) *gomo
 }
 
 // NewAccountWithAddress mocks base method.
-func (m *MockAccountKeeper) NewAccountWithAddress(ctx types.Context, addr types.AccAddress) types0.AccountI {
+func (m *MockAccountKeeper) NewAccountWithAddress(ctx context.Context, addr types.AccAddress) types.AccountI {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "NewAccountWithAddress", ctx, addr)
-	ret0, _ := ret[0].(types0.AccountI)
+	ret0, _ := ret[0].(types.AccountI)
 	return ret0
 }
 
@@ -66,7 +66,7 @@ func (mr *MockAccountKeeperMockRecorder) NewAccountWithAddress(ctx, addr interfa
 }
 
 // SetAccount mocks base method.
-func (m *MockAccountKeeper) SetAccount(ctx types.Context, acc types0.AccountI) {
+func (m *MockAccountKeeper) SetAccount(ctx context.Context, acc types.AccountI) {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "SetAccount", ctx, acc)
 }
@@ -101,7 +101,7 @@ func (m *MockAuthzKeeper) EXPECT() *MockAuthzKeeperMockRecorder {
 }
 
 // DeleteGrant mocks base method.
-func (m *MockAuthzKeeper) DeleteGrant(ctx types.Context, grantee, granter types.AccAddress, msgType string) error {
+func (m *MockAuthzKeeper) DeleteGrant(ctx context.Context, grantee, granter types.AccAddress, msgType string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DeleteGrant", ctx, grantee, granter, msgType)
 	ret0, _ := ret[0].(error)
@@ -115,7 +115,7 @@ func (mr *MockAuthzKeeperMockRecorder) DeleteGrant(ctx, grantee, granter, msgTyp
 }
 
 // SaveGrant mocks base method.
-func (m *MockAuthzKeeper) SaveGrant(ctx types.Context, grantee, granter types.AccAddress, authorization authz.Authorization, expiration *time.Time) error {
+func (m *MockAuthzKeeper) SaveGrant(ctx context.Context, grantee, granter types.AccAddress, authorization authz.Authorization, expiration *time.Time) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SaveGrant", ctx, grantee, granter, authorization, expiration)
 	ret0, _ := ret[0].(error)
