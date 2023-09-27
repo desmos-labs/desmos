@@ -1,13 +1,17 @@
 syntax = "proto3";
 package desmos.profiles.v3;
 
-import "cosmos/msg/v1/msg.proto";
+import "google/protobuf/any.proto";
+import "gogoproto/gogo.proto";
 
-import "desmos/profiles/v3/msgs_profile.proto";
-import "desmos/profiles/v3/msgs_dtag_requests.proto";
-import "desmos/profiles/v3/msgs_chain_links.proto";
-import "desmos/profiles/v3/msgs_app_links.proto";
-import "desmos/profiles/v3/msgs_params.proto";
+import "cosmos/msg/v1/msg.proto";
+import "amino/amino.proto";
+import "cosmos_proto/cosmos.proto";
+import "ibc/core/client/v1/client.proto";
+
+import "desmos/profiles/v3/models_app_links.proto";
+import "desmos/profiles/v3/models_chain_links.proto";
+import "desmos/profiles/v3/models_params.proto";
 
 option go_package = "github.com/desmos-labs/desmos/v6/x/profiles/types";
 
@@ -71,3 +75,352 @@ service Msg {
   // Since: Desmos 5.0.0
   rpc UpdateParams(MsgUpdateParams) returns (MsgUpdateParamsResponse);
 }
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// MsgSaveProfile represents a message to save a profile.
+message MsgSaveProfile {
+  option (cosmos.msg.v1.signer) = "creator";
+  option (amino.name) = "desmos/MsgSaveProfile";
+
+  // DTag of the profile. If it shouldn't be changed, [do-no-modify] can be used
+  // instead.
+  string dtag = 1 [
+    (gogoproto.moretags) = "yaml:\"dtag\"",
+    (gogoproto.customname) = "DTag"
+  ];
+
+  // Nickname of the profile. If it shouldn't be changed, [do-no-modify] can be
+  // used instead.
+  string nickname = 2 [ (gogoproto.moretags) = "yaml:\"nickname\"" ];
+
+  // Bio of the profile. If it shouldn't be changed, [do-no-modify] can be used
+  // instead.
+  string bio = 3 [ (gogoproto.moretags) = "yaml:\"bio\"" ];
+
+  // URL to the profile picture. If it shouldn't be changed, [do-no-modify] can
+  // be used instead.
+  string profile_picture = 4
+      [ (gogoproto.moretags) = "yaml:\"profile_picture\"" ];
+
+  // URL to the profile cover. If it shouldn't be changed, [do-no-modify] can be
+  // used instead.
+  string cover_picture = 5 [ (gogoproto.moretags) = "yaml:\"cover_picture\"" ];
+
+  // Address of the user associated to the profile
+  string creator = 6 [
+    (gogoproto.moretags) = "yaml:\"creator\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
+}
+
+// MsgSaveProfileResponse defines the Msg/SaveProfile response type.
+message MsgSaveProfileResponse {}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// MsgDeleteProfile represents the message used to delete an existing profile.
+message MsgDeleteProfile {
+  option (cosmos.msg.v1.signer) = "creator";
+  option (amino.name) = "desmos/MsgDeleteProfile";
+
+  // Address associated to the profile to be deleted
+  string creator = 1 [
+    (gogoproto.moretags) = "yaml:\"creator\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
+}
+
+// MsgDeleteProfileResponse defines the Msg/DeleteProfile response type.
+message MsgDeleteProfileResponse {}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// MsgRequestDTagTransfer represents the message used to request the DTag
+// transfer to another user.
+message MsgRequestDTagTransfer {
+  option (cosmos.msg.v1.signer) = "sender";
+  option (amino.name) = "desmos/MsgRequestDTagTransfer";
+
+  // Receiver contains the address of the request receiver that owns the DTag to
+  // transfer if the request is accepted
+  string receiver = 1 [ (gogoproto.moretags) = "yaml:\"receiver\"" ];
+
+  // Sender contains the address of the request sender that will receive the
+  // receiver DTag if the requet is accepted
+  string sender = 2 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
+}
+
+// MsgRequestDTagTransferResponse defines the Msg/RequestDTagTransfer response
+// type.
+message MsgRequestDTagTransferResponse {}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// MsgCancelDTagTransferRequest represents the message used to cancel a DTag
+// transfer request.
+message MsgCancelDTagTransferRequest {
+  option (cosmos.msg.v1.signer) = "sender";
+  option (amino.name) = "desmos/MsgCancelDTagTransferRequest";
+
+  // Receiver contains the address of the request receiver
+  string receiver = 1 [
+    (gogoproto.moretags) = "yaml:\"receiver\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
+
+  // Sender contains the address of the requets sender
+  string sender = 2 [
+    (gogoproto.moretags) = "yaml:\"sender\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
+}
+
+// MsgCancelDTagTransferRequestResponse represents the
+// Msg/CancelDTagTransferRequest response type.
+message MsgCancelDTagTransferRequestResponse {}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// MsgAcceptDTagTransferRequest represents the message used to accept a DTag
+// transfer request.
+message MsgAcceptDTagTransferRequest {
+  option (cosmos.msg.v1.signer) = "receiver";
+  option (amino.name) = "desmos/MsgAcceptDTagTransferRequest";
+
+  // NewDTag represents the DTag that the request receiver will obtain if they
+  // accept the request
+  string new_dtag = 1 [
+    (gogoproto.moretags) = "yaml:\"new_dtag\"",
+    (gogoproto.customname) = "NewDTag"
+  ];
+
+  // Sender represents the request sender
+  string sender = 2 [
+    (gogoproto.moretags) = "yaml:\"sender\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
+
+  // Receiver represents the request receiver
+  string receiver = 3 [
+    (gogoproto.moretags) = "yaml:\"receiver\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
+}
+
+// MsgAcceptDTagTransferRequestResponse defines the
+// Msg/AcceptDTagTransferRequest response.
+message MsgAcceptDTagTransferRequestResponse {}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// MsgRefuseDTagTransferRequest represents the message used to refuse a DTag
+// transfer request.
+message MsgRefuseDTagTransferRequest {
+  option (cosmos.msg.v1.signer) = "receiver";
+  option (amino.name) = "desmos/MsgRefuseDTagTransferRequest";
+
+  // Sender represents the request sender
+  string sender = 1 [
+    (gogoproto.moretags) = "yaml:\"sender\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
+
+  // Receiver represents the request receiver
+  string receiver = 2 [
+    (gogoproto.moretags) = "yaml:\"receiver\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
+}
+
+// MsgRefuseDTagTransferRequestResponse defines the
+// Msg/RefuseDTagTransferRequest response.
+message MsgRefuseDTagTransferRequestResponse {}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// MsgLinkChainAccount represents a message to link an account to a profile.
+message MsgLinkChainAccount {
+  option (cosmos.msg.v1.signer) = "signer";
+  option (amino.name) = "desmos/MsgLinkChainAccount";
+
+  // ChainAddress contains the details of the external chain address to be
+  // linked
+  google.protobuf.Any chain_address = 1 [
+    (gogoproto.moretags) = "yaml:\"source_address\"",
+    (cosmos_proto.accepts_interface) = "desmos.profiles.v3.AddressData"
+  ];
+
+  // Proof contains the proof of ownership of the external chain address
+  desmos.profiles.v3.Proof proof = 2 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"source_proof\"",
+    (amino.dont_omitempty) = true
+  ];
+
+  // ChainConfig contains the configuration of the external chain
+  desmos.profiles.v3.ChainConfig chain_config = 3 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"source_chain_config\"",
+    (amino.dont_omitempty) = true
+  ];
+
+  // Signer represents the Desmos address associated with the
+  // profile to which link the external account
+  string signer = 4 [
+    (gogoproto.moretags) = "yaml:\"signer\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
+}
+
+// MsgLinkChainAccountResponse defines the Msg/LinkAccount response type.
+message MsgLinkChainAccountResponse {}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// MsgUnlinkChainAccount represents a message to unlink an account from a
+// profile.
+message MsgUnlinkChainAccount {
+  option (cosmos.msg.v1.signer) = "owner";
+  option (amino.name) = "desmos/MsgUnlinkChainAccount";
+
+  // Owner represents the Desmos profile from which to remove the link
+  string owner = 1 [
+    (gogoproto.moretags) = "yaml:\"owner\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
+
+  // ChainName represents the name of the chain to which the link to remove is
+  // associated
+  string chain_name = 2 [ (gogoproto.moretags) = "yaml:\"chain_name\"" ];
+
+  // Target represents the external address to be removed
+  string target = 3 [ (gogoproto.moretags) = "yaml:\"target\"" ];
+}
+
+// MsgUnlinkChainAccountResponse defines the Msg/UnlinkAccount response type.
+message MsgUnlinkChainAccountResponse {}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// MsgSetDefaultExternalAddress represents the message used to set a default
+// address for a specific chain
+message MsgSetDefaultExternalAddress {
+  option (cosmos.msg.v1.signer) = "signer";
+  option (amino.name) = "desmos/MsgSetDefaultExternalAddress";
+
+  // Name of the chain for which to set the default address
+  string chain_name = 1;
+
+  // Address to be set as the default one
+  string target = 2;
+
+  // User signing the message
+  string signer = 3 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+}
+
+// MsgSetDefaultExternalAddressResponse represents the
+// Msg/SetDefaultExternalAddress response type
+message MsgSetDefaultExternalAddressResponse {}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// MsgLinkApplication defines a msg to connect a profile with a
+// centralized application account (eg. Twitter, GitHub, etc).
+message MsgLinkApplication {
+  option (cosmos.msg.v1.signer) = "sender";
+  option (amino.name) = "desmos/MsgLinkApplication";
+
+  // The sender of the connection request
+  string sender = 1 [
+    (gogoproto.moretags) = "yaml:\"sender\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
+
+  // LinkData contains the data related to the application to which connect
+  Data link_data = 2 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"link_data\"",
+    (amino.dont_omitempty) = true
+  ];
+
+  // Hex encoded call data that will be sent to the data source in order to
+  // verify the link
+  string call_data = 3 [ (gogoproto.moretags) = "yaml:\"call_data\"" ];
+
+  // The port on which the packet will be sent
+  string source_port = 4 [ (gogoproto.moretags) = "yaml:\"source_port\"" ];
+
+  // The channel by which the packet will be sent
+  string source_channel = 5
+      [ (gogoproto.moretags) = "yaml:\"source_channel\"" ];
+
+  // Timeout height relative to the current block height.
+  // The timeout is disabled when set to 0.
+  ibc.core.client.v1.Height timeout_height = 6 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"timeout_height\"",
+    (amino.dont_omitempty) = true
+  ];
+
+  // Timeout timestamp (in nanoseconds) relative to the current block timestamp.
+  // The timeout is disabled when set to 0.
+  uint64 timeout_timestamp = 7
+      [ (gogoproto.moretags) = "yaml:\"timeout_timestamp\"" ];
+}
+
+// MsgLinkApplicationResponse defines the Msg/LinkApplication
+// response type.
+message MsgLinkApplicationResponse {}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+// MsgUnlinkApplication defines a msg to delete an application link from a user
+// profile
+message MsgUnlinkApplication {
+  option (cosmos.msg.v1.signer) = "signer";
+  option (amino.name) = "desmos/MsgUnlinkApplication";
+
+  // Application represents the name of the application to unlink
+  string application = 1 [ (gogoproto.moretags) = "yaml:\"application\"" ];
+
+  // Username represents the username inside the application to unlink
+  string username = 2 [ (gogoproto.moretags) = "yaml:\"username\"" ];
+
+  // Signer represents the Desmos account to which the application should be
+  // unlinked
+  string signer = 3 [
+    (gogoproto.moretags) = "yaml:\"signer\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
+}
+
+// MsgUnlinkApplicationResponse defines the Msg/UnlinkApplication response
+// type.
+message MsgUnlinkApplicationResponse {}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// MsgUpdateParams is the Msg/UpdateParams request type.
+//
+// Since: Desmos 5.0.0
+message MsgUpdateParams {
+  option (cosmos.msg.v1.signer) = "authority";
+  option (amino.name) = "desmos/x/profiles/MsgUpdateParams";
+
+  // authority is the address that controls the module (defaults to x/gov unless
+  // overwritten).
+  string authority = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+
+  // params defines the parameters to update.
+  //
+  // NOTE: All parameters must be supplied.
+  Params params = 2
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+}
+
+// MsgUpdateParamsResponse defines the response structure for executing a
+// MsgUpdateParams message.
+//
+// Since: Desmos 5.0.0
+message MsgUpdateParamsResponse {}
