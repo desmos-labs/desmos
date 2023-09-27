@@ -61,6 +61,7 @@ import (
 	ibckeeper "github.com/cosmos/ibc-go/v8/modules/core/keeper"
 	solomachine "github.com/cosmos/ibc-go/v8/modules/light-clients/06-solomachine"
 	ibctm "github.com/cosmos/ibc-go/v8/modules/light-clients/07-tendermint"
+	ibctestingtypes "github.com/cosmos/ibc-go/v8/testing/types"
 
 	ica "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts"
 	icacontroller "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts/controller"
@@ -699,4 +700,31 @@ func BlockedAddresses() map[string]bool {
 	}
 
 	return result
+}
+
+// IBC TestingApp functions
+
+// GetBaseApp implements the ibctesting.TestingApp interface
+func (app *DesmosApp) GetBaseApp() *baseapp.BaseApp {
+	return app.BaseApp
+}
+
+// GetStakingKeeper implements the ibctesting.TestingApp interface
+func (app *DesmosApp) GetStakingKeeper() ibctestingtypes.StakingKeeper {
+	return app.StakingKeeper
+}
+
+// GetIBCKeeper implements the TestingApp interface
+func (app *DesmosApp) GetIBCKeeper() *ibckeeper.Keeper {
+	return app.IBCKeeper
+}
+
+// GetScopedIBCKeeper implements the ibctesting.TestingApp interface
+func (app *DesmosApp) GetScopedIBCKeeper() capabilitykeeper.ScopedKeeper {
+	return app.ScopedIBCKeeper
+}
+
+// GetTxConfig implements the ibctesting.TestingApp interface
+func (app *DesmosApp) GetTxConfig() client.TxConfig {
+	return app.txConfig
 }
