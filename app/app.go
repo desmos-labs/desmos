@@ -47,7 +47,9 @@ import (
 
 	feegrantkeeper "cosmossdk.io/x/feegrant/keeper"
 	mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
+	"github.com/cosmos/ibc-go/modules/capability"
 	capabilitykeeper "github.com/cosmos/ibc-go/modules/capability/keeper"
+	capabilitytypes "github.com/cosmos/ibc-go/modules/capability/types"
 
 	ibcfee "github.com/cosmos/ibc-go/v8/modules/apps/29-fee"
 	ibcfeekeeper "github.com/cosmos/ibc-go/v8/modules/apps/29-fee/keeper"
@@ -59,8 +61,6 @@ import (
 	porttypes "github.com/cosmos/ibc-go/v8/modules/core/05-port/types"
 	ibcexported "github.com/cosmos/ibc-go/v8/modules/core/exported"
 	ibckeeper "github.com/cosmos/ibc-go/v8/modules/core/keeper"
-	solomachine "github.com/cosmos/ibc-go/v8/modules/light-clients/06-solomachine"
-	ibctm "github.com/cosmos/ibc-go/v8/modules/light-clients/07-tendermint"
 	ibctestingtypes "github.com/cosmos/ibc-go/v8/testing/types"
 
 	ica "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts"
@@ -224,7 +224,6 @@ func NewDesmosApp(
 		&app.interfaceRegistry,
 		&app.AccountKeeper,
 		&app.BankKeeper,
-		&app.CapabilityKeeper,
 		&app.StakingKeeper,
 		&app.SlashingKeeper,
 		&app.MintKeeper,
@@ -288,6 +287,11 @@ func NewDesmosApp(
 		app.RegisterStores(key)
 	}
 
+	memKeys := storetypes.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
+	for _, key := range memKeys {
+		app.RegisterStores(key)
+	}
+
 	// load state streaming if enabled
 	if err := app.RegisterStreamingServices(appOpts, app.kvStoreKeys()); err != nil {
 		panic(err)
@@ -299,6 +303,9 @@ func NewDesmosApp(
 	for _, m := range []string{ibctransfertypes.ModuleName, ibcexported.ModuleName, icahosttypes.SubModuleName, icacontrollertypes.SubModuleName} {
 		app.ParamsKeeper.Subspace(m)
 	}
+
+	// add capability keeper and ScopeToModule for ibc module
+	app.CapabilityKeeper = capabilitykeeper.NewKeeper(app.appCodec, app.GetKey(capabilitytypes.StoreKey), app.GetKey(capabilitytypes.MemStoreKey))
 
 	// add capability keeper and ScopeToModule for ibc module
 	scopedIBCKeeper := app.CapabilityKeeper.ScopeToModule(ibcexported.ModuleName)
@@ -453,6 +460,7 @@ func NewDesmosApp(
 	// NOTE: Any module instantiated in the module manager that is later modified
 	// must be passed by reference here.
 	legacyModules := []module.AppModule{
+		capability.NewAppModule(app.appCodec, *app.CapabilityKeeper, true),
 		ibc.NewAppModule(app.IBCKeeper),
 		ibctransfer.NewAppModule(app.TransferKeeper),
 		ibcfee.NewAppModule(app.IBCFeeKeeper),
@@ -478,10 +486,6 @@ func NewDesmosApp(
 	app.sm.RegisterStoreDecoders()
 	app.ModuleManager.RegisterInvariants(app.CrisisKeeper)
 	app.registerUpgradeHandlers()
-
-	// register additional types
-	ibctm.AppModuleBasic{}.RegisterInterfaces(app.interfaceRegistry)
-	solomachine.AppModuleBasic{}.RegisterInterfaces(app.interfaceRegistry)
 
 	app.ScopedIBCKeeper = scopedIBCKeeper
 	app.ScopedIBCTransferKeeper = scopedIBCTransferKeeper
