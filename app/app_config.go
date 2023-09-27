@@ -9,6 +9,7 @@ import (
 
 	evidencetypes "cosmossdk.io/x/evidence/types"
 	"cosmossdk.io/x/feegrant"
+	"github.com/cosmos/cosmos-sdk/runtime"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
@@ -218,12 +219,13 @@ var (
 	beginBlockerOrder = []string{
 		// Simd modules
 		upgradetypes.ModuleName,
+		capabilitytypes.ModuleName,
 		minttypes.ModuleName,
 		distrtypes.ModuleName,
 		slashingtypes.ModuleName,
 		evidencetypes.ModuleName,
 		stakingtypes.ModuleName,
-		authtypes.ModuleName,
+		authz.ModuleName,
 
 		// IBC modules
 		ibcexported.ModuleName,
@@ -294,6 +296,7 @@ var (
 	// alphabetically (default order)
 	// NOTE: The relationships module must occur before the profiles module, or all relationships will be deleted
 	migrationModuleOrder = []string{
+		runtime.ModuleName,
 		authtypes.ModuleName,
 		authz.ModuleName,
 		banktypes.ModuleName,
