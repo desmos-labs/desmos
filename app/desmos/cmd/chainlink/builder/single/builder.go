@@ -3,10 +3,11 @@ package single
 import (
 	"encoding/hex"
 
-	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 
 	"github.com/desmos-labs/desmos/v6/app/desmos/cmd/chainlink/getter"
 	"github.com/desmos-labs/desmos/v6/app/desmos/cmd/chainlink/types"
@@ -33,14 +34,14 @@ func NewAccountChainLinkJSONBuilder(owner string, getter getter.SingleSignatureA
 }
 
 // BuildChainLinkJSON implements ChainLinkJSONBuilder
-func (b *AccountChainLinkJSONBuilder) BuildChainLinkJSON(cdc codec.Codec, chain types.Chain) (utils.ChainLinkJSON, error) {
+func (b *AccountChainLinkJSONBuilder) BuildChainLinkJSON(ctx client.Context, chain types.Chain) (utils.ChainLinkJSON, error) {
 	mnemonic, err := b.getter.GetMnemonic()
 	if err != nil {
 		return utils.ChainLinkJSON{}, err
 	}
 
 	// Create an in-memory keybase for signing
-	keyBase := keyring.NewInMemory(cdc)
+	keyBase := keyring.NewInMemory(ctx.Codec)
 	_, err = keyBase.NewAccount(KeyName, mnemonic, "", chain.DerivationPath, hd.Secp256k1)
 	if err != nil {
 		return utils.ChainLinkJSON{}, err
@@ -51,7 +52,7 @@ func (b *AccountChainLinkJSONBuilder) BuildChainLinkJSON(cdc codec.Codec, chain 
 	accAddr, _ := key.GetAddress()
 	addr, _ := sdk.Bech32ifyAddressBytes(chain.Prefix, accAddr)
 	value := []byte(b.owner)
-	sig, pubkey, err := keyBase.Sign(KeyName, value)
+	sig, pubkey, err := keyBase.Sign(KeyName, value, signing.SignMode_SIGN_MODE_TEXTUAL)
 	if err != nil {
 		return utils.ChainLinkJSON{}, err
 	}
