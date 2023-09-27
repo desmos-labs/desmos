@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/client"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	authsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
@@ -30,7 +30,7 @@ func NewAccountChainLinkJSONBuilder(getter getter.MultiSignatureAccountReference
 }
 
 // BuildChainLinkJSON implements ChainLinkJSONBuilder
-func (b *AccountChainLinkJSONBuilder) BuildChainLinkJSON(_ codec.Codec, chain types.Chain) (utils.ChainLinkJSON, error) {
+func (b *AccountChainLinkJSONBuilder) BuildChainLinkJSON(ctx client.Context, chain types.Chain) (utils.ChainLinkJSON, error) {
 	txFilePath, err := b.getter.GetMultiSignedTxFilePath()
 	if err != nil {
 		return utils.ChainLinkJSON{}, err
@@ -81,14 +81,14 @@ func (b *AccountChainLinkJSONBuilder) BuildChainLinkJSON(_ codec.Codec, chain ty
 	}
 
 	// Re-create the bytes that have been signed in order to produce the signature
-	signingData := authsigning.SignerData{
+	signerData := authsigning.SignerData{
 		AccountNumber: 0,
 		Sequence:      0,
 		ChainID:       signedChainID,
 		Address:       addr,
 		PubKey:        sigs[0].PubKey,
 	}
-	value, err := txCfg.SignModeHandler().GetSignBytes(signMode, signingData, parsedTx)
+	value, err := authsigning.GetSignBytesAdapter(ctx.CmdContext, ctx.TxConfig.SignModeHandler(), signMode, signerData, txBuilder.GetTx())
 	if err != nil {
 		return utils.ChainLinkJSON{}, err
 	}

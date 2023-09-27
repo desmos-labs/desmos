@@ -58,7 +58,7 @@ Providing an invalid transaction (either with an account-number or sequence not 
 				return err
 			}
 
-			chainLinkJSON, err := provider(owner, isSingleSignatureAccount).BuildChainLinkJSON(clientCtx.Codec, chain)
+			chainLinkJSON, err := provider(owner, isSingleSignatureAccount).BuildChainLinkJSON(clientCtx, chain)
 			if err != nil {
 				return err
 			}
