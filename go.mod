@@ -11,7 +11,7 @@ require (
 	cosmossdk.io/depinject v1.0.0-alpha.4
 	cosmossdk.io/errors v1.0.1
 	cosmossdk.io/log v1.2.1
-	cosmossdk.io/math v1.1.2
+	cosmossdk.io/math v1.1.3-rc.1
 	cosmossdk.io/simapp v0.0.0-20230323161446-0af178d721ff
 	cosmossdk.io/store v1.0.0-rc.0
 	cosmossdk.io/tools/confix v0.0.0-20230922093520-d5c78a637ea1
@@ -359,7 +359,7 @@ replace (
 	github.com/CosmWasm/wasmd => github.com/CosmWasm/wasmd v0.42.0-rc.1.0.20230921105125-fe597029cedd
 
 	// Our cosmos-sdk branch is: https://github.com/desmos-labs/cosmos-sdk v0.50.x-desmos
-	github.com/cosmos/cosmos-sdk => github.com/desmos-labs/cosmos-sdk v0.50.0-rc.0-desmos
+	github.com/cosmos/cosmos-sdk => github.com/desmos-labs/cosmos-sdk v0.50.0-rc.1-desmos
 
 	// Replace the Cosmos Ledger app with the Desmos fork
 	github.com/cosmos/ledger-cosmos-go => github.com/desmos-labs/ledger-desmos-go v0.12.1-desmos
