@@ -4,6 +4,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/cosmos/cosmos-sdk/codec/address"
+	"github.com/cosmos/cosmos-sdk/runtime"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
@@ -32,7 +34,7 @@ import (
 
 func TestBeginBlocker(t *testing.T) {
 	// Define store keys
-	keys := storetypes.NewMemoryStoreKeys(
+	keys := storetypes.NewKVStoreKeys(
 		authtypes.StoreKey, relationshipstypes.StoreKey, types.StoreKey,
 	)
 
@@ -50,7 +52,7 @@ func TestBeginBlocker(t *testing.T) {
 	cdc, legacyAmino := app.MakeCodecs()
 	sk := subspaceskeeper.NewKeeper(cdc, keys[subspacestypes.StoreKey], nil, nil, "authority")
 	rk := relationshipskeeper.NewKeeper(cdc, keys[relationshipstypes.StoreKey], sk)
-	ak := authkeeper.NewAccountKeeper(cdc, keys[authtypes.StoreKey], authtypes.ProtoBaseAccount, app.GetMaccPerms(), "cosmos", authtypes.NewModuleAddress("gov").String())
+	ak := authkeeper.NewAccountKeeper(cdc, runtime.NewKVStoreService(keys[authtypes.StoreKey]), authtypes.ProtoBaseAccount, app.GetMaccPerms(), address.NewBech32Codec("cosmos"), "cosmos", authtypes.NewModuleAddress("gov").String())
 	k := keeper.NewKeeper(cdc, legacyAmino, keys[types.StoreKey], ak, rk, nil, nil, nil, authtypes.NewModuleAddress("gov").String())
 
 	testCases := []struct {

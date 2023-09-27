@@ -9,6 +9,8 @@ import (
 	types2 "github.com/desmos-labs/desmos/v6/x/profiles/legacy/v4/types"
 	v5types "github.com/desmos-labs/desmos/v6/x/profiles/legacy/v5/types"
 
+	"github.com/cosmos/cosmos-sdk/codec/address"
+	"github.com/cosmos/cosmos-sdk/runtime"
 	"github.com/cosmos/cosmos-sdk/types/tx"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	"github.com/cosmos/cosmos-sdk/x/auth/migrations/legacytx"
@@ -18,6 +20,7 @@ import (
 
 	"cosmossdk.io/log"
 	"cosmossdk.io/store"
+	"cosmossdk.io/store/metrics"
 	storetypes "cosmossdk.io/store/types"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	dbm "github.com/cosmos/cosmos-db"
@@ -38,7 +41,7 @@ func buildContext(
 	keys map[string]*storetypes.KVStoreKey, tKeys map[string]*storetypes.TransientStoreKey, memKeys map[string]*storetypes.MemoryStoreKey,
 ) sdk.Context {
 	db := dbm.NewMemDB()
-	cms := store.NewCommitMultiStore(db)
+	cms := store.NewCommitMultiStore(db, log.NewNopLogger(), metrics.NewNoOpMetrics())
 	for _, key := range keys {
 		cms.MountStoreWithDB(key, storetypes.StoreTypeIAVL, db)
 	}
@@ -68,9 +71,10 @@ func TestMigrateStore(t *testing.T) {
 	// Build the x/auth keeper
 	authKeeper := authkeeper.NewAccountKeeper(
 		cdc,
-		keys[authtypes.StoreKey],
+		runtime.NewKVStoreService(keys[authtypes.StoreKey]),
 		authtypes.ProtoBaseAccount,
-		app.GetMaccPerms(),
+		nil,
+		address.NewBech32Codec("cosmos"),
 		"cosmos",
 		authtypes.NewModuleAddress("gov").String(),
 	)

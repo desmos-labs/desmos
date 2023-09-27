@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/cosmos/cosmos-sdk/runtime"
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 
 	subspacesauthz "github.com/desmos-labs/desmos/v6/x/subspaces/authz"
@@ -30,7 +31,7 @@ func TestMigrateStore(t *testing.T) {
 	memKeys := storetypes.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
 	// Build the authz keeper
-	authzKeeper := authzkeeper.NewKeeper(keys[authzkeeper.StoreKey], cdc, nil, nil)
+	authzKeeper := authzkeeper.NewKeeper(runtime.NewKVStoreService(keys[authzkeeper.StoreKey]), cdc, nil, nil)
 
 	testCases := []struct {
 		name      string
