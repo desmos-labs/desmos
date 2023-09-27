@@ -107,7 +107,7 @@ The printed JSON object can be safely used as the verification proof when connec
 // signRaw signs the given value directly by converting it into raw bytes
 func signRaw(txFactory tx.Factory, key *keyring.Record, value string) (valueBz []byte, sigBz []byte, err error) {
 	valueBz = []byte(value)
-	sigBz, _, err = txFactory.Keybase().Sign(key.Name, valueBz)
+	sigBz, _, err = txFactory.Keybase().Sign(key.Name, valueBz, signing.SignMode_SIGN_MODE_TEXTUAL)
 	return valueBz, sigBz, err
 }
 
@@ -126,7 +126,7 @@ func signAmino(clientCtx client.Context, txFactory tx.Factory, key *keyring.Reco
 	}
 
 	// Sign the data with the private key
-	err = tx.Sign(txFactory, key.Name, txBuilder, true)
+	err = tx.Sign(clientCtx.CmdContext, txFactory, key.Name, txBuilder, true)
 	if err != nil {
 		return
 	}
@@ -144,7 +144,7 @@ func signAmino(clientCtx client.Context, txFactory tx.Factory, key *keyring.Reco
 		Sequence:      txFactory.Sequence(),
 		Address:       address.String(),
 	}
-	valueBz, err = clientCtx.TxConfig.SignModeHandler().GetSignBytes(signMode, signerData, txBuilder.GetTx())
+	valueBz, err = authsigning.GetSignBytesAdapter(clientCtx.CmdContext, clientCtx.TxConfig.SignModeHandler(), signMode, signerData, txBuilder.GetTx())
 	if err != nil {
 		return
 	}
