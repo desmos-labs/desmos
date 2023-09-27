@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/types/kv"
+	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 )
 
 // GetSimulationLog unmarshals the KVPair's Value to the corresponding type based on the
