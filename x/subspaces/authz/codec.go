@@ -4,7 +4,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/x/authz"
-	authzcodec "github.com/cosmos/cosmos-sdk/x/authz/codec"
 )
 
 // RegisterLegacyAminoCodec registers the necessary interfaces and concrete types
@@ -19,10 +18,4 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 		(*authz.Authorization)(nil),
 		&GenericSubspaceAuthorization{},
 	)
-}
-
-func init() {
-	// Register all Amino interfaces and concrete types on the authz Amino codec so that this can later be
-	// used to properly serialize MsgGrant and MsgExec instances
-	RegisterLegacyAminoCodec(authzcodec.Amino)
 }
