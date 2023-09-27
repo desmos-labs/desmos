@@ -2,6 +2,7 @@ package keeper_test
 
 import (
 	"testing"
+	"time"
 
 	"cosmossdk.io/log"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
@@ -82,8 +83,8 @@ func (suite *KeeperTestSuite) SetupTest() {
 
 	moduleAcc := authtypes.NewEmptyModuleAccount(banktypes.ModuleName, authtypes.Burner,
 		authtypes.Minter, authtypes.Staking)
-
-	suite.ak.SetModuleAccount(suite.ctx, moduleAcc)
+	maccI := (suite.ak.NewAccount(suite.ctx, moduleAcc)).(sdk.ModuleAccountI) // set the account number
+	suite.ak.SetModuleAccount(suite.ctx, maccI)
 
 	suite.bk = bankkeeper.NewBaseKeeper(
 		suite.cdc,
@@ -137,10 +138,10 @@ func (suite *KeeperTestSuite) setupSupply(ctx sdk.Context, totalSupply sdk.Coins
 		suite.createBaseAccount(),
 		vestedSupply,
 		0,
-		12324125423,
+		time.Date(2100, 1, 1, 0, 0, 0, 0, time.UTC).Unix(),
 	)
 	suite.Require().NoError(err)
-	suite.ak.SetAccount(ctx, vestingAccount)
+	suite.ak.SetAccount(ctx, suite.ak.NewAccount(ctx, vestingAccount))
 
 	// Send supply coins to the vesting account
 	suite.Require().NoError(suite.bk.SendCoinsFromModuleToAccount(
