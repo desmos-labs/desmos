@@ -7,7 +7,6 @@ import (
 	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/msgservice"
-	"github.com/cosmos/cosmos-sdk/x/auth/migrations/legacytx"
 )
 
 func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
@@ -15,8 +14,6 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	legacy.RegisterAminoMsg(cdc, &MsgDeleteRelationship{}, "desmos/MsgDeleteRelationship")
 	legacy.RegisterAminoMsg(cdc, &MsgBlockUser{}, "desmos/MsgBlockUser")
 	legacy.RegisterAminoMsg(cdc, &MsgUnblockUser{}, "desmos/MsgUnblockUser")
-
-	legacytx.RegisterLegacyAminoCodec(cdc)
 }
 
 func RegisterInterfaces(registry types.InterfaceRegistry) {
