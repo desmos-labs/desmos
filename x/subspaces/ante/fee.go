@@ -1,6 +1,7 @@
 package ante
 
 import (
+	"bytes"
 	"fmt"
 
 	"cosmossdk.io/errors"
@@ -114,7 +115,7 @@ func (dfd DeductFeeDecorator) tryHandleSubspaceTx(ctx sdk.Context, tx sdk.FeeTx,
 
 	// If the fee granter is not set, or it's not equal to the subspace treasury,
 	// then use auth.DeductFeeDecorator to deal with fees
-	if feeGranter == nil || !feeGranter.Equals(types.GetTreasuryAddress(subspaceID)) {
+	if !bytes.Equal(feeGranter, types.GetTreasuryAddress(subspaceID)) {
 		return ctx, false, nil
 	}
 
@@ -147,7 +148,7 @@ func (dfd DeductFeeDecorator) tryHandleSubspaceTx(ctx sdk.Context, tx sdk.FeeTx,
 		sdk.NewEvent(
 			sdk.EventTypeTx,
 			sdk.NewAttribute(sdk.AttributeKeyFee, fees.String()),
-			sdk.NewAttribute(sdk.AttributeKeyFeePayer, deductFeesFrom.String()),
+			sdk.NewAttribute(sdk.AttributeKeyFeePayer, sdk.AccAddress(deductFeesFrom).String()),
 		),
 	})
 	return ctx, true, err
