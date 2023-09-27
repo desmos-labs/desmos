@@ -17,6 +17,8 @@ import (
 
 	"cosmossdk.io/errors"
 	"cosmossdk.io/math"
+	cmtproto "github.com/cometbft/cometbft/proto/tendermint/types"
+	cmttypes "github.com/cometbft/cometbft/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
@@ -55,7 +57,7 @@ var (
 	DefaultOpenInitVersion *connectiontypes.Version
 	DefaultTrustLevel      = ibctmtypes.DefaultTrustLevel
 	UpgradePath            = []string{"upgrade", "upgradedIBCState"}
-	ConnectionVersion      = connectiontypes.ExportedVersionsToProto(connectiontypes.GetCompatibleVersions())[0]
+	ConnectionVersion      = connectiontypes.GetCompatibleVersions()[0]
 )
 
 // TestChain is a testing struct that wraps a simapp with the last TM Header, the current ABCI
@@ -74,8 +76,15 @@ type TestChain struct {
 	TxConfig      client.TxConfig
 	Codec         codec.BinaryCodec
 
-	Vals    *tmtypes.ValidatorSet
-	Signers []tmtypes.PrivValidator
+	Vals     *cmttypes.ValidatorSet
+	NextVals *cmttypes.ValidatorSet
+
+	// Signers is a map from validator address to the PrivValidator
+	// The map is converted into an array that is the same order as the validators right before signing commit
+	// This ensures that signers will always be in correct order even as validator powers change.
+	// If a test adds a new validator after chain creation, then the signer map must be updated to include
+	// the new PrivValidator entry.
+	Signers []cmttypes.PrivValidator
 
 	PrivKey cryptotypes.PrivKey
 	Account sdk.AccountI
@@ -138,6 +147,7 @@ func NewTestChain(t *testing.T, chainID string) *TestChain {
 		Connections:   make([]*TestConnection, 0),
 	}
 
+	// commit genesis block
 	chain.NextBlock()
 
 	return chain
@@ -145,18 +155,34 @@ func NewTestChain(t *testing.T, chainID string) *TestChain {
 
 // GetContext returns the current context for the application.
 func (chain *TestChain) GetContext() sdk.Context {
-	return chain.App.BaseApp.NewContext(false, chain.CurrentHeader)
+	return chain.App.BaseApp.NewUncachedContext(false, chain.CurrentHeader)
 }
 
 // QueryProof performs an abci query with the given key and returns the proto encoded merkle proof
 // for the query and the height at which the proof will succeed on a tendermint verifier.
 func (chain *TestChain) QueryProof(key []byte) ([]byte, clienttypes.Height) {
-	res := chain.App.Query(abci.RequestQuery{
-		Path:   fmt.Sprintf("store/%s/key", exported.StoreKey),
-		Height: chain.App.LastBlockHeight() - 1,
-		Data:   key,
-		Prove:  true,
-	})
+	return chain.QueryProofAtHeight(key, chain.App.LastBlockHeight())
+}
+
+// QueryProofAtHeight performs an abci query with the given key and returns the proto encoded merkle proof
+// for the query and the height at which the proof will succeed on a tendermint verifier. Only the IBC
+// store is supported
+func (chain *TestChain) QueryProofAtHeight(key []byte, height int64) ([]byte, clienttypes.Height) {
+	return chain.QueryProofForStore(exported.StoreKey, key, height)
+}
+
+// QueryProofForStore performs an abci query with the given key and returns the proto encoded merkle proof
+// for the query and the height at which the proof will succeed on a tendermint verifier.
+func (chain *TestChain) QueryProofForStore(storeKey string, key []byte, height int64) ([]byte, clienttypes.Height) {
+	res, err := chain.App.Query(
+		chain.GetContext().Context(),
+		&abci.RequestQuery{
+			Path:   fmt.Sprintf("store/%s/key", storeKey),
+			Height: height - 1,
+			Data:   key,
+			Prove:  true,
+		})
+	require.NoError(chain.T, err)
 
 	merkleProof, err := commitmenttypes.ConvertProofs(res.ProofOps)
 	require.NoError(chain.T, err)
@@ -175,12 +201,13 @@ func (chain *TestChain) QueryProof(key []byte) ([]byte, clienttypes.Height) {
 // QueryUpgradeProof performs an abci query with the given key and returns the proto encoded merkle proof
 // for the query and the height at which the proof will succeed on a tendermint verifier.
 func (chain *TestChain) QueryUpgradeProof(key []byte, height uint64) ([]byte, clienttypes.Height) {
-	res := chain.App.Query(abci.RequestQuery{
+	res, err := chain.App.Query(chain.GetContext(), &abci.RequestQuery{
 		Path:   "store/upgrade/key",
 		Height: int64(height - 1),
 		Data:   key,
 		Prove:  true,
 	})
+	require.NoError(chain.T, err)
 
 	merkleProof, err := commitmenttypes.ConvertProofs(res.ProofOps)
 	require.NoError(chain.T, err)
@@ -223,15 +250,35 @@ func (chain *TestChain) QueryConsensusStateProof(clientID string) ([]byte, clien
 
 // NextBlock sets the last header to the current header and increments the current header to be
 // at the next block height. It does not update the time as that is handled by the Coordinator.
-//
-// CONTRACT: this function must only be called after app.Commit() occurs
+// It will call FinalizeBlock and Commit and apply the validator set changes to the next validators
+// of the next block being created. This follows the Tendermint protocol of applying valset changes
+// returned on block `n` to the validators of block `n+2`.
+// It calls BeginBlock with the new block created before returning.
 func (chain *TestChain) NextBlock() {
+	res, err := chain.App.FinalizeBlock(&abci.RequestFinalizeBlock{
+		Height:             chain.CurrentHeader.Height,
+		Time:               chain.CurrentHeader.GetTime(),
+		NextValidatorsHash: chain.NextVals.Hash(),
+	})
+	require.NoError(chain.T, err)
+	chain.commitBlock(res)
+}
+
+func (chain *TestChain) commitBlock(res *abci.ResponseFinalizeBlock) {
+	_, err := chain.App.Commit()
+	require.NoError(chain.T, err)
+
 	// set the last header to the current header
 	// use nil trusted fields
 	chain.LastHeader = chain.CurrentTMClientHeader()
 
+	// val set changes returned from previous block get applied to the next validators
+	// of this block. See tendermint spec for details.
+	chain.Vals = chain.NextVals
+	chain.NextVals = ApplyValSetChanges(chain.T, chain.Vals, res.ValidatorUpdates)
+
 	// increment the current header
-	chain.CurrentHeader = tmproto.Header{
+	chain.CurrentHeader = cmtproto.Header{
 		ChainID: chain.ChainID,
 		Height:  chain.App.LastBlockHeight() + 1,
 		AppHash: chain.App.LastCommitID().Hash,
@@ -239,11 +286,9 @@ func (chain *TestChain) NextBlock() {
 		// chains.
 		Time:               chain.CurrentHeader.Time,
 		ValidatorsHash:     chain.Vals.Hash(),
-		NextValidatorsHash: chain.Vals.Hash(),
+		NextValidatorsHash: chain.NextVals.Hash(),
+		ProposerAddress:    chain.CurrentHeader.ProposerAddress,
 	}
-
-	chain.App.BeginBlock(abci.RequestBeginBlock{Header: chain.CurrentHeader})
-
 }
 
 // sendMsgs delivers a transaction through the application without returning the result.
@@ -298,14 +343,16 @@ func (chain *TestChain) GetConsensusState(clientID string, height exported.Heigh
 // GetValsAtHeight will return the validator set of the chain at a given height. It will return
 // a success boolean depending on if the validator set exists or not at that height.
 func (chain *TestChain) GetValsAtHeight(height int64) (*tmtypes.ValidatorSet, bool) {
-	histInfo, ok := chain.App.StakingKeeper.GetHistoricalInfo(chain.GetContext(), height)
-	if !ok {
+	histInfo, err := chain.App.StakingKeeper.GetHistoricalInfo(chain.GetContext(), height)
+	if err != nil {
 		return nil, false
 	}
 
-	valSet := stakingtypes.Validators(histInfo.Valset)
+	valSet := stakingtypes.Validators{
+		Validators: histInfo.Valset,
+	}
 
-	tmValidators, err := stakingtestutil.ToTmValidators(valSet, sdk.DefaultPowerReduction)
+	tmValidators, err := stakingtestutil.ToCmtValidators(valSet, sdk.DefaultPowerReduction)
 	if err != nil {
 		panic(err)
 	}
@@ -545,12 +592,12 @@ func (chain *TestChain) CreateTMClientHeader(chainID string, blockHeight int64, 
 	blockID := MakeBlockID(hhash, 3, tmhash.Sum([]byte("part_set")))
 	voteSet := tmtypes.NewVoteSet(chainID, blockHeight, 1, tmproto.PrecommitType, tmValSet)
 
-	commit, err := tmtypes.MakeCommit(blockID, blockHeight, 1, voteSet, signers, timestamp)
+	extCommit, err := tmtypes.MakeExtCommit(blockID, blockHeight, 1, voteSet, signers, timestamp, false)
 	require.NoError(chain.T, err)
 
 	signedHeader := &tmproto.SignedHeader{
 		Header: tmHeader.ToProto(),
-		Commit: commit.ToProto(),
+		Commit: extCommit.ToCommit().ToProto(),
 	}
 
 	valSet, err = tmValSet.ToProto()

@@ -8,7 +8,6 @@ import (
 
 	profilestypes "github.com/desmos-labs/desmos/v6/x/profiles/types"
 
-	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/stretchr/testify/require"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -27,7 +26,8 @@ var (
 type Coordinator struct {
 	t *testing.T
 
-	Chains map[string]*TestChain
+	CurrentTime time.Time
+	Chains      map[string]*TestChain
 }
 
 // NewCoordinator initializes Coordinator with N TestChain's
@@ -189,12 +189,28 @@ func (coord *Coordinator) CreateChannel(
 // IncrementTime iterates through all the TestChain's and increments their current header time
 // by 5 seconds.
 //
-// CONTRACT: this function must be called after every commit on any TestChain.
+// CONTRACT: this function must be called after every Commit on any TestChain.
 func (coord *Coordinator) IncrementTime() {
+	coord.IncrementTimeBy(TimeIncrement)
+}
+
+// IncrementTimeBy iterates through all the TestChain's and increments their current header time
+// by specified time.
+func (coord *Coordinator) IncrementTimeBy(increment time.Duration) {
+	coord.CurrentTime = coord.CurrentTime.Add(increment).UTC()
+	coord.UpdateTime()
+}
+
+// UpdateTime updates all clocks for the TestChains to the current global time.
+func (coord *Coordinator) UpdateTime() {
 	for _, chain := range coord.Chains {
-		chain.CurrentHeader.Time = chain.CurrentHeader.Time.Add(TimeIncrement)
-		chain.App.BeginBlock(abci.RequestBeginBlock{Header: chain.CurrentHeader})
+		coord.UpdateTimeForChain(chain)
 	}
+}
+
+// UpdateTimeForChain updates the clock for a specific chain.
+func (coord *Coordinator) UpdateTimeForChain(chain *TestChain) {
+	chain.CurrentHeader.Time = coord.CurrentTime.UTC()
 }
 
 // SendMsg delivers a single provided message to the chain. The counterparty

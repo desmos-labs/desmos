@@ -91,10 +91,13 @@ func (chain *TestChain) SmartQuery(contractAddr string, queryMsg interface{}, re
 	}
 	reqBin := chain.Codec.MustMarshal(&req)
 
-	res := chain.App.Query(abci.RequestQuery{
+	res, err := chain.App.Query(chain.GetContext(), &abci.RequestQuery{
 		Path: "/cosmwasm.wasm.v1.Query/SmartContractState",
 		Data: reqBin,
 	})
+	if err != nil {
+		return err
+	}
 
 	if res.Code != 0 {
 		return fmt.Errorf("query failed: (%d) %s", res.Code, res.Log)
