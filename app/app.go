@@ -61,6 +61,7 @@ import (
 	porttypes "github.com/cosmos/ibc-go/v8/modules/core/05-port/types"
 	ibcexported "github.com/cosmos/ibc-go/v8/modules/core/exported"
 	ibckeeper "github.com/cosmos/ibc-go/v8/modules/core/keeper"
+	ibctestingtypes "github.com/cosmos/ibc-go/v8/testing/types"
 
 	ica "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts"
 	icacontroller "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts/controller"
@@ -703,4 +704,31 @@ func BlockedAddresses() map[string]bool {
 	}
 
 	return result
+}
+
+// IBC TestingApp functions
+
+// GetBaseApp implements the ibctesting.TestingApp interface
+func (app *DesmosApp) GetBaseApp() *baseapp.BaseApp {
+	return app.BaseApp
+}
+
+// GetStakingKeeper implements the ibctesting.TestingApp interface
+func (app *DesmosApp) GetStakingKeeper() ibctestingtypes.StakingKeeper {
+	return app.StakingKeeper
+}
+
+// GetIBCKeeper implements the ibctesting.TestingApp interface
+func (app *DesmosApp) GetIBCKeeper() *ibckeeper.Keeper {
+	return app.IBCKeeper
+}
+
+// GetScopedIBCKeeper implements the ibctesting.TestingApp interface
+func (app *DesmosApp) GetScopedIBCKeeper() capabilitykeeper.ScopedKeeper {
+	return app.ScopedIBCKeeper
+}
+
+// GetTxConfig implements the ibctesting.TestingApp interface
+func (app *DesmosApp) GetTxConfig() client.TxConfig {
+	return app.txConfig
 }
