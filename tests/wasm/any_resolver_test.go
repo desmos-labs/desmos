@@ -10,8 +10,8 @@ import (
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/stretchr/testify/require"
 
+	ibctesting "github.com/cosmos/ibc-go/v8/testing"
 	"github.com/desmos-labs/desmos/v6/tests/wasm"
-	"github.com/desmos-labs/desmos/v6/testutil/ibctesting"
 	profilestypes "github.com/desmos-labs/desmos/v6/x/profiles/types"
 	wasmtypes "github.com/desmos-labs/desmos/v6/x/wasm/types"
 )
@@ -21,15 +21,15 @@ func TestAnyResolverByProfile(t *testing.T) {
 	coord := ibctesting.NewCoordinator(t, 1)
 	chain := &wasm.TestChain{coord.GetChain(ibctesting.GetChainID(1))}
 
+	// Store and instantiate test contract
+	contractAddr := wasm.InstantiateTestContract(t, chain)
+
 	// Save a profile
 	saveProfileMsg := profilestypes.NewMsgSaveProfile(
-		"test_user", "test_user", "test bio", "https://profile.pic", "https://cover.pic", chain.Account.GetAddress().String(),
+		"test_user", "test_user", "test bio", "https://profile.pic", "https://cover.pic", chain.SenderAccount.GetAddress().String(),
 	)
 	_, err := chain.SendMsgs(saveProfileMsg)
 	require.NoError(t, err)
-
-	// Store and instantiate test contract
-	contractAddr := wasm.InstantiateTestContract(t, chain)
 
 	// Request profile via test contract
 	profileReq := profilestypes.QueryProfileRequest{
@@ -70,7 +70,7 @@ func TestAnyResolverByProfile(t *testing.T) {
 			"https://profile.pic", "https://cover.pic",
 		),
 		chain.CurrentHeader.Time,
-		chain.Account,
+		chain.SenderAccount,
 	)
 	require.NoError(t, err)
 
