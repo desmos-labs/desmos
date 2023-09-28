@@ -166,7 +166,7 @@ func (suite *KeeperTestSuite) TestKeeper_StartProfileConnection() {
 			err = suite.chainA.App.(*app.DesmosApp).ProfilesKeeper.StartProfileConnection(
 				suite.chainA.GetContext(), applicationData, callData, suite.chainA.SenderAccount.GetAddress(),
 				path.EndpointA.ChannelConfig.PortID, path.EndpointA.ChannelID,
-				clienttypes.NewHeight(0, 110), 0,
+				clienttypes.NewHeight(10, 110), 0,
 			)
 
 			if tc.expPass {
