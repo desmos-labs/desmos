@@ -315,6 +315,11 @@ func NewDesmosApp(
 	scopedICAControllerKeeper := app.CapabilityKeeper.ScopeToModule(icacontrollertypes.SubModuleName)
 	scopedICAHostKeeper := app.CapabilityKeeper.ScopeToModule(icahosttypes.SubModuleName)
 
+	// seal capability keeper after scoping modules
+	// Applications that wish to enforce statically created ScopedKeepers should call `Seal` after creating
+	// their scoped modules in `NewApp` with `ScopeToModule`
+	app.CapabilityKeeper.Seal()
+
 	// Create IBC keeper
 	app.IBCKeeper = ibckeeper.NewKeeper(
 		app.appCodec, storeKeys[ibcexported.StoreKey], app.GetSubspace(ibcexported.ModuleName), app.StakingKeeper, app.UpgradeKeeper, scopedIBCKeeper, authtypes.NewModuleAddress(govtypes.ModuleName).String(),
