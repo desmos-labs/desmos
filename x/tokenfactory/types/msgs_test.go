@@ -77,11 +77,6 @@ func TestMsgCreateDenom_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgCreateDenom_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgCreateDenom","value":{"sender":"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69","subdenom":"minttoken","subspace_id":"1"}}`
-	require.Equal(t, expected, string(msgCreateDenom.GetSignBytes()))
-}
-
 func TestMsgCreateDenom_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgCreateDenom.Sender)
 	require.Equal(t, []sdk.AccAddress{addr}, msgCreateDenom.GetSigners())
@@ -155,11 +150,6 @@ func TestMsgMint_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgMint_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgMint","value":{"amount":{"amount":"100","denom":"uminttoken"},"sender":"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69","subspace_id":"1"}}`
-	require.Equal(t, expected, string(msgMint.GetSignBytes()))
-}
-
 func TestMsgMint_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgMint.Sender)
 	require.Equal(t, []sdk.AccAddress{addr}, msgMint.GetSigners())
@@ -231,11 +221,6 @@ func TestMsgBurn_ValidateBasic(t *testing.T) {
 			}
 		})
 	}
-}
-
-func TestMsgBurn_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgBurn","value":{"amount":{"amount":"100","denom":"uminttoken"},"sender":"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69","subspace_id":"1"}}`
-	require.Equal(t, expected, string(msgBurn.GetSignBytes()))
 }
 
 func TestMsgBurn_GetSigners(t *testing.T) {
@@ -339,11 +324,6 @@ func TestMsgSetDenomMetadata_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgSetDenomMetadata_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgSetDenomMetadata","value":{"metadata":{"base":"factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken","denom_units":[{"denom":"factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken"},{"aliases":["minttoken"],"denom":"minttoken","exponent":6}],"description":"The custom token of the test subspace.","display":"minttoken","name":"Mint Token","symbol":"MTK"},"sender":"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69","subspace_id":"1"}}`
-	require.Equal(t, expected, string(msgSetDenomMetadata.GetSignBytes()))
-}
-
 func TestMsgSetDenomMetadata_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgSetDenomMetadata.Sender)
 	require.Equal(t, []sdk.AccAddress{addr}, msgSetDenomMetadata.GetSigners())
@@ -395,11 +375,6 @@ func TestMsgUpdateParams_ValidateBasic(t *testing.T) {
 			}
 		})
 	}
-}
-
-func TestMsgUpdateParams_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/x/tokenfactory/MsgUpdateParams","value":{"authority":"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd","params":{"denom_creation_fee":[{"amount":"10000000000","denom":"stake"}]}}}`
-	require.Equal(t, expected, string(msgUpdateParams.GetSignBytes()))
 }
 
 func TestMsgUpdateParams_GetSigners(t *testing.T) {

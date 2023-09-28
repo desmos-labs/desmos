@@ -106,11 +106,6 @@ func TestMsgCreateReport_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgCreateReport_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgCreateReport","value":{"message":"This post is spam","reasons_ids":[1],"reporter":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","subspace_id":"1","target":{"type":"desmos/PostTarget","value":{"post_id":"1"}}}}`
-	require.Equal(t, expected, string(msgCreateReport.GetSignBytes()))
-}
-
 func TestMsgCreateReport_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgCreateReport.Reporter)
 	require.Equal(t, []sdk.AccAddress{addr}, msgCreateReport.GetSigners())
@@ -185,11 +180,6 @@ func TestMsgDeleteReport_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgDeleteReport_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgDeleteReport","value":{"report_id":"1","signer":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","subspace_id":"1"}}`
-	require.Equal(t, expected, string(msgDeleteReport.GetSignBytes()))
-}
-
 func TestMsgDeleteReport_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgDeleteReport.Signer)
 	require.Equal(t, []sdk.AccAddress{addr}, msgDeleteReport.GetSigners())
@@ -262,11 +252,6 @@ func TestMsgSupportStandardReason_ValidateBasic(t *testing.T) {
 			}
 		})
 	}
-}
-
-func TestMsgSupportStandardReason_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgSupportStandardReason","value":{"signer":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","standard_reason_id":1,"subspace_id":"1"}}`
-	require.Equal(t, expected, string(msgSupportStandardReason.GetSignBytes()))
 }
 
 func TestMsgSupportStandardReason_GetSigners(t *testing.T) {
@@ -347,11 +332,6 @@ func TestMsgAddReason_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgAddReason_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgAddReason","value":{"description":"This post is spam or the user is a spammer","signer":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","subspace_id":"1","title":"Spam"}}`
-	require.Equal(t, expected, string(msgAddReason.GetSignBytes()))
-}
-
 func TestMsgAddReason_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgAddReason.Signer)
 	require.Equal(t, []sdk.AccAddress{addr}, msgAddReason.GetSigners())
@@ -426,11 +406,6 @@ func TestMsgRemoveReason_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgRemoveReason_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgRemoveReason","value":{"reason_id":1,"signer":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","subspace_id":"1"}}`
-	require.Equal(t, expected, string(msgRemoveReason.GetSignBytes()))
-}
-
 func TestMsgRemoveReason_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgRemoveReason.Signer)
 	require.Equal(t, []sdk.AccAddress{addr}, msgRemoveReason.GetSigners())
@@ -482,11 +457,6 @@ func TestMsgUpdateParams_ValidateBasic(t *testing.T) {
 			}
 		})
 	}
-}
-
-func TestMsgUpdateParams_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/x/reports/MsgUpdateParams","value":{"authority":"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd","params":{"standard_reasons":null}}}`
-	require.Equal(t, expected, string(msgUpdateParams.GetSignBytes()))
 }
 
 func TestMsgUpdateParams_GetSigners(t *testing.T) {

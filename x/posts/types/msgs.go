@@ -110,11 +110,6 @@ func (msg *MsgCreatePost) ValidateBasic() error {
 	return nil
 }
 
-// GetSignBytes implements sdk.Msg
-func (msg *MsgCreatePost) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
-}
-
 // GetSigners implements sdk.Msg
 func (msg *MsgCreatePost) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Author)
@@ -192,11 +187,6 @@ func (msg *MsgEditPost) ValidateBasic() error {
 	return nil
 }
 
-// GetSignBytes implements sdk.Msg
-func (msg *MsgEditPost) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
-}
-
 // GetSigners implements sdk.Msg
 func (msg *MsgEditPost) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Editor)
@@ -253,11 +243,6 @@ func (msg *MsgAddPostAttachment) ValidateBasic() error {
 	return nil
 }
 
-// GetSignBytes implements sdk.Msg
-func (msg *MsgAddPostAttachment) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
-}
-
 // GetSigners implements sdk.Msg
 func (msg *MsgAddPostAttachment) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Editor)
@@ -310,11 +295,6 @@ func (msg *MsgRemovePostAttachment) ValidateBasic() error {
 	return nil
 }
 
-// GetSignBytes implements sdk.Msg
-func (msg *MsgRemovePostAttachment) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
-}
-
 // GetSigners implements sdk.Msg
 func (msg *MsgRemovePostAttachment) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Editor)
@@ -354,11 +334,6 @@ func (msg *MsgDeletePost) ValidateBasic() error {
 	}
 
 	return nil
-}
-
-// GetSignBytes implements sdk.Msg
-func (msg *MsgDeletePost) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
 }
 
 // GetSigners implements sdk.Msg
@@ -427,11 +402,6 @@ func (msg *MsgAnswerPoll) ValidateBasic() error {
 	return nil
 }
 
-// GetSignBytes implements sdk.Msg
-func (msg *MsgAnswerPoll) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
-}
-
 // GetSigners implements sdk.Msg
 func (msg *MsgAnswerPoll) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Signer)
@@ -441,8 +411,7 @@ func (msg *MsgAnswerPoll) GetSigners() []sdk.AccAddress {
 // --------------------------------------------------------------------------------------------------------------------
 
 var (
-	_ sdk.Msg            = &MsgMovePost{}
-	_ legacytx.LegacyMsg = &MsgMovePost{}
+	_ sdk.Msg = &MsgMovePost{}
 )
 
 // NewMsgMovePost returns a new MsgMovePost instance
@@ -494,11 +463,6 @@ func (msg *MsgMovePost) ValidateBasic() error {
 	return nil
 }
 
-// GetSignBytes implements sdk.Msg
-func (msg *MsgMovePost) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
-}
-
 // GetSigners implements sdk.Msg
 func (msg *MsgMovePost) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Owner)
@@ -509,7 +473,7 @@ func (msg *MsgMovePost) GetSigners() []sdk.AccAddress {
 
 var (
 	_ sdk.Msg            = &MsgUpdateParams{}
-	_ legacytx.LegacyMsg = &MsgUpdateParams{}
+	_  &MsgUpdateParams{}
 )
 
 func NewMsgUpdateParams(params Params, authority string) *MsgUpdateParams {
@@ -543,9 +507,4 @@ func (msg *MsgUpdateParams) ValidateBasic() error {
 func (msg *MsgUpdateParams) GetSigners() []sdk.AccAddress {
 	authority := sdk.MustAccAddressFromBech32(msg.Authority)
 	return []sdk.AccAddress{authority}
-}
-
-// GetSigners implements legacytx.LegacyMsg
-func (msg *MsgUpdateParams) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
 }

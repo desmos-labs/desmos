@@ -82,11 +82,6 @@ func (msg *MsgCreateReport) ValidateBasic() error {
 	return msg.Target.GetCachedValue().(ReportTarget).Validate()
 }
 
-// GetSignBytes encodes the message for signing
-func (msg *MsgCreateReport) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
-}
-
 // GetSigners defines whose signature is required
 func (msg *MsgCreateReport) GetSigners() []sdk.AccAddress {
 	sender, _ := sdk.AccAddressFromBech32(msg.Reporter)
@@ -130,11 +125,6 @@ func (msg *MsgDeleteReport) ValidateBasic() error {
 	return nil
 }
 
-// GetSignBytes encodes the message for signing
-func (msg *MsgDeleteReport) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
-}
-
 // GetSigners defines whose signature is required
 func (msg *MsgDeleteReport) GetSigners() []sdk.AccAddress {
 	sender, _ := sdk.AccAddressFromBech32(msg.Signer)
@@ -176,11 +166,6 @@ func (msg *MsgSupportStandardReason) ValidateBasic() error {
 	}
 
 	return nil
-}
-
-// GetSignBytes encodes the message for signing
-func (msg *MsgSupportStandardReason) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required
@@ -230,11 +215,6 @@ func (msg *MsgAddReason) ValidateBasic() error {
 	return nil
 }
 
-// GetSignBytes encodes the message for signing
-func (msg *MsgAddReason) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
-}
-
 // GetSigners defines whose signature is required
 func (msg *MsgAddReason) GetSigners() []sdk.AccAddress {
 	sender, _ := sdk.AccAddressFromBech32(msg.Signer)
@@ -281,11 +261,6 @@ func (msg *MsgRemoveReason) ValidateBasic() error {
 	return nil
 }
 
-// GetSignBytes encodes the message for signing
-func (msg *MsgRemoveReason) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
-}
-
 // GetSigners defines whose signature is required
 func (msg *MsgRemoveReason) GetSigners() []sdk.AccAddress {
 	sender, _ := sdk.AccAddressFromBech32(msg.Signer)
@@ -328,9 +303,4 @@ func (msg *MsgUpdateParams) ValidateBasic() error {
 func (msg *MsgUpdateParams) GetSigners() []sdk.AccAddress {
 	authority := sdk.MustAccAddressFromBech32(msg.Authority)
 	return []sdk.AccAddress{authority}
-}
-
-// GetSigners implements legacytx.LegacyMsg
-func (msg *MsgUpdateParams) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
 }

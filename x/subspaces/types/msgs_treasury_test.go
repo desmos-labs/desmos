@@ -98,11 +98,6 @@ func TestMsgGrantTreasuryAuthorization_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgGrantTreasuryAuthorization_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgGrantTreasuryAuthorization","value":{"grant":{"authorization":{"spend_limit":[{"amount":"100","denom":"steak"}]},"expiration":"2100-01-11T00:00:00Z"},"grantee":"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69","granter":"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez","subspace_id":"1"}}`
-	require.Equal(t, expected, string(msgGrantTreasuryAuthorization.GetSignBytes()))
-}
-
 func TestMsgGrantTreasuryAuthorization_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgGrantTreasuryAuthorization.Granter)
 	require.Equal(t, []sdk.AccAddress{addr}, msgGrantTreasuryAuthorization.GetSigners())
@@ -198,11 +193,6 @@ func TestMsgRevokeTreasuryAuthorization_ValidateBasic(t *testing.T) {
 			}
 		})
 	}
-}
-
-func TestMsgRevokeTreasuryAuthorization_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgRevokeTreasuryAuthorization","value":{"grantee":"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69","granter":"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez","msg_type_url":"/cosmos.bank.v1betat1.MsgSend","subspace_id":"1"}}`
-	require.Equal(t, expected, string(msgRevokeTreasuryAuthorization.GetSignBytes()))
 }
 
 func TestMsgRevokeTreasuryAuthorization_GetSigners(t *testing.T) {

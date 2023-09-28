@@ -66,11 +66,6 @@ func (msg *MsgAddReaction) ValidateBasic() error {
 	return nil
 }
 
-// GetSignBytes implements sdk.Msg
-func (msg *MsgAddReaction) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
-}
-
 // GetSigners implements sdk.Msg
 func (msg *MsgAddReaction) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.User)
@@ -123,11 +118,6 @@ func (msg *MsgRemoveReaction) ValidateBasic() error {
 	return nil
 }
 
-// GetSignBytes implements sdk.Msg
-func (msg *MsgRemoveReaction) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
-}
-
 // GetSigners implements sdk.Msg
 func (msg *MsgRemoveReaction) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.User)
@@ -177,11 +167,6 @@ func (msg *MsgAddRegisteredReaction) ValidateBasic() error {
 	}
 
 	return nil
-}
-
-// GetSignBytes implements sdk.Msg
-func (msg *MsgAddRegisteredReaction) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners implements sdk.Msg
@@ -244,11 +229,6 @@ func (msg *MsgEditRegisteredReaction) ValidateBasic() error {
 	return nil
 }
 
-// GetSignBytes implements sdk.Msg
-func (msg *MsgEditRegisteredReaction) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
-}
-
 // GetSigners implements sdk.Msg
 func (msg *MsgEditRegisteredReaction) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.User)
@@ -295,11 +275,6 @@ func (msg *MsgRemoveRegisteredReaction) ValidateBasic() error {
 	}
 
 	return nil
-}
-
-// GetSignBytes implements sdk.Msg
-func (msg *MsgRemoveRegisteredReaction) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners implements sdk.Msg

@@ -80,11 +80,6 @@ func TestMsgCreateSubspace_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgCreateSubspace_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgCreateSubspace","value":{"creator":"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69","description":"This is a test subspace","name":"Test subspace","owner":"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez"}}`
-	require.Equal(t, expected, string(msgCreateSubspace.GetSignBytes()))
-}
-
 func TestMsgCreateSubspace_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgCreateSubspace.Creator)
 	require.Equal(t, []sdk.AccAddress{addr}, msgCreateSubspace.GetSigners())
@@ -155,11 +150,6 @@ func TestMsgEditSubspace_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgEditSubspace_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgEditSubspace","value":{"description":"This is a new description","name":"This is a new name","owner":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","signer":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","subspace_id":"1"}}`
-	require.Equal(t, expected, string(msgEditSubspace.GetSignBytes()))
-}
-
 func TestMsgEditSubspace_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgEditSubspace.Signer)
 	require.Equal(t, []sdk.AccAddress{addr}, msgEditSubspace.GetSigners())
@@ -213,11 +203,6 @@ func TestMsgDeleteSubspace_ValidateBasic(t *testing.T) {
 			}
 		})
 	}
-}
-
-func TestMsgDeleteSubspace_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgDeleteSubspace","value":{"signer":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","subspace_id":"1"}}`
-	require.Equal(t, expected, string(msgDeleteSubspace.GetSignBytes()))
 }
 
 func TestMsgDeleteSubspace_GetSigners(t *testing.T) {
@@ -301,11 +286,6 @@ func TestMsgCreateSection_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgCreateSection_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgCreateSection","value":{"creator":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","description":"This is a test section","name":"Test section","subspace_id":"1"}}`
-	require.Equal(t, expected, string(msgCreateSection.GetSignBytes()))
-}
-
 func TestMsgCreateSection_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgCreateSection.Creator)
 	require.Equal(t, []sdk.AccAddress{addr}, msgCreateSection.GetSigners())
@@ -387,11 +367,6 @@ func TestMsgEditSection_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgEditSection_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgEditSection","value":{"description":"This is a test section","editor":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","name":"Test section","section_id":1,"subspace_id":"1"}}`
-	require.Equal(t, expected, string(msgEditSection.GetSignBytes()))
-}
-
 func TestMsgEditSection_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgEditSection.Editor)
 	require.Equal(t, []sdk.AccAddress{addr}, msgEditSection.GetSigners())
@@ -469,11 +444,6 @@ func TestMsgMoveSection_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgMoveSection_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgMoveSection","value":{"new_parent_id":1,"section_id":1,"signer":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","subspace_id":"1"}}`
-	require.Equal(t, expected, string(msgMoveSection.GetSignBytes()))
-}
-
 func TestMsgMoveSection_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgMoveSection.Signer)
 	require.Equal(t, []sdk.AccAddress{addr}, msgMoveSection.GetSigners())
@@ -545,11 +515,6 @@ func TestMsgDeleteSection_ValidateBasic(t *testing.T) {
 			}
 		})
 	}
-}
-
-func TestMsgDeleteSection_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgDeleteSection","value":{"section_id":1,"signer":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","subspace_id":"1"}}`
-	require.Equal(t, expected, string(msgDeleteSection.GetSignBytes()))
 }
 
 func TestMsgDeleteSection_GetSigners(t *testing.T) {
@@ -667,11 +632,6 @@ func TestMsgCreateUserGroup_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgCreateUserGroup_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgCreateUserGroup","value":{"creator":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","default_permissions":["EDIT_SUBSPACE"],"description":"Description","initial_members":["cosmos16yhs7fgqnf6fjm4tftv66g2smtmee62wyg780l"],"name":"Group","subspace_id":"1"}}`
-	require.Equal(t, expected, string(msgCreateUserGroup.GetSignBytes()))
-}
-
 func TestMsgCreateUserGroup_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgCreateUserGroup.Creator)
 	require.Equal(t, []sdk.AccAddress{addr}, msgCreateUserGroup.GetSigners())
@@ -740,11 +700,6 @@ func TestMsgEditUserGroup_ValidateBasic(t *testing.T) {
 			}
 		})
 	}
-}
-
-func TestMsgEditUserGroup_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgEditUserGroup","value":{"description":"Description","group_id":1,"name":"Group","signer":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","subspace_id":"1"}}`
-	require.Equal(t, expected, string(msgEditUserGroup.GetSignBytes()))
 }
 
 func TestMsgEditUserGroup_GetSigners(t *testing.T) {
@@ -824,11 +779,6 @@ func TestMsgMoveUserGroup_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgMoveUserGroup_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgMoveUserGroup","value":{"group_id":1,"new_section_id":2,"signer":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","subspace_id":"1"}}`
-	require.Equal(t, expected, string(msgMoveUserGroup.GetSignBytes()))
-}
-
 func TestMsgMoveUserGroup_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgMoveUserGroup.Signer)
 	require.Equal(t, []sdk.AccAddress{addr}, msgMoveUserGroup.GetSigners())
@@ -906,11 +856,6 @@ func TestMsgSetUserGroupPermissions_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgSetUserGroupPermissions_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgSetUserGroupPermissions","value":{"group_id":1,"permissions":["EDIT_SUBSPACE"],"signer":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","subspace_id":"1"}}`
-	require.Equal(t, expected, string(msgSetUserGroupPermissions.GetSignBytes()))
-}
-
 func TestMsgSetUserGroupPermissions_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgSetUserGroupPermissions.Signer)
 	require.Equal(t, []sdk.AccAddress{addr}, msgSetUserGroupPermissions.GetSigners())
@@ -982,11 +927,6 @@ func TestMsgDeleteUserGroup_ValidateBasic(t *testing.T) {
 			}
 		})
 	}
-}
-
-func TestMsgDeleteUserGroup_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgDeleteUserGroup","value":{"group_id":1,"signer":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","subspace_id":"1"}}`
-	require.Equal(t, expected, string(msgDeleteUserGroup.GetSignBytes()))
 }
 
 func TestMsgDeleteUserGroup_GetSigners(t *testing.T) {
@@ -1076,11 +1016,6 @@ func TestMsgAddUserToUserGroup_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgAddUserToUserGroup_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgAddUserToUserGroup","value":{"group_id":1,"signer":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","subspace_id":"1","user":"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"}}`
-	require.Equal(t, expected, string(msgAddUserToGroup.GetSignBytes()))
-}
-
 func TestMsgAddUserToUserGroup_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgAddUserToGroup.Signer)
 	require.Equal(t, []sdk.AccAddress{addr}, msgAddUserToGroup.GetSigners())
@@ -1166,11 +1101,6 @@ func TestMsgRemoveUserFromUserGroup_ValidateBasic(t *testing.T) {
 			}
 		})
 	}
-}
-
-func TestMsgRemoveUserFromUserGroup_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgRemoveUserFromUserGroup","value":{"group_id":1,"signer":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","subspace_id":"1","user":"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"}}`
-	require.Equal(t, expected, string(msgRemoveUserFromUserGroup.GetSignBytes()))
 }
 
 func TestMsgRemoveUserFromUserGroup_GetSigners(t *testing.T) {
@@ -1264,11 +1194,6 @@ func TestMsgSetUserPermissions_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgSetUserPermissions_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgSetUserPermissions","value":{"permissions":["EDIT_SUBSPACE"],"signer":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","subspace_id":"1","user":"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"}}`
-	require.Equal(t, expected, string(msgSetUserPermissions.GetSignBytes()))
-}
-
 func TestMsgSetUserPermissions_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgSetUserPermissions.Signer)
 	require.Equal(t, []sdk.AccAddress{addr}, msgSetUserPermissions.GetSigners())
@@ -1340,11 +1265,6 @@ func TestMsgUpdateSubspaceFeeTokens_ValidateBasic(t *testing.T) {
 			}
 		})
 	}
-}
-
-func TestMsgUpdateSubspaceFeeTokens_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgUpdateSubspaceFeeTokens","value":{"additional_fee_tokens":[{"amount":"10","denom":"minttoken"}],"authority":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","subspace_id":"1"}}`
-	require.Equal(t, expected, string(msgUpdateSubspaceFeeTokens.GetSignBytes()))
 }
 
 func TestMsgUpdateSubspaceFeeTokens_GetSigners(t *testing.T) {

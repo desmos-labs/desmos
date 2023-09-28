@@ -99,11 +99,6 @@ func TestMsgRequestPostOwnerTransfer_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgRequestPostOwnerTransfer_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgRequestPostOwnerTransfer","value":{"post_id":"1","receiver":"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd","sender":"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg","subspace_id":"1"}}`
-	require.Equal(t, expected, string(msgRequestPostOwnerTransfer.GetSignBytes()))
-}
-
 func TestMsgRequestPostOwnerTransfer_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgRequestPostOwnerTransfer.Sender)
 	require.Equal(t, []sdk.AccAddress{addr}, msgRequestPostOwnerTransfer.GetSigners())
@@ -175,11 +170,6 @@ func TestMsgCancelPostOwnerTransferRequest_ValidateBasic(t *testing.T) {
 			}
 		})
 	}
-}
-
-func TestMsgCancelPostOwnerTransferRequest_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgCancelPostOwnerTransfer","value":{"post_id":"1","sender":"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg","subspace_id":"1"}}`
-	require.Equal(t, expected, string(msgCancelPostOwnerTransferRequest.GetSignBytes()))
 }
 
 func TestMsgCancelPostOwnerTransferRequest_GetSigners(t *testing.T) {
@@ -255,11 +245,6 @@ func TestMsgAcceptPostOwnerTransferRequest_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgAcceptPostOwnerTransferRequest_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgAcceptPostOwnerTransfer","value":{"post_id":"1","receiver":"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg","subspace_id":"1"}}`
-	require.Equal(t, expected, string(msgAcceptPostOwnerTransferRequest.GetSignBytes()))
-}
-
 func TestMsgAcceptPostOwnerTransferRequest_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgAcceptPostOwnerTransferRequest.Receiver)
 	require.Equal(t, []sdk.AccAddress{addr}, msgAcceptPostOwnerTransferRequest.GetSigners())
@@ -331,11 +316,6 @@ func TestMsgRefusePostOwnerTransferRequest_ValidateBasic(t *testing.T) {
 			}
 		})
 	}
-}
-
-func TestMsgRefusePostOwnerTransferRequest_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgRefusePostOwnerTransfer","value":{"post_id":"1","receiver":"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg","subspace_id":"1"}}`
-	require.Equal(t, expected, string(msgRefusePostOwnerTransferRequest.GetSignBytes()))
 }
 
 func TestMsgRefusePostOwnerTransferRequest_GetSigners(t *testing.T) {

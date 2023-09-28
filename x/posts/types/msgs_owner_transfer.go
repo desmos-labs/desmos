@@ -4,12 +4,10 @@ import (
 	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/cosmos/cosmos-sdk/x/auth/migrations/legacytx"
 )
 
 var (
-	_ sdk.Msg            = &MsgRequestPostOwnerTransfer{}
-	_ legacytx.LegacyMsg = &MsgRequestPostOwnerTransfer{}
+	_ sdk.Msg = &MsgRequestPostOwnerTransfer{}
 )
 
 // MsgRequestPostOwnerTransfer returns a new MsgRequestPostOwnerTransfer instance
@@ -65,16 +63,10 @@ func (msg *MsgRequestPostOwnerTransfer) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sender}
 }
 
-// GetSigners implements legacytx.LegacyMsg
-func (msg *MsgRequestPostOwnerTransfer) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
-}
-
 // --------------------------------------------------------------------------------------------------------------------
 
 var (
-	_ sdk.Msg            = &MsgCancelPostOwnerTransferRequest{}
-	_ legacytx.LegacyMsg = &MsgCancelPostOwnerTransferRequest{}
+	_ sdk.Msg = &MsgCancelPostOwnerTransferRequest{}
 )
 
 // MsgCancelPostOwnerTransferRequest returns a new MsgCancelPostOwnerTransferRequest instance
@@ -120,16 +112,10 @@ func (msg *MsgCancelPostOwnerTransferRequest) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sender}
 }
 
-// GetSigners implements legacytx.LegacyMsg
-func (msg *MsgCancelPostOwnerTransferRequest) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
-}
-
 // --------------------------------------------------------------------------------------------------------------------
 
 var (
-	_ sdk.Msg            = &MsgAcceptPostOwnerTransferRequest{}
-	_ legacytx.LegacyMsg = &MsgAcceptPostOwnerTransferRequest{}
+	_ sdk.Msg = &MsgAcceptPostOwnerTransferRequest{}
 )
 
 // MsgAcceptPostOwnerTransferRequest returns a new MsgAcceptPostOwnerTransferRequest instance
@@ -175,16 +161,10 @@ func (msg *MsgAcceptPostOwnerTransferRequest) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{receiver}
 }
 
-// GetSigners implements legacytx.LegacyMsg
-func (msg *MsgAcceptPostOwnerTransferRequest) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
-}
-
 // --------------------------------------------------------------------------------------------------------------------
 
 var (
-	_ sdk.Msg            = &MsgRefusePostOwnerTransferRequest{}
-	_ legacytx.LegacyMsg = &MsgRefusePostOwnerTransferRequest{}
+	_ sdk.Msg = &MsgRefusePostOwnerTransferRequest{}
 )
 
 // MsgRefusePostOwnerTransferRequest returns a new MsgRefusePostOwnerTransferRequest instance
@@ -228,9 +208,4 @@ func (msg *MsgRefusePostOwnerTransferRequest) ValidateBasic() error {
 func (msg *MsgRefusePostOwnerTransferRequest) GetSigners() []sdk.AccAddress {
 	receiver := sdk.MustAccAddressFromBech32(msg.Receiver)
 	return []sdk.AccAddress{receiver}
-}
-
-// GetSigners implements legacytx.LegacyMsg
-func (msg *MsgRefusePostOwnerTransferRequest) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
 }

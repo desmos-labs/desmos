@@ -8,16 +8,12 @@ import (
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/cosmos/cosmos-sdk/x/auth/migrations/legacytx"
 	"github.com/cosmos/cosmos-sdk/x/authz"
 )
 
 var (
 	_ sdk.Msg = &MsgGrantTreasuryAuthorization{}
 	_ sdk.Msg = &MsgRevokeTreasuryAuthorization{}
-
-	_ legacytx.LegacyMsg = &MsgGrantTreasuryAuthorization{}
-	_ legacytx.LegacyMsg = &MsgRevokeTreasuryAuthorization{}
 
 	_ ManageSubspaceMsg = &MsgGrantTreasuryAuthorization{}
 	_ ManageSubspaceMsg = &MsgRevokeTreasuryAuthorization{}
@@ -61,11 +57,6 @@ func (msg *MsgGrantTreasuryAuthorization) ValidateBasic() error {
 	}
 
 	return msg.Grant.ValidateBasic()
-}
-
-// GetSignBytes implements legacytx.LegacyMsg
-func (msg *MsgGrantTreasuryAuthorization) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
 }
 
 // GetSigners implements sdk.Msg
@@ -120,11 +111,6 @@ func (msg *MsgRevokeTreasuryAuthorization) ValidateBasic() error {
 	}
 
 	return nil
-}
-
-// GetSignBytes implements legacytx.LegacyMsg
-func (msg *MsgRevokeTreasuryAuthorization) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
 }
 
 // GetSigners implements sdk.Msg
