@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"cosmossdk.io/errors"
@@ -38,6 +39,11 @@ func (k MsgServer) SaveProfile(goCtx context.Context, msg *types.MsgSaveProfile)
 		addr, err := sdk.AccAddressFromBech32(msg.Creator)
 		if err != nil {
 			return nil, err
+		}
+
+		acc := k.ak.GetAccount(ctx, addr)
+		if acc == nil {
+			return nil, fmt.Errorf("account with address not found: %s", msg.Creator)
 		}
 
 		profile, err = types.NewProfileFromAccount(msg.DTag, k.ak.GetAccount(ctx, addr), ctx.BlockTime())
