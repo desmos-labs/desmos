@@ -90,7 +90,7 @@ func (suite *KeeperTestSuite) TestKeeper_StartProfileConnection() {
 			name: "next seq send not found",
 			malleate: func() {
 				path = NewIBCProfilesPath(suite.chainA, suite.chainB)
-				suite.coordinator.CreateConnections(path)
+				suite.coordinator.SetupConnections(path)
 
 				// setup test channels of endpoints
 				path.EndpointA.ChannelConfig.PortID = types.IBCPortID
@@ -110,7 +110,7 @@ func (suite *KeeperTestSuite) TestKeeper_StartProfileConnection() {
 						"ics-20",
 					),
 				)
-				suite.chainA.CreateChannelCapability(suite.chainA.GetSimApp().GetScopedIBCKeeper(), path.EndpointA.ChannelConfig.PortID, path.EndpointA.ChannelID)
+				suite.chainA.CreateChannelCapability(suite.chainA.App.(*app.DesmosApp).ScopedProfilesKeeper, path.EndpointA.ChannelConfig.PortID, path.EndpointA.ChannelID)
 			},
 			expPass: false,
 		},
