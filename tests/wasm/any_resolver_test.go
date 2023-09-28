@@ -11,14 +11,16 @@ import (
 	"github.com/stretchr/testify/require"
 
 	ibctesting "github.com/cosmos/ibc-go/v8/testing"
+
 	"github.com/desmos-labs/desmos/v6/tests/wasm"
+	desmosibctesting "github.com/desmos-labs/desmos/v6/testutil/ibctesting"
 	profilestypes "github.com/desmos-labs/desmos/v6/x/profiles/types"
 	wasmtypes "github.com/desmos-labs/desmos/v6/x/wasm/types"
 )
 
 func TestAnyResolverByProfile(t *testing.T) {
 	// Create a test chain
-	coord := ibctesting.NewCoordinator(t, 1)
+	coord := desmosibctesting.NewCoordinator(t, 1)
 	chain := &wasm.TestChain{coord.GetChain(ibctesting.GetChainID(1))}
 
 	// Store and instantiate test contract
@@ -69,13 +71,16 @@ func TestAnyResolverByProfile(t *testing.T) {
 		profilestypes.NewPictures(
 			"https://profile.pic", "https://cover.pic",
 		),
-		chain.CurrentHeader.Time,
+		chain.LastHeader.GetTime(), // creation time is the latest block time
 		chain.SenderAccount,
 	)
 	require.NoError(t, err)
 
 	// Encode expected profile response by stargate codec
 	expRes := stargateCdc.MustMarshalJSON(&profilestypes.QueryProfileResponse{Profile: codectypes.UnsafePackAny(expProfile)})
+
+	var r profilestypes.QueryProfileResponse
+	stargateCdc.MustUnmarshalJSON(expRes, &r)
 
 	require.Equal(t, expRes, res)
 }
