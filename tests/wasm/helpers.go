@@ -13,7 +13,6 @@ import (
 	abci "github.com/cometbft/cometbft/abci/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/gogoproto/proto"
-	ibctesting "github.com/cosmos/ibc-go/v8/testing"
 	"github.com/stretchr/testify/require"
 
 	chaintesting "github.com/cosmos/ibc-go/v8/testing"
@@ -64,7 +63,7 @@ func (chain *TestChain) InstantiateContract(codeID uint64, initMsg []byte) sdk.A
 		CodeID: codeID,
 		Label:  "any-resolver-test",
 		Msg:    initMsg,
-		Funds:  sdk.Coins{ibctesting.TestCoin},
+		Funds:  sdk.Coins{chaintesting.TestCoin},
 	}
 
 	r, err := chain.SendMsgs(instantiateMsg)
