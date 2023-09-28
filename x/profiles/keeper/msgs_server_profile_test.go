@@ -295,7 +295,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SaveProfile() {
 			}
 
 			server := keeper.NewMsgServerImpl(suite.k)
-			_, err := server.SaveProfile(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := server.SaveProfile(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -357,7 +357,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteProfile() {
 			}
 
 			server := keeper.NewMsgServerImpl(suite.k)
-			_, err := server.DeleteProfile(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := server.DeleteProfile(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)

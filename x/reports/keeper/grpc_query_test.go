@@ -248,7 +248,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Reports() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.Reports(sdk.WrapSDKContext(ctx), tc.request)
+			res, err := suite.k.Reports(ctx, tc.request)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -317,7 +317,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Report() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.Report(sdk.WrapSDKContext(ctx), tc.request)
+			res, err := suite.k.Report(ctx, tc.request)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -411,7 +411,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Reasons() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.Reasons(sdk.WrapSDKContext(ctx), tc.request)
+			res, err := suite.k.Reasons(ctx, tc.request)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -474,7 +474,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Reason() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.Reason(sdk.WrapSDKContext(ctx), tc.request)
+			res, err := suite.k.Reason(ctx, tc.request)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -525,7 +525,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Params() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.Params(sdk.WrapSDKContext(ctx), tc.request)
+			res, err := suite.k.Params(ctx, tc.request)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {

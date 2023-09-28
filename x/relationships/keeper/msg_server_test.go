@@ -117,7 +117,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateRelationship() {
 			}
 
 			service := keeper.NewMsgServerImpl(suite.k)
-			_, err := service.CreateRelationship(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := service.CreateRelationship(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Error(err)
@@ -221,7 +221,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteRelationship() {
 			}
 
 			service := keeper.NewMsgServerImpl(suite.k)
-			_, err := service.DeleteRelationship(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := service.DeleteRelationship(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Error(err)
@@ -330,7 +330,7 @@ func (suite *KeeperTestSuite) TestMsgServer_BlockUser() {
 			}
 
 			service := keeper.NewMsgServerImpl(suite.k)
-			_, err := service.BlockUser(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := service.BlockUser(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Error(err)
@@ -436,7 +436,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UnblockUser() {
 			}
 
 			service := keeper.NewMsgServerImpl(suite.k)
-			_, err := service.UnblockUser(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := service.UnblockUser(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)

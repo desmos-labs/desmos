@@ -50,7 +50,7 @@ func (querier ReportsWasmQuerier) handleReportsRequest(ctx sdk.Context, data jso
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-	res, err := querier.reportskeeper.Reports(sdk.WrapSDKContext(ctx), &req)
+	res, err := querier.reportskeeper.Reports(ctx, &req)
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
@@ -63,7 +63,7 @@ func (querier ReportsWasmQuerier) handleReportRequest(ctx sdk.Context, data json
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-	res, err := querier.reportskeeper.Report(sdk.WrapSDKContext(ctx), &req)
+	res, err := querier.reportskeeper.Report(ctx, &req)
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
@@ -76,7 +76,7 @@ func (querier ReportsWasmQuerier) handleReasonsRequest(ctx sdk.Context, data jso
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-	res, err := querier.reportskeeper.Reasons(sdk.WrapSDKContext(ctx), &req)
+	res, err := querier.reportskeeper.Reasons(ctx, &req)
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
@@ -89,7 +89,7 @@ func (querier ReportsWasmQuerier) handleReasonRequest(ctx sdk.Context, data json
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-	res, err := querier.reportskeeper.Reason(sdk.WrapSDKContext(ctx), &req)
+	res, err := querier.reportskeeper.Reason(ctx, &req)
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}

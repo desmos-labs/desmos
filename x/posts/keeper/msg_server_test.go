@@ -550,7 +550,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			}
 
 			msgServer := keeper.NewMsgServerImpl(suite.k)
-			res, err := msgServer.CreatePost(sdk.WrapSDKContext(ctx), tc.msg)
+			res, err := msgServer.CreatePost(ctx, tc.msg)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -832,7 +832,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 			}
 
 			msgServer := keeper.NewMsgServerImpl(suite.k)
-			res, err := msgServer.EditPost(sdk.WrapSDKContext(ctx), tc.msg)
+			res, err := msgServer.EditPost(ctx, tc.msg)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -1075,7 +1075,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeletePost() {
 			}
 
 			msgServer := keeper.NewMsgServerImpl(suite.k)
-			_, err := msgServer.DeletePost(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := msgServer.DeletePost(ctx, tc.msg)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -1339,7 +1339,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddPostAttachment() {
 			}
 
 			msgServer := keeper.NewMsgServerImpl(suite.k)
-			res, err := msgServer.AddPostAttachment(sdk.WrapSDKContext(ctx), tc.msg)
+			res, err := msgServer.AddPostAttachment(ctx, tc.msg)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -1750,7 +1750,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostAttachment() {
 			}
 
 			msgServer := keeper.NewMsgServerImpl(suite.k)
-			res, err := msgServer.RemovePostAttachment(sdk.WrapSDKContext(ctx), tc.msg)
+			res, err := msgServer.RemovePostAttachment(ctx, tc.msg)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -2365,7 +2365,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 			}
 
 			msgServer := keeper.NewMsgServerImpl(suite.k)
-			_, err := msgServer.AnswerPoll(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := msgServer.AnswerPoll(ctx, tc.msg)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -2427,7 +2427,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UpdateParams() {
 
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.k)
-			_, err := service.UpdateParams(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := service.UpdateParams(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -2965,7 +2965,7 @@ func (suite *KeeperTestSuite) TestMsgServer_MovePost() {
 
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.k)
-			_, err := service.MovePost(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := service.MovePost(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -3273,7 +3273,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RequestPostOwnerTransfer() {
 			}
 
 			msgServer := keeper.NewMsgServerImpl(suite.k)
-			res, err := msgServer.RequestPostOwnerTransfer(sdk.WrapSDKContext(ctx), tc.msg)
+			res, err := msgServer.RequestPostOwnerTransfer(ctx, tc.msg)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -3371,7 +3371,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CancelPostOwnerTransfer() {
 			}
 
 			msgServer := keeper.NewMsgServerImpl(suite.k)
-			res, err := msgServer.CancelPostOwnerTransferRequest(sdk.WrapSDKContext(ctx), tc.msg)
+			res, err := msgServer.CancelPostOwnerTransferRequest(ctx, tc.msg)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -3620,7 +3620,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptPostOwnerTransfer() {
 			}
 
 			msgServer := keeper.NewMsgServerImpl(suite.k)
-			res, err := msgServer.AcceptPostOwnerTransferRequest(sdk.WrapSDKContext(ctx), tc.msg)
+			res, err := msgServer.AcceptPostOwnerTransferRequest(ctx, tc.msg)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -3718,7 +3718,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RefusePostOwnerTransfer() {
 			}
 
 			msgServer := keeper.NewMsgServerImpl(suite.k)
-			res, err := msgServer.RefusePostOwnerTransferRequest(sdk.WrapSDKContext(ctx), tc.msg)
+			res, err := msgServer.RefusePostOwnerTransferRequest(ctx, tc.msg)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {

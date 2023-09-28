@@ -199,7 +199,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateDenom() {
 			}
 
 			msgServer := keeper.NewMsgServerImpl(suite.k)
-			res, err := msgServer.CreateDenom(sdk.WrapSDKContext(ctx), tc.msg)
+			res, err := msgServer.CreateDenom(ctx, tc.msg)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -467,7 +467,7 @@ func (suite *KeeperTestSuite) TestMsgServer_Mint() {
 			}
 
 			msgServer := keeper.NewMsgServerImpl(suite.k)
-			res, err := msgServer.Mint(sdk.WrapSDKContext(ctx), tc.msg)
+			res, err := msgServer.Mint(ctx, tc.msg)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -733,7 +733,7 @@ func (suite *KeeperTestSuite) TestMsgServer_Burn() {
 			}
 
 			msgServer := keeper.NewMsgServerImpl(suite.k)
-			res, err := msgServer.Burn(sdk.WrapSDKContext(ctx), tc.msg)
+			res, err := msgServer.Burn(ctx, tc.msg)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -887,7 +887,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SetDenomMetadata() {
 			}
 
 			msgServer := keeper.NewMsgServerImpl(suite.k)
-			res, err := msgServer.SetDenomMetadata(sdk.WrapSDKContext(ctx), tc.msg)
+			res, err := msgServer.SetDenomMetadata(ctx, tc.msg)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -952,7 +952,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UpdateParams() {
 
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.k)
-			_, err := service.UpdateParams(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := service.UpdateParams(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
