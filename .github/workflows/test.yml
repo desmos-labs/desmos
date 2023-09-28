@@ -22,7 +22,7 @@ jobs:
       - name: Setup Go 🧰
         uses: actions/setup-go@v4
         with:
-          go-version: '1.19'
+          go-version: '1.21'
 
       - name: Display go version 🛂
         run: go version
@@ -49,7 +49,7 @@ jobs:
       - name: Setup Go 🧰
         uses: actions/setup-go@v4
         with:
-          go-version: '1.19'
+          go-version: '1.21'
 
       - name: Compute diff 📜
         uses: technote-space/get-diff-action@v6.1.2
@@ -113,7 +113,7 @@ jobs:
       - name: Setup Go 🧰
         uses: actions/setup-go@v4
         with:
-          go-version: '1.19'
+          go-version: '1.21'
 
       - name: Compute diff 📜
         uses: technote-space/get-diff-action@v6.1.2
@@ -220,7 +220,7 @@ jobs:
       - name: Setup Go 🧰
         uses: actions/setup-go@v4
         with:
-          go-version: '1.19'
+          go-version: '1.21'
 
       - name: Compute diff 📜
         uses: technote-space/get-diff-action@v6.1.2
@@ -308,7 +308,7 @@ jobs:
       - name: Setup Go 🧰
         uses: actions/setup-go@v4
         with:
-          go-version: '1.19'
+          go-version: '1.21'
 
       - name: Compute diff 📜
         uses: technote-space/get-diff-action@v6.1.2
