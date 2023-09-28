@@ -2,12 +2,10 @@ package types
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth/migrations/legacytx"
 )
 
 var (
-	_ sdk.Msg            = &MsgUpdateParams{}
-	_ legacytx.LegacyMsg = &MsgUpdateParams{}
+	_ sdk.Msg = &MsgUpdateParams{}
 )
 
 func NewMsgUpdateParams(params Params, authority string) *MsgUpdateParams {
@@ -41,9 +39,4 @@ func (msg *MsgUpdateParams) ValidateBasic() error {
 func (msg *MsgUpdateParams) GetSigners() []sdk.AccAddress {
 	authority := sdk.MustAccAddressFromBech32(msg.Authority)
 	return []sdk.AccAddress{authority}
-}
-
-// GetSigners implements legacytx.LegacyMsg
-func (msg *MsgUpdateParams) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
 }

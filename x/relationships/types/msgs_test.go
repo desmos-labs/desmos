@@ -78,11 +78,6 @@ func TestMsgCreateRelationship_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgCreateRelationship_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgCreateRelationship","value":{"counterparty":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","signer":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","subspace_id":"1"}}`
-	require.Equal(t, expected, string(msgCreateRelationship.GetSignBytes()))
-}
-
 func TestMsgCreateRelationship_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgCreateRelationship.Signer)
 	require.Equal(t, []sdk.AccAddress{addr}, msgCreateRelationship.GetSigners())
@@ -156,11 +151,6 @@ func TestMsgDeleteRelationships_ValidateBasic(t *testing.T) {
 			}
 		})
 	}
-}
-
-func TestMsgDeleteRelationships_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgDeleteRelationship","value":{"counterparty":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","signer":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","subspace_id":"1"}}`
-	require.Equal(t, expected, string(msgDeleteRelationships.GetSignBytes()))
 }
 
 func TestMsgDeleteRelationships_GetSigners(t *testing.T) {
@@ -242,11 +232,6 @@ func TestMsgBlockUser_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgBlockUser_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgBlockUser","value":{"blocked":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","blocker":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","reason":"reason"}}`
-	require.Equal(t, expected, string(msgBlockUser.GetSignBytes()))
-}
-
 func TestMsgBlockUser_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgBlockUser.Blocker)
 	require.Equal(t, []sdk.AccAddress{addr}, msgBlockUser.GetSigners())
@@ -324,11 +309,6 @@ func TestMsgUnblockUser_ValidateBasic(t *testing.T) {
 			}
 		})
 	}
-}
-
-func TestMsgUnblockUser_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgUnblockUser","value":{"blocked":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","blocker":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
-	require.Equal(t, expected, string(msgUnblockUser.GetSignBytes()))
 }
 
 func TestMsgUnblockUser_GetSigners(t *testing.T) {

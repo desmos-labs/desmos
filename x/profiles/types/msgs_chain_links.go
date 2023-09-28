@@ -55,11 +55,6 @@ func (msg *MsgLinkChainAccount) ValidateBasic() error {
 	return nil
 }
 
-// GetSignBytes encodes the message for signing
-func (msg *MsgLinkChainAccount) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
-}
-
 // UnpackInterfaces implements codectypes.UnpackInterfacesMessage
 func (msg *MsgLinkChainAccount) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 	var address AddressData
@@ -114,11 +109,6 @@ func (msg *MsgUnlinkChainAccount) ValidateBasic() error {
 	return nil
 }
 
-// GetSignBytes encodes the message for signing
-func (msg *MsgUnlinkChainAccount) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
-}
-
 // GetSigners defines whose signature is required
 func (msg *MsgUnlinkChainAccount) GetSigners() []sdk.AccAddress {
 	signer, _ := sdk.AccAddressFromBech32(msg.Owner)
@@ -159,11 +149,6 @@ func (msg *MsgSetDefaultExternalAddress) ValidateBasic() error {
 	}
 
 	return nil
-}
-
-// GetSignBytes encodes the message for signing
-func (msg *MsgSetDefaultExternalAddress) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required

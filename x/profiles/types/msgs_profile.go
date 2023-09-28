@@ -40,11 +40,6 @@ func (msg *MsgSaveProfile) ValidateBasic() error {
 	return nil
 }
 
-// GetSignBytes encodes the message for signing
-func (msg *MsgSaveProfile) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
-}
-
 // GetSigners defines whose signature is required
 func (msg *MsgSaveProfile) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Creator)
@@ -74,11 +69,6 @@ func (msg *MsgDeleteProfile) ValidateBasic() error {
 	}
 
 	return nil
-}
-
-// GetSignBytes encodes the message for signing
-func (msg *MsgDeleteProfile) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners defines whose signature is required

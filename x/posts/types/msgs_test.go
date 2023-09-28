@@ -218,11 +218,6 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgCreatePost_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgCreatePost","value":{"attachments":[{"type":"desmos/Media","value":{"mime_type":"image/png","uri":"ftp://user:password@example.com/image.png"}},{"type":"desmos/Poll","value":{"end_date":"2020-01-01T12:00:00Z","provided_answers":[{"attachments":[{"type":"desmos/Media","value":{"mime_type":"image/png","uri":"ftp://user:password@example.com/cat.png"}}],"text":"Cat"},{"text":"Dog"}],"question":"What animal is best?"}}],"author":"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd","conversation_id":"1","entities":{"hashtags":[{"end":"3","start":"1","tag":"tag"}],"mentions":[{"end":"6","start":"4","tag":"tag"}],"urls":[{"display_url":"Display URL","end":"9","start":"7","url":"URL"}]},"external_id":"External ID","referenced_posts":[{"post_id":"1","type":2}],"reply_settings":1,"section_id":1,"subspace_id":"1","tags":["general"],"text":"This is a text"}}`
-	require.Equal(t, expected, string(msgCreatePost.GetSignBytes()))
-}
-
 func TestMsgCreatePost_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgCreatePost.Author)
 	require.Equal(t, []sdk.AccAddress{addr}, msgCreatePost.GetSigners())
@@ -345,11 +340,6 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgEditPost_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgEditPost","value":{"editor":"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd","entities":{"hashtags":[{"end":"3","start":"1","tag":"tag"}],"mentions":[{"end":"6","start":"4","tag":"tag"}],"urls":[{"display_url":"Display URL","end":"9","start":"7","url":"URL"}]},"post_id":"1","subspace_id":"1","tags":["general"],"text":"Edited text"}}`
-	require.Equal(t, expected, string(msgEditPost.GetSignBytes()))
-}
-
 func TestMsgEditPost_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgEditPost.Editor)
 	require.Equal(t, []sdk.AccAddress{addr}, msgEditPost.GetSigners())
@@ -442,11 +432,6 @@ func TestMsgAddPostAttachment_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgAddPostAttachment_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgAddPostAttachment","value":{"content":{"type":"desmos/Media","value":{"mime_type":"image/png","uri":"ftp://user:password@example.com/image.png"}},"editor":"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd","post_id":"1","subspace_id":"1"}}`
-	require.Equal(t, expected, string(msgAddPostAttachment.GetSignBytes()))
-}
-
 func TestMsgAddPostAttachment_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgAddPostAttachment.Editor)
 	require.Equal(t, []sdk.AccAddress{addr}, msgAddPostAttachment.GetSigners())
@@ -534,11 +519,6 @@ func TestMsgRemovePostAttachment_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgRemovePostAttachment_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgRemovePostAttachment","value":{"attachment_id":1,"editor":"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd","post_id":"1","subspace_id":"1"}}`
-	require.Equal(t, expected, string(msgRemovePostAttachment.GetSignBytes()))
-}
-
 func TestMsgRemovePostAttachment_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgRemovePostAttachment.Editor)
 	require.Equal(t, []sdk.AccAddress{addr}, msgRemovePostAttachment.GetSigners())
@@ -610,11 +590,6 @@ func TestMsgDeletePost_ValidateBasic(t *testing.T) {
 			}
 		})
 	}
-}
-
-func TestMsgDeletePost_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgDeletePost","value":{"post_id":"1","signer":"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd","subspace_id":"1"}}`
-	require.Equal(t, expected, string(msgDeletePost.GetSignBytes()))
 }
 
 func TestMsgDeletePost_GetSigners(t *testing.T) {
@@ -731,11 +706,6 @@ func TestMsgAnswerPoll_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgAnswerPoll_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgAnswerPoll","value":{"answers_indexes":[1,2,3],"poll_id":1,"post_id":"1","signer":"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd","subspace_id":"1"}}`
-	require.Equal(t, expected, string(msgAnswerPoll.GetSignBytes()))
-}
-
 func TestMsgAnswerPoll_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgAnswerPoll.Signer)
 	require.Equal(t, []sdk.AccAddress{addr}, msgAnswerPoll.GetSigners())
@@ -839,11 +809,6 @@ func TestMsgMovePost_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgMovePost_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgMovePost","value":{"owner":"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd","post_id":"1","subspace_id":"1","target_subspace_id":"2"}}`
-	require.Equal(t, expected, string(msgMovePost.GetSignBytes()))
-}
-
 func TestMsgMovePost_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgMovePost.Owner)
 	require.Equal(t, []sdk.AccAddress{addr}, msgMovePost.GetSigners())
@@ -895,11 +860,6 @@ func TestMsgUpdateParams_ValidateBasic(t *testing.T) {
 			}
 		})
 	}
-}
-
-func TestMsgUpdateParams_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/x/posts/MsgUpdateParams","value":{"authority":"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd","params":{"max_text_length":500}}}`
-	require.Equal(t, expected, string(msgUpdateParams.GetSignBytes()))
 }
 
 func TestMsgUpdateParams_GetSigners(t *testing.T) {
