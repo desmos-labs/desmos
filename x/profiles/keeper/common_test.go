@@ -30,6 +30,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/suite"
 
+	desmosibctesting "github.com/desmos-labs/desmos/v6/testutil/ibctesting"
 	"github.com/desmos-labs/desmos/v6/x/profiles/keeper"
 	"github.com/desmos-labs/desmos/v6/x/profiles/testutil"
 	"github.com/desmos-labs/desmos/v6/x/profiles/types"
@@ -136,7 +137,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 }
 
 func (suite *KeeperTestSuite) SetupIBCTest() {
-	suite.coordinator = ibctesting.NewCoordinator(suite.T(), 2)
+	suite.coordinator = desmosibctesting.NewCoordinator(suite.T(), 2)
 	suite.chainA = suite.coordinator.GetChain(ibctesting.GetChainID(1))
 	suite.chainB = suite.coordinator.GetChain(ibctesting.GetChainID(2))
 }
