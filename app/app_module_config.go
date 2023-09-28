@@ -123,6 +123,7 @@ var (
 				Name: runtime.ModuleName,
 				Config: appconfig.WrapAny(&runtimev1alpha1.Module{
 					AppName:       appName,
+					PreBlockers:   preblockerOder,
 					BeginBlockers: beginBlockerOrder,
 					EndBlockers:   endBlockerOrder,
 					OverrideStoreKeys: []*runtimev1alpha1.StoreKeyConfig{

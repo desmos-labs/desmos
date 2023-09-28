@@ -211,6 +211,11 @@ var (
 		{Account: tokenfactorytypes.ModuleName, Permissions: []string{authtypes.Minter, authtypes.Burner}},
 	}
 
+	// NOTE: upgrade module is required to be prioritized
+	preblockerOder = []string{
+		upgradetypes.ModuleName,
+	}
+
 	// During begin block slashing happens after distr.BeginBlocker so that
 	// there is nothing left over in the validator fee pool, so as to keep the
 	// CanWithdrawInvariant invariant.
@@ -218,7 +223,6 @@ var (
 	// NOTE: capability module's beginblocker must come before any modules using capabilities (e.g. IBC)
 	beginBlockerOrder = []string{
 		// Simd modules
-		upgradetypes.ModuleName,
 		capabilitytypes.ModuleName,
 		minttypes.ModuleName,
 		distrtypes.ModuleName,
