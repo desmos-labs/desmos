@@ -20,8 +20,8 @@ import (
 
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 
+	ibctesting "github.com/cosmos/ibc-go/v8/testing"
 	"github.com/desmos-labs/desmos/v6/app"
-	"github.com/desmos-labs/desmos/v6/testutil/ibctesting"
 
 	"cosmossdk.io/log"
 	"cosmossdk.io/store"
@@ -184,4 +184,14 @@ func (suite *KeeperTestSuite) CheckProfileNoError(profile *types.Profile, err er
 
 func (suite *KeeperTestSuite) TearDownTest() {
 	suite.ctrl.Finish()
+}
+
+func NewIBCProfilesPath(chainA, chainB *ibctesting.TestChain) *ibctesting.Path {
+	path := ibctesting.NewPath(chainA, chainB)
+	path.EndpointA.ChannelConfig.PortID = types.IBCPortID
+	path.EndpointB.ChannelConfig.PortID = types.IBCPortID
+	path.EndpointA.ChannelConfig.Version = "ics-20"
+	path.EndpointB.ChannelConfig.Version = "ics-20"
+
+	return path
 }

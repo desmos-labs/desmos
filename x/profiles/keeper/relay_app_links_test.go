@@ -7,14 +7,14 @@ import (
 	"strings"
 	"time"
 
+	"github.com/desmos-labs/desmos/v6/app"
 	"github.com/desmos-labs/desmos/v6/testutil/profilestesting"
 
 	"github.com/desmos-labs/desmos/v6/pkg/obi"
 
 	clienttypes "github.com/cosmos/ibc-go/v8/modules/core/02-client/types"
-	"github.com/cosmos/ibc-go/v8/modules/core/exported"
 
-	"github.com/desmos-labs/desmos/v6/testutil/ibctesting"
+	ibctesting "github.com/cosmos/ibc-go/v8/testing"
 
 	channeltypes "github.com/cosmos/ibc-go/v8/modules/core/04-channel/types"
 
@@ -64,10 +64,10 @@ func createResponsePacketData(
 
 func (suite *KeeperTestSuite) TestKeeper_StartProfileConnection() {
 	var (
-		applicationData    types.Data
-		callData           string
-		channelA, channelB ibctesting.TestChannel
-		err                error
+		applicationData types.Data
+		callData        string
+		path            *ibctesting.Path
+		err             error
 	)
 
 	testCases := []struct {
@@ -80,44 +80,49 @@ func (suite *KeeperTestSuite) TestKeeper_StartProfileConnection() {
 			name: "source channel not found",
 			malleate: func() {
 				// channel references wrong ID
-				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
-				channelA, _ = suite.coordinator.CreateIBCProfilesChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
-				channelA.ID = "IDisInvalid"
+				path = NewIBCProfilesPath(suite.chainA, suite.chainB)
+				suite.coordinator.Setup(path)
+				path.EndpointA.ChannelID = "IDisInvalid"
 			},
 			expPass: false,
 		},
 		{
 			name: "next seq send not found",
 			malleate: func() {
-				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
-				channelA = suite.chainA.NextTestChannel(connA, types.IBCPortID)
-				channelB = suite.chainB.NextTestChannel(connB, types.IBCPortID)
+				path = NewIBCProfilesPath(suite.chainA, suite.chainB)
+				suite.coordinator.CreateConnections(path)
+
+				// setup test channels of endpoints
+				path.EndpointA.ChannelConfig.PortID = types.IBCPortID
+				path.EndpointA.ChannelID = "channel-1"
+				path.EndpointB.ChannelConfig.PortID = types.IBCPortID
+				path.EndpointB.ChannelID = "channel-1"
 
 				// manually create channel so next seq send is never set
-				suite.chainA.App.IBCKeeper.ChannelKeeper.SetChannel(
+				suite.chainA.App.(*app.DesmosApp).IBCKeeper.ChannelKeeper.SetChannel(
 					suite.chainA.GetContext(),
-					channelA.PortID, channelA.ID,
+					path.EndpointA.ChannelConfig.PortID, path.EndpointA.ChannelID,
 					channeltypes.NewChannel(
 						channeltypes.OPEN,
 						channeltypes.ORDERED,
-						channeltypes.NewCounterparty(channelB.PortID, channelB.ID),
-						[]string{connA.ID},
+						channeltypes.NewCounterparty(path.EndpointB.ChannelConfig.PortID, path.EndpointB.ChannelID),
+						[]string{path.EndpointA.ConnectionID},
 						"ics-20",
 					),
 				)
-				suite.chainA.CreateChannelCapability(channelA.PortID, channelA.ID)
+				suite.chainA.CreateChannelCapability(suite.chainA.GetSimApp().GetScopedIBCKeeper(), path.EndpointA.ChannelConfig.PortID, path.EndpointA.ChannelID)
 			},
 			expPass: false,
 		},
 		{
 			name: "channel capability not found",
 			malleate: func() {
-				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
-				channelA, channelB = suite.coordinator.CreateIBCProfilesChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
-				capability := suite.chainA.GetChannelCapability(channelA.PortID, channelA.ID)
+				path = NewIBCProfilesPath(suite.chainA, suite.chainB)
+				suite.coordinator.Setup(path)
+				capability := suite.chainA.GetChannelCapability(path.EndpointA.ChannelConfig.PortID, path.EndpointA.ChannelID)
 
 				// Release channel capability
-				err := suite.chainA.App.ScopedProfilesKeeper.ReleaseCapability(suite.chainA.GetContext(), capability)
+				err := suite.chainA.App.(*app.DesmosApp).ScopedProfilesKeeper.ReleaseCapability(suite.chainA.GetContext(), capability)
 				suite.Require().NoError(err)
 			},
 			expPass: false,
@@ -125,8 +130,8 @@ func (suite *KeeperTestSuite) TestKeeper_StartProfileConnection() {
 		{
 			name: "send without profile returns error",
 			malleate: func() {
-				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
-				channelA, channelB = suite.coordinator.CreateIBCProfilesChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
+				path = NewIBCProfilesPath(suite.chainA, suite.chainB)
+				suite.coordinator.Setup(path)
 				applicationData = types.NewData("twitter", "twitteruser")
 				callData = "call_data"
 			},
@@ -135,14 +140,14 @@ func (suite *KeeperTestSuite) TestKeeper_StartProfileConnection() {
 		{
 			name: "send with profile works properly",
 			malleate: func() {
-				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
-				channelA, channelB = suite.coordinator.CreateIBCProfilesChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
+				path = NewIBCProfilesPath(suite.chainA, suite.chainB)
+				suite.coordinator.Setup(path)
 				applicationData = types.NewData("twitter", "twitteruser")
 				callData = "call_data"
 			},
 			storeChainA: func(ctx sdk.Context) {
-				profile := profilestesting.ProfileFromAddr(suite.chainA.Account.GetAddress().String())
-				suite.chainA.App.AccountKeeper.SetAccount(ctx, profile)
+				profile := profilestesting.ProfileFromAddr(suite.chainA.SenderAccount.GetAddress().String())
+				suite.chainA.App.(*app.DesmosApp).AccountKeeper.SetAccount(ctx, profile)
 			},
 			expPass: true,
 		},
@@ -158,19 +163,19 @@ func (suite *KeeperTestSuite) TestKeeper_StartProfileConnection() {
 				tc.storeChainA(suite.chainA.GetContext())
 			}
 
-			err = suite.chainA.App.ProfilesKeeper.StartProfileConnection(
-				suite.chainA.GetContext(), applicationData, callData, suite.chainA.Account.GetAddress(),
-				channelA.PortID, channelA.ID,
+			err = suite.chainA.App.(*app.DesmosApp).ProfilesKeeper.StartProfileConnection(
+				suite.chainA.GetContext(), applicationData, callData, suite.chainA.SenderAccount.GetAddress(),
+				path.EndpointA.ChannelConfig.PortID, path.EndpointA.ChannelID,
 				clienttypes.NewHeight(0, 110), 0,
 			)
 
 			if tc.expPass {
 				suite.Require().NoError(err)
 
-				links := suite.chainA.App.ProfilesKeeper.GetApplicationLinks(suite.chainA.GetContext())
+				links := suite.chainA.App.(*app.DesmosApp).ProfilesKeeper.GetApplicationLinks(suite.chainA.GetContext())
 				suite.Require().Len(links, 1)
 
-				suite.Require().Equal(suite.chainA.Account.GetAddress().String(), links[0].User)
+				suite.Require().Equal(suite.chainA.SenderAccount.GetAddress().String(), links[0].User)
 				suite.Require().Equal(types.ApplicationLinkStateInitialized, links[0].State)
 			} else {
 				suite.Require().Error(err)
