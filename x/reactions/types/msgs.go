@@ -328,11 +328,6 @@ func (msg *MsgSetReactionsParams) ValidateBasic() error {
 	return nil
 }
 
-// GetSignBytes implements sdk.Msg
-func (msg *MsgSetReactionsParams) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
-}
-
 // GetSigners implements sdk.Msg
 func (msg *MsgSetReactionsParams) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.User)

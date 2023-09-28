@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
-	"github.com/cosmos/cosmos-sdk/x/auth/migrations/legacytx"
 
 	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -472,8 +471,7 @@ func (msg *MsgMovePost) GetSigners() []sdk.AccAddress {
 // --------------------------------------------------------------------------------------------------------------------
 
 var (
-	_ sdk.Msg            = &MsgUpdateParams{}
-	_  &MsgUpdateParams{}
+	_ sdk.Msg = &MsgUpdateParams{}
 )
 
 func NewMsgUpdateParams(params Params, authority string) *MsgUpdateParams {
