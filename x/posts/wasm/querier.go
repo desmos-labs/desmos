@@ -69,7 +69,7 @@ func (querier PostsWasmQuerier) handleSubspacePostsRequest(ctx sdk.Context, requ
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-	PostsResponse, err := querier.postsKeeper.SubspacePosts(sdk.WrapSDKContext(ctx), &PostsReq)
+	PostsResponse, err := querier.postsKeeper.SubspacePosts(ctx, &PostsReq)
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
@@ -86,7 +86,7 @@ func (querier PostsWasmQuerier) handleSectionPostsRequest(ctx sdk.Context, reque
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-	SectionPostsResponse, err := querier.postsKeeper.SectionPosts(sdk.WrapSDKContext(ctx), &incomingDtagReq)
+	SectionPostsResponse, err := querier.postsKeeper.SectionPosts(ctx, &incomingDtagReq)
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
@@ -103,7 +103,7 @@ func (querier PostsWasmQuerier) handlePostRequest(ctx sdk.Context, request json.
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-	PostResponse, err := querier.postsKeeper.Post(sdk.WrapSDKContext(ctx), &chainLinkReq)
+	PostResponse, err := querier.postsKeeper.Post(ctx, &chainLinkReq)
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
@@ -121,7 +121,7 @@ func (querier PostsWasmQuerier) handlePostAttachmentsRequest(ctx sdk.Context, re
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-	PostAttachmentsResponse, err := querier.postsKeeper.PostAttachments(sdk.WrapSDKContext(ctx), &PostAttachmentsReq)
+	PostAttachmentsResponse, err := querier.postsKeeper.PostAttachments(ctx, &PostAttachmentsReq)
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
@@ -139,7 +139,7 @@ func (querier PostsWasmQuerier) handlePollAnswersRequest(ctx sdk.Context, reques
 		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 	applicationLinkByChainIDResponse, err := querier.postsKeeper.PollAnswers(
-		sdk.WrapSDKContext(ctx),
+		ctx,
 		&applicationReq,
 	)
 	if err != nil {

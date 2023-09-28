@@ -149,7 +149,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateSubspace() {
 
 				// Run the fist subspace creation message
 				msgServer := keeper.NewMsgServerImpl(suite.k)
-				_, err := msgServer.CreateSubspace(sdk.WrapSDKContext(ctx), types.NewMsgCreateSubspace(
+				_, err := msgServer.CreateSubspace(ctx, types.NewMsgCreateSubspace(
 					"Test subspace",
 					"This is a test subspace",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
@@ -212,7 +212,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateSubspace() {
 
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.k)
-			res, err := service.CreateSubspace(sdk.WrapSDKContext(ctx), tc.msg)
+			res, err := service.CreateSubspace(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -392,7 +392,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditSubspace() {
 
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.k)
-			_, err := service.EditSubspace(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := service.EditSubspace(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -503,7 +503,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteSubspace() {
 
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.k)
-			_, err := service.DeleteSubspace(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := service.DeleteSubspace(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -747,7 +747,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateSection() {
 			}
 
 			msgServer := keeper.NewMsgServerImpl(suite.k)
-			res, err := msgServer.CreateSection(sdk.WrapSDKContext(ctx), tc.msg)
+			res, err := msgServer.CreateSection(ctx, tc.msg)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -941,7 +941,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditSection() {
 			}
 
 			msgServer := keeper.NewMsgServerImpl(suite.k)
-			_, err := msgServer.EditSection(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := msgServer.EditSection(ctx, tc.msg)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -1196,7 +1196,7 @@ func (suite *KeeperTestSuite) TestMsgServer_MoveSection() {
 			}
 
 			msgServer := keeper.NewMsgServerImpl(suite.k)
-			_, err := msgServer.MoveSection(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := msgServer.MoveSection(ctx, tc.msg)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -1336,7 +1336,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteSection() {
 			}
 
 			msgServer := keeper.NewMsgServerImpl(suite.k)
-			_, err := msgServer.DeleteSection(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := msgServer.DeleteSection(ctx, tc.msg)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -1570,7 +1570,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateUserGroup() {
 
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.k)
-			res, err := service.CreateUserGroup(sdk.WrapSDKContext(ctx), tc.msg)
+			res, err := service.CreateUserGroup(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -1769,7 +1769,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditUserGroup() {
 
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.k)
-			_, err := service.EditUserGroup(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := service.EditUserGroup(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -2076,7 +2076,7 @@ func (suite *KeeperTestSuite) TestMsgServer_MoveUserGroup() {
 
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.k)
-			_, err := service.MoveUserGroup(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := service.MoveUserGroup(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -2339,7 +2339,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SetUserGroupPermissions() {
 
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.k)
-			_, err := service.SetUserGroupPermissions(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := service.SetUserGroupPermissions(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -2482,7 +2482,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteUserGroup() {
 
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.k)
-			_, err := service.DeleteUserGroup(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := service.DeleteUserGroup(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -2662,7 +2662,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddUserToGroup() {
 
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.k)
-			_, err := service.AddUserToUserGroup(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := service.AddUserToUserGroup(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -2841,7 +2841,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RemoveUserFromGroup() {
 
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.k)
-			_, err := service.RemoveUserFromUserGroup(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := service.RemoveUserFromUserGroup(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -3006,7 +3006,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SetUserPermissions() {
 
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.k)
-			_, err := service.SetUserPermissions(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := service.SetUserPermissions(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -3146,7 +3146,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UpdateSubspaceFeeTokens() {
 
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.k)
-			_, err := service.UpdateSubspaceFeeTokens(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := service.UpdateSubspaceFeeTokens(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -3329,7 +3329,7 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantTreasuryAuthorization() {
 
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.k)
-			res, err := service.GrantTreasuryAuthorization(sdk.WrapSDKContext(ctx), tc.msg)
+			res, err := service.GrantTreasuryAuthorization(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -3553,7 +3553,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RevokeTreasuryAuthorization() {
 
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.k)
-			res, err := service.RevokeTreasuryAuthorization(sdk.WrapSDKContext(ctx), tc.msg)
+			res, err := service.RevokeTreasuryAuthorization(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -3840,7 +3840,7 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantAllowance() {
 
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.k)
-			_, err := service.GrantAllowance(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := service.GrantAllowance(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -4045,7 +4045,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RevokeAllowance() {
 
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.k)
-			_, err := service.RevokeAllowance(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := service.RevokeAllowance(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)

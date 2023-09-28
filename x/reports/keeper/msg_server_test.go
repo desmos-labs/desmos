@@ -412,7 +412,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateReport() {
 			}
 
 			msgServer := keeper.NewMsgServerImpl(suite.k)
-			res, err := msgServer.CreateReport(sdk.WrapSDKContext(ctx), tc.msg)
+			res, err := msgServer.CreateReport(ctx, tc.msg)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -653,7 +653,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteReport() {
 			}
 
 			msgServer := keeper.NewMsgServerImpl(suite.k)
-			_, err := msgServer.DeleteReport(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := msgServer.DeleteReport(ctx, tc.msg)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -824,7 +824,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SupportStandardReason() {
 			}
 
 			msgServer := keeper.NewMsgServerImpl(suite.k)
-			res, err := msgServer.SupportStandardReason(sdk.WrapSDKContext(ctx), tc.msg)
+			res, err := msgServer.SupportStandardReason(ctx, tc.msg)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -1001,7 +1001,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddReason() {
 			}
 
 			msgServer := keeper.NewMsgServerImpl(suite.k)
-			res, err := msgServer.AddReason(sdk.WrapSDKContext(ctx), tc.msg)
+			res, err := msgServer.AddReason(ctx, tc.msg)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -1135,7 +1135,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RemoveReason() {
 			}
 
 			msgServer := keeper.NewMsgServerImpl(suite.k)
-			_, err := msgServer.RemoveReason(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := msgServer.RemoveReason(ctx, tc.msg)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -1186,7 +1186,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UpdateParams() {
 
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.k)
-			_, err := service.UpdateParams(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := service.UpdateParams(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)

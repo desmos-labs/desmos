@@ -48,7 +48,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Total() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.Total(sdk.WrapSDKContext(ctx), tc.req)
+			res, err := suite.k.Total(ctx, tc.req)
 			suite.Require().NoError(err)
 			suite.Require().Equal(tc.expSupply, res.TotalSupply)
 		})
@@ -96,7 +96,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Circulating() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.Circulating(sdk.WrapSDKContext(ctx), tc.req)
+			res, err := suite.k.Circulating(ctx, tc.req)
 			suite.Require().NoError(err)
 			suite.Require().Equal(tc.expSupply, res.CirculatingSupply)
 		})

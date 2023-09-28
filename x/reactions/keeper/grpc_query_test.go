@@ -100,7 +100,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Reactions() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.Reactions(sdk.WrapSDKContext(ctx), tc.request)
+			res, err := suite.k.Reactions(ctx, tc.request)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -165,7 +165,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Reaction() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.Reaction(sdk.WrapSDKContext(ctx), tc.request)
+			res, err := suite.k.Reaction(ctx, tc.request)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -264,7 +264,7 @@ func (suite *KeeperTestSuite) TestQueryServer_RegisteredReactions() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.RegisteredReactions(sdk.WrapSDKContext(ctx), tc.request)
+			res, err := suite.k.RegisteredReactions(ctx, tc.request)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -322,7 +322,7 @@ func (suite *KeeperTestSuite) TestQueryServer_RegisteredReaction() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.RegisteredReaction(sdk.WrapSDKContext(ctx), tc.request)
+			res, err := suite.k.RegisteredReaction(ctx, tc.request)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -378,7 +378,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ReactionsParams() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.ReactionsParams(sdk.WrapSDKContext(ctx), tc.request)
+			res, err := suite.k.ReactionsParams(ctx, tc.request)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {

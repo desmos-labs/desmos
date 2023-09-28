@@ -60,7 +60,7 @@ func (querier ProfilesWasmQuerier) handleProfileRequest(ctx sdk.Context, request
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-	res, err := querier.profilesKeeper.Profile(sdk.WrapSDKContext(ctx), &req)
+	res, err := querier.profilesKeeper.Profile(ctx, &req)
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
@@ -77,7 +77,7 @@ func (querier ProfilesWasmQuerier) handleIncomingDTagRequest(ctx sdk.Context, re
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-	res, err := querier.profilesKeeper.IncomingDTagTransferRequests(sdk.WrapSDKContext(ctx), &req)
+	res, err := querier.profilesKeeper.IncomingDTagTransferRequests(ctx, &req)
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
@@ -94,7 +94,7 @@ func (querier ProfilesWasmQuerier) handleChainLinksRequest(ctx sdk.Context, requ
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-	res, err := querier.profilesKeeper.ChainLinks(sdk.WrapSDKContext(ctx), &req)
+	res, err := querier.profilesKeeper.ChainLinks(ctx, &req)
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
@@ -112,7 +112,7 @@ func (querier ProfilesWasmQuerier) handleChainLinkOwnersRequest(ctx sdk.Context,
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-	res, err := querier.profilesKeeper.ChainLinkOwners(sdk.WrapSDKContext(ctx), &req)
+	res, err := querier.profilesKeeper.ChainLinkOwners(ctx, &req)
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
@@ -130,7 +130,7 @@ func (querier ProfilesWasmQuerier) handleDefaultExternalAddressesRequest(ctx sdk
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-	res, err := querier.profilesKeeper.DefaultExternalAddresses(sdk.WrapSDKContext(ctx), &req)
+	res, err := querier.profilesKeeper.DefaultExternalAddresses(ctx, &req)
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
@@ -148,7 +148,7 @@ func (querier ProfilesWasmQuerier) handleApplicationLinksRequest(ctx sdk.Context
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-	res, err := querier.profilesKeeper.ApplicationLinks(sdk.WrapSDKContext(ctx), &req)
+	res, err := querier.profilesKeeper.ApplicationLinks(ctx, &req)
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
@@ -166,7 +166,7 @@ func (querier ProfilesWasmQuerier) handleApplicationLinkByClientIDRequest(ctx sd
 		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 	res, err := querier.profilesKeeper.ApplicationLinkByClientID(
-		sdk.WrapSDKContext(ctx),
+		ctx,
 		&req,
 	)
 	if err != nil {
@@ -186,7 +186,7 @@ func (querier ProfilesWasmQuerier) handleApplicationLinkOwnersRequest(ctx sdk.Co
 		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 	res, err := querier.profilesKeeper.ApplicationLinkOwners(
-		sdk.WrapSDKContext(ctx),
+		ctx,
 		&req,
 	)
 	if err != nil {

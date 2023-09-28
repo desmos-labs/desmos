@@ -70,7 +70,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Profile() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.Profile(sdk.WrapSDKContext(ctx), tc.req)
+			res, err := suite.k.Profile(ctx, tc.req)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -208,7 +208,7 @@ func (suite *KeeperTestSuite) TestQueryServer_IncomingDTagTransferRequests() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.IncomingDTagTransferRequests(sdk.WrapSDKContext(ctx), tc.req)
+			res, err := suite.k.IncomingDTagTransferRequests(ctx, tc.req)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -618,7 +618,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinks() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.ChainLinks(sdk.WrapSDKContext(ctx), tc.req)
+			res, err := suite.k.ChainLinks(ctx, tc.req)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -726,7 +726,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinkOwners() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.ChainLinkOwners(sdk.WrapSDKContext(ctx), tc.request)
+			res, err := suite.k.ChainLinkOwners(ctx, tc.request)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -815,7 +815,7 @@ func (suite *KeeperTestSuite) TestQueryServer_DefaultExternalAddresses() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.DefaultExternalAddresses(sdk.WrapSDKContext(ctx), tc.request)
+			res, err := suite.k.DefaultExternalAddresses(ctx, tc.request)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -1420,7 +1420,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinks() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.ApplicationLinks(sdk.WrapSDKContext(ctx), tc.req)
+			res, err := suite.k.ApplicationLinks(ctx, tc.req)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -1501,7 +1501,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkByClientID() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.ApplicationLinkByClientID(sdk.WrapSDKContext(ctx), tc.req)
+			res, err := suite.k.ApplicationLinkByClientID(ctx, tc.req)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -1776,7 +1776,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkOwners() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.ApplicationLinkOwners(sdk.WrapSDKContext(ctx), tc.req)
+			res, err := suite.k.ApplicationLinkOwners(ctx, tc.req)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -1792,7 +1792,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Params() {
 
 	suite.k.SetParams(ctx, types.DefaultParams())
 
-	res, err := suite.k.Params(sdk.WrapSDKContext(ctx), &types.QueryParamsRequest{})
+	res, err := suite.k.Params(ctx, &types.QueryParamsRequest{})
 	suite.Require().NoError(err)
 	suite.Require().NotNil(res)
 

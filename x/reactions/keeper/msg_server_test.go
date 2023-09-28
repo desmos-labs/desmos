@@ -541,7 +541,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddReaction() {
 			}
 
 			msgServer := keeper.NewMsgServerImpl(suite.k)
-			res, err := msgServer.AddReaction(sdk.WrapSDKContext(ctx), tc.msg)
+			res, err := msgServer.AddReaction(ctx, tc.msg)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -805,7 +805,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RemoveReaction() {
 			}
 
 			msgServer := keeper.NewMsgServerImpl(suite.k)
-			_, err := msgServer.RemoveReaction(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := msgServer.RemoveReaction(ctx, tc.msg)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -983,7 +983,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddRegisteredReaction() {
 			}
 
 			msgServer := keeper.NewMsgServerImpl(suite.k)
-			res, err := msgServer.AddRegisteredReaction(sdk.WrapSDKContext(ctx), tc.msg)
+			res, err := msgServer.AddRegisteredReaction(ctx, tc.msg)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -1168,7 +1168,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditRegisteredReaction() {
 			}
 
 			msgServer := keeper.NewMsgServerImpl(suite.k)
-			_, err := msgServer.EditRegisteredReaction(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := msgServer.EditRegisteredReaction(ctx, tc.msg)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -1305,7 +1305,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RemoveRegisteredReaction() {
 			}
 
 			msgServer := keeper.NewMsgServerImpl(suite.k)
-			_, err := msgServer.RemoveRegisteredReaction(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := msgServer.RemoveRegisteredReaction(ctx, tc.msg)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -1443,7 +1443,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SetReactionsParams() {
 			}
 
 			msgServer := keeper.NewMsgServerImpl(suite.k)
-			_, err := msgServer.SetReactionsParams(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := msgServer.SetReactionsParams(ctx, tc.msg)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {

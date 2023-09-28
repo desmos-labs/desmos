@@ -104,7 +104,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RequestDTagTransfer() {
 			}
 
 			server := keeper.NewMsgServerImpl(suite.k)
-			_, err := server.RequestDTagTransfer(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := server.RequestDTagTransfer(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -172,7 +172,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CancelDTagTransfer() {
 			}
 
 			server := keeper.NewMsgServerImpl(suite.k)
-			_, err := server.CancelDTagTransferRequest(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := server.CancelDTagTransferRequest(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -461,7 +461,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptDTagTransfer() {
 			}
 
 			server := keeper.NewMsgServerImpl(suite.k)
-			_, err := server.AcceptDTagTransferRequest(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := server.AcceptDTagTransferRequest(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -533,7 +533,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RefuseDTagTransfer() {
 			}
 
 			server := keeper.NewMsgServerImpl(suite.k)
-			_, err := server.RefuseDTagTransferRequest(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := server.RefuseDTagTransferRequest(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
