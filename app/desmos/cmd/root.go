@@ -80,7 +80,8 @@ func NewRootCmd() *cobra.Command {
 
 			// This needs to go after ReadFromClientConfig, as that function
 			// sets the RPC client needed for SIGN_MODE_TEXTUAL.
-			enabledSignModes := append(tx.DefaultSignModes, signing.SignMode_SIGN_MODE_TEXTUAL)
+			enabledSignModes := tx.DefaultSignModes
+			enabledSignModes = append(enabledSignModes, signing.SignMode_SIGN_MODE_TEXTUAL)
 			txConfigOpts := tx.ConfigOptions{
 				EnabledSignModes:           enabledSignModes,
 				TextualCoinMetadataQueryFn: txmodule.NewGRPCCoinMetadataQueryFn(initClientCtx),
@@ -104,7 +105,7 @@ func NewRootCmd() *cobra.Command {
 		},
 	}
 
-	initRootCmd(rootCmd, txConfig, interfaceRegistry, appCodec, moduleBasicManager)
+	initRootCmd(rootCmd, txConfig, moduleBasicManager)
 
 	if err := autoCliOpts.EnhanceRootCommand(rootCmd); err != nil {
 		panic(err)
