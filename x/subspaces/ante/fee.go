@@ -112,9 +112,9 @@ func (dfd DeductFeeDecorator) tryHandleSubspaceTx(ctx sdk.Context, tx sdk.FeeTx,
 	deductFeesFrom := tx.FeePayer()
 	feeGranter := tx.FeeGranter()
 
-	// If the fee granter is not equal to fee payer, or it's not equal to the subspace treasury,
+	// If the fee granter is not set, or it's not equal to the subspace treasury,
 	// then use auth.DeductFeeDecorator to deal with fees
-	if !bytes.Equal(deductFeesFrom, feeGranter) || !bytes.Equal(feeGranter, types.GetTreasuryAddress(subspaceID)) {
+	if !bytes.Equal(feeGranter, types.GetTreasuryAddress(subspaceID)) {
 		return ctx, false, nil
 	}
 
@@ -128,6 +128,7 @@ func (dfd DeductFeeDecorator) tryHandleSubspaceTx(ctx sdk.Context, tx sdk.FeeTx,
 		return ctx, false, nil
 	}
 
+	deductFeesFrom = feeGranter
 	deductFeesFromAcc := dfd.ak.GetAccount(ctx, deductFeesFrom)
 	if deductFeesFromAcc == nil {
 		return ctx, false, errors.Wrapf(sdkerrors.ErrUnknownAddress, "fee payer address: %s does not exist", deductFeesFrom)
