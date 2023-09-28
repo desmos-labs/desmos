@@ -47,8 +47,6 @@ import (
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	solomachine "github.com/cosmos/ibc-go/v8/modules/light-clients/06-solomachine"
-	ibctm "github.com/cosmos/ibc-go/v8/modules/light-clients/07-tendermint"
 
 	_ "cosmossdk.io/x/evidence"                       // import for side-effects
 	_ "cosmossdk.io/x/feegrant/module"                // import for side-effects
@@ -262,8 +260,6 @@ var (
 					paramsclient.ProposalHandler,
 				},
 			),
-			ibctm.ModuleName:       ibctm.AppModuleBasic{},
-			solomachine.ModuleName: solomachine.AppModuleBasic{},
 		},
 	))
 )
