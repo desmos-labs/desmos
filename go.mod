@@ -2,8 +2,6 @@ module github.com/desmos-labs/desmos/v6
 
 go 1.21
 
-toolchain go1.21.0
-
 require (
 	cosmossdk.io/api v0.7.1
 	cosmossdk.io/client/v2 v2.0.0-20230818115413-c402c51a1508
