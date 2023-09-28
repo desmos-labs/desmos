@@ -8,7 +8,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	"github.com/desmos-labs/desmos/v6/x/profiles/types"
 )
@@ -31,16 +30,16 @@ func (suite *KeeperTestSuite) TestKeeper_IterateProfile() {
 
 	profiles := []*types.Profile{
 		suite.CheckProfileNoError(
-			types.NewProfileFromAccount("first", authtypes.NewBaseAccountWithAddress(addr1), date),
+			types.NewProfileFromAccount("first", suite.ak.NewAccountWithAddress(suite.ctx, addr1), date),
 		),
 		suite.CheckProfileNoError(
-			types.NewProfileFromAccount("second", authtypes.NewBaseAccountWithAddress(addr2), date),
+			types.NewProfileFromAccount("second", suite.ak.NewAccountWithAddress(suite.ctx, addr2), date),
 		),
 		suite.CheckProfileNoError(
-			types.NewProfileFromAccount("not", authtypes.NewBaseAccountWithAddress(addr3), date),
+			types.NewProfileFromAccount("not", suite.ak.NewAccountWithAddress(suite.ctx, addr3), date),
 		),
 		suite.CheckProfileNoError(
-			types.NewProfileFromAccount("third", authtypes.NewBaseAccountWithAddress(addr4), date),
+			types.NewProfileFromAccount("third", suite.ak.NewAccountWithAddress(suite.ctx, addr4), date),
 		),
 	}
 
