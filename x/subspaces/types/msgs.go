@@ -826,7 +826,7 @@ func (msg *MsgSetUserPermissions) IsManageSubspaceMsg() {}
 // --------------------------------------------------------------------------------------------------------------------
 
 var (
-	_ sdk.Msg            = &MsgUpdateSubspaceFeeTokens{}
+	_ sdk.Msg = &MsgUpdateSubspaceFeeTokens{}
 )
 
 // NewMsgUpdateSubspaceFeeTokens creates a new MsgUpdateSubspaceFeeTokens instance
