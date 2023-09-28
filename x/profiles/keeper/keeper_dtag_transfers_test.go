@@ -66,10 +66,10 @@ func (suite *KeeperTestSuite) TestKeeper_SaveDTagTransferRequest() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				)
-				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr(request.Receiver)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr(request.Receiver, profilestesting.WithNextAccountNumber(ctx, suite.ak))))
 				suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, request))
 
-				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn")))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn", profilestesting.WithNextAccountNumber(ctx, suite.ak))))
 			},
 			transferReq: types.NewDTagTransferRequest(
 				"dtag",
@@ -101,10 +101,10 @@ func (suite *KeeperTestSuite) TestKeeper_SaveDTagTransferRequest() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				)
-				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr(request.Receiver)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr(request.Receiver, profilestesting.WithNextAccountNumber(ctx, suite.ak))))
 				suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, request))
 
-				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn")))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn", profilestesting.WithNextAccountNumber(ctx, suite.ak))))
 			},
 			transferReq: types.NewDTagTransferRequest(
 				"dtag",
@@ -403,10 +403,10 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteAllUserIncomingDTagTransferReques
 		{
 			name: "DTag requests are deleted properly",
 			store: func(ctx sdk.Context) {
-				profile1 := profilestesting.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
+				profile1 := profilestesting.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773", profilestesting.WithNextAccountNumber(ctx, suite.ak))
 				suite.Require().NoError(suite.k.SaveProfile(ctx, profile1))
 
-				profile2 := profilestesting.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")
+				profile2 := profilestesting.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x", profilestesting.WithNextAccountNumber(ctx, suite.ak))
 				suite.Require().NoError(suite.k.SaveProfile(ctx, profile2))
 
 				request := types.NewDTagTransferRequest(

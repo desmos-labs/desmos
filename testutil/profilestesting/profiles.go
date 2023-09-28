@@ -1,6 +1,7 @@
 package profilestesting
 
 import (
+	"context"
 	"encoding/hex"
 	"fmt"
 	"time"
@@ -11,6 +12,7 @@ import (
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/bech32/legacybech32"
+	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	"github.com/gogo/protobuf/proto"
@@ -58,7 +60,9 @@ func PubKeyFromJSON(cdc codec.Codec, pubKey string) cryptotypes.PubKey {
 	return publicKey
 }
 
-func ProfileFromAddr(address string) *types.Profile {
+type ProfileOption func(*types.Profile) *types.Profile
+
+func ProfileFromAddr(address string, options ...func(*types.Profile) *types.Profile) *types.Profile {
 	profile, err := types.NewProfile(
 		fmt.Sprintf("%s-dtag", address),
 		"",
@@ -71,7 +75,18 @@ func ProfileFromAddr(address string) *types.Profile {
 		panic(err)
 	}
 
+	for _, option := range options {
+		profile = option(profile)
+	}
+
 	return profile
+}
+
+func WithNextAccountNumber(ctx context.Context, ak authkeeper.AccountKeeper) ProfileOption {
+	return func(profile *types.Profile) *types.Profile {
+		profile.SetAccountNumber(ak.NextAccountNumber(ctx))
+		return profile
+	}
 }
 
 // SingleSignatureFromHex convert the hex-encoded string of the single signature to CosmosSignatureData
