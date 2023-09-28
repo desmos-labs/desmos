@@ -32,6 +32,23 @@ func (suite *KeeperTestSuite) TestMsgServer_SaveProfile() {
 		check     func(ctx sdk.Context)
 	}{
 		{
+			name: "account not found returns error (with no previous profile created)",
+			msg: types.NewMsgSaveProfile(
+				"custom_dtag",
+				"my-nickname",
+				"my-bio",
+				"https://tc.com/profile-picture",
+				"https://tc.com/cover-pic",
+				"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+			),
+			check: func(ctx sdk.Context) {
+				_, found, err := suite.k.GetProfile(ctx, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
+				suite.Require().NoError(err)
+				suite.Require().True(found)
+			},
+			shouldErr: true,
+		},
+		{
 			name: "profile saved (with no previous profile created)",
 			store: func(ctx sdk.Context) {
 				suite.ak.SetAccount(ctx, profilestesting.AccountFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"))
