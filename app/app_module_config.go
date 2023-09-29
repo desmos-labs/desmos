@@ -114,9 +114,11 @@ var (
 		// We allow the following module accounts to receive funds:
 		// govtypes.ModuleName
 	}
+)
 
-	// application configuration (used by depinject)
-	AppConfig = depinject.Configs(appconfig.Compose(&appv1alpha1.Config{
+// GetAppConfig returns the depinject config for building modules
+func GetAppConfig() depinject.Config {
+	return depinject.Configs(appconfig.Compose(&appv1alpha1.Config{
 		Modules: []*appv1alpha1.ModuleConfig{
 			// SDK modules
 			{
@@ -139,7 +141,7 @@ var (
 			{
 				Name: authtypes.ModuleName,
 				Config: appconfig.WrapAny(&authmodulev1.Module{
-					Bech32Prefix:             sdk.Bech32MainPrefix,
+					Bech32Prefix:             sdk.GetConfig().GetBech32AccountAddrPrefix(),
 					ModuleAccountPermissions: maccPerms,
 					// By default modules authority is the governance module. This is configurable with the following:
 					// Authority: "group", // A custom module authority can be set using a module name
@@ -263,4 +265,4 @@ var (
 			),
 		},
 	))
-)
+}

@@ -180,7 +180,7 @@ func NewDesmosApp(
 
 		// merge the AppConfig and other configuration in one config
 		appConfig = depinject.Configs(
-			AppConfig,
+			GetAppConfig(),
 			depinject.Supply(
 				// supply the application options
 				appOpts,

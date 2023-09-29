@@ -17,6 +17,7 @@ import (
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/server"
 	simtestutil "github.com/cosmos/cosmos-sdk/testutil/sims"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	"github.com/cosmos/cosmos-sdk/x/auth/tx"
@@ -29,6 +30,11 @@ import (
 // NewRootCmd creates a new root command for desmos. It is called once in the
 // main function.
 func NewRootCmd() *cobra.Command {
+	// Read in the configuration file for the sdk
+	cfg := sdk.GetConfig()
+	app.SetupConfig(cfg)
+	cfg.Seal()
+
 	var (
 		interfaceRegistry  codectypes.InterfaceRegistry
 		appCodec           codec.Codec
@@ -40,7 +46,7 @@ func NewRootCmd() *cobra.Command {
 
 	if err := depinject.Inject(
 		depinject.Configs(
-			app.AppConfig,
+			app.GetAppConfig(),
 			depinject.Supply(
 				log.NewNopLogger(),
 				simtestutil.NewAppOptionsWithFlagHome(tempDir()),
