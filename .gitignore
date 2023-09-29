@@ -40,7 +40,6 @@ sim_log_file
 *.box
 *.log
 vagrant
-*.dot
 
 # IDE
 .idea/
