@@ -394,7 +394,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptDTagTransfer() {
 			},
 		},
 		{
-			name: "DTag exchanged correctly (already existent sender profile))",
+			name: "DTag exchanged correctly (already existent sender profile)",
 			store: func(ctx sdk.Context) {
 				request := types.NewDTagTransferRequest(
 					"DTag",
