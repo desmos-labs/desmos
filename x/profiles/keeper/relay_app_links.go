@@ -20,8 +20,8 @@ import (
 	oracletypes "github.com/desmos-labs/desmos/v6/x/oracle/types"
 )
 
-// oracleScriptCallData represents the data that should be OBI-encoded and sent to perform an oracle request
-type oracleScriptCallData struct {
+// OracleScriptCallData represents the data that should be OBI-encoded and sent to perform an oracle request
+type OracleScriptCallData struct {
 	Application string `obi:"application"`
 	CallData    string `obi:"call_data"`
 }
@@ -62,7 +62,7 @@ func (k Keeper) StartProfileConnection(
 	}
 
 	// Create the call data to be used
-	data := oracleScriptCallData{
+	data := OracleScriptCallData{
 		Application: strings.ToLower(applicationData.Application),
 		CallData:    dataSourceCallData,
 	}

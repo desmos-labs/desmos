@@ -6,6 +6,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"github.com/desmos-labs/desmos/v6/app"
 	"github.com/desmos-labs/desmos/v6/x/profiles/types"
 )
 
@@ -220,6 +221,31 @@ func TestApplicationLink_Validate(t *testing.T) {
 	}
 }
 
+func TestMustUnmarshalApplicationLink(t *testing.T) {
+	link := types.NewApplicationLink(
+		"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+		types.NewData("twitter", "twitteruser"),
+		types.ApplicationLinkStateInitialized,
+		types.NewOracleRequest(
+			0,
+			1,
+			types.NewOracleRequestCallData(
+				"twitter",
+				"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",
+			),
+			"client_id",
+		),
+		nil,
+		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+		time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
+	)
+
+	cdc, _ := app.MakeCodecs()
+	marshalled := types.MustMarshalApplicationLink(cdc, link)
+	unmarshalled := types.MustUnmarshalApplicationLink(cdc, marshalled)
+	require.Equal(t, link, unmarshalled)
+}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 func TestData_Validate(t *testing.T) {
@@ -379,6 +405,73 @@ func TestOracleRequest_CallData_Validate(t *testing.T) {
 			} else {
 				require.NoError(t, err)
 			}
+		})
+	}
+}
+
+func TestApplicationLink_IsVerificationOngoing(t *testing.T) {
+	testCases := []struct {
+		name     string
+		link     types.ApplicationLink
+		expected bool
+	}{
+		{
+			name:     "non on going state returns false",
+			link:     types.ApplicationLink{State: types.AppLinkStateVerificationSuccess},
+			expected: false,
+		},
+		{
+			name:     "verification initialized returns true",
+			link:     types.ApplicationLink{State: types.ApplicationLinkStateInitialized},
+			expected: true,
+		},
+		{
+			name:     "verification error returns true",
+			link:     types.ApplicationLink{State: types.AppLinkStateVerificationStarted},
+			expected: true,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			require.Equal(t, tc.expected, tc.link.IsVerificationOngoing())
+		})
+	}
+}
+
+func TestApplicationLink_IsVerificationCompleted(t *testing.T) {
+	testCases := []struct {
+		name     string
+		link     types.ApplicationLink
+		expected bool
+	}{
+		{
+			name:     "non completed state returns false",
+			link:     types.ApplicationLink{State: types.ApplicationLinkStateInitialized},
+			expected: false,
+		},
+		{
+			name:     "verification success returns true",
+			link:     types.ApplicationLink{State: types.AppLinkStateVerificationSuccess},
+			expected: true,
+		},
+		{
+			name:     "verification error returns true",
+			link:     types.ApplicationLink{State: types.AppLinkStateVerificationError},
+			expected: true,
+		},
+		{
+			name:     "verification timeout returns true",
+			link:     types.ApplicationLink{State: types.AppLinkStateVerificationTimedOut},
+			expected: true,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			require.Equal(t, tc.expected, tc.link.IsVerificationCompleted())
 		})
 	}
 }

@@ -2,16 +2,18 @@
 
 set -eo pipefail
 oIFS="$IFS"; IFS=, ; set -- $1 ; IFS="$oIFS"
-
 DISABLED_MUTATORS='branch/*'
 
 # Only consider the following:
-# * go files in types, keeper, or module root directories
+# * go files in types, keeper directories
 # * ignore test and Protobuf files
 # * ignore simulation test files
 # * ignore legacy files
-go_file_exclusions="-type f ! -path */client/* ! -path */simulation/* ! -path */legacy/* -name *.go -and -not -name *_test.go -and -not -name *pb* -and -not -name module.go -and -not -name ibc_module.go"
-MUTATION_SOURCES=$(find ./x  $go_file_exclusions )
+# * ignore legacy wasm files
+# * ignore testutil files
+# * ignore codec.go
+go_file_exclusions="-type f ( -path */keeper/* -or -path */types/* ) -and -name *.go -and -not -path */legacy/* -and -not -name *_test.go -and -not -name *pb* -and -not -name codec.go"
+MUTATION_SOURCES=$(find ./x $go_file_exclusions )
 
 # Filter on a module-by-module basis as provided by input
 arg_len=$#

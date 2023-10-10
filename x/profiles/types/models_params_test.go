@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
@@ -111,18 +112,28 @@ func TestValidateNicknameParams(t *testing.T) {
 		shouldErr bool
 	}{
 		{
+			name:      "invalid max returns error - nil min",
+			params:    types.NicknameParams{MinLength: sdkmath.Int{}, MaxLength: sdk.NewInt(10)},
+			shouldErr: true,
+		},
+		{
 			name:      "invalid min returns error",
 			params:    types.NewNicknameParams(sdk.NewInt(1), sdk.NewInt(1000)),
 			shouldErr: true,
 		},
 		{
-			name:      "invalid max returns error",
+			name:      "invalid max returns error - nil max",
+			params:    types.NicknameParams{MinLength: sdk.NewInt(2), MaxLength: sdkmath.Int{}},
+			shouldErr: true,
+		},
+		{
+			name:      "invalid max returns error - lower than min",
 			params:    types.NewNicknameParams(sdk.NewInt(2), sdk.NewInt(-10)),
 			shouldErr: true,
 		},
 		{
 			name:      "valid values return no error",
-			params:    types.NewNicknameParams(sdk.NewInt(2), sdk.NewInt(1000)),
+			params:    types.NewNicknameParams(sdk.NewInt(2), sdk.NewInt(10)),
 			shouldErr: false,
 		},
 	}
@@ -158,7 +169,7 @@ func TestValidateDTagParams(t *testing.T) {
 			shouldErr: true,
 		},
 		{
-			name:      "invalid max returns error",
+			name:      "invalid max returns error - lower than min",
 			params:    types.NewDTagParams("regExParam", sdk.NewInt(3), sdk.NewInt(-30)),
 			shouldErr: true,
 		},
@@ -321,7 +332,17 @@ func TestValidateAppLinksParams(t *testing.T) {
 			shouldErr: true,
 		},
 		{
-			name:      "valid params return no error",
+			name:      "invalid duration returns error",
+			params:    types.NewAppLinksParams(types.FourteenDaysCorrectionFactor - 1),
+			shouldErr: true,
+		},
+		{
+			name:      "minimum duration returns no error",
+			params:    types.NewAppLinksParams(types.FourteenDaysCorrectionFactor),
+			shouldErr: false,
+		},
+		{
+			name:      "default params return no error",
 			params:    types.DefaultAppLinksParams(),
 			shouldErr: false,
 		},

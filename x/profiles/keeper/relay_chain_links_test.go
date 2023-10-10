@@ -20,11 +20,11 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 	)
 
 	testCases := []struct {
-		name        string
-		malleate    func(srcAddr, srcSigHex, destAddr, destSigHex string)
-		store       func()
-		doubleStore bool
-		expPass     bool
+		name      string
+		malleate  func(srcAddr, srcSigHex, destAddr, destSigHex string)
+		store     func()
+		expPass   bool
+		getExpAck func(srcAddr string) types.LinkChainAccountPacketAck
 	}{
 		{
 			name: "invalid packet returns error",
@@ -336,6 +336,11 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 				suite.Require().NoError(err)
 			},
 			expPass: true,
+			getExpAck: func(srcAddr string) types.LinkChainAccountPacketAck {
+				return types.LinkChainAccountPacketAck{
+					SourceAddress: srcAddr,
+				}
+			},
 		},
 	}
 
@@ -359,9 +364,10 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 				tc.store()
 			}
 
-			_, err = suite.chainB.App.ProfilesKeeper.OnRecvLinkChainAccountPacket(suite.chainB.GetContext(), packetData)
+			ack, err := suite.chainB.App.ProfilesKeeper.OnRecvLinkChainAccountPacket(suite.chainB.GetContext(), packetData)
 			if tc.expPass {
 				suite.Require().NoError(err)
+				suite.Require().Equal(tc.getExpAck(srcAddr), ack)
 			} else {
 				suite.Require().Error(err)
 			}

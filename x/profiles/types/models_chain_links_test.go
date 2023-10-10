@@ -273,7 +273,18 @@ func TestProof_Verify(t *testing.T) {
 			shouldErr:   true,
 		},
 		{
-			name:        "invalid signature returns error",
+			name: "invalid signature type returns error",
+			proof: types.Proof{
+				PubKey:    pubKeyAny,
+				Signature: codectypes.UnsafePackAny(types.NewSingleSignature(types.SIGNATURE_VALUE_TYPE_UNSPECIFIED, sigBz)),
+				PlainText: "636F736D6F73317535357977686B3674686D686E787337796E387668387637657A6E636B63716A65766E616478",
+			},
+			owner:       "cosmos1u55ywhk6thmhnxs7yn8vh8v7eznckcqjevnadx",
+			addressData: types.NewBase58Address(base58.Encode(pubKey.Bytes())),
+			shouldErr:   true,
+		},
+		{
+			name:        "invalid public key returns error",
 			proof:       types.Proof{PubKey: invalidAny, Signature: sigAny, PlainText: "76616C7565"},
 			owner:       "cosmos1u55ywhk6thmhnxs7yn8vh8v7eznckcqjevnadx",
 			addressData: types.NewBase58Address(base58.Encode(pubKey.Bytes())),
@@ -809,6 +820,83 @@ func TestCosmosMultiSignature_Verify(t *testing.T) {
 
 // --------------------------------------------------------------------------------------------------------------------
 
+func TestCosmosSignatureDataToSignature(t *testing.T) {
+	testCases := []struct {
+		name      string
+		data      signing.SignatureData
+		expected  types.Signature
+		shouldErr bool
+	}{
+		{
+			name: "convert unsupport sign mode signature returns error",
+			data: &signing.SingleSignatureData{
+				SignMode:  signing.SignMode_SIGN_MODE_UNSPECIFIED,
+				Signature: []byte("signature"),
+			},
+			shouldErr: true,
+		},
+		{
+			name: "convert direct sign mode single signature returns no error",
+			data: &signing.SingleSignatureData{
+				SignMode:  signing.SignMode_SIGN_MODE_DIRECT,
+				Signature: []byte("signature"),
+			},
+			expected: types.NewSingleSignature(types.SIGNATURE_VALUE_TYPE_COSMOS_DIRECT, []byte("signature")),
+		},
+		{
+			name: "convert legacy amino mode single signature returns no error",
+			data: &signing.SingleSignatureData{
+				SignMode:  signing.SignMode_SIGN_MODE_LEGACY_AMINO_JSON,
+				Signature: []byte("signature"),
+			},
+			expected: types.NewSingleSignature(types.SIGNATURE_VALUE_TYPE_COSMOS_AMINO, []byte("signature")),
+		},
+		{
+			name: "convert textual mode single signature returns no error",
+			data: &signing.SingleSignatureData{
+				SignMode:  signing.SignMode_SIGN_MODE_TEXTUAL,
+				Signature: []byte("signature"),
+			},
+			expected: types.NewSingleSignature(types.SIGNATURE_VALUE_TYPE_RAW, []byte("signature")),
+		},
+		{
+			name: "convert multi signature returns no error",
+			data: &signing.MultiSignatureData{
+				Signatures: []signing.SignatureData{
+					&signing.SingleSignatureData{
+						SignMode:  signing.SignMode_SIGN_MODE_LEGACY_AMINO_JSON,
+						Signature: []byte("signature"),
+					},
+					&signing.SingleSignatureData{
+						SignMode:  signing.SignMode_SIGN_MODE_LEGACY_AMINO_JSON,
+						Signature: []byte("signature"),
+					},
+				},
+			},
+			expected: types.NewCosmosMultiSignature(nil, []types.Signature{
+				types.NewSingleSignature(types.SIGNATURE_VALUE_TYPE_COSMOS_AMINO, []byte("signature")),
+				types.NewSingleSignature(types.SIGNATURE_VALUE_TYPE_COSMOS_AMINO, []byte("signature")),
+			}),
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			signature, err := types.CosmosSignatureDataToSignature(tc.data)
+
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+				require.Equal(t, tc.expected, signature)
+			}
+		})
+	}
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
 func TestBech32Address_Validate(t *testing.T) {
 	testCases := []struct {
 		name      string
@@ -920,7 +1008,7 @@ func TestHexAddress_Validate(t *testing.T) {
 		},
 		{
 			name:      "address value shorter than prefix returns error",
-			address:   types.NewHexAddress("0", "0x"),
+			address:   types.NewHexAddress("0x", "0x"),
 			shouldErr: true,
 		},
 		{

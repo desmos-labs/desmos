@@ -3,6 +3,7 @@ package keeper_test
 import (
 	"encoding/hex"
 	"fmt"
+	"sort"
 	"time"
 
 	"github.com/golang/mock/gomock"
@@ -185,7 +186,15 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 }
 
 func (suite *KeeperTestSuite) Test_InitGenesis() {
-	ext := suite.GetRandomProfile()
+	// Create two test profiles to link for testing default external address entries properly set
+	exts := []TestProfile{
+		suite.GetRandomProfile(),
+		suite.GetRandomProfile(),
+	}
+
+	sort.SliceStable(exts, func(i, j int) bool {
+		return string(exts[i].GetAddress().String()) < string(exts[j].GetAddress().String())
+	})
 
 	testCases := []struct {
 		name        string
@@ -266,15 +275,15 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 				[]types.ChainLink{
 					types.NewChainLink(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
-						types.NewProof(ext.GetPubKey(), profilestesting.SingleSignatureFromHex(hex.EncodeToString(ext.Sign(ext.GetAddress()))), hex.EncodeToString([]byte(ext.GetAddress().String()))),
+						types.NewBech32Address(exts[0].GetAddress().String(), "cosmos"),
+						types.NewProof(exts[0].GetPubKey(), profilestesting.SingleSignatureFromHex(hex.EncodeToString(exts[0].Sign(exts[0].GetAddress()))), hex.EncodeToString([]byte(exts[0].GetAddress().String()))),
 						types.NewChainConfig("cosmos"),
 						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 					),
 					types.NewChainLink(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
-						types.NewProof(ext.GetPubKey(), profilestesting.SingleSignatureFromHex(hex.EncodeToString(ext.Sign(ext.GetAddress()))), hex.EncodeToString([]byte(ext.GetAddress().String()))),
+						types.NewBech32Address(exts[0].GetAddress().String(), "cosmos"),
+						types.NewProof(exts[0].GetPubKey(), profilestesting.SingleSignatureFromHex(hex.EncodeToString(exts[0].Sign(exts[0].GetAddress()))), hex.EncodeToString([]byte(exts[0].GetAddress().String()))),
 						types.NewChainConfig("cosmos"),
 						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 					),
@@ -329,11 +338,24 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 				[]types.ChainLink{
 					types.NewChainLink(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
+						types.NewBech32Address(exts[0].GetAddress().String(), "cosmos"),
 						types.NewProof(
-							ext.GetPubKey(),
+							exts[0].GetPubKey(),
 							profilestesting.SingleSignatureFromHex(
-								hex.EncodeToString(ext.Sign([]byte("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"))),
+								hex.EncodeToString(exts[0].Sign([]byte("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"))),
+							),
+							hex.EncodeToString([]byte("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")),
+						),
+						types.NewChainConfig("cosmos"),
+						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+					),
+					types.NewChainLink(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						types.NewBech32Address(exts[1].GetAddress().String(), "cosmos"),
+						types.NewProof(
+							exts[1].GetPubKey(),
+							profilestesting.SingleSignatureFromHex(
+								hex.EncodeToString(exts[1].Sign([]byte("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"))),
 							),
 							hex.EncodeToString([]byte("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")),
 						),
@@ -342,7 +364,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 					),
 				},
 				[]types.DefaultExternalAddressEntry{
-					types.NewDefaultExternalAddressEntry("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", "cosmos", ext.GetAddress().String()),
+					types.NewDefaultExternalAddressEntry("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", "cosmos", exts[1].GetAddress().String()),
 				},
 				[]types.ApplicationLink{
 					types.NewApplicationLink(
@@ -390,11 +412,24 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 				chainLinks := []types.ChainLink{
 					types.NewChainLink(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
+						types.NewBech32Address(exts[0].GetAddress().String(), "cosmos"),
 						types.NewProof(
-							ext.GetPubKey(),
+							exts[0].GetPubKey(),
 							profilestesting.SingleSignatureFromHex(
-								hex.EncodeToString(ext.Sign([]byte("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"))),
+								hex.EncodeToString(exts[0].Sign([]byte("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"))),
+							),
+							hex.EncodeToString([]byte("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")),
+						),
+						types.NewChainConfig("cosmos"),
+						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+					),
+					types.NewChainLink(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						types.NewBech32Address(exts[1].GetAddress().String(), "cosmos"),
+						types.NewProof(
+							exts[1].GetPubKey(),
+							profilestesting.SingleSignatureFromHex(
+								hex.EncodeToString(exts[1].Sign([]byte("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"))),
 							),
 							hex.EncodeToString([]byte("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")),
 						),
@@ -402,7 +437,15 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 					),
 				}
+				sort.SliceStable(chainLinks, func(i, j int) bool {
+					return string(chainLinks[i].Address.GetValue()) < string(chainLinks[j].Address.GetValue())
+				})
 				suite.Require().Equal(chainLinks, suite.k.GetChainLinks(ctx))
+
+				defaultExternalAddressEntries := []types.DefaultExternalAddressEntry{
+					types.NewDefaultExternalAddressEntry("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", "cosmos", exts[1].GetAddress().String()),
+				}
+				suite.Require().Equal(defaultExternalAddressEntries, suite.k.GetDefaultExternalAddressEntries(ctx))
 
 				applicationLinks := []types.ApplicationLink{
 					types.NewApplicationLink(

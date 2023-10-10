@@ -277,7 +277,62 @@ func (suite *KeeperTestSuite) TestKeeper_IterateExpiringApplicationLinks() {
 		setupCtx func(ctx sdk.Context) sdk.Context
 		store    func(ctx sdk.Context)
 		expLinks []types.ApplicationLink
+		check    func(ctx sdk.Context)
 	}{
+		{
+			name: "expiring links without client key are skipped properly",
+			setupCtx: func(ctx sdk.Context) sdk.Context {
+				return ctx.WithBlockTime(time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC))
+			},
+			store: func(ctx sdk.Context) {
+				suite.ak.SetAccount(ctx, profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"))
+
+				err := suite.k.SaveApplicationLink(ctx, types.NewApplicationLink(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					types.NewData("github", "github-user"),
+					types.ApplicationLinkStateInitialized,
+					types.NewOracleRequest(
+						0,
+						1,
+						types.NewOracleRequestCallData("github", "call_data"),
+						"client_id",
+					),
+					nil,
+					time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				))
+				suite.Require().NoError(err)
+
+				err = suite.k.SaveApplicationLink(ctx, types.NewApplicationLink(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					types.NewData("reddit", "reddit-user"),
+					types.ApplicationLinkStateInitialized,
+					types.NewOracleRequest(
+						0,
+						1,
+						types.NewOracleRequestCallData("reddit", "call_data"),
+						"client_id2",
+					),
+					nil,
+					time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+				))
+				suite.Require().NoError(err)
+
+				// Delete client ids
+				ctx.KVStore(suite.storeKey).Delete(types.ApplicationLinkClientIDKey("client_id"))
+				ctx.KVStore(suite.storeKey).Delete(types.ApplicationLinkClientIDKey("client_id2"))
+			},
+			expLinks: nil,
+			check: func(ctx sdk.Context) {
+				suite.Require().False(
+					ctx.KVStore(suite.storeKey).Has(types.ApplicationLinkExpiringTimeKey(time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC), "client_id")),
+				)
+				suite.Require().False(
+					ctx.KVStore(suite.storeKey).Has(types.ApplicationLinkExpiringTimeKey(time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC), "client_id2")),
+				)
+			},
+		},
 		{
 			name: "expiring links are iterated properly",
 			setupCtx: func(ctx sdk.Context) sdk.Context {
@@ -355,6 +410,10 @@ func (suite *KeeperTestSuite) TestKeeper_IterateExpiringApplicationLinks() {
 			})
 
 			suite.Require().Equal(tc.expLinks, iteratedLinks)
+
+			if tc.check != nil {
+				tc.check(ctx)
+			}
 		})
 	}
 }

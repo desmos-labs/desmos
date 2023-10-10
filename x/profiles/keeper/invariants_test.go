@@ -2,6 +2,8 @@ package keeper_test
 
 import (
 	"fmt"
+	"reflect"
+	"runtime"
 	"time"
 
 	"github.com/desmos-labs/desmos/v6/testutil/profilestesting"
@@ -14,6 +16,38 @@ import (
 	"github.com/desmos-labs/desmos/v6/x/profiles/keeper"
 	"github.com/desmos-labs/desmos/v6/x/profiles/types"
 )
+
+var _ sdk.InvariantRegistry = &MockRegistry{}
+
+type MockRegistry struct {
+	RegisteredMap map[string]sdk.Invariant
+}
+
+func (m *MockRegistry) RegisterRoute(moduleName, route string, invar sdk.Invariant) {
+	m.RegisteredMap[moduleName+route] = invar
+}
+
+func (suite *KeeperTestSuite) TestKeeper_RegisterInvariants() {
+	mock := &MockRegistry{make(map[string]sdk.Invariant)}
+	keeper.RegisterInvariants(mock, suite.k)
+
+	suite.Require().Equal(
+		runtime.FuncForPC(reflect.ValueOf(keeper.ValidProfilesInvariant(suite.k)).Pointer()).Name(),
+		runtime.FuncForPC(reflect.ValueOf(mock.RegisteredMap[types.ModuleName+"valid-profiles"]).Pointer()).Name(),
+	)
+	suite.Require().Equal(
+		runtime.FuncForPC(reflect.ValueOf(keeper.ValidDTagTransferRequests(suite.k)).Pointer()).Name(),
+		runtime.FuncForPC(reflect.ValueOf(mock.RegisteredMap[types.ModuleName+"valid-dtag-transfer-requests"]).Pointer()).Name(),
+	)
+	suite.Require().Equal(
+		runtime.FuncForPC(reflect.ValueOf(keeper.ValidChainLinks(suite.k)).Pointer()).Name(),
+		runtime.FuncForPC(reflect.ValueOf(mock.RegisteredMap[types.ModuleName+"valid-chain-links"]).Pointer()).Name(),
+	)
+	suite.Require().Equal(
+		runtime.FuncForPC(reflect.ValueOf(keeper.ValidApplicationLinks(suite.k)).Pointer()).Name(),
+		runtime.FuncForPC(reflect.ValueOf(mock.RegisteredMap[types.ModuleName+"valid-application-links"]).Pointer()).Name(),
+	)
+}
 
 func (suite *KeeperTestSuite) TestInvariants() {
 	testCases := []struct {
@@ -47,7 +81,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 			expBroken: true,
 		},
 		{
-			name: "ValidDTagTransferRequests broken",
+			name: "ValidDTagTransferRequests broken - no profile",
 			store: func(ctx sdk.Context) {
 				store := ctx.KVStore(suite.storeKey)
 
@@ -62,6 +96,35 @@ func (suite *KeeperTestSuite) TestInvariants() {
 				fmt.Sprintf("%s%s",
 					"The following list contains invalid DTag transfer requests:\n",
 					"[Sender]: sender, [Receiver]: receiver\n",
+				),
+			),
+		},
+		{
+			name: "ValidDTagTransferRequests broken - sender equals receiver",
+			store: func(ctx sdk.Context) {
+				store := ctx.KVStore(suite.storeKey)
+
+				profile, err := types.NewProfileFromAccount(
+					"dTag",
+					profilestesting.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+					time.Now(),
+				)
+				suite.Require().NoError(err)
+
+				err = suite.k.SaveProfile(ctx, profile)
+				suite.Require().NoError(err)
+
+				request := types.NewDTagTransferRequest("dTag", "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+				store.Set(
+					types.DTagTransferRequestStoreKey(request.Sender, request.Sender),
+					suite.cdc.MustMarshal(&request),
+				)
+			},
+			expBroken: true,
+			expResponse: sdk.FormatInvariant(types.ModuleName, "invalid dtag transfer requests",
+				fmt.Sprintf("%s%s",
+					"The following list contains invalid DTag transfer requests:\n",
+					"[Sender]: cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47, [Receiver]: cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47\n",
 				),
 			),
 		},

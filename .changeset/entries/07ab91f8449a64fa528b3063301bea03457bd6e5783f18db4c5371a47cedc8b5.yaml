@@ -1,0 +1,6 @@
+type: refactor
+module: x/profiles
+pull_request: 1227
+description: Improve `x/profiles` tests by mutation test
+backward_compatible: true
+date: 2023-09-07T08:33:19.593791638Z

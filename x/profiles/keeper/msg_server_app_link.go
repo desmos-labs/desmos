@@ -97,12 +97,6 @@ func (k MsgServer) UnlinkApplication(
 			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.Signer),
 		),
-		sdk.NewEvent(
-			types.EventTypeApplicationLinkDeleted,
-			sdk.NewAttribute(types.AttributeKeyUser, msg.Signer),
-			sdk.NewAttribute(types.AttributeKeyApplicationName, msg.Application),
-			sdk.NewAttribute(types.AttributeKeyApplicationUsername, msg.Username),
-		),
 	})
 
 	return &types.MsgUnlinkApplicationResponse{}, nil

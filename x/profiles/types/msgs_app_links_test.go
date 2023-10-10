@@ -100,6 +100,19 @@ func TestMsgLinkApplication_ValidateBasic(t *testing.T) {
 			shouldErr: true,
 		},
 		{
+			name: "invalid channel returns error",
+			msg: types.NewMsgLinkApplication(
+				types.NewData("twitter", "twitteruser"),
+				"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",
+				"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+				types.IBCPortID,
+				"/invalid",
+				clienttypes.NewHeight(0, 1000),
+				0,
+			),
+			shouldErr: true,
+		},
+		{
 			name:      "valid message returns no error",
 			msg:       msgLinkApplication,
 			shouldErr: false,
