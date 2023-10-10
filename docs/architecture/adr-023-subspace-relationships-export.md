@@ -5,6 +5,9 @@
 - June 16th, 2023: First draft;
 - October 10th, 2023: Status update.
 
+## Status
+REJECTED
+
 ## Abstract
 
 This ADR introduces a new feature that enables users export relationships inside a subspace into another subspace.
