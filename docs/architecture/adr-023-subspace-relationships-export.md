@@ -3,6 +3,7 @@
 ## Changelog
 
 - June 16th, 2023: First draft;
+- October 10th, 2023: Status update.
 
 ## Abstract
 
