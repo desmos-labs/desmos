@@ -13,7 +13,7 @@ var (
 	_ upgrades.Upgrade = &Upgrade{}
 )
 
-// Upgrade represents the v6 upgrade
+// Upgrade represents the v6.2.0 upgrade
 type Upgrade struct {
 	mm           *module.Manager
 	configurator module.Configurator
