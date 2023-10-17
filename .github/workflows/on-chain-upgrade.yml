@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
-      GENESIS_DESMOS_VERSION: "v6.2.0"
+      GENESIS_DESMOS_VERSION: "v6.0.0"
       GENESIS_URL: "https://github.com/desmos-labs/states/raw/main/morpheus-apollo-3-13462545.json"
       UPGRADE_NAME: "v6"
     steps:
