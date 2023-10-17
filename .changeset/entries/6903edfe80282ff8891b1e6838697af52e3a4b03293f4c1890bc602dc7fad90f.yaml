@@ -1,6 +1,0 @@
-type: fix
-module: x/posts
-pull_request: 1226
-description: Fixed Wasm configuration for incoming post owner transfer requests query
-backward_compatible: true
-date: 2023-08-31T13:48:14.642644523Z
