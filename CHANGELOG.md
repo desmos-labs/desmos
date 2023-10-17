@@ -2,6 +2,19 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
+## Version 6.2.0
+### Bug Fixes
+#### Profiles
+- ([\#1250](https://github.com/desmos-labs/desmos/pull/1250)) Fixed missing account number when creating an account due to an incoming DTag transfer request
+
+#### Posts
+- ([\#1226](https://github.com/desmos-labs/desmos/pull/1226)) Fixed Wasm configuration for incoming post owner transfer requests query
+
+### Dependencies
+#### Other
+- ([\#1245](https://github.com/desmos-labs/desmos/pull/1245)) Updated `cosmos-sdk` to `v0.47.5`
+- ([\#1245](https://github.com/desmos-labs/desmos/pull/1245)) Updated `wasmd` to `v0.43.0`
+
 ## Version 6.1.1
 ### Bug Fixes
 #### Other

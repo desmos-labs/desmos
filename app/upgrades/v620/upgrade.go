@@ -1,11 +1,9 @@
-package v500
+package v620
 
 import (
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	consensusparamskeeper "github.com/cosmos/cosmos-sdk/x/consensus/keeper"
-	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 
 	"github.com/desmos-labs/desmos/v6/app/upgrades"
@@ -15,33 +13,29 @@ var (
 	_ upgrades.Upgrade = &Upgrade{}
 )
 
-// Upgrade represents the v5.2.0 upgrade
+// Upgrade represents the v6.2.0 upgrade
 type Upgrade struct {
 	mm           *module.Manager
 	configurator module.Configurator
-
-	paramsKeeper          paramskeeper.Keeper
-	consensusParamsKeeper consensusparamskeeper.Keeper
 }
 
 // NewUpgrade returns a new Upgrade instance
-func NewUpgrade(mm *module.Manager, configurator module.Configurator, pk paramskeeper.Keeper, consensusParamsKeeper consensusparamskeeper.Keeper) *Upgrade {
+func NewUpgrade(mm *module.Manager, configurator module.Configurator) *Upgrade {
 	return &Upgrade{
-		mm:                    mm,
-		configurator:          configurator,
-		paramsKeeper:          pk,
-		consensusParamsKeeper: consensusParamsKeeper,
+		mm:           mm,
+		configurator: configurator,
 	}
 }
 
 // Name implements upgrades.Upgrade
 func (u *Upgrade) Name() string {
-	return "v5.2.0"
+	return "v6.2.0"
 }
 
 // Handler implements upgrades.Upgrade
 func (u *Upgrade) Handler() upgradetypes.UpgradeHandler {
 	return func(ctx sdk.Context, plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
+		// This upgrade does not require any migration, so we can simply return the current version map
 		return u.mm.RunMigrations(ctx, u.configurator, fromVM)
 	}
 }

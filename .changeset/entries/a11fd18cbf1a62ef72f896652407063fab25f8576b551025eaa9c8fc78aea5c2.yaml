@@ -1,6 +1,0 @@
-type: fix
-module: x/profiles
-pull_request: 1250
-description: Fix missing account number of account creation
-backward_compatible: true
-date: 2023-09-28T08:12:05.365508338Z
