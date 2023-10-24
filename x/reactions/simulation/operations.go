@@ -17,7 +17,8 @@ import (
 )
 
 // Simulation operation weights constants
-// #nosec G101 -- This is a false positive
+//
+//nolint:gosec // This is a false positive
 const (
 	OpWeightMsgAddReaction              = "op_weight_msg_add_reactions"
 	OpWeightMsgRemoveReaction           = "op_weight_msg_remove_reaction"

@@ -5,8 +5,9 @@ import (
 	"sort"
 	"time"
 
-	"github.com/desmos-labs/desmos/v6/testutil/profilestesting"
 	"github.com/golang/mock/gomock"
+
+	"github.com/desmos-labs/desmos/v6/testutil/profilestesting"
 
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 

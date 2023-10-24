@@ -2,7 +2,7 @@ package types
 
 // DONTCOVER
 
-// #nosec G101 -- This is a false positive
+//nolint:gosec // This is a false positive
 const (
 	EventTypeCreateDenom      = "create_denom"
 	EventTypeMint             = "tf_mint"

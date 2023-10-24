@@ -17,7 +17,8 @@ import (
 )
 
 // Simulation operation weights constants
-// #nosec G101 -- This is a false positive
+//
+//nolint:gosec // This is a false positive
 const (
 	OpWeightMsgCreateSubspace              = "op_weight_msg_create_subspace"
 	OpWeightMsgEditSubspace                = "op_weight_msg_edit_subspace"
