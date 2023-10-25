@@ -17,7 +17,8 @@ import (
 )
 
 // Simulation operation weights constants
-// #nosec G101 -- This is a false positive
+//
+//nolint:gosec // This is a false positive
 const (
 	OpWeightMsgCreateReport          = "op_weight_msg_create_report"
 	OpWeightMsgDeleteReport          = "op_weight_msg_delete_report"

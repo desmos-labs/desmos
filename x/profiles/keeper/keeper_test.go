@@ -8,8 +8,9 @@ import (
 	"time"
 
 	"github.com/cometbft/cometbft/libs/log"
-	"github.com/desmos-labs/desmos/v6/testutil/profilestesting"
 	"github.com/golang/mock/gomock"
+
+	"github.com/desmos-labs/desmos/v6/testutil/profilestesting"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 

@@ -25,7 +25,8 @@ import (
 // DONTCOVER
 
 // Simulation operation weights constants
-// #nosec G101 -- This is a false positive
+//
+//nolint:gosec // This is a false positive
 const (
 	OpWeightMsgCreateDenom      = "op_weight_msg_create_denom"
 	OpWeightMsgMint             = "op_weight_msg_mint"
