@@ -63,6 +63,12 @@ issues:
       text: "SA1019:"
       linters:
         - staticcheck
+
+    # TODO: Remove it when legacy v1beta1 gov types are removed from ibc-go 
+    - text: 'SA1019: "github.com/cosmos/ibc-go/v8/modules/core/02-client/types" is deprecated: The legacy v1beta1 gov types maintained in this file are deprecated and will be removed in a future release. Please use MsgIBCSoftwareUpgrade and MsgRecoverClient in favour of the legacy v1beta1 gov proposal types.'
+      linters:
+        - staticcheck
+
   max-issues-per-linter: 10000
   max-same-issues: 10000
 
