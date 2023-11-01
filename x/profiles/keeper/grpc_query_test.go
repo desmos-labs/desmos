@@ -917,10 +917,10 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinks() {
 		{
 			name: "valid request with user",
 			store: func(ctx sdk.Context) {
-				profile := profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+				profile := profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", profilestesting.WithNextAccountNumber(ctx, suite.ak))
 				suite.ak.SetAccount(ctx, profile)
 
-				otherProfile := profilestesting.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
+				otherProfile := profilestesting.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773", profilestesting.WithNextAccountNumber(ctx, suite.ak))
 				suite.ak.SetAccount(ctx, otherProfile)
 
 				suite.Require().NoError(suite.k.SaveApplicationLink(

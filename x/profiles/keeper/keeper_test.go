@@ -1,17 +1,15 @@
 package keeper_test
 
 import (
-	"bytes"
 	"encoding/hex"
-	"fmt"
 	"strings"
 	"time"
 
-	"github.com/cometbft/cometbft/libs/log"
 	"github.com/golang/mock/gomock"
 
 	"github.com/desmos-labs/desmos/v6/testutil/profilestesting"
 
+	"github.com/cosmos/cosmos-sdk/testutil/mock"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/v6/x/profiles/types"
@@ -124,19 +122,15 @@ func (suite *KeeperTestSuite) TestKeeper_SaveProfile_Logger() {
 	)
 
 	// Setup Logger
-	var buf bytes.Buffer
-
+	logger := mock.NewMockLogger(suite.ctrl)
 	ctx, _ := suite.ctx.CacheContext()
-	ctx = ctx.WithLogger(log.NewTMLogger(&buf))
+	ctx = ctx.WithLogger(logger)
+
+	logger.EXPECT().With("module", "x/"+types.ModuleName).Return(logger)
+	logger.EXPECT().Info("saved profile", "DTag", profile.DTag, "from", profile.GetAddress())
 
 	// Execute
 	suite.Require().NoError(suite.k.SaveProfile(ctx, profile))
-
-	// Check logs
-	msg := strings.TrimSpace(buf.String())
-	suite.Require().Contains(msg, "saved profile")
-	suite.Require().Contains(msg, fmt.Sprintf("DTag=%s", profile.DTag))
-	suite.Require().Contains(msg, fmt.Sprintf("from=%s", profile.GetAccount().GetAddress().String()))
 }
 
 func (suite *KeeperTestSuite) TestKeeper_GetProfile() {

@@ -113,7 +113,7 @@ func TestValidateNicknameParams(t *testing.T) {
 	}{
 		{
 			name:      "invalid max returns error - nil min",
-			params:    types.NicknameParams{MinLength: sdkmath.Int{}, MaxLength: math.NewInt(10)},
+			params:    types.NicknameParams{MinLength: math.Int{}, MaxLength: math.NewInt(10)},
 			shouldErr: true,
 		},
 		{
@@ -123,7 +123,7 @@ func TestValidateNicknameParams(t *testing.T) {
 		},
 		{
 			name:      "invalid max returns error - nil max",
-			params:    types.NicknameParams{MinLength: math.NewInt(2), MaxLength: sdkmath.Int{}},
+			params:    types.NicknameParams{MinLength: math.NewInt(2), MaxLength: math.Int{}},
 			shouldErr: true,
 		},
 		{

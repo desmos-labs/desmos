@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	"cosmossdk.io/math"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 
@@ -19,7 +20,7 @@ import (
 
 func TestProfile_TrackDelegation(t *testing.T) {
 	// Create a profile with vesting account
-	vestingAccount := vestingtypes.NewContinuousVestingAccount(
+	vestingAccount, _ := vestingtypes.NewContinuousVestingAccount(
 		&authtypes.BaseAccount{
 			Address: "cosmos1tdgrkvx2qgjk0uqsmdhm6dcz6wvwh9f8t37x0k",
 			PubKey: codectypes.UnsafePackAny(
@@ -30,7 +31,7 @@ func TestProfile_TrackDelegation(t *testing.T) {
 			AccountNumber: 0,
 			Sequence:      0,
 		},
-		sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(1000))),
+		sdk.NewCoins(sdk.NewCoin("stake", math.NewInt(1000))),
 		time.Date(2023, 9, 1, 0, 0, 0, 0, time.UTC).Unix(),
 		time.Date(2100, 9, 1, 0, 0, 0, 0, time.UTC).Unix(),
 	)
@@ -46,10 +47,10 @@ func TestProfile_TrackDelegation(t *testing.T) {
 	)
 
 	// Execute track delegation
-	profile.TrackDelegation(time.Date(2023, 9, 1, 0, 0, 0, 0, time.UTC), sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(2000))), sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(100))))
+	profile.TrackDelegation(time.Date(2023, 9, 1, 0, 0, 0, 0, time.UTC), sdk.NewCoins(sdk.NewCoin("stake", math.NewInt(2000))), sdk.NewCoins(sdk.NewCoin("stake", math.NewInt(100))))
 
 	// Setup expected vesting account
-	expected := vestingtypes.NewContinuousVestingAccount(
+	expected, _ := vestingtypes.NewContinuousVestingAccount(
 		&authtypes.BaseAccount{
 			Address: "cosmos1tdgrkvx2qgjk0uqsmdhm6dcz6wvwh9f8t37x0k",
 			PubKey: codectypes.UnsafePackAny(
@@ -60,18 +61,18 @@ func TestProfile_TrackDelegation(t *testing.T) {
 			AccountNumber: 0,
 			Sequence:      0,
 		},
-		sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(1000))),
+		sdk.NewCoins(sdk.NewCoin("stake", math.NewInt(1000))),
 		time.Date(2023, 9, 1, 0, 0, 0, 0, time.UTC).Unix(),
 		time.Date(2100, 9, 1, 0, 0, 0, 0, time.UTC).Unix(),
 	)
-	expected.TrackDelegation(time.Date(2023, 9, 1, 0, 0, 0, 0, time.UTC), sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(2000))), sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(100))))
+	expected.TrackDelegation(time.Date(2023, 9, 1, 0, 0, 0, 0, time.UTC), sdk.NewCoins(sdk.NewCoin("stake", math.NewInt(2000))), sdk.NewCoins(sdk.NewCoin("stake", math.NewInt(100))))
 
 	require.Equal(t, expected, profile.GetAccount())
 }
 
 func TestProfile_TrackUndelegation(t *testing.T) {
 	// Create a profile with vesting account
-	vestingAccount := vestingtypes.NewContinuousVestingAccount(
+	vestingAccount, _ := vestingtypes.NewContinuousVestingAccount(
 		&authtypes.BaseAccount{
 			Address: "cosmos1tdgrkvx2qgjk0uqsmdhm6dcz6wvwh9f8t37x0k",
 			PubKey: codectypes.UnsafePackAny(
@@ -82,7 +83,7 @@ func TestProfile_TrackUndelegation(t *testing.T) {
 			AccountNumber: 0,
 			Sequence:      0,
 		},
-		sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(1000))),
+		sdk.NewCoins(sdk.NewCoin("stake", math.NewInt(1000))),
 		time.Date(2023, 9, 1, 0, 0, 0, 0, time.UTC).Unix(),
 		time.Date(2100, 9, 1, 0, 0, 0, 0, time.UTC).Unix(),
 	)
@@ -98,11 +99,11 @@ func TestProfile_TrackUndelegation(t *testing.T) {
 	)
 
 	// Execute track delegation
-	profile.TrackDelegation(time.Date(2023, 9, 1, 0, 0, 0, 0, time.UTC), sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(2000))), sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(200))))
-	profile.TrackUndelegation(sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(100))))
+	profile.TrackDelegation(time.Date(2023, 9, 1, 0, 0, 0, 0, time.UTC), sdk.NewCoins(sdk.NewCoin("stake", math.NewInt(2000))), sdk.NewCoins(sdk.NewCoin("stake", math.NewInt(200))))
+	profile.TrackUndelegation(sdk.NewCoins(sdk.NewCoin("stake", math.NewInt(100))))
 
 	// Setup expected vesting account
-	expected := vestingtypes.NewContinuousVestingAccount(
+	expected, _ := vestingtypes.NewContinuousVestingAccount(
 		&authtypes.BaseAccount{
 			Address: "cosmos1tdgrkvx2qgjk0uqsmdhm6dcz6wvwh9f8t37x0k",
 			PubKey: codectypes.UnsafePackAny(
@@ -113,12 +114,12 @@ func TestProfile_TrackUndelegation(t *testing.T) {
 			AccountNumber: 0,
 			Sequence:      0,
 		},
-		sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(1000))),
+		sdk.NewCoins(sdk.NewCoin("stake", math.NewInt(1000))),
 		time.Date(2023, 9, 1, 0, 0, 0, 0, time.UTC).Unix(),
 		time.Date(2100, 9, 1, 0, 0, 0, 0, time.UTC).Unix(),
 	)
-	expected.TrackDelegation(time.Date(2023, 9, 1, 0, 0, 0, 0, time.UTC), sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(2000))), sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(200))))
-	expected.TrackUndelegation(sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(100))))
+	expected.TrackDelegation(time.Date(2023, 9, 1, 0, 0, 0, 0, time.UTC), sdk.NewCoins(sdk.NewCoin("stake", math.NewInt(2000))), sdk.NewCoins(sdk.NewCoin("stake", math.NewInt(200))))
+	expected.TrackUndelegation(sdk.NewCoins(sdk.NewCoin("stake", math.NewInt(100))))
 
 	require.Equal(t, expected, profile.GetAccount())
 }

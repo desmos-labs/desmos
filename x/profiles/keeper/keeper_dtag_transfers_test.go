@@ -1,11 +1,7 @@
 package keeper_test
 
 import (
-	"bytes"
-	"fmt"
-	"strings"
-
-	"github.com/cometbft/cometbft/libs/log"
+	"github.com/cosmos/cosmos-sdk/testutil/mock"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/golang/mock/gomock"
 
@@ -182,22 +178,19 @@ func (suite *KeeperTestSuite) TestKeeper_SaveDTagTransferRequest_Logger() {
 		"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 	)
-	suite.Require().NoError(suite.k.SaveProfile(suite.ctx, profilestesting.ProfileFromAddr(request.Receiver)))
-	suite.Require().NoError(suite.k.SaveProfile(suite.ctx, profilestesting.ProfileFromAddr(request.Sender)))
+	suite.Require().NoError(suite.k.SaveProfile(suite.ctx, profilestesting.ProfileFromAddr(request.Receiver, profilestesting.WithNextAccountNumber(suite.ctx, suite.ak))))
+	suite.Require().NoError(suite.k.SaveProfile(suite.ctx, profilestesting.ProfileFromAddr(request.Sender, profilestesting.WithNextAccountNumber(suite.ctx, suite.ak))))
 
 	// Setup Logger
-	var buf bytes.Buffer
+	logger := mock.NewMockLogger(suite.ctrl)
 	ctx, _ := suite.ctx.CacheContext()
-	ctx = ctx.WithLogger(log.NewTMLogger(&buf))
+	ctx = ctx.WithLogger(logger)
+
+	logger.EXPECT().With("module", "x/"+types.ModuleName).Return(logger)
+	logger.EXPECT().Info("DTag transfer request", "sender", request.Sender, "receiver", request.Receiver)
 
 	// Execute
 	suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, request))
-
-	// Check logs
-	msg := strings.TrimSpace(buf.String())
-	suite.Require().Contains(msg, "DTag transfer request")
-	suite.Require().Contains(msg, fmt.Sprintf("sender=%s", request.Sender))
-	suite.Require().Contains(msg, fmt.Sprintf("receiver=%s", request.Receiver))
 }
 
 func (suite *KeeperTestSuite) TestKeeper_SaveDTagTransferRequest_AfterDTagTransferRequestCreated() {
@@ -207,8 +200,8 @@ func (suite *KeeperTestSuite) TestKeeper_SaveDTagTransferRequest_AfterDTagTransf
 		"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 	)
-	suite.Require().NoError(suite.k.SaveProfile(suite.ctx, profilestesting.ProfileFromAddr(request.Receiver)))
-	suite.Require().NoError(suite.k.SaveProfile(suite.ctx, profilestesting.ProfileFromAddr(request.Sender)))
+	suite.Require().NoError(suite.k.SaveProfile(suite.ctx, profilestesting.ProfileFromAddr(request.Receiver, profilestesting.WithNextAccountNumber(suite.ctx, suite.ak))))
+	suite.Require().NoError(suite.k.SaveProfile(suite.ctx, profilestesting.ProfileFromAddr(request.Sender, profilestesting.WithNextAccountNumber(suite.ctx, suite.ak))))
 
 	// Setup hooks
 	suite.hooks.EXPECT().AfterDTagTransferRequestCreated(gomock.Any(), request)
@@ -381,8 +374,8 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteDTagTransferRequest_AfterDTagTran
 		"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 	)
-	suite.Require().NoError(suite.k.SaveProfile(suite.ctx, profilestesting.ProfileFromAddr(request.Receiver)))
-	suite.Require().NoError(suite.k.SaveProfile(suite.ctx, profilestesting.ProfileFromAddr(request.Sender)))
+	suite.Require().NoError(suite.k.SaveProfile(suite.ctx, profilestesting.ProfileFromAddr(request.Receiver, profilestesting.WithNextAccountNumber(suite.ctx, suite.ak))))
+	suite.Require().NoError(suite.k.SaveProfile(suite.ctx, profilestesting.ProfileFromAddr(request.Sender, profilestesting.WithNextAccountNumber(suite.ctx, suite.ak))))
 	suite.Require().NoError(suite.k.SaveDTagTransferRequest(suite.ctx, request))
 
 	// Setup hooks

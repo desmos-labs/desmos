@@ -325,11 +325,11 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptDTagTransfer() {
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				)
 
-				receiverProfile := profilestesting.ProfileFromAddr(request.Receiver)
+				receiverProfile := profilestesting.ProfileFromAddr(request.Receiver, profilestesting.WithNextAccountNumber(ctx, suite.ak))
 				receiverProfile.DTag = "DTag"
-				senderProfile := profilestesting.ProfileFromAddr(request.Sender)
+				senderProfile := profilestesting.ProfileFromAddr(request.Sender, profilestesting.WithNextAccountNumber(ctx, suite.ak))
 				senderProfile.DTag = "senderDTag"
-				otherProfile := profilestesting.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
+				otherProfile := profilestesting.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773", profilestesting.WithNextAccountNumber(ctx, suite.ak))
 				otherProfile.DTag = "NewDTag"
 				suite.Require().NoError(suite.k.SaveProfile(ctx, senderProfile))
 				suite.Require().NoError(suite.k.SaveProfile(ctx, receiverProfile))

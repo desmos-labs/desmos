@@ -1,12 +1,10 @@
 package keeper_test
 
 import (
-	"bytes"
 	"fmt"
-	"strings"
 	"time"
 
-	"github.com/cometbft/cometbft/libs/log"
+	"github.com/cosmos/cosmos-sdk/testutil/mock"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	capabilitytypes "github.com/cosmos/ibc-go/modules/capability/types"
 	clienttypes "github.com/cosmos/ibc-go/v8/modules/core/02-client/types"
@@ -446,9 +444,15 @@ func (suite *KeeperTestSuite) TestMsgServer_LinkApplication_Logger() {
 		Return(uint64(0), nil)
 
 	// Setup Logger
-	var buf bytes.Buffer
+	logger := mock.NewMockLogger(suite.ctrl)
 	ctx, _ := suite.ctx.CacheContext()
-	ctx = ctx.WithLogger(log.NewTMLogger(&buf))
+	ctx = ctx.WithLogger(logger)
+
+	logger.EXPECT().With("module", "x/"+types.ModuleName).Return(logger)
+	logger.EXPECT().Info("Application link created",
+		"application", "twitter",
+		"username", "twitteruser",
+		"account", "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
 
 	// Execute
 	server := keeper.NewMsgServerImpl(suite.k)
@@ -462,13 +466,6 @@ func (suite *KeeperTestSuite) TestMsgServer_LinkApplication_Logger() {
 		0,
 	))
 	suite.Require().NoError(err)
-
-	// Check logs
-	msg := strings.TrimSpace(buf.String())
-	suite.Require().Contains(msg, "Application link created")
-	suite.Require().Contains(msg, fmt.Sprintf("application=%s", "twitter"))
-	suite.Require().Contains(msg, fmt.Sprintf("username=%s", "twitteruser"))
-	suite.Require().Contains(msg, fmt.Sprintf("account=%s", "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"))
 }
 
 func (suite *KeeperTestSuite) TestMsgServer_UnlinkApplication() {
@@ -574,9 +571,15 @@ func (suite *KeeperTestSuite) TestMsgServer_UnlinkApplication_Logger() {
 		)))
 
 	// Setup Logger
-	var buf bytes.Buffer
+	logger := mock.NewMockLogger(suite.ctrl)
 	ctx, _ := suite.ctx.CacheContext()
-	ctx = ctx.WithLogger(log.NewTMLogger(&buf))
+	ctx = ctx.WithLogger(logger)
+
+	logger.EXPECT().With("module", "x/"+types.ModuleName).Return(logger)
+	logger.EXPECT().Info("Application link removed",
+		"application", "twitter",
+		"username", "twitteruser",
+		"account", "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
 
 	// Execute
 	server := keeper.NewMsgServerImpl(suite.k)
@@ -586,11 +589,4 @@ func (suite *KeeperTestSuite) TestMsgServer_UnlinkApplication_Logger() {
 		"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 	))
 	suite.Require().NoError(err)
-
-	// Check logs
-	msg := strings.TrimSpace(buf.String())
-	suite.Require().Contains(msg, "Application link removed")
-	suite.Require().Contains(msg, fmt.Sprintf("application=%s", "twitter"))
-	suite.Require().Contains(msg, fmt.Sprintf("username=%s", "twitteruser"))
-	suite.Require().Contains(msg, fmt.Sprintf("account=%s", "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"))
 }
