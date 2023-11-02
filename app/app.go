@@ -487,18 +487,18 @@ func NewDesmosApp(
 	// NOTE: Any module instantiated in the module manager that is later modified
 	// must be passed by reference here.
 	legacyModules := []module.AppModule{
+		// IBC modules
 		capability.NewAppModule(app.appCodec, *app.CapabilityKeeper, false),
 		ibc.NewAppModule(app.IBCKeeper),
 		ibctransfer.NewAppModule(app.TransferKeeper),
 		ibcfee.NewAppModule(app.IBCFeeKeeper),
 		ica.NewAppModule(&app.ICAControllerKeeper, &app.ICAHostKeeper),
+		ibctm.AppModuleBasic{},
+		solomachine.AppModuleBasic{},
+
+		// Custom modules
 		wasm.NewAppModule(app.appCodec, &app.WasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper, app.MsgServiceRouter(), app.GetSubspace(wasmtypes.ModuleName)),
 	}
-
-	// register additional types
-	ibctm.AppModuleBasic{}.RegisterInterfaces(app.interfaceRegistry)
-	solomachine.AppModuleBasic{}.RegisterInterfaces(app.interfaceRegistry)
-
 	if err := app.RegisterModules(legacyModules...); err != nil {
 		panic(err)
 	}
