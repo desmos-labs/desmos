@@ -323,6 +323,8 @@ var (
 		ibctransfertypes.ModuleName,
 		ibcfeetypes.ModuleName,
 		icatypes.ModuleName,
+		ibctm.ModuleName,
+		solomachine.ModuleName,
 
 		// Custom modules
 		subspacestypes.ModuleName,
