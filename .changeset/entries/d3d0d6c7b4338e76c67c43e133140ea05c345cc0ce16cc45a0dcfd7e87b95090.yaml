@@ -1,0 +1,6 @@
+type: deps
+module: other
+pull_request: 1246
+description: Bump ibc-go to v8
+backward_compatible: false
+date: 2023-11-02T05:30:24.946321857Z
