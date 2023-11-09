@@ -9,8 +9,8 @@ require (
 	cosmossdk.io/errors v1.0.0
 	cosmossdk.io/math v1.2.0
 	cosmossdk.io/simapp v0.0.0-20230323161446-0af178d721ff
-	github.com/CosmWasm/wasmd v0.43.0
-	github.com/CosmWasm/wasmvm v1.4.1
+	github.com/CosmWasm/wasmd v0.44.0
+	github.com/CosmWasm/wasmvm v1.5.0
 	github.com/armon/go-metrics v0.4.1
 	github.com/btcsuite/btcd/btcec/v2 v2.3.2
 	github.com/cometbft/cometbft v0.37.2
