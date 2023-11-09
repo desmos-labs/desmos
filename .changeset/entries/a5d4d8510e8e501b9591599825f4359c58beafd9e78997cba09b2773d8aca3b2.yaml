@@ -1,0 +1,6 @@
+type: deps
+module: other
+pull_request: 1266
+description: Bump github.com/CosmWasm/wasmd to 0.44.0
+backward_compatible: true
+date: 2023-11-09T09:16:42.923853549Z
