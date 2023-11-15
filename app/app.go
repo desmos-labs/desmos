@@ -493,8 +493,8 @@ func NewDesmosApp(
 		ibctransfer.NewAppModule(app.TransferKeeper),
 		ibcfee.NewAppModule(app.IBCFeeKeeper),
 		ica.NewAppModule(&app.ICAControllerKeeper, &app.ICAHostKeeper),
-		ibctm.AppModuleBasic{},
-		solomachine.AppModuleBasic{},
+		ibctm.NewAppModule(),
+		solomachine.NewAppModule(),
 
 		// Custom modules
 		wasm.NewAppModule(app.appCodec, &app.WasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper, app.MsgServiceRouter(), app.GetSubspace(wasmtypes.ModuleName)),

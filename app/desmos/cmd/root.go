@@ -11,7 +11,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/config"
-	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	"github.com/cosmos/cosmos-sdk/server"
 	simtestutil "github.com/cosmos/cosmos-sdk/testutil/sims"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -19,7 +19,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	"github.com/cosmos/cosmos-sdk/x/auth/tx"
 	txmodule "github.com/cosmos/cosmos-sdk/x/auth/tx/config"
-	"github.com/cosmos/cosmos-sdk/x/auth/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	"github.com/cosmos/cosmos-sdk/x/gov"
@@ -50,9 +50,9 @@ func NewRootCmd() *cobra.Command {
 		WithInterfaceRegistry(encodingConfig.InterfaceRegistry).
 		WithLegacyAmino(encodingConfig.Amino).
 		WithInput(os.Stdin).
-		WithAccountRetriever(types.AccountRetriever{}).
+		WithAccountRetriever(authtypes.AccountRetriever{}).
 		WithHomeDir(app.DefaultNodeHome).
-		WithViper("") // In desmos, we don't use any prefix for env variables.
+		WithViper("DESMOS")
 
 	rootCmd := &cobra.Command{
 		Use:           "desmos",
@@ -75,21 +75,24 @@ func NewRootCmd() *cobra.Command {
 			}
 
 			// This needs to go after ReadFromClientConfig, as that function
-			// sets the RPC client needed for SIGN_MODE_TEXTUAL.
-			enabledSignModes := tx.DefaultSignModes
-			enabledSignModes = append(enabledSignModes, signing.SignMode_SIGN_MODE_TEXTUAL)
-			txConfigOpts := tx.ConfigOptions{
-				EnabledSignModes:           enabledSignModes,
-				TextualCoinMetadataQueryFn: txmodule.NewGRPCCoinMetadataQueryFn(initClientCtx),
+			// sets the RPC client needed for SIGN_MODE_TEXTUAL. This sign mode
+			// is only available if the client is online.
+			if !initClientCtx.Offline {
+				enabledSignModes := append(tx.DefaultSignModes, signing.SignMode_SIGN_MODE_TEXTUAL)
+				txConfigOpts := tx.ConfigOptions{
+					EnabledSignModes:           enabledSignModes,
+					TextualCoinMetadataQueryFn: txmodule.NewGRPCCoinMetadataQueryFn(initClientCtx),
+				}
+				txConfig, err := tx.NewTxConfigWithOptions(
+					initClientCtx.Codec,
+					txConfigOpts,
+				)
+				if err != nil {
+					return err
+				}
+
+				initClientCtx = initClientCtx.WithTxConfig(txConfig)
 			}
-			txConfigWithTextual, err := tx.NewTxConfigWithOptions(
-				codec.NewProtoCodec(encodingConfig.InterfaceRegistry),
-				txConfigOpts,
-			)
-			if err != nil {
-				return err
-			}
-			initClientCtx = initClientCtx.WithTxConfig(txConfigWithTextual)
 
 			if err := client.SetCmdClientContextHandler(initClientCtx, cmd); err != nil {
 				return err
@@ -113,7 +116,9 @@ func NewRootCmd() *cobra.Command {
 
 	// add keyring to autocli opts
 	autoCliOpts := tempApp.AutoCliOpts()
-	autoCliOpts.Keyring = initClientCtx.Keyring
+	initClientCtx, _ = config.ReadFromClientConfig(initClientCtx)
+	autoCliOpts.Keyring, _ = keyring.NewAutoCLIKeyring(initClientCtx.Keyring)
+	autoCliOpts.ClientCtx = initClientCtx
 
 	if err := autoCliOpts.EnhanceRootCommand(rootCmd); err != nil {
 		panic(err)
