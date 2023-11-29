@@ -191,25 +191,26 @@ assertIsDeliverTxSuccess(result);
 
 ## Desmos Bindings
 The [Desmos Bindings](https://github.com/desmos-labs/desmos-bindings) are a set of packages that make possible to interact with the Desmos chain directly from smart contracts. With them, you can build your own dApp smart contracts taking full advantage of the Desmos chain modules to create even more personalisation to your app.   
-You can find the bindings generated documentation here: [Desmos Bindings docs](https://docs.rs/desmos-bindings/1.0.0/desmos_bindings/index.html). 
+You can find the bindings generated documentation here: [Desmos Bindings docs](https://docs.rs/desmos-bindings/latest/desmos_bindings/index.html). 
 
 ### Example 1: Post from a contract
 The below example shows you how to send a [`MsgCreatePost`](02-modules/posts/04-messages.md#msgcreatepost) from
 inside a smart contract.
 ```rust
-pub fn post_example_from_contract(deps: DepsMut, env: Env, info: MessageInfo, message: String) -> Result<Response<DesmosMsg>, ContractError> {
-    let post_msg = PostsMsg::CreatePost {
-        subspace_id: Uint64::new(1),
-        section_id: 1,
-        external_id: None,
-        text: Some(message),
-        entities: None,
-        attachments: None,
-        author: env.contract.address,
-        conversation_id: None,
-        reply_settings: ReplySetting::Unspecified,
+pub fn post_example_from_contract(deps: DepsMut, env: Env, info: MessageInfo, message: String) -> Result<Response<Empty>, ContractError> {
+    let post_msg = PostsMsg::create_post(
+        1,
+        1,
+        None,
+        "message",
+        None,
+        vec![],
+        vec![],
+        env.contract.address,
+        None,
+        ReplySetting::Unspecified,
         referenced_posts: vec![]
-    };
+    );
 
     let response = Response::new()
         .add_attribute("action", "post")
@@ -223,12 +224,9 @@ pub fn post_example_from_contract(deps: DepsMut, env: Env, info: MessageInfo, me
 ### Example 2: Query from a contract the Desmos chain state you need
 The below example shows you how to query a Subspace's posts from inside a smart contract.
 ```rust
-fn query_posts_from_contract(deps: Deps<DesmosQuery>, subspace_id: Uint64, pagination: Option<PageRequest>) -> StdResult<Binary> {
-    let request = DesmosQuery::Posts(PostsQuery::SubspacePosts {
-        subspace_id,
-        pagination,
-    });
-    let response: StdResult<QuerySubspacePostsResponse> = deps.querier.query(&request.into());
+fn query_posts_from_contract(deps: Deps, subspace_id: Uint64, pagination: Option<PageRequest>) -> StdResult<Binary> {
+    let querier = PostQuerier::new(&deps.querier);
+    let response: StdResult<QuerySubspacePostsResponse> = querier.query_subspace_posts(subspace_id, pagination);
 }
 ```
 
