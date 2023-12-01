@@ -5,6 +5,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec/legacy"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/msgservice"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -64,6 +65,10 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 		&SingleSignature{},
 		&CosmosMultiSignature{},
 	)
+	registry.RegisterImplementations(
+		(*cryptotypes.PubKey)(nil),
+		&ethsecp256k1.PubKey{},
+	)
 
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgSaveProfile{},
@@ -83,18 +88,30 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
 }
 
+// ModuleCdc references the global x/profiles protobuf codec. Note, the codec should
+// ONLY be used in certain instances of tests and for JSON encoding.
+//
+// The actual codec used for serialization should be provided to x/profiles and
+// defined at the application level.
+func ModuleCdc() *codec.ProtoCodec {
+	// Register required interfaces to registry
+	registry := types.NewInterfaceRegistry()
+	cryptocodec.RegisterInterfaces(registry)
+	RegisterInterfaces(registry)
+
+	return codec.NewProtoCodec(registry)
+}
+
 var (
 	amino = codec.NewLegacyAmino()
 
-	// AminoCdc references the global x/relationships module codec. Note, the codec should
+	// AminoCdc references the global x/profiles module codec. Note, the codec should
 	// ONLY be used in certain instances of tests and for JSON encoding as Amino is
 	// still used for that purpose.
 	//
-	// The actual codec used for serialization should be provided to x/relationships and
+	// The actual codec used for serialization should be provided to x/profiles and
 	// defined at the application level.
 	AminoCdc = codec.NewAminoCodec(amino)
-
-	ModuleCdc = codec.NewProtoCodec(types.NewInterfaceRegistry())
 )
 
 func init() {

@@ -216,7 +216,7 @@ func handleLinkChainAccountPacketData(
 	am IBCModule, ctx sdk.Context, packet channeltypes.Packet,
 ) (handled bool, ack channeltypes.Acknowledgement, err error) {
 	var packetData types.LinkChainAccountPacketData
-	if err := types.ModuleCdc.UnmarshalJSON(packet.GetData(), &packetData); err != nil {
+	if err := types.ModuleCdc().UnmarshalJSON(packet.GetData(), &packetData); err != nil {
 		return false, channeltypes.Acknowledgement{}, nil
 	}
 
@@ -259,7 +259,7 @@ func handleOracleRequestPacketData(
 	am IBCModule, ctx sdk.Context, packet channeltypes.Packet,
 ) (handled bool, ack channeltypes.Acknowledgement, err error) {
 	var data oracletypes.OracleResponsePacketData
-	if err := types.ModuleCdc.UnmarshalJSON(packet.GetData(), &data); err != nil {
+	if err := types.ModuleCdc().UnmarshalJSON(packet.GetData(), &data); err != nil {
 		return false, channeltypes.Acknowledgement{}, nil
 	}
 
@@ -295,14 +295,14 @@ func (am IBCModule) OnAcknowledgementPacket(
 	relayer sdk.AccAddress,
 ) error {
 	var ack channeltypes.Acknowledgement
-	err := types.ModuleCdc.UnmarshalJSON(acknowledgement, &ack)
+	err := types.ModuleCdc().UnmarshalJSON(acknowledgement, &ack)
 	if err != nil {
 		return errors.Wrapf(sdkerrors.ErrUnknownRequest,
 			"cannot unmarshal oracle packet acknowledgement: %v", err)
 	}
 
 	var data oracletypes.OracleRequestPacketData
-	err = types.ModuleCdc.UnmarshalJSON(packet.GetData(), &data)
+	err = types.ModuleCdc().UnmarshalJSON(packet.GetData(), &data)
 	if err != nil {
 		return errors.Wrapf(sdkerrors.ErrUnknownRequest,
 			"cannot unmarshal oracle request packet data: %s", err)
@@ -351,7 +351,7 @@ func (am IBCModule) OnTimeoutPacket(
 	relayer sdk.AccAddress,
 ) error {
 	var data oracletypes.OracleRequestPacketData
-	err := types.ModuleCdc.UnmarshalJSON(packet.GetData(), &data)
+	err := types.ModuleCdc().UnmarshalJSON(packet.GetData(), &data)
 	if err != nil {
 		return errors.Wrapf(sdkerrors.ErrUnknownRequest,
 			"cannot unmarshal oracle request packet data: %s", err)

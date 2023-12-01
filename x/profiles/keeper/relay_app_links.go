@@ -232,7 +232,7 @@ func (k Keeper) OnOracleRequestAcknowledgementPacket(
 		link.State = types.AppLinkStateVerificationStarted
 
 		var packetAck oracletypes.OracleRequestPacketAcknowledgement
-		err = types.ModuleCdc.UnmarshalJSON(res.Result, &packetAck)
+		err = types.ModuleCdc().UnmarshalJSON(res.Result, &packetAck)
 		if err != nil {
 			return fmt.Errorf("cannot unmarshal oracle request packet acknowledgment: %s", err)
 		}

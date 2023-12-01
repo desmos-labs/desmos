@@ -746,7 +746,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnOracleRequestAcknowledgementPacket() 
 				suite.Require().NoError(err)
 			},
 			data:      createRequestPacketData("client_id"),
-			ack:       channeltypes.NewResultAcknowledgement(types.ModuleCdc.MustMarshalJSON(&result)),
+			ack:       channeltypes.NewResultAcknowledgement(types.ModuleCdc().MustMarshalJSON(&result)),
 			shouldErr: false,
 			expLink: types.NewApplicationLink(
 				"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
