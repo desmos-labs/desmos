@@ -88,20 +88,6 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
 }
 
-// ModuleCdc references the global x/profiles protobuf codec. Note, the codec should
-// ONLY be used in certain instances of tests and for JSON encoding.
-//
-// The actual codec used for serialization should be provided to x/profiles and
-// defined at the application level.
-func ModuleCdc() *codec.ProtoCodec {
-	// Register required interfaces to registry
-	registry := types.NewInterfaceRegistry()
-	cryptocodec.RegisterInterfaces(registry)
-	RegisterInterfaces(registry)
-
-	return codec.NewProtoCodec(registry)
-}
-
 var (
 	amino = codec.NewLegacyAmino()
 

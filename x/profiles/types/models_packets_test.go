@@ -6,6 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	"github.com/stretchr/testify/require"
 
+	"github.com/desmos-labs/desmos/v6/app"
 	"github.com/desmos-labs/desmos/v6/testutil/profilestesting"
 	"github.com/desmos-labs/desmos/v6/x/profiles/types"
 )
@@ -146,7 +147,9 @@ func TestLinkChainAccountPacketData_GetBytes(t *testing.T) {
 		"cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70",
 		types.NewProof(pubKey, profilestesting.SingleSignatureFromHex("032086ede8d4bce29fe364a94744ca71dbeaf370221ba20f9716a165c54b079561"), "plain_text"),
 	)
-	bz, err := packetData.GetBytes()
+
+	cdc, _ := app.MakeCodecs()
+	bz, err := packetData.GetBytes(cdc)
 	require.NoError(t, err)
 	require.Equal(t, "{\"destination_address\":\"cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70\",\"destination_proof\":{\"plain_text\":\"plain_text\",\"pub_key\":{\"@type\":\"/cosmos.crypto.secp256k1.PubKey\",\"key\":\"AwZDXuC7qKxWZKLctIkxTAcgXM81McJ16Sfc93H5AFZL\"},\"signature\":{\"@type\":\"/desmos.profiles.v3.SingleSignature\",\"signature\":\"AyCG7ejUvOKf42SpR0TKcdvq83AiG6IPlxahZcVLB5Vh\",\"value_type\":\"SIGNATURE_VALUE_TYPE_RAW\"}},\"source_address\":{\"@type\":\"/desmos.profiles.v3.Bech32Address\",\"prefix\":\"cosmos\",\"value\":\"cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70\"},\"source_chain_config\":{\"name\":\"cosmos\"},\"source_proof\":{\"plain_text\":\"plain_text\",\"pub_key\":{\"@type\":\"/cosmos.crypto.secp256k1.PubKey\",\"key\":\"AwZDXuC7qKxWZKLctIkxTAcgXM81McJ16Sfc93H5AFZL\"},\"signature\":{\"@type\":\"/desmos.profiles.v3.SingleSignature\",\"signature\":\"AyCG7ejUvOKf42SpR0TKcdvq83AiG6IPlxahZcVLB5Vh\",\"value_type\":\"SIGNATURE_VALUE_TYPE_RAW\"}}}", string(bz))
 }

@@ -22,7 +22,7 @@ import (
 // Keeper maintains the link to data storage and exposes getter/setter methods for the various parts of the state machine
 type Keeper struct {
 	storeKey      storetypes.StoreKey
-	cdc           codec.BinaryCodec
+	cdc           codec.Codec
 	legacyAmino   *codec.LegacyAmino
 	paramSubspace paramstypes.Subspace
 	hooks         types.ProfilesHooks
@@ -46,7 +46,7 @@ type Keeper struct {
 //  2. DTag -> Address
 //     This is used to get the address of a user based on a DTag
 func NewKeeper(
-	cdc codec.BinaryCodec,
+	cdc codec.Codec,
 	legacyAmino *codec.LegacyAmino,
 	storeKey storetypes.StoreKey,
 	ak authkeeper.AccountKeeper,
