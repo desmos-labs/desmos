@@ -6,6 +6,7 @@ package types
 import (
 	"fmt"
 
+	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -61,7 +62,6 @@ func (p LinkChainAccountPacketData) Validate() error {
 }
 
 // GetBytes is a helper for serialising
-func (p LinkChainAccountPacketData) GetBytes() ([]byte, error) {
-	var modulePacket LinkChainAccountPacketData
-	return sdk.SortJSON(ModuleCdc.MustMarshalJSON(&modulePacket))
+func (p LinkChainAccountPacketData) GetBytes(cdc codec.Codec) ([]byte, error) {
+	return sdk.SortJSON(cdc.MustMarshalJSON(&p))
 }

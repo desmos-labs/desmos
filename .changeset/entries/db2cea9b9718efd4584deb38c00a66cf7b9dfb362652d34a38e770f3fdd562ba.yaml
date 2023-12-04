@@ -1,0 +1,6 @@
+type: fix
+module: x/profiles
+pull_request: 1270
+description: Replace missing interfaces to `x/profiles` module protobuf codec into app codec
+backward_compatible: true
+date: 2023-12-01T08:06:01.010353464Z
