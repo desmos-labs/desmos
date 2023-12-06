@@ -1,23 +1,33 @@
 "x/fees":
-  - x/fees/**/*
+  - changed-files:
+    - any-glob-to-any-file: x/fees/**/*
 "x/profiles":
-  - x/profiles/**/*
+  - changed-files:
+    - any-glob-to-any-file: x/profiles/**/*
 "x/relationships":
-  - x/relationships/**/*
+  - changed-files:
+    - any-glob-to-any-file: x/relationships/**/*
 "x/subspaces":
-  - x/subspaces/**/*
+  - changed-files:
+    - any-glob-to-any-file: x/subspaces/**/*
 "x/CLI":
-  - client/**/*
-  - x/*/client/**/*
+  - changed-files:
+    - any-glob-to-any-file: client/**/*
+    - any-glob-to-any-file: x/*/client/**/*
 "kind/build":
-  - Makefile
-  - Dockerfile
-  - docker-compose.yml
-  - scripts/*
+  - changed-files:
+    - any-glob-to-any-file: Makefile
+    - any-glob-to-any-file: Dockerfile
+    - any-glob-to-any-file: docker-compose.yml
+    - any-glob-to-any-file: scripts/*
 "kind/ci":
-  - .github/**/*.yml
-  - buf.yaml
-  - .mergify.yml
-  - .golangci.yml
+  - changed-files:
+    - any-glob-to-any-file: .github/**/*.yml
+    - any-glob-to-any-file: buf.yaml
+    - any-glob-to-any-file: .mergify.yml
+    - any-glob-to-any-file: .golangci.yml
+    - any-glob-to-any-file: .github/dependabot.yml
+    - any-glob-to-any-file: .github/labeler.yml
 "kind/ADR":
-  - docs/architecture/**/*
+  - changed-files:
+    - any-glob-to-any-file: docs/architecture/**/*

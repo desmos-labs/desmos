@@ -3,9 +3,14 @@ on:
   - pull_request_target
 
 jobs:
-  labeler:
+  Labeler:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/labeler@main
+      - name: Checkout 🛎️
+        uses: actions/checkout@v4
+
+      - name: Apply PR labels 🏷️
+        uses: actions/labeler@v5
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          sync-labels: true
