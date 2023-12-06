@@ -27,7 +27,7 @@
     - any-glob-to-any-file: .mergify.yml
     - any-glob-to-any-file: .golangci.yml
     - any-glob-to-any-file: .github/dependabot.yml
-    - any-glob-to-any-file: .github/dependabot.yml
+    - any-glob-to-any-file: .github/labeler.yml
 "kind/ADR":
   - changed-files:
     - any-glob-to-any-file: docs/architecture/**/*
