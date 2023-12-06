@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Dependencies
 #### Other
-- ([\#1266](https://github.com/desmos-labs/desmos/pull/1266)) Updated `wasmd` to `v0.44.0`
+- ([\#1273](https://github.com/desmos-labs/desmos/pull/1273)) Updated `wasmd` to `v0.45.0`
 
 ## Version 6.2.0
 ### Bug Fixes
