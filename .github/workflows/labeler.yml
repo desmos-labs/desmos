@@ -3,7 +3,7 @@ on:
   - pull_request_target
 
 jobs:
-  labeler:
+  Labeler:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
