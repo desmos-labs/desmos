@@ -1,6 +1,0 @@
-type: deps
-module: none
-pull_request: 1273
-description: Updated `github.com/CosmWasm/wasmd` to `v0.45.0`
-backward_compatible: false
-date: 2023-12-06T14:53:53.99804948Z
