@@ -65,3 +65,20 @@ func (p LinkChainAccountPacketData) Validate() error {
 func (p LinkChainAccountPacketData) GetBytes(cdc codec.Codec) ([]byte, error) {
 	return sdk.SortJSON(cdc.MustMarshalJSON(&p))
 }
+
+// UnpackInterfaces implements codectypes.UnpackInterfacesMessage
+func (p *LinkChainAccountPacketData) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
+	var address AddressData
+	if err := unpacker.UnpackAny(p.SourceAddress, &address); err != nil {
+		return err
+	}
+
+	if err := p.SourceProof.UnpackInterfaces(unpacker); err != nil {
+		return err
+	}
+
+	if err := p.DestinationProof.UnpackInterfaces(unpacker); err != nil {
+		return err
+	}
+	return nil
+}
