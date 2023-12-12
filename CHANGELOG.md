@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
+## Version 6.4.0
+### Bug Fixes
+#### Profiles
+- ([\#1277](https://github.com/desmos-labs/desmos/pull/1277)) Added missing unpack interfaces function for `LinkChainAccountPacketData` which prevented chain links from being created properly over IBC
+
 ## Version 6.3.1 
 ### Bug fixes
 - Added missing `v6.3.0` upgrade handler
