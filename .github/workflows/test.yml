@@ -124,7 +124,7 @@ jobs:
             go.sum
 
       - name: Download packages file 📥
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: "${{ github.sha }}-${{ matrix.part }}"
         if: env.GIT_DIFF
@@ -156,25 +156,25 @@ jobs:
             go.sum
 
       - name: Download coverage 00 📥
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: "${{ github.sha }}-00-coverage"
         if: env.GIT_DIFF
 
       - name: Download coverage 01 📥
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: "${{ github.sha }}-01-coverage"
         if: env.GIT_DIFF
 
       - name: Download coverage 02 📥
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: "${{ github.sha }}-02-coverage"
         if: env.GIT_DIFF
 
       - name: Download coverage 03 📥
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: "${{ github.sha }}-03-coverage"
         if: env.GIT_DIFF
@@ -231,7 +231,7 @@ jobs:
             go.sum
 
       - name: Download packages file 📥
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: "${{ github.sha }}-${{ matrix.part }}"
         if: env.GIT_DIFF
@@ -264,25 +264,25 @@ jobs:
             go.sum
 
       - name: Download coverage 00 📥
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: "${{ github.sha }}-00-race-output"
         if: env.GIT_DIFF
 
       - name: Download coverage 01 📥
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: "${{ github.sha }}-01-race-output"
         if: env.GIT_DIFF
 
       - name: Download coverage 02 📥
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: "${{ github.sha }}-02-race-output"
         if: env.GIT_DIFF
 
       - name: Download coverage 03 📥
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: "${{ github.sha }}-03-race-output"
         if: env.GIT_DIFF
