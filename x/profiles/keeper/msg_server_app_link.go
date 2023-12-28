@@ -49,12 +49,6 @@ func (k Keeper) LinkApplication(
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			sdk.EventTypeMessage,
-			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
-			sdk.NewAttribute(sdk.AttributeKeySender, msg.Sender),
-		),
-		sdk.NewEvent(
 			types.EventTypesApplicationLinkCreated,
 			sdk.NewAttribute(types.AttributeKeyUser, msg.Sender),
 			sdk.NewAttribute(types.AttributeKeyApplicationName, msg.LinkData.Application),
@@ -89,15 +83,6 @@ func (k MsgServer) UnlinkApplication(
 		"application", msg.Application,
 		"username", msg.Username,
 		"account", msg.Signer)
-
-	ctx.EventManager().EmitEvents(sdk.Events{
-		sdk.NewEvent(
-			sdk.EventTypeMessage,
-			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
-			sdk.NewAttribute(sdk.AttributeKeySender, msg.Signer),
-		),
-	})
 
 	return &types.MsgUnlinkApplicationResponse{}, nil
 }

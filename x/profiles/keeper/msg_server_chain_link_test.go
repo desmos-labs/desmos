@@ -108,12 +108,6 @@ func (suite *KeeperTestSuite) TestMsgServer_LinkChainAccount() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgLinkChainAccount{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, destAddr),
-				),
-				sdk.NewEvent(
 					types.EventTypeLinkChainAccount,
 					sdk.NewAttribute(types.AttributeKeyChainLinkExternalAddress, srcAddr),
 					sdk.NewAttribute(types.AttributeKeyChainLinkChainName, "cosmos"),
@@ -204,12 +198,6 @@ func (suite *KeeperTestSuite) TestMsgServer_UnlinkChainAccount() {
 			),
 			shouldErr: false,
 			expEvents: sdk.Events{
-				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgUnlinkChainAccount{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
-				),
 				sdk.NewEvent(
 					types.EventTypeUnlinkChainAccount,
 					sdk.NewAttribute(types.AttributeKeyChainLinkExternalAddress, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
@@ -306,12 +294,6 @@ func (suite *KeeperTestSuite) TestMsgServer_SetDefaultExternalAddress() {
 			),
 			shouldErr: false,
 			expEvents: sdk.Events{
-				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgSetDefaultExternalAddress{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
-				),
 				sdk.NewEvent(
 					types.EventTypeSetDefaultExternalAddress,
 					sdk.NewAttribute(types.AttributeKeyChainLinkChainName, "cosmos"),

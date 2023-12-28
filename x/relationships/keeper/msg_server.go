@@ -48,12 +48,6 @@ func (k msgServer) CreateRelationship(goCtx context.Context, msg *types.MsgCreat
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			sdk.EventTypeMessage,
-			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
-			sdk.NewAttribute(sdk.AttributeKeySender, msg.Signer),
-		),
-		sdk.NewEvent(
 			types.EventTypeRelationshipCreated,
 			sdk.NewAttribute(types.AttributeRelationshipCreator, msg.Signer),
 			sdk.NewAttribute(types.AttributeRelationshipCounterparty, msg.Counterparty),
@@ -82,12 +76,6 @@ func (k msgServer) DeleteRelationship(goCtx context.Context, msg *types.MsgDelet
 	k.Keeper.DeleteRelationship(ctx, msg.Signer, msg.Counterparty, msg.SubspaceID)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
-		sdk.NewEvent(
-			sdk.EventTypeMessage,
-			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
-			sdk.NewAttribute(sdk.AttributeKeySender, msg.Signer),
-		),
 		sdk.NewEvent(
 			types.EventTypeRelationshipDeleted,
 			sdk.NewAttribute(types.AttributeRelationshipCreator, msg.Signer),
@@ -118,12 +106,6 @@ func (k msgServer) BlockUser(goCtx context.Context, msg *types.MsgBlockUser) (*t
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			sdk.EventTypeMessage,
-			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
-			sdk.NewAttribute(sdk.AttributeKeySender, msg.Blocker),
-		),
-		sdk.NewEvent(
 			types.EventTypeBlockUser,
 			sdk.NewAttribute(types.AttributeKeyUserBlockBlocker, msg.Blocker),
 			sdk.NewAttribute(types.AttributeKeyUserBlockBlocked, msg.Blocked),
@@ -152,12 +134,6 @@ func (k msgServer) UnblockUser(goCtx context.Context, msg *types.MsgUnblockUser)
 	k.DeleteUserBlock(ctx, msg.Blocker, msg.Blocked, msg.SubspaceID)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
-		sdk.NewEvent(
-			sdk.EventTypeMessage,
-			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
-			sdk.NewAttribute(sdk.AttributeKeySender, msg.Blocker),
-		),
 		sdk.NewEvent(
 			types.EventTypeUnblockUser,
 			sdk.NewAttribute(types.AttributeKeyUserBlockBlocker, msg.Blocker),

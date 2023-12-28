@@ -31,14 +31,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UpdateParams() {
 				authtypes.NewModuleAddress("gov").String(),
 			),
 			shouldErr: false,
-			expEvents: sdk.Events{
-				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgUpdateParams{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos10d07y265gmmuvt4z0w9aw880jnsr700j6zn9kn"),
-				),
-			},
+			expEvents: sdk.Events{},
 			check: func(ctx sdk.Context) {
 				params := suite.k.GetParams(ctx)
 				suite.Require().Equal(types.DefaultParams(), params)

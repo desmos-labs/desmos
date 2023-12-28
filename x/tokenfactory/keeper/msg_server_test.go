@@ -164,12 +164,6 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateDenom() {
 			},
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgCreateDenom{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69"),
-				),
-				sdk.NewEvent(
 					types.EventTypeCreateDenom,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeCreator, "cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69"),
@@ -439,12 +433,6 @@ func (suite *KeeperTestSuite) TestMsgServer_Mint() {
 			expResponse: &types.MsgMintResponse{},
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgMint{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69"),
-				),
-				sdk.NewEvent(
 					types.EventTypeMint,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeMintToAddress, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
@@ -705,12 +693,6 @@ func (suite *KeeperTestSuite) TestMsgServer_Burn() {
 			expResponse: &types.MsgBurnResponse{},
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgBurn{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69"),
-				),
-				sdk.NewEvent(
 					types.EventTypeBurn,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeBurnFromAddress, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
@@ -859,12 +841,6 @@ func (suite *KeeperTestSuite) TestMsgServer_SetDenomMetadata() {
 			expResponse: &types.MsgSetDenomMetadataResponse{},
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgSetDenomMetadata{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69"),
-				),
-				sdk.NewEvent(
 					types.EventTypeSetDenomMetadata,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeDenom, metadata.Base),
@@ -928,14 +904,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UpdateParams() {
 					suite.k.GetParams(ctx),
 				)
 			},
-			expEvents: sdk.Events{
-				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgUpdateParams{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos10d07y265gmmuvt4z0w9aw880jnsr700j6zn9kn"),
-				),
-			},
+			expEvents: sdk.Events{},
 		},
 	}
 	for _, tc := range testCases {

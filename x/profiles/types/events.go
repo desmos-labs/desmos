@@ -42,6 +42,4 @@ const (
 	AttributeKeyResolveStatus                 = "resolve_status"
 	AttributeKeyAck                           = "acknowledgement"
 	AttributeKeyAckError                      = "error"
-
-	AttributeValueCategory = ModuleName
 )

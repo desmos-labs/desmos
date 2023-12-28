@@ -416,12 +416,6 @@ func (suite *KeeperTestSuite) TestMsgServer_AddReaction() {
 			},
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgAddReaction{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f"),
-				),
-				sdk.NewEvent(
 					types.EventTypeAddReaction,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyPostID, "1"),
@@ -507,12 +501,6 @@ func (suite *KeeperTestSuite) TestMsgServer_AddReaction() {
 				ReactionID: 1,
 			},
 			expEvents: sdk.Events{
-				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgAddReaction{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f"),
-				),
 				sdk.NewEvent(
 					types.EventTypeAddReaction,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
@@ -792,12 +780,6 @@ func (suite *KeeperTestSuite) TestMsgServer_RemoveReaction() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgRemoveReaction{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f"),
-				),
-				sdk.NewEvent(
 					types.EventTypeRemoveReaction,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyPostID, "1"),
@@ -964,12 +946,6 @@ func (suite *KeeperTestSuite) TestMsgServer_AddRegisteredReaction() {
 				RegisteredReactionID: 1,
 			},
 			expEvents: sdk.Events{
-				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgAddRegisteredReaction{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f"),
-				),
 				sdk.NewEvent(
 					types.EventTypeAddRegisteredReaction,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
@@ -1161,12 +1137,6 @@ func (suite *KeeperTestSuite) TestMsgServer_EditRegisteredReaction() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgEditRegisteredReaction{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f"),
-				),
-				sdk.NewEvent(
 					types.ActionEditRegisteredReaction,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyRegisteredReactionID, "1"),
@@ -1311,12 +1281,6 @@ func (suite *KeeperTestSuite) TestMsgServer_RemoveRegisteredReaction() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgRemoveRegisteredReaction{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f"),
-				),
-				sdk.NewEvent(
 					types.EventTypeRemoveRegisteredReaction,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyRegisteredReactionID, "1"),
@@ -1449,12 +1413,6 @@ func (suite *KeeperTestSuite) TestMsgServer_SetReactionsParams() {
 			),
 			shouldErr: false,
 			expEvents: sdk.Events{
-				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgSetReactionsParams{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f"),
-				),
 				sdk.NewEvent(
 					types.EventTypeSetReactionsParams,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
