@@ -14,7 +14,6 @@ const (
 	EventTypeCancelPostOwnerTransfer  = "cancel_post_owner_transfer"
 	EventTypeAcceptPostOwnerTransfer  = "accept_post_owner_transfer"
 	EventTypeRefusePostOwnerTransfer  = "refuse_post_owner_transfer"
-	EventTypeUpdateParams             = "update_params"
 
 	AttributeKeySubspaceID    = "subspace_id"
 	AttributeKeySectionID     = "section_id"
