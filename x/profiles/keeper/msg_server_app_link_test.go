@@ -237,12 +237,6 @@ func (suite *KeeperTestSuite) TestMsgServer_LinkApplication() {
 					sdk.NewAttribute(types.AttributeKeyApplicationUsername, "twitteruser"),
 				),
 				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgLinkApplication{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
-				),
-				sdk.NewEvent(
 					types.EventTypesApplicationLinkCreated,
 					sdk.NewAttribute(types.AttributeKeyUser, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 					sdk.NewAttribute(types.AttributeKeyApplicationName, "twitter"),
@@ -347,12 +341,6 @@ func (suite *KeeperTestSuite) TestMsgServer_LinkApplication() {
 					sdk.NewAttribute(types.AttributeKeyUser, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 					sdk.NewAttribute(types.AttributeKeyApplicationName, "twitter"),
 					sdk.NewAttribute(types.AttributeKeyApplicationUsername, "twitteruser"),
-				),
-				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgLinkApplication{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 				),
 				sdk.NewEvent(
 					types.EventTypesApplicationLinkCreated,
@@ -527,12 +515,6 @@ func (suite *KeeperTestSuite) TestMsgServer_UnlinkApplication() {
 					sdk.NewAttribute(types.AttributeKeyApplicationName, "twitter"),
 					sdk.NewAttribute(types.AttributeKeyApplicationUsername, "twitteruser"),
 					sdk.NewAttribute(types.AttributeKeyApplicationLinkExpirationTime, time.Date(2020, 3, 1, 00, 00, 00, 000, time.UTC).Format(time.RFC3339)),
-				),
-				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgUnlinkApplication{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 				),
 			},
 			check: func(ctx sdk.Context) {

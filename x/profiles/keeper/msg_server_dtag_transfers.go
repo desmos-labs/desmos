@@ -45,12 +45,6 @@ func (k MsgServer) RequestDTagTransfer(goCtx context.Context, msg *types.MsgRequ
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			sdk.EventTypeMessage,
-			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
-			sdk.NewAttribute(sdk.AttributeKeySender, msg.Sender),
-		),
-		sdk.NewEvent(
 			types.EventTypeDTagTransferRequest,
 			sdk.NewAttribute(types.AttributeKeyDTagToTrade, dTagToTrade),
 			sdk.NewAttribute(types.AttributeKeyRequestSender, transferRequest.Sender),
@@ -74,12 +68,6 @@ func (k MsgServer) CancelDTagTransferRequest(goCtx context.Context, msg *types.M
 	k.DeleteDTagTransferRequest(ctx, msg.Sender, msg.Receiver)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
-		sdk.NewEvent(
-			sdk.EventTypeMessage,
-			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
-			sdk.NewAttribute(sdk.AttributeKeySender, msg.Sender),
-		),
 		sdk.NewEvent(
 			types.EventTypeDTagTransferCancel,
 			sdk.NewAttribute(types.AttributeKeyRequestSender, msg.Sender),
@@ -178,12 +166,6 @@ func (k MsgServer) AcceptDTagTransferRequest(goCtx context.Context, msg *types.M
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			sdk.EventTypeMessage,
-			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
-			sdk.NewAttribute(sdk.AttributeKeySender, msg.Receiver),
-		),
-		sdk.NewEvent(
 			types.EventTypeDTagTransferAccept,
 			sdk.NewAttribute(types.AttributeKeyDTagToTrade, dTagToTrade),
 			sdk.NewAttribute(types.AttributeKeyNewDTag, msg.NewDTag),
@@ -208,12 +190,6 @@ func (k MsgServer) RefuseDTagTransferRequest(goCtx context.Context, msg *types.M
 	k.DeleteDTagTransferRequest(ctx, msg.Sender, msg.Receiver)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
-		sdk.NewEvent(
-			sdk.EventTypeMessage,
-			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
-			sdk.NewAttribute(sdk.AttributeKeySender, msg.Receiver),
-		),
 		sdk.NewEvent(
 			types.EventTypeDTagTransferRefuse,
 			sdk.NewAttribute(types.AttributeKeyRequestSender, msg.Sender),

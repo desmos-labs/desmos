@@ -23,7 +23,6 @@ const (
 	EventTypeRevokeAllowance             = "revoke_allowance"
 	EventTypeUpdateSubspaceFeeToken      = "update_subspace_fee_token"
 
-	AttributeValueCategory      = ModuleName
 	AttributeKeySubspaceID      = "subspace_id"
 	AttributeKeySubspaceName    = "subspace_name"
 	AttributeKeySubspaceCreator = "subspace_creator"

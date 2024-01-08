@@ -11,7 +11,6 @@ const (
 	EventTypeAddReason             = "add_reason"
 	EventTypeRemoveReason          = "remove_reason"
 
-	AttributeValueCategory       = ModuleName
 	AttributeKeySubspaceID       = "subspace_id"
 	AttributeKeyReportID         = "report_id"
 	AttributeKeyReporter         = "reporter"

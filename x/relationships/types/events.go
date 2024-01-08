@@ -8,7 +8,6 @@ const (
 	EventTypeBlockUser           = "block_user"
 	EventTypeUnblockUser         = "unblock_user"
 
-	AttributeValueCategory            = ModuleName
 	AttributeRelationshipCreator      = "creator"
 	AttributeRelationshipCounterparty = "counterparty"
 	AttributeKeyUserBlockBlocker      = "blocker"

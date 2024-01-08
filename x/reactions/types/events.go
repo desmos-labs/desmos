@@ -9,7 +9,6 @@ const (
 	EventTypeRemoveRegisteredReaction = "removed_registered_reaction"
 	EventTypeSetReactionsParams       = "set_reactions_params"
 
-	AttributeValueCategory           = ModuleName
 	AttributeKeySubspaceID           = "subspace_id"
 	AttributeKeyPostID               = "post_id"
 	AttributeKeyReactionID           = "reaction_id"

@@ -63,12 +63,6 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateSubspace() {
 			expResponse: &types.MsgCreateSubspaceResponse{SubspaceID: 1},
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgCreateSubspace{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69"),
-				),
-				sdk.NewEvent(
 					types.EventTypeCreateSubspace,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeySubspaceName, "Test subspace"),
@@ -117,12 +111,6 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateSubspace() {
 			shouldErr:   false,
 			expResponse: &types.MsgCreateSubspaceResponse{SubspaceID: 1},
 			expEvents: sdk.Events{
-				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgCreateSubspace{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos18atyyv6zycryhvnhpr2mjxgusdcah6kdpkffq0"),
-				),
 				sdk.NewEvent(
 					types.EventTypeCreateSubspace,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
@@ -177,12 +165,6 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateSubspace() {
 			shouldErr:   false,
 			expResponse: &types.MsgCreateSubspaceResponse{SubspaceID: 2},
 			expEvents: sdk.Events{
-				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgCreateSubspace{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1y4emx0mm4ncva9mnv9yvjrm7nrq3psvmwhk9ll"),
-				),
 				sdk.NewEvent(
 					types.EventTypeCreateSubspace,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "2"),
@@ -376,12 +358,6 @@ func (suite *KeeperTestSuite) TestMsgServer_EditSubspace() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgEditSubspace{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
-				),
-				sdk.NewEvent(
 					types.EventTypeEditSubspace,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 				),
@@ -504,12 +480,6 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteSubspace() {
 			msg:       types.NewMsgDeleteSubspace(1, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
 			shouldErr: false,
 			expEvents: sdk.Events{
-				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgDeleteSubspace{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
-				),
 				sdk.NewEvent(
 					types.EventTypeDeleteSubspace,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
@@ -742,12 +712,6 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateSection() {
 			expResponse: &types.MsgCreateSectionResponse{SectionID: 2},
 			expEvent: sdk.Events{
 				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgCreateSection{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4"),
-				),
-				sdk.NewEvent(
 					types.EventTypeCreateSection,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeySectionID, "2"),
@@ -947,12 +911,6 @@ func (suite *KeeperTestSuite) TestMsgServer_EditSection() {
 			),
 			shouldErr: false,
 			expEvents: sdk.Events{
-				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgEditSection{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4"),
-				),
 				sdk.NewEvent(
 					types.EventTypeEditSection,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
@@ -1209,12 +1167,6 @@ func (suite *KeeperTestSuite) TestMsgServer_MoveSection() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgMoveSection{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4"),
-				),
-				sdk.NewEvent(
 					types.EventTypeMoveSection,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeySectionID, "2"),
@@ -1361,12 +1313,6 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteSection() {
 			),
 			shouldErr: false,
 			expEvents: sdk.Events{
-				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgDeleteSection{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4"),
-				),
 				sdk.NewEvent(
 					types.EventTypeDeleteSection,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
@@ -1594,12 +1540,6 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateUserGroup() {
 			expResponse: &types.MsgCreateUserGroupResponse{GroupID: 2},
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgCreateUserGroup{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"),
-				),
-				sdk.NewEvent(
 					types.EventTypeCreateUserGroup,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyUserGroupID, "2"),
@@ -1796,12 +1736,6 @@ func (suite *KeeperTestSuite) TestMsgServer_EditUserGroup() {
 			),
 			shouldErr: false,
 			expEvents: sdk.Events{
-				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgEditUserGroup{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"),
-				),
 				sdk.NewEvent(
 					types.EventTypeEditUserGroup,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
@@ -2110,12 +2044,6 @@ func (suite *KeeperTestSuite) TestMsgServer_MoveUserGroup() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgMoveUserGroup{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"),
-				),
-				sdk.NewEvent(
 					types.EvenTypeMoveUserGroup,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyUserGroupID, "1"),
@@ -2336,12 +2264,6 @@ func (suite *KeeperTestSuite) TestMsgServer_SetUserGroupPermissions() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgSetUserGroupPermissions{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
-				),
-				sdk.NewEvent(
 					types.EventTypeSetUserGroupPermissions,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyUserGroupID, "1"),
@@ -2391,12 +2313,6 @@ func (suite *KeeperTestSuite) TestMsgServer_SetUserGroupPermissions() {
 			),
 			shouldErr: false,
 			expEvents: sdk.Events{
-				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgSetUserGroupPermissions{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"),
-				),
 				sdk.NewEvent(
 					types.EventTypeSetUserGroupPermissions,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
@@ -2542,12 +2458,6 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteUserGroup() {
 			),
 			shouldErr: false,
 			expEvents: sdk.Events{
-				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgDeleteUserGroup{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"),
-				),
 				sdk.NewEvent(
 					types.EventTypeDeleteUserGroup,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
@@ -2728,12 +2638,6 @@ func (suite *KeeperTestSuite) TestMsgServer_AddUserToGroup() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgAddUserToUserGroup{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"),
-				),
-				sdk.NewEvent(
 					types.EventTypeAddUserToGroup,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyUserGroupID, "1"),
@@ -2913,12 +2817,6 @@ func (suite *KeeperTestSuite) TestMsgServer_RemoveUserFromGroup() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgRemoveUserFromUserGroup{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"),
-				),
-				sdk.NewEvent(
 					types.EventTypeRemoveUserFromGroup,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyUserGroupID, "1"),
@@ -3085,12 +2983,6 @@ func (suite *KeeperTestSuite) TestMsgServer_SetUserPermissions() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgSetUserPermissions{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos17ua98rre5j9ce7hfude0y5y3rh4gtqkygm8hru"),
-				),
-				sdk.NewEvent(
 					types.EventTypeSetUserPermissions,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyUser, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"),
@@ -3219,12 +3111,6 @@ func (suite *KeeperTestSuite) TestMsgServer_UpdateSubspaceFeeTokens() {
 			),
 			shouldErr: false,
 			expEvents: sdk.Events{
-				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgUpdateSubspaceFeeTokens{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, authtypes.NewModuleAddress("gov").String()),
-				),
 				sdk.NewEvent(
 					types.EventTypeUpdateSubspaceFeeToken,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
@@ -3407,12 +3293,6 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantTreasuryAuthorization() {
 			shouldErr:   false,
 			expResponse: &types.MsgGrantTreasuryAuthorizationResponse{},
 			expEvents: sdk.Events{
-				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgGrantTreasuryAuthorization{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez"),
-				),
 				sdk.NewEvent(
 					types.EventTypeGrantTreasuryAuthorization,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
@@ -3637,12 +3517,6 @@ func (suite *KeeperTestSuite) TestMsgServer_RevokeTreasuryAuthorization() {
 			shouldErr:   false,
 			expResponse: &types.MsgRevokeTreasuryAuthorizationResponse{},
 			expEvents: sdk.Events{
-				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgRevokeTreasuryAuthorization{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez"),
-				),
 				sdk.NewEvent(
 					types.EventTypeRevokeTreasuryAuthorization,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
@@ -3881,12 +3755,6 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantAllowance() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgGrantAllowance{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"),
-				),
-				sdk.NewEvent(
 					types.EventTypeGrantAllowance,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyGranter, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"),
@@ -3942,12 +3810,6 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantAllowance() {
 			),
 			shouldErr: false,
 			expEvents: sdk.Events{
-				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgGrantAllowance{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"),
-				),
 				sdk.NewEvent(
 					types.EventTypeGrantAllowance,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
@@ -4115,12 +3977,6 @@ func (suite *KeeperTestSuite) TestMsgServer_RevokeAllowance() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgRevokeAllowance{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"),
-				),
-				sdk.NewEvent(
 					types.EventTypeRevokeAllowance,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyGranter, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"),
@@ -4165,12 +4021,6 @@ func (suite *KeeperTestSuite) TestMsgServer_RevokeAllowance() {
 			),
 			shouldErr: false,
 			expEvents: sdk.Events{
-				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgRevokeAllowance{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"),
-				),
 				sdk.NewEvent(
 					types.EventTypeRevokeAllowance,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),

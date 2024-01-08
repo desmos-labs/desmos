@@ -29,12 +29,6 @@ func (k MsgServer) LinkChainAccount(goCtx context.Context, msg *types.MsgLinkCha
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			sdk.EventTypeMessage,
-			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
-			sdk.NewAttribute(sdk.AttributeKeySender, msg.Signer),
-		),
-		sdk.NewEvent(
 			types.EventTypeLinkChainAccount,
 			sdk.NewAttribute(types.AttributeKeyChainLinkExternalAddress, srcAddrData.GetValue()),
 			sdk.NewAttribute(types.AttributeKeyChainLinkChainName, msg.ChainConfig.Name),
@@ -61,12 +55,6 @@ func (k MsgServer) UnlinkChainAccount(goCtx context.Context, msg *types.MsgUnlin
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			sdk.EventTypeMessage,
-			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
-			sdk.NewAttribute(sdk.AttributeKeySender, msg.Owner),
-		),
-		sdk.NewEvent(
 			types.EventTypeUnlinkChainAccount,
 			sdk.NewAttribute(types.AttributeKeyChainLinkExternalAddress, msg.Target),
 			sdk.NewAttribute(types.AttributeKeyChainLinkChainName, msg.ChainName),
@@ -90,12 +78,6 @@ func (k MsgServer) SetDefaultExternalAddress(goCtx context.Context, msg *types.M
 	k.SaveDefaultExternalAddress(ctx, msg.Signer, msg.ChainName, msg.Target)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
-		sdk.NewEvent(
-			sdk.EventTypeMessage,
-			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
-			sdk.NewAttribute(sdk.AttributeKeySender, msg.Signer),
-		),
 		sdk.NewEvent(
 			types.EventTypeSetDefaultExternalAddress,
 			sdk.NewAttribute(types.AttributeKeyChainLinkChainName, msg.ChainName),

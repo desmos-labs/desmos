@@ -1,0 +1,6 @@
+type: fix
+module: none
+pull_request: 5299
+description: 'fix: remove duplicated message type events'
+backward_compatible: true
+date: 2023-12-28T10:10:27.551132142Z

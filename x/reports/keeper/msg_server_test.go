@@ -280,12 +280,6 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateReport() {
 			},
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgCreateReport{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh"),
-				),
-				sdk.NewEvent(
 					types.EventTypeCreateReport,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyReportID, "1"),
@@ -381,12 +375,6 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateReport() {
 				CreationDate: time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 			},
 			expEvents: sdk.Events{
-				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgCreateReport{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh"),
-				),
 				sdk.NewEvent(
 					types.EventTypeCreateReport,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
@@ -603,12 +591,6 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteReport() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgDeleteReport{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh"),
-				),
-				sdk.NewEvent(
 					types.EventTypeDeleteReport,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyReportID, "1"),
@@ -650,12 +632,6 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteReport() {
 			),
 			shouldErr: false,
 			expEvents: sdk.Events{
-				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgDeleteReport{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh"),
-				),
 				sdk.NewEvent(
 					types.EventTypeDeleteReport,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
@@ -821,12 +797,6 @@ func (suite *KeeperTestSuite) TestMsgServer_SupportStandardReason() {
 				ReasonsID: 1,
 			},
 			expEvents: sdk.Events{
-				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgSupportStandardReason{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh"),
-				),
 				sdk.NewEvent(
 					types.EventTypeSupportStandardReason,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
@@ -1006,12 +976,6 @@ func (suite *KeeperTestSuite) TestMsgServer_AddReason() {
 			},
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgAddReason{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh"),
-				),
-				sdk.NewEvent(
 					types.EventTypeAddReason,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyReasonID, "1"),
@@ -1151,12 +1115,6 @@ func (suite *KeeperTestSuite) TestMsgServer_RemoveReason() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgRemoveReason{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh"),
-				),
-				sdk.NewEvent(
 					types.EventTypeRemoveReason,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyReasonID, "1"),
@@ -1211,14 +1169,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UpdateParams() {
 				authtypes.NewModuleAddress("gov").String(),
 			),
 			shouldErr: false,
-			expEvents: sdk.Events{
-				sdk.NewEvent(
-					sdk.EventTypeMessage,
-					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgUpdateParams{})),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos10d07y265gmmuvt4z0w9aw880jnsr700j6zn9kn"),
-				),
-			},
+			expEvents: sdk.Events{},
 			check: func(ctx sdk.Context) {
 				params := suite.k.GetParams(ctx)
 				suite.Require().Equal(types.DefaultParams(), params)

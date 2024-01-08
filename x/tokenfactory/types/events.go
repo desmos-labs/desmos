@@ -9,7 +9,6 @@ const (
 	EventTypeBurn             = "tf_burn"
 	EventTypeSetDenomMetadata = "set_denom_metadata"
 
-	AttributeValueCategory   = ModuleName
 	AttributeKeySubspaceID   = "subspace_id"
 	AttributeAmount          = "amount"
 	AttributeCreator         = "creator"

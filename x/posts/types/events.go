@@ -15,7 +15,6 @@ const (
 	EventTypeAcceptPostOwnerTransfer  = "accept_post_owner_transfer"
 	EventTypeRefusePostOwnerTransfer  = "refuse_post_owner_transfer"
 
-	AttributeValueCategory    = ModuleName
 	AttributeKeySubspaceID    = "subspace_id"
 	AttributeKeySectionID     = "section_id"
 	AttributeKeyPostID        = "post_id"
