@@ -10,7 +10,7 @@ require (
 	cosmossdk.io/math v1.1.2
 	cosmossdk.io/simapp v0.0.0-20230323161446-0af178d721ff
 	github.com/CosmWasm/wasmd v0.43.0
-	github.com/CosmWasm/wasmvm v1.4.1
+	github.com/CosmWasm/wasmvm v1.4.2
 	github.com/armon/go-metrics v0.4.1
 	github.com/btcsuite/btcd/btcec/v2 v2.3.2
 	github.com/cometbft/cometbft v0.37.2
