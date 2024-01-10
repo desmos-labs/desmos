@@ -1,0 +1,6 @@
+type: deps
+module: other
+pull_request: 1287
+description: Bump wasmvm to 1.5.1
+backward_compatible: true
+date: 2024-01-10T12:57:51.662157471Z
