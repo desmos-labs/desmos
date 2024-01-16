@@ -57,7 +57,7 @@ message DidDoc {
     // Documentation: https://www.w3.org/TR/did-core/#also-known-as
     string also_known_as = 4;
 
-    // Keys of verification methods for verifying digital signature, must have at least one associated to Desmos address.
+    // Keys of verification methods for verifying digital signature, must have at least one associated to Desmos account.
     repeated VerificationMethod verification_methods = 5;
 
     // Id of keys for authentication within verification methods (optional).
@@ -68,7 +68,7 @@ message DidDoc {
     // Documentation: https://w3id.org/security#assertionMethod
     repeated string assertion_method = 7;
 
-    // Id of keys for capability invocation that can manage the DID documentation within verification methods, must have at least one associated to Desmos address.
+    // Id of keys for capability invocation that can manage the DID documentation within verification methods, must have at least one associated to Desmos account.
     // Documentation: https://w3id.org/security#capabilityInvocationMethod
     repeated string capability_invocation = 8;
 
@@ -207,7 +207,7 @@ message MsgCreateDidDoc {
     // DIDs or URIs referring to the newly DID document to be set.
     string also_known_as = 4;
 
-    // Keys of the newly DID document for verifying digital signature, must have at least one associated to Desmos address.
+    // Keys of the newly DID document for verifying digital signature, must have at least one associated to Desmos account.
     repeated VerificationMethod verification_methods = 5;
 
     // Verification method for authentication to be set.
@@ -216,7 +216,7 @@ message MsgCreateDidDoc {
     // Verification method for assertion method to be set.
     repeated string assertion_method = 7;
 
-    // Verification method for capability invocation to be set, must have at least one associated to Desmos address.
+    // Verification method for capability invocation to be set, must have at least one associated to Desmos account.
     repeated string capability_invocation = 8;
 
     // Verification method for capability delegation to be set.
@@ -252,7 +252,7 @@ message MsgUpdateDidDoc {
     // DIDs or URIs referring to the newly DID document to be set.
     string also_known_as = 4;
 
-    // Keys of the newly DID document for verifying digital signature, must have at least one associated to Desmos address.
+    // Keys of the newly DID document for verifying digital signature, must have at least one associated to Desmos account.
     repeated VerificationMethod verification_methods = 5;
 
     // Verification method for authentication to be set.
@@ -261,7 +261,7 @@ message MsgUpdateDidDoc {
     // Verification method for assertion method to be set.
     repeated string assertion_method = 7;
 
-    // Verification method for capability invocation to be set, must have at least one associated to Desmos address.
+    // Verification method for capability invocation to be set, must have at least one associated to Desmos account.
     repeated string capability_invocation = 8;
 
     // Verification method for capability delegation to be set.
