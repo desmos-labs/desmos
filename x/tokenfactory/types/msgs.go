@@ -2,15 +2,14 @@ package types
 
 import (
 	"cosmossdk.io/errors"
+	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/cosmos/cosmos-sdk/x/auth/migrations/legacytx"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 )
 
 var (
-	_ sdk.Msg            = &MsgCreateDenom{}
-	_ legacytx.LegacyMsg = &MsgCreateDenom{}
+	_ sdk.Msg = &MsgCreateDenom{}
 )
 
 // NewMsgCreateDenom creates a new MsgCreateDenom instance
@@ -53,16 +52,10 @@ func (msg MsgCreateDenom) Route() string { return RouterKey }
 // Type implements legacytx.LegacyMsg
 func (msg MsgCreateDenom) Type() string { return ActionCreateDenom }
 
-// GetSignBytes implements legacytx.LegacyMsg
-func (msg MsgCreateDenom) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
-}
-
 // --------------------------------------------------------------------------------------------------------------------
 
 var (
-	_ sdk.Msg            = &MsgMint{}
-	_ legacytx.LegacyMsg = &MsgMint{}
+	_ sdk.Msg = &MsgMint{}
 )
 
 // NewMsgMint creates a new MsgMint instance
@@ -85,7 +78,7 @@ func (msg MsgMint) ValidateBasic() error {
 		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid sender address: %s", err)
 	}
 
-	if !msg.Amount.IsValid() || msg.Amount.Amount.Equal(sdk.ZeroInt()) {
+	if !msg.Amount.IsValid() || msg.Amount.Amount.Equal(math.ZeroInt()) {
 		return errors.Wrap(sdkerrors.ErrInvalidCoins, msg.Amount.String())
 	}
 
@@ -104,16 +97,10 @@ func (msg MsgMint) Route() string { return RouterKey }
 // Type implements legacytx.LegacyMsg
 func (msg MsgMint) Type() string { return ActionMint }
 
-// MsgMint implements legacytx.LegacyMsg
-func (msg MsgMint) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
-}
-
 // --------------------------------------------------------------------------------------------------------------------
 
 var (
-	_ sdk.Msg            = &MsgBurn{}
-	_ legacytx.LegacyMsg = &MsgBurn{}
+	_ sdk.Msg = &MsgBurn{}
 )
 
 // NewMsgCreateDenom creates a new MsgBurn instance
@@ -136,7 +123,7 @@ func (msg MsgBurn) ValidateBasic() error {
 		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid sender address: %s", err)
 	}
 
-	if !msg.Amount.IsValid() || msg.Amount.Amount.Equal(sdk.ZeroInt()) {
+	if !msg.Amount.IsValid() || msg.Amount.Amount.Equal(math.ZeroInt()) {
 		return errors.Wrap(sdkerrors.ErrInvalidCoins, msg.Amount.String())
 	}
 
@@ -155,16 +142,10 @@ func (msg MsgBurn) Route() string { return RouterKey }
 // Type implements legacytx.LegacyMsg
 func (msg MsgBurn) Type() string { return ActionBurn }
 
-// GetSignBytes implements legacytx.LegacyMsg
-func (msg MsgBurn) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
-}
-
 // --------------------------------------------------------------------------------------------------------------------
 
 var (
-	_ sdk.Msg            = &MsgSetDenomMetadata{}
-	_ legacytx.LegacyMsg = &MsgSetDenomMetadata{}
+	_ sdk.Msg = &MsgSetDenomMetadata{}
 )
 
 // NewMsgCreateDenom creates a new MsgSetDenomMetadata instance
@@ -208,16 +189,10 @@ func (msg MsgSetDenomMetadata) Route() string { return RouterKey }
 // Type implements legacytx.LegacyMsg
 func (msg MsgSetDenomMetadata) Type() string { return ActionSetDenomMetadata }
 
-// GetSignBytes implements legacytx.LegacyMsg
-func (msg MsgSetDenomMetadata) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
-}
-
 // --------------------------------------------------------------------------------------------------------------------
 
 var (
-	_ sdk.Msg            = &MsgUpdateParams{}
-	_ legacytx.LegacyMsg = &MsgUpdateParams{}
+	_ sdk.Msg = &MsgUpdateParams{}
 )
 
 // NewMsgUpdateParams creates a new MsgUpdateParams instance
@@ -249,8 +224,3 @@ func (msg MsgUpdateParams) Route() string { return RouterKey }
 
 // Type implements legacytx.LegacyMsg
 func (msg MsgUpdateParams) Type() string { return ActionUpdateParams }
-
-// GetSignBytes implements legacytx.LegacyMsg
-func (msg MsgUpdateParams) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
-}

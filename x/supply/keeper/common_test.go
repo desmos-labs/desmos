@@ -2,15 +2,19 @@ package keeper_test
 
 import (
 	"testing"
+	"time"
 
-	db "github.com/cometbft/cometbft-db"
-	"github.com/cometbft/cometbft/libs/log"
+	"cosmossdk.io/log"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
+	db "github.com/cosmos/cosmos-db"
 
+	"cosmossdk.io/store"
+	"cosmossdk.io/store/metrics"
+	storetypes "cosmossdk.io/store/types"
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/codec/address"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
-	"github.com/cosmos/cosmos-sdk/store"
-	storetypes "github.com/cosmos/cosmos-sdk/store/types"
+	"github.com/cosmos/cosmos-sdk/runtime"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -46,11 +50,11 @@ func (suite *KeeperTestSuite) SetupTest() {
 	maccPerms := app.GetMaccPerms()
 
 	// Define store keys
-	keys := sdk.NewMemoryStoreKeys(authtypes.StoreKey, banktypes.StoreKey, distributiontypes.StoreKey, stakingtypes.StoreKey)
+	keys := storetypes.NewKVStoreKeys(authtypes.StoreKey, banktypes.StoreKey, distributiontypes.StoreKey, stakingtypes.StoreKey)
 
 	// Create an in-memory db
 	memDB := db.NewMemDB()
-	ms := store.NewCommitMultiStore(memDB)
+	ms := store.NewCommitMultiStore(memDB, log.NewNopLogger(), metrics.NewNoOpMetrics())
 	for _, key := range keys {
 		ms.MountStoreWithDB(key, storetypes.StoreTypeIAVL, memDB)
 	}
@@ -69,44 +73,48 @@ func (suite *KeeperTestSuite) SetupTest() {
 	// Dependencies initialization
 	suite.ak = authkeeper.NewAccountKeeper(
 		suite.cdc,
-		keys[authtypes.StoreKey],
+		runtime.NewKVStoreService(keys[authtypes.StoreKey]),
 		authtypes.ProtoBaseAccount,
 		maccPerms,
+		address.NewBech32Codec("cosmos"),
 		"cosmos",
 		authtypes.NewModuleAddress("gov").String(),
 	)
 
 	moduleAcc := authtypes.NewEmptyModuleAccount(banktypes.ModuleName, authtypes.Burner,
 		authtypes.Minter, authtypes.Staking)
-
-	suite.ak.SetModuleAccount(suite.ctx, moduleAcc)
+	maccI := (suite.ak.NewAccount(suite.ctx, moduleAcc)).(sdk.ModuleAccountI) // set the account number
+	suite.ak.SetModuleAccount(suite.ctx, maccI)
 
 	suite.bk = bankkeeper.NewBaseKeeper(
 		suite.cdc,
-		keys[banktypes.StoreKey],
+		runtime.NewKVStoreService(keys[banktypes.StoreKey]),
 		suite.ak,
 		nil,
 		authtypes.NewModuleAddress("gov").String(),
+		log.NewNopLogger(),
 	)
 
 	suite.sk = stakingkeeper.NewKeeper(
 		suite.cdc,
-		keys[stakingtypes.StoreKey],
+		runtime.NewKVStoreService(keys[stakingtypes.StoreKey]),
 		suite.ak,
 		suite.bk,
 		authtypes.NewModuleAddress("gov").String(),
+		address.NewBech32Codec("cosmosvaloper"),
+		address.NewBech32Codec("cosmosvalcons"),
 	)
 
 	suite.dk = distributionkeeper.NewKeeper(
 		suite.cdc,
-		keys[distributiontypes.StoreKey],
+		runtime.NewKVStoreService(keys[distributiontypes.StoreKey]),
 		suite.ak,
 		suite.bk,
 		suite.sk,
 		authtypes.FeeCollectorName,
 		authtypes.NewModuleAddress("gov").String(),
 	)
-	suite.dk.SetFeePool(suite.ctx, distributiontypes.InitialFeePool())
+	suite.dk.FeePool.Set(suite.ctx, distributiontypes.InitialFeePool())
 
 	// Define keeper
 	suite.k = keeper.NewKeeper(suite.cdc, suite.ak, suite.bk, suite.dk)
@@ -126,13 +134,14 @@ func (suite *KeeperTestSuite) setupSupply(ctx sdk.Context, totalSupply sdk.Coins
 	suite.Require().NoError(suite.bk.MintCoins(ctx, moduleAcc.GetName(), totalSupply))
 
 	// Create a vesting account
-	vestingAccount := vestingtypes.NewContinuousVestingAccount(
+	vestingAccount, err := vestingtypes.NewContinuousVestingAccount(
 		suite.createBaseAccount(),
 		vestedSupply,
 		0,
-		12324125423,
+		time.Date(2100, 1, 1, 0, 0, 0, 0, time.UTC).Unix(),
 	)
-	suite.ak.SetAccount(ctx, vestingAccount)
+	suite.Require().NoError(err)
+	suite.ak.SetAccount(ctx, suite.ak.NewAccount(ctx, vestingAccount))
 
 	// Send supply coins to the vesting account
 	suite.Require().NoError(suite.bk.SendCoinsFromModuleToAccount(

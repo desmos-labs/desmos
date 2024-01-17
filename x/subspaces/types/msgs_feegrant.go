@@ -4,20 +4,16 @@ import (
 	"fmt"
 
 	"cosmossdk.io/errors"
+	feegranttypes "cosmossdk.io/x/feegrant"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/cosmos/cosmos-sdk/x/auth/migrations/legacytx"
-	feegranttypes "github.com/cosmos/cosmos-sdk/x/feegrant"
 	"github.com/gogo/protobuf/proto"
 )
 
 var (
 	_ sdk.Msg = &MsgGrantAllowance{}
 	_ sdk.Msg = &MsgRevokeAllowance{}
-
-	_ legacytx.LegacyMsg = &MsgGrantAllowance{}
-	_ legacytx.LegacyMsg = &MsgRevokeAllowance{}
 
 	_ ManageSubspaceMsg = &MsgGrantAllowance{}
 	_ ManageSubspaceMsg = &MsgRevokeAllowance{}
@@ -101,11 +97,6 @@ func (msg *MsgGrantAllowance) Route() string {
 	return RouterKey
 }
 
-// GetSignBytes implements legacytx.LegacyMsg
-func (msg *MsgGrantAllowance) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
-}
-
 // GetUnpackedAllowance gets the unpacked allowance from the cached value of the allowance
 func (msg *MsgGrantAllowance) GetUnpackedAllowance() (feegranttypes.FeeAllowanceI, error) {
 	allowance, ok := msg.Allowance.GetCachedValue().(feegranttypes.FeeAllowanceI)
@@ -176,11 +167,6 @@ func (msg *MsgRevokeAllowance) Type() string {
 // Route implements legacytx.LegacyMsg
 func (msg *MsgRevokeAllowance) Route() string {
 	return RouterKey
-}
-
-// GetSignBytes implements legacytx.LegacyMsg
-func (msg *MsgRevokeAllowance) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
 }
 
 // UnpackInterfaces implements codectypes.UnpackInterfacesMessage

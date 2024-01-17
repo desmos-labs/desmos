@@ -1,9 +1,9 @@
 package v5
 
 import (
+	"cosmossdk.io/store/prefix"
+	storetypes "cosmossdk.io/store/types"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/store/prefix"
-	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	v4 "github.com/desmos-labs/desmos/v6/x/posts/legacy/v4"
@@ -22,7 +22,7 @@ func MigrateStore(ctx sdk.Context, storeKey storetypes.StoreKey, cdc codec.Binar
 }
 
 // migrateAttachments migrates all the attachments to v5
-func migrateAttachments(store sdk.KVStore, cdc codec.BinaryCodec) error {
+func migrateAttachments(store storetypes.KVStore, cdc codec.BinaryCodec) error {
 	attachmentsStore := prefix.NewStore(store, types.AttachmentPrefix)
 	attachmentsIterator := attachmentsStore.Iterator(nil, nil)
 	defer attachmentsIterator.Close()

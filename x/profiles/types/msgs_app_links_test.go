@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	clienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
+	clienttypes "github.com/cosmos/ibc-go/v8/modules/core/02-client/types"
 	"github.com/stretchr/testify/require"
 
 	"github.com/desmos-labs/desmos/v6/x/profiles/types"
@@ -133,11 +133,6 @@ func TestMsgLinkApplication_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgLinkApplication_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgLinkApplication","value":{"call_data":"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D","link_data":{"application":"twitter","username":"twitteruser"},"sender":"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773","source_channel":"channel-0","source_port":"ibc-profiles","timeout_height":{"revision_height":"1000"}}}`
-	require.Equal(t, expected, string(msgLinkApplication.GetSignBytes()))
-}
-
 func TestMsgLinkApplication_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgLinkApplication.Sender)
 	require.Equal(t, []sdk.AccAddress{addr}, msgLinkApplication.GetSigners())
@@ -211,11 +206,6 @@ func TestMsgUnlinkApplication_ValidateBasic(t *testing.T) {
 			}
 		})
 	}
-}
-
-func TestMsgUnlinkApplication_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgUnlinkApplication","value":{"application":"twitter","signer":"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773","username":"twitteruser"}}`
-	require.Equal(t, expected, string(msgUnlinkApplication.GetSignBytes()))
 }
 
 func TestMsgUnlinkApplication_GetSigners(t *testing.T) {

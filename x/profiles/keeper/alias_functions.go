@@ -3,8 +3,8 @@ package keeper
 import (
 	"bytes"
 
+	storetypes "cosmossdk.io/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	"github.com/desmos-labs/desmos/v6/x/profiles/types"
 )
@@ -12,7 +12,7 @@ import (
 // IterateProfiles iterates through the Profiles set and performs the provided function
 func (k Keeper) IterateProfiles(ctx sdk.Context, fn func(profile *types.Profile) (stop bool)) {
 
-	k.ak.IterateAccounts(ctx, func(account authtypes.AccountI) (stop bool) {
+	k.ak.IterateAccounts(ctx, func(account sdk.AccountI) (stop bool) {
 		profile, ok := account.(*types.Profile)
 
 		if ok {
@@ -49,7 +49,7 @@ func (k Keeper) IterateDTagTransferRequests(
 	ctx sdk.Context, fn func(dTagTransferRequest types.DTagTransferRequest) (stop bool),
 ) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.DTagTransferRequestPrefix)
+	iterator := storetypes.KVStorePrefixIterator(store, types.DTagTransferRequestPrefix)
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
@@ -67,7 +67,7 @@ func (k Keeper) IterateUserIncomingDTagTransferRequests(
 	ctx sdk.Context, user string, fn func(dTagTransferRequest types.DTagTransferRequest) (stop bool),
 ) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.IncomingDTagTransferRequestsPrefix(user))
+	iterator := storetypes.KVStorePrefixIterator(store, types.IncomingDTagTransferRequestsPrefix(user))
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
@@ -84,7 +84,7 @@ func (k Keeper) IterateUserIncomingDTagTransferRequests(
 // IterateApplicationLinks iterates through all the application links and performs the provided function
 func (k Keeper) IterateApplicationLinks(ctx sdk.Context, fn func(link types.ApplicationLink) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.ApplicationLinkPrefix)
+	iterator := storetypes.KVStorePrefixIterator(store, types.ApplicationLinkPrefix)
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
@@ -100,7 +100,7 @@ func (k Keeper) IterateApplicationLinks(ctx sdk.Context, fn func(link types.Appl
 // and performs the provided function
 func (k Keeper) IterateUserApplicationLinks(ctx sdk.Context, user string, fn func(link types.ApplicationLink) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.UserApplicationLinksPrefix(user))
+	iterator := storetypes.KVStorePrefixIterator(store, types.UserApplicationLinksPrefix(user))
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
@@ -128,7 +128,7 @@ func (k Keeper) GetApplicationLinks(ctx sdk.Context) []types.ApplicationLink {
 func (k Keeper) IterateExpiringApplicationLinks(ctx sdk.Context, fn func(link types.ApplicationLink) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 
-	iterator := sdk.KVStorePrefixIterator(store, types.ExpiringAppLinkTimePrefix)
+	iterator := storetypes.KVStorePrefixIterator(store, types.ExpiringAppLinkTimePrefix)
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
@@ -174,7 +174,7 @@ func (k Keeper) IterateExpiringApplicationLinks(ctx sdk.Context, fn func(link ty
 // IterateChainLinks iterates through the chain links and perform the provided function
 func (k Keeper) IterateChainLinks(ctx sdk.Context, fn func(link types.ChainLink) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.ChainLinksPrefix)
+	iterator := storetypes.KVStorePrefixIterator(store, types.ChainLinksPrefix)
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
@@ -190,7 +190,7 @@ func (k Keeper) IterateChainLinks(ctx sdk.Context, fn func(link types.ChainLink)
 func (k Keeper) IterateUserChainLinks(ctx sdk.Context, user string, fn func(link types.ChainLink) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 
-	iterator := sdk.KVStorePrefixIterator(store, types.UserChainLinksPrefix(user))
+	iterator := storetypes.KVStorePrefixIterator(store, types.UserChainLinksPrefix(user))
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
@@ -207,7 +207,7 @@ func (k Keeper) IterateUserChainLinks(ctx sdk.Context, user string, fn func(link
 func (k Keeper) IterateUserChainLinksByChain(ctx sdk.Context, user string, chainName string, fn func(link types.ChainLink) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 
-	iterator := sdk.KVStorePrefixIterator(store, types.UserChainLinksChainPrefix(user, chainName))
+	iterator := storetypes.KVStorePrefixIterator(store, types.UserChainLinksChainPrefix(user, chainName))
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
@@ -234,7 +234,7 @@ func (k Keeper) GetChainLinks(ctx sdk.Context) []types.ChainLink {
 func (k Keeper) IterateDefaultExternalAddresses(ctx sdk.Context, fn func(entry types.DefaultExternalAddressEntry) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 
-	iterator := sdk.KVStorePrefixIterator(store, types.DefaultExternalAddressPrefix)
+	iterator := storetypes.KVStorePrefixIterator(store, types.DefaultExternalAddressPrefix)
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {

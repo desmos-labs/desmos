@@ -3,6 +3,7 @@ package types_test
 import (
 	"testing"
 
+	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
@@ -17,12 +18,12 @@ func TestParams_Validate(t *testing.T) {
 	}{
 		{
 			name:      "invalid coins return error",
-			params:    types.NewParams(sdk.Coins{sdk.Coin{Denom: "%invalid%", Amount: sdk.NewInt(100)}}),
+			params:    types.NewParams(sdk.Coins{sdk.Coin{Denom: "%invalid%", Amount: math.NewInt(100)}}),
 			shouldErr: true,
 		},
 		{
 			name:      "valid params return no error",
-			params:    types.NewParams(sdk.NewCoins(sdk.Coin{Denom: "udsm", Amount: sdk.NewInt(100)})),
+			params:    types.NewParams(sdk.NewCoins(sdk.Coin{Denom: "udsm", Amount: math.NewInt(100)})),
 			shouldErr: false,
 		},
 		{

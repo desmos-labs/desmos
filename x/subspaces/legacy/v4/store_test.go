@@ -4,14 +4,16 @@ import (
 	"testing"
 	"time"
 
+	"github.com/cosmos/cosmos-sdk/runtime"
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 
 	subspacesauthz "github.com/desmos-labs/desmos/v6/x/subspaces/authz"
 	v4 "github.com/desmos-labs/desmos/v6/x/subspaces/legacy/v4"
 
+	storetypes "cosmossdk.io/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	capabilitytypes "github.com/cosmos/ibc-go/modules/capability/types"
 	"github.com/stretchr/testify/require"
 
 	"github.com/desmos-labs/desmos/v6/app"
@@ -24,12 +26,12 @@ func TestMigrateStore(t *testing.T) {
 	cdc, _ := app.MakeCodecs()
 
 	// Build all the necessary keys
-	keys := sdk.NewKVStoreKeys(authzkeeper.StoreKey)
-	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
-	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
+	keys := storetypes.NewKVStoreKeys(authzkeeper.StoreKey)
+	tKeys := storetypes.NewTransientStoreKeys(paramstypes.TStoreKey)
+	memKeys := storetypes.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
 	// Build the authz keeper
-	authzKeeper := authzkeeper.NewKeeper(keys[authzkeeper.StoreKey], cdc, nil, nil)
+	authzKeeper := authzkeeper.NewKeeper(runtime.NewKVStoreService(keys[authzkeeper.StoreKey]), cdc, nil, nil)
 
 	testCases := []struct {
 		name      string

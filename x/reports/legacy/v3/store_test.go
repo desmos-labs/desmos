@@ -3,6 +3,7 @@ package v3_test
 import (
 	"testing"
 
+	storetypes "cosmossdk.io/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
@@ -34,7 +35,7 @@ func (ms mockSubspace) SetParamSet(ctx sdk.Context, ps paramstypes.ParamSet) {
 func TestMigrate(t *testing.T) {
 	cdc, _ := app.MakeCodecs()
 
-	keys := sdk.NewKVStoreKeys(types.StoreKey)
+	keys := storetypes.NewKVStoreKeys(types.StoreKey)
 
 	testCases := []struct {
 		name          string

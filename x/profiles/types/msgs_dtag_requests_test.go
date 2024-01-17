@@ -68,11 +68,6 @@ func TestMsgRequestDTagTransfer_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgRequestDTagTransfer_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgRequestDTagTransfer","value":{"receiver":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","sender":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
-	require.Equal(t, expected, string(msgRequestTransferDTag.GetSignBytes()))
-}
-
 func TestMsgRequestDTagTransfer_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgRequestTransferDTag.Sender)
 	require.Equal(t, []sdk.AccAddress{addr}, msgRequestTransferDTag.GetSigners())
@@ -157,11 +152,6 @@ func TestMsgAcceptDTagTransferRequest_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgAcceptDTagTransferRequest_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgAcceptDTagTransferRequest","value":{"new_dtag":"dtag","receiver":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","sender":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"}}`
-	require.Equal(t, expected, string(msgAcceptDTagTransfer.GetSignBytes()))
-}
-
 func TestMsgAcceptDTagTransferRequest_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgAcceptDTagTransfer.Receiver)
 	require.Equal(t, []sdk.AccAddress{addr}, msgAcceptDTagTransfer.GetSigners())
@@ -236,11 +226,6 @@ func TestMsgRejectDTagTransferRequest_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgRejectDTagTransferRequest_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgRefuseDTagTransferRequest","value":{"receiver":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","sender":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"}}`
-	require.Equal(t, expected, string(msgRejectDTagTransfer.GetSignBytes()))
-}
-
 func TestMsgRejectDTagTransferRequest_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgRejectDTagTransfer.Receiver)
 	require.Equal(t, []sdk.AccAddress{addr}, msgRejectDTagTransfer.GetSigners())
@@ -310,11 +295,6 @@ func TestMsgCancelDTagTransferRequest_ValidateBasic(t *testing.T) {
 			}
 		})
 	}
-}
-
-func TestMsgCancelDTagTransferRequest_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgCancelDTagTransferRequest","value":{"receiver":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","sender":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
-	require.Equal(t, expected, string(msgCancelDTagTransferReq.GetSignBytes()))
 }
 
 func TestMsgCancelDTagTransferRequest_GetSigners(t *testing.T) {

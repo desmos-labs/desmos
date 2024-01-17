@@ -164,7 +164,7 @@ func (suite *KeeperTestSuite) TestQueryServer_SubspacePosts() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.SubspacePosts(sdk.WrapSDKContext(ctx), tc.request)
+			res, err := suite.k.SubspacePosts(ctx, tc.request)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -330,7 +330,7 @@ func (suite *KeeperTestSuite) TestQueryServer_SectionPosts() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.SectionPosts(sdk.WrapSDKContext(ctx), tc.request)
+			res, err := suite.k.SectionPosts(ctx, tc.request)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -413,7 +413,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Post() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.Post(sdk.WrapSDKContext(ctx), tc.request)
+			res, err := suite.k.Post(ctx, tc.request)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -498,7 +498,7 @@ func (suite *KeeperTestSuite) TestQueryServer_PostAttachments() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.PostAttachments(sdk.WrapSDKContext(ctx), tc.request)
+			res, err := suite.k.PostAttachments(ctx, tc.request)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -603,7 +603,7 @@ func (suite *KeeperTestSuite) TestQueryServer_PollAnswers() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.PollAnswers(sdk.WrapSDKContext(ctx), tc.request)
+			res, err := suite.k.PollAnswers(ctx, tc.request)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -639,7 +639,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Params() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.Params(sdk.WrapSDKContext(ctx), tc.request)
+			res, err := suite.k.Params(ctx, tc.request)
 			suite.Require().NoError(err)
 			suite.Require().Equal(tc.expParams, res.Params)
 		})
@@ -729,7 +729,7 @@ func (suite *KeeperTestSuite) TestQueryServer_IncomingPostOwnerTransferRequests(
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.IncomingPostOwnerTransferRequests(sdk.WrapSDKContext(ctx), tc.request)
+			res, err := suite.k.IncomingPostOwnerTransferRequests(ctx, tc.request)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {

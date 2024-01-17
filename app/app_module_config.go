@@ -1,12 +1,13 @@
 package app
 
 import (
+	"cosmossdk.io/depinject"
+
 	runtimev1alpha1 "cosmossdk.io/api/cosmos/app/runtime/v1alpha1"
 	appv1alpha1 "cosmossdk.io/api/cosmos/app/v1alpha1"
 	authmodulev1 "cosmossdk.io/api/cosmos/auth/module/v1"
 	authzmodulev1 "cosmossdk.io/api/cosmos/authz/module/v1"
 	bankmodulev1 "cosmossdk.io/api/cosmos/bank/module/v1"
-	capabilitymodulev1 "cosmossdk.io/api/cosmos/capability/module/v1"
 	consensusmodulev1 "cosmossdk.io/api/cosmos/consensus/module/v1"
 	crisismodulev1 "cosmossdk.io/api/cosmos/crisis/module/v1"
 	distrmodulev1 "cosmossdk.io/api/cosmos/distribution/module/v1"
@@ -23,28 +24,48 @@ import (
 	vestingmodulev1 "cosmossdk.io/api/cosmos/vesting/module/v1"
 
 	"cosmossdk.io/core/appconfig"
+	evidencetypes "cosmossdk.io/x/evidence/types"
+	"cosmossdk.io/x/feegrant"
+	upgradetypes "cosmossdk.io/x/upgrade/types"
+	"github.com/cosmos/cosmos-sdk/runtime"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/module"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 	"github.com/cosmos/cosmos-sdk/x/authz"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	consensustypes "github.com/cosmos/cosmos-sdk/x/consensus/types"
 	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
-	evidencetypes "github.com/cosmos/cosmos-sdk/x/evidence/types"
-	"github.com/cosmos/cosmos-sdk/x/feegrant"
+	"github.com/cosmos/cosmos-sdk/x/genutil"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
+	"github.com/cosmos/cosmos-sdk/x/gov"
+	govclient "github.com/cosmos/cosmos-sdk/x/gov/client"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
+	paramsclient "github.com/cosmos/cosmos-sdk/x/params/client"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 
-	icatypes "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/types"
-	ibcfeetypes "github.com/cosmos/ibc-go/v7/modules/apps/29-fee/types"
-	ibctransfertypes "github.com/cosmos/ibc-go/v7/modules/apps/transfer/types"
+	_ "cosmossdk.io/x/evidence"                       // import for side-effects
+	_ "cosmossdk.io/x/feegrant/module"                // import for side-effects
+	_ "cosmossdk.io/x/upgrade"                        // import for side-effects
+	_ "github.com/cosmos/cosmos-sdk/x/auth/tx/config" // import for side-effects
+	_ "github.com/cosmos/cosmos-sdk/x/auth/vesting"   // import for side-effects
+	_ "github.com/cosmos/cosmos-sdk/x/authz/module"   // import for side-effects
+	_ "github.com/cosmos/cosmos-sdk/x/bank"           // import for side-effects
+	_ "github.com/cosmos/cosmos-sdk/x/consensus"      // import for side-effects
+	_ "github.com/cosmos/cosmos-sdk/x/crisis"         // import for side-effects
+	_ "github.com/cosmos/cosmos-sdk/x/distribution"   // import for side-effects
+	_ "github.com/cosmos/cosmos-sdk/x/mint"           // import for side-effects
+	_ "github.com/cosmos/cosmos-sdk/x/params"         // import for side-effects
+	_ "github.com/cosmos/cosmos-sdk/x/slashing"       // import for side-effects
+	_ "github.com/cosmos/cosmos-sdk/x/staking"        // import for side-effects
+
+	icatypes "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts/types"
+	ibcfeetypes "github.com/cosmos/ibc-go/v8/modules/apps/29-fee/types"
+	ibctransfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 
@@ -56,6 +77,15 @@ import (
 	subspacesmodulev1 "github.com/desmos-labs/desmos/v6/api/desmos/subspaces/module/v1"
 	supplymodulev1 "github.com/desmos-labs/desmos/v6/api/desmos/supply/module/v1"
 	tokenfactorymodulev1 "github.com/desmos-labs/desmos/v6/api/desmos/tokenfactory/module/v1"
+
+	_ "github.com/desmos-labs/desmos/v6/x/posts"         // import for side-effects
+	_ "github.com/desmos-labs/desmos/v6/x/profiles"      // import for side-effects
+	_ "github.com/desmos-labs/desmos/v6/x/reactions"     // import for side-effects
+	_ "github.com/desmos-labs/desmos/v6/x/relationships" // import for side-effects
+	_ "github.com/desmos-labs/desmos/v6/x/reports"       // import for side-effects
+	_ "github.com/desmos-labs/desmos/v6/x/subspaces"     // import for side-effects
+	_ "github.com/desmos-labs/desmos/v6/x/supply"        // import for side-effects
+	_ "github.com/desmos-labs/desmos/v6/x/tokenfactory"  // import for side-effects
 
 	poststypes "github.com/desmos-labs/desmos/v6/x/posts/types"
 	profilestypes "github.com/desmos-labs/desmos/v6/x/profiles/types"
@@ -84,20 +114,18 @@ var (
 		// We allow the following module accounts to receive funds:
 		// govtypes.ModuleName
 	}
+)
 
-	// application configuration (used by depinject)
-	AppConfig = appconfig.Compose(&appv1alpha1.Config{
+// GetAppConfig returns the depinject config for building modules
+func GetAppConfig() depinject.Config {
+	return depinject.Configs(appconfig.Compose(&appv1alpha1.Config{
 		Modules: []*appv1alpha1.ModuleConfig{
 			// SDK modules
 			{
-				Name: "runtime",
+				Name: runtime.ModuleName,
 				Config: appconfig.WrapAny(&runtimev1alpha1.Module{
-					AppName: appName,
-					// During begin block slashing happens after distr.BeginBlocker so that
-					// there is nothing left over in the validator fee pool, so as to keep the
-					// CanWithdrawInvariant invariant.
-					// NOTE: staking module is required if HistoricalEntries param > 0
-					// NOTE: capability module's beginblocker must come before any modules using capabilities (e.g. IBC)
+					AppName:       appName,
+					PreBlockers:   preblockerOder,
 					BeginBlockers: beginBlockerOrder,
 					EndBlockers:   endBlockerOrder,
 					OverrideStoreKeys: []*runtimev1alpha1.StoreKeyConfig{
@@ -106,19 +134,14 @@ var (
 							KvStoreKey: "acc",
 						},
 					},
-					InitGenesis: genesisModuleOrder,
-					// When ExportGenesis is not specified, the export genesis module order
-					// is equal to the init genesis order
-					// ExportGenesis: genesisModuleOrder,
-					// Uncomment if you want to set a custom migration order here.
-					// OrderMigrations: nil,
+					InitGenesis:     genesisModuleOrder,
 					OrderMigrations: migrationModuleOrder,
 				}),
 			},
 			{
 				Name: authtypes.ModuleName,
 				Config: appconfig.WrapAny(&authmodulev1.Module{
-					Bech32Prefix:             sdk.Bech32MainPrefix,
+					Bech32Prefix:             sdk.GetConfig().GetBech32AccountAddrPrefix(),
 					ModuleAccountPermissions: maccPerms,
 					// By default modules authority is the governance module. This is configurable with the following:
 					// Authority: "group", // A custom module authority can be set using a module name
@@ -137,7 +160,12 @@ var (
 			},
 			{
 				Name:   stakingtypes.ModuleName,
-				Config: appconfig.WrapAny(&stakingmodulev1.Module{}),
+				Config: appconfig.WrapAny(&stakingmodulev1.Module{
+					// NOTE: specifying a prefix is only necessary when using bech32 addresses
+					// If not specfied, the auth Bech32Prefix appended with "valoper" and "valcons" is used by default
+					// Bech32PrefixValidator: "desmosvaloper",
+					// Bech32PrefixConsensus: "desmosvalcons",
+				}),
 			},
 			{
 				Name:   slashingtypes.ModuleName,
@@ -166,12 +194,6 @@ var (
 			{
 				Name:   distrtypes.ModuleName,
 				Config: appconfig.WrapAny(&distrmodulev1.Module{}),
-			},
-			{
-				Name: capabilitytypes.ModuleName,
-				Config: appconfig.WrapAny(&capabilitymodulev1.Module{
-					SealKeeper: true,
-				}),
 			},
 			{
 				Name:   evidencetypes.ModuleName,
@@ -232,5 +254,16 @@ var (
 				Config: appconfig.WrapAny(&tokenfactorymodulev1.Module{}),
 			},
 		},
-	})
-)
+	}),
+		depinject.Supply(
+			// supply custom module basics
+			map[string]module.AppModuleBasic{
+				genutiltypes.ModuleName: genutil.NewAppModuleBasic(genutiltypes.DefaultMessageValidator),
+				govtypes.ModuleName: gov.NewAppModuleBasic(
+					[]govclient.ProposalHandler{
+						paramsclient.ProposalHandler,
+					},
+				),
+			},
+		))
+}

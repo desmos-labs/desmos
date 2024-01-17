@@ -34,7 +34,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Params() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.Params(sdk.WrapSDKContext(ctx), tc.request)
+			res, err := suite.k.Params(ctx, tc.request)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -73,7 +73,7 @@ func (suite *KeeperTestSuite) TestQueryServer_SubspaceDenoms() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.SubspaceDenoms(sdk.WrapSDKContext(ctx), tc.request)
+			res, err := suite.k.SubspaceDenoms(ctx, tc.request)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {

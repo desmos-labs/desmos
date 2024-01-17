@@ -52,7 +52,7 @@ func (querier ReactionsWasmQuerier) handleReactionsRequest(ctx sdk.Context, data
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-	res, err := querier.reactionskeeper.Reactions(sdk.WrapSDKContext(ctx), &req)
+	res, err := querier.reactionskeeper.Reactions(ctx, &req)
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
@@ -65,7 +65,7 @@ func (querier ReactionsWasmQuerier) handleReactionRequest(ctx sdk.Context, data 
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-	res, err := querier.reactionskeeper.Reaction(sdk.WrapSDKContext(ctx), &req)
+	res, err := querier.reactionskeeper.Reaction(ctx, &req)
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
@@ -78,7 +78,7 @@ func (querier ReactionsWasmQuerier) handleRegisteredReactionsRequest(ctx sdk.Con
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-	res, err := querier.reactionskeeper.RegisteredReactions(sdk.WrapSDKContext(ctx), &req)
+	res, err := querier.reactionskeeper.RegisteredReactions(ctx, &req)
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
@@ -91,7 +91,7 @@ func (querier ReactionsWasmQuerier) handleRegisteredReactionRequest(ctx sdk.Cont
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-	res, err := querier.reactionskeeper.RegisteredReaction(sdk.WrapSDKContext(ctx), &req)
+	res, err := querier.reactionskeeper.RegisteredReaction(ctx, &req)
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
@@ -104,7 +104,7 @@ func (querier ReactionsWasmQuerier) handleReactionsParamsRequest(ctx sdk.Context
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-	res, err := querier.reactionskeeper.ReactionsParams(sdk.WrapSDKContext(ctx), &req)
+	res, err := querier.reactionskeeper.ReactionsParams(ctx, &req)
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}

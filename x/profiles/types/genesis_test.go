@@ -4,9 +4,9 @@ import (
 	"testing"
 	"time"
 
+	"cosmossdk.io/math"
 	"github.com/desmos-labs/desmos/v6/testutil/profilestesting"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
 	"github.com/desmos-labs/desmos/v6/x/profiles/types"
@@ -28,7 +28,7 @@ func TestValidateGenesis(t *testing.T) {
 			genesis: types.NewGenesisState(
 				nil,
 				types.NewParams(
-					types.NewNicknameParams(sdk.NewInt(-1), sdk.NewInt(10)),
+					types.NewNicknameParams(math.NewInt(-1), math.NewInt(10)),
 					types.DefaultDTagParams(),
 					types.DefaultBioParams(),
 					types.DefaultOracleParams(),

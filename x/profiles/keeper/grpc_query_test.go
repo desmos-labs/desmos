@@ -70,7 +70,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Profile() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.Profile(sdk.WrapSDKContext(ctx), tc.req)
+			res, err := suite.k.Profile(ctx, tc.req)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -103,7 +103,7 @@ func (suite *KeeperTestSuite) TestQueryServer_IncomingDTagTransferRequests() {
 					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 				)
-				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr(request.Receiver)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr(request.Receiver, profilestesting.WithNextAccountNumber(ctx, suite.ak))))
 				suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, request))
 
 				request = types.NewDTagTransferRequest(
@@ -111,7 +111,7 @@ func (suite *KeeperTestSuite) TestQueryServer_IncomingDTagTransferRequests() {
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 				)
-				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr(request.Receiver)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr(request.Receiver, profilestesting.WithNextAccountNumber(ctx, suite.ak))))
 				suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, request))
 			},
 			req: types.NewQueryIncomingDTagTransferRequestsRequest(
@@ -164,10 +164,10 @@ func (suite *KeeperTestSuite) TestQueryServer_IncomingDTagTransferRequests() {
 			name: "valid request without user",
 			store: func(ctx sdk.Context) {
 				receiver1 := "cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x"
-				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr(receiver1)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr(receiver1, profilestesting.WithNextAccountNumber(ctx, suite.ak))))
 
 				receiver2 := "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"
-				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr(receiver2)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr(receiver2, profilestesting.WithNextAccountNumber(ctx, suite.ak))))
 
 				request := types.NewDTagTransferRequest(
 					"dtag",
@@ -208,7 +208,7 @@ func (suite *KeeperTestSuite) TestQueryServer_IncomingDTagTransferRequests() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.IncomingDTagTransferRequests(sdk.WrapSDKContext(ctx), tc.req)
+			res, err := suite.k.IncomingDTagTransferRequests(ctx, tc.req)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -618,7 +618,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinks() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.ChainLinks(sdk.WrapSDKContext(ctx), tc.req)
+			res, err := suite.k.ChainLinks(ctx, tc.req)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -726,7 +726,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinkOwners() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.ChainLinkOwners(sdk.WrapSDKContext(ctx), tc.request)
+			res, err := suite.k.ChainLinkOwners(ctx, tc.request)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -760,8 +760,8 @@ func (suite *KeeperTestSuite) TestQueryServer_DefaultExternalAddresses() {
 		{
 			name: "query without any data returns everything",
 			store: func(ctx sdk.Context) {
-				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")))
-				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", profilestesting.WithNextAccountNumber(ctx, suite.ak))))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", profilestesting.WithNextAccountNumber(ctx, suite.ak))))
 
 				suite.Require().NoError(suite.k.SaveChainLink(ctx, firstChainLink))
 				suite.Require().NoError(suite.k.SaveChainLink(ctx, secondChainLink))
@@ -776,8 +776,8 @@ func (suite *KeeperTestSuite) TestQueryServer_DefaultExternalAddresses() {
 		{
 			name: "query with owner returns correct data",
 			store: func(ctx sdk.Context) {
-				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")))
-				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", profilestesting.WithNextAccountNumber(ctx, suite.ak))))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", profilestesting.WithNextAccountNumber(ctx, suite.ak))))
 
 				suite.Require().NoError(suite.k.SaveChainLink(ctx, firstChainLink))
 				suite.Require().NoError(suite.k.SaveChainLink(ctx, secondChainLink))
@@ -792,8 +792,8 @@ func (suite *KeeperTestSuite) TestQueryServer_DefaultExternalAddresses() {
 		{
 			name: "query with owner and chain name returns correct data",
 			store: func(ctx sdk.Context) {
-				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")))
-				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", profilestesting.WithNextAccountNumber(ctx, suite.ak))))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", profilestesting.WithNextAccountNumber(ctx, suite.ak))))
 
 				suite.Require().NoError(suite.k.SaveChainLink(ctx, firstChainLink))
 				suite.Require().NoError(suite.k.SaveChainLink(ctx, secondChainLink))
@@ -815,7 +815,7 @@ func (suite *KeeperTestSuite) TestQueryServer_DefaultExternalAddresses() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.DefaultExternalAddresses(sdk.WrapSDKContext(ctx), tc.request)
+			res, err := suite.k.DefaultExternalAddresses(ctx, tc.request)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -917,10 +917,10 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinks() {
 		{
 			name: "valid request with user",
 			store: func(ctx sdk.Context) {
-				profile := profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+				profile := profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", profilestesting.WithNextAccountNumber(ctx, suite.ak))
 				suite.ak.SetAccount(ctx, profile)
 
-				otherProfile := profilestesting.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
+				otherProfile := profilestesting.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773", profilestesting.WithNextAccountNumber(ctx, suite.ak))
 				suite.ak.SetAccount(ctx, otherProfile)
 
 				suite.Require().NoError(suite.k.SaveApplicationLink(
@@ -1420,7 +1420,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinks() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.ApplicationLinks(sdk.WrapSDKContext(ctx), tc.req)
+			res, err := suite.k.ApplicationLinks(ctx, tc.req)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -1501,7 +1501,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkByClientID() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.ApplicationLinkByClientID(sdk.WrapSDKContext(ctx), tc.req)
+			res, err := suite.k.ApplicationLinkByClientID(ctx, tc.req)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -1523,7 +1523,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkOwners() {
 		{
 			name: "query without any data returns everything",
 			store: func(ctx sdk.Context) {
-				profile := profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+				profile := profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", profilestesting.WithNextAccountNumber(ctx, suite.ak))
 				suite.ak.SetAccount(ctx, profile)
 
 				suite.Require().NoError(suite.k.SaveApplicationLink(
@@ -1547,7 +1547,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkOwners() {
 					)),
 				)
 
-				profile = profilestesting.ProfileFromAddr("cosmos1ngzeux3j0vfkps0779y0c8pnrmszlg0hekp5um")
+				profile = profilestesting.ProfileFromAddr("cosmos1ngzeux3j0vfkps0779y0c8pnrmszlg0hekp5um", profilestesting.WithNextAccountNumber(ctx, suite.ak))
 				suite.ak.SetAccount(ctx, profile)
 
 				suite.Require().NoError(suite.k.SaveApplicationLink(
@@ -1589,7 +1589,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkOwners() {
 		{
 			name: "query with application returns the correct data",
 			store: func(ctx sdk.Context) {
-				profile := profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+				profile := profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", profilestesting.WithNextAccountNumber(ctx, suite.ak))
 				suite.ak.SetAccount(ctx, profile)
 
 				suite.Require().NoError(suite.k.SaveApplicationLink(
@@ -1613,7 +1613,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkOwners() {
 					)),
 				)
 
-				profile = profilestesting.ProfileFromAddr("cosmos1ngzeux3j0vfkps0779y0c8pnrmszlg0hekp5um")
+				profile = profilestesting.ProfileFromAddr("cosmos1ngzeux3j0vfkps0779y0c8pnrmszlg0hekp5um", profilestesting.WithNextAccountNumber(ctx, suite.ak))
 				suite.ak.SetAccount(ctx, profile)
 
 				suite.Require().NoError(suite.k.SaveApplicationLink(
@@ -1637,7 +1637,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkOwners() {
 					)),
 				)
 
-				profile = profilestesting.ProfileFromAddr("cosmos1pxsak5c7ke5tz3d8alawuzu3cayr9s65ce7njr")
+				profile = profilestesting.ProfileFromAddr("cosmos1pxsak5c7ke5tz3d8alawuzu3cayr9s65ce7njr", profilestesting.WithNextAccountNumber(ctx, suite.ak))
 				suite.ak.SetAccount(ctx, profile)
 
 				suite.Require().NoError(suite.k.SaveApplicationLink(
@@ -1679,7 +1679,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkOwners() {
 		{
 			name: "query with application and username returns the correct data",
 			store: func(ctx sdk.Context) {
-				profile := profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+				profile := profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", profilestesting.WithNextAccountNumber(ctx, suite.ak))
 				suite.ak.SetAccount(ctx, profile)
 
 				suite.Require().NoError(suite.k.SaveApplicationLink(
@@ -1703,7 +1703,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkOwners() {
 					)),
 				)
 
-				profile = profilestesting.ProfileFromAddr("cosmos1ngzeux3j0vfkps0779y0c8pnrmszlg0hekp5um")
+				profile = profilestesting.ProfileFromAddr("cosmos1ngzeux3j0vfkps0779y0c8pnrmszlg0hekp5um", profilestesting.WithNextAccountNumber(ctx, suite.ak))
 				suite.ak.SetAccount(ctx, profile)
 
 				suite.Require().NoError(suite.k.SaveApplicationLink(
@@ -1727,7 +1727,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkOwners() {
 					)),
 				)
 
-				profile = profilestesting.ProfileFromAddr("cosmos1mrmyggajlv0k3mlrhergjjnt75srn5y5u5a83x")
+				profile = profilestesting.ProfileFromAddr("cosmos1mrmyggajlv0k3mlrhergjjnt75srn5y5u5a83x", profilestesting.WithNextAccountNumber(ctx, suite.ak))
 				suite.ak.SetAccount(ctx, profile)
 
 				suite.Require().NoError(suite.k.SaveApplicationLink(
@@ -1776,7 +1776,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkOwners() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.ApplicationLinkOwners(sdk.WrapSDKContext(ctx), tc.req)
+			res, err := suite.k.ApplicationLinkOwners(ctx, tc.req)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -1792,7 +1792,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Params() {
 
 	suite.k.SetParams(ctx, types.DefaultParams())
 
-	res, err := suite.k.Params(sdk.WrapSDKContext(ctx), &types.QueryParamsRequest{})
+	res, err := suite.k.Params(ctx, &types.QueryParamsRequest{})
 	suite.Require().NoError(err)
 	suite.Require().NotNil(res)
 

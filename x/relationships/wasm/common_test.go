@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 	"testing"
 
-	db "github.com/cometbft/cometbft-db"
-	"github.com/cometbft/cometbft/libs/log"
+	"cosmossdk.io/log"
+	"cosmossdk.io/store"
+	"cosmossdk.io/store/metrics"
+	storetypes "cosmossdk.io/store/types"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
-	"github.com/cosmos/cosmos-sdk/store"
-	storetypes "github.com/cosmos/cosmos-sdk/store/types"
+	db "github.com/cosmos/cosmos-db"
 	"github.com/stretchr/testify/suite"
 
 	"github.com/desmos-labs/desmos/v6/app"
@@ -72,13 +73,13 @@ type TestSuite struct {
 
 func (suite *TestSuite) SetupTest() {
 	// Define the store keys
-	keys := sdk.NewKVStoreKeys(types.StoreKey)
+	keys := storetypes.NewKVStoreKeys(types.StoreKey)
 
 	suite.storeKey = keys[types.StoreKey]
 
 	// Create an in-memory db
 	memDB := db.NewMemDB()
-	ms := store.NewCommitMultiStore(memDB)
+	ms := store.NewCommitMultiStore(memDB, log.NewNopLogger(), metrics.NewNoOpMetrics())
 	for _, key := range keys {
 		ms.MountStoreWithDB(key, storetypes.StoreTypeIAVL, memDB)
 	}

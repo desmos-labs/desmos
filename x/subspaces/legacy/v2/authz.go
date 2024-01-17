@@ -3,6 +3,8 @@ package v2
 // DONTCOVER
 
 import (
+	"context"
+
 	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -33,12 +35,13 @@ func (a GenericSubspaceAuthorization) MsgTypeURL() string {
 }
 
 // Accept implements Authorization.Accept.
-func (a GenericSubspaceAuthorization) Accept(ctx sdk.Context, msg sdk.Msg) (authz.AcceptResponse, error) {
+func (a GenericSubspaceAuthorization) Accept(ctx context.Context, msg sdk.Msg) (authz.AcceptResponse, error) {
 	switch msg := msg.(type) {
 
 	case types.SubspaceMsg:
 		for _, subspaceID := range a.SubspacesIDs {
-			ctx.GasMeter().ConsumeGas(gasCostPerIteration, "generic subspace authorization")
+			sdkCtx := sdk.UnwrapSDKContext(ctx)
+			sdkCtx.GasMeter().ConsumeGas(gasCostPerIteration, "generic subspace authorization")
 			if subspaceID == msg.GetSubspaceID() {
 				return authz.AcceptResponse{Accept: true}, nil
 			}

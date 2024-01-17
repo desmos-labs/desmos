@@ -4,10 +4,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/cosmos/cosmos-sdk/store/prefix"
-	storetypes "github.com/cosmos/cosmos-sdk/store/types"
+	"cosmossdk.io/math"
+	"cosmossdk.io/store/prefix"
+	storetypes "cosmossdk.io/store/types"
+	"cosmossdk.io/x/feegrant"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/feegrant"
 
 	"github.com/stretchr/testify/require"
 
@@ -35,7 +36,7 @@ func TestMigrateStore(t *testing.T) {
 	cdc, _ := app.MakeCodecs()
 
 	// Build all the necessary keys
-	keys := sdk.NewKVStoreKeys(types.StoreKey)
+	keys := storetypes.NewKVStoreKeys(types.StoreKey)
 
 	expiration := time.Date(2100, 7, 7, 0, 0, 0, 0, time.UTC)
 
@@ -53,7 +54,7 @@ func TestMigrateStore(t *testing.T) {
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
 					&feegrant.BasicAllowance{
-						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(1))),
+						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(1))),
 						Expiration: &expiration,
 					},
 				)
@@ -74,7 +75,7 @@ func TestMigrateStore(t *testing.T) {
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
 					&feegrant.BasicAllowance{
-						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(1))),
+						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(1))),
 					},
 				)
 				ctx.KVStore(keys[types.StoreKey]).Set(types.UserAllowanceKey(1, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"), cdc.MustMarshal(&grant))
@@ -92,7 +93,7 @@ func TestMigrateStore(t *testing.T) {
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewGroupGrantee(1),
 					&feegrant.BasicAllowance{
-						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(1))),
+						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(1))),
 						Expiration: &expiration,
 					},
 				)
@@ -113,7 +114,7 @@ func TestMigrateStore(t *testing.T) {
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewGroupGrantee(1),
 					&feegrant.BasicAllowance{
-						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(1))),
+						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(1))),
 					},
 				)
 				ctx.KVStore(keys[types.StoreKey]).Set(types.GroupAllowanceKey(1, 1), cdc.MustMarshal(&grant))

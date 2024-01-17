@@ -4,13 +4,15 @@ import (
 	"testing"
 	"time"
 
-	db "github.com/cometbft/cometbft-db"
-	"github.com/cometbft/cometbft/libs/log"
+	"cosmossdk.io/log"
+	"cosmossdk.io/math"
+	"cosmossdk.io/store"
+	"cosmossdk.io/store/metrics"
+	storetypes "cosmossdk.io/store/types"
+	"cosmossdk.io/x/feegrant"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
-	"github.com/cosmos/cosmos-sdk/store"
-	storetypes "github.com/cosmos/cosmos-sdk/store/types"
+	db "github.com/cosmos/cosmos-db"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/feegrant"
 	"github.com/stretchr/testify/require"
 
 	"github.com/desmos-labs/desmos/v6/app"
@@ -21,13 +23,13 @@ import (
 
 func TestBeginBlocker(t *testing.T) {
 	// Define store keys
-	keys := sdk.NewMemoryStoreKeys(
+	keys := storetypes.NewMemoryStoreKeys(
 		types.StoreKey,
 	)
 
 	// Create an in-memory db
 	memDB := db.NewMemDB()
-	ms := store.NewCommitMultiStore(memDB)
+	ms := store.NewCommitMultiStore(memDB, log.NewNopLogger(), metrics.NewNoOpMetrics())
 	for _, key := range keys {
 		ms.MountStoreWithDB(key, storetypes.StoreTypeIAVL, memDB)
 	}
@@ -60,7 +62,7 @@ func TestBeginBlocker(t *testing.T) {
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewGroupGrantee(1),
 					&feegrant.BasicAllowance{
-						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(1))),
+						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(1))),
 						Expiration: &expiration,
 					},
 				))
@@ -87,7 +89,7 @@ func TestBeginBlocker(t *testing.T) {
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewGroupGrantee(1),
 					&feegrant.BasicAllowance{
-						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(1))),
+						SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(1))),
 						Expiration: &expiration,
 					},
 				))

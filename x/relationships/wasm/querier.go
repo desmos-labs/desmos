@@ -49,7 +49,7 @@ func (querier RelationshipsWasmQuerier) handleRelationshipsRequest(ctx sdk.Conte
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-	res, err := querier.relationshipsKeeper.Relationships(sdk.WrapSDKContext(ctx), &req)
+	res, err := querier.relationshipsKeeper.Relationships(ctx, &req)
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
@@ -66,7 +66,7 @@ func (querier RelationshipsWasmQuerier) handleBlocksRequest(ctx sdk.Context, req
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-	res, err := querier.relationshipsKeeper.Blocks(sdk.WrapSDKContext(ctx), &req)
+	res, err := querier.relationshipsKeeper.Blocks(ctx, &req)
 	if err != nil {
 		return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}

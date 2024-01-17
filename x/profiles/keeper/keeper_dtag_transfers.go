@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"cosmossdk.io/errors"
+	storetypes "cosmossdk.io/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
@@ -60,7 +61,7 @@ func (k Keeper) GetDTagTransferRequest(ctx sdk.Context, sender, receiver string)
 // GetDTagTransferRequests returns all the requests inside the given context
 func (k Keeper) GetDTagTransferRequests(ctx sdk.Context) (requests []types.DTagTransferRequest) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.DTagTransferRequestPrefix)
+	iterator := storetypes.KVStorePrefixIterator(store, types.DTagTransferRequestPrefix)
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {

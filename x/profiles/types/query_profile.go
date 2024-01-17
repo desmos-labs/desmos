@@ -4,7 +4,7 @@ package types
 
 import (
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // NewQueryProfileRequest returns a new QueryProfileRequest containing the given data
@@ -17,7 +17,7 @@ func NewQueryProfileRequest(user string) *QueryProfileRequest {
 // UnpackInterfaces implements codectypes.UnpackInterfacesMessage
 func (r *QueryProfileResponse) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 	if r.Profile != nil {
-		var profile authtypes.AccountI
+		var profile sdk.AccountI
 		return unpacker.UnpackAny(r.Profile, &profile)
 	}
 	return nil

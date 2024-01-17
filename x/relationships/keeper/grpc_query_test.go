@@ -141,7 +141,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Relationships() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.Relationships(sdk.WrapSDKContext(ctx), tc.req)
+			res, err := suite.k.Relationships(ctx, tc.req)
 			suite.Require().NoError(err)
 			suite.Require().NotNil(res)
 			suite.Require().Equal(tc.expRelationships, res.Relationships)
@@ -298,7 +298,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Blocks() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.Blocks(sdk.WrapSDKContext(ctx), tc.req)
+			res, err := suite.k.Blocks(ctx, tc.req)
 			suite.Require().NoError(err)
 			suite.Require().NotNil(res)
 			suite.Require().Equal(tc.expBlocks, res.Blocks)

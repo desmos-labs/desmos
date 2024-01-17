@@ -48,7 +48,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UpdateParams() {
 
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.k)
-			_, err := service.UpdateParams(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := service.UpdateParams(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)

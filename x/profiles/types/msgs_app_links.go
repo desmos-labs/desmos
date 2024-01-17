@@ -7,8 +7,8 @@ import (
 	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	clienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
-	host "github.com/cosmos/ibc-go/v7/modules/core/24-host"
+	clienttypes "github.com/cosmos/ibc-go/v8/modules/core/02-client/types"
+	host "github.com/cosmos/ibc-go/v8/modules/core/24-host"
 )
 
 // NewMsgLinkApplication creates a new MsgLinkApplication instance
@@ -69,11 +69,6 @@ func (msg *MsgLinkApplication) ValidateBasic() error {
 	return nil
 }
 
-// GetSignBytes implements sdk.Msg.
-func (msg *MsgLinkApplication) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
-}
-
 // GetSigners implements sdk.Msg
 func (msg *MsgLinkApplication) GetSigners() []sdk.AccAddress {
 	valAddr, err := sdk.AccAddressFromBech32(msg.Sender)
@@ -124,11 +119,6 @@ func (msg *MsgUnlinkApplication) ValidateBasic() error {
 	}
 
 	return nil
-}
-
-// GetSignBytes implements sdk.Msg.
-func (msg *MsgUnlinkApplication) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners implements sdk.Msg

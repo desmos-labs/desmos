@@ -39,63 +39,63 @@ func WeightedOperations(
 	k *keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) sim.WeightedOperations {
 	var weightMsgSaveProfile int
-	appParams.GetOrGenerate(cdc, OpWeightMsgSaveProfile, &weightMsgSaveProfile, nil,
+	appParams.GetOrGenerate(OpWeightMsgSaveProfile, &weightMsgSaveProfile, nil,
 		func(_ *rand.Rand) {
 			weightMsgSaveProfile = params.DefaultWeightMsgSaveProfile
 		},
 	)
 
 	var weightMsgDeleteProfile int
-	appParams.GetOrGenerate(cdc, OpWeightMsgDeleteProfile, &weightMsgDeleteProfile, nil,
+	appParams.GetOrGenerate(OpWeightMsgDeleteProfile, &weightMsgDeleteProfile, nil,
 		func(_ *rand.Rand) {
 			weightMsgDeleteProfile = params.DefaultWeightMsgDeleteProfile
 		},
 	)
 
 	var weightMsgRequestDTagTransfer int
-	appParams.GetOrGenerate(cdc, OpWeightMsgRequestDTagTransfer, &weightMsgRequestDTagTransfer, nil,
+	appParams.GetOrGenerate(OpWeightMsgRequestDTagTransfer, &weightMsgRequestDTagTransfer, nil,
 		func(_ *rand.Rand) {
 			weightMsgRequestDTagTransfer = params.DefaultWeightMsgRequestDTagTransfer
 		},
 	)
 
 	var weightMsgAcceptDTagTransfer int
-	appParams.GetOrGenerate(cdc, OpWeightMsgAcceptDTagTransfer, &weightMsgAcceptDTagTransfer, nil,
+	appParams.GetOrGenerate(OpWeightMsgAcceptDTagTransfer, &weightMsgAcceptDTagTransfer, nil,
 		func(_ *rand.Rand) {
 			weightMsgAcceptDTagTransfer = params.DefaultWeightMsgAcceptDTagTransfer
 		},
 	)
 
 	var weightMsgRefuseDTagTransfer int
-	appParams.GetOrGenerate(cdc, OpWeightMsgRefuseDTagTransfer, &weightMsgRefuseDTagTransfer, nil,
+	appParams.GetOrGenerate(OpWeightMsgRefuseDTagTransfer, &weightMsgRefuseDTagTransfer, nil,
 		func(r *rand.Rand) {
 			weightMsgRefuseDTagTransfer = params.DefaultWeightMsgRefuseDTagTransfer
 		},
 	)
 
 	var weightMsgCancelDTagTransfer int
-	appParams.GetOrGenerate(cdc, OpWeightMsgCancelDTagTransfer, &weightMsgCancelDTagTransfer, nil,
+	appParams.GetOrGenerate(OpWeightMsgCancelDTagTransfer, &weightMsgCancelDTagTransfer, nil,
 		func(r *rand.Rand) {
 			weightMsgCancelDTagTransfer = params.DefaultWeightMsgCancelDTagTransfer
 		},
 	)
 
 	var weightMsgLinkChainAccount int
-	appParams.GetOrGenerate(cdc, OpWeightMsgLinkChainAccount, &weightMsgLinkChainAccount, nil,
+	appParams.GetOrGenerate(OpWeightMsgLinkChainAccount, &weightMsgLinkChainAccount, nil,
 		func(r *rand.Rand) {
 			weightMsgLinkChainAccount = params.DefaultWeightMsgLinkChainAccount
 		},
 	)
 
 	var weightMsgUnlinkChainAccount int
-	appParams.GetOrGenerate(cdc, OpWeightMsgUnlinkChainAccount, &weightMsgUnlinkChainAccount, nil,
+	appParams.GetOrGenerate(OpWeightMsgUnlinkChainAccount, &weightMsgUnlinkChainAccount, nil,
 		func(r *rand.Rand) {
 			weightMsgUnlinkChainAccount = params.DefaultWeightMsgUnlinkChainAccount
 		},
 	)
 
 	var weightMsgSetDefaultExternalAddress int
-	appParams.GetOrGenerate(cdc, OpWeightMsgLinkChainAccount, &weightMsgSetDefaultExternalAddress, nil,
+	appParams.GetOrGenerate(OpWeightMsgLinkChainAccount, &weightMsgSetDefaultExternalAddress, nil,
 		func(r *rand.Rand) {
 			weightMsgSetDefaultExternalAddress = params.DefaultWeightMsgSetDefaultExternalAddress
 		},

@@ -7,10 +7,10 @@ import (
 	"fmt"
 	"testing"
 
+	"cosmossdk.io/math"
 	tmcli "github.com/cometbft/cometbft/libs/cli"
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
 	"github.com/cosmos/cosmos-sdk/testutil/network"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
@@ -86,7 +86,7 @@ func (s *IntegrationTestSuite) TestCmdQueryTotalSupply() {
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			shouldErr:      false,
-			expectedOutput: types.QueryTotalResponse{TotalSupply: sdk.NewInt(1000000020)},
+			expectedOutput: types.QueryTotalResponse{TotalSupply: math.NewInt(1000000020)},
 		},
 		{
 			name: "total supply returned correctly with divider_exponent conversion applied",
@@ -96,7 +96,7 @@ func (s *IntegrationTestSuite) TestCmdQueryTotalSupply() {
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			shouldErr:      false,
-			expectedOutput: types.QueryTotalResponse{TotalSupply: sdk.NewInt(10000000)},
+			expectedOutput: types.QueryTotalResponse{TotalSupply: math.NewInt(10000000)},
 		},
 	}
 
@@ -145,7 +145,7 @@ func (s *IntegrationTestSuite) TestCmdQueryCirculatingSupply() {
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			shouldErr:      false,
-			expectedOutput: types.QueryCirculatingResponse{CirculatingSupply: sdk.NewInt(1000000020)},
+			expectedOutput: types.QueryCirculatingResponse{CirculatingSupply: math.NewInt(1000000020)},
 		},
 		{
 			name: "circulating supply returned correctly with divider_exponent conversion applied",
@@ -155,7 +155,7 @@ func (s *IntegrationTestSuite) TestCmdQueryCirculatingSupply() {
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			shouldErr:      false,
-			expectedOutput: types.QueryCirculatingResponse{CirculatingSupply: sdk.NewInt(10000000)},
+			expectedOutput: types.QueryCirculatingResponse{CirculatingSupply: math.NewInt(10000000)},
 		},
 	}
 

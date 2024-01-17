@@ -3,9 +3,9 @@ package types_test
 import (
 	"testing"
 
+	"cosmossdk.io/x/feegrant"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/feegrant"
 	"github.com/stretchr/testify/require"
 
 	"github.com/desmos-labs/desmos/v6/x/subspaces/types"
@@ -104,11 +104,6 @@ func TestMsgGrantAllowance_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgGrantAllowance_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgGrantAllowance","value":{"allowance":{"spend_limit":[]},"grantee":{"type":"desmos/UserGrantee","value":{"user":"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez"}},"granter":"cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0","subspace_id":"1"}}`
-	require.Equal(t, expected, string(msgGrantAllowance.GetSignBytes()))
-}
-
 func TestMsgGrantAllowance_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgGrantAllowance.Granter)
 	require.Equal(t, []sdk.AccAddress{addr}, msgGrantAllowance.GetSigners())
@@ -180,11 +175,6 @@ func TestMsgRevokeAllowance_ValidateBasic(t *testing.T) {
 			}
 		})
 	}
-}
-
-func TestMsgRevokeAllowance_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgRevokeAllowance","value":{"grantee":{"type":"desmos/UserGrantee","value":{"user":"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez"}},"granter":"cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0","subspace_id":"1"}}`
-	require.Equal(t, expected, string(msgRevokeAllowance.GetSignBytes()))
 }
 
 func TestMsgRevokeAllowance_GetSigners(t *testing.T) {

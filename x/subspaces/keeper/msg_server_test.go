@@ -3,10 +3,11 @@ package keeper_test
 import (
 	"time"
 
+	"cosmossdk.io/math"
+	"cosmossdk.io/x/feegrant"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	"github.com/cosmos/cosmos-sdk/x/feegrant"
 
 	"github.com/desmos-labs/desmos/v6/x/subspaces/keeper"
 	"github.com/desmos-labs/desmos/v6/x/subspaces/types"
@@ -148,7 +149,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateSubspace() {
 
 				// Run the fist subspace creation message
 				msgServer := keeper.NewMsgServerImpl(suite.k)
-				_, err := msgServer.CreateSubspace(sdk.WrapSDKContext(ctx), types.NewMsgCreateSubspace(
+				_, err := msgServer.CreateSubspace(ctx, types.NewMsgCreateSubspace(
 					"Test subspace",
 					"This is a test subspace",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
@@ -211,7 +212,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateSubspace() {
 
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.k)
-			res, err := service.CreateSubspace(sdk.WrapSDKContext(ctx), tc.msg)
+			res, err := service.CreateSubspace(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -391,7 +392,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditSubspace() {
 
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.k)
-			_, err := service.EditSubspace(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := service.EditSubspace(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -502,7 +503,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteSubspace() {
 
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.k)
-			_, err := service.DeleteSubspace(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := service.DeleteSubspace(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -746,7 +747,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateSection() {
 			}
 
 			msgServer := keeper.NewMsgServerImpl(suite.k)
-			res, err := msgServer.CreateSection(sdk.WrapSDKContext(ctx), tc.msg)
+			res, err := msgServer.CreateSection(ctx, tc.msg)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -940,7 +941,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditSection() {
 			}
 
 			msgServer := keeper.NewMsgServerImpl(suite.k)
-			_, err := msgServer.EditSection(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := msgServer.EditSection(ctx, tc.msg)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -1195,7 +1196,7 @@ func (suite *KeeperTestSuite) TestMsgServer_MoveSection() {
 			}
 
 			msgServer := keeper.NewMsgServerImpl(suite.k)
-			_, err := msgServer.MoveSection(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := msgServer.MoveSection(ctx, tc.msg)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -1335,7 +1336,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteSection() {
 			}
 
 			msgServer := keeper.NewMsgServerImpl(suite.k)
-			_, err := msgServer.DeleteSection(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := msgServer.DeleteSection(ctx, tc.msg)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -1569,7 +1570,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateUserGroup() {
 
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.k)
-			res, err := service.CreateUserGroup(sdk.WrapSDKContext(ctx), tc.msg)
+			res, err := service.CreateUserGroup(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -1768,7 +1769,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditUserGroup() {
 
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.k)
-			_, err := service.EditUserGroup(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := service.EditUserGroup(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -2075,7 +2076,7 @@ func (suite *KeeperTestSuite) TestMsgServer_MoveUserGroup() {
 
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.k)
-			_, err := service.MoveUserGroup(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := service.MoveUserGroup(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -2338,7 +2339,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SetUserGroupPermissions() {
 
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.k)
-			_, err := service.SetUserGroupPermissions(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := service.SetUserGroupPermissions(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -2481,7 +2482,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteUserGroup() {
 
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.k)
-			_, err := service.DeleteUserGroup(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := service.DeleteUserGroup(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -2661,7 +2662,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddUserToGroup() {
 
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.k)
-			_, err := service.AddUserToUserGroup(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := service.AddUserToUserGroup(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -2840,7 +2841,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RemoveUserFromGroup() {
 
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.k)
-			_, err := service.RemoveUserFromUserGroup(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := service.RemoveUserFromUserGroup(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -3005,7 +3006,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SetUserPermissions() {
 
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.k)
-			_, err := service.SetUserPermissions(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := service.SetUserPermissions(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -3034,7 +3035,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UpdateSubspaceFeeTokens() {
 			name: "invalid authority return error",
 			msg: types.NewMsgUpdateSubspaceFeeTokens(
 				1,
-				sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(10))),
+				sdk.NewCoins(sdk.NewCoin("minttoken", math.NewInt(10))),
 				"invalid",
 			),
 			shouldErr: true,
@@ -3043,7 +3044,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UpdateSubspaceFeeTokens() {
 			name: "subspace not found returns error",
 			msg: types.NewMsgUpdateSubspaceFeeTokens(
 				1,
-				sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(10))),
+				sdk.NewCoins(sdk.NewCoin("minttoken", math.NewInt(10))),
 				authtypes.NewModuleAddress("gov").String(),
 			),
 			shouldErr: true,
@@ -3064,7 +3065,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UpdateSubspaceFeeTokens() {
 			},
 			msg: types.NewMsgUpdateSubspaceFeeTokens(
 				1,
-				sdk.Coins{{Denom: "minttoken", Amount: sdk.NewInt(-10)}},
+				sdk.Coins{{Denom: "minttoken", Amount: math.NewInt(-10)}},
 				authtypes.NewModuleAddress("gov").String(),
 			),
 			shouldErr: true,
@@ -3085,7 +3086,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UpdateSubspaceFeeTokens() {
 			},
 			msg: types.NewMsgUpdateSubspaceFeeTokens(
 				1,
-				sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(10))),
+				sdk.NewCoins(sdk.NewCoin("minttoken", math.NewInt(10))),
 				authtypes.NewModuleAddress("gov").String(),
 			),
 			shouldErr: true,
@@ -3106,7 +3107,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UpdateSubspaceFeeTokens() {
 			},
 			msg: types.NewMsgUpdateSubspaceFeeTokens(
 				1,
-				sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(10))),
+				sdk.NewCoins(sdk.NewCoin("minttoken", math.NewInt(10))),
 				authtypes.NewModuleAddress("gov").String(),
 			),
 			shouldErr: false,
@@ -3127,7 +3128,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UpdateSubspaceFeeTokens() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(10))),
+					sdk.NewCoins(sdk.NewCoin("minttoken", math.NewInt(10))),
 				)
 
 				suite.Require().Equal(expected, subspace)
@@ -3145,7 +3146,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UpdateSubspaceFeeTokens() {
 
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.k)
-			_, err := service.UpdateSubspaceFeeTokens(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := service.UpdateSubspaceFeeTokens(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -3328,7 +3329,7 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantTreasuryAuthorization() {
 
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.k)
-			res, err := service.GrantTreasuryAuthorization(sdk.WrapSDKContext(ctx), tc.msg)
+			res, err := service.GrantTreasuryAuthorization(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -3552,7 +3553,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RevokeTreasuryAuthorization() {
 
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.k)
-			res, err := service.RevokeTreasuryAuthorization(sdk.WrapSDKContext(ctx), tc.msg)
+			res, err := service.RevokeTreasuryAuthorization(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -3589,7 +3590,7 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantAllowance() {
 				1,
 				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 				types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
-				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))},
 			),
 			shouldErr: true,
 		},
@@ -3611,7 +3612,7 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantAllowance() {
 				1,
 				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 				types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
-				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))},
 			),
 			shouldErr: true,
 		},
@@ -3640,14 +3641,14 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantAllowance() {
 					1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))},
 				))
 			},
 			msg: types.NewMsgGrantAllowance(
 				1,
 				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 				types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
-				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))},
 			),
 			shouldErr: true,
 		},
@@ -3676,7 +3677,7 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantAllowance() {
 				1,
 				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 				types.NewGroupGrantee(1),
-				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))},
 			),
 			shouldErr: true,
 		},
@@ -3714,14 +3715,14 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantAllowance() {
 					1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewGroupGrantee(1),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))},
 				))
 			},
 			msg: types.NewMsgGrantAllowance(
 				1,
 				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 				types.NewGroupGrantee(1),
-				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))},
 			),
 			shouldErr: true,
 		},
@@ -3750,7 +3751,7 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantAllowance() {
 				1,
 				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 				types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
-				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))},
 			),
 			shouldErr: false,
 			expEvents: sdk.Events{
@@ -3768,7 +3769,7 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantAllowance() {
 					1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))},
 				), grant)
 			},
 		},
@@ -3806,7 +3807,7 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantAllowance() {
 				1,
 				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 				types.NewGroupGrantee(1),
-				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))},
 			),
 			shouldErr: false,
 			expEvents: sdk.Events{
@@ -3823,7 +3824,7 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantAllowance() {
 				suite.Require().Equal(types.NewGrant(1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewGroupGrantee(1),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))},
 				), grant)
 			},
 		},
@@ -3839,7 +3840,7 @@ func (suite *KeeperTestSuite) TestMsgServer_GrantAllowance() {
 
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.k)
-			_, err := service.GrantAllowance(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := service.GrantAllowance(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -3966,7 +3967,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RevokeAllowance() {
 					1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))},
 				))
 			},
 			msg: types.NewMsgRevokeAllowance(
@@ -4011,7 +4012,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RevokeAllowance() {
 				suite.k.SaveGrant(ctx, types.NewGrant(1,
 					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 					types.NewGroupGrantee(1),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))},
 				))
 			},
 			msg: types.NewMsgRevokeAllowance(
@@ -4044,7 +4045,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RevokeAllowance() {
 
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.k)
-			_, err := service.RevokeAllowance(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := service.RevokeAllowance(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)

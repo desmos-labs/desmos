@@ -3,19 +3,18 @@ package v6
 import (
 	"fmt"
 
+	storetypes "cosmossdk.io/store/types"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
-	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 
 	v5types "github.com/desmos-labs/desmos/v6/x/profiles/legacy/v5/types"
 
-	"github.com/cosmos/cosmos-sdk/store/prefix"
+	"cosmossdk.io/store/prefix"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	"github.com/desmos-labs/desmos/v6/x/profiles/types"
 )
@@ -60,7 +59,7 @@ func MigrateStore(ctx sdk.Context, ak authkeeper.AccountKeeper, storeKey storety
 // The migration from v5 to v6 is skipped because the two types are identical (from v5 to v6 no changes were made).
 func migrateProfiles(ctx sdk.Context, ak authkeeper.AccountKeeper) error {
 	var profiles []*v5types.Profile
-	ak.IterateAccounts(ctx, func(account authtypes.AccountI) (stop bool) {
+	ak.IterateAccounts(ctx, func(account sdk.AccountI) (stop bool) {
 		if profile, ok := account.(*v5types.Profile); ok {
 			profiles = append(profiles, profile)
 		}
@@ -90,7 +89,7 @@ func migrateProfiles(ctx sdk.Context, ak authkeeper.AccountKeeper) error {
 
 // migrateApplicationLinks migrates the application links from v5 to v7 adding the expiration date properly.
 // The migration from v5 to v6 is skipped because the two types are identical (from v5 to v6 no changes were made).
-func migrateApplicationLinks(store sdk.KVStore, cdc codec.BinaryCodec) error {
+func migrateApplicationLinks(store storetypes.KVStore, cdc codec.BinaryCodec) error {
 	appLinksStore := prefix.NewStore(store, types.ApplicationLinkPrefix)
 	iterator := appLinksStore.Iterator(nil, nil)
 
@@ -177,7 +176,7 @@ func convertApplicationLinkResult(v5Result *v5types.Result) *types.Result {
 
 // migrateChainLinks migrates the chain links from v5 to v7 by changing the various Protobuf interface types.
 // The migration from v5 to v6 is skipped because the two types are identical (from v5 to v6 no changes were made).
-func migrateChainLinks(store sdk.KVStore, cdc codec.BinaryCodec) error {
+func migrateChainLinks(store storetypes.KVStore, cdc codec.BinaryCodec) error {
 	appLinksStore := prefix.NewStore(store, types.ChainLinksPrefix)
 	iterator := appLinksStore.Iterator(nil, nil)
 
@@ -298,7 +297,7 @@ func convertChainLinkSignatureData(data *codectypes.Any, cdc codec.BinaryCodec) 
 }
 
 // setDefaultExternalAddresses set the default external address of each chain for each owner
-func setDefaultExternalAddresses(store sdk.KVStore, cdc codec.BinaryCodec) error {
+func setDefaultExternalAddresses(store storetypes.KVStore, cdc codec.BinaryCodec) error {
 	chainLinkStore := prefix.NewStore(store, types.ChainLinksPrefix)
 	chainLinksIterator := chainLinkStore.Iterator(nil, nil)
 	defer chainLinksIterator.Close()

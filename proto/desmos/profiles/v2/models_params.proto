@@ -35,13 +35,13 @@ message NicknameParams {
   option (gogoproto.goproto_getters) = false;
 
   bytes min_length = 1 [
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"min_length\""
   ];
 
   bytes max_length = 2 [
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"max_length\""
   ];
@@ -54,14 +54,14 @@ message DTagParams {
   string reg_ex = 1 [ (gogoproto.moretags) = "yaml:\"reg_ex\"" ];
 
   bytes min_length = 2 [
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"min_length\"",
     (gogoproto.customname) = "MinLength"
   ];
 
   bytes max_length = 3 [
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"max_length\"",
     (gogoproto.customname) = "MaxLength"
@@ -73,7 +73,7 @@ message BioParams {
   option (gogoproto.goproto_getters) = false;
 
   bytes max_length = 3 [
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"max_length\""
   ];

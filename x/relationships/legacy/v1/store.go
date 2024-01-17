@@ -1,8 +1,8 @@
 package v1
 
 import (
+	storetypes "cosmossdk.io/store/types"
 	"github.com/cosmos/cosmos-sdk/codec"
-	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	subspacestypes "github.com/desmos-labs/desmos/v6/x/subspaces/types"
@@ -37,7 +37,7 @@ func MigrateStore(ctx sdk.Context, pk profilesv4.Keeper, relationshipsStoreKey s
 }
 
 // migrateUserBlocks migrates the user blocks stored to the new type, converting the subspace from string to uint64
-func migrateUserBlocks(ctx sdk.Context, pk profilesv4.Keeper, store sdk.KVStore, cdc codec.BinaryCodec) error {
+func migrateUserBlocks(ctx sdk.Context, pk profilesv4.Keeper, store storetypes.KVStore, cdc codec.BinaryCodec) error {
 	for _, v230Block := range pk.GetBlocks(ctx) {
 		// Get the subspace id
 		subspaceID, err := subspacestypes.ParseSubspaceID(v230Block.SubspaceID)
@@ -60,7 +60,7 @@ func migrateUserBlocks(ctx sdk.Context, pk profilesv4.Keeper, store sdk.KVStore,
 }
 
 // migrateRelationships migrates the relationships stored to the new type, converting the subspace from string to uint64
-func migrateRelationships(ctx sdk.Context, pk profilesv4.Keeper, store sdk.KVStore, cdc codec.BinaryCodec) error {
+func migrateRelationships(ctx sdk.Context, pk profilesv4.Keeper, store storetypes.KVStore, cdc codec.BinaryCodec) error {
 	for _, v230Relationship := range pk.GetRelationships(ctx) {
 		// Get the subspace id
 		subspaceID, err := subspacestypes.ParseSubspaceID(v230Relationship.SubspaceID)

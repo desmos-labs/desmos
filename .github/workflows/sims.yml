@@ -31,7 +31,7 @@ jobs:
       - name: Setup Go 🧰
         uses: actions/setup-go@v5
         with:
-          go-version: '1.20'
+          go-version: '1.21'
 
       - name: Build 🔨
         run: make build
@@ -43,7 +43,7 @@ jobs:
       - name: Setup Go 🧰
         uses: actions/setup-go@v5
         with:
-          go-version: '1.20'
+          go-version: '1.21'
 
       - name: Install runsim 🏃
         run: export GO111MODULE="on" && go install github.com/cosmos/tools/cmd/runsim@v1.0.0
@@ -64,7 +64,7 @@ jobs:
       - name: Setup Go 🧰
         uses: actions/setup-go@v5
         with:
-          go-version: '1.20'
+          go-version: '1.21'
 
       - name: Compute diff 📜
         uses: technote-space/get-diff-action@v6.1.2
@@ -95,7 +95,7 @@ jobs:
       - name: Setup Go 🧰
         uses: actions/setup-go@v5
         with:
-          go-version: '1.20'
+          go-version: '1.21'
 
       - name: Compute diff 📜
         uses: technote-space/get-diff-action@v6.1.2
@@ -126,7 +126,7 @@ jobs:
       - name: Setup Go 🧰
         uses: actions/setup-go@v5
         with:
-          go-version: '1.20'
+          go-version: '1.21'
 
       - name: Compute diff 📜
         uses: technote-space/get-diff-action@v6.1.2

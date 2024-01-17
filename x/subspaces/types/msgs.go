@@ -7,7 +7,6 @@ import (
 	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/cosmos/cosmos-sdk/x/auth/migrations/legacytx"
 )
 
 // SubspaceMsg represents a generic message that is related to a subspace
@@ -103,11 +102,6 @@ func (msg *MsgCreateSubspace) ValidateBasic() error {
 	return nil
 }
 
-// GetSignBytes implements sdk.Msg
-func (msg *MsgCreateSubspace) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
-}
-
 // GetSigners implements sdk.Msg
 func (msg *MsgCreateSubspace) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Creator)
@@ -153,11 +147,6 @@ func (msg *MsgEditSubspace) ValidateBasic() error {
 	return nil
 }
 
-// GetSignBytes implements sdk.Msg
-func (msg *MsgEditSubspace) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
-}
-
 // GetSigners implements sdk.Msg
 func (msg *MsgEditSubspace) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Signer)
@@ -195,11 +184,6 @@ func (msg *MsgDeleteSubspace) ValidateBasic() error {
 	}
 
 	return nil
-}
-
-// GetSignBytes implements sdk.Msg
-func (msg *MsgDeleteSubspace) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
 }
 
 // GetSigners implements sdk.Msg
@@ -254,11 +238,6 @@ func (msg *MsgCreateSection) ValidateBasic() error {
 	return nil
 }
 
-// GetSignBytes implements sdk.Msg
-func (msg *MsgCreateSection) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
-}
-
 // GetSigners implements sdk.Msg
 func (msg *MsgCreateSection) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Creator)
@@ -311,11 +290,6 @@ func (msg *MsgEditSection) ValidateBasic() error {
 	return nil
 }
 
-// GetSignBytes implements sdk.Msg
-func (msg *MsgEditSection) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
-}
-
 // GetSigners implements sdk.Msg
 func (msg *MsgEditSection) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Editor)
@@ -366,11 +340,6 @@ func (msg *MsgMoveSection) ValidateBasic() error {
 	return nil
 }
 
-// GetSignBytes implements sdk.Msg
-func (msg *MsgMoveSection) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
-}
-
 // GetSigners implements sdk.Msg
 func (msg *MsgMoveSection) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Signer)
@@ -413,11 +382,6 @@ func (msg *MsgDeleteSection) ValidateBasic() error {
 	}
 
 	return nil
-}
-
-// GetSignBytes implements sdk.Msg
-func (msg *MsgDeleteSection) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
 }
 
 // GetSigners implements sdk.Msg
@@ -487,11 +451,6 @@ func (msg *MsgCreateUserGroup) ValidateBasic() error {
 	return nil
 }
 
-// GetSignBytes implements sdk.Msg
-func (msg *MsgCreateUserGroup) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
-}
-
 // GetSigners implements sdk.Msg
 func (msg *MsgCreateUserGroup) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Creator)
@@ -538,11 +497,6 @@ func (msg *MsgEditUserGroup) ValidateBasic() error {
 	}
 
 	return nil
-}
-
-// GetSignBytes implements sdk.Msg
-func (msg *MsgEditUserGroup) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
 }
 
 // GetSigners implements sdk.Msg
@@ -595,11 +549,6 @@ func (msg *MsgMoveUserGroup) ValidateBasic() error {
 	return nil
 }
 
-// GetSignBytes implements sdk.Msg
-func (msg *MsgMoveUserGroup) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
-}
-
 // GetSigners implements sdk.Msg
 func (msg *MsgMoveUserGroup) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Signer)
@@ -650,11 +599,6 @@ func (msg *MsgSetUserGroupPermissions) ValidateBasic() error {
 	return nil
 }
 
-// GetSignBytes implements sdk.Msg
-func (msg *MsgSetUserGroupPermissions) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
-}
-
 // GetSigners implements sdk.Msg
 func (msg *MsgSetUserGroupPermissions) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Signer)
@@ -697,11 +641,6 @@ func (msg *MsgDeleteUserGroup) ValidateBasic() error {
 	}
 
 	return nil
-}
-
-// GetSignBytes implements sdk.Msg
-func (msg *MsgDeleteUserGroup) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
 }
 
 // GetSigners implements sdk.Msg
@@ -759,11 +698,6 @@ func (msg *MsgAddUserToUserGroup) ValidateBasic() error {
 	return nil
 }
 
-// GetSignBytes implements sdk.Msg
-func (msg *MsgAddUserToUserGroup) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
-}
-
 // GetSigners implements sdk.Msg
 func (msg *MsgAddUserToUserGroup) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Signer)
@@ -817,11 +751,6 @@ func (msg *MsgRemoveUserFromUserGroup) ValidateBasic() error {
 	}
 
 	return nil
-}
-
-// GetSignBytes implements sdk.Msg
-func (msg *MsgRemoveUserFromUserGroup) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
 }
 
 // GetSigners implements sdk.Msg
@@ -885,11 +814,6 @@ func (msg *MsgSetUserPermissions) ValidateBasic() error {
 	return nil
 }
 
-// GetSignBytes implements sdk.Msg
-func (msg *MsgSetUserPermissions) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
-}
-
 // GetSigners implements sdk.Msg
 func (msg *MsgSetUserPermissions) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Signer)
@@ -902,8 +826,7 @@ func (msg *MsgSetUserPermissions) IsManageSubspaceMsg() {}
 // --------------------------------------------------------------------------------------------------------------------
 
 var (
-	_ sdk.Msg            = &MsgUpdateSubspaceFeeTokens{}
-	_ legacytx.LegacyMsg = &MsgUpdateSubspaceFeeTokens{}
+	_ sdk.Msg = &MsgUpdateSubspaceFeeTokens{}
 )
 
 // NewMsgUpdateSubspaceFeeTokens creates a new MsgUpdateSubspaceFeeTokens instance
@@ -942,11 +865,6 @@ func (msg *MsgUpdateSubspaceFeeTokens) ValidateBasic() error {
 	}
 
 	return nil
-}
-
-// GetSignBytes implements legacytx.LegacyMsg
-func (msg *MsgUpdateSubspaceFeeTokens) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(msg))
 }
 
 // GetSigners implements sdk.Msg

@@ -5,6 +5,7 @@ import (
 
 	poststypes "github.com/desmos-labs/desmos/v6/x/posts/types"
 
+	storetypes "cosmossdk.io/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/v6/x/reports/types"
@@ -61,7 +62,7 @@ func (k Keeper) GetStandardReason(ctx sdk.Context, id uint32) (reason types.Stan
 // IterateReasons iterates over all the stored reasons and performs the provided function
 func (k Keeper) IterateReasons(ctx sdk.Context, fn func(reason types.Reason) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.ReasonPrefix)
+	iterator := storetypes.KVStorePrefixIterator(store, types.ReasonPrefix)
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
@@ -78,7 +79,7 @@ func (k Keeper) IterateReasons(ctx sdk.Context, fn func(reason types.Reason) (st
 // IterateSubspaceReasons iterates over all the given subspace reasons and performs the provided function
 func (k Keeper) IterateSubspaceReasons(ctx sdk.Context, subspaceID uint64, fn func(reason types.Reason) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.SubspaceReasonsPrefix(subspaceID))
+	iterator := storetypes.KVStorePrefixIterator(store, types.SubspaceReasonsPrefix(subspaceID))
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
@@ -107,7 +108,7 @@ func (k Keeper) GetSubspaceReasons(ctx sdk.Context, subspaceID uint64) []types.R
 // IterateReports iterates over all reports and performs the provided function
 func (k Keeper) IterateReports(ctx sdk.Context, fn func(report types.Report) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.ReportPrefix)
+	iterator := storetypes.KVStorePrefixIterator(store, types.ReportPrefix)
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
@@ -124,7 +125,7 @@ func (k Keeper) IterateReports(ctx sdk.Context, fn func(report types.Report) (st
 // IterateSubspaceReports iterates over all the given subspace reports and performs the provided function
 func (k Keeper) IterateSubspaceReports(ctx sdk.Context, subspaceID uint64, fn func(report types.Report) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.SubspaceReportsPrefix(subspaceID))
+	iterator := storetypes.KVStorePrefixIterator(store, types.SubspaceReportsPrefix(subspaceID))
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
@@ -151,7 +152,7 @@ func (k Keeper) GetSubspaceReports(ctx sdk.Context, subspaceID uint64) []types.R
 // IteratePostReports iterates over all the reports for the given post and performs the provided function
 func (k Keeper) IteratePostReports(ctx sdk.Context, subspaceID uint64, postID uint64, fn func(report types.Report) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.PostReportsPrefix(subspaceID, postID))
+	iterator := storetypes.KVStorePrefixIterator(store, types.PostReportsPrefix(subspaceID, postID))
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {

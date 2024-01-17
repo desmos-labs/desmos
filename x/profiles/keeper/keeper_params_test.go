@@ -1,6 +1,7 @@
 package keeper_test
 
 import (
+	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/v6/x/profiles/types"
@@ -8,16 +9,16 @@ import (
 
 func (suite *KeeperTestSuite) TestKeeper_SetParams() {
 	params := types.NewParams(
-		types.NewNicknameParams(sdk.NewInt(3), sdk.NewInt(1000)),
-		types.NewDTagParams("^[A-Za-z0-9_]+$", sdk.NewInt(3), sdk.NewInt(1000)),
-		types.NewBioParams(sdk.NewInt(1000)),
+		types.NewNicknameParams(math.NewInt(3), math.NewInt(1000)),
+		types.NewDTagParams("^[A-Za-z0-9_]+$", math.NewInt(3), math.NewInt(1000)),
+		types.NewBioParams(math.NewInt(1000)),
 		types.NewOracleParams(
 			32,
 			10,
 			6,
 			50_000,
 			200_000,
-			sdk.NewCoin("band", sdk.NewInt(10)),
+			sdk.NewCoin("band", math.NewInt(10)),
 		),
 		types.NewAppLinksParams(types.DefaultAppLinksValidityDuration),
 	)
@@ -38,16 +39,16 @@ func (suite *KeeperTestSuite) TestKeeper_GetParams() {
 			name: "valid params do not error",
 			store: func(ctx sdk.Context) {
 				params := types.NewParams(
-					types.NewNicknameParams(sdk.NewInt(3), sdk.NewInt(1000)),
-					types.NewDTagParams("^[A-Za-z0-9_]+$", sdk.NewInt(3), sdk.NewInt(1000)),
-					types.NewBioParams(sdk.NewInt(1000)),
+					types.NewNicknameParams(math.NewInt(3), math.NewInt(1000)),
+					types.NewDTagParams("^[A-Za-z0-9_]+$", math.NewInt(3), math.NewInt(1000)),
+					types.NewBioParams(math.NewInt(1000)),
 					types.NewOracleParams(
 						32,
 						10,
 						6,
 						50_000,
 						200_000,
-						sdk.NewCoin("band", sdk.NewInt(10)),
+						sdk.NewCoin("band", math.NewInt(10)),
 					),
 					types.NewAppLinksParams(types.DefaultAppLinksValidityDuration),
 				)
@@ -55,16 +56,16 @@ func (suite *KeeperTestSuite) TestKeeper_GetParams() {
 			},
 			shouldErr: false,
 			expParams: types.NewParams(
-				types.NewNicknameParams(sdk.NewInt(3), sdk.NewInt(1000)),
-				types.NewDTagParams("^[A-Za-z0-9_]+$", sdk.NewInt(3), sdk.NewInt(1000)),
-				types.NewBioParams(sdk.NewInt(1000)),
+				types.NewNicknameParams(math.NewInt(3), math.NewInt(1000)),
+				types.NewDTagParams("^[A-Za-z0-9_]+$", math.NewInt(3), math.NewInt(1000)),
+				types.NewBioParams(math.NewInt(1000)),
 				types.NewOracleParams(
 					32,
 					10,
 					6,
 					50_000,
 					200_000,
-					sdk.NewCoin("band", sdk.NewInt(10)),
+					sdk.NewCoin("band", math.NewInt(10)),
 				),
 				types.NewAppLinksParams(types.DefaultAppLinksValidityDuration),
 			),

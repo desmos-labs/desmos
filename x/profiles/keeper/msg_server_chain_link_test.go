@@ -8,8 +8,6 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-
 	"github.com/desmos-labs/desmos/v6/x/profiles/keeper"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -75,13 +73,13 @@ func (suite *KeeperTestSuite) TestMsgServer_LinkChainAccount() {
 				srcAccAddr, err := sdk.AccAddressFromBech32(srcAddr)
 				suite.Require().NoError(err)
 
-				srcBaseAcc := authtypes.NewBaseAccountWithAddress(srcAccAddr)
+				srcBaseAcc := suite.ak.NewAccountWithAddress(ctx, srcAccAddr)
 				suite.Require().NoError(srcBaseAcc.SetPubKey(srcPubKey))
 				suite.ak.SetAccount(suite.ctx, srcBaseAcc)
 
 				destAccAddr, err := sdk.AccAddressFromBech32(destAddr)
 				suite.Require().NoError(err)
-				destBaseAcc := authtypes.NewBaseAccountWithAddress(destAccAddr)
+				destBaseAcc := suite.ak.NewAccountWithAddress(ctx, destAccAddr)
 				suite.Require().NoError(destBaseAcc.SetPubKey(destPubKey))
 				suite.ak.SetAccount(suite.ctx, destBaseAcc)
 
@@ -136,7 +134,7 @@ func (suite *KeeperTestSuite) TestMsgServer_LinkChainAccount() {
 			}
 
 			server := keeper.NewMsgServerImpl(suite.k)
-			_, err = server.LinkChainAccount(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err = server.LinkChainAccount(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -226,7 +224,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UnlinkChainAccount() {
 			}
 
 			server := keeper.NewMsgServerImpl(suite.k)
-			_, err := server.UnlinkChainAccount(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := server.UnlinkChainAccount(ctx, tc.msg)
 			suite.Require().Equal(tc.expEvents, ctx.EventManager().Events())
 
 			if tc.shouldErr {
@@ -318,7 +316,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SetDefaultExternalAddress() {
 			}
 
 			server := keeper.NewMsgServerImpl(suite.k)
-			_, err := server.SetDefaultExternalAddress(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := server.SetDefaultExternalAddress(ctx, tc.msg)
 			suite.Require().Equal(tc.expEvents, ctx.EventManager().Events())
 
 			if tc.shouldErr {

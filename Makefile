@@ -353,7 +353,7 @@ update-deps-types:
 ###############################################################################
 ###                                Protobuf                                 ###
 ###############################################################################
-protoVer=0.11.6
+protoVer=0.14.0
 protoImageName=ghcr.io/cosmos/proto-builder:$(protoVer)
 protoImage=$(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace --user $(shell id -u):$(shell id -g) $(protoImageName)
 
@@ -391,7 +391,7 @@ build-docker-desmosnode:
 
 # Setups 4 folders representing each one the genesis state of a testnet node
 setup-localnet: build-linux
-	if ! [ -f build/node0/desmos/config/genesis.json ]; then $(BUILDDIR)/desmos testnet \
+	if ! [ -f build/node0/.desmos/config/genesis.json ]; then $(BUILDDIR)/desmos testnet \
 		-o ./build --starting-ip-address 192.168.255.2 --keyring-backend=test \
 		--v=$(if $(NODES),$(NODES),4) \
 		--gentx-coin-denom=$(if $(COIN_DENOM),$(COIN_DENOM),"stake") \

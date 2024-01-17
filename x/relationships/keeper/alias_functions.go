@@ -1,6 +1,7 @@
 package keeper
 
 import (
+	storetypes "cosmossdk.io/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/v6/x/relationships/types"
@@ -10,7 +11,7 @@ import (
 func (k Keeper) IterateRelationships(ctx sdk.Context, fn func(index int64, relationship types.Relationship) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 
-	iterator := sdk.KVStorePrefixIterator(store, types.RelationshipsStorePrefix)
+	iterator := storetypes.KVStorePrefixIterator(store, types.RelationshipsStorePrefix)
 	defer iterator.Close()
 
 	i := int64(0)
@@ -32,7 +33,7 @@ func (k Keeper) IterateRelationships(ctx sdk.Context, fn func(index int64, relat
 func (k Keeper) IterateSubspaceRelationships(ctx sdk.Context, subspaceID uint64, fn func(index int64, relationship types.Relationship) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 
-	iterator := sdk.KVStorePrefixIterator(store, types.SubspaceRelationshipsPrefix(subspaceID))
+	iterator := storetypes.KVStorePrefixIterator(store, types.SubspaceRelationshipsPrefix(subspaceID))
 	defer iterator.Close()
 
 	i := int64(0)
@@ -50,7 +51,7 @@ func (k Keeper) IterateSubspaceRelationships(ctx sdk.Context, subspaceID uint64,
 // IterateUsersBlocks iterates through the list of user blocks and performs the given function
 func (k Keeper) IterateUsersBlocks(ctx sdk.Context, fn func(index int64, block types.UserBlock) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.UsersBlocksStorePrefix)
+	iterator := storetypes.KVStorePrefixIterator(store, types.UsersBlocksStorePrefix)
 	defer iterator.Close()
 
 	i := int64(0)
@@ -67,7 +68,7 @@ func (k Keeper) IterateUsersBlocks(ctx sdk.Context, fn func(index int64, block t
 // IterateSubspaceUsersBlocks iterates through the list of user blocks stored for a subspace and performs the given function
 func (k Keeper) IterateSubspaceUsersBlocks(ctx sdk.Context, subspaceID uint64, fn func(index int64, block types.UserBlock) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.SubspaceBlocksPrefix(subspaceID))
+	iterator := storetypes.KVStorePrefixIterator(store, types.SubspaceBlocksPrefix(subspaceID))
 	defer iterator.Close()
 
 	i := int64(0)

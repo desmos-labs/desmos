@@ -1,10 +1,11 @@
-package v640
+package upgrades
 
 import (
-	storetypes "github.com/cosmos/cosmos-sdk/store/types"
-	sdk "github.com/cosmos/cosmos-sdk/types"
+	"context"
+
+	storetypes "cosmossdk.io/store/types"
+	upgradetypes "cosmossdk.io/x/upgrade/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 
 	"github.com/desmos-labs/desmos/v6/app/upgrades"
 )
@@ -13,7 +14,7 @@ var (
 	_ upgrades.Upgrade = &Upgrade{}
 )
 
-// Upgrade represents the v6.4.0 upgrade
+// Upgrade represents the v6 upgrade
 type Upgrade struct {
 	mm           *module.Manager
 	configurator module.Configurator
@@ -29,18 +30,20 @@ func NewUpgrade(mm *module.Manager, configurator module.Configurator) *Upgrade {
 
 // Name implements upgrades.Upgrade
 func (u *Upgrade) Name() string {
-	return "v6.4.0"
+	return "v7"
 }
 
 // Handler implements upgrades.Upgrade
 func (u *Upgrade) Handler() upgradetypes.UpgradeHandler {
-	return func(ctx sdk.Context, plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
-		// This upgrade does not require any migration, so we can simply return the current version map
+	return func(ctx context.Context, plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
+		// After properly setting all the validator commissions, we can proceed with the normal migration
 		return u.mm.RunMigrations(ctx, u.configurator, fromVM)
 	}
 }
 
 // StoreUpgrades implements upgrades.Upgrade
 func (u *Upgrade) StoreUpgrades() *storetypes.StoreUpgrades {
-	return &storetypes.StoreUpgrades{}
+	return &storetypes.StoreUpgrades{
+		Added: []string{},
+	}
 }

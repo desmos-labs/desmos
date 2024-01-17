@@ -5,9 +5,10 @@ import (
 	"testing"
 	"time"
 
+	"cosmossdk.io/math"
+	"cosmossdk.io/x/feegrant"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/authz"
-	"github.com/cosmos/cosmos-sdk/x/feegrant"
 	"github.com/stretchr/testify/require"
 
 	"github.com/desmos-labs/desmos/v6/app"
@@ -285,7 +286,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 				1,
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 				types.NewUserGrantee("cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0"),
-				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10)))},
+				&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("stake", math.NewInt(10)))},
 			)),
 			shouldErr: false,
 			expMsgs: []sdk.Msg{
@@ -293,7 +294,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 					1,
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 					types.NewUserGrantee("cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0"),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10)))},
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("stake", math.NewInt(10)))},
 				),
 			},
 		},

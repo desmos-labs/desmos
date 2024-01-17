@@ -1,15 +1,15 @@
 package app
 
 import (
+	corestoretypes "cosmossdk.io/core/store"
 	"cosmossdk.io/errors"
-	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
-	ibcante "github.com/cosmos/ibc-go/v7/modules/core/ante"
-	ibckeeper "github.com/cosmos/ibc-go/v7/modules/core/keeper"
+	ibcante "github.com/cosmos/ibc-go/v8/modules/core/ante"
+	ibckeeper "github.com/cosmos/ibc-go/v8/modules/core/keeper"
 
-	subspaceante "github.com/desmos-labs/desmos/v6/x/subspaces/ante"
+	subspacesante "github.com/desmos-labs/desmos/v6/x/subspaces/ante"
 	subspaceskeeper "github.com/desmos-labs/desmos/v6/x/subspaces/keeper"
 
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
@@ -23,7 +23,7 @@ type HandlerOptions struct {
 
 	IBCkeeper         *ibckeeper.Keeper
 	SubspacesKeeper   subspaceskeeper.Keeper
-	TxCounterStoreKey storetypes.StoreKey
+	TxCounterStoreKey corestoretypes.KVStoreService
 	WasmConfig        *wasmTypes.WasmConfig
 }
 
@@ -58,8 +58,9 @@ func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 		ante.NewTxTimeoutHeightDecorator(),
 		ante.NewValidateMemoDecorator(options.AccountKeeper),
 		ante.NewConsumeGasForTxSizeDecorator(options.AccountKeeper),
-		subspaceante.NewDeductFeeDecorator(
-			ante.NewDeductFeeDecorator(options.AccountKeeper, options.BankKeeper, options.FeegrantKeeper, options.TxFeeChecker), options.AccountKeeper, options.BankKeeper, options.SubspacesKeeper, options.TxFeeChecker),
+		subspacesante.NewDeductFeeDecorator(
+			ante.NewDeductFeeDecorator(options.AccountKeeper, options.BankKeeper, options.FeegrantKeeper, options.TxFeeChecker), options.AccountKeeper, options.BankKeeper, options.SubspacesKeeper, options.TxFeeChecker,
+		),
 		// SetPubKeyDecorator must be called before all signature verification decorators
 		ante.NewSetPubKeyDecorator(options.AccountKeeper),
 		ante.NewValidateSigCountDecorator(options.AccountKeeper),

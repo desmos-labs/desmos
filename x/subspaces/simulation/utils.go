@@ -6,9 +6,8 @@ import (
 	"math/rand"
 	"time"
 
+	"cosmossdk.io/math"
 	poststypes "github.com/desmos-labs/desmos/v6/x/posts/types"
-
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
@@ -105,7 +104,7 @@ func RandomAddress(r *rand.Rand, addresses []string) string {
 }
 
 // RandomAuthAccount returns a random account from the slice given
-func RandomAuthAccount(r *rand.Rand, accounts []authtypes.AccountI) authtypes.AccountI {
+func RandomAuthAccount(r *rand.Rand, accounts []sdk.AccountI) sdk.AccountI {
 	return accounts[r.Intn(len(accounts))]
 }
 
@@ -129,7 +128,7 @@ func GenerateRandomFeeTokens(r *rand.Rand) sdk.Coins {
 	coins := make(sdk.Coins, r.Intn(10))
 
 	for i := range coins {
-		coins[i] = sdk.NewCoin(simtypes.RandStringOfLength(r, 10), sdk.NewInt(r.Int63n(1000000)))
+		coins[i] = sdk.NewCoin(simtypes.RandStringOfLength(r, 10), math.NewInt(r.Int63n(1000000)))
 	}
 
 	return coins.Sort()

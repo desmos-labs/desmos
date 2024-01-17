@@ -15,6 +15,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
+	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 
 	multibuilder "github.com/desmos-labs/desmos/v6/app/desmos/cmd/chainlink/builder/multi"
 	singlebuilder "github.com/desmos-labs/desmos/v6/app/desmos/cmd/chainlink/builder/single"
@@ -60,7 +61,7 @@ func (suite *CreateJSONChainLinkTestSuite) TestSingleSignatureAccount() {
 	key, err := keyBase.Key(singlebuilder.KeyName)
 	suite.Require().NoError(err)
 
-	sig, _, err := keyBase.Sign(singlebuilder.KeyName, []byte(suite.Owner))
+	sig, _, err := keyBase.Sign(singlebuilder.KeyName, []byte(suite.Owner), signing.SignMode_SIGN_MODE_TEXTUAL)
 	suite.Require().NoError(err)
 
 	pubKey, err := key.GetPubKey()

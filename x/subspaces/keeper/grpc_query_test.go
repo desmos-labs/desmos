@@ -5,9 +5,10 @@ import (
 
 	"github.com/desmos-labs/desmos/v6/x/subspaces/types"
 
+	"cosmossdk.io/math"
+	"cosmossdk.io/x/feegrant"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
-	"github.com/cosmos/cosmos-sdk/x/feegrant"
 )
 
 func (suite *KeeperTestSuite) TestQueryServer_Subspaces() {
@@ -80,7 +81,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Subspaces() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.Subspaces(sdk.WrapSDKContext(ctx), tc.req)
+			res, err := suite.k.Subspaces(ctx, tc.req)
 			suite.Require().NoError(err)
 			suite.Require().Equal(tc.expSubspaces, res.Subspaces)
 		})
@@ -139,7 +140,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Subspace() {
 				tc.store(ctx)
 			}
 
-			response, err := suite.k.Subspace(sdk.WrapSDKContext(ctx), tc.request)
+			response, err := suite.k.Subspace(ctx, tc.request)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -268,7 +269,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Sections() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.Sections(sdk.WrapSDKContext(ctx), tc.req)
+			res, err := suite.k.Sections(ctx, tc.req)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -351,7 +352,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Section() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.Section(sdk.WrapSDKContext(ctx), tc.req)
+			res, err := suite.k.Section(ctx, tc.req)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -500,7 +501,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserGroups() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.UserGroups(sdk.WrapSDKContext(ctx), tc.req)
+			res, err := suite.k.UserGroups(ctx, tc.req)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -568,7 +569,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserGroup() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.UserGroup(sdk.WrapSDKContext(ctx), tc.req)
+			res, err := suite.k.UserGroup(ctx, tc.req)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -653,7 +654,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserGroupMembers() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.UserGroupMembers(sdk.WrapSDKContext(ctx), tc.req)
+			res, err := suite.k.UserGroupMembers(ctx, tc.req)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -779,7 +780,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserPermissions() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.UserPermissions(sdk.WrapSDKContext(ctx), tc.req)
+			res, err := suite.k.UserPermissions(ctx, tc.req)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -818,14 +819,14 @@ func (suite *KeeperTestSuite) TestQueryServer_UserAllowances() {
 					1,
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))},
 				))
 
 				suite.k.SaveGrant(ctx, types.NewGrant(
 					1,
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					types.NewUserGrantee("cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69"),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))},
 				))
 			},
 			req:       types.NewQueryUserAllowancesRequest(1, "", nil),
@@ -835,13 +836,13 @@ func (suite *KeeperTestSuite) TestQueryServer_UserAllowances() {
 					1,
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))},
 				),
 				types.NewGrant(
 					1,
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					types.NewUserGrantee("cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69"),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))},
 				),
 			},
 		},
@@ -853,14 +854,14 @@ func (suite *KeeperTestSuite) TestQueryServer_UserAllowances() {
 				suite.k.SaveGrant(ctx, types.NewGrant(1,
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))},
 				))
 
 				suite.k.SaveGrant(ctx, types.NewGrant(
 					1,
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					types.NewUserGrantee("cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69"),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))},
 				))
 			},
 			req:       types.NewQueryUserAllowancesRequest(1, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5", nil),
@@ -870,7 +871,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserAllowances() {
 					1,
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					types.NewUserGrantee("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))},
 				),
 			},
 		},
@@ -884,7 +885,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserAllowances() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.UserAllowances(sdk.WrapSDKContext(ctx), tc.req)
+			res, err := suite.k.UserAllowances(ctx, tc.req)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -925,13 +926,13 @@ func (suite *KeeperTestSuite) TestQueryServer_GroupAllowances() {
 					1,
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					types.NewGroupGrantee(1),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))},
 				))
 				suite.k.SaveGrant(ctx, types.NewGrant(
 					1,
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					types.NewGroupGrantee(2),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))},
 				))
 			},
 			req:       types.NewQueryGroupAllowancesRequest(1, 0, nil),
@@ -940,12 +941,12 @@ func (suite *KeeperTestSuite) TestQueryServer_GroupAllowances() {
 				types.NewGrant(1,
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					types.NewGroupGrantee(1),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))},
 				),
 				types.NewGrant(1,
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					types.NewGroupGrantee(2),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))},
 				),
 			},
 		},
@@ -961,13 +962,13 @@ func (suite *KeeperTestSuite) TestQueryServer_GroupAllowances() {
 					1,
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					types.NewGroupGrantee(1),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))},
 				))
 				suite.k.SaveGrant(ctx, types.NewGrant(
 					1,
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					types.NewGroupGrantee(2),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))},
 				))
 			},
 			req:       types.NewQueryGroupAllowancesRequest(1, 1, nil),
@@ -977,7 +978,7 @@ func (suite *KeeperTestSuite) TestQueryServer_GroupAllowances() {
 					1,
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					types.NewGroupGrantee(1),
-					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))},
+					&feegrant.BasicAllowance{SpendLimit: sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))},
 				),
 			},
 		},
@@ -991,7 +992,7 @@ func (suite *KeeperTestSuite) TestQueryServer_GroupAllowances() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.GroupAllowances(sdk.WrapSDKContext(ctx), tc.req)
+			res, err := suite.k.GroupAllowances(ctx, tc.req)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {

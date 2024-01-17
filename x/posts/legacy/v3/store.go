@@ -3,10 +3,10 @@ package v3
 import (
 	"fmt"
 
+	"cosmossdk.io/store/prefix"
+	storetypes "cosmossdk.io/store/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
-	"github.com/cosmos/cosmos-sdk/store/prefix"
-	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	v2 "github.com/desmos-labs/desmos/v6/x/posts/legacy/v2"
@@ -44,7 +44,7 @@ func MigrateStore(ctx sdk.Context, storeKey storetypes.StoreKey, cdc codec.Binar
 }
 
 // migratePosts migrates the posts preset inside the store from v2 to v3
-func migratePosts(store sdk.KVStore, cdc codec.BinaryCodec) error {
+func migratePosts(store storetypes.KVStore, cdc codec.BinaryCodec) error {
 	prefixStore := prefix.NewStore(store, types.PostPrefix)
 	iterator := prefixStore.Iterator(nil, nil)
 
@@ -178,7 +178,7 @@ func migrateReplySettings(settings v2.ReplySetting) v4.ReplySetting {
 }
 
 // migrateAttachments migrates the attachments present inside the store from v2 to v3
-func migrateAttachments(store sdk.KVStore, cdc codec.BinaryCodec) error {
+func migrateAttachments(store storetypes.KVStore, cdc codec.BinaryCodec) error {
 	prefixStore := prefix.NewStore(store, types.AttachmentPrefix)
 	iterator := prefixStore.Iterator(nil, nil)
 
@@ -266,7 +266,7 @@ func convertProvidedAnswers(v2Answers []v2.Poll_ProvidedAnswer) []v4.Poll_Provid
 }
 
 // migrateUserAnswers migrates all the user answers present inside the store from v2 to v3
-func migrateUserAnswers(store sdk.KVStore, cdc codec.BinaryCodec) error {
+func migrateUserAnswers(store storetypes.KVStore, cdc codec.BinaryCodec) error {
 	prefixStore := prefix.NewStore(store, types.UserAnswerPrefix)
 	iterator := prefixStore.Iterator(nil, nil)
 

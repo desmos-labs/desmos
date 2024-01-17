@@ -1,9 +1,9 @@
 package v3
 
 import (
+	"cosmossdk.io/store/prefix"
+	storetypes "cosmossdk.io/store/types"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/store/prefix"
-	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	poststypes "github.com/desmos-labs/desmos/v6/x/posts/types"
@@ -79,7 +79,7 @@ func FixMissingNextReactionIDs(ctx sdk.Context, storeKey storetypes.StoreKey, pk
 		}
 
 		// Get max reaction ID of the post
-		iter := sdk.KVStorePrefixIterator(store, types.PostReactionsPrefix(post.SubspaceID, post.ID))
+		iter := storetypes.KVStorePrefixIterator(store, types.PostReactionsPrefix(post.SubspaceID, post.ID))
 		maxReactionID := uint32(0)
 		for ; iter.Valid(); iter.Next() {
 			var reaction types.Reaction

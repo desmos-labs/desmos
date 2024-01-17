@@ -6,13 +6,16 @@ import (
 	"github.com/desmos-labs/desmos/v6/x/subspaces/keeper"
 	"github.com/desmos-labs/desmos/v6/x/subspaces/types"
 
-	db "github.com/cometbft/cometbft-db"
-	"github.com/cometbft/cometbft/libs/log"
+	"cosmossdk.io/log"
+	"cosmossdk.io/store"
+	"cosmossdk.io/store/metrics"
+	storetypes "cosmossdk.io/store/types"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
+	db "github.com/cosmos/cosmos-db"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/store"
-	storetypes "github.com/cosmos/cosmos-sdk/store/types"
+	"github.com/cosmos/cosmos-sdk/codec/address"
+	"github.com/cosmos/cosmos-sdk/runtime"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -41,12 +44,12 @@ func TestKeeperTestSuite(t *testing.T) {
 
 func (suite *KeeperTestSuite) SetupTest() {
 	// Define store keys
-	keys := sdk.NewMemoryStoreKeys(types.StoreKey, authtypes.StoreKey, authzkeeper.StoreKey)
+	keys := storetypes.NewKVStoreKeys(types.StoreKey, authtypes.StoreKey, authzkeeper.StoreKey)
 	suite.storeKey = keys[types.StoreKey]
 
 	// Create an in-memory db
 	memDB := db.NewMemDB()
-	ms := store.NewCommitMultiStore(memDB)
+	ms := store.NewCommitMultiStore(memDB, log.NewNopLogger(), metrics.NewNoOpMetrics())
 	for _, key := range keys {
 		ms.MountStoreWithDB(key, storetypes.StoreTypeIAVL, memDB)
 	}
@@ -61,13 +64,14 @@ func (suite *KeeperTestSuite) SetupTest() {
 	// Dependencies initialization
 	suite.ak = authkeeper.NewAccountKeeper(
 		suite.cdc,
-		keys[authtypes.StoreKey],
+		runtime.NewKVStoreService(keys[authtypes.StoreKey]),
 		authtypes.ProtoBaseAccount,
 		app.GetMaccPerms(),
+		address.NewBech32Codec("cosmos"),
 		"cosmos",
 		authtypes.NewModuleAddress("gov").String(),
 	)
-	suite.authzKeeper = authzkeeper.NewKeeper(keys[authzkeeper.StoreKey], suite.cdc, &baseapp.MsgServiceRouter{}, suite.ak)
+	suite.authzKeeper = authzkeeper.NewKeeper(runtime.NewKVStoreService(keys[authzkeeper.StoreKey]), suite.cdc, &baseapp.MsgServiceRouter{}, suite.ak)
 
 	// Define keeper
 	suite.k = keeper.NewKeeper(suite.cdc, suite.storeKey, suite.ak, suite.authzKeeper, authtypes.NewModuleAddress("gov").String())
@@ -75,7 +79,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 
 func (suite *KeeperTestSuite) getAllGrantsInExpiringQueue(ctx sdk.Context) []types.Grant {
 	store := ctx.KVStore(suite.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.ExpiringAllowanceQueuePrefix)
+	iterator := storetypes.KVStorePrefixIterator(store, types.ExpiringAllowanceQueuePrefix)
 	defer iterator.Close()
 
 	var grants []types.Grant

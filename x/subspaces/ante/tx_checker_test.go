@@ -3,6 +3,7 @@ package ante_test
 import (
 	"testing"
 
+	"cosmossdk.io/math"
 	"github.com/cosmos/cosmos-sdk/testutil/testdata"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
@@ -30,7 +31,7 @@ func (suite *AnteTestSuite) TestCheckTxFeeWithSubspaceMinPrices() {
 	}{
 		{
 			name: "standard tx returns no error",
-			fees: sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(100))),
+			fees: sdk.NewCoins(sdk.NewCoin("stake", math.NewInt(100))),
 			buildTx: func(fees sdk.Coins) sdk.Tx {
 				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
 				txBuilder.SetMsgs(nonSubspaceMsg)
@@ -42,7 +43,7 @@ func (suite *AnteTestSuite) TestCheckTxFeeWithSubspaceMinPrices() {
 		},
 		{
 			name: "standard tx with insufficient fees returns error",
-			fees: sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10))),
+			fees: sdk.NewCoins(sdk.NewCoin("stake", math.NewInt(10))),
 			buildTx: func(fees sdk.Coins) sdk.Tx {
 				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
 				txBuilder.SetMsgs(nonSubspaceMsg)
@@ -54,7 +55,7 @@ func (suite *AnteTestSuite) TestCheckTxFeeWithSubspaceMinPrices() {
 		},
 		{
 			name: "standard tx with subspace fees returns error",
-			fees: sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(100))),
+			fees: sdk.NewCoins(sdk.NewCoin("minttoken", math.NewInt(100))),
 			buildTx: func(fees sdk.Coins) sdk.Tx {
 				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
 				txBuilder.SetMsgs(nonSubspaceMsg)
@@ -71,7 +72,7 @@ func (suite *AnteTestSuite) TestCheckTxFeeWithSubspaceMinPrices() {
 					GetSubspace(gomock.Any(), uint64(1)).
 					Return(types.Subspace{}, false)
 			},
-			fees: sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(100))),
+			fees: sdk.NewCoins(sdk.NewCoin("stake", math.NewInt(100))),
 			buildTx: func(fees sdk.Coins) sdk.Tx {
 				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
 				txBuilder.SetMsgs(msg)
@@ -88,7 +89,7 @@ func (suite *AnteTestSuite) TestCheckTxFeeWithSubspaceMinPrices() {
 					GetSubspace(gomock.Any(), uint64(1)).
 					Return(types.Subspace{}, false)
 			},
-			fees: sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(100))),
+			fees: sdk.NewCoins(sdk.NewCoin("minttoken", math.NewInt(100))),
 			buildTx: func(fees sdk.Coins) sdk.Tx {
 				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
 				txBuilder.SetMsgs(msg)
@@ -100,7 +101,7 @@ func (suite *AnteTestSuite) TestCheckTxFeeWithSubspaceMinPrices() {
 		},
 		{
 			name: "manage subspace tx with subspace fees returns error",
-			fees: sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(100))),
+			fees: sdk.NewCoins(sdk.NewCoin("minttoken", math.NewInt(100))),
 			buildTx: func(fees sdk.Coins) sdk.Tx {
 				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
 				txBuilder.SetMsgs(manageSubspaceMsg)
@@ -112,7 +113,7 @@ func (suite *AnteTestSuite) TestCheckTxFeeWithSubspaceMinPrices() {
 		},
 		{
 			name: "manage subspace tx returns no error",
-			fees: sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(100))),
+			fees: sdk.NewCoins(sdk.NewCoin("stake", math.NewInt(100))),
 			buildTx: func(fees sdk.Coins) sdk.Tx {
 				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
 				txBuilder.SetMsgs(manageSubspaceMsg)
@@ -129,12 +130,12 @@ func (suite *AnteTestSuite) TestCheckTxFeeWithSubspaceMinPrices() {
 					GetSubspace(gomock.Any(), uint64(1)).
 					Return(
 						types.Subspace{
-							AdditionalFeeTokens: sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(1))),
+							AdditionalFeeTokens: sdk.NewCoins(sdk.NewCoin("minttoken", math.NewInt(1))),
 						},
 						true,
 					)
 			},
-			fees: sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(100))),
+			fees: sdk.NewCoins(sdk.NewCoin("minttoken", math.NewInt(100))),
 			buildTx: func(fees sdk.Coins) sdk.Tx {
 				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
 				txBuilder.SetMsgs(msg)
@@ -151,12 +152,12 @@ func (suite *AnteTestSuite) TestCheckTxFeeWithSubspaceMinPrices() {
 					GetSubspace(gomock.Any(), uint64(1)).
 					Return(
 						types.Subspace{
-							AdditionalFeeTokens: sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(1))),
+							AdditionalFeeTokens: sdk.NewCoins(sdk.NewCoin("minttoken", math.NewInt(1))),
 						},
 						true,
 					)
 			},
-			fees: sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(100))),
+			fees: sdk.NewCoins(sdk.NewCoin("stake", math.NewInt(100))),
 			buildTx: func(fees sdk.Coins) sdk.Tx {
 				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
 				txBuilder.SetMsgs(msg)
@@ -173,12 +174,12 @@ func (suite *AnteTestSuite) TestCheckTxFeeWithSubspaceMinPrices() {
 					GetSubspace(gomock.Any(), uint64(1)).
 					Return(
 						types.Subspace{
-							AdditionalFeeTokens: sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(1))),
+							AdditionalFeeTokens: sdk.NewCoins(sdk.NewCoin("minttoken", math.NewInt(1))),
 						},
 						true,
 					)
 			},
-			fees: sdk.NewCoins(sdk.NewCoin("minttoken", sdk.NewInt(100))),
+			fees: sdk.NewCoins(sdk.NewCoin("minttoken", math.NewInt(100))),
 			buildTx: func(fees sdk.Coins) sdk.Tx {
 				txBuilder := suite.clientCtx.TxConfig.NewTxBuilder()
 				txBuilder.SetMsgs(msg)
@@ -218,17 +219,17 @@ func TestAnte_MergeMinPrices(t *testing.T) {
 	}{
 		{
 			name:     "merge existing coin does not update amount properly",
-			original: sdk.NewDecCoins(sdk.NewDecCoin("udsm", sdk.NewInt(1000))),
-			others:   sdk.NewDecCoins(sdk.NewDecCoin("udsm", sdk.NewInt(5000))),
-			result:   sdk.NewDecCoins(sdk.NewDecCoin("udsm", sdk.NewInt(1000))),
+			original: sdk.NewDecCoins(sdk.NewDecCoin("udsm", math.NewInt(1000))),
+			others:   sdk.NewDecCoins(sdk.NewDecCoin("udsm", math.NewInt(5000))),
+			result:   sdk.NewDecCoins(sdk.NewDecCoin("udsm", math.NewInt(1000))),
 		},
 		{
 			name:     "merge non-existing coin properly",
-			original: sdk.NewDecCoins(sdk.NewDecCoin("udsm", sdk.NewInt(1000))),
-			others:   sdk.NewDecCoins(sdk.NewDecCoin("minttoken", sdk.NewInt(5000))),
+			original: sdk.NewDecCoins(sdk.NewDecCoin("udsm", math.NewInt(1000))),
+			others:   sdk.NewDecCoins(sdk.NewDecCoin("minttoken", math.NewInt(5000))),
 			result: sdk.NewDecCoins(
-				sdk.NewDecCoin("udsm", sdk.NewInt(1000)),
-				sdk.NewDecCoin("minttoken", sdk.NewInt(5000)),
+				sdk.NewDecCoin("udsm", math.NewInt(1000)),
+				sdk.NewDecCoin("minttoken", math.NewInt(5000)),
 			),
 		},
 	}

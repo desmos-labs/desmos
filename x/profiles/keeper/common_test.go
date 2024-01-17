@@ -6,8 +6,11 @@ import (
 
 	"github.com/golang/mock/gomock"
 
+	"cosmossdk.io/store/metrics"
+	storetypes "cosmossdk.io/store/types"
+	"github.com/cosmos/cosmos-sdk/codec/address"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
-	storetypes "github.com/cosmos/cosmos-sdk/store/types"
+	"github.com/cosmos/cosmos-sdk/runtime"
 	"github.com/cosmos/go-bip39"
 
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
@@ -17,16 +20,17 @@ import (
 
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 
+	ibctesting "github.com/cosmos/ibc-go/v8/testing"
 	"github.com/desmos-labs/desmos/v6/app"
-	"github.com/desmos-labs/desmos/v6/testutil/ibctesting"
 
-	db "github.com/cometbft/cometbft-db"
-	"github.com/cometbft/cometbft/libs/log"
+	"cosmossdk.io/log"
+	"cosmossdk.io/store"
+	db "github.com/cosmos/cosmos-db"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/suite"
 
+	desmosibctesting "github.com/desmos-labs/desmos/v6/testutil/ibctesting"
 	"github.com/desmos-labs/desmos/v6/x/profiles/keeper"
 	"github.com/desmos-labs/desmos/v6/x/profiles/testutil"
 	"github.com/desmos-labs/desmos/v6/x/profiles/types"
@@ -78,13 +82,13 @@ func (p TestProfile) Sign(data []byte) []byte {
 
 func (suite *KeeperTestSuite) SetupTest() {
 	// Define the store keys
-	keys := sdk.NewKVStoreKeys(types.StoreKey, authtypes.StoreKey)
+	keys := storetypes.NewKVStoreKeys(types.StoreKey, authtypes.StoreKey)
 
 	suite.storeKey = keys[types.StoreKey]
 
 	// Create an in-memory db
 	memDB := db.NewMemDB()
-	ms := store.NewCommitMultiStore(memDB)
+	ms := store.NewCommitMultiStore(memDB, log.NewNopLogger(), metrics.NewNoOpMetrics())
 	for _, key := range keys {
 		ms.MountStoreWithDB(key, storetypes.StoreTypeIAVL, memDB)
 	}
@@ -99,9 +103,10 @@ func (suite *KeeperTestSuite) SetupTest() {
 	// Dependencies initializations
 	suite.ak = authkeeper.NewAccountKeeper(
 		suite.cdc,
-		keys[authtypes.StoreKey],
+		runtime.NewKVStoreService(keys[authtypes.StoreKey]),
 		authtypes.ProtoBaseAccount,
 		app.GetMaccPerms(),
+		address.NewBech32Codec("cosmos"),
 		"cosmos",
 		authtypes.NewModuleAddress("gov").String(),
 	)
@@ -132,7 +137,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 }
 
 func (suite *KeeperTestSuite) SetupIBCTest() {
-	suite.coordinator = ibctesting.NewCoordinator(suite.T(), 2)
+	suite.coordinator = desmosibctesting.NewCoordinator(suite.T(), 2)
 	suite.chainA = suite.coordinator.GetChain(ibctesting.GetChainID(1))
 	suite.chainB = suite.coordinator.GetChain(ibctesting.GetChainID(2))
 }
@@ -180,4 +185,14 @@ func (suite *KeeperTestSuite) CheckProfileNoError(profile *types.Profile, err er
 
 func (suite *KeeperTestSuite) TearDownTest() {
 	suite.ctrl.Finish()
+}
+
+func NewIBCProfilesPath(chainA, chainB *ibctesting.TestChain) *ibctesting.Path {
+	path := ibctesting.NewPath(chainA, chainB)
+	path.EndpointA.ChannelConfig.PortID = types.IBCPortID
+	path.EndpointB.ChannelConfig.PortID = types.IBCPortID
+	path.EndpointA.ChannelConfig.Version = "ics-20"
+	path.EndpointB.ChannelConfig.Version = "ics-20"
+
+	return path
 }

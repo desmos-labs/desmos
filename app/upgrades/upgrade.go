@@ -1,8 +1,8 @@
 package upgrades
 
 import (
-	storetypes "github.com/cosmos/cosmos-sdk/store/types"
-	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
+	storetypes "cosmossdk.io/store/types"
+	upgradetypes "cosmossdk.io/x/upgrade/types"
 )
 
 // Upgrade represents a generic on-chain upgrade

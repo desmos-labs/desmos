@@ -16,7 +16,7 @@ if [ -z "${BINARY_CHECK}" ]; then
 	exit 1
 fi
 
-export DESMOSDHOME="/desmos/node${ID}/desmos"
+export DESMOSDHOME="/desmos/node${ID}/.desmos"
 
 if [ -d "$(dirname "${DESMOSDHOME}"/"${LOG}")" ]; then
   "${BINARY}" --home "${DESMOSDHOME}" "$@" | tee "${DESMOSDHOME}/${LOG}"

@@ -3,6 +3,7 @@ package types_test
 import (
 	"testing"
 
+	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/stretchr/testify/require"
@@ -76,11 +77,6 @@ func TestMsgCreateDenom_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgCreateDenom_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgCreateDenom","value":{"sender":"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69","subdenom":"minttoken","subspace_id":"1"}}`
-	require.Equal(t, expected, string(msgCreateDenom.GetSignBytes()))
-}
-
 func TestMsgCreateDenom_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgCreateDenom.Sender)
 	require.Equal(t, []sdk.AccAddress{addr}, msgCreateDenom.GetSigners())
@@ -91,7 +87,7 @@ func TestMsgCreateDenom_GetSigners(t *testing.T) {
 var msgMint = types.NewMsgMint(
 	1,
 	"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-	sdk.NewCoin("uminttoken", sdk.NewInt(100)),
+	sdk.NewCoin("uminttoken", math.NewInt(100)),
 )
 
 func TestMsgMint_Route(t *testing.T) {
@@ -131,7 +127,7 @@ func TestMsgMint_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgMint(
 				msgMint.SubspaceID,
 				msgMint.Sender,
-				sdk.Coin{Denom: "%invalid%", Amount: sdk.NewInt(100)},
+				sdk.Coin{Denom: "%invalid%", Amount: math.NewInt(100)},
 			),
 			shouldErr: true,
 		},
@@ -154,11 +150,6 @@ func TestMsgMint_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgMint_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgMint","value":{"amount":{"amount":"100","denom":"uminttoken"},"sender":"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69","subspace_id":"1"}}`
-	require.Equal(t, expected, string(msgMint.GetSignBytes()))
-}
-
 func TestMsgMint_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgMint.Sender)
 	require.Equal(t, []sdk.AccAddress{addr}, msgMint.GetSigners())
@@ -169,7 +160,7 @@ func TestMsgMint_GetSigners(t *testing.T) {
 var msgBurn = types.NewMsgBurn(
 	1,
 	"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-	sdk.NewCoin("uminttoken", sdk.NewInt(100)),
+	sdk.NewCoin("uminttoken", math.NewInt(100)),
 )
 
 func TestMsgBurn_Route(t *testing.T) {
@@ -209,7 +200,7 @@ func TestMsgBurn_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgBurn(
 				msgBurn.SubspaceID,
 				msgBurn.Sender,
-				sdk.Coin{Denom: "%invalid%", Amount: sdk.NewInt(100)},
+				sdk.Coin{Denom: "%invalid%", Amount: math.NewInt(100)},
 			),
 			shouldErr: true,
 		},
@@ -230,11 +221,6 @@ func TestMsgBurn_ValidateBasic(t *testing.T) {
 			}
 		})
 	}
-}
-
-func TestMsgBurn_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgBurn","value":{"amount":{"amount":"100","denom":"uminttoken"},"sender":"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69","subspace_id":"1"}}`
-	require.Equal(t, expected, string(msgBurn.GetSignBytes()))
 }
 
 func TestMsgBurn_GetSigners(t *testing.T) {
@@ -338,11 +324,6 @@ func TestMsgSetDenomMetadata_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgSetDenomMetadata_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgSetDenomMetadata","value":{"metadata":{"base":"factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken","denom_units":[{"denom":"factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken"},{"aliases":["minttoken"],"denom":"minttoken","exponent":6}],"description":"The custom token of the test subspace.","display":"minttoken","name":"Mint Token","symbol":"MTK"},"sender":"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69","subspace_id":"1"}}`
-	require.Equal(t, expected, string(msgSetDenomMetadata.GetSignBytes()))
-}
-
 func TestMsgSetDenomMetadata_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgSetDenomMetadata.Sender)
 	require.Equal(t, []sdk.AccAddress{addr}, msgSetDenomMetadata.GetSigners())
@@ -394,11 +375,6 @@ func TestMsgUpdateParams_ValidateBasic(t *testing.T) {
 			}
 		})
 	}
-}
-
-func TestMsgUpdateParams_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/x/tokenfactory/MsgUpdateParams","value":{"authority":"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd","params":{"denom_creation_fee":[{"amount":"10000000000","denom":"stake"}]}}}`
-	require.Equal(t, expected, string(msgUpdateParams.GetSignBytes()))
 }
 
 func TestMsgUpdateParams_GetSigners(t *testing.T) {

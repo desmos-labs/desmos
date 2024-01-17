@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
@@ -192,7 +193,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateDenom() {
 			}
 
 			msgServer := keeper.NewMsgServerImpl(suite.k)
-			res, err := msgServer.CreateDenom(sdk.WrapSDKContext(ctx), tc.msg)
+			res, err := msgServer.CreateDenom(ctx, tc.msg)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -227,7 +228,7 @@ func (suite *KeeperTestSuite) TestMsgServer_Mint() {
 			msg: types.NewMsgMint(
 				1,
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-				sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", sdk.NewInt(100)),
+				sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", math.NewInt(100)),
 			),
 			shouldErr: true,
 		},
@@ -260,7 +261,7 @@ func (suite *KeeperTestSuite) TestMsgServer_Mint() {
 			msg: types.NewMsgMint(
 				1,
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-				sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", sdk.NewInt(100)),
+				sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", math.NewInt(100)),
 			),
 			shouldErr: true,
 		},
@@ -298,7 +299,7 @@ func (suite *KeeperTestSuite) TestMsgServer_Mint() {
 					MintCoins(
 						gomock.Any(),
 						types.ModuleName,
-						sdk.NewCoins(sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", sdk.NewInt(100))),
+						sdk.NewCoins(sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", math.NewInt(100))),
 					).
 					Return(fmt.Errorf("error"))
 			},
@@ -310,7 +311,7 @@ func (suite *KeeperTestSuite) TestMsgServer_Mint() {
 			msg: types.NewMsgMint(
 				1,
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-				sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", sdk.NewInt(100)),
+				sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", math.NewInt(100)),
 			),
 			shouldErr: true,
 		},
@@ -348,7 +349,7 @@ func (suite *KeeperTestSuite) TestMsgServer_Mint() {
 					MintCoins(
 						gomock.Any(),
 						types.ModuleName,
-						sdk.NewCoins(sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", sdk.NewInt(100))),
+						sdk.NewCoins(sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", math.NewInt(100))),
 					).
 					Return(nil)
 
@@ -357,7 +358,7 @@ func (suite *KeeperTestSuite) TestMsgServer_Mint() {
 						gomock.Any(),
 						types.ModuleName,
 						sdk.MustAccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
-						sdk.NewCoins(sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", sdk.NewInt(100))),
+						sdk.NewCoins(sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", math.NewInt(100))),
 					).
 					Return(fmt.Errorf("error"))
 			},
@@ -369,7 +370,7 @@ func (suite *KeeperTestSuite) TestMsgServer_Mint() {
 			msg: types.NewMsgMint(
 				1,
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-				sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", sdk.NewInt(100)),
+				sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", math.NewInt(100)),
 			),
 			shouldErr: true,
 		},
@@ -407,7 +408,7 @@ func (suite *KeeperTestSuite) TestMsgServer_Mint() {
 					MintCoins(
 						gomock.Any(),
 						types.ModuleName,
-						sdk.NewCoins(sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", sdk.NewInt(100))),
+						sdk.NewCoins(sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", math.NewInt(100))),
 					).
 					Return(nil)
 
@@ -416,7 +417,7 @@ func (suite *KeeperTestSuite) TestMsgServer_Mint() {
 						gomock.Any(),
 						types.ModuleName,
 						sdk.MustAccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
-						sdk.NewCoins(sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", sdk.NewInt(100))),
+						sdk.NewCoins(sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", math.NewInt(100))),
 					).
 					Return(nil)
 			},
@@ -428,7 +429,7 @@ func (suite *KeeperTestSuite) TestMsgServer_Mint() {
 			msg: types.NewMsgMint(
 				1,
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-				sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", sdk.NewInt(100)),
+				sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", math.NewInt(100)),
 			),
 			expResponse: &types.MsgMintResponse{},
 			expEvents: sdk.Events{
@@ -436,7 +437,7 @@ func (suite *KeeperTestSuite) TestMsgServer_Mint() {
 					types.EventTypeMint,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeMintToAddress, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
-					sdk.NewAttribute(types.AttributeAmount, sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", sdk.NewInt(100)).String()),
+					sdk.NewAttribute(types.AttributeAmount, sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", math.NewInt(100)).String()),
 				),
 			},
 		},
@@ -454,7 +455,7 @@ func (suite *KeeperTestSuite) TestMsgServer_Mint() {
 			}
 
 			msgServer := keeper.NewMsgServerImpl(suite.k)
-			res, err := msgServer.Mint(sdk.WrapSDKContext(ctx), tc.msg)
+			res, err := msgServer.Mint(ctx, tc.msg)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -486,7 +487,7 @@ func (suite *KeeperTestSuite) TestMsgServer_Burn() {
 			msg: types.NewMsgBurn(
 				1,
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-				sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", sdk.NewInt(100)),
+				sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", math.NewInt(100)),
 			),
 			shouldErr: true,
 		},
@@ -519,7 +520,7 @@ func (suite *KeeperTestSuite) TestMsgServer_Burn() {
 			msg: types.NewMsgBurn(
 				1,
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-				sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", sdk.NewInt(100)),
+				sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", math.NewInt(100)),
 			),
 			shouldErr: true,
 		},
@@ -558,7 +559,7 @@ func (suite *KeeperTestSuite) TestMsgServer_Burn() {
 						gomock.Any(),
 						sdk.MustAccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 						types.ModuleName,
-						sdk.NewCoins(sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", sdk.NewInt(100))),
+						sdk.NewCoins(sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", math.NewInt(100))),
 					).
 					Return(fmt.Errorf("error"))
 			},
@@ -570,7 +571,7 @@ func (suite *KeeperTestSuite) TestMsgServer_Burn() {
 			msg: types.NewMsgBurn(
 				1,
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-				sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", sdk.NewInt(100)),
+				sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", math.NewInt(100)),
 			),
 			shouldErr: true,
 		},
@@ -609,7 +610,7 @@ func (suite *KeeperTestSuite) TestMsgServer_Burn() {
 						gomock.Any(),
 						sdk.MustAccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 						types.ModuleName,
-						sdk.NewCoins(sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", sdk.NewInt(100))),
+						sdk.NewCoins(sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", math.NewInt(100))),
 					).
 					Return(nil)
 
@@ -617,7 +618,7 @@ func (suite *KeeperTestSuite) TestMsgServer_Burn() {
 					BurnCoins(
 						gomock.Any(),
 						types.ModuleName,
-						sdk.NewCoins(sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", sdk.NewInt(100))),
+						sdk.NewCoins(sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", math.NewInt(100))),
 					).
 					Return(fmt.Errorf("error"))
 			},
@@ -629,7 +630,7 @@ func (suite *KeeperTestSuite) TestMsgServer_Burn() {
 			msg: types.NewMsgBurn(
 				1,
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-				sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", sdk.NewInt(100)),
+				sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", math.NewInt(100)),
 			),
 			shouldErr: true,
 		},
@@ -668,7 +669,7 @@ func (suite *KeeperTestSuite) TestMsgServer_Burn() {
 						gomock.Any(),
 						sdk.MustAccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 						types.ModuleName,
-						sdk.NewCoins(sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", sdk.NewInt(100))),
+						sdk.NewCoins(sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", math.NewInt(100))),
 					).
 					Return(nil)
 
@@ -676,7 +677,7 @@ func (suite *KeeperTestSuite) TestMsgServer_Burn() {
 					BurnCoins(
 						gomock.Any(),
 						types.ModuleName,
-						sdk.NewCoins(sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", sdk.NewInt(100))),
+						sdk.NewCoins(sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", math.NewInt(100))),
 					).
 					Return(nil)
 			},
@@ -688,7 +689,7 @@ func (suite *KeeperTestSuite) TestMsgServer_Burn() {
 			msg: types.NewMsgBurn(
 				1,
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-				sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", sdk.NewInt(100)),
+				sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", math.NewInt(100)),
 			),
 			expResponse: &types.MsgBurnResponse{},
 			expEvents: sdk.Events{
@@ -696,7 +697,7 @@ func (suite *KeeperTestSuite) TestMsgServer_Burn() {
 					types.EventTypeBurn,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeBurnFromAddress, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
-					sdk.NewAttribute(types.AttributeAmount, sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", sdk.NewInt(100)).String()),
+					sdk.NewAttribute(types.AttributeAmount, sdk.NewCoin("factory/cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47/uminttoken", math.NewInt(100)).String()),
 				),
 			},
 		},
@@ -714,7 +715,7 @@ func (suite *KeeperTestSuite) TestMsgServer_Burn() {
 			}
 
 			msgServer := keeper.NewMsgServerImpl(suite.k)
-			res, err := msgServer.Burn(sdk.WrapSDKContext(ctx), tc.msg)
+			res, err := msgServer.Burn(ctx, tc.msg)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -862,7 +863,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SetDenomMetadata() {
 			}
 
 			msgServer := keeper.NewMsgServerImpl(suite.k)
-			res, err := msgServer.SetDenomMetadata(sdk.WrapSDKContext(ctx), tc.msg)
+			res, err := msgServer.SetDenomMetadata(ctx, tc.msg)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -894,13 +895,13 @@ func (suite *KeeperTestSuite) TestMsgServer_UpdateParams() {
 		{
 			name: "set params properly",
 			msg: types.NewMsgUpdateParams(
-				types.NewParams(sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))),
+				types.NewParams(sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))),
 				authtypes.NewModuleAddress("gov").String(),
 			),
 			shouldErr: false,
 			check: func(ctx sdk.Context) {
 				suite.Require().Equal(
-					types.NewParams(sdk.NewCoins(sdk.NewCoin("test", sdk.NewInt(100)))),
+					types.NewParams(sdk.NewCoins(sdk.NewCoin("test", math.NewInt(100)))),
 					suite.k.GetParams(ctx),
 				)
 			},
@@ -920,7 +921,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UpdateParams() {
 
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.k)
-			_, err := service.UpdateParams(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := service.UpdateParams(ctx, tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)

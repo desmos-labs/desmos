@@ -46,28 +46,28 @@ func WeightedOperations(
 ) sim.WeightedOperations {
 
 	var weightMsgCreateDenom int
-	appParams.GetOrGenerate(cdc, OpWeightMsgCreateDenom, &weightMsgCreateDenom, nil,
+	appParams.GetOrGenerate(OpWeightMsgCreateDenom, &weightMsgCreateDenom, nil,
 		func(_ *rand.Rand) {
 			weightMsgCreateDenom = DefaultWeightMsgCreateDenom
 		},
 	)
 
 	var weightMsgMint int
-	appParams.GetOrGenerate(cdc, OpWeightMsgMint, &weightMsgMint, nil,
+	appParams.GetOrGenerate(OpWeightMsgMint, &weightMsgMint, nil,
 		func(_ *rand.Rand) {
 			weightMsgMint = DefaultWeightMsgMint
 		},
 	)
 
 	var weightMsgBurn int
-	appParams.GetOrGenerate(cdc, OpWeightMsgBurn, &weightMsgBurn, nil,
+	appParams.GetOrGenerate(OpWeightMsgBurn, &weightMsgBurn, nil,
 		func(_ *rand.Rand) {
 			weightMsgBurn = DefaultWeightMsgBurn
 		},
 	)
 
 	var weightMsgSetDenomMetadata int
-	appParams.GetOrGenerate(cdc, OpWeightMsgSetDenomMetadata, &weightMsgSetDenomMetadata, nil,
+	appParams.GetOrGenerate(OpWeightMsgSetDenomMetadata, &weightMsgSetDenomMetadata, nil,
 		func(_ *rand.Rand) {
 			weightMsgSetDenomMetadata = DefaultWeightMsgSetDenomMetadata
 		},
@@ -212,7 +212,7 @@ func randomMintFields(
 	}
 	denom := RandomDenom(r, denoms)
 	amount = sdk.NewCoin(denom, simtypes.RandomAmount(r, math.NewInt(1000)))
-	if amount.Amount.Equal(sdk.NewInt(0)) {
+	if amount.Amount.Equal(math.NewInt(0)) {
 		// Skip because amount with zero is invalid
 		skip = true
 		return
@@ -282,7 +282,7 @@ func randomBurnFields(
 	// Get a amount to burn
 	balance := bk.SpendableCoin(ctx, sdk.MustAccAddressFromBech32(subspace.Treasury), denom)
 	amount = sdk.NewCoin(denom, simtypes.RandomAmount(r, balance.Amount))
-	if amount.Amount.Equal(sdk.NewInt(0)) {
+	if amount.Amount.Equal(math.NewInt(0)) {
 		// Skip because amount with zero is invalid
 		skip = true
 		return

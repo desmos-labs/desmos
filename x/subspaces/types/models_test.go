@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
@@ -154,7 +155,7 @@ func TestSubspace_Validate(t *testing.T) {
 				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				sdk.Coins{{Denom: "minttoken", Amount: sdk.NewInt(-10)}},
+				sdk.Coins{{Denom: "minttoken", Amount: math.NewInt(-10)}},
 			),
 			shouldErr: true,
 		},
@@ -653,8 +654,8 @@ func TestAdditionalFeeTokensUpdate_Update(t *testing.T) {
 	)
 
 	updated := types.NewAdditionalFeeTokensUpdate(
-		sdk.NewCoin("minttoken", sdk.NewInt(10)),
-		sdk.NewCoin("ustar", sdk.NewInt(10)),
+		sdk.NewCoin("minttoken", math.NewInt(10)),
+		sdk.NewCoin("ustar", math.NewInt(10)),
 	).Update(subspace)
 
 	require.Equal(t, types.NewSubspace(
@@ -666,8 +667,8 @@ func TestAdditionalFeeTokensUpdate_Update(t *testing.T) {
 		"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 		time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 		sdk.NewCoins(
-			sdk.NewCoin("minttoken", sdk.NewInt(10)),
-			sdk.NewCoin("ustar", sdk.NewInt(10)),
+			sdk.NewCoin("minttoken", math.NewInt(10)),
+			sdk.NewCoin("ustar", math.NewInt(10)),
 		),
 	), updated)
 }

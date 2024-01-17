@@ -32,20 +32,20 @@ func (suite *KeeperTestSuite) TestKeeper_RegisterInvariants() {
 	keeper.RegisterInvariants(mock, suite.k)
 
 	suite.Require().Equal(
-		runtime.FuncForPC(reflect.ValueOf(keeper.ValidProfilesInvariant(suite.k)).Pointer()).Name(),
-		runtime.FuncForPC(reflect.ValueOf(mock.RegisteredMap[types.ModuleName+"valid-profiles"]).Pointer()).Name(),
+		runtime.FuncForPC(reflect.ValueOf(keeper.ValidProfilesInvariant(suite.k)).Pointer()),
+		runtime.FuncForPC(reflect.ValueOf(mock.RegisteredMap[types.ModuleName+"valid-profiles"]).Pointer()),
 	)
 	suite.Require().Equal(
-		runtime.FuncForPC(reflect.ValueOf(keeper.ValidDTagTransferRequests(suite.k)).Pointer()).Name(),
-		runtime.FuncForPC(reflect.ValueOf(mock.RegisteredMap[types.ModuleName+"valid-dtag-transfer-requests"]).Pointer()).Name(),
+		runtime.FuncForPC(reflect.ValueOf(keeper.ValidDTagTransferRequests(suite.k)).Pointer()),
+		runtime.FuncForPC(reflect.ValueOf(mock.RegisteredMap[types.ModuleName+"valid-dtag-transfer-requests"]).Pointer()),
 	)
 	suite.Require().Equal(
-		runtime.FuncForPC(reflect.ValueOf(keeper.ValidChainLinks(suite.k)).Pointer()).Name(),
-		runtime.FuncForPC(reflect.ValueOf(mock.RegisteredMap[types.ModuleName+"valid-chain-links"]).Pointer()).Name(),
+		runtime.FuncForPC(reflect.ValueOf(keeper.ValidChainLinks(suite.k)).Pointer()),
+		runtime.FuncForPC(reflect.ValueOf(mock.RegisteredMap[types.ModuleName+"valid-chain-links"]).Pointer()),
 	)
 	suite.Require().Equal(
-		runtime.FuncForPC(reflect.ValueOf(keeper.ValidApplicationLinks(suite.k)).Pointer()).Name(),
-		runtime.FuncForPC(reflect.ValueOf(mock.RegisteredMap[types.ModuleName+"valid-application-links"]).Pointer()).Name(),
+		runtime.FuncForPC(reflect.ValueOf(keeper.ValidApplicationLinks(suite.k)).Pointer()),
+		runtime.FuncForPC(reflect.ValueOf(mock.RegisteredMap[types.ModuleName+"valid-application-links"]).Pointer()),
 	)
 }
 
