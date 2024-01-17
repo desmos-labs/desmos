@@ -1,6 +1,6 @@
 type: deps
 module: other
 pull_request: 1246
-description: Bump cosmos sdk to v0.50.2
+description: Bump cosmos sdk to v0.50.3
 backward_compatible: false
 date: 2023-11-02T05:29:58.252068969Z
