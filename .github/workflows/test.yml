@@ -32,7 +32,7 @@ jobs:
           export GO111MODULE="on" && go install github.com/mfridman/tparse@v0.8.3
 
       - name: Cache 💾
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/go/bin
           key: ${{ runner.os }}-go-tparse-binary
@@ -288,7 +288,7 @@ jobs:
         if: env.GIT_DIFF
 
       - name: Save cache 💾
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/go/bin
           key: ${{ runner.os }}-go-tparse-binary
