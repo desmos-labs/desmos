@@ -86,7 +86,7 @@ func TestBeginBlocker(t *testing.T) {
 			},
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeApplicationLinkDeleted,
+					types.EventTypeDeletedApplicationLink,
 					sdk.NewAttribute(types.AttributeKeyUser, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 					sdk.NewAttribute(types.AttributeKeyApplicationName, "twitter"),
 					sdk.NewAttribute(types.AttributeKeyApplicationUsername, "twitteruser"),

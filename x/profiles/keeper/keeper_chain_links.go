@@ -56,6 +56,15 @@ func (k Keeper) SaveChainLink(ctx sdk.Context, link types.ChainLink) error {
 		k.SaveDefaultExternalAddress(ctx, link.User, link.ChainConfig.Name, srcAddrData.GetValue())
 	}
 
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			types.EventTypeSavedChainLink,
+			sdk.NewAttribute(types.AttributeKeyChainLinkOwner, link.User),
+			sdk.NewAttribute(types.AttributeKeyChainLinkChainName, link.ChainConfig.Name),
+			sdk.NewAttribute(types.AttributeKeyChainLinkExternalAddress, link.GetAddressData().GetValue()),
+		),
+	)
+
 	k.AfterChainLinkSaved(ctx, link)
 	return nil
 }

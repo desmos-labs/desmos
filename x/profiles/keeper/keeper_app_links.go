@@ -33,7 +33,7 @@ func (k Keeper) SaveApplicationLink(ctx sdk.Context, link types.ApplicationLink)
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
-			types.EventTypesApplicationLinkSaved,
+			types.EventTypeSavedApplicationLink,
 			sdk.NewAttribute(types.AttributeKeyUser, link.User),
 			sdk.NewAttribute(types.AttributeKeyApplicationName, link.Data.Application),
 			sdk.NewAttribute(types.AttributeKeyApplicationUsername, link.Data.Username),
@@ -108,7 +108,7 @@ func (k Keeper) DeleteApplicationLink(ctx sdk.Context, appLink types.Application
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
-			types.EventTypeApplicationLinkDeleted,
+			types.EventTypeDeletedApplicationLink,
 			sdk.NewAttribute(types.AttributeKeyUser, appLink.User),
 			sdk.NewAttribute(types.AttributeKeyApplicationName, appLink.Data.Application),
 			sdk.NewAttribute(types.AttributeKeyApplicationUsername, appLink.Data.Username),

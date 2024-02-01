@@ -29,7 +29,7 @@ func (k MsgServer) LinkChainAccount(goCtx context.Context, msg *types.MsgLinkCha
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeLinkChainAccount,
+			types.EventTypeCreatedChainLink,
 			sdk.NewAttribute(types.AttributeKeyChainLinkExternalAddress, srcAddrData.GetValue()),
 			sdk.NewAttribute(types.AttributeKeyChainLinkChainName, msg.ChainConfig.Name),
 			sdk.NewAttribute(types.AttributeKeyChainLinkOwner, msg.Signer),
@@ -55,7 +55,7 @@ func (k MsgServer) UnlinkChainAccount(goCtx context.Context, msg *types.MsgUnlin
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeUnlinkChainAccount,
+			types.EventTypeDeletedChainLink,
 			sdk.NewAttribute(types.AttributeKeyChainLinkExternalAddress, msg.Target),
 			sdk.NewAttribute(types.AttributeKeyChainLinkChainName, msg.ChainName),
 			sdk.NewAttribute(types.AttributeKeyChainLinkOwner, msg.Owner),

@@ -231,13 +231,13 @@ func (suite *KeeperTestSuite) TestMsgServer_LinkApplication() {
 			),
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypesApplicationLinkSaved,
+					types.EventTypeSavedApplicationLink,
 					sdk.NewAttribute(types.AttributeKeyUser, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 					sdk.NewAttribute(types.AttributeKeyApplicationName, "twitter"),
 					sdk.NewAttribute(types.AttributeKeyApplicationUsername, "twitteruser"),
 				),
 				sdk.NewEvent(
-					types.EventTypesApplicationLinkCreated,
+					types.EventTypeCreatedApplicationLink,
 					sdk.NewAttribute(types.AttributeKeyUser, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 					sdk.NewAttribute(types.AttributeKeyApplicationName, "twitter"),
 					sdk.NewAttribute(types.AttributeKeyApplicationUsername, "twitteruser"),
@@ -337,13 +337,13 @@ func (suite *KeeperTestSuite) TestMsgServer_LinkApplication() {
 			),
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypesApplicationLinkSaved,
+					types.EventTypeSavedApplicationLink,
 					sdk.NewAttribute(types.AttributeKeyUser, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 					sdk.NewAttribute(types.AttributeKeyApplicationName, "twitter"),
 					sdk.NewAttribute(types.AttributeKeyApplicationUsername, "twitteruser"),
 				),
 				sdk.NewEvent(
-					types.EventTypesApplicationLinkCreated,
+					types.EventTypeCreatedApplicationLink,
 					sdk.NewAttribute(types.AttributeKeyUser, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 					sdk.NewAttribute(types.AttributeKeyApplicationName, "twitter"),
 					sdk.NewAttribute(types.AttributeKeyApplicationUsername, "twitteruser"),
@@ -510,7 +510,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UnlinkApplication() {
 			msg: types.NewMsgUnlinkApplication("twitter", "twitteruser", "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeApplicationLinkDeleted,
+					types.EventTypeDeletedApplicationLink,
 					sdk.NewAttribute(types.AttributeKeyUser, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 					sdk.NewAttribute(types.AttributeKeyApplicationName, "twitter"),
 					sdk.NewAttribute(types.AttributeKeyApplicationUsername, "twitteruser"),

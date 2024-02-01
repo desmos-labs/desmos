@@ -49,7 +49,7 @@ func (k Keeper) LinkApplication(
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypesApplicationLinkCreated,
+			types.EventTypeCreatedApplicationLink,
 			sdk.NewAttribute(types.AttributeKeyUser, msg.Sender),
 			sdk.NewAttribute(types.AttributeKeyApplicationName, msg.LinkData.Application),
 			sdk.NewAttribute(types.AttributeKeyApplicationUsername, msg.LinkData.Username),

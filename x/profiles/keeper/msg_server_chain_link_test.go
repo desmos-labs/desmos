@@ -108,7 +108,7 @@ func (suite *KeeperTestSuite) TestMsgServer_LinkChainAccount() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeLinkChainAccount,
+					types.EventTypeCreatedChainLink,
 					sdk.NewAttribute(types.AttributeKeyChainLinkExternalAddress, srcAddr),
 					sdk.NewAttribute(types.AttributeKeyChainLinkChainName, "cosmos"),
 					sdk.NewAttribute(types.AttributeKeyChainLinkOwner, destAddr),
@@ -199,7 +199,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UnlinkChainAccount() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeUnlinkChainAccount,
+					types.EventTypeDeletedChainLink,
 					sdk.NewAttribute(types.AttributeKeyChainLinkExternalAddress, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 					sdk.NewAttribute(types.AttributeKeyChainLinkChainName, "cosmos"),
 					sdk.NewAttribute(types.AttributeKeyChainLinkOwner, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
