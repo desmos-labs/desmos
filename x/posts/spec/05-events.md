@@ -88,7 +88,7 @@ The posts module emits the following events:
 | message  | action            | desmos.posts.v3.MsgUpdateParams |
 | message  | sender            | {userAddress}                   |
 
-## MsgMovePost
+### MsgMovePost
 
 | **Type**   | **Attribute Key** | **Attribute Value**         | 
 |:-----------|:------------------|:----------------------------|
@@ -100,7 +100,7 @@ The posts module emits the following events:
 | message    | action            | desmos.posts.v3.MsgMovePost |
 | message    | sender            | {userAddress}               |
 
-## MsgRequestPostOwnerTransfer
+### MsgRequestPostOwnerTransfer
 
 | **Type**                      | **Attribute Key** | **Attribute Value**                         | 
 |:------------------------------|:------------------|:--------------------------------------------|
@@ -112,7 +112,7 @@ The posts module emits the following events:
 | message                       | action            | desmos.posts.v3.MsgRequestPostOwnerTransfer |
 | message                       | sender            | {userAddress}                               |
 
-## MsgCancelPostOwnerTransferRequest
+### MsgCancelPostOwnerTransferRequest
 
 | **Type**                     | **Attribute Key** | **Attribute Value**                               | 
 |:-----------------------------|:------------------|:--------------------------------------------------|
@@ -123,7 +123,7 @@ The posts module emits the following events:
 | message                      | action            | desmos.posts.v3.MsgCancelPostOwnerTransferRequest |
 | message                      | sender            | {userAddress}                                     |
 
-## MsgAcceptPostOwnerTransferRequest
+### MsgAcceptPostOwnerTransferRequest
 
 | **Type**                     | **Attribute Key** | **Attribute Value**                               | 
 |:-----------------------------|:------------------|:--------------------------------------------------|
@@ -136,7 +136,7 @@ The posts module emits the following events:
 | message                      | action            | desmos.posts.v3.MsgAcceptPostOwnerTransferRequest |
 | message                      | sender            | {userAddress}                                     |
 
-## MsgRefusePostOwnerTransferRequest
+### MsgRefusePostOwnerTransferRequest
 
 | **Type**                    | **Attribute Key** | **Attribute Value**                               | 
 |:----------------------------|:------------------|:--------------------------------------------------|

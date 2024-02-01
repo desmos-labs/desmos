@@ -4,7 +4,10 @@ import (
 	"context"
 	"fmt"
 	"sort"
+	"strings"
 	"time"
+
+	"github.com/desmos-labs/desmos/v6/types/utils"
 
 	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -436,6 +439,10 @@ func (k msgServer) AnswerPoll(goCtx context.Context, msg *types.MsgAnswerPoll) (
 			sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyPostID, fmt.Sprintf("%d", msg.PostID)),
 			sdk.NewAttribute(types.AttributeKeyPollID, fmt.Sprintf("%d", msg.PollID)),
+			sdk.NewAttribute(types.AttributeKeyAnswersIndexes, strings.Join(utils.Map(msg.AnswersIndexes, func(index uint32) string {
+				return fmt.Sprintf("%d", index)
+			}), ",")),
+			sdk.NewAttribute(types.AttributeKeyAnswerer, msg.Signer),
 		),
 	})
 
