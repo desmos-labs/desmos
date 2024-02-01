@@ -82,10 +82,10 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateRelationship() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeRelationshipCreated,
+					types.EventTypeCreatedRelationship,
 					sdk.NewAttribute(types.AttributeRelationshipCreator, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 					sdk.NewAttribute(types.AttributeRelationshipCounterparty, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
-					sdk.NewAttribute(types.AttributeKeySubspace, "1"),
+					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 				),
 			},
 			check: func(ctx sdk.Context) {
@@ -181,10 +181,10 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteRelationship() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeRelationshipDeleted,
+					types.EventTypeDeletedRelationship,
 					sdk.NewAttribute(types.AttributeRelationshipCreator, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 					sdk.NewAttribute(types.AttributeRelationshipCounterparty, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
-					sdk.NewAttribute(types.AttributeKeySubspace, "1"),
+					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 				),
 			},
 			check: func(ctx sdk.Context) {
@@ -283,10 +283,10 @@ func (suite *KeeperTestSuite) TestMsgServer_BlockUser() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeBlockUser,
+					types.EventTypeBlockedUser,
 					sdk.NewAttribute(types.AttributeKeyUserBlockBlocker, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 					sdk.NewAttribute(types.AttributeKeyUserBlockBlocked, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
-					sdk.NewAttribute(types.AttributeKeySubspace, "1"),
+					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 				),
 			},
 			check: func(ctx sdk.Context) {
@@ -383,10 +383,10 @@ func (suite *KeeperTestSuite) TestMsgServer_UnblockUser() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeUnblockUser,
+					types.EventTypeUnblockedUser,
 					sdk.NewAttribute(types.AttributeKeyUserBlockBlocker, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 					sdk.NewAttribute(types.AttributeKeyUserBlockBlocked, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
-					sdk.NewAttribute(types.AttributeKeySubspace, "1"),
+					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 				),
 			},
 			check: func(ctx sdk.Context) {
