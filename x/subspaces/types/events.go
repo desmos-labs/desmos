@@ -11,7 +11,7 @@ const (
 	EventTypeDeletedSection               = "deleted_section"
 	EventTypeCreatedUserGroup             = "created_user_group"
 	EventTypeEditedUserGroup              = "edited_user_group"
-	EvenTypeMovedUserGroup                = "moved_user_group"
+	EventTypeMovedUserGroup               = "moved_user_group"
 	EventTypeSetUserGroupPermissions      = "set_user_group_permissions"
 	EventTypeDeletedUserGroup             = "deleted_user_group"
 	EventTypeAddedUserToGroup             = "added_group_member"

@@ -2044,7 +2044,7 @@ func (suite *KeeperTestSuite) TestMsgServer_MoveUserGroup() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EvenTypeMovedUserGroup,
+					types.EventTypeMovedUserGroup,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyUserGroupID, "1"),
 				),

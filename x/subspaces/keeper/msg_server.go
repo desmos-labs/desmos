@@ -502,7 +502,7 @@ func (k msgServer) MoveUserGroup(goCtx context.Context, msg *types.MsgMoveUserGr
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EvenTypeMovedUserGroup,
+			types.EventTypeMovedUserGroup,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyUserGroupID, fmt.Sprintf("%d", msg.GroupID)),
 		),
