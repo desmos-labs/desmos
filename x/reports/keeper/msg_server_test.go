@@ -280,14 +280,14 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateReport() {
 			},
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeCreateReport,
+					types.EventTypeCreatedReport,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyReportID, "1"),
 					sdk.NewAttribute(types.AttributeKeyReporter, "cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh"),
 					sdk.NewAttribute(types.AttributeKeyCreationTime, time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC).Format(time.RFC3339)),
 				),
 				sdk.NewEvent(
-					types.EventTypeReportUser,
+					types.EventTypeReportedUser,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyUser, "cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd"),
 					sdk.NewAttribute(types.AttributeKeyReporter, "cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh"),
@@ -376,14 +376,14 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateReport() {
 			},
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeCreateReport,
+					types.EventTypeCreatedReport,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyReportID, "1"),
 					sdk.NewAttribute(types.AttributeKeyReporter, "cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh"),
 					sdk.NewAttribute(types.AttributeKeyCreationTime, time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC).Format(time.RFC3339)),
 				),
 				sdk.NewEvent(
-					types.EventTypeReportPost,
+					types.EventTypeReportedPost,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyPostID, "1"),
 					sdk.NewAttribute(types.AttributeKeyReporter, "cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh"),
@@ -591,7 +591,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteReport() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeDeleteReport,
+					types.EventTypeDeletedReport,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyReportID, "1"),
 				),
@@ -633,7 +633,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteReport() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeDeleteReport,
+					types.EventTypeDeletedReport,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyReportID, "1"),
 				),
@@ -798,7 +798,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SupportStandardReason() {
 			},
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeSupportStandardReason,
+					types.EventTypeSupportedStandardReason,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyStandardReasonID, "1"),
 					sdk.NewAttribute(types.AttributeKeyReasonID, "1"),
@@ -976,7 +976,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddReason() {
 			},
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeAddReason,
+					types.EventTypeAddedReportingReason,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyReasonID, "1"),
 				),
@@ -1115,7 +1115,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RemoveReason() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeRemoveReason,
+					types.EventTypeRemovedReportingReason,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyReasonID, "1"),
 				),

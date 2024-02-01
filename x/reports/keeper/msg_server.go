@@ -93,14 +93,14 @@ func (k msgServer) CreateReport(goCtx context.Context, msg *types.MsgCreateRepor
 	switch target := target.(type) {
 	case *types.PostTarget:
 		reportEvent = sdk.NewEvent(
-			types.EventTypeReportPost,
+			types.EventTypeReportedPost,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyPostID, fmt.Sprintf("%d", target.PostID)),
 			sdk.NewAttribute(types.AttributeKeyReporter, msg.Reporter),
 		)
 	case *types.UserTarget:
 		reportEvent = sdk.NewEvent(
-			types.EventTypeReportUser,
+			types.EventTypeReportedUser,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyUser, target.User),
 			sdk.NewAttribute(types.AttributeKeyReporter, msg.Reporter),
@@ -111,7 +111,7 @@ func (k msgServer) CreateReport(goCtx context.Context, msg *types.MsgCreateRepor
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeCreateReport,
+			types.EventTypeCreatedReport,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyReportID, fmt.Sprintf("%d", report.ID)),
 			sdk.NewAttribute(types.AttributeKeyReporter, msg.Reporter),
@@ -153,7 +153,7 @@ func (k msgServer) DeleteReport(goCtx context.Context, msg *types.MsgDeleteRepor
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeDeleteReport,
+			types.EventTypeDeletedReport,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyReportID, fmt.Sprintf("%d", msg.ReportID)),
 		),
@@ -203,7 +203,7 @@ func (k msgServer) SupportStandardReason(goCtx context.Context, msg *types.MsgSu
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeSupportStandardReason,
+			types.EventTypeSupportedStandardReason,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyStandardReasonID, fmt.Sprintf("%d", msg.StandardReasonID)),
 			sdk.NewAttribute(types.AttributeKeyReasonID, fmt.Sprintf("%d", reason.ID)),
@@ -250,7 +250,7 @@ func (k msgServer) AddReason(goCtx context.Context, msg *types.MsgAddReason) (*t
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeAddReason,
+			types.EventTypeAddedReportingReason,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyReasonID, fmt.Sprintf("%d", reason.ID)),
 		),
@@ -285,7 +285,7 @@ func (k msgServer) RemoveReason(goCtx context.Context, msg *types.MsgRemoveReaso
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeRemoveReason,
+			types.EventTypeRemovedReportingReason,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyReasonID, fmt.Sprintf("%d", msg.ReasonID)),
 		),

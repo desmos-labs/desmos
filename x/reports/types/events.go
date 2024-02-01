@@ -3,13 +3,13 @@ package types
 // DONTCOVER
 
 const (
-	EventTypeCreateReport          = "create_report"
-	EventTypeReportPost            = "report_post"
-	EventTypeReportUser            = "report_user"
-	EventTypeDeleteReport          = "delete_report"
-	EventTypeSupportStandardReason = "support_standard_reason"
-	EventTypeAddReason             = "add_reason"
-	EventTypeRemoveReason          = "remove_reason"
+	EventTypeCreatedReport           = "created_report"
+	EventTypeReportedPost            = "reported_post"
+	EventTypeReportedUser            = "reported_user"
+	EventTypeDeletedReport           = "deleted_report"
+	EventTypeSupportedStandardReason = "supported_standard_reason"
+	EventTypeAddedReportingReason    = "added_reason"
+	EventTypeRemovedReportingReason  = "removed_reason"
 
 	AttributeKeySubspaceID       = "subspace_id"
 	AttributeKeyReportID         = "report_id"
