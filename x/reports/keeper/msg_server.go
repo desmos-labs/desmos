@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"time"
 
+	poststypes "github.com/desmos-labs/desmos/v6/x/posts/types"
+
 	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -94,14 +96,14 @@ func (k msgServer) CreateReport(goCtx context.Context, msg *types.MsgCreateRepor
 	case *types.PostTarget:
 		reportEvent = sdk.NewEvent(
 			types.EventTypeReportedPost,
-			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
-			sdk.NewAttribute(types.AttributeKeyPostID, fmt.Sprintf("%d", target.PostID)),
+			sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			sdk.NewAttribute(poststypes.AttributeKeyPostID, fmt.Sprintf("%d", target.PostID)),
 			sdk.NewAttribute(types.AttributeKeyReporter, msg.Reporter),
 		)
 	case *types.UserTarget:
 		reportEvent = sdk.NewEvent(
 			types.EventTypeReportedUser,
-			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyUser, target.User),
 			sdk.NewAttribute(types.AttributeKeyReporter, msg.Reporter),
 		)
@@ -112,7 +114,7 @@ func (k msgServer) CreateReport(goCtx context.Context, msg *types.MsgCreateRepor
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			types.EventTypeCreatedReport,
-			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyReportID, fmt.Sprintf("%d", report.ID)),
 			sdk.NewAttribute(types.AttributeKeyReporter, msg.Reporter),
 			sdk.NewAttribute(types.AttributeKeyCreationTime, report.CreationDate.Format(time.RFC3339)),
@@ -154,7 +156,7 @@ func (k msgServer) DeleteReport(goCtx context.Context, msg *types.MsgDeleteRepor
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			types.EventTypeDeletedReport,
-			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyReportID, fmt.Sprintf("%d", msg.ReportID)),
 		),
 	})
@@ -204,7 +206,7 @@ func (k msgServer) SupportStandardReason(goCtx context.Context, msg *types.MsgSu
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			types.EventTypeSupportedStandardReason,
-			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyStandardReasonID, fmt.Sprintf("%d", msg.StandardReasonID)),
 			sdk.NewAttribute(types.AttributeKeyReasonID, fmt.Sprintf("%d", reason.ID)),
 		),
@@ -251,7 +253,7 @@ func (k msgServer) AddReason(goCtx context.Context, msg *types.MsgAddReason) (*t
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			types.EventTypeAddedReportingReason,
-			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyReasonID, fmt.Sprintf("%d", reason.ID)),
 		),
 	})
@@ -286,7 +288,7 @@ func (k msgServer) RemoveReason(goCtx context.Context, msg *types.MsgRemoveReaso
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			types.EventTypeRemovedReportingReason,
-			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyReasonID, fmt.Sprintf("%d", msg.ReasonID)),
 		),
 	})

@@ -3,6 +3,8 @@ package posts
 import (
 	"fmt"
 
+	subspacestypes "github.com/desmos-labs/desmos/v6/x/subspaces/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/v6/x/posts/keeper"
@@ -19,7 +21,7 @@ func EndBlocker(ctx sdk.Context, keeper *keeper.Keeper) {
 		ctx.EventManager().EmitEvent(
 			sdk.NewEvent(
 				types.EventTypeTalliedPoll,
-				sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", poll.SubspaceID)),
+				sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, fmt.Sprintf("%d", poll.SubspaceID)),
 				sdk.NewAttribute(types.AttributeKeyPostID, fmt.Sprintf("%d", poll.PostID)),
 				sdk.NewAttribute(types.AttributeKeyPollID, fmt.Sprintf("%d", poll.ID)),
 			),

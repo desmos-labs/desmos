@@ -11,12 +11,10 @@ const (
 	EventTypeAddedReportingReason    = "added_reason"
 	EventTypeRemovedReportingReason  = "removed_reason"
 
-	AttributeKeySubspaceID       = "subspace_id"
 	AttributeKeyReportID         = "report_id"
 	AttributeKeyReporter         = "reporter"
 	AttributeKeyCreationTime     = "creation_time"
 	AttributeKeyStandardReasonID = "standard_reason_id"
 	AttributeKeyReasonID         = "reason_id"
-	AttributeKeyPostID           = "post_id"
 	AttributeKeyUser             = "user"
 )

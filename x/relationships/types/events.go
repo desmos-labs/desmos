@@ -12,5 +12,4 @@ const (
 	AttributeRelationshipCounterparty = "counterparty"
 	AttributeKeyUserBlockBlocker      = "blocker"
 	AttributeKeyUserBlockBlocked      = "blocked"
-	AttributeKeySubspaceID            = "subspace_id"
 )

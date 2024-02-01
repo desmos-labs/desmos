@@ -15,8 +15,6 @@ const (
 	EventTypeAcceptedPostOwnerTransfer  = "accepted_post_owner_transfer"
 	EventTypeRefusedPostOwnerTransfer   = "refused_post_owner_transfer"
 
-	AttributeKeySubspaceID    = "subspace_id"
-	AttributeKeySectionID     = "section_id"
 	AttributeKeyPostID        = "post_id"
 	AttributeKeyAuthor        = "author"
 	AttributeKeyCreationTime  = "creation_date"

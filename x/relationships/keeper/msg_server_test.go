@@ -4,6 +4,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/golang/mock/gomock"
 
+	subspacestypes "github.com/desmos-labs/desmos/v6/x/subspaces/types"
+
 	"github.com/desmos-labs/desmos/v6/x/relationships/keeper"
 	"github.com/desmos-labs/desmos/v6/x/relationships/types"
 )
@@ -85,7 +87,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateRelationship() {
 					types.EventTypeCreatedRelationship,
 					sdk.NewAttribute(types.AttributeRelationshipCreator, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 					sdk.NewAttribute(types.AttributeRelationshipCounterparty, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
-					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, "1"),
 				),
 			},
 			check: func(ctx sdk.Context) {
@@ -184,7 +186,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteRelationship() {
 					types.EventTypeDeletedRelationship,
 					sdk.NewAttribute(types.AttributeRelationshipCreator, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 					sdk.NewAttribute(types.AttributeRelationshipCounterparty, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
-					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, "1"),
 				),
 			},
 			check: func(ctx sdk.Context) {
@@ -286,7 +288,7 @@ func (suite *KeeperTestSuite) TestMsgServer_BlockUser() {
 					types.EventTypeBlockedUser,
 					sdk.NewAttribute(types.AttributeKeyUserBlockBlocker, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 					sdk.NewAttribute(types.AttributeKeyUserBlockBlocked, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
-					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, "1"),
 				),
 			},
 			check: func(ctx sdk.Context) {
@@ -386,7 +388,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UnblockUser() {
 					types.EventTypeUnblockedUser,
 					sdk.NewAttribute(types.AttributeKeyUserBlockBlocker, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 					sdk.NewAttribute(types.AttributeKeyUserBlockBlocked, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
-					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, "1"),
 				),
 			},
 			check: func(ctx sdk.Context) {
