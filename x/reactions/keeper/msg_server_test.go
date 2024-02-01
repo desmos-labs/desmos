@@ -416,7 +416,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddReaction() {
 			},
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeAddReaction,
+					types.EventTypeAddedReaction,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyPostID, "1"),
 					sdk.NewAttribute(types.AttributeKeyReactionID, "1"),
@@ -502,7 +502,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddReaction() {
 			},
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeAddReaction,
+					types.EventTypeAddedReaction,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyPostID, "1"),
 					sdk.NewAttribute(types.AttributeKeyReactionID, "1"),
@@ -780,7 +780,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RemoveReaction() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeRemoveReaction,
+					types.EventTypeRemovedReaction,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyPostID, "1"),
 					sdk.NewAttribute(types.AttributeKeyReactionID, "1"),
@@ -947,7 +947,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddRegisteredReaction() {
 			},
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeAddRegisteredReaction,
+					types.EventTypeAddedRegisteredReaction,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyRegisteredReactionID, "1"),
 				),
@@ -1281,7 +1281,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RemoveRegisteredReaction() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeRemoveRegisteredReaction,
+					types.EventTypeRemovedRegisteredReaction,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyRegisteredReactionID, "1"),
 				),

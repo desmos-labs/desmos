@@ -3,11 +3,11 @@ package types
 // DONTCOVER
 
 const (
-	EventTypeAddReaction              = "add_reaction"
-	EventTypeRemoveReaction           = "remove_reaction"
-	EventTypeAddRegisteredReaction    = "add_registered_reaction"
-	EventTypeRemoveRegisteredReaction = "removed_registered_reaction"
-	EventTypeSetReactionsParams       = "set_reactions_params"
+	EventTypeAddedReaction             = "added_reaction"
+	EventTypeRemovedReaction           = "removed_reaction"
+	EventTypeAddedRegisteredReaction   = "added_registered_reaction"
+	EventTypeRemovedRegisteredReaction = "removed_registered_reaction"
+	EventTypeSetReactionsParams        = "set_reactions_params"
 
 	AttributeKeySubspaceID           = "subspace_id"
 	AttributeKeyPostID               = "post_id"

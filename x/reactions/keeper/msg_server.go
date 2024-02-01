@@ -90,7 +90,7 @@ func (k msgServer) AddReaction(goCtx context.Context, msg *types.MsgAddReaction)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeAddReaction,
+			types.EventTypeAddedReaction,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyPostID, fmt.Sprintf("%d", msg.PostID)),
 			sdk.NewAttribute(types.AttributeKeyReactionID, fmt.Sprintf("%d", reaction.ID)),
@@ -139,7 +139,7 @@ func (k msgServer) RemoveReaction(goCtx context.Context, msg *types.MsgRemoveRea
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeRemoveReaction,
+			types.EventTypeRemovedReaction,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyPostID, fmt.Sprintf("%d", msg.PostID)),
 			sdk.NewAttribute(types.AttributeKeyReactionID, fmt.Sprintf("%d", msg.ReactionID)),
@@ -265,7 +265,7 @@ func (k msgServer) RemoveRegisteredReaction(goCtx context.Context, msg *types.Ms
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeRemoveRegisteredReaction,
+			types.EventTypeRemovedRegisteredReaction,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyRegisteredReactionID, fmt.Sprintf("%d", msg.RegisteredReactionID)),
 		),
