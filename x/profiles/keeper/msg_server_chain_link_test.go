@@ -108,6 +108,12 @@ func (suite *KeeperTestSuite) TestMsgServer_LinkChainAccount() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
+					types.EventTypeSavedChainLink,
+					sdk.NewAttribute(types.AttributeKeyChainLinkExternalAddress, srcAddr),
+					sdk.NewAttribute(types.AttributeKeyChainLinkChainName, "cosmos"),
+					sdk.NewAttribute(types.AttributeKeyChainLinkOwner, destAddr),
+				),
+				sdk.NewEvent(
 					types.EventTypeCreatedChainLink,
 					sdk.NewAttribute(types.AttributeKeyChainLinkExternalAddress, srcAddr),
 					sdk.NewAttribute(types.AttributeKeyChainLinkChainName, "cosmos"),

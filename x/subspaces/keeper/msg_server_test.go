@@ -2267,6 +2267,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SetUserGroupPermissions() {
 					types.EventTypeSetUserGroupPermissions,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyUserGroupID, "1"),
+					sdk.NewAttribute(types.AttributeKeyPermissions, "EVERYTHING"),
 				),
 			},
 			check: func(ctx sdk.Context) {
@@ -2317,6 +2318,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SetUserGroupPermissions() {
 					types.EventTypeSetUserGroupPermissions,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyUserGroupID, "1"),
+					sdk.NewAttribute(types.AttributeKeyPermissions, "SET_PERMISSIONS"),
 				),
 			},
 			check: func(ctx sdk.Context) {
@@ -2985,6 +2987,8 @@ func (suite *KeeperTestSuite) TestMsgServer_SetUserPermissions() {
 				sdk.NewEvent(
 					types.EventTypeSetUserPermissions,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					sdk.NewAttribute(types.AttributeKeySectionID, "0"),
+					sdk.NewAttribute(types.AttributeKeyPermissions, "EDIT_SUBSPACE"),
 					sdk.NewAttribute(types.AttributeKeyUser, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"),
 				),
 			},

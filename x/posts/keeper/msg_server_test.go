@@ -2192,6 +2192,8 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 					sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyPostID, "1"),
 					sdk.NewAttribute(types.AttributeKeyPollID, "1"),
+					sdk.NewAttribute(types.AttributeKeyAnswersIndexes, "0"),
+					sdk.NewAttribute(types.AttributeKeyAnswerer, "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"),
 				),
 			},
 			check: func(ctx sdk.Context) {
@@ -2273,6 +2275,8 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 					sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyPostID, "1"),
 					sdk.NewAttribute(types.AttributeKeyPollID, "1"),
+					sdk.NewAttribute(types.AttributeKeyAnswersIndexes, "0,1"),
+					sdk.NewAttribute(types.AttributeKeyAnswerer, "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"),
 				),
 			},
 			check: func(ctx sdk.Context) {

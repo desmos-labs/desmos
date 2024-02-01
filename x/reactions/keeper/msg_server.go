@@ -191,7 +191,7 @@ func (k msgServer) AddRegisteredReaction(goCtx context.Context, msg *types.MsgAd
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.ActionAddRegisteredReaction,
+			types.EventTypeAddedRegisteredReaction,
 			sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyRegisteredReactionID, fmt.Sprintf("%d", reaction.ID)),
 		),
