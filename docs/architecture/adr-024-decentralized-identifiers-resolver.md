@@ -114,6 +114,7 @@ message VerificationMethod {
 ### Limitation
 
 Due to the necessity of public key(s) being directly controlled by the profile owner, any profile owner lacking public keys, such as those associated with a contract, cannot be resolved into a DID.
+Future versions may explore alternative methods to accommodate profiles without direct public key control, enhancing inclusivity.
 
 ## Consequences
 
