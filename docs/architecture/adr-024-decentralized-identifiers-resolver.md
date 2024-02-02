@@ -19,7 +19,7 @@ Decentralized identifiers (DIDs) are a new type of identifier that enables verif
 
 ## Decision
 
-We will implement a query method `DidDoc` to resolve Desmos Profile into DID document. In addition, A DID that uses this method MUST begin with the following prefix: `did:desmos`.
+We will implement a query method `DidDoc` within the Desmos Profiles module to resolve Desmos Profiles into DID documents. In addition, A DID that uses this method MUST begin with the following prefix: `did:desmos`.
 
 The example of the resolver's response would be like as follows:
 
