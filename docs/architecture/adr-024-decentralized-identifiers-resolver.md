@@ -31,9 +31,9 @@ The example of the resolver's response would be like as follows:
     ],
     "id": "did:desmos:<desmos-address>",
     "alsoKnownAs": [
-        "dtag:<DTag>", // Desmos Dtag
-        "application:<application-name>:<id-in-application>", // application link
-        "blockchain:<chain-name>:<chain-address>", // chain link
+        "dtag:<DTag>", /* Desmos Dtag */
+        "application:<application-name>:<id-in-application>", /* application link */
+        "blockchain:<chain-name>:<chain-address>", /* chain link */
     ],
     "verificationMethod": [
         {
