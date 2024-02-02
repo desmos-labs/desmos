@@ -11,7 +11,7 @@ ACCEPTED Not Implemented
 
 ## Abstract
 
-This ADR proposes the integration of a new functionality to incorporate Decentralized Identifiers (DIDs) into Desmos by resolving Desmos Profile into DID document.
+This ADR proposes the integration of a new functionality into Desmos to resolve Desmos Profiles into DID documents, incorporating Decentralized Identifiers (DIDs) for enhanced digital identity verification.
 
 ## Context
 
