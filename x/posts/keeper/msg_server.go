@@ -4,7 +4,10 @@ import (
 	"context"
 	"fmt"
 	"sort"
+	"strings"
 	"time"
+
+	"github.com/desmos-labs/desmos/v6/types/utils"
 
 	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -103,9 +106,9 @@ func (k msgServer) CreatePost(goCtx context.Context, msg *types.MsgCreatePost) (
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeCreatePost,
-			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
-			sdk.NewAttribute(types.AttributeKeySectionID, fmt.Sprintf("%d", msg.SectionID)),
+			types.EventTypeCreatedPost,
+			sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			sdk.NewAttribute(subspacestypes.AttributeKeySectionID, fmt.Sprintf("%d", msg.SectionID)),
 			sdk.NewAttribute(types.AttributeKeyPostID, fmt.Sprintf("%d", post.ID)),
 			sdk.NewAttribute(types.AttributeKeyAuthor, msg.Author),
 			sdk.NewAttribute(types.AttributeKeyCreationTime, post.CreationDate.Format(time.RFC3339)),
@@ -157,8 +160,8 @@ func (k msgServer) EditPost(goCtx context.Context, msg *types.MsgEditPost) (*typ
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeEditPost,
-			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			types.EventTypeEditedPost,
+			sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyPostID, fmt.Sprintf("%d", msg.PostID)),
 			sdk.NewAttribute(types.AttributeKeyLastEditTime, updateTime.Format(time.RFC3339)),
 		),
@@ -196,8 +199,8 @@ func (k msgServer) DeletePost(goCtx context.Context, msg *types.MsgDeletePost) (
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeDeletePost,
-			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			types.EventTypeDeletedPost,
+			sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyPostID, fmt.Sprintf("%d", msg.PostID)),
 		),
 	})
@@ -296,8 +299,8 @@ func (k msgServer) AddPostAttachment(goCtx context.Context, msg *types.MsgAddPos
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeAddPostAttachment,
-			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			types.EventTypeAddedPostAttachment,
+			sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyPostID, fmt.Sprintf("%d", msg.PostID)),
 			sdk.NewAttribute(types.AttributeKeyAttachmentID, fmt.Sprintf("%d", attachmentID)),
 			sdk.NewAttribute(types.AttributeKeyLastEditTime, post.LastEditedDate.Format(time.RFC3339)),
@@ -353,8 +356,8 @@ func (k msgServer) RemovePostAttachment(goCtx context.Context, msg *types.MsgRem
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeRemovePostAttachment,
-			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			types.EventTypeRemovedPostAttachment,
+			sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyPostID, fmt.Sprintf("%d", msg.PostID)),
 			sdk.NewAttribute(types.AttributeKeyAttachmentID, fmt.Sprintf("%d", msg.AttachmentID)),
 			sdk.NewAttribute(types.AttributeKeyLastEditTime, post.LastEditedDate.Format(time.RFC3339)),
@@ -432,10 +435,14 @@ func (k msgServer) AnswerPoll(goCtx context.Context, msg *types.MsgAnswerPoll) (
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeAnswerPoll,
-			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			types.EventTypeAnsweredPoll,
+			sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyPostID, fmt.Sprintf("%d", msg.PostID)),
 			sdk.NewAttribute(types.AttributeKeyPollID, fmt.Sprintf("%d", msg.PollID)),
+			sdk.NewAttribute(types.AttributeKeyAnswersIndexes, strings.Join(utils.Map(msg.AnswersIndexes, func(index uint32) string {
+				return fmt.Sprintf("%d", index)
+			}), ",")),
+			sdk.NewAttribute(types.AttributeKeyAnswerer, msg.Signer),
 		),
 	})
 
@@ -530,8 +537,8 @@ func (k msgServer) MovePost(goCtx context.Context, msg *types.MsgMovePost) (*typ
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeMovePost,
-			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			types.EventTypeMovedPost,
+			sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyPostID, fmt.Sprintf("%d", msg.PostID)),
 			sdk.NewAttribute(types.AttributeKeyNewSubspaceID, fmt.Sprintf("%d", msg.TargetSubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyNewPostID, fmt.Sprintf("%d", updatedPost.ID)),
@@ -586,8 +593,8 @@ func (k msgServer) RequestPostOwnerTransfer(goCtx context.Context, msg *types.Ms
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeRequestPostOwnerTransfer,
-			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			types.EventTypeRequestedPostOwnerTransfer,
+			sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyPostID, fmt.Sprintf("%d", msg.PostID)),
 			sdk.NewAttribute(types.AttributeKeyReceiver, msg.Receiver),
 			sdk.NewAttribute(types.AttributeKeySender, msg.Sender),
@@ -617,8 +624,8 @@ func (k msgServer) CancelPostOwnerTransferRequest(goCtx context.Context, msg *ty
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeCancelPostOwnerTransfer,
-			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			types.EventTypeCanceledPostOwnerTransfer,
+			sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyPostID, fmt.Sprintf("%d", msg.PostID)),
 			sdk.NewAttribute(types.AttributeKeySender, msg.Sender),
 		),
@@ -673,8 +680,8 @@ func (k msgServer) AcceptPostOwnerTransferRequest(goCtx context.Context, msg *ty
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeAcceptPostOwnerTransfer,
-			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			types.EventTypeAcceptedPostOwnerTransfer,
+			sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyPostID, fmt.Sprintf("%d", msg.PostID)),
 			sdk.NewAttribute(types.AttributeKeyReceiver, msg.Receiver),
 		),
@@ -703,8 +710,8 @@ func (k msgServer) RefusePostOwnerTransferRequest(goCtx context.Context, msg *ty
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeRefusePostOwnerTransfer,
-			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			types.EventTypeRefusedPostOwnerTransfer,
+			sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyPostID, fmt.Sprintf("%d", msg.PostID)),
 			sdk.NewAttribute(types.AttributeKeyReceiver, msg.Receiver),
 		),

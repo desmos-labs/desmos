@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	subspacestypes "github.com/desmos-labs/desmos/v6/x/subspaces/types"
+
 	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -48,10 +50,10 @@ func (k msgServer) CreateRelationship(goCtx context.Context, msg *types.MsgCreat
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeRelationshipCreated,
+			types.EventTypeCreatedRelationship,
 			sdk.NewAttribute(types.AttributeRelationshipCreator, msg.Signer),
 			sdk.NewAttribute(types.AttributeRelationshipCounterparty, msg.Counterparty),
-			sdk.NewAttribute(types.AttributeKeySubspace, fmt.Sprintf("%d", msg.SubspaceID)),
+			sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 		),
 	})
 
@@ -77,10 +79,10 @@ func (k msgServer) DeleteRelationship(goCtx context.Context, msg *types.MsgDelet
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeRelationshipDeleted,
+			types.EventTypeDeletedRelationship,
 			sdk.NewAttribute(types.AttributeRelationshipCreator, msg.Signer),
 			sdk.NewAttribute(types.AttributeRelationshipCounterparty, msg.Counterparty),
-			sdk.NewAttribute(types.AttributeKeySubspace, fmt.Sprintf("%d", msg.SubspaceID)),
+			sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 		),
 	})
 
@@ -106,10 +108,10 @@ func (k msgServer) BlockUser(goCtx context.Context, msg *types.MsgBlockUser) (*t
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeBlockUser,
+			types.EventTypeBlockedUser,
 			sdk.NewAttribute(types.AttributeKeyUserBlockBlocker, msg.Blocker),
 			sdk.NewAttribute(types.AttributeKeyUserBlockBlocked, msg.Blocked),
-			sdk.NewAttribute(types.AttributeKeySubspace, fmt.Sprintf("%d", msg.SubspaceID)),
+			sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 		),
 	})
 
@@ -135,10 +137,10 @@ func (k msgServer) UnblockUser(goCtx context.Context, msg *types.MsgUnblockUser)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeUnblockUser,
+			types.EventTypeUnblockedUser,
 			sdk.NewAttribute(types.AttributeKeyUserBlockBlocker, msg.Blocker),
 			sdk.NewAttribute(types.AttributeKeyUserBlockBlocked, msg.Blocked),
-			sdk.NewAttribute(types.AttributeKeySubspace, fmt.Sprintf("%d", msg.SubspaceID)),
+			sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 		),
 	})
 

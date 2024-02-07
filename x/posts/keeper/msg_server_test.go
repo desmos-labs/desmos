@@ -364,9 +364,9 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			},
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeCreatePost,
-					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
-					sdk.NewAttribute(types.AttributeKeySectionID, "0"),
+					types.EventTypeCreatedPost,
+					sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, "1"),
+					sdk.NewAttribute(subspacestypes.AttributeKeySectionID, "0"),
 					sdk.NewAttribute(types.AttributeKeyPostID, "1"),
 					sdk.NewAttribute(types.AttributeKeyAuthor, "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"),
 					sdk.NewAttribute(types.AttributeKeyCreationTime, time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC).Format(time.RFC3339)),
@@ -480,9 +480,9 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			},
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeCreatePost,
-					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
-					sdk.NewAttribute(types.AttributeKeySectionID, "0"),
+					types.EventTypeCreatedPost,
+					sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, "1"),
+					sdk.NewAttribute(subspacestypes.AttributeKeySectionID, "0"),
 					sdk.NewAttribute(types.AttributeKeyPostID, "2"),
 					sdk.NewAttribute(types.AttributeKeyAuthor, "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"),
 					sdk.NewAttribute(types.AttributeKeyCreationTime, time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC).Format(time.RFC3339)),
@@ -767,8 +767,8 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 			},
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeEditPost,
-					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					types.EventTypeEditedPost,
+					sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyPostID, "1"),
 					sdk.NewAttribute(types.AttributeKeyLastEditTime, time.Date(2021, 1, 1, 12, 00, 00, 000, time.UTC).Format(time.RFC3339)),
 				),
@@ -968,8 +968,8 @@ func (suite *KeeperTestSuite) TestMsgServer_DeletePost() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeDeletePost,
-					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					types.EventTypeDeletedPost,
+					sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyPostID, "1"),
 				),
 			},
@@ -1019,8 +1019,8 @@ func (suite *KeeperTestSuite) TestMsgServer_DeletePost() {
 			msg: types.NewMsgDeletePost(1, 1, "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"),
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeDeletePost,
-					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					types.EventTypeDeletedPost,
+					sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyPostID, "1"),
 				),
 			},
@@ -1260,8 +1260,8 @@ func (suite *KeeperTestSuite) TestMsgServer_AddPostAttachment() {
 			},
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeAddPostAttachment,
-					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					types.EventTypeAddedPostAttachment,
+					sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyPostID, "1"),
 					sdk.NewAttribute(types.AttributeKeyAttachmentID, "1"),
 					sdk.NewAttribute(types.AttributeKeyLastEditTime, time.Date(2021, 1, 1, 12, 00, 00, 000, time.UTC).Format(time.RFC3339)),
@@ -1584,8 +1584,8 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostAttachment() {
 			},
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeRemovePostAttachment,
-					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					types.EventTypeRemovedPostAttachment,
+					sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyPostID, "1"),
 					sdk.NewAttribute(types.AttributeKeyAttachmentID, "1"),
 					sdk.NewAttribute(types.AttributeKeyLastEditTime, time.Date(2021, 1, 1, 12, 00, 00, 000, time.UTC).Format(time.RFC3339)),
@@ -1666,8 +1666,8 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostAttachment() {
 			},
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeRemovePostAttachment,
-					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					types.EventTypeRemovedPostAttachment,
+					sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyPostID, "1"),
 					sdk.NewAttribute(types.AttributeKeyAttachmentID, "1"),
 					sdk.NewAttribute(types.AttributeKeyLastEditTime, time.Date(2021, 1, 1, 12, 00, 00, 000, time.UTC).Format(time.RFC3339)),
@@ -2188,10 +2188,12 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeAnswerPoll,
-					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					types.EventTypeAnsweredPoll,
+					sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyPostID, "1"),
 					sdk.NewAttribute(types.AttributeKeyPollID, "1"),
+					sdk.NewAttribute(types.AttributeKeyAnswersIndexes, "0"),
+					sdk.NewAttribute(types.AttributeKeyAnswerer, "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"),
 				),
 			},
 			check: func(ctx sdk.Context) {
@@ -2269,10 +2271,12 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeAnswerPoll,
-					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					types.EventTypeAnsweredPoll,
+					sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyPostID, "1"),
 					sdk.NewAttribute(types.AttributeKeyPollID, "1"),
+					sdk.NewAttribute(types.AttributeKeyAnswersIndexes, "0,1"),
+					sdk.NewAttribute(types.AttributeKeyAnswerer, "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"),
 				),
 			},
 			check: func(ctx sdk.Context) {
@@ -2766,8 +2770,8 @@ func (suite *KeeperTestSuite) TestMsgServer_MovePost() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeMovePost,
-					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					types.EventTypeMovedPost,
+					sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyPostID, "1"),
 					sdk.NewAttribute(types.AttributeKeyNewSubspaceID, "2"),
 					sdk.NewAttribute(types.AttributeKeyNewPostID, "2"),
@@ -3155,8 +3159,8 @@ func (suite *KeeperTestSuite) TestMsgServer_RequestPostOwnerTransfer() {
 			expResponse: &types.MsgRequestPostOwnerTransferResponse{},
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeRequestPostOwnerTransfer,
-					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					types.EventTypeRequestedPostOwnerTransfer,
+					sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyPostID, "1"),
 					sdk.NewAttribute(types.AttributeKeyReceiver, "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"),
 					sdk.NewAttribute(types.AttributeKeySender, "cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg"),
@@ -3264,8 +3268,8 @@ func (suite *KeeperTestSuite) TestMsgServer_CancelPostOwnerTransfer() {
 			expResponse: &types.MsgCancelPostOwnerTransferRequestResponse{},
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeCancelPostOwnerTransfer,
-					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					types.EventTypeCanceledPostOwnerTransfer,
+					sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyPostID, "1"),
 					sdk.NewAttribute(types.AttributeKeySender, "cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg"),
 				),
@@ -3504,8 +3508,8 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptPostOwnerTransfer() {
 			expResponse: &types.MsgAcceptPostOwnerTransferRequestResponse{},
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeAcceptPostOwnerTransfer,
-					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					types.EventTypeAcceptedPostOwnerTransfer,
+					sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyPostID, "1"),
 					sdk.NewAttribute(types.AttributeKeyReceiver, "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"),
 				),
@@ -3599,8 +3603,8 @@ func (suite *KeeperTestSuite) TestMsgServer_RefusePostOwnerTransfer() {
 			expResponse: &types.MsgRefusePostOwnerTransferRequestResponse{},
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeRefusePostOwnerTransfer,
-					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					types.EventTypeRefusedPostOwnerTransfer,
+					sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyPostID, "1"),
 					sdk.NewAttribute(types.AttributeKeyReceiver, "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"),
 				),

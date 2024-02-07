@@ -241,11 +241,11 @@ func handleLinkChainAccountPacketData(
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
-			types.EventTypeLinkChainAccountPacket,
+			types.EventTypeReceivedLinkChainAccountPacket,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(types.AttributeKeyChainLinkOwner, packetData.DestinationAddress),
 			sdk.NewAttribute(types.AttributeKeyChainLinkExternalAddress, address.GetValue()),
 			sdk.NewAttribute(types.AttributeKeyChainLinkChainName, packetData.SourceChainConfig.Name),
-			sdk.NewAttribute(types.AttributeKeyChainLinkOwner, packetData.DestinationAddress),
 			sdk.NewAttribute(types.AttributeKeyAckSuccess, fmt.Sprintf("%t", true)),
 		),
 	)
@@ -253,30 +253,30 @@ func handleLinkChainAccountPacketData(
 	return true, acknowledgement, nil
 }
 
-// handleOracleRequestPacketData tries handling athe given packet by deserializing the inner data
+// handleOracleRequestPacketData tries handling the given packet by deserializing the inner data
 // as an OracleResponsePacketData instance.
 func handleOracleRequestPacketData(
 	am IBCModule, ctx sdk.Context, packet channeltypes.Packet,
 ) (handled bool, ack channeltypes.Acknowledgement, err error) {
-	var data oracletypes.OracleResponsePacketData
-	if err := am.cdc.UnmarshalJSON(packet.GetData(), &data); err != nil {
+	var packetData oracletypes.OracleResponsePacketData
+	if err := am.cdc.UnmarshalJSON(packet.GetData(), &packetData); err != nil {
 		return false, channeltypes.Acknowledgement{}, nil
 	}
 
 	acknowledgement := channeltypes.NewResultAcknowledgement([]byte{byte(1)})
 
-	err = am.keeper.OnRecvApplicationLinkPacketData(ctx, data)
+	err = am.keeper.OnRecvApplicationLinkPacketData(ctx, packetData)
 	if err != nil {
 		acknowledgement = channeltypes.NewErrorAcknowledgement(err)
 	}
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
-			types.EventTypePacket,
+			types.EventTypeReceivedOracleResponsePacketData,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
-			sdk.NewAttribute(types.AttributeKeyClientID, data.ClientID),
-			sdk.NewAttribute(types.AttributeKeyRequestID, fmt.Sprintf("%d", data.RequestID)),
-			sdk.NewAttribute(types.AttributeKeyResolveStatus, data.ResolveStatus.String()),
+			sdk.NewAttribute(types.AttributeKeyClientID, packetData.ClientID),
+			sdk.NewAttribute(types.AttributeKeyRequestID, fmt.Sprintf("%d", packetData.RequestID)),
+			sdk.NewAttribute(types.AttributeKeyResolveStatus, packetData.ResolveStatus.String()),
 			sdk.NewAttribute(types.AttributeKeyAckSuccess, fmt.Sprintf("%t", true)),
 		),
 	)
@@ -315,7 +315,7 @@ func (am IBCModule) OnAcknowledgementPacket(
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
-			types.EventTypePacket,
+			types.EventTypeReceivedOracleResponsePacketData,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 			sdk.NewAttribute(types.AttributeKeyClientID, data.ClientID),
 			sdk.NewAttribute(types.AttributeKeyAck, fmt.Sprintf("%v", ack)),
@@ -326,14 +326,14 @@ func (am IBCModule) OnAcknowledgementPacket(
 	case *channeltypes.Acknowledgement_Result:
 		ctx.EventManager().EmitEvent(
 			sdk.NewEvent(
-				types.EventTypePacket,
+				types.EventTypeReceivedOracleResponsePacketData,
 				sdk.NewAttribute(types.AttributeKeyAckSuccess, string(resp.Result)),
 			),
 		)
 	case *channeltypes.Acknowledgement_Error:
 		ctx.EventManager().EmitEvent(
 			sdk.NewEvent(
-				types.EventTypePacket,
+				types.EventTypeReceivedOracleResponsePacketData,
 				sdk.NewAttribute(types.AttributeKeyAckError, resp.Error),
 			),
 		)

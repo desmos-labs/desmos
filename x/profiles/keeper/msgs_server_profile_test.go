@@ -51,7 +51,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SaveProfile() {
 			},
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeProfileSaved,
+					types.EventTypeSavedProfile,
 					sdk.NewAttribute(types.AttributeKeyProfileDTag, "custom_dtag"),
 					sdk.NewAttribute(types.AttributeKeyProfileCreator, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 					sdk.NewAttribute(types.AttributeKeyProfileCreationTime, blockTime.Format(time.RFC3339)),
@@ -85,7 +85,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SaveProfile() {
 			),
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeProfileSaved,
+					types.EventTypeSavedProfile,
 					sdk.NewAttribute(types.AttributeKeyProfileDTag, "other_dtag"),
 					sdk.NewAttribute(types.AttributeKeyProfileCreator, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 					sdk.NewAttribute(types.AttributeKeyProfileCreationTime, blockTime.Format(time.RFC3339)),
@@ -125,7 +125,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SaveProfile() {
 			),
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeProfileSaved,
+					types.EventTypeSavedProfile,
 					sdk.NewAttribute(types.AttributeKeyProfileDTag, "Test"),
 					sdk.NewAttribute(types.AttributeKeyProfileCreator, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 					sdk.NewAttribute(types.AttributeKeyProfileCreationTime, blockTime.Format(time.RFC3339)),
@@ -203,7 +203,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SaveProfile() {
 			),
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeProfileSaved,
+					types.EventTypeSavedProfile,
 					sdk.NewAttribute(types.AttributeKeyProfileDTag, "tomtom"),
 					sdk.NewAttribute(types.AttributeKeyProfileCreator, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 					sdk.NewAttribute(types.AttributeKeyProfileCreationTime, blockTime.Format(time.RFC3339)),
@@ -294,7 +294,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteProfile() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeProfileDeleted,
+					types.EventTypeDeletedProfile,
 					sdk.NewAttribute(types.AttributeKeyProfileCreator, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 				),
 			},

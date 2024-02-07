@@ -83,7 +83,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RequestDTagTransfer() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeDTagTransferRequest,
+					types.EventTypeRequestedDTagTransfer,
 					sdk.NewAttribute(types.AttributeKeyDTagToTrade, fmt.Sprintf("%s-dtag", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")),
 					sdk.NewAttribute(types.AttributeKeyRequestSender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 					sdk.NewAttribute(types.AttributeKeyRequestReceiver, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
@@ -150,7 +150,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CancelDTagTransfer() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeDTagTransferCancel,
+					types.EventTypeCanceledDTagTransferRequest,
 					sdk.NewAttribute(types.AttributeKeyRequestSender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 					sdk.NewAttribute(types.AttributeKeyRequestReceiver, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 				),
@@ -367,7 +367,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptDTagTransfer() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeDTagTransferAccept,
+					types.EventTypeAcceptedDTagTransferRequest,
 					sdk.NewAttribute(types.AttributeKeyDTagToTrade, "DTag"),
 					sdk.NewAttribute(types.AttributeKeyNewDTag, "NewDtag"),
 					sdk.NewAttribute(types.AttributeKeyRequestSender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
@@ -396,7 +396,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptDTagTransfer() {
 			),
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeDTagTransferAccept,
+					types.EventTypeAcceptedDTagTransferRequest,
 					sdk.NewAttribute(types.AttributeKeyDTagToTrade, "DTag"),
 					sdk.NewAttribute(types.AttributeKeyNewDTag, "NewDtag"),
 					sdk.NewAttribute(types.AttributeKeyRequestSender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
@@ -434,7 +434,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptDTagTransfer() {
 			),
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeDTagTransferAccept,
+					types.EventTypeAcceptedDTagTransferRequest,
 					sdk.NewAttribute(types.AttributeKeyDTagToTrade, "receiverDTag"),
 					sdk.NewAttribute(types.AttributeKeyNewDTag, "senderDTag"),
 					sdk.NewAttribute(types.AttributeKeyRequestSender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
@@ -511,7 +511,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RefuseDTagTransfer() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeDTagTransferRefuse,
+					types.EventTypeRefusedDTagTransferRequest,
 					sdk.NewAttribute(types.AttributeKeyRequestSender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 					sdk.NewAttribute(types.AttributeKeyRequestReceiver, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 				),

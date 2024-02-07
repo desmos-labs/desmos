@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/desmos-labs/desmos/v6/x/subspaces/types"
@@ -51,7 +52,7 @@ func (k msgServer) CreateSubspace(goCtx context.Context, msg *types.MsgCreateSub
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeCreateSubspace,
+			types.EventTypeCreatedSubspace,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", subspaceID)),
 			sdk.NewAttribute(types.AttributeKeySubspaceName, subspace.Name),
 			sdk.NewAttribute(types.AttributeKeySubspaceCreator, subspace.Creator),
@@ -96,7 +97,7 @@ func (k msgServer) EditSubspace(goCtx context.Context, msg *types.MsgEditSubspac
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeEditSubspace,
+			types.EventTypeEditedSubspace,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", updated.ID)),
 		),
 	})
@@ -128,7 +129,7 @@ func (k msgServer) DeleteSubspace(goCtx context.Context, msg *types.MsgDeleteSub
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeDeleteSubspace,
+			types.EventTypeDeletedSubspace,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 		),
 	})
@@ -181,7 +182,7 @@ func (k msgServer) CreateSection(goCtx context.Context, msg *types.MsgCreateSect
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeCreateSection,
+			types.EventTypeCreatedSection,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", section.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeySectionID, fmt.Sprintf("%d", section.ID)),
 		),
@@ -230,7 +231,7 @@ func (k msgServer) EditSection(goCtx context.Context, msg *types.MsgEditSection)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeEditSection,
+			types.EventTypeEditedSection,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", section.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeySectionID, fmt.Sprintf("%d", section.ID)),
 		),
@@ -286,7 +287,7 @@ func (k msgServer) MoveSection(goCtx context.Context, msg *types.MsgMoveSection)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeMoveSection,
+			types.EventTypeMovedSection,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeySectionID, fmt.Sprintf("%d", msg.SectionID)),
 		),
@@ -324,7 +325,7 @@ func (k msgServer) DeleteSection(goCtx context.Context, msg *types.MsgDeleteSect
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeDeleteSection,
+			types.EventTypeDeletedSection,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeySectionID, fmt.Sprintf("%d", msg.SectionID)),
 		),
@@ -391,7 +392,7 @@ func (k msgServer) CreateUserGroup(goCtx context.Context, msg *types.MsgCreateUs
 
 		// Add the events to the list of to emit
 		userEvents = append(userEvents, sdk.NewEvent(
-			types.EventTypeAddUserToGroup,
+			types.EventTypeAddedUserToGroup,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", group.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyUserGroupID, fmt.Sprintf("%d", group.ID)),
 			sdk.NewAttribute(types.AttributeKeyUser, member),
@@ -400,7 +401,7 @@ func (k msgServer) CreateUserGroup(goCtx context.Context, msg *types.MsgCreateUs
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeCreateUserGroup,
+			types.EventTypeCreatedUserGroup,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyUserGroupID, fmt.Sprintf("%d", group.ID)),
 		),
@@ -446,7 +447,7 @@ func (k msgServer) EditUserGroup(goCtx context.Context, msg *types.MsgEditUserGr
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeEditUserGroup,
+			types.EventTypeEditedUserGroup,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyUserGroupID, fmt.Sprintf("%d", msg.GroupID)),
 		),
@@ -501,7 +502,7 @@ func (k msgServer) MoveUserGroup(goCtx context.Context, msg *types.MsgMoveUserGr
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EvenTypeMoveUserGroup,
+			types.EventTypeMovedUserGroup,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyUserGroupID, fmt.Sprintf("%d", msg.GroupID)),
 		),
@@ -555,6 +556,7 @@ func (k msgServer) SetUserGroupPermissions(goCtx context.Context, msg *types.Msg
 			types.EventTypeSetUserGroupPermissions,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyUserGroupID, fmt.Sprintf("%d", msg.GroupID)),
+			sdk.NewAttribute(types.AttributeKeyPermissions, strings.Join(msg.Permissions, ",")),
 		),
 	})
 
@@ -591,7 +593,7 @@ func (k msgServer) DeleteUserGroup(goCtx context.Context, msg *types.MsgDeleteUs
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeDeleteUserGroup,
+			types.EventTypeDeletedUserGroup,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyUserGroupID, fmt.Sprintf("%d", msg.GroupID)),
 		),
@@ -640,7 +642,7 @@ func (k msgServer) AddUserToUserGroup(goCtx context.Context, msg *types.MsgAddUs
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeAddUserToGroup,
+			types.EventTypeAddedUserToGroup,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyUserGroupID, fmt.Sprintf("%d", msg.GroupID)),
 			sdk.NewAttribute(types.AttributeKeyUser, msg.User),
@@ -685,7 +687,7 @@ func (k msgServer) RemoveUserFromUserGroup(goCtx context.Context, msg *types.Msg
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeRemoveUserFromGroup,
+			types.EventTypeRemovedUserFromGroup,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyUserGroupID, fmt.Sprintf("%d", msg.GroupID)),
 			sdk.NewAttribute(types.AttributeKeyUser, msg.User),
@@ -736,6 +738,8 @@ func (k msgServer) SetUserPermissions(goCtx context.Context, msg *types.MsgSetUs
 		sdk.NewEvent(
 			types.EventTypeSetUserPermissions,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			sdk.NewAttribute(types.AttributeKeySectionID, fmt.Sprintf("%d", msg.SectionID)),
+			sdk.NewAttribute(types.AttributeKeyPermissions, strings.Join(msg.Permissions, ",")),
 			sdk.NewAttribute(types.AttributeKeyUser, msg.User),
 		),
 	})
@@ -778,7 +782,7 @@ func (k msgServer) GrantTreasuryAuthorization(goCtx context.Context, msg *types.
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeGrantTreasuryAuthorization,
+			types.EventTypeGrantedTreasuryAuthorization,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyGranter, msg.Granter),
 			sdk.NewAttribute(types.AttributeKeyGrantee, msg.Grantee),
@@ -816,7 +820,7 @@ func (k msgServer) RevokeTreasuryAuthorization(goCtx context.Context, msg *types
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeRevokeTreasuryAuthorization,
+			types.EventTypeRevokedTreasuryAuthorization,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyGranter, msg.Granter),
 			sdk.NewAttribute(types.AttributeKeyGrantee, msg.Grantee),
@@ -845,7 +849,7 @@ func (k msgServer) GrantAllowance(goCtx context.Context, msg *types.MsgGrantAllo
 			return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, "fee allowance already exists")
 		}
 		events = events.AppendEvent(sdk.NewEvent(
-			types.EventTypeGrantAllowance,
+			types.EventTypeGrantedAllowance,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyGranter, msg.Granter),
 			sdk.NewAttribute(types.AttributeKeyUserGrantee, grantee.User),
@@ -859,7 +863,7 @@ func (k msgServer) GrantAllowance(goCtx context.Context, msg *types.MsgGrantAllo
 			return nil, errors.Wrap(sdkerrors.ErrInvalidRequest, "fee allowance already exists")
 		}
 		events = events.AppendEvent(sdk.NewEvent(
-			types.EventTypeGrantAllowance,
+			types.EventTypeGrantedAllowance,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyGranter, msg.Granter),
 			sdk.NewAttribute(types.AttributeKeyGroupGrantee, fmt.Sprintf("%d", grantee.GroupID)),
@@ -904,7 +908,7 @@ func (k msgServer) RevokeAllowance(goCtx context.Context, msg *types.MsgRevokeAl
 		}
 		k.DeleteUserGrant(ctx, msg.SubspaceID, grantee.User)
 		events = events.AppendEvent(sdk.NewEvent(
-			types.EventTypeRevokeAllowance,
+			types.EventTypeRevokedAllowance,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyGranter, msg.Granter),
 			sdk.NewAttribute(types.AttributeKeyUserGrantee, grantee.User),
@@ -916,7 +920,7 @@ func (k msgServer) RevokeAllowance(goCtx context.Context, msg *types.MsgRevokeAl
 		}
 		k.DeleteGroupGrant(ctx, msg.SubspaceID, grantee.GroupID)
 		events = events.AppendEvent(sdk.NewEvent(
-			types.EventTypeRevokeAllowance,
+			types.EventTypeRevokedAllowance,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyGranter, msg.Granter),
 			sdk.NewAttribute(types.AttributeKeyGroupGrantee, fmt.Sprintf("%d", grantee.GroupID)),
@@ -956,7 +960,7 @@ func (k msgServer) UpdateSubspaceFeeTokens(goCtx context.Context, msg *types.Msg
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeUpdateSubspaceFeeToken,
+			types.EventTypeUpdatedSubspaceFeeToken,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", updated.ID)),
 			sdk.NewAttribute(types.AttributeKeyUser, msg.Authority),
 		),

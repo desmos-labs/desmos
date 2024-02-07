@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"time"
 
+	poststypes "github.com/desmos-labs/desmos/v6/x/posts/types"
+
 	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -93,15 +95,15 @@ func (k msgServer) CreateReport(goCtx context.Context, msg *types.MsgCreateRepor
 	switch target := target.(type) {
 	case *types.PostTarget:
 		reportEvent = sdk.NewEvent(
-			types.EventTypeReportPost,
-			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
-			sdk.NewAttribute(types.AttributeKeyPostID, fmt.Sprintf("%d", target.PostID)),
+			types.EventTypeReportedPost,
+			sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			sdk.NewAttribute(poststypes.AttributeKeyPostID, fmt.Sprintf("%d", target.PostID)),
 			sdk.NewAttribute(types.AttributeKeyReporter, msg.Reporter),
 		)
 	case *types.UserTarget:
 		reportEvent = sdk.NewEvent(
-			types.EventTypeReportUser,
-			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			types.EventTypeReportedUser,
+			sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyUser, target.User),
 			sdk.NewAttribute(types.AttributeKeyReporter, msg.Reporter),
 		)
@@ -111,8 +113,8 @@ func (k msgServer) CreateReport(goCtx context.Context, msg *types.MsgCreateRepor
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeCreateReport,
-			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			types.EventTypeCreatedReport,
+			sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyReportID, fmt.Sprintf("%d", report.ID)),
 			sdk.NewAttribute(types.AttributeKeyReporter, msg.Reporter),
 			sdk.NewAttribute(types.AttributeKeyCreationTime, report.CreationDate.Format(time.RFC3339)),
@@ -153,8 +155,8 @@ func (k msgServer) DeleteReport(goCtx context.Context, msg *types.MsgDeleteRepor
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeDeleteReport,
-			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			types.EventTypeDeletedReport,
+			sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyReportID, fmt.Sprintf("%d", msg.ReportID)),
 		),
 	})
@@ -203,8 +205,8 @@ func (k msgServer) SupportStandardReason(goCtx context.Context, msg *types.MsgSu
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeSupportStandardReason,
-			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			types.EventTypeSupportedStandardReason,
+			sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyStandardReasonID, fmt.Sprintf("%d", msg.StandardReasonID)),
 			sdk.NewAttribute(types.AttributeKeyReasonID, fmt.Sprintf("%d", reason.ID)),
 		),
@@ -250,8 +252,8 @@ func (k msgServer) AddReason(goCtx context.Context, msg *types.MsgAddReason) (*t
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeAddReason,
-			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			types.EventTypeAddedReportingReason,
+			sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyReasonID, fmt.Sprintf("%d", reason.ID)),
 		),
 	})
@@ -285,8 +287,8 @@ func (k msgServer) RemoveReason(goCtx context.Context, msg *types.MsgRemoveReaso
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeRemoveReason,
-			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			types.EventTypeRemovedReportingReason,
+			sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyReasonID, fmt.Sprintf("%d", msg.ReasonID)),
 		),
 	})

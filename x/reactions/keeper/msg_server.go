@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	poststypes "github.com/desmos-labs/desmos/v6/x/posts/types"
+
 	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -90,9 +92,9 @@ func (k msgServer) AddReaction(goCtx context.Context, msg *types.MsgAddReaction)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeAddReaction,
-			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
-			sdk.NewAttribute(types.AttributeKeyPostID, fmt.Sprintf("%d", msg.PostID)),
+			types.EventTypeAddedReaction,
+			sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			sdk.NewAttribute(poststypes.AttributeKeyPostID, fmt.Sprintf("%d", msg.PostID)),
 			sdk.NewAttribute(types.AttributeKeyReactionID, fmt.Sprintf("%d", reaction.ID)),
 			sdk.NewAttribute(types.AttributeKeyUser, msg.User),
 		),
@@ -139,9 +141,9 @@ func (k msgServer) RemoveReaction(goCtx context.Context, msg *types.MsgRemoveRea
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeRemoveReaction,
-			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
-			sdk.NewAttribute(types.AttributeKeyPostID, fmt.Sprintf("%d", msg.PostID)),
+			types.EventTypeRemovedReaction,
+			sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			sdk.NewAttribute(poststypes.AttributeKeyPostID, fmt.Sprintf("%d", msg.PostID)),
 			sdk.NewAttribute(types.AttributeKeyReactionID, fmt.Sprintf("%d", msg.ReactionID)),
 		),
 	})
@@ -189,8 +191,8 @@ func (k msgServer) AddRegisteredReaction(goCtx context.Context, msg *types.MsgAd
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.ActionAddRegisteredReaction,
-			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			types.EventTypeAddedRegisteredReaction,
+			sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyRegisteredReactionID, fmt.Sprintf("%d", reaction.ID)),
 		),
 	})
@@ -233,7 +235,7 @@ func (k msgServer) EditRegisteredReaction(goCtx context.Context, msg *types.MsgE
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			types.ActionEditRegisteredReaction,
-			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyRegisteredReactionID, fmt.Sprintf("%d", msg.RegisteredReactionID)),
 		),
 	})
@@ -265,8 +267,8 @@ func (k msgServer) RemoveRegisteredReaction(goCtx context.Context, msg *types.Ms
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeRemoveRegisteredReaction,
-			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			types.EventTypeRemovedRegisteredReaction,
+			sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyRegisteredReactionID, fmt.Sprintf("%d", msg.RegisteredReactionID)),
 		),
 	})
@@ -301,7 +303,7 @@ func (k msgServer) SetReactionsParams(goCtx context.Context, msg *types.MsgSetRe
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			types.EventTypeSetReactionsParams,
-			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 		),
 	})
 

@@ -71,7 +71,7 @@ func (k MsgServer) SaveProfile(goCtx context.Context, msg *types.MsgSaveProfile)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeProfileSaved,
+			types.EventTypeSavedProfile,
 			sdk.NewAttribute(types.AttributeKeyProfileDTag, updated.DTag),
 			sdk.NewAttribute(types.AttributeKeyProfileCreator, updated.GetAddress().String()),
 			sdk.NewAttribute(types.AttributeKeyProfileCreationTime, updated.CreationDate.Format(time.RFC3339Nano)),
@@ -92,7 +92,7 @@ func (k MsgServer) DeleteProfile(goCtx context.Context, msg *types.MsgDeleteProf
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeProfileDeleted,
+			types.EventTypeDeletedProfile,
 			sdk.NewAttribute(types.AttributeKeyProfileCreator, msg.Creator),
 		),
 	})

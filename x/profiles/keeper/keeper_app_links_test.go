@@ -62,7 +62,7 @@ func (suite *KeeperTestSuite) Test_SaveApplicationLink() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypesApplicationLinkSaved,
+					types.EventTypeSavedApplicationLink,
 					sdk.NewAttribute(types.AttributeKeyUser, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 					sdk.NewAttribute(types.AttributeKeyApplicationName, "twitter"),
 					sdk.NewAttribute(types.AttributeKeyApplicationUsername, "twitteruser"),
@@ -422,7 +422,7 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 			),
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeApplicationLinkDeleted,
+					types.EventTypeDeletedApplicationLink,
 					sdk.NewAttribute(types.AttributeKeyUser, "cosmos1xvvggrlgjkhu4rva9j500rc52za2smxhluvftc"),
 					sdk.NewAttribute(types.AttributeKeyApplicationName, "twitter"),
 					sdk.NewAttribute(types.AttributeKeyApplicationUsername, "twitteruser"),
@@ -476,7 +476,7 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 			),
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeApplicationLinkDeleted,
+					types.EventTypeDeletedApplicationLink,
 					sdk.NewAttribute(types.AttributeKeyUser, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 					sdk.NewAttribute(types.AttributeKeyApplicationName, "github"),
 					sdk.NewAttribute(types.AttributeKeyApplicationUsername, "twitteruser"),
@@ -530,7 +530,7 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 			),
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeApplicationLinkDeleted,
+					types.EventTypeDeletedApplicationLink,
 					sdk.NewAttribute(types.AttributeKeyUser, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 					sdk.NewAttribute(types.AttributeKeyApplicationName, "twitter"),
 					sdk.NewAttribute(types.AttributeKeyApplicationUsername, "another-user"),
@@ -584,7 +584,7 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 			),
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeApplicationLinkDeleted,
+					types.EventTypeDeletedApplicationLink,
 					sdk.NewAttribute(types.AttributeKeyUser, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 					sdk.NewAttribute(types.AttributeKeyApplicationName, "twitter"),
 					sdk.NewAttribute(types.AttributeKeyApplicationUsername, "twitteruser"),

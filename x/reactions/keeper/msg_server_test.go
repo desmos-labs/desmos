@@ -3,6 +3,8 @@ package keeper_test
 import (
 	"time"
 
+	subspacestypes "github.com/desmos-labs/desmos/v6/x/subspaces/types"
+
 	"github.com/golang/mock/gomock"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -416,9 +418,9 @@ func (suite *KeeperTestSuite) TestMsgServer_AddReaction() {
 			},
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeAddReaction,
-					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
-					sdk.NewAttribute(types.AttributeKeyPostID, "1"),
+					types.EventTypeAddedReaction,
+					sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, "1"),
+					sdk.NewAttribute(poststypes.AttributeKeyPostID, "1"),
 					sdk.NewAttribute(types.AttributeKeyReactionID, "1"),
 					sdk.NewAttribute(types.AttributeKeyUser, "cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f"),
 				),
@@ -502,9 +504,9 @@ func (suite *KeeperTestSuite) TestMsgServer_AddReaction() {
 			},
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeAddReaction,
-					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
-					sdk.NewAttribute(types.AttributeKeyPostID, "1"),
+					types.EventTypeAddedReaction,
+					sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, "1"),
+					sdk.NewAttribute(poststypes.AttributeKeyPostID, "1"),
 					sdk.NewAttribute(types.AttributeKeyReactionID, "1"),
 					sdk.NewAttribute(types.AttributeKeyUser, "cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f"),
 				),
@@ -780,9 +782,9 @@ func (suite *KeeperTestSuite) TestMsgServer_RemoveReaction() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeRemoveReaction,
-					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
-					sdk.NewAttribute(types.AttributeKeyPostID, "1"),
+					types.EventTypeRemovedReaction,
+					sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, "1"),
+					sdk.NewAttribute(poststypes.AttributeKeyPostID, "1"),
 					sdk.NewAttribute(types.AttributeKeyReactionID, "1"),
 				),
 			},
@@ -947,8 +949,8 @@ func (suite *KeeperTestSuite) TestMsgServer_AddRegisteredReaction() {
 			},
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeAddRegisteredReaction,
-					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					types.EventTypeAddedRegisteredReaction,
+					sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyRegisteredReactionID, "1"),
 				),
 			},
@@ -1138,7 +1140,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditRegisteredReaction() {
 			expEvents: sdk.Events{
 				sdk.NewEvent(
 					types.ActionEditRegisteredReaction,
-					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyRegisteredReactionID, "1"),
 				),
 			},
@@ -1281,8 +1283,8 @@ func (suite *KeeperTestSuite) TestMsgServer_RemoveRegisteredReaction() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeRemoveRegisteredReaction,
-					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					types.EventTypeRemovedRegisteredReaction,
+					sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyRegisteredReactionID, "1"),
 				),
 			},
@@ -1415,7 +1417,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SetReactionsParams() {
 			expEvents: sdk.Events{
 				sdk.NewEvent(
 					types.EventTypeSetReactionsParams,
-					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					sdk.NewAttribute(subspacestypes.AttributeKeySubspaceID, "1"),
 				),
 			},
 			check: func(ctx sdk.Context) {
