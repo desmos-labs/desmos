@@ -1,0 +1,6 @@
+type: refactor
+module: other
+pull_request: 1295
+description: Updated the event andattributes names for better naming consistency
+backward_compatible: false
+date: 2024-02-07T16:14:12.727157086Z
