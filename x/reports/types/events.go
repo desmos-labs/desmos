@@ -8,8 +8,8 @@ const (
 	EventTypeReportedUser            = "reported_user"
 	EventTypeDeletedReport           = "deleted_report"
 	EventTypeSupportedStandardReason = "supported_standard_reason"
-	EventTypeAddedReportingReason    = "added_reason"
-	EventTypeRemovedReportingReason  = "removed_reason"
+	EventTypeAddedReportingReason    = "added_reporting_reason"
+	EventTypeRemovedReportingReason  = "removed_reporting_reason"
 
 	AttributeKeyReportID         = "report_id"
 	AttributeKeyReporter         = "reporter"

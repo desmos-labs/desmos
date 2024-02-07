@@ -33,14 +33,14 @@ The profiles module emits the following events:
 
 ## MsgRequestDTagTransfer
 
-| **Type**                      | **Attribute Key** | **Attribute Value**                       | 
-|:------------------------------|:------------------|:------------------------------------------|
-| created_dtag_transfer_request | dtag_to_trade     | {dTagToTrade}                             | 
-| created_dtag_transfer_request | request_sender    | {requestSenderAddress}                    | 
-| created_dtag_transfer_request | request_receiver  | {requestReceiverAddress}                  |
-| message                       | module            | profiles                                  | 
-| message                       | action            | desmos.profiles.v3.MsgRequestDTagTransfer |
-| message                       | sender            | {requestSenderAddress}                    |
+| **Type**                | **Attribute Key** | **Attribute Value**                       | 
+|:------------------------|:------------------|:------------------------------------------|
+| requested_dtag_transfer | dtag_to_trade     | {dTagToTrade}                             | 
+| requested_dtag_transfer | request_sender    | {requestSenderAddress}                    | 
+| requested_dtag_transfer | request_receiver  | {requestReceiverAddress}                  |
+| message                 | module            | profiles                                  | 
+| message                 | action            | desmos.profiles.v3.MsgRequestDTagTransfer |
+| message                 | sender            | {requestSenderAddress}                    |
 
 ## MsgCancelDTagTransferRequest
 

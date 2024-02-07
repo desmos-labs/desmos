@@ -6,7 +6,7 @@ const (
 	EventTypeSavedProfile   = "saved_profile"
 	EventTypeDeletedProfile = "deleted_profile"
 
-	EventTypeRequestedDTagTransferRequest     = "created_dtag_transfer_request"
+	EventTypeRequestedDTagTransfer            = "requested_dtag_transfer"
 	EventTypeAcceptedDTagTransferRequest      = "accepted_dtag_transfer_request"
 	EventTypeRefusedDTagTransferRequest       = "refused_dtag_transfer_request"
 	EventTypeCanceledDTagTransferRequest      = "canceled_dtag_transfer_request"

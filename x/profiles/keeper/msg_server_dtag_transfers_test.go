@@ -83,7 +83,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RequestDTagTransfer() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
-					types.EventTypeRequestedDTagTransferRequest,
+					types.EventTypeRequestedDTagTransfer,
 					sdk.NewAttribute(types.AttributeKeyDTagToTrade, fmt.Sprintf("%s-dtag", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")),
 					sdk.NewAttribute(types.AttributeKeyRequestSender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 					sdk.NewAttribute(types.AttributeKeyRequestReceiver, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),

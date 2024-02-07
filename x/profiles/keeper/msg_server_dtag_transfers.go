@@ -45,7 +45,7 @@ func (k MsgServer) RequestDTagTransfer(goCtx context.Context, msg *types.MsgRequ
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeRequestedDTagTransferRequest,
+			types.EventTypeRequestedDTagTransfer,
 			sdk.NewAttribute(types.AttributeKeyDTagToTrade, dTagToTrade),
 			sdk.NewAttribute(types.AttributeKeyRequestSender, transferRequest.Sender),
 			sdk.NewAttribute(types.AttributeKeyRequestReceiver, transferRequest.Receiver),
