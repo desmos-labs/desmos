@@ -791,14 +791,6 @@ func (a *Poll_ProvidedAnswer) UnpackInterfaces(unpacker codectypes.AnyUnpacker) 
 
 // --------------------------------------------------------------------------------------------------------------------
 
-func MapAnswersIndexesToStrings(answersIndexes []uint32) []string {
-	answers := make([]string, len(answersIndexes))
-	for i, answer := range answersIndexes {
-		answers[i] = strconv.FormatUint(uint64(answer), 10)
-	}
-	return answers
-}
-
 // NewUserAnswer returns a new UserAnswer instance
 func NewUserAnswer(subspaceID uint64, postID uint64, pollID uint32, answersIndexes []uint32, user string) UserAnswer {
 	return UserAnswer{
