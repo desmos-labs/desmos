@@ -1,6 +1,0 @@
-type: fix
-module: none
-pull_request: 1284
-description: Removed duplicated message events emission
-backward_compatible: true
-date: 2023-12-28T10:10:27.551132142Z
