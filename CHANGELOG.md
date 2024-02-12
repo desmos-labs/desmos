@@ -2,6 +2,14 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
+## Version 7.0.0
+### Bug Fixes
+- ([\#1284](https://github.com/desmos-labs/desmos/pull/1284)) Removed duplicated message events emission
+
+### Dependencies
+- ([\#1287](https://github.com/desmos-labs/desmos/pull/1287)) Updated `wasmvm` to `v1.5.1`
+- ([\#1299](https://github.com/desmos-labs/desmos/pull/1299)) Updated `cosmos-sdk` to `v0.47.8`
+
 ## Version 6.4.0
 ### Bug Fixes
 #### Profiles
