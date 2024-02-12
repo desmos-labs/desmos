@@ -8,7 +8,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/kv"
 
-	"github.com/desmos-labs/desmos/v6/x/profiles/types"
+	"github.com/desmos-labs/desmos/v7/x/profiles/types"
 )
 
 // NewDecodeStore returns a new decoder that unmarshals the KVPair's Value

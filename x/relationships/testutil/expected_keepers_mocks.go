@@ -8,8 +8,9 @@ import (
 	reflect "reflect"
 
 	types "github.com/cosmos/cosmos-sdk/types"
-	types0 "github.com/desmos-labs/desmos/v6/x/subspaces/types"
 	gomock "github.com/golang/mock/gomock"
+
+	types0 "github.com/desmos-labs/desmos/v7/x/subspaces/types"
 )
 
 // MockSubspacesKeeper is a mock of SubspacesKeeper interface.

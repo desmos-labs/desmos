@@ -7,22 +7,22 @@ import (
 	"strings"
 	"time"
 
-	"github.com/desmos-labs/desmos/v6/testutil/profilestesting"
+	"github.com/desmos-labs/desmos/v7/testutil/profilestesting"
 
-	"github.com/desmos-labs/desmos/v6/pkg/obi"
+	"github.com/desmos-labs/desmos/v7/pkg/obi"
 
 	clienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
 	"github.com/cosmos/ibc-go/v7/modules/core/exported"
 
-	"github.com/desmos-labs/desmos/v6/testutil/ibctesting"
+	"github.com/desmos-labs/desmos/v7/testutil/ibctesting"
 
 	channeltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	oracletypes "github.com/desmos-labs/desmos/v6/x/oracle/types"
+	oracletypes "github.com/desmos-labs/desmos/v7/x/oracle/types"
 
-	"github.com/desmos-labs/desmos/v6/x/profiles/types"
+	"github.com/desmos-labs/desmos/v7/x/profiles/types"
 )
 
 func createRequestPacketData(clientID string) oracletypes.OracleRequestPacketData {

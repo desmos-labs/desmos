@@ -6,12 +6,12 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 
-	"github.com/desmos-labs/desmos/v6/app/desmos/cmd/chainlink/builder"
-	chainlinktypes "github.com/desmos-labs/desmos/v6/app/desmos/cmd/chainlink/getter"
+	"github.com/desmos-labs/desmos/v7/app/desmos/cmd/chainlink/builder"
+	chainlinktypes "github.com/desmos-labs/desmos/v7/app/desmos/cmd/chainlink/getter"
 
 	"github.com/spf13/cobra"
 
-	"github.com/desmos-labs/desmos/v6/app"
+	"github.com/desmos-labs/desmos/v7/app"
 )
 
 // GetCreateChainLinkJSON returns the command allowing to generate the chain link JSON

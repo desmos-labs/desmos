@@ -3,12 +3,12 @@ package posts
 import (
 	"fmt"
 
-	subspacestypes "github.com/desmos-labs/desmos/v6/x/subspaces/types"
+	subspacestypes "github.com/desmos-labs/desmos/v7/x/subspaces/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v6/x/posts/keeper"
-	"github.com/desmos-labs/desmos/v6/x/posts/types"
+	"github.com/desmos-labs/desmos/v7/x/posts/keeper"
+	"github.com/desmos-labs/desmos/v7/x/posts/types"
 )
 
 // EndBlocker called every block, process ended polls

@@ -7,7 +7,7 @@ import (
 	fmt "fmt"
 	_ "github.com/cosmos/cosmos-proto"
 	types1 "github.com/cosmos/cosmos-sdk/codec/types"
-	types "github.com/desmos-labs/desmos/v6/x/posts/types"
+	types "github.com/desmos-labs/desmos/v7/x/posts/types"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
 	_ "google.golang.org/protobuf/types/known/timestamppb"

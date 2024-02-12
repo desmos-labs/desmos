@@ -10,7 +10,7 @@ import "cosmos/msg/v1/msg.proto";
 
 import "desmos/posts/v3/models.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v6/x/posts/types";
+option go_package = "github.com/desmos-labs/desmos/v7/x/posts/types";
 
 // Msg defines the posts Msg service.
 service Msg {

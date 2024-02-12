@@ -8,8 +8,9 @@ import (
 	reflect "reflect"
 
 	types "github.com/cosmos/cosmos-sdk/types"
-	types0 "github.com/desmos-labs/desmos/v6/x/profiles/types"
 	gomock "github.com/golang/mock/gomock"
+
+	types0 "github.com/desmos-labs/desmos/v7/x/profiles/types"
 )
 
 // MockProfilesHooks is a mock of ProfilesHooks interface.

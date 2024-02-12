@@ -4,14 +4,14 @@ import (
 	"context"
 	"fmt"
 
-	poststypes "github.com/desmos-labs/desmos/v6/x/posts/types"
+	poststypes "github.com/desmos-labs/desmos/v7/x/posts/types"
 
 	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/desmos-labs/desmos/v6/x/reactions/types"
-	subspacestypes "github.com/desmos-labs/desmos/v6/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v7/x/reactions/types"
+	subspacestypes "github.com/desmos-labs/desmos/v7/x/subspaces/types"
 )
 
 type msgServer struct {

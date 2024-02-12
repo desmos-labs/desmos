@@ -4,10 +4,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/golang/mock/gomock"
 
-	subspacestypes "github.com/desmos-labs/desmos/v6/x/subspaces/types"
+	subspacestypes "github.com/desmos-labs/desmos/v7/x/subspaces/types"
 
-	"github.com/desmos-labs/desmos/v6/x/relationships/keeper"
-	"github.com/desmos-labs/desmos/v6/x/relationships/types"
+	"github.com/desmos-labs/desmos/v7/x/relationships/keeper"
+	"github.com/desmos-labs/desmos/v7/x/relationships/types"
 )
 
 func (suite *KeeperTestSuite) TestMsgServer_CreateRelationship() {

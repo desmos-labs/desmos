@@ -9,8 +9,8 @@ import (
 	ibcante "github.com/cosmos/ibc-go/v7/modules/core/ante"
 	ibckeeper "github.com/cosmos/ibc-go/v7/modules/core/keeper"
 
-	subspaceante "github.com/desmos-labs/desmos/v6/x/subspaces/ante"
-	subspaceskeeper "github.com/desmos-labs/desmos/v6/x/subspaces/keeper"
+	subspaceante "github.com/desmos-labs/desmos/v7/x/subspaces/ante"
+	subspaceskeeper "github.com/desmos-labs/desmos/v7/x/subspaces/keeper"
 
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmTypes "github.com/CosmWasm/wasmd/x/wasm/types"

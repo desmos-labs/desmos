@@ -1,9 +1,9 @@
 package app
 
 import (
-	v620 "github.com/desmos-labs/desmos/v6/app/upgrades/v620"
-	v630 "github.com/desmos-labs/desmos/v6/app/upgrades/v630"
-	v640 "github.com/desmos-labs/desmos/v6/app/upgrades/v640"
+	v620 "github.com/desmos-labs/desmos/v7/app/upgrades/v620"
+	v630 "github.com/desmos-labs/desmos/v7/app/upgrades/v630"
+	v640 "github.com/desmos-labs/desmos/v7/app/upgrades/v640"
 )
 
 // registerUpgradeHandlers registers all the upgrade handlers that are supported by the app

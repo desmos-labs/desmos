@@ -1,4 +1,4 @@
-module github.com/desmos-labs/desmos/v6
+module github.com/desmos-labs/desmos/v7
 
 go 1.20
 

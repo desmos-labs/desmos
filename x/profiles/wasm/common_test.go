@@ -15,13 +15,13 @@ import (
 
 	"github.com/stretchr/testify/suite"
 
-	"github.com/desmos-labs/desmos/v6/app"
-	"github.com/desmos-labs/desmos/v6/x/profiles/keeper"
+	"github.com/desmos-labs/desmos/v7/app"
+	"github.com/desmos-labs/desmos/v7/x/profiles/keeper"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v6/x/profiles/types"
+	"github.com/desmos-labs/desmos/v7/x/profiles/types"
 )
 
 func buildSaveProfileRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {

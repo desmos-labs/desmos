@@ -7,7 +7,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/desmos-labs/desmos/v6/x/reports/types"
+	"github.com/desmos-labs/desmos/v7/x/reports/types"
 )
 
 // SetNextReportID sets the new report id for the given subspace to the store

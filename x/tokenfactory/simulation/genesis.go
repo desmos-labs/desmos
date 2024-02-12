@@ -7,9 +7,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
-	subspacessim "github.com/desmos-labs/desmos/v6/x/subspaces/simulation"
-	subspacestypes "github.com/desmos-labs/desmos/v6/x/subspaces/types"
-	"github.com/desmos-labs/desmos/v6/x/tokenfactory/types"
+	subspacessim "github.com/desmos-labs/desmos/v7/x/subspaces/simulation"
+	subspacestypes "github.com/desmos-labs/desmos/v7/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v7/x/tokenfactory/types"
 )
 
 // RandomizeGenState generates a random GenesisState for x/tokenfactory

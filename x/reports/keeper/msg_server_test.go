@@ -5,14 +5,14 @@ import (
 
 	"github.com/golang/mock/gomock"
 
-	poststypes "github.com/desmos-labs/desmos/v6/x/posts/types"
+	poststypes "github.com/desmos-labs/desmos/v7/x/posts/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	"github.com/desmos-labs/desmos/v6/x/reports/keeper"
-	"github.com/desmos-labs/desmos/v6/x/reports/types"
-	subspacestypes "github.com/desmos-labs/desmos/v6/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v7/x/reports/keeper"
+	"github.com/desmos-labs/desmos/v7/x/reports/types"
+	subspacestypes "github.com/desmos-labs/desmos/v7/x/subspaces/types"
 )
 
 func (suite *KeeperTestSuite) TestMsgServer_CreateReport() {

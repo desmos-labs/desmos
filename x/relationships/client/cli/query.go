@@ -9,9 +9,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/spf13/cobra"
 
-	subspacestypes "github.com/desmos-labs/desmos/v6/x/subspaces/types"
+	subspacestypes "github.com/desmos-labs/desmos/v7/x/subspaces/types"
 
-	"github.com/desmos-labs/desmos/v6/x/relationships/types"
+	"github.com/desmos-labs/desmos/v7/x/relationships/types"
 )
 
 // GetQueryCmd returns the command allowing to perform queries

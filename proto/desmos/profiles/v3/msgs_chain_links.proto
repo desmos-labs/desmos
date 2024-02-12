@@ -8,7 +8,7 @@ import "cosmos_proto/cosmos.proto";
 import "cosmos/msg/v1/msg.proto";
 import "desmos/profiles/v3/models_chain_links.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v6/x/profiles/types";
+option go_package = "github.com/desmos-labs/desmos/v7/x/profiles/types";
 
 // MsgLinkChainAccount represents a message to link an account to a profile.
 message MsgLinkChainAccount {

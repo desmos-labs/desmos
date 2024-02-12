@@ -5,9 +5,9 @@ import (
 
 	"github.com/golang/mock/gomock"
 
-	"github.com/desmos-labs/desmos/v6/app"
-	"github.com/desmos-labs/desmos/v6/x/subspaces/ante"
-	"github.com/desmos-labs/desmos/v6/x/subspaces/ante/testutil"
+	"github.com/desmos-labs/desmos/v7/app"
+	"github.com/desmos-labs/desmos/v7/x/subspaces/ante"
+	"github.com/desmos-labs/desmos/v7/x/subspaces/ante/testutil"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	sdktestutil "github.com/cosmos/cosmos-sdk/testutil"

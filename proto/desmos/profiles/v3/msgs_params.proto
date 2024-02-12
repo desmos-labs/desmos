@@ -8,7 +8,7 @@ import "cosmos/msg/v1/msg.proto";
 
 import "desmos/profiles/v3/models_params.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v6/x/profiles/types";
+option go_package = "github.com/desmos-labs/desmos/v7/x/profiles/types";
 
 // MsgUpdateParams is the Msg/UpdateParams request type.
 //

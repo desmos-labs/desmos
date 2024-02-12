@@ -4,7 +4,7 @@ package desmos.supply.v1;
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v6/x/supply/types";
+option go_package = "github.com/desmos-labs/desmos/v7/x/supply/types";
 
 // Query defines the gRPC querier service.
 service Query {

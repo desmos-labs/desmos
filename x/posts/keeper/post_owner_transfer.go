@@ -3,7 +3,7 @@ package keeper
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v6/x/posts/types"
+	"github.com/desmos-labs/desmos/v7/x/posts/types"
 )
 
 // SavePostOwnerTransferRequest saves the given transfer request inside the current context

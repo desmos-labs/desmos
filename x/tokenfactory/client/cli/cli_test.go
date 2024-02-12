@@ -19,10 +19,10 @@ import (
 	"github.com/gogo/protobuf/proto"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/desmos-labs/desmos/v6/testutil"
-	subspacestypes "github.com/desmos-labs/desmos/v6/x/subspaces/types"
-	"github.com/desmos-labs/desmos/v6/x/tokenfactory/client/cli"
-	"github.com/desmos-labs/desmos/v6/x/tokenfactory/types"
+	"github.com/desmos-labs/desmos/v7/testutil"
+	subspacestypes "github.com/desmos-labs/desmos/v7/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v7/x/tokenfactory/client/cli"
+	"github.com/desmos-labs/desmos/v7/x/tokenfactory/types"
 )
 
 func TestIntegrationTestSuite(t *testing.T) {

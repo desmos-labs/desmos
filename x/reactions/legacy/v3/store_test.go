@@ -8,12 +8,12 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v6/app"
-	"github.com/desmos-labs/desmos/v6/testutil/storetesting"
-	poststypes "github.com/desmos-labs/desmos/v6/x/posts/types"
-	v3 "github.com/desmos-labs/desmos/v6/x/reactions/legacy/v3"
-	"github.com/desmos-labs/desmos/v6/x/reactions/testutil"
-	"github.com/desmos-labs/desmos/v6/x/reactions/types"
+	"github.com/desmos-labs/desmos/v7/app"
+	"github.com/desmos-labs/desmos/v7/testutil/storetesting"
+	poststypes "github.com/desmos-labs/desmos/v7/x/posts/types"
+	v3 "github.com/desmos-labs/desmos/v7/x/reactions/legacy/v3"
+	"github.com/desmos-labs/desmos/v7/x/reactions/testutil"
+	"github.com/desmos-labs/desmos/v7/x/reactions/types"
 )
 
 func TestMigrateStore(t *testing.T) {

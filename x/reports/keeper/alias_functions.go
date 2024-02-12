@@ -3,13 +3,13 @@ package keeper
 import (
 	"fmt"
 
-	poststypes "github.com/desmos-labs/desmos/v6/x/posts/types"
+	poststypes "github.com/desmos-labs/desmos/v7/x/posts/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v6/x/reports/types"
+	"github.com/desmos-labs/desmos/v7/x/reports/types"
 
-	subspacestypes "github.com/desmos-labs/desmos/v6/x/subspaces/types"
+	subspacestypes "github.com/desmos-labs/desmos/v7/x/subspaces/types"
 )
 
 // HasProfile returns true iff the given user has a profile, or an error if something is wrong.

@@ -3,7 +3,7 @@ package keeper_test
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v6/x/reactions/types"
+	"github.com/desmos-labs/desmos/v7/x/reactions/types"
 )
 
 func (suite *KeeperTestSuite) TestKeeper_SaveSubspaceReactionsParams() {

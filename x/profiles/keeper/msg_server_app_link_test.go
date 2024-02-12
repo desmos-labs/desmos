@@ -14,11 +14,11 @@ import (
 	host "github.com/cosmos/ibc-go/v7/modules/core/24-host"
 	"github.com/golang/mock/gomock"
 
-	"github.com/desmos-labs/desmos/v6/pkg/obi"
-	"github.com/desmos-labs/desmos/v6/testutil/profilestesting"
-	oracletypes "github.com/desmos-labs/desmos/v6/x/oracle/types"
-	"github.com/desmos-labs/desmos/v6/x/profiles/keeper"
-	"github.com/desmos-labs/desmos/v6/x/profiles/types"
+	"github.com/desmos-labs/desmos/v7/pkg/obi"
+	"github.com/desmos-labs/desmos/v7/testutil/profilestesting"
+	oracletypes "github.com/desmos-labs/desmos/v7/x/oracle/types"
+	"github.com/desmos-labs/desmos/v7/x/profiles/keeper"
+	"github.com/desmos-labs/desmos/v7/x/profiles/types"
 )
 
 func (suite *KeeperTestSuite) TestMsgServer_LinkApplication() {

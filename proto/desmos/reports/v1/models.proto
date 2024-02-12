@@ -7,7 +7,7 @@ import "google/protobuf/any.proto";
 import "google/protobuf/timestamp.proto";
 import "cosmos_proto/cosmos.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v6/x/reports/types";
+option go_package = "github.com/desmos-labs/desmos/v7/x/reports/types";
 
 // Report contains the data of a generic report
 message Report {

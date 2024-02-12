@@ -3,15 +3,15 @@ package keeper_test
 import (
 	"time"
 
-	subspacestypes "github.com/desmos-labs/desmos/v6/x/subspaces/types"
+	subspacestypes "github.com/desmos-labs/desmos/v7/x/subspaces/types"
 
 	"github.com/golang/mock/gomock"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	poststypes "github.com/desmos-labs/desmos/v6/x/posts/types"
-	"github.com/desmos-labs/desmos/v6/x/reactions/keeper"
-	"github.com/desmos-labs/desmos/v6/x/reactions/types"
+	poststypes "github.com/desmos-labs/desmos/v7/x/posts/types"
+	"github.com/desmos-labs/desmos/v7/x/reactions/keeper"
+	"github.com/desmos-labs/desmos/v7/x/reactions/types"
 )
 
 func (suite *KeeperTestSuite) TestMsgServer_AddReaction() {

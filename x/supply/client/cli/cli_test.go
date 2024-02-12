@@ -16,9 +16,9 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/desmos-labs/desmos/v6/testutil"
-	"github.com/desmos-labs/desmos/v6/x/supply/client/cli"
-	"github.com/desmos-labs/desmos/v6/x/supply/types"
+	"github.com/desmos-labs/desmos/v7/testutil"
+	"github.com/desmos-labs/desmos/v7/x/supply/client/cli"
+	"github.com/desmos-labs/desmos/v7/x/supply/types"
 )
 
 type IntegrationTestSuite struct {

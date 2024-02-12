@@ -13,12 +13,12 @@ import (
 	feegrantcli "github.com/cosmos/cosmos-sdk/x/feegrant/client/cli"
 	"github.com/stretchr/testify/suite"
 
-	poststypes "github.com/desmos-labs/desmos/v6/x/posts/types"
+	poststypes "github.com/desmos-labs/desmos/v7/x/posts/types"
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/gogo/protobuf/proto"
 
-	"github.com/desmos-labs/desmos/v6/x/subspaces/client/cli"
+	"github.com/desmos-labs/desmos/v7/x/subspaces/client/cli"
 
 	tmcli "github.com/cometbft/cometbft/libs/cli"
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
@@ -26,8 +26,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v6/testutil"
-	"github.com/desmos-labs/desmos/v6/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v7/testutil"
+	"github.com/desmos-labs/desmos/v7/x/subspaces/types"
 )
 
 func TestIntegrationTestSuite(t *testing.T) {

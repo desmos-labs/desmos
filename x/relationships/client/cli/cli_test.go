@@ -12,8 +12,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
 
-	"github.com/desmos-labs/desmos/v6/testutil"
-	profilestypes "github.com/desmos-labs/desmos/v6/x/profiles/types"
+	"github.com/desmos-labs/desmos/v7/testutil"
+	profilestypes "github.com/desmos-labs/desmos/v7/x/profiles/types"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
@@ -25,8 +25,8 @@ import (
 	"github.com/golang/protobuf/proto"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/desmos-labs/desmos/v6/x/relationships/client/cli"
-	"github.com/desmos-labs/desmos/v6/x/relationships/types"
+	"github.com/desmos-labs/desmos/v7/x/relationships/client/cli"
+	"github.com/desmos-labs/desmos/v7/x/relationships/types"
 )
 
 type IntegrationTestSuite struct {

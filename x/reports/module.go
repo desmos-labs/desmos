@@ -24,19 +24,19 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 
-	postskeeper "github.com/desmos-labs/desmos/v6/x/posts/keeper"
-	poststypes "github.com/desmos-labs/desmos/v6/x/posts/types"
-	profileskeeper "github.com/desmos-labs/desmos/v6/x/profiles/keeper"
-	relationshipskeeper "github.com/desmos-labs/desmos/v6/x/relationships/keeper"
-	subspaceskeeper "github.com/desmos-labs/desmos/v6/x/subspaces/keeper"
-	subspacestypes "github.com/desmos-labs/desmos/v6/x/subspaces/types"
+	postskeeper "github.com/desmos-labs/desmos/v7/x/posts/keeper"
+	poststypes "github.com/desmos-labs/desmos/v7/x/posts/types"
+	profileskeeper "github.com/desmos-labs/desmos/v7/x/profiles/keeper"
+	relationshipskeeper "github.com/desmos-labs/desmos/v7/x/relationships/keeper"
+	subspaceskeeper "github.com/desmos-labs/desmos/v7/x/subspaces/keeper"
+	subspacestypes "github.com/desmos-labs/desmos/v7/x/subspaces/types"
 
-	modulev1 "github.com/desmos-labs/desmos/v6/api/desmos/reports/module/v1"
+	modulev1 "github.com/desmos-labs/desmos/v7/api/desmos/reports/module/v1"
 
-	"github.com/desmos-labs/desmos/v6/x/reports/client/cli"
-	"github.com/desmos-labs/desmos/v6/x/reports/keeper"
-	"github.com/desmos-labs/desmos/v6/x/reports/simulation"
-	"github.com/desmos-labs/desmos/v6/x/reports/types"
+	"github.com/desmos-labs/desmos/v7/x/reports/client/cli"
+	"github.com/desmos-labs/desmos/v7/x/reports/keeper"
+	"github.com/desmos-labs/desmos/v7/x/reports/simulation"
+	"github.com/desmos-labs/desmos/v7/x/reports/types"
 )
 
 const (

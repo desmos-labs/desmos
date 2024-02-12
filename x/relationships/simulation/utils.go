@@ -7,7 +7,7 @@ import (
 
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	"github.com/desmos-labs/desmos/v6/x/relationships/types"
+	"github.com/desmos-labs/desmos/v7/x/relationships/types"
 )
 
 // RandomGenesisAccount picks and returns a random genesis account from an array

@@ -4,7 +4,7 @@ import (
 	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v6/x/reports/types"
+	"github.com/desmos-labs/desmos/v7/x/reports/types"
 )
 
 // SetNextReasonID sets the new reason id for the given subspace to the store

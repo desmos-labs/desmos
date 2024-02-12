@@ -15,9 +15,9 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/desmos-labs/desmos/v6/app"
-	"github.com/desmos-labs/desmos/v6/x/subspaces/keeper"
-	"github.com/desmos-labs/desmos/v6/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v7/app"
+	"github.com/desmos-labs/desmos/v7/x/subspaces/keeper"
+	"github.com/desmos-labs/desmos/v7/x/subspaces/types"
 )
 
 func buildCreateSubspaceRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {

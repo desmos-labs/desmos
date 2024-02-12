@@ -6,7 +6,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v6/x/posts/types"
+	"github.com/desmos-labs/desmos/v7/x/posts/types"
 )
 
 var msgRequestPostOwnerTransfer = types.NewMsgRequestPostOwnerTransfer(

@@ -3,7 +3,7 @@ package desmos.profiles.v1beta1;
 
 import "gogoproto/gogo.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v6/x/profiles/legacy/v4/types";
+option go_package = "github.com/desmos-labs/desmos/v7/x/profiles/legacy/v4/types";
 
 // Relationship is the struct of a relationship.
 // It represent the concept of "follow" of traditional social networks.

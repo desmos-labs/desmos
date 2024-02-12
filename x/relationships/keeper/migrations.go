@@ -3,7 +3,7 @@ package keeper
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	v2 "github.com/desmos-labs/desmos/v6/x/relationships/legacy/v2"
+	v2 "github.com/desmos-labs/desmos/v7/x/relationships/legacy/v2"
 )
 
 // DONTCOVER

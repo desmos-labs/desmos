@@ -11,14 +11,14 @@ import (
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/require"
 
-	v2 "github.com/desmos-labs/desmos/v6/x/posts/legacy/v2"
-	v3 "github.com/desmos-labs/desmos/v6/x/posts/legacy/v3"
-	v4 "github.com/desmos-labs/desmos/v6/x/posts/legacy/v4"
+	v2 "github.com/desmos-labs/desmos/v7/x/posts/legacy/v2"
+	v3 "github.com/desmos-labs/desmos/v7/x/posts/legacy/v3"
+	v4 "github.com/desmos-labs/desmos/v7/x/posts/legacy/v4"
 
-	"github.com/desmos-labs/desmos/v6/app"
-	"github.com/desmos-labs/desmos/v6/testutil/storetesting"
-	"github.com/desmos-labs/desmos/v6/x/posts/types"
-	subspacestypes "github.com/desmos-labs/desmos/v6/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v7/app"
+	"github.com/desmos-labs/desmos/v7/testutil/storetesting"
+	"github.com/desmos-labs/desmos/v7/x/posts/types"
+	subspacestypes "github.com/desmos-labs/desmos/v7/x/subspaces/types"
 )
 
 func TestMigrateStore(t *testing.T) {

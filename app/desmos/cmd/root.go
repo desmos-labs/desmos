@@ -12,12 +12,12 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/pruning"
 	"github.com/cosmos/cosmos-sdk/client/snapshot"
 
-	"github.com/desmos-labs/desmos/v6/app/desmos/cmd/chainlink"
-	"github.com/desmos-labs/desmos/v6/app/desmos/cmd/sign"
+	"github.com/desmos-labs/desmos/v7/app/desmos/cmd/chainlink"
+	"github.com/desmos-labs/desmos/v7/app/desmos/cmd/sign"
 
 	"github.com/cosmos/cosmos-sdk/x/crisis"
 
-	"github.com/desmos-labs/desmos/v6/app"
+	"github.com/desmos-labs/desmos/v7/app"
 
 	dbm "github.com/cometbft/cometbft-db"
 	tmcfg "github.com/cometbft/cometbft/config"
@@ -39,8 +39,8 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	genutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
 
-	chainlinktypes "github.com/desmos-labs/desmos/v6/app/desmos/cmd/chainlink/getter"
-	chainlinkprovider "github.com/desmos-labs/desmos/v6/app/desmos/cmd/chainlink/provider"
+	chainlinktypes "github.com/desmos-labs/desmos/v7/app/desmos/cmd/chainlink/getter"
+	chainlinkprovider "github.com/desmos-labs/desmos/v7/app/desmos/cmd/chainlink/provider"
 )
 
 // NewRootCmd creates a new root command for desmos. It is called once in the

@@ -8,7 +8,7 @@ import (
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 
-	v5types "github.com/desmos-labs/desmos/v6/x/profiles/legacy/v5/types"
+	v5types "github.com/desmos-labs/desmos/v7/x/profiles/legacy/v5/types"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 
@@ -17,7 +17,7 @@ import (
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	"github.com/desmos-labs/desmos/v6/x/profiles/types"
+	"github.com/desmos-labs/desmos/v7/x/profiles/types"
 )
 
 // MigrateStore performs in-place store migrations from v6 to v7.

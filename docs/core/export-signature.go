@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/desmos-labs/desmos/v6/app"
-	profilescliutils "github.com/desmos-labs/desmos/v6/x/profiles/client/utils"
-	profilestypes "github.com/desmos-labs/desmos/v6/x/profiles/types"
+	"github.com/desmos-labs/desmos/v7/app"
+	profilescliutils "github.com/desmos-labs/desmos/v7/x/profiles/client/utils"
+	profilestypes "github.com/desmos-labs/desmos/v7/x/profiles/types"
 )
 
 func main() {

@@ -6,7 +6,7 @@ import "gogoproto/gogo.proto";
 import "desmos/tokenfactory/v1/params.proto";
 import "desmos/tokenfactory/v1/models.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v6/x/tokenfactory/types";
+option go_package = "github.com/desmos-labs/desmos/v7/x/tokenfactory/types";
 
 // GenesisState defines the tokenfactory module's genesis state.
 message GenesisState {

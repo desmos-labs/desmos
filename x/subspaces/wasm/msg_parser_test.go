@@ -10,10 +10,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/feegrant"
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v6/app"
-	profilestypes "github.com/desmos-labs/desmos/v6/x/profiles/types"
-	"github.com/desmos-labs/desmos/v6/x/subspaces/types"
-	"github.com/desmos-labs/desmos/v6/x/subspaces/wasm"
+	"github.com/desmos-labs/desmos/v7/app"
+	profilestypes "github.com/desmos-labs/desmos/v7/x/profiles/types"
+	"github.com/desmos-labs/desmos/v7/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v7/x/subspaces/wasm"
 )
 
 func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
