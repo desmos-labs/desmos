@@ -9,15 +9,15 @@ ENV GOBIN /go/bin
 # Set working directory for the build
 WORKDIR /go/src/github.com/cosmos/cosmos-sdk
 RUN git clone https://github.com/cosmos/cosmos-sdk.git /go/src/github.com/cosmos/cosmos-sdk
-RUN git checkout tags/cosmovisor/v1.0.0
-RUN cd /go/src/github.com/cosmos/cosmos-sdk/cosmovisor
+RUN git checkout tags/tools/cosmovisor/v1.5.0
+RUN cd /go/src/github.com/cosmos/cosmos-sdk/tools/cosmovisor
 RUN make cosmovisor
 
 # Final image
 FROM desmoslabs/desmos:$DESMOS_VERSION
 
 # Copy over binaries from the build-env
-COPY --from=build-env /go/src/github.com/cosmos/cosmos-sdk/cosmovisor/cosmovisor /usr/bin/cosmovisor
+COPY --from=build-env /go/src/github.com/cosmos/cosmos-sdk/tools/cosmovisor/cosmovisor /usr/bin/cosmovisor
 
 ARG UID=1000
 ARG GID=1000
