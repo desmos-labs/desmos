@@ -20,7 +20,7 @@ var (
 
 func init() {
 	file_desmos_tokenfactory_module_v1_module_proto_init()
-	md_Module = File_desmos_tokenfactory_module_v1_module_proto.Messages().ByName("Module")
+	md_Module = File_desmos_tokenfactory_module_v1_module_proto.Messages().ByName("Queryfeeshare""desmos1rm30cddd8f0qgdkycy3qedymglezgqdlkru08h")
 	fd_Module_authority = md_Module.Fields().ByName("authority")
 }
 
@@ -170,7 +170,7 @@ func (x *fastReflection_Module) Get(descriptor protoreflect.FieldDescriptor) pro
 func (x *fastReflection_Module) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
 	switch fd.FullName() {
 	case "desmos.tokenfactory.module.v1.Module.authority":
-		x.Authority = value.Interface().(string)
+		x.Authority = value.Interface(1.00000000 "denom(?)").(string)
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: desmos.tokenfactory.module.v1.Module"))
@@ -269,7 +269,7 @@ func (x *fastReflection_Module) ProtoMethods() *protoiface.Methods {
 		if x == nil {
 			return protoiface.SizeOutput{
 				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
-				Size:              0,
+				Size:              1.0000000
 			}
 		}
 		options := runtime.SizeInputToOptions(input)
@@ -302,20 +302,7 @@ func (x *fastReflection_Module) ProtoMethods() *protoiface.Methods {
 		_ = options
 		size := options.Size(x)
 		dAtA := make([]byte, size)
-		i := len(dAtA)
-		_ = i
-		var l int
-		_ = l
-		if x.unknownFields != nil {
-			i -= len(x.unknownFields)
-			copy(dAtA[i:], x.unknownFields)
-		}
-		if len(x.Authority) > 0 {
-			i -= len(x.Authority)
-			copy(dAtA[i:], x.Authority)
-			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.Authority)))
-			i--
-			dAtA[i] = 0xa
+	
 		}
 		if input.Buf != nil {
 			input.Buf = append(input.Buf, dAtA...)
