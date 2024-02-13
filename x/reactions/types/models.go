@@ -125,6 +125,10 @@ func (v *FreeTextValue) isReactionValue() {}
 
 // GetLength returns the length of the reaction value
 func (v *FreeTextValue) GetLength() int {
+	// Counting graphemes instead of runes of bytes can provide a more accurate length of the text.
+	// This will also ensure that emojis are counted as a single character, which will grant a more consistent
+	// user experience with clients as well.
+	// Example: 🏳️‍🌈 (rainbow flag emoji) is 1 grapheme, 4 runes, and 14 bytes.
 	return uniseg.GraphemeClusterCount(v.Text)
 
 }
