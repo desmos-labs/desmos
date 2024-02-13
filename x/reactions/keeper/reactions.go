@@ -77,7 +77,7 @@ func (k Keeper) validateFreeTextValue(ctx sdk.Context, reaction types.Reaction, 
 	}
 
 	// Make sure the value respected the max length
-	if uint32(len(value.Text)) > params.MaxLength {
+	if uint32(value.GetLength()) > params.MaxLength {
 		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "value exceed max length allowed")
 	}
 

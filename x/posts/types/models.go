@@ -11,6 +11,7 @@ import (
 	"github.com/gogo/protobuf/proto"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/rivo/uniseg"
 )
 
 // ParsePostID parses the given value as a post id, returning an error if it's invalid
@@ -153,6 +154,11 @@ func (p Post) GetMentionedUsers() []string {
 		mentions[i] = mention.Tag
 	}
 	return mentions
+}
+
+// GetTextLength returns the length of the post text
+func (p Post) GetTextLength() int {
+	return uniseg.GraphemeClusterCount(p.Text)
 }
 
 // NewPostReference returns a new PostReference instance
