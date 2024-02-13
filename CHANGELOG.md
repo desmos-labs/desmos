@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Version 7.0.0
 ### Bug Fixes
 - ([\#1284](https://github.com/desmos-labs/desmos/pull/1284)) Removed duplicated message events emission
+- ([\#1303](https://github.com/desmos-labs/desmos/pull/1303)) Replaced graphemes count instead of bytes count to determine text length
 
 ### Dependencies
 - ([\#1287](https://github.com/desmos-labs/desmos/pull/1287)) Updated `wasmvm` to `v1.5.1`
