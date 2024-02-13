@@ -3,7 +3,7 @@ package keeper
 import (
 	"fmt"
 
-	"github.com/desmos-labs/desmos/v6/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v7/x/subspaces/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )

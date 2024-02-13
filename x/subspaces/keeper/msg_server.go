@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/desmos-labs/desmos/v6/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v7/x/subspaces/types"
 
 	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"

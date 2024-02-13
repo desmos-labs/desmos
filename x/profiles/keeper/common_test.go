@@ -17,8 +17,8 @@ import (
 
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 
-	"github.com/desmos-labs/desmos/v6/app"
-	"github.com/desmos-labs/desmos/v6/testutil/ibctesting"
+	"github.com/desmos-labs/desmos/v7/app"
+	"github.com/desmos-labs/desmos/v7/testutil/ibctesting"
 
 	db "github.com/cometbft/cometbft-db"
 	"github.com/cometbft/cometbft/libs/log"
@@ -27,9 +27,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/desmos-labs/desmos/v6/x/profiles/keeper"
-	"github.com/desmos-labs/desmos/v6/x/profiles/testutil"
-	"github.com/desmos-labs/desmos/v6/x/profiles/types"
+	"github.com/desmos-labs/desmos/v7/x/profiles/keeper"
+	"github.com/desmos-labs/desmos/v7/x/profiles/testutil"
+	"github.com/desmos-labs/desmos/v7/x/profiles/types"
 )
 
 func TestKeeperTestSuite(t *testing.T) {

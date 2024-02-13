@@ -3,7 +3,7 @@ package keeper_test
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v6/x/relationships/types"
+	"github.com/desmos-labs/desmos/v7/x/relationships/types"
 )
 
 func (suite *KeeperTestSuite) TestHooks_AfterSubspaceDeleted() {

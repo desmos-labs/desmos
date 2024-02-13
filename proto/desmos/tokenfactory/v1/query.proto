@@ -6,7 +6,7 @@ import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "desmos/tokenfactory/v1/params.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v6/x/tokenfactory/types";
+option go_package = "github.com/desmos-labs/desmos/v7/x/tokenfactory/types";
 
 // Query defines the gRPC querier service.
 service Query {

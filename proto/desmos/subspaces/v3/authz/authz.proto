@@ -5,7 +5,7 @@ import "amino/amino.proto";
 import "gogoproto/gogo.proto";
 import "cosmos_proto/cosmos.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v6/x/subspaces/authz";
+option go_package = "github.com/desmos-labs/desmos/v7/x/subspaces/authz";
 
 // GenericSubspaceAuthorization defines an authorization to perform any
 // operation only inside a specific subspace.

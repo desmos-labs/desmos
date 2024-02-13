@@ -14,9 +14,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/migrations/legacytx"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	v4types "github.com/desmos-labs/desmos/v6/x/profiles/legacy/v4/types"
-	v5types "github.com/desmos-labs/desmos/v6/x/profiles/legacy/v5/types"
-	"github.com/desmos-labs/desmos/v6/x/profiles/types"
+	v4types "github.com/desmos-labs/desmos/v7/x/profiles/legacy/v4/types"
+	v5types "github.com/desmos-labs/desmos/v7/x/profiles/legacy/v5/types"
+	"github.com/desmos-labs/desmos/v7/x/profiles/types"
 )
 
 // MigrateStore performs in-place store migrations from v4 to v5.

@@ -10,9 +10,9 @@ import (
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	"github.com/cosmos/cosmos-sdk/x/feegrant"
 
-	"github.com/desmos-labs/desmos/v6/testutil/simtesting"
-	"github.com/desmos-labs/desmos/v6/x/subspaces/keeper"
-	"github.com/desmos-labs/desmos/v6/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v7/testutil/simtesting"
+	"github.com/desmos-labs/desmos/v7/x/subspaces/keeper"
+	"github.com/desmos-labs/desmos/v7/x/subspaces/types"
 )
 
 // DONTCOVER

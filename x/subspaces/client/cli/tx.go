@@ -12,7 +12,7 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/spf13/pflag"
 
-	subspacesauthz "github.com/desmos-labs/desmos/v6/x/subspaces/authz"
+	subspacesauthz "github.com/desmos-labs/desmos/v7/x/subspaces/authz"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -22,7 +22,7 @@ import (
 	authzcli "github.com/cosmos/cosmos-sdk/x/authz/client/cli"
 	"github.com/spf13/cobra"
 
-	"github.com/desmos-labs/desmos/v6/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v7/x/subspaces/types"
 )
 
 // DONTCOVER

@@ -3,15 +3,15 @@ package v3
 import (
 	"fmt"
 
-	poststypes "github.com/desmos-labs/desmos/v6/x/posts/types"
+	poststypes "github.com/desmos-labs/desmos/v7/x/posts/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	v2 "github.com/desmos-labs/desmos/v6/x/subspaces/legacy/v2"
-	"github.com/desmos-labs/desmos/v6/x/subspaces/types"
+	v2 "github.com/desmos-labs/desmos/v7/x/subspaces/legacy/v2"
+	"github.com/desmos-labs/desmos/v7/x/subspaces/types"
 )
 
 // MigrateStore migrates the store from version 2 to version 3.

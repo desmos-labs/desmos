@@ -17,7 +17,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	"github.com/desmos-labs/desmos/v6/app"
+	"github.com/desmos-labs/desmos/v7/app"
 )
 
 // NewAppConstructor returns a new Desmos AppConstructor

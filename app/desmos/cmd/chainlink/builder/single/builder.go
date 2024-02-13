@@ -8,10 +8,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v6/app/desmos/cmd/chainlink/getter"
-	"github.com/desmos-labs/desmos/v6/app/desmos/cmd/chainlink/types"
-	"github.com/desmos-labs/desmos/v6/x/profiles/client/utils"
-	profilestypes "github.com/desmos-labs/desmos/v6/x/profiles/types"
+	"github.com/desmos-labs/desmos/v7/app/desmos/cmd/chainlink/getter"
+	"github.com/desmos-labs/desmos/v7/app/desmos/cmd/chainlink/types"
+	"github.com/desmos-labs/desmos/v7/x/profiles/client/utils"
+	profilestypes "github.com/desmos-labs/desmos/v7/x/profiles/types"
 )
 
 const (

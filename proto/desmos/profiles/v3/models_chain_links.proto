@@ -8,7 +8,7 @@ import "google/protobuf/timestamp.proto";
 import "cosmos_proto/cosmos.proto";
 import "cosmos/crypto/multisig/v1beta1/multisig.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v6/x/profiles/types";
+option go_package = "github.com/desmos-labs/desmos/v7/x/profiles/types";
 
 // ChainLink contains the data representing either an inter- or cross- chain
 // link

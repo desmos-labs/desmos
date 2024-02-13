@@ -6,9 +6,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/golang/mock/gomock"
 
-	poststypes "github.com/desmos-labs/desmos/v6/x/posts/types"
-	"github.com/desmos-labs/desmos/v6/x/reactions/types"
-	subspacestypes "github.com/desmos-labs/desmos/v6/x/subspaces/types"
+	poststypes "github.com/desmos-labs/desmos/v7/x/posts/types"
+	"github.com/desmos-labs/desmos/v7/x/reactions/types"
+	subspacestypes "github.com/desmos-labs/desmos/v7/x/subspaces/types"
 )
 
 func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {

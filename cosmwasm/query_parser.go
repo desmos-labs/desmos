@@ -8,12 +8,12 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	poststypes "github.com/desmos-labs/desmos/v6/x/posts/types"
-	profiletypes "github.com/desmos-labs/desmos/v6/x/profiles/types"
-	reactionstypes "github.com/desmos-labs/desmos/v6/x/reactions/types"
-	relationshipstypes "github.com/desmos-labs/desmos/v6/x/relationships/types"
-	reportstypes "github.com/desmos-labs/desmos/v6/x/reports/types"
-	subspacestypes "github.com/desmos-labs/desmos/v6/x/subspaces/types"
+	poststypes "github.com/desmos-labs/desmos/v7/x/posts/types"
+	profiletypes "github.com/desmos-labs/desmos/v7/x/profiles/types"
+	reactionstypes "github.com/desmos-labs/desmos/v7/x/reactions/types"
+	relationshipstypes "github.com/desmos-labs/desmos/v7/x/relationships/types"
+	reportstypes "github.com/desmos-labs/desmos/v7/x/reports/types"
+	subspacestypes "github.com/desmos-labs/desmos/v7/x/subspaces/types"
 )
 
 type Querier interface {

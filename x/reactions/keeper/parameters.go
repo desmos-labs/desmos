@@ -4,7 +4,7 @@ import (
 	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v6/x/reactions/types"
+	"github.com/desmos-labs/desmos/v7/x/reactions/types"
 )
 
 // SaveSubspaceReactionsParams stores the given reactions params inside the store

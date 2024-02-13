@@ -9,10 +9,10 @@ import (
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
-	"github.com/desmos-labs/desmos/v6/testutil/simtesting"
-	"github.com/desmos-labs/desmos/v6/x/posts/keeper"
-	"github.com/desmos-labs/desmos/v6/x/posts/types"
-	subspacessim "github.com/desmos-labs/desmos/v6/x/subspaces/simulation"
+	"github.com/desmos-labs/desmos/v7/testutil/simtesting"
+	"github.com/desmos-labs/desmos/v7/x/posts/keeper"
+	"github.com/desmos-labs/desmos/v7/x/posts/types"
+	subspacessim "github.com/desmos-labs/desmos/v7/x/subspaces/simulation"
 )
 
 // DONTCOVER

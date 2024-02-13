@@ -10,7 +10,7 @@ import "cosmos/msg/v1/msg.proto";
 
 import "desmos/reports/v1/models.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v6/x/reports/types";
+option go_package = "github.com/desmos-labs/desmos/v7/x/reports/types";
 
 // Msg defines the reports Msg service.
 service Msg {

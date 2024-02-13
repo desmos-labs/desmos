@@ -12,12 +12,12 @@ import (
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v6/testutil/simtesting"
+	"github.com/desmos-labs/desmos/v7/testutil/simtesting"
 
-	subspacessim "github.com/desmos-labs/desmos/v6/x/subspaces/simulation"
+	subspacessim "github.com/desmos-labs/desmos/v7/x/subspaces/simulation"
 
-	"github.com/desmos-labs/desmos/v6/x/relationships/keeper"
-	"github.com/desmos-labs/desmos/v6/x/relationships/types"
+	"github.com/desmos-labs/desmos/v7/x/relationships/keeper"
+	"github.com/desmos-labs/desmos/v7/x/relationships/types"
 )
 
 // SimulateMsgCreateRelationship tests and runs a single MsgCreateRelationship

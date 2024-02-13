@@ -6,15 +6,15 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/desmos-labs/desmos/v6/testutil/profilestesting"
+	"github.com/desmos-labs/desmos/v7/testutil/profilestesting"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v6/x/profiles/keeper"
-	"github.com/desmos-labs/desmos/v6/x/profiles/types"
+	"github.com/desmos-labs/desmos/v7/x/profiles/keeper"
+	"github.com/desmos-labs/desmos/v7/x/profiles/types"
 )
 
 var _ sdk.InvariantRegistry = &MockRegistry{}

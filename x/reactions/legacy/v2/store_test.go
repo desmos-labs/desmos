@@ -7,24 +7,24 @@ import (
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	"github.com/desmos-labs/desmos/v6/testutil/storetesting"
-	profileskeeper "github.com/desmos-labs/desmos/v6/x/profiles/keeper"
-	profilestypes "github.com/desmos-labs/desmos/v6/x/profiles/types"
+	"github.com/desmos-labs/desmos/v7/testutil/storetesting"
+	profileskeeper "github.com/desmos-labs/desmos/v7/x/profiles/keeper"
+	profilestypes "github.com/desmos-labs/desmos/v7/x/profiles/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v6/app"
-	postskeeper "github.com/desmos-labs/desmos/v6/x/posts/keeper"
-	poststypes "github.com/desmos-labs/desmos/v6/x/posts/types"
-	v2 "github.com/desmos-labs/desmos/v6/x/reactions/legacy/v2"
-	"github.com/desmos-labs/desmos/v6/x/reactions/types"
-	relationshipskeeper "github.com/desmos-labs/desmos/v6/x/relationships/keeper"
-	relationshipstypes "github.com/desmos-labs/desmos/v6/x/relationships/types"
-	subspaceskeeper "github.com/desmos-labs/desmos/v6/x/subspaces/keeper"
-	subspacestypes "github.com/desmos-labs/desmos/v6/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v7/app"
+	postskeeper "github.com/desmos-labs/desmos/v7/x/posts/keeper"
+	poststypes "github.com/desmos-labs/desmos/v7/x/posts/types"
+	v2 "github.com/desmos-labs/desmos/v7/x/reactions/legacy/v2"
+	"github.com/desmos-labs/desmos/v7/x/reactions/types"
+	relationshipskeeper "github.com/desmos-labs/desmos/v7/x/relationships/keeper"
+	relationshipstypes "github.com/desmos-labs/desmos/v7/x/relationships/types"
+	subspaceskeeper "github.com/desmos-labs/desmos/v7/x/subspaces/keeper"
+	subspacestypes "github.com/desmos-labs/desmos/v7/x/subspaces/types"
 )
 
 func TestMigrateStore(t *testing.T) {

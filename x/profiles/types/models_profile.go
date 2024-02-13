@@ -3,7 +3,7 @@ package types
 import (
 	"fmt"
 
-	"github.com/desmos-labs/desmos/v6/x/commons"
+	"github.com/desmos-labs/desmos/v7/x/commons"
 )
 
 // NewPictures is a constructor function for Pictures

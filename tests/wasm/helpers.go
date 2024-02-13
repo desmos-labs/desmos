@@ -15,7 +15,7 @@ import (
 	ibctesting "github.com/cosmos/ibc-go/v7/testing"
 	"github.com/stretchr/testify/require"
 
-	chaintesting "github.com/desmos-labs/desmos/v6/testutil/ibctesting"
+	chaintesting "github.com/desmos-labs/desmos/v7/testutil/ibctesting"
 )
 
 type TestChain struct {

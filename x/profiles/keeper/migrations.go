@@ -4,13 +4,13 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 
-	v4 "github.com/desmos-labs/desmos/v6/x/profiles/legacy/v4"
-	v5 "github.com/desmos-labs/desmos/v6/x/profiles/legacy/v5"
-	v6 "github.com/desmos-labs/desmos/v6/x/profiles/legacy/v6"
-	v7 "github.com/desmos-labs/desmos/v6/x/profiles/legacy/v7"
-	v8 "github.com/desmos-labs/desmos/v6/x/profiles/legacy/v8"
-	v9 "github.com/desmos-labs/desmos/v6/x/profiles/legacy/v9"
-	"github.com/desmos-labs/desmos/v6/x/profiles/types"
+	v4 "github.com/desmos-labs/desmos/v7/x/profiles/legacy/v4"
+	v5 "github.com/desmos-labs/desmos/v7/x/profiles/legacy/v5"
+	v6 "github.com/desmos-labs/desmos/v7/x/profiles/legacy/v6"
+	v7 "github.com/desmos-labs/desmos/v7/x/profiles/legacy/v7"
+	v8 "github.com/desmos-labs/desmos/v7/x/profiles/legacy/v8"
+	v9 "github.com/desmos-labs/desmos/v7/x/profiles/legacy/v9"
+	"github.com/desmos-labs/desmos/v7/x/profiles/types"
 )
 
 // DONTCOVER

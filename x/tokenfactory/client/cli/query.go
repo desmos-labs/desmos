@@ -9,8 +9,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/spf13/cobra"
 
-	subspacestypes "github.com/desmos-labs/desmos/v6/x/subspaces/types"
-	"github.com/desmos-labs/desmos/v6/x/tokenfactory/types"
+	subspacestypes "github.com/desmos-labs/desmos/v7/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v7/x/tokenfactory/types"
 )
 
 // DONTCOVER

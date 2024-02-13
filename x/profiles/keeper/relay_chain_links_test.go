@@ -8,8 +8,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	"github.com/desmos-labs/desmos/v6/testutil/profilestesting"
-	"github.com/desmos-labs/desmos/v6/x/profiles/types"
+	"github.com/desmos-labs/desmos/v7/testutil/profilestesting"
+	"github.com/desmos-labs/desmos/v7/x/profiles/types"
 )
 
 func (suite *KeeperTestSuite) TestOnRecvPacket() {

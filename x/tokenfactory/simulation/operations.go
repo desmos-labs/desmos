@@ -15,11 +15,11 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
 
-	"github.com/desmos-labs/desmos/v6/testutil/simtesting"
-	subspacessim "github.com/desmos-labs/desmos/v6/x/subspaces/simulation"
-	subspacestypes "github.com/desmos-labs/desmos/v6/x/subspaces/types"
-	"github.com/desmos-labs/desmos/v6/x/tokenfactory/keeper"
-	"github.com/desmos-labs/desmos/v6/x/tokenfactory/types"
+	"github.com/desmos-labs/desmos/v7/testutil/simtesting"
+	subspacessim "github.com/desmos-labs/desmos/v7/x/subspaces/simulation"
+	subspacestypes "github.com/desmos-labs/desmos/v7/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v7/x/tokenfactory/keeper"
+	"github.com/desmos-labs/desmos/v7/x/tokenfactory/types"
 )
 
 // DONTCOVER

@@ -10,10 +10,10 @@ import (
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v6/tests/wasm"
-	"github.com/desmos-labs/desmos/v6/testutil/ibctesting"
-	profilestypes "github.com/desmos-labs/desmos/v6/x/profiles/types"
-	wasmtypes "github.com/desmos-labs/desmos/v6/x/wasm/types"
+	"github.com/desmos-labs/desmos/v7/tests/wasm"
+	"github.com/desmos-labs/desmos/v7/testutil/ibctesting"
+	profilestypes "github.com/desmos-labs/desmos/v7/x/profiles/types"
+	wasmtypes "github.com/desmos-labs/desmos/v7/x/wasm/types"
 )
 
 func TestAnyResolverByProfile(t *testing.T) {

@@ -9,9 +9,9 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v6/testutil/storetesting"
-	"github.com/desmos-labs/desmos/v6/x/subspaces/authz"
-	"github.com/desmos-labs/desmos/v6/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v7/testutil/storetesting"
+	"github.com/desmos-labs/desmos/v7/x/subspaces/authz"
+	"github.com/desmos-labs/desmos/v7/x/subspaces/types"
 )
 
 func TestGenericSubspaceAuthorization_Accept(t *testing.T) {

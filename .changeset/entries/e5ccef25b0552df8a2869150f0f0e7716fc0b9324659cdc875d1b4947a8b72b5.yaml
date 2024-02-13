@@ -1,6 +1,0 @@
-type: deps
-module: none
-pull_request: 1286
-description: Updated `cosmos-sdk` to `v0.47.7`
-backward_compatible: true
-date: 2024-01-09T16:11:23.001030289Z

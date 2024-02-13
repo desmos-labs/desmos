@@ -9,8 +9,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	antetypes "github.com/desmos-labs/desmos/v6/x/subspaces/ante/types"
-	"github.com/desmos-labs/desmos/v6/x/subspaces/types"
+	antetypes "github.com/desmos-labs/desmos/v7/x/subspaces/ante/types"
+	"github.com/desmos-labs/desmos/v7/x/subspaces/types"
 )
 
 var _ sdk.AnteDecorator = &DeductFeeDecorator{}

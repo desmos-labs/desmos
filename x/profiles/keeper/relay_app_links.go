@@ -13,11 +13,11 @@ import (
 	channeltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
 	host "github.com/cosmos/ibc-go/v7/modules/core/24-host"
 
-	"github.com/desmos-labs/desmos/v6/pkg/obi"
+	"github.com/desmos-labs/desmos/v7/pkg/obi"
 
-	"github.com/desmos-labs/desmos/v6/x/profiles/types"
+	"github.com/desmos-labs/desmos/v7/x/profiles/types"
 
-	oracletypes "github.com/desmos-labs/desmos/v6/x/oracle/types"
+	oracletypes "github.com/desmos-labs/desmos/v7/x/oracle/types"
 )
 
 // OracleScriptCallData represents the data that should be OBI-encoded and sent to perform an oracle request

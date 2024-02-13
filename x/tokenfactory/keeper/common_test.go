@@ -16,10 +16,10 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/desmos-labs/desmos/v6/app"
-	"github.com/desmos-labs/desmos/v6/x/tokenfactory/keeper"
-	"github.com/desmos-labs/desmos/v6/x/tokenfactory/testutil"
-	"github.com/desmos-labs/desmos/v6/x/tokenfactory/types"
+	"github.com/desmos-labs/desmos/v7/app"
+	"github.com/desmos-labs/desmos/v7/x/tokenfactory/keeper"
+	"github.com/desmos-labs/desmos/v7/x/tokenfactory/testutil"
+	"github.com/desmos-labs/desmos/v7/x/tokenfactory/types"
 )
 
 type KeeperTestSuite struct {

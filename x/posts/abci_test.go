@@ -13,11 +13,11 @@ import (
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v6/app"
-	"github.com/desmos-labs/desmos/v6/x/posts"
-	postskeeper "github.com/desmos-labs/desmos/v6/x/posts/keeper"
-	"github.com/desmos-labs/desmos/v6/x/posts/types"
-	poststypes "github.com/desmos-labs/desmos/v6/x/posts/types"
+	"github.com/desmos-labs/desmos/v7/app"
+	"github.com/desmos-labs/desmos/v7/x/posts"
+	postskeeper "github.com/desmos-labs/desmos/v7/x/posts/keeper"
+	"github.com/desmos-labs/desmos/v7/x/posts/types"
+	poststypes "github.com/desmos-labs/desmos/v7/x/posts/types"
 )
 
 func TestEndBlocker(t *testing.T) {

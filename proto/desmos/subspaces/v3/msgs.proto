@@ -9,7 +9,7 @@ import "cosmos_proto/cosmos.proto";
 import "cosmos/msg/v1/msg.proto";
 import "cosmos/authz/v1beta1/authz.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v6/x/subspaces/types";
+option go_package = "github.com/desmos-labs/desmos/v7/x/subspaces/types";
 
 // Msg defines subspaces Msg service.
 service Msg {

@@ -3,8 +3,8 @@ package builder
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"github.com/desmos-labs/desmos/v6/app/desmos/cmd/chainlink/types"
-	"github.com/desmos-labs/desmos/v6/x/profiles/client/utils"
+	"github.com/desmos-labs/desmos/v7/app/desmos/cmd/chainlink/types"
+	"github.com/desmos-labs/desmos/v7/x/profiles/client/utils"
 )
 
 // ChainLinkJSONBuilder allows to build a ChainLinkJSON instance

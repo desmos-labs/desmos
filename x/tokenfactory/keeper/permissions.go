@@ -4,8 +4,8 @@ import (
 	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	subspacestypes "github.com/desmos-labs/desmos/v6/x/subspaces/types"
-	"github.com/desmos-labs/desmos/v6/x/tokenfactory/types"
+	subspacestypes "github.com/desmos-labs/desmos/v7/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v7/x/tokenfactory/types"
 )
 
 // ValidateManageTokenPermission validates the sender has the manage denom permission to the subspace tokens inside the given subspace

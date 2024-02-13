@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/desmos-labs/desmos/v6/testutil/profilestesting"
+	"github.com/desmos-labs/desmos/v7/testutil/profilestesting"
 
 	"github.com/mr-tron/base58"
 
@@ -21,11 +21,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	"github.com/cosmos/cosmos-sdk/x/auth/migrations/legacytx"
 
-	"github.com/desmos-labs/desmos/v6/app"
+	"github.com/desmos-labs/desmos/v7/app"
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v6/x/profiles/types"
+	"github.com/desmos-labs/desmos/v7/x/profiles/types"
 )
 
 func TestUnmarshalSignature(t *testing.T) {
