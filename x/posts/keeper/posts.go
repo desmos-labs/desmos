@@ -116,7 +116,7 @@ func (k Keeper) ValidatePost(ctx sdk.Context, post types.Post) error {
 	}
 
 	// Check the post text length to make sure it's not exceeding the max length
-	if uint32(len(post.Text)) > params.MaxTextLength {
+	if uint32(post.GetTextLength()) > params.MaxTextLength {
 		return errors.Wrapf(types.ErrInvalidPost, "text exceed max length allowed")
 	}
 

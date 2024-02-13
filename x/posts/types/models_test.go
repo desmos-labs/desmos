@@ -349,6 +349,103 @@ func TestPost_Validate(t *testing.T) {
 	}
 }
 
+func TestPost_GetTextLength(t *testing.T) {
+	testCases := []struct {
+		name      string
+		post      types.Post
+		expLength int
+	}{
+		{
+			name: "latin text returns correct length",
+			post: types.NewPost(
+				1,
+				0,
+				2,
+				"External id",
+				"Hello",
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+				1,
+				nil,
+				nil,
+				nil,
+				types.REPLY_SETTING_EVERYONE,
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				nil,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+			),
+			expLength: 5,
+		},
+		{
+			name: "non latin text returns correct length",
+			post: types.NewPost(
+				1,
+				0,
+				2,
+				"External id",
+				"世界",
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+				1,
+				nil,
+				nil,
+				nil,
+				types.REPLY_SETTING_EVERYONE,
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				nil,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+			),
+			expLength: 2,
+		},
+		{
+			name: "emoji text returns correct length",
+			post: types.NewPost(
+				1,
+				0,
+				2,
+				"External id",
+				"😃😃😃",
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+				1,
+				nil,
+				nil,
+				nil,
+				types.REPLY_SETTING_EVERYONE,
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				nil,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+			),
+			expLength: 3,
+		},
+		{
+			name: "mixed text returns correct length",
+			post: types.NewPost(
+				1,
+				0,
+				2,
+				"External id",
+				"Hello 世界! 😃",
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+				1,
+				nil,
+				nil,
+				nil,
+				types.REPLY_SETTING_EVERYONE,
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				nil,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+			),
+			expLength: 11,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			require.Equal(t, tc.expLength, tc.post.GetTextLength())
+		})
+	}
+}
+
 func TestPostReference_Validate(t *testing.T) {
 	testCases := []struct {
 		name      string

@@ -130,6 +130,44 @@ func TestRegisteredReactionValue_Validate(t *testing.T) {
 
 // --------------------------------------------------------------------------------------------------------------------
 
+func TestFreeTextValue_Length(t *testing.T) {
+
+	testCases := []struct {
+		name      string
+		reaction  *types.FreeTextValue
+		expLength int
+	}{
+		{
+			name:      "latin text returns correct length",
+			reaction:  types.NewFreeTextValue("Hello"),
+			expLength: 5,
+		},
+		{
+			name:      "non latin text returns correct length",
+			reaction:  types.NewFreeTextValue("世界"),
+			expLength: 2,
+		},
+		{
+			name:      "emoji text returns correct length",
+			reaction:  types.NewFreeTextValue("😃😃😃"),
+			expLength: 3,
+		},
+		{
+			name:      "mixed text returns correct length",
+			reaction:  types.NewFreeTextValue("Hello 世界! 😃"),
+			expLength: 11,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			require.Equal(t, tc.expLength, tc.reaction.GetLength())
+		})
+	}
+}
+
 func TestFreeTextValue_Validate(t *testing.T) {
 	testCases := []struct {
 		name      string
