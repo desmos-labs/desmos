@@ -1,0 +1,6 @@
+type: fix
+module: other
+pull_request: 1303
+description: Replaced graphemes count instead of bytes count to determine text length
+backward_compatible: true
+date: 2024-02-13T10:55:14.7783395Z
