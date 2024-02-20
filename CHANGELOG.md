@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
+## Version 7.0.1
+### Dependencies
+- ([\#1305](https://github.com/desmos-labs/desmos/pull/1305)) Updated `cosmos-sdk` to `v0.47.9`
+
 ## Version 7.0.0
 ### Bug Fixes
 - ([\#1284](https://github.com/desmos-labs/desmos/pull/1284)) Removed duplicated message events emission
