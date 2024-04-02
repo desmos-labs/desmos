@@ -11,8 +11,7 @@ updates:
       interval: daily
     open-pull-requests-limit: 10
     reviewers:
-      - dadamu
-      - riccardom
+      - desmos-labs/core-devs
     labels:
       - automerge
       - dependencies
