@@ -35,7 +35,7 @@ jobs:
       - name: Deploy preview to Netlify 🚀
         if: env.GIT_DIFF
         id: deploy-preview
-        uses: nwtgck/actions-netlify@v2.1
+        uses: nwtgck/actions-netlify@v3.0
         with:
           publish-dir: ./output
           deploy-message: "Deploy from GitHub Actions"
