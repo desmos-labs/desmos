@@ -70,7 +70,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Create a file with all the pkgs 📜
-        run: go list ./... > pkgs.txt
+        run: go mod tidy && go list ./... > pkgs.txt
 
       - name: Split pkgs into 4 files ✂️
         run: split -d -n l/4 pkgs.txt pkgs.txt.part.
