@@ -137,4 +137,4 @@ Their responsibilities include:
 
 The Stable Release Managers are appointed by the Desmos Foundation. Currently residing Stable Release Managers:
 
-* @riccardom - Riccardo Montagnin
+* @desmos-labs/core-devs - Desmos-labs Core Dev Team
