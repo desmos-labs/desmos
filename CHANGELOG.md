@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
+## Version 7.1.0
+### Dependencies
+- ([\#1323](https://github.com/desmos-labs/desmos/pull/1323)) Bumped `cosmos-sdk` to `v0.47.10`
+- ([\#1324](https://github.com/desmos-labs/desmos/pull/1324)) Bumped `wasmd` to `v1.5.2`
+- [[\#1322]](https://github.com/desmos-labs/desmos/pull/1322) Bumped `ibc-go` to `v7.4.0`
+
 ## Version 7.0.1
 ### Dependencies
 - ([\#1305](https://github.com/desmos-labs/desmos/pull/1305)) Updated `cosmos-sdk` to `v0.47.9`
