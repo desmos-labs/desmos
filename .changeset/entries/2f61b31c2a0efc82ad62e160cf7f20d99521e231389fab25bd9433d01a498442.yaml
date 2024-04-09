@@ -1,0 +1,6 @@
+type: deps
+module: none
+pull_request: 1324
+description: Bumped `wasmd` to v1.5.2
+backward_compatible: true
+date: 2024-04-09T06:39:35.03776699Z
