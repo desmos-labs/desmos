@@ -1,0 +1,6 @@
+type: deps
+module: none
+pull_request: 1323
+description: Bumped `cosmos-sdk` to `v0.47.10`
+backward_compatible: true
+date: 2024-04-09T06:35:41.554639766Z
