@@ -1,0 +1,6 @@
+type: fix
+module: other
+pull_request: 1333
+description: Fix swagger frontend and include third party API methods to swagger.yaml
+backward_compatible: true
+date: 2024-05-08T10:28:33.711763983Z
