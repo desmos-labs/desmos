@@ -124,7 +124,7 @@ desmos query profiles default-external-addresses [[owner]] [[chain_name]] [flags
 ```
 
 **Notes**
-- The `chain_name` paremeter will only be used if the `owner` is specified
+- The `chain_name` parameter will only be used if the `owner` is specified
 
 Example:
 ```bash
