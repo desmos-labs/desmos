@@ -94,7 +94,7 @@ func (k Keeper) DeleteChainLink(ctx sdk.Context, link types.ChainLink) {
 	store.Delete(types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, link.GetAddressData().GetValue()))
 	store.Delete(types.ChainLinkOwnerKey(link.ChainConfig.Name, link.GetAddressData().GetValue(), link.User))
 
-	// Update the default external address to be the oldest link if the deleted link is default exnternal address
+	// Update the default external address to be the oldest link if the deleted link is default external address
 	if k.isDefaultExternalAddress(ctx, link) {
 		k.updateOwnerDefaultExternalAddress(ctx, link.User, link.ChainConfig.Name)
 	}

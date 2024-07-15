@@ -248,7 +248,7 @@ func (k Keeper) IterateDefaultExternalAddresses(ctx sdk.Context, fn func(entry t
 }
 
 // GetDefaultExternalAddressEntries returns a slice of DefaultExternalAddressEntry objects containing the details of all the
-// default exnternal address entries stored inside the current context
+// default external address entries stored inside the current context
 func (k Keeper) GetDefaultExternalAddressEntries(ctx sdk.Context) []types.DefaultExternalAddressEntry {
 	var entries []types.DefaultExternalAddressEntry
 	k.IterateDefaultExternalAddresses(ctx, func(entry types.DefaultExternalAddressEntry) (stop bool) {
