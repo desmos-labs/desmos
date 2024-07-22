@@ -1266,7 +1266,7 @@ func (m *Params) GetIBCRequestEnabled() bool {
 
 // PendingResolveList is a list of requests that are waiting to be resolved
 type PendingResolveList struct {
-	// RequestIDs is a list of request IDs that are waiting to be resolved
+	// RequestIds is a list of request IDs that are waiting to be resolved
 	RequestIds []uint64 `protobuf:"varint,1,rep,packed,name=request_ids,json=requestIds,proto3" json:"request_ids,omitempty"`
 }
 
@@ -1313,7 +1313,7 @@ func (m *PendingResolveList) GetRequestIds() []uint64 {
 // IBCChannel is information of IBC protocol to allow communicating with other
 // chain
 type IBCChannel struct {
-	// PortID is port ID used for sending response packet when request is
+	// PortId is port ID used for sending response packet when request is
 	// resolved.
 	PortId string `protobuf:"bytes,1,opt,name=port_id,json=portId,proto3" json:"port_id,omitempty"`
 	// ChannelID is channel ID used for sending response packet when request is
