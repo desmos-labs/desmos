@@ -105,7 +105,7 @@ echo ""
 echo "===> Waiting for upgrade height ($UPGRADE_HEIGHT)"
 while true; do
   curr_block=$(curl -s $NODE/status | jq -r '.result.sync_info.latest_block_height')
-  docker compose -f $(pwd)/contrib/upgrade_testnet/docker-compose.yml logs --tail=1
+  docker compose -f "$(pwd)/contrib/upgrade_testnet/docker-compose.yml" logs --tail=1
 
   if [ ! -z ${curr_block} ] ; then
     echo "Current block: ${curr_block}"
