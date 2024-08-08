@@ -60,4 +60,4 @@ fi
 
 # Start the devnet
 echo "===> Starting the devnet"
-docker-compose -f $TESTNETDIR/docker-compose.yml up -d
+docker compose -f $TESTNETDIR/docker-compose.yml up -d
