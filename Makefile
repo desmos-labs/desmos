@@ -412,11 +412,11 @@ upgrade-testnet-stop:
 # Run a 4-node testnet locally
 localnet-start: localnet-stop setup-localnet
 	$(if $(shell docker inspect -f '{{ .Id }}' desmoslabs/desmos-env 2>/dev/null),$(info found image desmoslabs/desmos-env),$(MAKE) -C contrib/images desmos-env)
-	docker-compose up -d
+	docker compose up -d
 
 # Stop testnet
 localnet-stop:
-	docker-compose down
+	docker compose down
 
 .PHONY: all build-linux install \
 	go-mod-cache clean build \
