@@ -2,8 +2,6 @@ module github.com/desmos-labs/desmos/v7
 
 go 1.21
 
-toolchain go1.22.3
-
 require (
 	cosmossdk.io/api v0.3.1
 	cosmossdk.io/core v0.5.1
