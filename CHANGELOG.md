@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
+
+## Version 7.1.1
+### Dependencies
+- ([\#1324](https://github.com/desmos-labs/desmos/pull/1324)) Bumped `wasmvm` to `v1.5.3`
+
 ## Version 7.1.0
 ### Dependencies
 - ([\#1323](https://github.com/desmos-labs/desmos/pull/1323)) Bumped `cosmos-sdk` to `v0.47.10`
