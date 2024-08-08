@@ -1,6 +1,6 @@
 module github.com/desmos-labs/desmos/v7
 
-go 1.21
+go 1.20
 
 require (
 	cosmossdk.io/api v0.3.1
