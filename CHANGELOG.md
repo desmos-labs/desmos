@@ -4,11 +4,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
 ## Version 7.1.0
 ### Dependencies
-- ([\#1323](https://github.com/desmos-labs/desmos/pull/1343)) Bumped `cosmos-sdk` to `v0.47.13`
-- ([\#1324](https://github.com/desmos-labs/desmos/pull/1344)) Bumped `wasmvm` to `v1.5.3`
-
-## Version 7.1.0
-### Dependencies
 - ([\#1323](https://github.com/desmos-labs/desmos/pull/1323)) Bumped `cosmos-sdk` to `v0.47.10`
 - ([\#1324](https://github.com/desmos-labs/desmos/pull/1324)) Bumped `wasmvm` to `v1.5.2`
 - ([\#1322](https://github.com/desmos-labs/desmos/pull/1322)) Bumped `ibc-go` to `v7.4.0`
