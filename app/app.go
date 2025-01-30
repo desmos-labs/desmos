@@ -110,6 +110,8 @@ import (
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
+
+	_ "github.com/desmos-labs/desmos/v7/client/docs/statik"
 )
 
 var (
