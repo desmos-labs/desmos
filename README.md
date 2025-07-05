@@ -1,7 +1,7 @@
 [![Website](.img/cover.png)](https://desmos.network)
 
 [![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/desmos-labs/desmos)](https://github.com/desmos-labs/desmos/releases)
-![License](https://img.shields.io/github/license/desmos-labs/desmos.svg)
+[![License](https://img.shields.io/github/license/desmos-labs/desmos.svg)](https://github.com/desmos-labs/desmos/blob/master/LICENSE)
 [![Go Reference](https://pkg.go.dev/badge/github.com/desmos-labs/desmos/.svg)](https://pkg.go.dev/github.com/desmos-labs/desmos/)
 [![Go Report](https://goreportcard.com/badge/github.com/desmos-labs/desmos)](https://goreportcard.com/report/github.com/desmos-labs/desmos)
 [![Codecov](https://codecov.io/gh/desmos-labs/desmos/branch/master/graph/badge.svg)](https://codecov.io/gh/desmos-labs/desmos/branch/master)
